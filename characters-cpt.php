@@ -86,7 +86,7 @@ function create_post_type_characters_taxonomies() {
 		'rewrite'               => array( 'slug' => 'character-tags' ),
 	);
 
-	register_taxonomy( 'lez_chartags', array('post','post_type_characters'), $args_chartags );
+	register_taxonomy( 'lez_chartags', 'post_type_characters', $args_chartags );
 }
 
 /** END Function to create and register custom post type Taxonomies **/
