@@ -179,6 +179,16 @@ function cmb_post_type_shows_metaboxes( array $meta_boxes ) {
 				'id'   => $prefix . 'fansite3url',
 				'type' => 'text',
 			),
+			//multiple checkboxes
+			array(
+				'name'    => 'Special Stars',
+				'id'      => $prefix . 'test_multicheckbox',
+				'type'    => 'multicheck',
+				'options' => array(
+					'check1' => 'Gold Star',
+					'check2' => 'Silver Star',
+				),
+			),
 		),
 	);
 
