@@ -182,7 +182,7 @@ function cmb_post_type_shows_metaboxes( array $meta_boxes ) {
 			//multiple checkboxes
 			array(
 				'name'    => 'Special Stars',
-				'id'      => $prefix . 'test_multicheckbox',
+				'id'      => $prefix . 'stars',
 				'type'    => 'multicheck',
 				'options' => array(
 					'check1' => 'Gold Star',
