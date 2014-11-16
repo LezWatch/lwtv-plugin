@@ -87,7 +87,7 @@ function create_post_type_shows_taxonomies() {
 		'rewrite'               => array( 'slug' => 'show-tags' ),
 	);
 
-	register_taxonomy( 'lez_tags', array('post','post_type_shows'), $args_gentags );
+	register_taxonomy( 'lez_tags', 'post_type_shows', $args_gentags );
 }
 
 /** END Function to create and register custom post type Taxonomies **/
