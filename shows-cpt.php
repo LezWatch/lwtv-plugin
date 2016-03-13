@@ -22,7 +22,7 @@ function lez_shows_post_type() {
 		'label'               => __( 'post_type_shows', 'lezwatchtv' ),
 		'description'         => __( 'TV Shows', 'lezwatchtv' ),
 		'labels'              => $labels,
-		'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail' ),
+		'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo' ),
 		'taxonomies'          => array( 'lez_cliches' ),
 		'hierarchical'        => false,
 		'public'              => true,
@@ -31,7 +31,7 @@ function lez_shows_post_type() {
 		'show_in_nav_menus'   => true,
 		'show_in_admin_bar'   => true,
 	 	'rewrite' 			  => array( 'slug' => 'shows' ),
-		'menu_icon'           => 'dashicons-video-alt', 
+		'menu_icon'           => 'dashicons-video-alt',
 		'menu_position'       => 5,
 		'can_export'          => true,
 		'has_archive'         => true,
@@ -101,7 +101,7 @@ function cmb_post_type_shows_metaboxes( array $meta_boxes ) {
 
 	// prefix for all custom fields
 	$prefix = 'lezshows_';
-	
+
 	$meta_boxes[] = array(
 		'id'         => 'shows_metabox',
 		'title'      => 'Show Details',
@@ -335,7 +335,7 @@ function featured_image_title_post_type_shows()
 
 function set_featured_image_text_post_type_shows( $content ) {
     global $current_screen;
- 
+
     if( 'post_type_shows' == $current_screen->post_type )
         return $content = str_replace( __( 'Set featured image' ), __( 'Upload Show Image' ), $content);
     else

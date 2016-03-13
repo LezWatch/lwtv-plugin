@@ -22,7 +22,7 @@ function lez_characters_post_type() {
 		'label'               => __( 'post_type_characters', 'lezwatchtv' ),
 		'description'         => __( 'Characters', 'lezwatchtv' ),
 		'labels'              => $labels,
-		'supports'            => array( 'title', 'thumbnail' ),
+		'supports'            => array( 'title', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo' ),
 		'hierarchical'        => false,
 		'public'              => true,
 		'show_ui'             => true,
@@ -30,7 +30,7 @@ function lez_characters_post_type() {
 		'show_in_nav_menus'   => true,
 		'show_in_admin_bar'   => true,
 	 	'rewrite' 			  => array( 'slug' => 'characters' ),
-		'menu_icon'           => 'dashicons-nametag', 
+		'menu_icon'           => 'dashicons-nametag',
 		'menu_position'       => 7,
 		'can_export'          => true,
 		'has_archive'         => true,
@@ -100,7 +100,7 @@ function cmb_post_type_characters_metaboxes( array $meta_boxes ) {
 
 	// prefix for all custom fields
 	$prefix = 'lezchars_';
-	
+
 	$meta_boxes[] = array(
 		'id'         => 'chars_metabox',
 		'title'      => 'Character Details',
@@ -128,7 +128,7 @@ function cmb_post_type_characters_metaboxes( array $meta_boxes ) {
 				'desc' => 'Select the show this character belongs to',
 				'id'   => $prefix . 'show',
 				'type' => 'select_post_type',
-				'post-type' => 'post_type_shows', // CPT 
+				'post-type' => 'post_type_shows', // CPT
 			),
 			// simple text field for form
 			array(
@@ -142,7 +142,7 @@ function cmb_post_type_characters_metaboxes( array $meta_boxes ) {
 				'desc' => 'Include http://',
 				'id'   => $prefix . 'url',
 				'type' => 'text',
-			),			
+			),
 		),
 	);
 
@@ -183,7 +183,7 @@ function featured_image_title_post_type_characters()
 
 function set_featured_image_text_post_type_characters( $content ) {
     global $current_screen;
- 
+
     if( 'post_type_characters' == $current_screen->post_type )
         return $content = str_replace( __( 'Set featured image' ), __( 'Upload Character Photo' ), $content);
     else
