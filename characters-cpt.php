@@ -58,22 +58,22 @@ function create_post_type_characters_taxonomies() {
 	// Add new taxonomy, NOT hierarchical (like tags)
 	//Labels for the new taxonomy
 	$names_chartags = array(
-		'name'                       => _x( 'Character Tags', 'lezwatchtv' ),
-		'singular_name'              => _x( 'Character Tag', 'taxonomy singular name' ),
-		'search_items'               => __( 'Search Character Tags' ),
-		'popular_items'              => __( 'Popular Character Tags' ),
-		'all_items'                  => __( 'All Character Tags' ),
+		'name'                       => _x( 'Character Tropes', 'lezwatchtv' ),
+		'singular_name'              => _x( 'Trope', 'taxonomy singular name' ),
+		'search_items'               => __( 'Search Tropes' ),
+		'popular_items'              => __( 'Popular Tropes' ),
+		'all_items'                  => __( 'All Tropes' ),
 		'parent_item'                => null,
 		'parent_item_colon'          => null,
-		'edit_item'                  => __( 'Edit Character Tag' ),
-		'update_item'                => __( 'Update Character Tag' ),
-		'add_new_item'               => __( 'Add New Character Tag' ),
-		'new_item_name'              => __( 'New Character Tag Name' ),
-		'separate_items_with_commas' => __( 'Separate Character Tags with commas' ),
-		'add_or_remove_items'        => __( 'Add or remove Character Tags' ),
-		'choose_from_most_used'      => __( 'Choose from the most used Character Tags' ),
-		'not_found'                  => __( 'No Character Tags found.' ),
-		'menu_name'                  => __( 'Character Tags' ),
+		'edit_item'                  => __( 'Edit Trope' ),
+		'update_item'                => __( 'Update Trope' ),
+		'add_new_item'               => __( 'Add New Trope' ),
+		'new_item_name'              => __( 'New Trope Name' ),
+		'separate_items_with_commas' => __( 'Separate Tropes with commas' ),
+		'add_or_remove_items'        => __( 'Add or remove Tropes' ),
+		'choose_from_most_used'      => __( 'Choose from the most used Tropes' ),
+		'not_found'                  => __( 'No Tropes found.' ),
+		'menu_name'                  => __( 'Tropes' ),
 	);
 	//paramters for the new taxonomy
 	$args_chartags = array(
@@ -83,7 +83,7 @@ function create_post_type_characters_taxonomies() {
 		'show_admin_column'     => true,
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
-		'rewrite'               => array( 'slug' => 'character-tags' ),
+		'rewrite'               => array( 'slug' => 'tropes' ),
 	);
 
 	register_taxonomy( 'lez_chartags', 'post_type_characters', $args_chartags );

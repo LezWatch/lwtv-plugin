@@ -59,22 +59,22 @@ function create_post_type_shows_taxonomies() {
 	// Add new taxonomy, NOT hierarchical (like tags)
 	//Labels for the new taxonomy
 	$names_gentags = array(
-		'name'                       => _x( 'Station and Location', 'lezwatchtv' ),
-		'singular_name'              => _x( 'Tag', 'taxonomy singular name' ),
-		'search_items'               => __( 'Search Station Tags' ),
-		'popular_items'              => __( 'Popular Station Tags' ),
-		'all_items'                  => __( 'All Station Tags' ),
+		'name'                       => _x( 'TV Station', 'lezwatchtv' ),
+		'singular_name'              => _x( 'Station', 'taxonomy singular name' ),
+		'search_items'               => __( 'Search Stations' ),
+		'popular_items'              => __( 'Popular Stations' ),
+		'all_items'                  => __( 'All Stations' ),
 		'parent_item'                => null,
 		'parent_item_colon'          => null,
-		'edit_item'                  => __( 'Edit Tag' ),
-		'update_item'                => __( 'Update Tag' ),
-		'add_new_item'               => __( 'Add New Tag' ),
-		'new_item_name'              => __( 'New Tag Name' ),
-		'separate_items_with_commas' => __( 'Separate Station Tags with commas' ),
-		'add_or_remove_items'        => __( 'Add or remove Station Tags' ),
-		'choose_from_most_used'      => __( 'Choose from the most used Station Tags' ),
-		'not_found'                  => __( 'No Station Tags found.' ),
-		'menu_name'                  => __( 'Station Tags' ),
+		'edit_item'                  => __( 'Edit Station' ),
+		'update_item'                => __( 'Update Station' ),
+		'add_new_item'               => __( 'Add New Station' ),
+		'new_item_name'              => __( 'New Station Name' ),
+		'separate_items_with_commas' => __( 'Separate Stations with commas' ),
+		'add_or_remove_items'        => __( 'Add or remove Stations' ),
+		'choose_from_most_used'      => __( 'Choose from the most used Stations' ),
+		'not_found'                  => __( 'No Stations found.' ),
+		'menu_name'                  => __( 'Stations' ),
 	);
 	//paramters for the new taxonomy
 	$args_gentags = array(
@@ -84,7 +84,7 @@ function create_post_type_shows_taxonomies() {
 		'show_admin_column'     => true,
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
-		'rewrite'               => array( 'slug' => 'show-tags' ),
+		'rewrite'               => array( 'slug' => 'stations' ),
 	);
 
 	register_taxonomy( 'lez_tags', 'post_type_shows', $args_gentags );
@@ -132,13 +132,6 @@ function cmb_post_type_shows_metaboxes( array $meta_boxes ) {
 				'id'		=> $prefix . 'cliches',
 				'type'		=> 'taxonomy_multicheck',
 				'taxonomy'	=> 'lez_cliches', // Taxonomy Name
-			),
-			// use WP default wysiwyg editor
-			array(
-				'name'    => 'Where to watch it',
-				'id'      => $prefix . 'watch',
-				'type'    => 'wysiwyg',
-				'options' => array(	'textarea_rows' => 10, ),
 			),
 			// simple text field for form
 			array(
