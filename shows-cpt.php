@@ -178,8 +178,8 @@ function cmb_post_type_shows_metaboxes( array $meta_boxes ) {
 				'id'      => $prefix . 'stars',
 				'type'    => 'multicheck',
 				'options' => array(
-					'check1' => 'Gold Star',
-					'check2' => 'Silver Star',
+					'gold' => 'Gold Star',
+					'silver' => 'Silver Star',
 				),
 			),
 		),
