@@ -296,22 +296,6 @@ add_action( 'init', 'remove_meta_boxes_from_post_type_shows');
 
 /** END Function hide custom taxonomies metabox **/
 
-
-/** BEGIN Filter to change the default "Enter title here" Text **/
-
-add_filter( 'enter_title_here', 'enter_title_here_post_type_shows' );
-function enter_title_here_post_type_shows( $message ){
-  global $post;
-  if( 'post_type_shows' == $post->post_type ):
-    $message = 'Enter Show Title';
-  endif;
-
-  return $message;
-}
-
-/** END Filter to change the default "Enter title here" Text **/
-
-
 /** BEGIN Function to change the default "Featured Image" metabox Title **/
 
 add_action('do_meta_boxes', 'featured_image_title_post_type_shows');

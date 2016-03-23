@@ -151,22 +151,6 @@ function cmb_post_type_characters_metaboxes( array $meta_boxes ) {
 
 /** END Function to create and register custom fields for custom post type **/
 
-
-/** BEGIN Filter to change the default "Enter title here" Text **/
-
-add_filter( 'enter_title_here', 'enter_title_here_post_type_characters' );
-function enter_title_here_post_type_characters( $message ){
-  global $post;
-  if( 'post_type_characters' == $post->post_type ):
-    $message = 'Enter Character Name';
-  endif;
-
-  return $message;
-}
-
-/** END Filter to change the default "Enter title here" Text **/
-
-
 /** BEGIN Function to change the default "Featured Image" metabox Title **/
 
 add_action('do_meta_boxes', 'featured_image_title_post_type_characters');
