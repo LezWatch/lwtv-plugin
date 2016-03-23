@@ -22,7 +22,7 @@ function lez_characters_post_type() {
 		'label'               => __( 'post_type_characters', 'lezwatchtv' ),
 		'description'         => __( 'Characters', 'lezwatchtv' ),
 		'labels'              => $labels,
-		'supports'            => array( 'title', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo' ),
+		'supports'            => array( 'title', 'editor', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo', 'comments' ),
 		'hierarchical'        => false,
 		'public'              => true,
 		'show_ui'             => true,
@@ -109,13 +109,6 @@ function cmb_post_type_characters_metaboxes( array $meta_boxes ) {
 		'priority'   => 'high',
 		'show_names' => true, // Character field names on the left
 		'fields'     => array(
-			// use WP default wysiwyg editor
-			array(
-				'name'    => 'Character description',
-				'id'      => $prefix . 'description',
-				'type'    => 'wysiwyg',
-				'options' => array(	'textarea_rows' => 10, ),
-			),
 			// simple text field for form
 			array(
 				'name' => 'Actor Name',
