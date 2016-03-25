@@ -24,7 +24,7 @@ function cmb2_get_post_options( $query_args ) {
     $args = wp_parse_args( $query_args, array(
         'post_type'   => 'post',
         'numberposts' => -1,
-        'post_status' => array('publish', 'pending', 'draft', 'future'),
+        'post_status' => array('publish'),
     ) );
 
     $posts = get_posts( $args );

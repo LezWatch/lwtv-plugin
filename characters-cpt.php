@@ -93,7 +93,11 @@ function create_post_type_characters_taxonomies() {
 
 // This gets a list of all the shows.
 function cmb2_get_post_type_shows_options() {
-    return cmb2_get_post_options( array( 'post_type' => 'post_type_shows', 'numberposts' => -1 ) );
+    return cmb2_get_post_options( array( 
+    		'post_type' => 'post_type_shows', 
+    		'numberposts' => -1,
+    		'post_status' => array('publish', 'pending', 'draft', 'future'),
+    	) );
 }
 
 add_filter( 'cmb2_admin_init', 'cmb_post_type_characters_metaboxes' );
