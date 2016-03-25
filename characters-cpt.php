@@ -130,9 +130,10 @@ function cmb_post_type_characters_metaboxes() {
 		'default'          => 'custom',
 	    'options_cb'       => 'cmb2_get_post_type_shows_options',
 	) );
-
+	// Field: Character Type
 	$cmb_characters->add_field( array(
 	    'name'             => 'Character Type',
+		'desc'             => 'Main characters are in credits, recurring are in 3 or more episodes a season, guests show up once a season.',
 	    'id'               => $prefix .'type',
 	    'type'             => 'select',
 	    'show_option_none' => true,
@@ -142,14 +143,6 @@ function cmb_post_type_characters_metaboxes() {
 	        'guest'     => 'Guest Character',
 	        'recurring' => 'Recurring Character',
 	    ),
-	) );
-	
-	// Field: IMDB URL
-	$cmb_characters->add_field( array(
-		'name'      => 'IMDB URL',
-		'id'        => $prefix . 'url',
-		'type'      => 'text_url',
-		'protocols' => array('http', 'https'), // Array of allowed protocols
 	) );
 }
 
