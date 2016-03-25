@@ -135,7 +135,7 @@ function cmb_post_type_characters_metaboxes() {
 	    'name'             => 'Character Type',
 	    'id'               => $prefix .'type',
 	    'type'             => 'select',
-	    'show_option_none' => false,
+	    'show_option_none' => true,
 	    'default'          => 'custom',
 	    'options'          => array(
 	        'regular'   => 'Regular/Main Character',
@@ -170,4 +170,33 @@ function set_featured_image_text_post_type_characters( $content ) {
     } else {
         return $content;
     }
+}
+
+// Add shit to columns
+add_filter( 'manage_post_type_characters_posts_columns', 'set_custom_edit_post_type_characters_columns' );
+function set_custom_edit_post_type_characters_columns($columns) {
+
+	$new_columns = array();
+	foreach($columns as $key => $title) {
+		if ($key=='date') {
+			$new_columns['shows'] = 'TV Show';
+			$new_columns['roletype'] = 'Role Type';
+		}
+		$new_columns[$key] = $title;
+	}
+	
+	return $new_columns;
+}
+
+add_action( 'manage_post_type_characters_posts_custom_column' , 'custom_post_type_characters_column', 10, 2 );
+add_action( 'manage_post_type_characters_posts_custom_column' , 'custom_post_type_characters_column', 10, 2 );
+function custom_post_type_characters_column( $column, $post_id ) {
+	switch ( $column ) {
+		case 'shows':
+			echo get_post( get_post_meta( $post_id, 'lezchars_show', true ) )->post_title; 
+			break;
+		case 'roletype':
+			echo get_post_meta( $post_id, 'lezchars_type', true );
+			break;
+	}
 }
