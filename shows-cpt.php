@@ -1,4 +1,11 @@
 <?php
+/*
+Plugin Name: Shows CPT
+Plugin URI:  http://lezwatchtv.com
+Description: Custom Post Type for shows on LWTV
+Version: 1.0
+Author: Evan Herman, Mika Epstein
+*/
 
 // Register Custom Post Type
 add_action( 'init', 'lez_shows_post_type', 0 );

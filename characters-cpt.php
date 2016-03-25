@@ -1,9 +1,15 @@
 <?php
+/*
+Plugin Name: Character CPT
+Plugin URI:  http://lezwatchtv.com
+Description: Custom Post Type for characters on LWTV
+Version: 1.0
+Author: Evan Herman, Mika Epstein
+*/
 
 // Register Custom Post Type
 add_action( 'init', 'lez_characters_post_type', 0 );
 function lez_characters_post_type() {
-
 	$labels = array(
 		'name'                => _x( 'Characters', 'Post Type General Name', 'lezwatchtv' ),
 		'singular_name'       => _x( 'Character', 'Post Type Singular Name', 'lezwatchtv' ),
@@ -40,7 +46,6 @@ function lez_characters_post_type() {
 		'capability_type'     => 'page',
 	);
 	register_post_type( 'post_type_characters', $args );
-
 }
 
 // hook into the init action and call create_post_type_characters_taxonomies when it fires
@@ -76,12 +81,17 @@ function create_post_type_characters_taxonomies() {
 		'query_var'             => true,
 		'rewrite'               => array( 'slug' => 'tropes' ),
 	);
-
 	register_taxonomy( 'lez_chartags', 'post_type_characters', $args_chartags );
 }
 
-/** BEGIN Function to create and register custom fields for custom post type **/
+/*
+ * Custom Meta Box section
+ *
+ * This relies fully on CMB2.
+ *
+ */
 
+// This gets a list of all the shows.
 function cmb2_get_post_type_shows_options() {
     return cmb2_get_post_options( array( 'post_type' => 'post_type_shows', 'numberposts' => -1 ) );
 }
@@ -92,9 +102,7 @@ function cmb_post_type_characters_metaboxes() {
 	// prefix for all custom fields
 	$prefix = 'lezchars_';
 
-	/**
-	 * Sample metabox to demonstrate each field type included
-	 */
+	// MetaBox Group: Character Details
 	$cmb_characters = new_cmb2_box( array(
 		'id'            => 'chars_metabox',
 		'title'         => 'Character Details',
@@ -104,6 +112,7 @@ function cmb_post_type_characters_metaboxes() {
 		'show_names   ' => true, // Show field names on the left
 	) );
 
+	// Field: Actor Name
 	$cmb_characters->add_field( array(
 		'name'       => 'Actor Name',
 		'desc'       => 'Include years (in parens) for multiple actors',
@@ -111,7 +120,7 @@ function cmb_post_type_characters_metaboxes() {
 		'type'       => 'text',
 		'repeatable' => 'true',
 	) );
-
+	// Field: Show Name
 	$cmb_characters->add_field( array(
 		'name'             => 'Show',
 		'desc'             => 'Select the show this character belongs to',
@@ -121,12 +130,18 @@ function cmb_post_type_characters_metaboxes() {
 		'default'          => 'custom',
 	    'options_cb'       => 'cmb2_get_post_type_shows_options',
 	) );
+	// Field: IMDB URL
+	$cmb_characters->add_field( array(
+		'name'      => 'IMDB URL',
+		'id'        => $prefix . 'url',
+		'type'      => 'text_url',
+		'protocols' => array('http', 'https'), // Array of allowed protocols
+	) );
 }
 
 // change the default "Featured Image" metabox title
 add_action('do_meta_boxes', 'featured_image_title_post_type_characters');
-function featured_image_title_post_type_characters()
-{
+function featured_image_title_post_type_characters() {
     remove_meta_box( 'postimagediv', 'post_type_characters', 'side' );
     add_meta_box('postimagediv', __('Character Photo'), 'post_thumbnail_meta_box', 'post_type_characters', 'side');
 }

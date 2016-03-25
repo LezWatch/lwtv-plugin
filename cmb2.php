@@ -1,4 +1,11 @@
 <?php
+/*
+Plugin Name: CMB2 Bootstrap
+Plugin URI:  https://github.com/WebDevStudios/CMB2
+Description: Boostrap file to load CMB2 and everything it needs to be running. Since we're using this as an MU plugin, it's required.
+Version: 1.0
+Author: Mika Epstein
+*/
 
 /**
  * Get the bootstrap! If using the plugin from wordpress.org, REMOVE THIS!
@@ -27,6 +34,8 @@ function cmb2_get_post_options( $query_args ) {
           $post_options[ $post->ID ] = $post->post_title;
         }
     }
+    
+    sort($post_options);
 
     return $post_options;
 }

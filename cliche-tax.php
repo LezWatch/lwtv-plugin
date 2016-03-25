@@ -1,9 +1,13 @@
 <?php
 /*
-Custom Taxonomy for cliches
+Plugin Name: Custom Taxonomy for cliches
+Plugin URI:  https://fortawesome.com/sets/symbolicons-block
+Description: Special taxonomy for cliches.
+Version: 1.0
+Author: Evan Herman
 */
 
-// Register Custom Taxonomy
+add_action( 'init', 'show_cliche_taxonomy', 0 );
 function show_cliche_taxonomy() {
 
         $labels = array(
@@ -33,9 +37,6 @@ function show_cliche_taxonomy() {
                 'show_tagcloud'              => false,
                 'rewrite' 				  	 => array( 'slug' => 'cliches' ),
         );
-        register_taxonomy( 'lez_cliches', array( 'post' ), $args );
+        register_taxonomy( 'lez_cliches', array( 'post_type_shows' ), $args );
 
 }
-
-// Hook into the 'init' action
-add_action( 'init', 'show_cliche_taxonomy', 0 );
