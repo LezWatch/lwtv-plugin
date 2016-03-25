@@ -134,6 +134,13 @@ function cmb_post_type_shows_metaboxes() {
 	    )
 	) );
 
+	$cmb_showdetails->add_field( array(
+		'name'      => 'IMDB URL',
+		'id'        => $prefix . 'url',
+		'type'      => 'text_url',
+		'protocols' => array('http', 'https'), // Array of allowed protocols
+	) );
+
 	$cmb_ratings = new_cmb2_box( array(
 		'id'            => 'ratings_metabox',
 		'title'         => 'Show Ratings',
