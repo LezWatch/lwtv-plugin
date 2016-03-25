@@ -1,0 +1,11 @@
+.cmb2-wrap .cmb-row.cmb-repeat-row {
+    border-bottom: none!important;
+}
+.cmb2-metabox>.cmb-row .cmb-repeat-table .cmb-row>.cmb-td {
+    padding: 10px 20px 0 0!important;
+}
+
+.cmb2-checkbox-list.cmb2-list li {
+  display: inline-block;
+  width: 45%;
+}

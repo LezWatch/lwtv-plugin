@@ -1,6 +1,7 @@
 <?php
 
 // Register Custom Post Type
+add_action( 'init', 'lez_shows_post_type', 0 );
 function lez_shows_post_type() {
 
 	$labels = array(
@@ -43,14 +44,6 @@ function lez_shows_post_type() {
 
 }
 
-// Hook into the 'init' action
-add_action( 'init', 'lez_shows_post_type', 0 );
-
-/** END Function to create and register custom post type **/
-
-
-/** BEGIN Function to create and register custom post type Taxonomies **/
-
 // hook into the init action and call create_post_type_shows_taxonomies when it fires
 add_action( 'init', 'create_post_type_shows_taxonomies', 0 );
 
@@ -90,214 +83,163 @@ function create_post_type_shows_taxonomies() {
 	register_taxonomy( 'lez_tags', 'post_type_shows', $args_gentags );
 }
 
-/** END Function to create and register custom post type Taxonomies **/
 
-
-
-/** BEGIN Function to create and register custom fields for custom post type **/
-add_filter( 'cmb_meta_boxes', 'cmb_post_type_shows_metaboxes' );
-
-function cmb_post_type_shows_metaboxes( array $meta_boxes ) {
+add_filter( 'cmb2_admin_init', 'cmb_post_type_shows_metaboxes' );
+function cmb_post_type_shows_metaboxes() {
 
 	// prefix for all custom fields
 	$prefix = 'lezshows_';
 
-	$meta_boxes[] = array(
-		'id'         => 'shows_metabox',
-		'title'      => 'Show Details',
-		'pages'      => array( 'post_type_shows', ), // Post type
-		'context'    => 'normal',
-		'priority'   => 'high',
-		'show_names' => true, // Show field names on the left
-		'fields'     => array(
-			// use WP default wysiwyg editor
-			array(
-				'name'    => 'Queer Plotline Timeline',
-				'desc'    => 'Which seasons/episodes have the gay in it',
-				'id'      => $prefix . 'plots',
-				'type'    => 'wysiwyg',
-				'options' => array(	'textarea_rows' => 10, ),
-			),
-			// use WP default wysiwyg editor
-			array(
-				'name'    => 'Notable Lez-Centric Episodes',
-				'id'      => $prefix . 'episodes',
-				'type'    => 'wysiwyg',
-				'options' => array(	'textarea_rows' => 10, ),
-			),
+	$cmb_showdetails = new_cmb2_box( array(
+		'id'            => 'shows_metabox',
+		'title'         => 'Shows Details',
+		'object_types'  => array( 'post_type_shows', ), // Post type
+		'context'       => 'normal',
+		'priority'      => 'high',
+		'show_names   ' => true, // Show field names on the left
+	) );
 
-			//checkboxes for custom taxonomy
-			array(
-				'name'		=> 'Cliché Plotlines',
-				'id'		=> $prefix . 'cliches',
-				'type'		=> 'taxonomy_multicheck',
-				'taxonomy'	=> 'lez_cliches', // Taxonomy Name
-			),
-			// simple text field for form
-			array(
-				'name' => 'Hashtags',
-				'id'   => $prefix . 'hashtags',
-				'type' => 'text',
-			),
-			// simple text field for form
-			array(
-				'name' => 'Fansite 1 Title',
-				'id'   => $prefix . 'fansite1title',
-				'type' => 'text',
-			),
-			array(
-				'name' => 'Fansite 1 URL',
-				'id'   => $prefix . 'fansite1url',
-				'type' => 'text',
-			),
-			// simple text field for form
-			array(
-				'name' => 'Fansite 2 Title',
-				'id'   => $prefix . 'fansite2title',
-				'type' => 'text',
-			),
-			array(
-				'name' => 'Fansite 2 URL',
-				'id'   => $prefix . 'fansite2url',
-				'type' => 'text',
-			),
-			// simple text field for form
-			array(
-				'name' => 'Fansite 3 Title',
-				'id'   => $prefix . 'fansite3title',
-				'type' => 'text',
-			),
-			array(
-				'name' => 'Fansite 3 URL',
-				'id'   => $prefix . 'fansite3url',
-				'type' => 'text',
-			),
-			//multiple checkboxes
-			array(
-				'name'    => 'Special Stars',
-				'id'      => $prefix . 'stars',
-				'type'    => 'multicheck',
-				'options' => array(
-					'gold' => 'Gold Star',
-					'silver' => 'Silver Star',
-				),
-			),
-		),
-	);
+	$cmb_showdetails->add_field( array(
+		'name'    => 'Queer Plotline Timeline',
+		'desc'    => 'Which seasons/episodes have the gay in it',
+		'id'      => $prefix . 'plots',
+		'type'    => 'wysiwyg',
+		'options' => array( 'textarea_rows' => 10, ),
+	) );
 
-	// A second metabox
-	$meta_boxes[] = array(
-		'id'         => 'ratings_metabox',
-		'title'      => 'Ratings',
-		'pages'      => array( 'post_type_shows', ), // Post type
-		'context'    => 'normal',
-		'priority'   => 'high',
-		'show_names' => true, // Show field names on the left
-		'fields'     => array(
-			//radio buttons displayed inline
-			array(
-				'name'    => 'Realness Rating',
-				'id'      => $prefix . 'realness_rating',
-				'type'    => 'radio_inline',
-				'options' => array(
-					array( 'name' => '1', 'value' => '1', ),
-					array( 'name' => '2', 'value' => '2', ),
-					array( 'name' => '3', 'value' => '3', ),
-					array( 'name' => '4', 'value' => '4', ),
-					array( 'name' => '5', 'value' => '5', ),
-					array( 'name' => '6', 'value' => '6', ),
-				),
-			),
-			// use WP default wysiwyg editor
-			array(
-				'name'    => 'Realness details',
-				'id'      => $prefix . 'realness_details',
-				'type'    => 'wysiwyg',
-				'options' => array(	'textarea_rows' => 5, ),
-			),
-			//radio buttons displayed inline
-			array(
-				'name'    => 'Show Quality Rating',
-				'id'      => $prefix . 'quality_rating',
-				'type'    => 'radio_inline',
-				'options' => array(
-					array( 'name' => '1', 'value' => '1', ),
-					array( 'name' => '2', 'value' => '2', ),
-					array( 'name' => '3', 'value' => '3', ),
-					array( 'name' => '4', 'value' => '4', ),
-					array( 'name' => '5', 'value' => '5', ),
-					array( 'name' => '6', 'value' => '6', ),
-				),
-			),
-			array(
-				'name'    => 'Show Quality Details',
-				'id'      => $prefix . 'quality_details',
-				'type'    => 'wysiwyg',
-				'options' => array(	'textarea_rows' => 5, ),
-			),
-			//radio buttons displayed inline
-			array(
-				'name'    => 'Screen Time Rating',
-				'id'      => $prefix . 'screentime_rating',
-				'type'    => 'radio_inline',
-				'options' => array(
-					array( 'name' => '1', 'value' => '1', ),
-					array( 'name' => '2', 'value' => '2', ),
-					array( 'name' => '3', 'value' => '3', ),
-					array( 'name' => '4', 'value' => '4', ),
-					array( 'name' => '5', 'value' => '5', ),
-					array( 'name' => '6', 'value' => '6', ),
-				),
-			),
-			array(
-				'name'    => 'Screen Time Details',
-				'id'      => $prefix . 'screentime_details',
-				'type'    => 'wysiwyg',
-				'options' => array(	'textarea_rows' => 5, ),
-			),
-			//radio buttons displayed inline
-			array(
-				'name'    => 'Worth It?',
-				'id'      => $prefix . 'worthit_rating',
-				'type'    => 'radio_inline',
-				'options' => array(
-					array( 'name' => 'Yes', 'value' => 'Yes', ),
-					array( 'name' => 'Meh', 'value' => 'Meh', ),
-					array( 'name' => 'No', 'value' => 'No', ),
-				),
-			),
-			array(
-				'name'    => 'Worth It Details',
-				'id'      => $prefix . 'worthit_details',
-				'type'    => 'wysiwyg',
-				'options' => array(	'textarea_rows' => 5, ),
-			),
-		)
-	);
+	$cmb_showdetails->add_field( array(
+		'name'    => 'Notable Lez-Centric Episodes',
+		'id'      => $prefix . 'episodes',
+		'type'    => 'wysiwyg',
+		'options' => array(	'textarea_rows' => 10, ),
+	) );
 
-	return $meta_boxes;
+	$cmb_showdetails->add_field( array(
+	    'name'     => 'Cliché Plotlines',
+	    'id'       => $prefix . 'cliches',
+		'taxonomy' => 'lez_cliches', //Enter Taxonomy Slug
+		'type'     => 'taxonomy_multicheck',
+		'select_all_button' => false,
+	) );
+
+	$cmb_showdetails->add_field( array(
+	    'name'    => 'Special Stars',
+	    'id'      => $prefix . 'stars',
+	    'type'             => 'select',
+	    'show_option_none' => true,
+	    'default'          => 'custom',
+	    'options' => array(
+			'gold'   => 'Gold Star',
+			'silver' => 'Silver Star',
+	    )
+	) );
+
+	$cmb_ratings = new_cmb2_box( array(
+		'id'            => 'ratings_metabox',
+		'title'         => 'Show Ratings',
+		'desc'          => 'Ratings are subjective 1 to 5, with 1 being low and 5 being the L Word.',
+		'object_types'  => array( 'post_type_shows', ), // Post type
+		'context'       => 'normal',
+		'priority'      => 'high',
+		'show_names   ' => true, // Show field names on the left
+	) );
+
+	$cmb_ratings->add_field( array(
+	    'name'    => 'Realness Rating',
+	    'id'      => $prefix . 'realness_rating',
+	    'desc'    => 'How realistic are the lesbians?',
+	    'type'    => 'radio_inline',
+	    'options' => array(
+	        '1' => '1',
+	        '2' => '2',
+	        '3' => '3',
+	        '4' => '4',
+	        '5' => '5',
+	    ),
+	) );
+
+	$cmb_ratings->add_field( array(
+		'name'    => 'Realness details',
+		'id'      => $prefix . 'realness_details',
+		'type'    => 'wysiwyg',
+		'options' => array(	'textarea_rows' => 5, ),
+	) );
+
+	$cmb_ratings->add_field( array(
+	    'name'    => 'Show Quality Rating',
+	    'id'      => $prefix . 'quality_rating',
+	    'desc'    => 'How good is the show for lesbians?',
+	    'type'    => 'radio_inline',
+	    'options' => array(
+	        '1' => '1',
+	        '2' => '2',
+	        '3' => '3',
+	        '4' => '4',
+	        '5' => '5',
+	    ),
+	) );
+
+	$cmb_ratings->add_field( array(
+		'name'    => 'Show Quality details',
+		'id'      => $prefix . 'quality_details',
+		'type'    => 'wysiwyg',
+		'options' => array(	'textarea_rows' => 5, ),
+	) );
+
+	$cmb_ratings->add_field( array(
+	    'name'    => 'Screentime Rating',
+	    'id'      => $prefix . 'screentime_rating',
+	    'desc'    => 'How much air-time do the lesbians get?',
+	    'type'    => 'radio_inline',
+	    'options' => array(
+	        '1' => '1',
+	        '2' => '2',
+	        '3' => '3',
+	        '4' => '4',
+	        '5' => '5',
+	    ),
+	) );
+
+	$cmb_ratings->add_field( array(
+		'name'    => 'Screntime details',
+		'id'      => $prefix . 'screentime_details',
+		'type'    => 'wysiwyg',
+		'options' => array(	'textarea_rows' => 5, ),
+	) );
+
+	$cmb_ratings->add_field( array(
+	    'name'    => 'Worth It?',
+	    'id'      => $prefix . 'worthit_rating',
+	    'desc'    => 'Is the show worth watching?',
+	    'type'    => 'radio_inline',
+	    'options' => array(
+	        'Yes' => 'Yes',
+	        'Meh' => 'Meh',
+	        'No'  => 'No',
+	    ),
+	) );
+
+	$cmb_ratings->add_field( array(
+		'name'    => 'Worth It details',
+		'id'      => $prefix . 'worthit_details',
+		'type'    => 'wysiwyg',
+		'options' => array(	'textarea_rows' => 5, ),
+	) );
+
 }
 
-/** END Function to create and register custom fields for custom post type **/
-
-
-/** BEGIN Function hide custom taxonomies metabox **/
-	//function to initiate metaboxes to remove
-	function remove_meta_boxes_from_post_type_shows() {
-		//function to pick metaboxes to remove
-		function the_meta_boxes_to_remove() {
-			//Remove From providers
-			remove_meta_box( 'tagsdiv-lez_cliches', 'post_type_shows', 'side' ); // for tag type custom taxonomies
-		}
-		add_action( 'admin_menu' , 'the_meta_boxes_to_remove' );
-	}
-
+// function to initiate metaboxes to remove
 add_action( 'init', 'remove_meta_boxes_from_post_type_shows');
+function remove_meta_boxes_from_post_type_shows() {
+	//function to pick metaboxes to remove
+	function the_meta_boxes_to_remove() {
+		// Remove the traditional cliche box since we're using it elsewhere.
+		remove_meta_box( 'tagsdiv-lez_cliches', 'post_type_shows', 'side' ); // for tag type custom taxonomies
+	}
+	add_action( 'admin_menu' , 'the_meta_boxes_to_remove' );
+}
 
-/** END Function hide custom taxonomies metabox **/
-
-/** BEGIN Function to change the default "Featured Image" metabox Title **/
-
+// change the default "Featured Image" metabox Title
 add_action('do_meta_boxes', 'featured_image_title_post_type_shows');
 function featured_image_title_post_type_shows()
 {
@@ -305,11 +247,8 @@ function featured_image_title_post_type_shows()
     add_meta_box('postimagediv', __('Show Image'), 'post_thumbnail_meta_box', 'post_type_shows', 'side');
 }
 
-/** END Function to change the default "Featured Image" metabox Title **/
-
-
-/** BEGIN Filter to change the default "Set Featured Image" Text **/
-
+// change the default "Set Featured Image" text
+add_filter( 'admin_post_thumbnail_html', 'set_featured_image_text_post_type_shows' );
 function set_featured_image_text_post_type_shows( $content ) {
     global $current_screen;
 
@@ -318,7 +257,3 @@ function set_featured_image_text_post_type_shows( $content ) {
     else
         return $content;
 }
-add_filter( 'admin_post_thumbnail_html', 'set_featured_image_text_post_type_shows' );
-
-/** END Filter to change the default "Set Featured Image" Text **/
-
