@@ -35,7 +35,7 @@ function cmb2_get_post_options( $query_args ) {
         }
     }
     
-    sort($post_options);
+    asort($post_options);
 
     return $post_options;
 }

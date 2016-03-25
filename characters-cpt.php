@@ -130,6 +130,20 @@ function cmb_post_type_characters_metaboxes() {
 		'default'          => 'custom',
 	    'options_cb'       => 'cmb2_get_post_type_shows_options',
 	) );
+
+	$cmb_characters->add_field( array(
+	    'name'             => 'Character Type',
+	    'id'               => $prefix .'type',
+	    'type'             => 'select',
+	    'show_option_none' => false,
+	    'default'          => 'custom',
+	    'options'          => array(
+	        'regular'   => 'Regular/Main Character',
+	        'guest'     => 'Guest Character',
+	        'recurring' => 'Recurring Character',
+	    ),
+	) );
+	
 	// Field: IMDB URL
 	$cmb_characters->add_field( array(
 		'name'      => 'IMDB URL',
