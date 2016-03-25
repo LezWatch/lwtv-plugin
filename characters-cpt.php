@@ -22,7 +22,7 @@ function lez_characters_post_type() {
 		'label'               => __( 'post_type_characters', 'lezwatchtv' ),
 		'description'         => __( 'Characters', 'lezwatchtv' ),
 		'labels'              => $labels,
-		'supports'            => array( 'title', 'editor', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo', 'comments' ),
+		'supports'            => array( 'title', 'editor', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo' ),
 		'hierarchical'        => false,
 		'public'              => true,
 		'show_ui'             => true,
