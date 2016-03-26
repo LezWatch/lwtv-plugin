@@ -93,8 +93,8 @@ function create_post_type_characters_taxonomies() {
 
 // This gets a list of all the shows.
 function cmb2_get_post_type_shows_options() {
-    return cmb2_get_post_options( array( 
-    		'post_type' => 'post_type_shows', 
+    return cmb2_get_post_options( array(
+    		'post_type' => 'post_type_shows',
     		'numberposts' => -1,
     		'post_status' => array('publish', 'pending', 'draft', 'future'),
     	) );
@@ -137,15 +137,15 @@ function cmb_post_type_characters_metaboxes() {
 	// Field: Character Type
 	$cmb_characters->add_field( array(
 	    'name'             => 'Character Type',
-		'desc'             => 'Main characters are in credits, recurring are in 3 or more episodes a season, guests show up once a season.',
+		'desc'             => 'Main characters are in credits. Guests show up once or twice a season. Recurring have their own plots.',
 	    'id'               => $prefix .'type',
 	    'type'             => 'select',
 	    'show_option_none' => true,
 	    'default'          => 'custom',
 	    'options'          => array(
 	        'regular'   => 'Regular/Main Character',
-	        'guest'     => 'Guest Character',
 	        'recurring' => 'Recurring Character',
+        	'guest'     => 'Guest Character',
 	    ),
 	) );
 }
@@ -181,7 +181,7 @@ function set_custom_edit_post_type_characters_columns($columns) {
 		}
 		$new_columns[$key] = $title;
 	}
-	
+
 	return $new_columns;
 }
 
@@ -190,10 +190,10 @@ add_action( 'manage_post_type_characters_posts_custom_column' , 'custom_post_typ
 function custom_post_type_characters_column( $column, $post_id ) {
 	switch ( $column ) {
 		case 'shows':
-			echo get_post( get_post_meta( $post_id, 'lezchars_show', true ) )->post_title; 
+			echo get_post( get_post_meta( $post_id, 'lezchars_show', true ) )->post_title;
 			break;
 		case 'roletype':
-			echo get_post_meta( $post_id, 'lezchars_type', true );
+			echo ucfirst(get_post_meta( $post_id, 'lezchars_type', true ));
 			break;
 	}
 }
