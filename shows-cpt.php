@@ -106,6 +106,15 @@ function cmb_post_type_shows_metaboxes() {
 		'show_names   ' => true, // Show field names on the left
 	) );
 
+
+	$cmb_showdetails->add_field( array(
+	    'name'     => 'Cliché Plotlines',
+	    'id'       => $prefix . 'cliches',
+		'taxonomy' => 'lez_cliches', //Enter Taxonomy Slug
+		'type'     => 'taxonomy_multicheck',
+		'select_all_button' => false,
+	) );
+
 	$cmb_showdetails->add_field( array(
 		'name'    => 'Queer Plotline Timeline',
 		'desc'    => 'Which seasons/episodes have the gay in it',
@@ -119,14 +128,6 @@ function cmb_post_type_shows_metaboxes() {
 		'id'      => $prefix . 'episodes',
 		'type'    => 'wysiwyg',
 		'options' => array(	'textarea_rows' => 10, ),
-	) );
-
-	$cmb_showdetails->add_field( array(
-	    'name'     => 'Cliché Plotlines',
-	    'id'       => $prefix . 'cliches',
-		'taxonomy' => 'lez_cliches', //Enter Taxonomy Slug
-		'type'     => 'taxonomy_multicheck',
-		'select_all_button' => false,
 	) );
 
 	$cmb_showdetails->add_field( array(
