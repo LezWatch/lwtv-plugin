@@ -123,22 +123,22 @@ function create_post_type_characters_taxonomies() {
 
 	// SEXUALITY
 	$names_sexuality = array(
-		'name'                       => _x( 'Sexuality', 'lezwatchtv' ),
-		'singular_name'              => _x( 'Sexual Preference', 'taxonomy singular name' ),
-		'search_items'               => __( 'Search Sexualities' ),
-		'popular_items'              => __( 'Popular Sexualities' ),
-		'all_items'                  => __( 'All Sexualities' ),
+		'name'                       => _x( 'Sexual Orientation', 'lezwatchtv' ),
+		'singular_name'              => _x( 'Sexual Orientation', 'taxonomy singular name' ),
+		'search_items'               => __( 'Search Sexual Orientations' ),
+		'popular_items'              => __( 'Popular Sexual Orientations' ),
+		'all_items'                  => __( 'All Sexual Orientations' ),
 		'parent_item'                => null,
 		'parent_item_colon'          => null,
-		'edit_item'                  => __( 'Edit Sexuality' ),
-		'update_item'                => __( 'Update Sexuality' ),
-		'add_new_item'               => __( 'Add New Sexuality' ),
-		'new_item_name'              => __( 'New Sexuality Name' ),
-		'separate_items_with_commas' => __( 'Separate Sexualities with commas' ),
-		'add_or_remove_items'        => __( 'Add or remove Sexualities' ),
-		'choose_from_most_used'      => __( 'Choose from the most used Sexualities' ),
-		'not_found'                  => __( 'No Sexualities found.' ),
-		'menu_name'                  => __( 'Sexual Preference' ),
+		'edit_item'                  => __( 'Edit Sexual Orientation' ),
+		'update_item'                => __( 'Update Sexual Orientation' ),
+		'add_new_item'               => __( 'Add New Sexual Orientation' ),
+		'new_item_name'              => __( 'New Sexual Orientation Name' ),
+		'separate_items_with_commas' => __( 'Separate Sexual Orientations with commas' ),
+		'add_or_remove_items'        => __( 'Add or remove Sexual Orientations' ),
+		'choose_from_most_used'      => __( 'Choose from the most used Sexual Orientations' ),
+		'not_found'                  => __( 'No Sexual Orientations found.' ),
+		'menu_name'                  => __( 'Sexual Orientation' ),
 	);
 	$args_sexuality = array(
 		'hierarchical'          => false,
@@ -204,10 +204,10 @@ function cmb_post_type_characters_metaboxes() {
 		'type'       => 'taxonomy_radio_inline',
 		'show_option_none' => false,
 	) );
-	// Field: Character Sexuality
+	// Field: Character Sexual Orientation
 	$cmb_characters->add_field( array(
 		'name'       => 'Sexuality',
-		'desc'       => 'Character\'s sexual preference',
+		'desc'       => 'Character\'s sexual orientation',
 		'id'         => $prefix . 'sexuality',
 		'taxonomy'   => 'lez_sexuality', //Enter Taxonomy Slug
 		'type'       => 'taxonomy_radio_inline',
