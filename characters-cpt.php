@@ -248,7 +248,7 @@ function cmb_post_type_characters_metaboxes() {
 // Remove Metaboxes we use elsewhere
 add_action( 'admin_menu', 'remove_meta_boxes_from_post_type_characters');
 function remove_meta_boxes_from_post_type_characters() {
-	remove_meta_box( 'tagsdiv-lez_genders', 'post_type_characters', 'side' );
+	remove_meta_box( 'tagsdiv-lez_gender', 'post_type_characters', 'side' );
 	remove_meta_box( 'tagsdiv-lez_sexuality', 'post_type_characters', 'side' );
 }
 
