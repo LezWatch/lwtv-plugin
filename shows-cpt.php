@@ -51,14 +51,16 @@ function lez_shows_post_type() {
 
 }
 
-// hook into the init action and call create_post_type_shows_taxonomies when it fires
-add_action( 'init', 'create_post_type_shows_taxonomies', 0 );
+/*
+ * TAXONOMIES
+ *
+ */
 
-// create taxonomies
+add_action( 'init', 'create_post_type_shows_taxonomies', 0 );
 function create_post_type_shows_taxonomies() {
-	// Add new taxonomy, NOT hierarchical (like tags)
-	//Labels for the new taxonomy
-	$names_gentags = array(
+
+	// TV STATIONS
+	$names_tvstations = array(
 		'name'                       => _x( 'TV Station', 'lezwatchtv' ),
 		'singular_name'              => _x( 'Station', 'taxonomy singular name' ),
 		'search_items'               => __( 'Search Stations' ),
@@ -77,9 +79,9 @@ function create_post_type_shows_taxonomies() {
 		'menu_name'                  => __( 'Stations' ),
 	);
 	//paramters for the new taxonomy
-	$args_gentags = array(
+	$args_tvstations = array(
 		'hierarchical'          => false,
-		'labels'                => $names_gentags,
+		'labels'                => $names_tvstations,
 		'show_ui'               => true,
 		'show_admin_column'     => true,
 		'update_count_callback' => '_update_post_term_count',
@@ -87,9 +89,38 @@ function create_post_type_shows_taxonomies() {
 		'rewrite'               => array( 'slug' => 'stations' ),
 	);
 
-	register_taxonomy( 'lez_tags', 'post_type_shows', $args_gentags );
-}
+	register_taxonomy( 'lez_tags', 'post_type_shows', $args_tvstations );
 
+	// SHOW CLICHES
+    $names_cliches = array(
+        'name'                       => _x( 'Show Clichés', 'Taxonomy General Name', 'lezwatchtv' ),
+        'singular_name'              => _x( 'Cliché', 'Taxonomy Singular Name', 'lezwatchtv' ),
+        'menu_name'                  => __( 'Clichés', 'lezwatchtv' ),
+        'all_items'                  => __( 'All Clichés', 'lezwatchtv' ),
+        'parent_item'                => __( 'Parent Cliché', 'lezwatchtv' ),
+        'parent_item_colon'          => __( 'Parent Cliché:', 'lezwatchtv' ),
+        'new_item_name'              => __( 'New Cliché', 'lezwatchtv' ),
+        'add_new_item'               => __( 'Add New Cliché', 'lezwatchtv' ),
+        'edit_item'                  => __( 'Edit Cliché', 'lezwatchtv' ),
+        'update_item'                => __( 'Update Cliché', 'lezwatchtv' ),
+        'separate_items_with_commas' => __( 'Separate cliché names with commas', 'lezwatchtv' ),
+        'search_items'               => __( 'Search Clichés', 'lezwatchtv' ),
+        'add_or_remove_items'        => __( 'Add or remove clichés', 'lezwatchtv' ),
+        'choose_from_most_used'      => __( 'Choose from the most used cliché name', 'lezwatchtv' ),
+        'not_found'                  => __( 'Not Found', 'lezwatchtv' ),
+    );
+    $args_cliches = array(
+        'hierarchical'               => false,
+        'labels'                     => $names_cliches,
+        'public'                     => true,
+        'show_ui'                    => true,
+        'show_admin_column'          => true,
+        'show_in_nav_menus'          => true,
+        'show_tagcloud'              => false,
+        'rewrite' 				  	 => array( 'slug' => 'cliches' ),
+    );
+    register_taxonomy( 'lez_cliches', array( 'post_type_shows' ), $args_cliches );
+}
 
 add_filter( 'cmb2_admin_init', 'cmb_post_type_shows_metaboxes' );
 function cmb_post_type_shows_metaboxes() {

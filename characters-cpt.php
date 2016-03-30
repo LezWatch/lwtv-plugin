@@ -7,7 +7,11 @@ Version: 1.0
 Author: Evan Herman, Mika Epstein
 */
 
-// Register Custom Post Type
+/*
+ * CPT Settings
+ *
+ */
+
 add_action( 'init', 'lez_characters_post_type', 0 );
 function lez_characters_post_type() {
 	$labels = array(
@@ -48,12 +52,15 @@ function lez_characters_post_type() {
 	register_post_type( 'post_type_characters', $args );
 }
 
-// hook into the init action and call create_post_type_characters_taxonomies when it fires
+/*
+ * Custom Taxonomies
+ *
+ */
 add_action( 'init', 'create_post_type_characters_taxonomies', 0 );
 function create_post_type_characters_taxonomies() {
-	// Add new taxonomy, NOT hierarchical (like tags)
-	//Labels for the new taxonomy
-	$names_chartags = array(
+
+	// TROPES
+	$names_tropes = array(
 		'name'                       => _x( 'Character Tropes', 'lezwatchtv' ),
 		'singular_name'              => _x( 'Trope', 'taxonomy singular name' ),
 		'search_items'               => __( 'Search Tropes' ),
@@ -72,16 +79,79 @@ function create_post_type_characters_taxonomies() {
 		'menu_name'                  => __( 'Tropes' ),
 	);
 	//paramters for the new taxonomy
-	$args_chartags = array(
+	$args_tropes = array(
 		'hierarchical'          => false,
-		'labels'                => $names_chartags,
+		'labels'                => $names_tropes,
 		'show_ui'               => true,
 		'show_admin_column'     => true,
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
 		'rewrite'               => array( 'slug' => 'tropes' ),
 	);
-	register_taxonomy( 'lez_chartags', 'post_type_characters', $args_chartags );
+	register_taxonomy( 'lez_chartags', 'post_type_characters', $args_tropes );
+
+	// GENDER IDENTITY
+	$names_gender = array(
+		'name'                       => _x( 'Gender', 'lezwatchtv' ),
+		'singular_name'              => _x( 'Gender Identity', 'taxonomy singular name' ),
+		'search_items'               => __( 'Search Genders' ),
+		'popular_items'              => __( 'Popular Genders' ),
+		'all_items'                  => __( 'All Genders' ),
+		'parent_item'                => null,
+		'parent_item_colon'          => null,
+		'edit_item'                  => __( 'Edit Gender' ),
+		'update_item'                => __( 'Update Gender' ),
+		'add_new_item'               => __( 'Add New Gender' ),
+		'new_item_name'              => __( 'New Gender Name' ),
+		'separate_items_with_commas' => __( 'Separate Genders with commas' ),
+		'add_or_remove_items'        => __( 'Add or remove Genders' ),
+		'choose_from_most_used'      => __( 'Choose from the most used Genders' ),
+		'not_found'                  => __( 'No Genders found.' ),
+		'menu_name'                  => __( 'Gender Identity' ),
+	);
+	$args_gender = array(
+		'hierarchical'          => false,
+		'labels'                => $names_gender,
+        'public'                => true,
+		'show_ui'               => true,
+		'show_admin_column'     => true,
+        'show_in_nav_menus'     => true,
+        'show_tagcloud'         => false,
+		'rewrite'               => array( 'slug' => 'gender' ),
+	);
+	register_taxonomy( 'lez_gender', 'post_type_characters', $args_gender );
+
+	// SEXUALITY
+	$names_sexuality = array(
+		'name'                       => _x( 'Sexuality', 'lezwatchtv' ),
+		'singular_name'              => _x( 'Sexual Preference', 'taxonomy singular name' ),
+		'search_items'               => __( 'Search Sexualities' ),
+		'popular_items'              => __( 'Popular Sexualities' ),
+		'all_items'                  => __( 'All Sexualities' ),
+		'parent_item'                => null,
+		'parent_item_colon'          => null,
+		'edit_item'                  => __( 'Edit Sexuality' ),
+		'update_item'                => __( 'Update Sexuality' ),
+		'add_new_item'               => __( 'Add New Sexuality' ),
+		'new_item_name'              => __( 'New Sexuality Name' ),
+		'separate_items_with_commas' => __( 'Separate Sexualities with commas' ),
+		'add_or_remove_items'        => __( 'Add or remove Sexualities' ),
+		'choose_from_most_used'      => __( 'Choose from the most used Sexualities' ),
+		'not_found'                  => __( 'No Sexualities found.' ),
+		'menu_name'                  => __( 'Sexual Preference' ),
+	);
+	$args_sexuality = array(
+		'hierarchical'          => false,
+		'labels'                => $names_sexuality,
+        'public'                => true,
+		'show_ui'               => true,
+		'show_admin_column'     => true,
+        'show_in_nav_menus'     => true,
+        'show_tagcloud'         => false,
+		'rewrite'               => array( 'slug' => 'sexuality' ),
+	);
+	register_taxonomy( 'lez_sexuality', 'post_type_characters', $args_sexuality );
+
 }
 
 /*
@@ -124,6 +194,26 @@ function cmb_post_type_characters_metaboxes() {
 		'type'       => 'text',
 		'repeatable' => 'true',
 	) );
+
+	// Field: Character Gender Idenity
+	$cmb_characters->add_field( array(
+		'name'       => 'Gender Identity',
+		'desc'       => 'Gender with which the character identifies',
+		'id'         => $prefix . 'gender',
+		'taxonomy'   => 'lez_gender', //Enter Taxonomy Slug
+		'type'       => 'taxonomy_radio_inline',
+		'show_option_none' => false,
+	) );
+	// Field: Character Sexuality
+	$cmb_characters->add_field( array(
+		'name'       => 'Sexuality',
+		'desc'       => 'Character\'s sexual preference',
+		'id'         => $prefix . 'sexuality',
+		'taxonomy'   => 'lez_sexuality', //Enter Taxonomy Slug
+		'type'       => 'taxonomy_radio_inline',
+		'show_option_none' => false,
+	) );
+
 	// Field: Show Name
 	$cmb_characters->add_field( array(
 		'name'             => 'Show',
@@ -137,7 +227,7 @@ function cmb_post_type_characters_metaboxes() {
 	// Field: Character Type
 	$cmb_characters->add_field( array(
 	    'name'             => 'Character Type',
-		'desc'             => 'Main characters are in credits. Guests show up once or twice a season. Recurring have their own plots.',
+		'desc'             => 'Main characters are in credits. Guests show up once or twice. Recurring have their own plots.',
 	    'id'               => $prefix .'type',
 	    'type'             => 'select',
 	    'show_option_none' => true,
@@ -148,6 +238,18 @@ function cmb_post_type_characters_metaboxes() {
         	'guest'     => 'Guest Character',
 	    ),
 	) );
+}
+
+/*
+ * Meta Box Adjustments
+ *
+ */
+
+// Remove Metaboxes we use elsewhere
+add_action( 'admin_menu', 'remove_meta_boxes_from_post_type_characters');
+function remove_meta_boxes_from_post_type_characters() {
+	remove_meta_box( 'tagsdiv-lez_genders', 'post_type_characters', 'side' );
+	remove_meta_box( 'tagsdiv-lez_sexuality', 'post_type_characters', 'side' );
 }
 
 // change the default "Featured Image" metabox title
