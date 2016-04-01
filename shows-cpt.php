@@ -30,7 +30,7 @@ function lez_shows_post_type() {
 		'label'               => __( 'post_type_shows', 'lezwatchtv' ),
 		'description'         => __( 'TV Shows', 'lezwatchtv' ),
 		'labels'              => $labels,
-		'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo' ),
+		'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo', 'revisions' ),
 		'taxonomies'          => array( 'lez_cliches' ),
 		'hierarchical'        => false,
 		'public'              => true,
