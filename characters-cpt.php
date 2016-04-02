@@ -234,6 +234,7 @@ function cmb_post_type_characters_metaboxes() {
 		'desc'             => 'Select the show this character belongs to',
 		'id'               => $prefix . 'show',
 		'type'             => 'select',
+		'repeatable' => 'true',
 		'show_option_none' => true,
 		'default'          => 'custom',
 	    'options_cb'       => 'cmb2_get_post_type_shows_options',
