@@ -176,6 +176,13 @@ function cmb_post_type_characters_metaboxes() {
 	// prefix for all custom fields
 	$prefix = 'lezchars_';
 
+	// This is just an array of all years from 1970, don't look at me like that
+	$year_first = 1970;
+	$year_array = array();
+	foreach (range(date('Y'), $year_first) as $x) {
+		$year_array[$x] = $x;
+	}
+
 	// MetaBox Group: Character Details
 	$cmb_characters = new_cmb2_box( array(
 		'id'            => 'chars_metabox',
@@ -245,6 +252,15 @@ function cmb_post_type_characters_metaboxes() {
         	'guest'     => 'Guest Character',
 	    ),
 	) );
+	$cmb_characters->add_field( array(
+	    'name'             => 'Year of Death',
+	    'desc'             => 'If the character is dead, select what year they died.',
+	    'id'               => $prefix .'death_year',
+	    'type'             => 'select',
+	    'show_option_none' => true,
+	    'default'          => 'custom',
+	    'options'          => $year_array,
+	) );
 }
 
 /*
@@ -257,7 +273,7 @@ add_action( 'admin_menu', 'remove_meta_boxes_from_post_type_characters');
 function remove_meta_boxes_from_post_type_characters() {
 	remove_meta_box( 'tagsdiv-lez_gender', 'post_type_characters', 'side' );
 	remove_meta_box( 'tagsdiv-lez_sexuality', 'post_type_characters', 'side' );
-	remove_meta_box( 'tagsdiv-lez_chartags', 'post_type_characters', 'side' ); 
+	remove_meta_box( 'tagsdiv-lez_chartags', 'post_type_characters', 'side' );
 }
 
 // change the default "Featured Image" metabox title
