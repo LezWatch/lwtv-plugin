@@ -315,9 +315,24 @@ function set_custom_edit_post_type_characters_columns($columns) {
 add_action( 'manage_post_type_characters_posts_custom_column' , 'custom_post_type_characters_column', 10, 2 );
 add_action( 'manage_post_type_characters_posts_custom_column' , 'custom_post_type_characters_column', 10, 2 );
 function custom_post_type_characters_column( $column, $post_id ) {
+
+	// Since SOME characters have multiple shows, we force this to be an array
+	if ( !is_array( get_post_meta( $post_id, 'lezchars_show', true ) ) ) {
+		$character_show_IDs = array( get_post_meta( $post_id, 'lezchars_show', true ) );
+	} else {
+		$character_show_IDs = get_post_meta( $post_id, 'lezchars_show', true );
+	}
+
+	// Show Title is an array to handle fucking commas
+	$show_title = array();
+
+	foreach ( $character_show_IDs as $character_show_ID ) {
+		array_push( $show_title, get_post( $character_show_ID )->post_title );
+	}
+
 	switch ( $column ) {
 		case 'shows':
-			echo get_post( get_post_meta( $post_id, 'lezchars_show', true ) )->post_title;
+			echo implode(", ", $show_title );
 			break;
 		case 'roletype':
 			echo ucfirst(get_post_meta( $post_id, 'lezchars_type', true ));
