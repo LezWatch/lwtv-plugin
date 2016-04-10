@@ -128,6 +128,8 @@ function cmb_post_type_shows_metaboxes() {
 	// prefix for all custom fields
 	$prefix = 'lezshows_';
 
+	// Basic Show Details
+
 	$cmb_showdetails = new_cmb2_box( array(
 		'id'            => 'shows_metabox',
 		'title'         => 'Shows Details',
@@ -136,7 +138,6 @@ function cmb_post_type_shows_metaboxes() {
 		'priority'      => 'high',
 		'show_names   ' => true, // Show field names on the left
 	) );
-
 
 	$cmb_showdetails->add_field( array(
 	    'name'     => 'Cliché Plotlines',
@@ -161,25 +162,7 @@ function cmb_post_type_shows_metaboxes() {
 		'options' => array(	'textarea_rows' => 10, ),
 	) );
 
-	$cmb_showdetails->add_field( array(
-	    'name'    => 'Special Stars',
-	    'id'      => $prefix . 'stars',
-	    'type'             => 'select',
-	    'show_option_none' => true,
-	    'default'          => 'custom',
-	    'options' => array(
-			'gold'   => 'Gold Star',
-			'silver' => 'Silver Star',
-	    )
-	) );
-
-	$cmb_showdetails->add_field( array(
-		'name'      => 'IMDB URL',
-		'id'        => $prefix . 'url',
-		'type'      => 'text_url',
-		'protocols' => array('http', 'https'), // Array of allowed protocols
-	) );
-
+	// Box for Ratings
 	$cmb_ratings = new_cmb2_box( array(
 		'id'            => 'ratings_metabox',
 		'title'         => 'Show Ratings',
@@ -272,7 +255,37 @@ function cmb_post_type_shows_metaboxes() {
 		'options' => array(	'textarea_rows' => 5, ),
 	) );
 
+	// Box for simple options
+	$cmb_notes = new_cmb2_box( array(
+		'id'            => 'notes_metabox',
+		'title'         => 'Special Notes',
+		'object_types'  => array( 'post_type_shows', ), // Post type
+		'context'       => 'side',
+		'priority'      => 'high',
+		'show_names'	=> true, // Show field names on the left
+		'cmb_styles'	=> false,
+	) );
+
+	$cmb_notes->add_field( array(
+	    'name'				=> 'Awesome Stars',
+	    'id'    			=> $prefix . 'stars',
+	    'type'				=> 'select',
+	    'show_option_none'	=> 'No Stars',
+	    'options'	 => array(
+			'gold'   => 'Gold Star',
+			'silver' => 'Silver Star',
+	    )
+	) );
+
+	$cmb_notes->add_field( array(
+	    'name' => 'Trigger Warnings?',
+	    'id'   => $prefix . 'triggerwarning',
+	    'type' => 'checkbox'
+	) );
+
 }
+
+//add_meta_box('postimagediv', __('Show Image'), 'post_thumbnail_meta_box', 'post_type_shows', 'side');
 
 // function to initiate metaboxes to remove
 add_action( 'init', 'remove_meta_boxes_from_post_type_shows');
@@ -287,8 +300,7 @@ function remove_meta_boxes_from_post_type_shows() {
 
 // change the default "Featured Image" metabox Title
 add_action('do_meta_boxes', 'featured_image_title_post_type_shows');
-function featured_image_title_post_type_shows()
-{
+function featured_image_title_post_type_shows() {
     remove_meta_box( 'postimagediv', 'post_type_shows', 'side' );
     add_meta_box('postimagediv', __('Show Image'), 'post_thumbnail_meta_box', 'post_type_shows', 'side');
 }

@@ -6,6 +6,26 @@
 }
 
 .cmb2-checkbox-list.cmb2-list li {
-  display: inline-block;
-  width: 45%;
+	display: inline-block;
+	width: 45%;
+}
+
+#notes_metabox .cmb-th label:after {
+    border-bottom: 0px!important;
+    padding-top: 0px!important;
+}
+
+#notes_metabox .cmb-th {
+    width: 50%!important;
+    float: left!important;
+}
+
+#notes_metabox .cmb-td {
+    width: 40%!important;
+    float: left!important;
+    margin-left: 15px;
+}
+
+input#lezshows_triggerwarning {
+
 }
