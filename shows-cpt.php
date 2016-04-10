@@ -261,7 +261,7 @@ function cmb_post_type_shows_metaboxes() {
 		'title'         => 'Special Notes',
 		'object_types'  => array( 'post_type_shows', ), // Post type
 		'context'       => 'side',
-		'priority'      => 'normal',
+		'priority'      => 'default',
 		'show_names'	=> true, // Show field names on the left
 		'cmb_styles'	=> false,
 	) );
