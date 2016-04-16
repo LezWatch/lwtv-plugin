@@ -17,8 +17,9 @@ if ( file_exists( dirname( __FILE__ ) . '/cmb2/init.php' ) ) {
 	require_once dirname( __FILE__ ) . '/CMB2/init.php';
 }
 
-// Extra Get post options.
-
+/**
+ * Extra Get post options.
+ */
 function cmb2_get_post_options( $query_args ) {
 
     $args = wp_parse_args( $query_args, array(
@@ -35,17 +36,44 @@ function cmb2_get_post_options( $query_args ) {
           $post_options[ $post->ID ] = $post->post_title;
         }
     }
-    
+
     asort($post_options);
 
     return $post_options;
 }
 
-// Handle the CSS for this
+/**
+ * CSS tweaks
+ */
+add_action( 'admin_enqueue_scripts', 'cmb2_lez_scripts', 10 );
 function cmb2_lez_scripts( $hook ) {
 	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'page-new.php' || $hook == 'page.php' ) {
 		wp_register_style( 'cmb-styles', plugins_url('/cmb2.css', __FILE__ ) );
 		wp_enqueue_style( 'cmb-styles' );
 	}
 }
-add_action( 'admin_enqueue_scripts', 'cmb2_lez_scripts', 10 );
+
+/**
+ * Hook in and add a metabox to add fields to taxonomy terms
+ */
+add_action( 'cmb2_admin_init', 'lezwatch_register_taxonomy_metabox' );
+function lezwatch_register_taxonomy_metabox() {
+	$prefix = 'lez_termsmeta_';
+	/**
+	 * Metabox to add fields to categories and tags
+	 */
+	$cmb_term = new_cmb2_box( array(
+		'id'               => $prefix . 'edit',
+		'title'            => __( 'Category Metabox', 'cmb2' ), // Doesn't output for term boxes
+		'object_types'     => array( 'term' ), // Tells CMB2 to use term_meta vs post_meta
+		'taxonomies'       => array( 'lez_cliches', 'lez_chartags' ), // Tells CMB2 which taxonomies should have these fields
+		'new_term_section' => true, // Will display in the "Add New Category" section
+	) );
+
+	$cmb_term->add_field( array(
+		'name' => __( 'Icon', 'cmb2' ),
+		'desc' => __( 'Name of the image you want to use (i.e. carrot.svg)', 'cmb2' ),
+		'id'   => $prefix . 'icon',
+		'type' => 'text_small',
+	) );
+}
