@@ -96,6 +96,15 @@ function lezwatch_register_taxonomy_metabox() {
  * @param  CMB2_Field object $field      Field object
  */
 function lez_before_field_icon( $field_args, $field ) {
+
+$arrContextOptions=array(
+    "ssl"=>array(
+        "verify_peer"=>false,
+        "verify_peer_name"=>false,
+    ),
+);
+
+
 	$icon = $field->value;
 	$iconpath = get_stylesheet_directory().'/images/symbolicons/'.$icon.'.svg';
 	if ( !empty($icon) || file_exists( $iconpath ) ) {
