@@ -26,6 +26,7 @@
     margin-left: 15px;
 }
 
-input#lezshows_triggerwarning {
-
+.cmb2-icon svg {
+    width: 30px;
+    vertical-align: middle;
 }
