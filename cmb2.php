@@ -97,18 +97,11 @@ function lezwatch_register_taxonomy_metabox() {
  */
 function lez_before_field_icon( $field_args, $field ) {
 
-$arrContextOptions=array(
-    "ssl"=>array(
-        "verify_peer"=>false,
-        "verify_peer_name"=>false,
-    ),
-);
-
 
 	$icon = $field->value;
 	$iconpath = get_stylesheet_directory().'/images/symbolicons/'.$icon.'.svg';
 	if ( !empty($icon) || file_exists( $iconpath ) ) {
-		echo '<span role="img" class="cmb2-icon">'.file_get_contents(get_stylesheet_directory_uri().'/images/symbolicons/'.$icon.'.svg').'</span>';
+		echo '<span role="img" class="cmb2-icon">'.file_get_contents(get_stylesheet_directory().'/images/symbolicons/'.$icon.'.svg').'</span>';
 	}
 }
 
