@@ -38,7 +38,6 @@ function cmb2_get_post_options( $query_args ) {
     }
 
     asort($post_options);
-
     return $post_options;
 }
 
@@ -47,57 +46,64 @@ function cmb2_get_post_options( $query_args ) {
  */
 add_action( 'admin_enqueue_scripts', 'cmb2_lez_scripts', 10 );
 function cmb2_lez_scripts( $hook ) {
+	wp_register_style( 'cmb-styles', plugins_url('/cmb2.css', __FILE__ ) );
 	if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'edit-tags.php' || $hook == 'term.php' || $hook == 'page-new.php' || $hook == 'page.php' ) {
-		wp_register_style( 'cmb-styles', plugins_url('/cmb2.css', __FILE__ ) );
 		wp_enqueue_style( 'cmb-styles' );
 	}
 }
 
 /**
- * Hook in and add a metabox to add fields to taxonomy terms
+ * Add metabox to custom taxonomies to show icon
+ *
+ * $icon_taxonomies   array of taxonomies to show icons on.
+ *
+ * lez_register_taxonomy_metabox()   CMB2 mextabox code
+ *
+ * lez_before_field_icon()    Show an icon if that exists
+ * @param  array              $field_args  Array of field parameters
+ * @param  CMB2_Field object  $field       Field object
+ *
+ * lez_add_taxonomy_icon_options()      how column if taxonomy is in $icon_taxonomies
+ * lez_terms_column_header_function()   Column header
+ * lez_terms_populate_rows_function()   Column content
  */
-add_action( 'cmb2_admin_init', 'lezwatch_register_taxonomy_metabox' );
-function lezwatch_register_taxonomy_metabox() {
+
+// Array of taxonomies.
+$icon_taxonomies = array( 'lez_cliches', 'lez_chartags', 'lez_gender', 'lez_sexuality' );
+
+// Add CMB2 Metabox
+add_action( 'cmb2_admin_init', 'lez_register_taxonomy_metabox' );
+function lez_register_taxonomy_metabox() {
+	global $icon_taxonomies;
 	$prefix = 'lez_termsmeta_';
 
 	$icon_array = array();
 	foreach (glob( get_stylesheet_directory().'/images/symbolicons/*.svg' ) as $file) {
-		$icon_array[ basename($file, '.svg') ] = basename($file, '.svg');
+		$icon_array[ basename($file, '.svg') ] = basename($file);
 	}
 
-	/**
-	 * Metabox to add fields to categories and tags
-	 */
 	$cmb_term = new_cmb2_box( array(
-		'id'               => $prefix . 'edit',
-		'title'            => __( 'Category Metabox', 'cmb2' ), // Doesn't output for term boxes
-		'object_types'     => array( 'term' ), // Tells CMB2 to use term_meta vs post_meta
-		'taxonomies'       => array( 'lez_cliches', 'lez_chartags' ), // Tells CMB2 which taxonomies should have these fields
-		'new_term_section' => true, // Will display in the "Add New Category" section
+		'id'				=> $prefix . 'edit',
+		'title'				=> 'Category Metabox',
+		'object_types'		=> array( 'term' ),
+		'taxonomies'		=> $icon_taxonomies,
+		'new_term_section'	=> true,
 	) );
 
 	$cmb_term->add_field( array(
-		'name'			=> __( 'Icon', 'cmb2' ),
-		'desc'			=> __( 'Name of the image you want to use', 'cmb2' ),
-		'id'			=> $prefix . 'icon',
-		//'type'			=> 'text_medium',
-	    'type'             => 'select',
-	    'show_option_none' => true,
-	    'default'          => 'custom',
-	    'options'          => $icon_array,
-		'before_field'	=> 'lez_before_field_icon',
+		'name'				=> 'Icon',
+		'desc'				=> 'Select the icon you want to use. Once saved, it will show on the left.',
+		'id'				=> $prefix . 'icon',
+	    'type'				=> 'select',
+	    'show_option_none'	=> true,
+	    'default'			=> 'custom',
+	    'options'			=> $icon_array,
+		'before_field'		=> 'lez_before_field_icon',
 	) );
 }
 
-/**
- * Show an icon if that exists
- *
- * @param  array             $field_args Array of field parameters
- * @param  CMB2_Field object $field      Field object
- */
+// Add before field icon display
 function lez_before_field_icon( $field_args, $field ) {
-
-
 	$icon = $field->value;
 	$iconpath = get_stylesheet_directory().'/images/symbolicons/'.$icon.'.svg';
 	if ( !empty($icon) || file_exists( $iconpath ) ) {
@@ -105,18 +111,24 @@ function lez_before_field_icon( $field_args, $field ) {
 	}
 }
 
-add_filter( "manage_edit-lez_cliches_columns", "lez_terms_column_header_function" );
-add_action( "manage_lez_cliches_custom_column",  "lez_terms_populate_rows_function", 10, 3  );
-add_filter( "manage_edit-lez_chartags_columns", "lez_terms_column_header_function" );
-add_action( "manage_lez_chartags_custom_column",  "lez_terms_populate_rows_function", 10, 3  );
+// Add all filters and actions to show icons on tax list page
+add_action( 'admin_init', 'lez_add_taxonomy_icon_options' );
+function lez_add_taxonomy_icon_options() {
+	global $icon_taxonomies;
+	foreach ( $icon_taxonomies as $tax_name ) {
+		add_filter( 'manage_edit-'.$tax_name. '_columns',  'lez_terms_column_header' );
+		add_action( 'manage_'.$tax_name. '_custom_column', 'lez_terms_column_content', 10, 3 );
+	}
+}
 
-
-function lez_terms_column_header_function($columns){
+// Tax list column header
+function lez_terms_column_header($columns){
     $columns['icon'] = 'Icon';
     return $columns;
 }
 
-function lez_terms_populate_rows_function($value, $content, $term_id){
+// Tax list column content
+function lez_terms_column_content($value, $content, $term_id){
 	$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
 	$iconpath = get_stylesheet_directory().'/images/symbolicons/'.$icon.'.svg';
 	if ( empty($icon) || !file_exists( $iconpath ) ) {
