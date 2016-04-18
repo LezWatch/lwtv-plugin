@@ -4,6 +4,8 @@ This is auto-updated from git. Please don't edit in this folder or your changes 
 
 ## Includes
 
+* functions.php - Calls thing
+
 * characters-cpt.php - Characters Custom Post type
 * cliche-tax.php - Show Clichés
 * cmb2 - CMB2
@@ -11,5 +13,4 @@ This is auto-updated from git. Please don't edit in this folder or your changes 
 * cmb2.php - Calls CMB2
 * shows-cpt.php - Shows Custom Post Type
 * ss-symbolicons-block - Font for Symbolicons (includes a fucking toaster!)
-* symbolicons.php - Calls Symbolicons
 * upgrades.php - Ensures we can auto-upgrade
