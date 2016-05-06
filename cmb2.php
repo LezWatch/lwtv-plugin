@@ -82,6 +82,8 @@ function lez_register_taxonomy_metabox() {
 		$icon_array[ basename($file, '.svg') ] = basename($file);
 	}
 
+	$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
+
 	$cmb_term = new_cmb2_box( array(
 		'id'				=> $prefix . 'edit',
 		'title'				=> 'Category Metabox',
@@ -92,7 +94,7 @@ function lez_register_taxonomy_metabox() {
 
 	$cmb_term->add_field( array(
 		'name'				=> 'Icon',
-		'desc'				=> 'Select the icon you want to use. Once saved, it will show on the left.',
+		'desc'				=> 'Select the icon you want to use. Once saved, it will show on the left. If you need help visualizing, check out the <a href='.$symbolicon_url.'>Symbolicons List</a>.',
 		'id'				=> $prefix . 'icon',
 	    'type'				=> 'select',
 	    'show_option_none'	=> true,

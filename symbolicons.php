@@ -19,29 +19,54 @@ class SymboliconsSettings {
     }
 
     public function init() {
-        add_action( 'admin_menu', array( $this, 'add_settings_page'));
+        add_action( 'admin_menu', array( $this, 'add_settings_page') );
     }
 
 	// Sets up the settings page
 	public function add_settings_page() {
-		$page = add_theme_page(__('Fonticodes'), __('Fonticodes'), 'edit_posts', 'fonticodes', array($this, 'settings_page'));
+		$page = add_theme_page(__('Symbolicons'), __('Symbolicons'), 'edit_posts', 'symbolicons', array($this, 'settings_page'));
 	}
 
 	// Content of the settings page
 	function settings_page() {
 		?>
 		<div class="wrap">
-		<h2>Symbolicons Settings</h2>	
-			
+
+		<style>
+			span.cmb2-icon {
+				width: 80px;
+			    display: inline-block;
+			    vertical-align: top;
+			    margin: 10px;
+			    word-wrap: break-word;
+			}
+			span.cmb2-icon svg {
+			    width: 75px;
+			    height: 75px;
+			}
+		</style>
+
+		<h2>Symbolicons</h2>
+
 		<?php
 
-		if ( !file_exists( get_stylesheet_directory().'/images/symbolicons/' ) ) {
+		$imagepath = get_stylesheet_directory().'/images/symbolicons/';
+
+		if ( !file_exists( $imagepath ) && !is_dir( $imagepath ) ) {
 			echo '<p>Your theme does not appear to have the symbolicons folder included, so you can\'t use them. How sad. It should be installed in <code>'.get_stylesheet_directory().'/images/symbolicons/</code> for this to work.';
 
 		} else {
-			echo '<p>It\'s installed!</p>';
+
+			echo '<p>The following are all the symbolicons we have to chose from and their file names. Let this help you be more better.</p>';
+
+			foreach( glob( $imagepath.'*' ) as $filename ){
+				$image = file_get_contents( $filename );
+				$name  = str_replace( $imagepath, '' , $filename );
+				$name  = str_replace( '.svg', '', $name );
+				echo '<span role="img" class="cmb2-icon">' . $image . $name .'</span>';
+			}
 		}
 	}
-}
 
+}
 new SymboliconsSettings();
