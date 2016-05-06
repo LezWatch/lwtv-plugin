@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Functions for things that just are.
+Plugin Name: Google Analytics
 Plugin URI:  http://lezwatch.com
-Description: Functions outside of themes
+Description: Google Anlytics without a plugin
 Version: 1.0
 Author: Mika Epstein
 */
@@ -25,11 +25,4 @@ function add_lez_googleanalytics() {
 </script>
 
 	<?php
-}
-
-// Symbolicons Bootstrap
-
-//add_action( 'wp_enqueue_scripts', 'symbolicons_fonts' );
-function symbolicons_fonts() {
-    wp_enqueue_style( 'symbolicons', plugins_url( 'ss-symbolicons-block/webfonts/ss-symbolicons-block.css' , __FILE__ ) );
 }
