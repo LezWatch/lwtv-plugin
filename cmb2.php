@@ -1,21 +1,11 @@
 <?php
 /*
-Plugin Name: CMB2 Bootstrap
+Plugin Name: CMB2 Add Ons
 Plugin URI:  https://github.com/WebDevStudios/CMB2
-Description: Boostrap file to load CMB2 and everything it needs to be running. Since we're using this as an MU plugin, it's required.
+Description: Customizations for CMB2
 Version: 1.0
 Author: Mika Epstein
 */
-
-/**
- * Get the bootstrap! If using the plugin from wordpress.org, REMOVE THIS!
- */
-
-if ( file_exists( dirname( __FILE__ ) . '/cmb2/init.php' ) ) {
-	require_once dirname( __FILE__ ) . '/cmb2/init.php';
-} elseif ( file_exists( dirname( __FILE__ ) . '/CMB2/init.php' ) ) {
-	require_once dirname( __FILE__ ) . '/CMB2/init.php';
-}
 
 /**
  * Extra Get post options.
