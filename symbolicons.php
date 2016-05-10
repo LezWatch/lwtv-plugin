@@ -44,20 +44,23 @@ class SymboliconsSettings {
 			    width: 75px;
 			    height: 75px;
 			}
+			span.cmb2-icon svg * {
+				fill: #444;
+			}
 		</style>
 
 		<h2>Symbolicons</h2>
 
 		<?php
 
-		$imagepath = get_stylesheet_directory().'/images/symbolicons/';
+		$imagepath = plugin_dir_path( __FILE__ ). '/symbolicons/';
 
 		if ( !file_exists( $imagepath ) && !is_dir( $imagepath ) ) {
-			echo '<p>Your theme does not appear to have the symbolicons folder included, so you can\'t use them. How sad. It should be installed in <code>'.get_stylesheet_directory().'/images/symbolicons/</code> for this to work.';
+			echo '<p>Your site does not appear to have the symbolicons folder included, so you can\'t use them. How sad. It should be installed in <code>'.plugin_dir_path( __FILE__ ).'/symbolicons/</code> for this to work.';
 
 		} else {
 
-			echo '<p>The following are all the symbolicons we have to chose from and their file names. Let this help you be more better.</p>';
+			echo '<p>The following are all the symbolicons we have to chose from and their file names. Let this help you be more better with your iconing.</p>';
 
 			foreach( glob( $imagepath.'*' ) as $filename ){
 				$image = file_get_contents( $filename );
