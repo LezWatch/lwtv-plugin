@@ -5,10 +5,27 @@ Version: 1.0
 Author: Mika Epstein
 */
 
+function lez_wp_help_css(){
+	echo '
+	<style>
+		#cws-wp-help-document {
+		    max-width: 600px;
+		    margin-left: 300px;
+		    background: white;
+		    padding: 10px!important;
+			border: 1px solid #ddd;
+		}
+
+		div#cws-wp-help-document p,
+		#cws-wp-help-listing ul li {
+		    font-size: 14px;
+		}
+	</style>
+	';
+}
 
 // Handle the CSS for this
 function wph_lez_scripts( $hook ) {
-	wp_register_style( 'wph-lez-styles', plugins_url('wp-help.css', __FILE__ ) );
-	wp_enqueue_style( 'wph-lez-styles' );
+	add_action( 'admin_print_scripts', 'lez_wp_help_css' );
 }
 add_action( 'admin_print_styles-toplevel_page_wp-help-documents', 'wph_lez_scripts', 10 );

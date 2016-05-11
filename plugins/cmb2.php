@@ -57,75 +57,78 @@ function cmb2_lez_scripts( $hook ) {
  */
 
 $icon_taxonomies = array( 'lez_cliches', 'lez_chartags', 'lez_gender', 'lez_sexuality' );
-$symbolicon_path = plugin_dir_path( dirname( __FILE__ ) ). '/symbolicons/';
 
-// Add CMB2 Metabox
+$symbolicon_path = get_stylesheet_directory().'/images/symbolicons/';
 
-function lez_register_taxonomy_metabox() {
-	global $icon_taxonomies, $symbolicon_path;
-	$prefix = 'lez_termsmeta_';
+// Only load the icons IF the icon folder is there. This will prevent weird theme switching errors
+if ( file_exists( $symbolicon_path ) && is_dir( $symbolicon_path ) ) {
 
-	$icon_array = array();
-	foreach (glob( $symbolicon_path.'*.svg' ) as $file) {
-		$icon_array[ basename($file, '.svg') ] = basename($file);
+	// Add CMB2 Metabox
+	add_action( 'cmb2_admin_init', 'lez_register_taxonomy_metabox' );
+	function lez_register_taxonomy_metabox() {
+		global $icon_taxonomies, $symbolicon_path;
+		$prefix = 'lez_termsmeta_';
+
+		$icon_array = array();
+		foreach (glob( $symbolicon_path.'*.svg' ) as $file) {
+			$icon_array[ basename($file, '.svg') ] = basename($file);
+		}
+
+		$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
+
+		$cmb_term = new_cmb2_box( array(
+			'id'				=> $prefix . 'edit',
+			'title'				=> 'Category Metabox',
+			'object_types'		=> array( 'term' ),
+			'taxonomies'		=> $icon_taxonomies,
+			'new_term_section'	=> true,
+		) );
+
+		$cmb_term->add_field( array(
+			'name'				=> 'Icon',
+			'desc'				=> 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href='.$symbolicon_url.'>Symbolicons List</a>.',
+			'id'				=> $prefix . 'icon',
+		    'type'				=> 'select',
+		    'show_option_none'	=> true,
+		    'default'			=> 'custom',
+		    'options'			=> $icon_array,
+			'before_field'		=> 'lez_before_field_icon',
+		) );
 	}
 
-	$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
+	// Add before field icon display
+	function lez_before_field_icon( $field_args, $field ) {
+		global $symbolicon_path;
 
-	$cmb_term = new_cmb2_box( array(
-		'id'				=> $prefix . 'edit',
-		'title'				=> 'Category Metabox',
-		'object_types'		=> array( 'term' ),
-		'taxonomies'		=> $icon_taxonomies,
-		'new_term_section'	=> true,
-	) );
-
-	$cmb_term->add_field( array(
-		'name'				=> 'Icon',
-		'desc'				=> 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href='.$symbolicon_url.'>Symbolicons List</a>.',
-		'id'				=> $prefix . 'icon',
-	    'type'				=> 'select',
-	    'show_option_none'	=> true,
-	    'default'			=> 'custom',
-	    'options'			=> $icon_array,
-		'before_field'		=> 'lez_before_field_icon',
-	) );
-}
-
-add_action( 'cmb2_admin_init', 'lez_register_taxonomy_metabox' );
-
-// Add before field icon display
-function lez_before_field_icon( $field_args, $field ) {
-	global $symbolicon_path;
-
-	$icon = $field->value;
-	$iconpath = $symbolicon_path.$icon.'.svg';
-	if ( !empty($icon) || file_exists( $iconpath ) ) {
-		echo '<span role="img" class="cmb2-icon">'.file_get_contents( $iconpath ).'</span>';
+		$icon = $field->value;
+		$iconpath = $symbolicon_path.$icon.'.svg';
+		if ( !empty($icon) || file_exists( $iconpath ) ) {
+			echo '<span role="img" class="cmb2-icon">'.file_get_contents( $iconpath ).'</span>';
+		}
 	}
-}
 
-// Add all filters and actions to show icons on tax list page
-foreach ( $icon_taxonomies as $tax_name ) {
-	add_filter( 'manage_edit-'.$tax_name. '_columns',  'lez_terms_column_header' );
-	add_action( 'manage_'.$tax_name. '_custom_column', 'lez_terms_column_content', 10, 3 );
-}
-
-// Tax list column header
-function lez_terms_column_header($columns){
-    $columns['icon'] = 'Icon';
-    return $columns;
-}
-
-// Tax list column content
-function lez_terms_column_content($value, $content, $term_id){
-	global $symbolicon_path;
-	$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
-	$iconpath = $symbolicon_path.$icon.'.svg';
-	if ( empty($icon) || !file_exists( $iconpath ) ) {
-		$content = 'N/A';
-	} else {
-		$content = '<span role="img" class="cmb2-icon">'.file_get_contents($iconpath).'</span>';
+	// Add all filters and actions to show icons on tax list page
+	foreach ( $icon_taxonomies as $tax_name ) {
+		add_filter( 'manage_edit-'.$tax_name. '_columns',  'lez_terms_column_header' );
+		add_action( 'manage_'.$tax_name. '_custom_column', 'lez_terms_column_content', 10, 3 );
 	}
-    return $content;
+
+	// Tax list column header
+	function lez_terms_column_header($columns){
+	    $columns['icon'] = 'Icon';
+	    return $columns;
+	}
+
+	// Tax list column content
+	function lez_terms_column_content($value, $content, $term_id){
+		global $symbolicon_path;
+		$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
+		$iconpath = $symbolicon_path.$icon.'.svg';
+		if ( empty($icon) || !file_exists( $iconpath ) ) {
+			$content = 'N/A';
+		} else {
+			$content = '<span role="img" class="cmb2-icon">'.file_get_contents($iconpath).'</span>';
+		}
+	    return $content;
+	}
 }

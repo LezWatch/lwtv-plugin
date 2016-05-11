@@ -4,12 +4,13 @@ This is auto-updated from git. Please don't edit in this folder or your changes 
 
 ## Includes
 
-* characters-cpt.php - Characters Custom Post type
-* cliche-tax.php - Show Clichés
-* /cmb2 - CMB2
-* cmb2.css - Custom CSS for CMB2
-* cmb2.php - Calls CMB2
-* googleanalytics.php - GA code
-* shows-cpt.php - Shows Custom Post Type
-* symbolicons.php - Help page for symbols
-* upgrades.php - Ensures we can auto-upgrade
+* functions.php				- The main file (calls others)
+* googleanalytics.php		- GA code
+* upgrades.php				- Ensures we can auto-upgrade
+
+* /plugins/					- Files for plugins
+* /plugins/cmb2.[css|php]	- Custom CSS and Code for CMB2
+* /plugins/wp-help.php		- Custom CSS and code for WP Help
+
+* /socialicons/				- Social Media Icons
+* socialicons.php			- The PHP code for shortcodes of social media icons
