@@ -59,8 +59,8 @@ function lez_characters_post_type() {
 add_action( 'init', 'create_post_type_characters_taxonomies', 0 );
 function create_post_type_characters_taxonomies() {
 
-	// TROPES
-	$names_tropes = array(
+	// CLICHES
+	$names_cliches = array(
 		'name'                       => _x( 'Character Clichés', 'lezwatchtv' ),
 		'singular_name'              => _x( 'Cliché', 'taxonomy singular name' ),
 		'search_items'               => __( 'Search Clichés' ),
@@ -79,16 +79,16 @@ function create_post_type_characters_taxonomies() {
 		'menu_name'                  => __( 'Clichés' ),
 	);
 	//paramters for the new taxonomy
-	$args_tropes = array(
+	$args_cliches = array(
 		'hierarchical'          => false,
-		'labels'                => $names_tropes,
+		'labels'                => $names_cliches,
 		'show_ui'               => true,
 		'show_admin_column'     => true,
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
 		'rewrite'               => array( 'slug' => 'cliches' ),
 	);
-	register_taxonomy( 'lez_chartags', 'post_type_characters', $args_tropes );
+	register_taxonomy( 'lez_cliches', 'post_type_characters', $args_cliches );
 
 	// GENDER IDENTITY
 	$names_gender = array(
