@@ -204,8 +204,8 @@ function cmb_post_type_characters_metaboxes() {
 	// Field: Character Clichés
 	$cmb_characters->add_field( array(
 	    'name'     => 'Character Clichés',
-	    'id'       => $prefix . 'tropes',
-		'taxonomy' => 'lez_chartags', //Enter Taxonomy Slug
+	    'id'       => $prefix . 'cliches',
+		'taxonomy' => 'lez_cliches', //Enter Taxonomy Slug
 		'type'     => 'taxonomy_multicheck',
 		'select_all_button' => false,
 	) );
@@ -274,7 +274,7 @@ add_action( 'admin_menu', 'remove_meta_boxes_from_post_type_characters');
 function remove_meta_boxes_from_post_type_characters() {
 	remove_meta_box( 'tagsdiv-lez_gender', 'post_type_characters', 'side' );
 	remove_meta_box( 'tagsdiv-lez_sexuality', 'post_type_characters', 'side' );
-	remove_meta_box( 'tagsdiv-lez_chartags', 'post_type_characters', 'side' );
+	remove_meta_box( 'tagsdiv-lez_cliches', 'post_type_characters', 'side' );
 }
 
 // change the default "Featured Image" metabox title

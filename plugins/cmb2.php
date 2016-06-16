@@ -56,7 +56,7 @@ function cmb2_lez_scripts( $hook ) {
  * lez_terms_populate_rows_function()   Column content
  */
 
-$icon_taxonomies = array( 'lez_cliches', 'lez_chartags', 'lez_gender', 'lez_sexuality' );
+$icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality' );
 
 $symbolicon_path = get_stylesheet_directory().'/images/symbolicons/';
 

@@ -31,7 +31,7 @@ function lez_shows_post_type() {
 		'description'         => __( 'TV Shows', 'lezwatchtv' ),
 		'labels'              => $labels,
 		'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo', 'revisions' ),
-		'taxonomies'          => array( 'lez_cliches' ),
+		'taxonomies'          => array( 'lez_tropes' ),
 		'hierarchical'        => false,
 		'public'              => true,
 		'show_ui'             => true,
@@ -92,7 +92,7 @@ function create_post_type_shows_taxonomies() {
 	register_taxonomy( 'lez_tags', 'post_type_shows', $args_tvstations );
 
 	// SHOW CLICHES
-    $names_cliches = array(
+    $names_tropes = array(
         'name'                       => _x( 'Show Tropes', 'Taxonomy General Name', 'lezwatchtv' ),
         'singular_name'              => _x( 'Trope', 'Taxonomy Singular Name', 'lezwatchtv' ),
         'menu_name'                  => __( 'Tropes', 'lezwatchtv' ),
@@ -109,9 +109,9 @@ function create_post_type_shows_taxonomies() {
         'choose_from_most_used'      => __( 'Choose from the most used cliché name', 'lezwatchtv' ),
         'not_found'                  => __( 'Not Found', 'lezwatchtv' ),
     );
-    $args_cliches = array(
+    $args_tropes = array(
         'hierarchical'               => false,
-        'labels'                     => $names_cliches,
+        'labels'                     => $names_tropes,
         'public'                     => true,
         'show_ui'                    => true,
         'show_admin_column'          => true,
@@ -119,7 +119,7 @@ function create_post_type_shows_taxonomies() {
         'show_tagcloud'              => false,
         'rewrite' 				  	 => array( 'slug' => 'tropes' ),
     );
-    register_taxonomy( 'lez_cliches', array( 'post_type_shows' ), $args_cliches );
+    register_taxonomy( 'lez_tropes', array( 'post_type_shows' ), $args_tropes );
 }
 
 add_filter( 'cmb2_admin_init', 'cmb_post_type_shows_metaboxes' );
@@ -142,7 +142,7 @@ function cmb_post_type_shows_metaboxes() {
 	$cmb_showdetails->add_field( array(
 	    'name'     => 'Trope Plotlines',
 	    'id'       => $prefix . 'cliches',
-		'taxonomy' => 'lez_cliches', //Enter Taxonomy Slug
+		'taxonomy' => 'lez_tropes', //Enter Taxonomy Slug
 		'type'     => 'taxonomy_multicheck',
 		'select_all_button' => false,
 	) );
@@ -291,7 +291,7 @@ function cmb_post_type_shows_metaboxes() {
 add_action( 'init', 'remove_meta_boxes_from_post_type_shows');
 function remove_meta_boxes_from_post_type_shows() {
 	function the_meta_boxes_to_remove() {
-		remove_meta_box( 'tagsdiv-lez_cliches', 'post_type_shows', 'side' ); // for tag type custom taxonomies
+		remove_meta_box( 'tagsdiv-lez_tropes', 'post_type_shows', 'side' ); // for tag type custom taxonomies
 	}
 	add_action( 'admin_menu' , 'the_meta_boxes_to_remove' );
 }
