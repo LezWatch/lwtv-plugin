@@ -61,22 +61,22 @@ function create_post_type_characters_taxonomies() {
 
 	// TROPES
 	$names_tropes = array(
-		'name'                       => _x( 'Character Tropes', 'lezwatchtv' ),
-		'singular_name'              => _x( 'Trope', 'taxonomy singular name' ),
-		'search_items'               => __( 'Search Tropes' ),
-		'popular_items'              => __( 'Popular Tropes' ),
-		'all_items'                  => __( 'All Tropes' ),
+		'name'                       => _x( 'Character Clichés', 'lezwatchtv' ),
+		'singular_name'              => _x( 'Cliché', 'taxonomy singular name' ),
+		'search_items'               => __( 'Search Clichés' ),
+		'popular_items'              => __( 'Popular Clichés' ),
+		'all_items'                  => __( 'All Clichés' ),
 		'parent_item'                => null,
 		'parent_item_colon'          => null,
-		'edit_item'                  => __( 'Edit Trope' ),
-		'update_item'                => __( 'Update Trope' ),
-		'add_new_item'               => __( 'Add New Trope' ),
-		'new_item_name'              => __( 'New Trope Name' ),
-		'separate_items_with_commas' => __( 'Separate Tropes with commas' ),
-		'add_or_remove_items'        => __( 'Add or remove Tropes' ),
-		'choose_from_most_used'      => __( 'Choose from the most used Tropes' ),
-		'not_found'                  => __( 'No Tropes found.' ),
-		'menu_name'                  => __( 'Tropes' ),
+		'edit_item'                  => __( 'Edit Cliché' ),
+		'update_item'                => __( 'Update Cliché' ),
+		'add_new_item'               => __( 'Add New Cliché' ),
+		'new_item_name'              => __( 'New Cliché Name' ),
+		'separate_items_with_commas' => __( 'Separate Clichés with commas' ),
+		'add_or_remove_items'        => __( 'Add or remove Clichés' ),
+		'choose_from_most_used'      => __( 'Choose from the most used Clichés' ),
+		'not_found'                  => __( 'No Clichés found.' ),
+		'menu_name'                  => __( 'Clichés' ),
 	);
 	//paramters for the new taxonomy
 	$args_tropes = array(
@@ -86,7 +86,7 @@ function create_post_type_characters_taxonomies() {
 		'show_admin_column'     => true,
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
-		'rewrite'               => array( 'slug' => 'tropes' ),
+		'rewrite'               => array( 'slug' => 'cliches' ),
 	);
 	register_taxonomy( 'lez_chartags', 'post_type_characters', $args_tropes );
 
@@ -201,9 +201,9 @@ function cmb_post_type_characters_metaboxes() {
 		'type'       => 'text',
 		'repeatable' => 'true',
 	) );
-	// Field: Character Tropes
+	// Field: Character Clichés
 	$cmb_characters->add_field( array(
-	    'name'     => 'Character Tropes',
+	    'name'     => 'Character Clichés',
 	    'id'       => $prefix . 'tropes',
 		'taxonomy' => 'lez_chartags', //Enter Taxonomy Slug
 		'type'     => 'taxonomy_multicheck',

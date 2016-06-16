@@ -93,18 +93,18 @@ function create_post_type_shows_taxonomies() {
 
 	// SHOW CLICHES
     $names_cliches = array(
-        'name'                       => _x( 'Show Clichés', 'Taxonomy General Name', 'lezwatchtv' ),
-        'singular_name'              => _x( 'Cliché', 'Taxonomy Singular Name', 'lezwatchtv' ),
-        'menu_name'                  => __( 'Clichés', 'lezwatchtv' ),
-        'all_items'                  => __( 'All Clichés', 'lezwatchtv' ),
-        'parent_item'                => __( 'Parent Cliché', 'lezwatchtv' ),
-        'parent_item_colon'          => __( 'Parent Cliché:', 'lezwatchtv' ),
-        'new_item_name'              => __( 'New Cliché', 'lezwatchtv' ),
-        'add_new_item'               => __( 'Add New Cliché', 'lezwatchtv' ),
-        'edit_item'                  => __( 'Edit Cliché', 'lezwatchtv' ),
-        'update_item'                => __( 'Update Cliché', 'lezwatchtv' ),
+        'name'                       => _x( 'Show Tropes', 'Taxonomy General Name', 'lezwatchtv' ),
+        'singular_name'              => _x( 'Trope', 'Taxonomy Singular Name', 'lezwatchtv' ),
+        'menu_name'                  => __( 'Tropes', 'lezwatchtv' ),
+        'all_items'                  => __( 'All Tropes', 'lezwatchtv' ),
+        'parent_item'                => __( 'Parent Trope', 'lezwatchtv' ),
+        'parent_item_colon'          => __( 'Parent Trope:', 'lezwatchtv' ),
+        'new_item_name'              => __( 'New Trope', 'lezwatchtv' ),
+        'add_new_item'               => __( 'Add New Trope', 'lezwatchtv' ),
+        'edit_item'                  => __( 'Edit Trope', 'lezwatchtv' ),
+        'update_item'                => __( 'Update Trope', 'lezwatchtv' ),
         'separate_items_with_commas' => __( 'Separate cliché names with commas', 'lezwatchtv' ),
-        'search_items'               => __( 'Search Clichés', 'lezwatchtv' ),
+        'search_items'               => __( 'Search Tropes', 'lezwatchtv' ),
         'add_or_remove_items'        => __( 'Add or remove clichés', 'lezwatchtv' ),
         'choose_from_most_used'      => __( 'Choose from the most used cliché name', 'lezwatchtv' ),
         'not_found'                  => __( 'Not Found', 'lezwatchtv' ),
@@ -117,7 +117,7 @@ function create_post_type_shows_taxonomies() {
         'show_admin_column'          => true,
         'show_in_nav_menus'          => true,
         'show_tagcloud'              => false,
-        'rewrite' 				  	 => array( 'slug' => 'cliches' ),
+        'rewrite' 				  	 => array( 'slug' => 'tropes' ),
     );
     register_taxonomy( 'lez_cliches', array( 'post_type_shows' ), $args_cliches );
 }
@@ -140,7 +140,7 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_showdetails->add_field( array(
-	    'name'     => 'Cliché Plotlines',
+	    'name'     => 'Trope Plotlines',
 	    'id'       => $prefix . 'cliches',
 		'taxonomy' => 'lez_cliches', //Enter Taxonomy Slug
 		'type'     => 'taxonomy_multicheck',
