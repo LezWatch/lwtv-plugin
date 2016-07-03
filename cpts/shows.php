@@ -7,7 +7,22 @@ Version: 1.0
 Author: Evan Herman, Mika Epstein
 */
 
-// Register Custom Post Type
+
+/**
+ * CSS tweaks
+ */
+add_action( 'admin_enqueue_scripts', 'shows_lez_scripts', 10 );
+function shows_lez_scripts( $hook ) {
+	global $current_screen;
+	wp_register_style( 'shows-styles', plugins_url('shows.css', __FILE__ ) );
+	if( 'post_type_shows' == $current_screen->post_type || 'lez_tags' == $current_screen->taxonomy || 'lez_tropes' == $current_screen->taxonomy ) {
+		wp_enqueue_style( 'shows-styles' );
+	}
+}
+
+/**
+ * Custom Post Type
+ */
 add_action( 'init', 'lez_shows_post_type', 0 );
 function lez_shows_post_type() {
 
@@ -61,8 +76,8 @@ function create_post_type_shows_taxonomies() {
 
 	// TV STATIONS
 	$names_tvstations = array(
-		'name'                       => _x( 'TV Station', 'lezwatchtv' ),
-		'singular_name'              => _x( 'Station', 'taxonomy singular name' ),
+		'name'                       => _x( 'TV Station(s)', 'lezwatchtv' ),
+		'singular_name'              => _x( 'TV Station', 'taxonomy singular name' ),
 		'search_items'               => __( 'Search Stations' ),
 		'popular_items'              => __( 'Popular Stations' ),
 		'all_items'                  => __( 'All Stations' ),
@@ -76,11 +91,11 @@ function create_post_type_shows_taxonomies() {
 		'add_or_remove_items'        => __( 'Add or remove Stations' ),
 		'choose_from_most_used'      => __( 'Choose from the most used Stations' ),
 		'not_found'                  => __( 'No Stations found.' ),
-		'menu_name'                  => __( 'Stations' ),
+		'menu_name'                  => __( 'TV Stations' ),
 	);
 	//paramters for the new taxonomy
 	$args_tvstations = array(
-		'hierarchical'          => false,
+		'hierarchical'          => true,
 		'labels'                => $names_tvstations,
 		'show_ui'               => true,
 		'show_admin_column'     => true,
@@ -91,33 +106,33 @@ function create_post_type_shows_taxonomies() {
 
 	register_taxonomy( 'lez_tags', 'post_type_shows', $args_tvstations );
 
-	// SHOW CLICHES
+	// SHOW TROPES
     $names_tropes = array(
-        'name'                       => _x( 'Show Tropes', 'Taxonomy General Name', 'lezwatchtv' ),
-        'singular_name'              => _x( 'Trope', 'Taxonomy Singular Name', 'lezwatchtv' ),
-        'menu_name'                  => __( 'Tropes', 'lezwatchtv' ),
-        'all_items'                  => __( 'All Tropes', 'lezwatchtv' ),
-        'parent_item'                => __( 'Parent Trope', 'lezwatchtv' ),
-        'parent_item_colon'          => __( 'Parent Trope:', 'lezwatchtv' ),
-        'new_item_name'              => __( 'New Trope', 'lezwatchtv' ),
-        'add_new_item'               => __( 'Add New Trope', 'lezwatchtv' ),
-        'edit_item'                  => __( 'Edit Trope', 'lezwatchtv' ),
-        'update_item'                => __( 'Update Trope', 'lezwatchtv' ),
-        'separate_items_with_commas' => __( 'Separate cliché names with commas', 'lezwatchtv' ),
-        'search_items'               => __( 'Search Tropes', 'lezwatchtv' ),
-        'add_or_remove_items'        => __( 'Add or remove clichés', 'lezwatchtv' ),
-        'choose_from_most_used'      => __( 'Choose from the most used cliché name', 'lezwatchtv' ),
-        'not_found'                  => __( 'Not Found', 'lezwatchtv' ),
+        'name'							=> _x( 'Show Tropes', 'Taxonomy General Name', 'lezwatchtv' ),
+        'singular_name'					=> _x( 'Trope', 'Taxonomy Singular Name', 'lezwatchtv' ),
+        'menu_name'						=> __( 'Tropes', 'lezwatchtv' ),
+        'all_items'						=> __( 'All Tropes', 'lezwatchtv' ),
+        'parent_item'					=> __( 'Parent Trope', 'lezwatchtv' ),
+        'parent_item_colon'				=> __( 'Parent Trope:', 'lezwatchtv' ),
+        'new_item_name'					=> __( 'New Trope', 'lezwatchtv' ),
+        'add_new_item'					=> __( 'Add New Trope', 'lezwatchtv' ),
+        'edit_item'						=> __( 'Edit Trope', 'lezwatchtv' ),
+        'update_item'					=> __( 'Update Trope', 'lezwatchtv' ),
+        'separate_items_with_commas'	=> __( 'Separate tropes with commas', 'lezwatchtv' ),
+        'search_items'					=> __( 'Search Tropes', 'lezwatchtv' ),
+        'add_or_remove_items'			=> __( 'Add or remove tropes', 'lezwatchtv' ),
+        'choose_from_most_used'			=> __( 'Choose from the most used tropes', 'lezwatchtv' ),
+        'not_found'						=> __( 'Not Found', 'lezwatchtv' ),
     );
     $args_tropes = array(
-        'hierarchical'               => false,
-        'labels'                     => $names_tropes,
-        'public'                     => true,
-        'show_ui'                    => true,
-        'show_admin_column'          => true,
-        'show_in_nav_menus'          => true,
-        'show_tagcloud'              => false,
-        'rewrite' 				  	 => array( 'slug' => 'tropes' ),
+        'hierarchical'			=> true,
+        'labels'				=> $names_tropes,
+        'public'				=> true,
+        'show_ui'				=> true,
+        'show_admin_column'		=> true,
+        'show_in_nav_menus'		=> true,
+        'show_tagcloud'			=> false,
+        'rewrite'				=> array( 'slug' => 'tropes' ),
     );
     register_taxonomy( 'lez_tropes', array( 'post_type_shows' ), $args_tropes );
 }
@@ -131,24 +146,24 @@ function cmb_post_type_shows_metaboxes() {
 	// Basic Show Details
 
 	$cmb_showdetails = new_cmb2_box( array(
-		'id'            => 'shows_metabox',
-		'title'         => 'Shows Details',
-		'object_types'  => array( 'post_type_shows', ), // Post type
-		'context'       => 'normal',
-		'priority'      => 'high',
-		'show_names   ' => true, // Show field names on the left
+		'id'			=> 'shows_metabox',
+		'title'			=> 'Shows Details',
+		'object_types'	=> array( 'post_type_shows', ), // Post type
+		'context'		=> 'normal',
+		'priority'		=> 'high',
+		'show_names'	=> true, // Show field names on the left
 	) );
 
 	$cmb_showdetails->add_field( array(
-	    'name'     => 'Trope Plotlines',
-	    'id'       => $prefix . 'cliches',
+	    'name'     => 'Trope Plots',
+	    'id'       => $prefix . 'tropes',
 		'taxonomy' => 'lez_tropes', //Enter Taxonomy Slug
 		'type'     => 'taxonomy_multicheck',
 		'select_all_button' => false,
 	) );
 
 	$cmb_showdetails->add_field( array(
-		'name'    => 'Queer Plotline Timeline',
+		'name'    => 'Queer Timeline',
 		'desc'    => 'Which seasons/episodes have the gay in it',
 		'id'      => $prefix . 'plots',
 		'type'    => 'wysiwyg',
@@ -156,7 +171,8 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_showdetails->add_field( array(
-		'name'    => 'Notable Lez-Centric Episodes',
+		'name'    => 'Notable Episodes',
+		'desc'    => 'Lez-centric episodes and plotlines',
 		'id'      => $prefix . 'episodes',
 		'type'    => 'wysiwyg',
 		'options' => array(	'textarea_rows' => 10, ),
@@ -165,8 +181,8 @@ function cmb_post_type_shows_metaboxes() {
 	// Box for Ratings
 	$cmb_ratings = new_cmb2_box( array(
 		'id'            => 'ratings_metabox',
-		'title'         => 'Show Ratings',
-		'desc'          => 'Ratings are subjective 1 to 5, with 1 being low and 5 being the L Word.',
+		'title'         => 'Show Rating',
+		'desc'          => 'Ratings are subjective 1 to 5, with 1 being low and 5 being The L Word.',
 		'object_types'  => array( 'post_type_shows', ), // Post type
 		'context'       => 'normal',
 		'priority'      => 'high',
@@ -188,7 +204,7 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_ratings->add_field( array(
-		'name'    => 'Realness details',
+		'name'    => 'Realness Details',
 		'id'      => $prefix . 'realness_details',
 		'type'    => 'wysiwyg',
 		'options' => array(	'textarea_rows' => 5, ),
@@ -197,7 +213,7 @@ function cmb_post_type_shows_metaboxes() {
 	$cmb_ratings->add_field( array(
 	    'name'    => 'Show Quality Rating',
 	    'id'      => $prefix . 'quality_rating',
-	    'desc'    => 'How good is the show for lesbians?',
+	    'desc'    => 'How good is the show for queers?',
 	    'type'    => 'radio_inline',
 	    'options' => array(
 	        '1' => '1',
@@ -209,7 +225,7 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_ratings->add_field( array(
-		'name'    => 'Show Quality details',
+		'name'    => 'Show Quality Details',
 		'id'      => $prefix . 'quality_details',
 		'type'    => 'wysiwyg',
 		'options' => array(	'textarea_rows' => 5, ),
@@ -230,7 +246,7 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_ratings->add_field( array(
-		'name'    => 'Screntime details',
+		'name'    => 'Screentime Details',
 		'id'      => $prefix . 'screentime_details',
 		'type'    => 'wysiwyg',
 		'options' => array(	'textarea_rows' => 5, ),
@@ -258,7 +274,7 @@ function cmb_post_type_shows_metaboxes() {
 	// Box for simple options
 	$cmb_notes = new_cmb2_box( array(
 		'id'            => 'notes_metabox',
-		'title'         => 'Special Notes',
+		'title'         => 'Additional Data',
 		'object_types'  => array( 'post_type_shows', ), // Post type
 		'context'       => 'side',
 		'priority'      => 'default',
@@ -267,7 +283,8 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_notes->add_field( array(
-	    'name'				=> 'Awesome Stars',
+	    'name'				=> 'Show Stars',
+	    'desc' 				=> 'Gold is by/for lesbians, No Stars is normal TV',
 	    'id'    			=> $prefix . 'stars',
 	    'type'				=> 'select',
 	    'show_option_none'	=> 'No Stars',
@@ -278,20 +295,24 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_notes->add_field( array(
-	    'name' => 'Trigger Warnings?',
+	    'name' => 'Triggers Warning?',
+	    'desc' => 'i.e. Game of Thrones, Jessica Jones, etc.',
 	    'id'   => $prefix . 'triggerwarning',
 	    'type' => 'checkbox'
 	) );
 
 }
 
-//add_meta_box('postimagediv', __('Show Image'), 'post_thumbnail_meta_box', 'post_type_shows', 'side');
+/*
+ * Meta Box Adjustments
+ *
+ */
 
 // function to initiate metaboxes to remove
 add_action( 'init', 'remove_meta_boxes_from_post_type_shows');
 function remove_meta_boxes_from_post_type_shows() {
 	function the_meta_boxes_to_remove() {
-		remove_meta_box( 'tagsdiv-lez_tropes', 'post_type_shows', 'side' ); // for tag type custom taxonomies
+		remove_meta_box( 'lez_tropesdiv', 'post_type_shows', 'side' ); // Hide the trope taxonomy
 	}
 	add_action( 'admin_menu' , 'the_meta_boxes_to_remove' );
 }

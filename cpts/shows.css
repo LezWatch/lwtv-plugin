@@ -1,0 +1,9 @@
+select#newlez_tags_parent {
+    display: none;
+}
+select#newlez_tropes_parent {
+    display: none;
+}
+.form-field.term-parent-wrap {
+    display: none;
+}
