@@ -297,6 +297,7 @@ function remove_meta_boxes_from_post_type_characters() {
 	remove_meta_box( 'tagsdiv-lez_gender', 'post_type_characters', 'side' );
 	remove_meta_box( 'tagsdiv-lez_sexuality', 'post_type_characters', 'side' );
 	remove_meta_box( 'tagsdiv-lez_cliches', 'post_type_characters', 'side' );
+	remove_meta_box( 'lez_clichesdiv', 'post_type_characters', 'side' );
 }
 
 // change the default "Featured Image" metabox title
