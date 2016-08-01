@@ -4,7 +4,7 @@ Plugin Name: Shows CPT
 Plugin URI:  http://lezwatchtv.com
 Description: Custom Post Type for shows on LWTV
 Version: 1.0
-Author: Evan Herman, Mika Epstein
+Author: Evan Herman, Tracy Levesque, Mika Epstein
 */
 
 
@@ -95,7 +95,7 @@ function create_post_type_shows_taxonomies() {
 	);
 	//paramters for the new taxonomy
 	$args_tvstations = array(
-		'hierarchical'          => true,
+		'hierarchical'          => false,
 		'labels'                => $names_tvstations,
 		'show_ui'               => true,
 		'show_admin_column'     => true,
@@ -143,8 +143,48 @@ function cmb_post_type_shows_metaboxes() {
 	// prefix for all custom fields
 	$prefix = 'lezshows_';
 
-	// Basic Show Details
+	// This is just an array of all years from 1930 on (1930 being the year TV dramas started)
+	$year_array = array();
+	foreach ( range(date('Y'), '1930' ) as $year) {
+		$startyear_array[$year] = $year;
+	}
 
+	// Must See Metabox - this should be required
+	$cmb_mustsee = new_cmb2_box( array(
+		'id'			=> 'mustsee_metabox',
+		'title'			=> 'Required Details',
+		'object_types'	=> array( 'post_type_shows', ), // Post type
+		'context'		=> 'normal',
+		'priority'		=> 'high',
+		'show_names'	=> true, // Show field names on the left
+	) );
+
+	$cmb_mustsee->add_field( array(
+	    'name'     => 'Trope Plots',
+	    'id'       => $prefix . 'tropes',
+		'taxonomy' => 'lez_tropes', //Enter Taxonomy Slug
+		'type'     => 'taxonomy_multicheck',
+		'select_all_button' => false,
+	) );
+
+	$cmb_mustsee->add_field( array(
+	    'name'    => 'Worth It?',
+	    'id'      => $prefix . 'worthit_rating',
+	    'desc'    => 'Is the show worth watching?',
+	    'type'    => 'radio_inline',
+	    'options' => array(
+	        'Yes' => 'Yes',
+	        'Meh' => 'Meh',
+	        'No'  => 'No',
+	    ),
+	) );
+	$cmb_mustsee->add_field( array(
+		'name'    => 'Worth It Details',
+		'id'      => $prefix . 'worthit_details',
+		'type'    => 'textarea_small',
+	) );
+
+	// Basic Show Details
 	$cmb_showdetails = new_cmb2_box( array(
 		'id'			=> 'shows_metabox',
 		'title'			=> 'Shows Details',
@@ -152,14 +192,6 @@ function cmb_post_type_shows_metaboxes() {
 		'context'		=> 'normal',
 		'priority'		=> 'high',
 		'show_names'	=> true, // Show field names on the left
-	) );
-
-	$cmb_showdetails->add_field( array(
-	    'name'     => 'Trope Plots',
-	    'id'       => $prefix . 'tropes',
-		'taxonomy' => 'lez_tropes', //Enter Taxonomy Slug
-		'type'     => 'taxonomy_multicheck',
-		'select_all_button' => false,
 	) );
 
 	$cmb_showdetails->add_field( array(
@@ -252,36 +284,16 @@ function cmb_post_type_shows_metaboxes() {
 		'options' => array(	'textarea_rows' => 5, ),
 	) );
 
-	$cmb_ratings->add_field( array(
-	    'name'    => 'Worth It?',
-	    'id'      => $prefix . 'worthit_rating',
-	    'desc'    => 'Is the show worth watching?',
-	    'type'    => 'radio_inline',
-	    'options' => array(
-	        'Yes' => 'Yes',
-	        'Meh' => 'Meh',
-	        'No'  => 'No',
-	    ),
-	) );
-
-	$cmb_ratings->add_field( array(
-		'name'    => 'Worth It details',
-		'id'      => $prefix . 'worthit_details',
-		'type'    => 'wysiwyg',
-		'options' => array(	'textarea_rows' => 5, ),
-	) );
-
-	// Box for simple options
+	// Metabox for the side (under shows)
 	$cmb_notes = new_cmb2_box( array(
-		'id'            => 'notes_metabox',
-		'title'         => 'Additional Data',
-		'object_types'  => array( 'post_type_shows', ), // Post type
-		'context'       => 'side',
-		'priority'      => 'default',
-		'show_names'	=> true, // Show field names on the left
-		'cmb_styles'	=> false,
+		'id'            	=> 'notes_metabox',
+		'title'         	=> 'Additional Data',
+		'object_types'  	=> array( 'post_type_shows', ), // Post type
+		'context'       	=> 'side',
+		'priority'      	=> 'default',
+		'show_names'		=> true, // Show field names on the left
+		'cmb_styles'		=> false,
 	) );
-
 	$cmb_notes->add_field( array(
 	    'name'				=> 'Show Stars',
 	    'desc' 				=> 'Gold is by/for lesbians, No Stars is normal TV',
@@ -293,14 +305,43 @@ function cmb_post_type_shows_metaboxes() {
 			'silver' => 'Silver Star',
 	    )
 	) );
-
 	$cmb_notes->add_field( array(
-	    'name' => 'Triggers Warning?',
-	    'desc' => 'i.e. Game of Thrones, Jessica Jones, etc.',
-	    'id'   => $prefix . 'triggerwarning',
-	    'type' => 'checkbox'
+	    'name' 				=> 'Triggers Warning?',
+	    'desc' 				=> 'i.e. Game of Thrones, Jessica Jones, etc.',
+	    'id'   				=> $prefix . 'triggerwarning',
+	    'type'				=> 'checkbox'
 	) );
-
+/*
+	// If we decide to add in years for the shows, this is the code.
+	$group_field_id = $cmb_notes->add_field( array(
+	    'id'          => $prefix .'airdates_group',
+	    'type'        => 'group',
+	    'description' => 'Dates the show ran. Pick "current" for an end date if it\'s still running.',
+	    'repeatable'  => false,
+	    'options'     => array(
+	        'group_title'   => __( 'Original Airdates', 'cmb2' ),
+	        'add_button'    => __( 'Add Another Entry', 'cmb2' ),
+	        'remove_button' => __( 'Remove Entry', 'cmb2' ),
+	    ),
+	) );
+	$cmb_notes->add_group_field( $group_field_id, array(
+	    'name' => 'Start Year',
+	    'id'   => 'start_year',
+		'type'				=> 'select',
+		'show_option_none'	=> true,
+		'default'			=> 'custom',
+		'options'			=> $year_array,
+	) );
+	$cmb_notes->add_group_field( $group_field_id, array(
+	    'name' => 'End Year',
+	    'id'   => 'end_year',
+	    'type' => 'text_date',
+		'type'				=> 'select',
+		'show_option_none'	=> true,
+		'default'			=> 'custom',
+		'options'			=> $year_array,
+	) );
+*/
 }
 
 /*

@@ -4,7 +4,7 @@ Plugin Name: Character CPT
 Plugin URI:  http://lezwatchtv.com
 Description: Custom Post Type for characters on LWTV
 Version: 1.0
-Author: Evan Herman, Mika Epstein
+Author: Evan Herman, Tracy Levesque, Mika Epstein
 */
 
 /**
@@ -202,10 +202,9 @@ function cmb_post_type_characters_metaboxes() {
 	// prefix for all custom fields
 	$prefix = 'lezchars_';
 
-	// This is just an array of all years from 1970, don't look at me like that
-	$year_first = 1970;
+	// This is just an array of all years from 1930 on (1930 being the year TV dramas started)
 	$year_array = array();
-	foreach (range(date('Y'), $year_first) as $x) {
+	foreach ( range(date('Y'), '1930' ) as $x) {
 		$year_array[$x] = $x;
 	}
 
@@ -241,7 +240,7 @@ function cmb_post_type_characters_metaboxes() {
 		'desc'				=> 'Gender with which the character identifies',
 		'id'				=> $prefix . 'gender',
 		'taxonomy'			=> 'lez_gender', //Enter Taxonomy Slug
-		'type'				=> 'taxonomy_radio_inline',
+		'type'				=> 'taxonomy_select',
 		'show_option_none'	=> false,
 	) );
 	// Field: Character Sexual Orientation
@@ -250,7 +249,7 @@ function cmb_post_type_characters_metaboxes() {
 		'desc'				=> 'Character\'s sexual orientation',
 		'id'				=> $prefix . 'sexuality',
 		'taxonomy'			=> 'lez_sexuality', //Enter Taxonomy Slug
-		'type'				=> 'taxonomy_radio_inline',
+		'type'				=> 'taxonomy_select',
 		'show_option_none'	=> false,
 	) );
 
