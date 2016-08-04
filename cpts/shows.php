@@ -311,37 +311,17 @@ function cmb_post_type_shows_metaboxes() {
 	    'id'   				=> $prefix . 'triggerwarning',
 	    'type'				=> 'checkbox'
 	) );
-/*
-	// If we decide to add in years for the shows, this is the code.
-	$group_field_id = $cmb_notes->add_field( array(
-	    'id'          => $prefix .'airdates_group',
-	    'type'        => 'group',
-	    'description' => 'Dates the show ran. Pick "current" for an end date if it\'s still running.',
-	    'repeatable'  => false,
-	    'options'     => array(
-	        'group_title'   => __( 'Original Airdates', 'cmb2' ),
-	        'add_button'    => __( 'Add Another Entry', 'cmb2' ),
-	        'remove_button' => __( 'Remove Entry', 'cmb2' ),
-	    ),
+
+	$cmb_notes->add_field( array(
+	    'name' 				=> 'Air Dates',
+	    'desc' 				=> 'Years Aired',
+	    'id'   				=> $prefix . 'airdates',
+		'earliest'			=> '1930',
+		'reverse'			=> true,
+		'start_label'		=> '',
+		'finish_label'		=> '',
+	    'type'				=> 'date_year_range'
 	) );
-	$cmb_notes->add_group_field( $group_field_id, array(
-	    'name' => 'Start Year',
-	    'id'   => 'start_year',
-		'type'				=> 'select',
-		'show_option_none'	=> true,
-		'default'			=> 'custom',
-		'options'			=> $year_array,
-	) );
-	$cmb_notes->add_group_field( $group_field_id, array(
-	    'name' => 'End Year',
-	    'id'   => 'end_year',
-	    'type' => 'text_date',
-		'type'				=> 'select',
-		'show_option_none'	=> true,
-		'default'			=> 'custom',
-		'options'			=> $year_array,
-	) );
-*/
 }
 
 /*
