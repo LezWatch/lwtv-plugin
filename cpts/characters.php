@@ -241,6 +241,7 @@ function cmb_post_type_characters_metaboxes() {
 		'id'				=> $prefix . 'gender',
 		'taxonomy'			=> 'lez_gender', //Enter Taxonomy Slug
 		'type'				=> 'taxonomy_select',
+		'default' 			=> 'cisgender',
 		'show_option_none'	=> false,
 	) );
 	// Field: Character Sexual Orientation
@@ -250,6 +251,7 @@ function cmb_post_type_characters_metaboxes() {
 		'id'				=> $prefix . 'sexuality',
 		'taxonomy'			=> 'lez_sexuality', //Enter Taxonomy Slug
 		'type'				=> 'taxonomy_select',
+		'default' 			=> 'homosexual',
 		'show_option_none'	=> false,
 	) );
 

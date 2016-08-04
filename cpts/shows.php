@@ -355,3 +355,37 @@ function set_featured_image_text_post_type_shows( $content ) {
     else
         return $content;
 }
+
+/*
+ * Post List Pages
+ * (custom columns, quick edit, etc)
+ */
+
+// Add Custom Column Headers
+add_filter( 'manage_post_type_shows_posts_columns', 'set_custom_edit_post_type_shows_columns' );
+function set_custom_edit_post_type_shows_columns($columns) {
+	$columns['shows-airdate']	= 'Airdates';
+	$columns['shows-worthit']	= 'Worth It?';
+	return $columns;
+}
+
+// Add Custom Column Content
+add_action( 'manage_post_type_shows_posts_custom_column' , 'custom_post_type_shows_column', 10, 2 );
+function custom_post_type_shows_column( $column, $post_id ) {
+
+	if ( get_post_meta( $post_id, 'lezshows_airdates', true ) ) {
+		$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
+		$airdates = $airdates['start'] .' - '. $airdates['finish'];
+	} else {
+		$airdates = "N/A";
+	}
+
+	switch ( $column ) {
+		case 'shows-airdate':
+			echo $airdates;
+			break;
+		case 'shows-worthit':
+			echo ucfirst(get_post_meta( $post_id, 'lezshows_worthit_rating', true ));
+			break;
+	}
+}
