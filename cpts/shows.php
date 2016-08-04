@@ -317,10 +317,15 @@ function cmb_post_type_shows_metaboxes() {
 	    'desc' 				=> 'Years Aired',
 	    'id'   				=> $prefix . 'airdates',
 		'earliest'			=> '1930',
-		'reverse'			=> true,
-		'start_label'		=> '',
-		'finish_label'		=> '',
-	    'type'				=> 'date_year_range'
+		'text'     => array( 
+			'start_label'		=> '',
+			'finish_label'		=> '',
+		),
+	    'type'				=> 'date_year_range',
+	    'options'  => array(
+	        'start_reverse_sort' => true,
+	        'finish_reverse_sort' => true,
+	    ),
 	) );
 }
 
