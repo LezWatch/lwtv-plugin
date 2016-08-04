@@ -301,6 +301,10 @@ function jt_cmb2_date_year_range_js() {
 
 				$endPicker.html( getNewOptions( $options[ id ], start, selectedEnd ) );
 			} );
+
+			// Kick it off.
+			$( '.cmb2-year-range-start' ).trigger( 'change' );
+
 		});
 	</script>
 	<?php
