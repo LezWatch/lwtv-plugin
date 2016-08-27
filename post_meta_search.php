@@ -1,51 +1,59 @@
 <?php
-/**
- * Extend WordPress search to include custom fields
- * <https://adambalee.com/search-wordpress-by-custom-fields-without-a-plugin/>
- *
- * http://adambalee.com
- */
+/*
+Plugin Name: Search Post Meta
+Plugin URI: https://adambalee.com/search-wordpress-by-custom-fields-without-a-plugin/
+Description: Extend WordPress search to include custom fields
+Version: 1.0
+Author: Mika Epstein
+*/
+
+
+
 
 /**
  * Join posts and postmeta tables
  *
  * http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_join
  */
-function cf_post_meta_search_join( $join ) {
+function lezwatch_search_join( $join ) {
     global $wpdb;
 
-    if ( is_search() ) {    
+    if ( is_search() ) {
         $join .=' LEFT JOIN '.$wpdb->postmeta. ' ON '. $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
     }
-    
+
     return $join;
 }
-add_filter('posts_join', 'cf_post_meta_search_join' );
+add_filter('posts_join', 'lezwatch_search_join' );
 
 /**
  * Modify the search query with posts_where
  *
  * http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_where
  */
-function cf_post_meta_search_where( $where ) {
+function lezwatch_search_where( $where ) {
     global $pagenow, $wpdb;
-   
+
     if ( is_search() ) {
-        $where = preg_replace(
+
+		$keys = "'lezchars_actor', 'lezshows_worthit_details', 'lezshows_plots', 'lezshows_episodes', 'lezshows_realness_details', 'lezshows_quality_details', 'lezshows_screentime_details'";
+
+		$where = preg_replace(
             "/\(\s*".$wpdb->posts.".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
-            "(".$wpdb->posts.".post_title LIKE $1) OR (".$wpdb->postmeta.".meta_value LIKE $1)", $where );
+            "(".$wpdb->posts.".post_title LIKE $1) OR ( (".$wpdb->postmeta.".meta_key IN ( ".$keys." ) ) AND (".$wpdb->postmeta.".meta_value LIKE $1)  )", $where );
+
     }
 
     return $where;
 }
-add_filter( 'posts_where', 'cf_post_meta_search_where' );
+add_filter( 'posts_where', 'lezwatch_search_where' );
 
 /**
  * Prevent duplicates
  *
  * http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_distinct
  */
-function cf_post_meta_search_distinct( $where ) {
+function lezwatch_search_distinct( $where ) {
     global $wpdb;
 
     if ( is_search() ) {
@@ -54,4 +62,4 @@ function cf_post_meta_search_distinct( $where ) {
 
     return $where;
 }
-add_filter( 'posts_distinct', 'cf_post_meta_search_distinct' );
+add_filter( 'posts_distinct', 'lezwatch_search_distinct' );
