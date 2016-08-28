@@ -1,6 +1,8 @@
-select#newlez_cliches_parent {
-    display: none;
-}
+
+div#tagsdiv-lez_gender,
+div#tagsdiv-lez_sexuality,
+div#lez_clichesdiv,
+select#newlez_cliches_parent,
 .form-field.term-parent-wrap {
     display: none;
 }
