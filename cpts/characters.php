@@ -23,9 +23,9 @@ $lez_character_roles = array(
 add_action( 'admin_enqueue_scripts', 'characters_lez_scripts', 10 );
 function characters_lez_scripts( $hook ) {
 	global $current_screen;
-	wp_register_style( 'shows-styles', plugins_url('shows.css', __FILE__ ) );
-	if( 'post_type_charaters' == $current_screen->post_type || 'lez_cliches' == $current_screen->taxonomy ) {
-		wp_enqueue_style( 'shows-styles' );
+	wp_register_style( 'character-styles', plugins_url('characters.css', __FILE__ ) );
+	if( 'post_type_characters' == $current_screen->post_type || 'lez_cliches' == $current_screen->taxonomy ) {
+		wp_enqueue_style( 'character-styles' );
 	}
 }
 
