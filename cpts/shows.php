@@ -317,7 +317,7 @@ function cmb_post_type_shows_metaboxes() {
 	    'desc' 				=> 'Years Aired',
 	    'id'   				=> $prefix . 'airdates',
 		'earliest'			=> '1930',
-		'text'     => array( 
+		'text'     => array(
 			'start_label'		=> '',
 			'finish_label'		=> '',
 		),
@@ -327,6 +327,19 @@ function cmb_post_type_shows_metaboxes() {
 	        'finish_reverse_sort' => true,
 	    ),
 	) );
+	$cmb_notes->add_field( array(
+	    'name'				=> 'Show Type',
+	    'desc' 				=> 'What kind of television entertainment is this?',
+	    'id'    			=> $prefix . 'tvtype',
+	    'type'				=> 'select',
+	    'default'			=> 'tvshow',
+	    'options'	 => array(
+			'tvshow'	=> 'TV Show',
+			'tvmini'	=> 'Mini Series',
+			'tvmovie'	=> 'TV Movie',
+	    )
+	) );
+
 }
 
 /*
