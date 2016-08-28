@@ -8,8 +8,7 @@ Author: Mika Epstein
 Author URI: http://ipstenu.org/
 Author Email: ipstenu@halfelf.org
 
-  Copyright (C) 2016 Mika Epstein.
-
+Copyright (C) 2016 Mika Epstein.
 */
 
 function generate_social_shortcode($atts) {
