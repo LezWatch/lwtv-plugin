@@ -83,7 +83,7 @@ function lez_add_characters_to_sitemaps( $post_types ) {
     $post_types[] = 'post_type_characters';
     return $post_types;
 }
-add_filter( 'jetpack_sitemap_post_types', 'lez_add_shows_to_sitemaps' );
+add_filter( 'jetpack_sitemap_post_types', 'lez_add_characters_to_sitemaps' );
 
 
 /*
