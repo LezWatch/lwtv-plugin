@@ -269,7 +269,7 @@ function cmb_post_type_characters_metaboxes() {
 
 	// Metabox Group: Quick Dropdowns
 	$cmb_charside = new_cmb2_box( array(
-		'id'            	=> 'notes_metabox',
+		'id'            	=> 'charnotes_metabox',
 		'title'         	=> 'Additional Data',
 		'object_types'  	=> array( 'post_type_characters', ), // Post type
 		'context'       	=> 'side',
