@@ -271,7 +271,7 @@ function cmb_post_type_characters_metaboxes() {
 	$cmb_charside = new_cmb2_box( array(
 		'id'            	=> 'notes_metabox',
 		'title'         	=> 'Additional Data',
-		'object_types'  	=> array( 'post_type_shows', ), // Post type
+		'object_types'  	=> array( 'post_type_characters', ), // Post type
 		'context'       	=> 'side',
 		'priority'      	=> 'default',
 		'show_names'		=> true, // Show field names on the left
