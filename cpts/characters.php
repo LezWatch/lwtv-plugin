@@ -229,15 +229,6 @@ function cmb_post_type_characters_metaboxes() {
 		'priority'			=> 'high',
 		'show_names'		=> true, // Show field names on the left
 	) );
-
-	// Field: Actor Name
-	$cmb_characters->add_field( array(
-		'name'				=> 'Actor Name',
-		'desc'				=> 'Include years (in parens) for multiple actors',
-		'id'				=> $prefix . 'actor',
-		'type'				=> 'text',
-		'repeatable'		=> 'true',
-	) );
 	// Field: Character Clichés
 	$cmb_characters->add_field( array(
 		'name'				=> 'Character Clichés',
@@ -246,37 +237,13 @@ function cmb_post_type_characters_metaboxes() {
 		'type'	 			=> 'taxonomy_multicheck',
 		'select_all_button'	=> false,
 	) );
-	// Field: Character Gender Idenity
+	// Field: Actor Name
 	$cmb_characters->add_field( array(
-		'name'				=> 'Gender Identity',
-		'desc'				=> 'Gender with which the character identifies',
-		'id'				=> $prefix . 'gender',
-		'taxonomy'			=> 'lez_gender', //Enter Taxonomy Slug
-		'type'				=> 'taxonomy_select',
-		'default' 			=> 'cisgender',
-		'show_option_none'	=> false,
-	) );
-	// Field: Character Sexual Orientation
-	$cmb_characters->add_field( array(
-		'name'				=> 'Sexuality',
-		'desc'				=> 'Character\'s sexual orientation',
-		'id'				=> $prefix . 'sexuality',
-		'taxonomy'			=> 'lez_sexuality', //Enter Taxonomy Slug
-		'type'				=> 'taxonomy_select',
-		'default' 			=> 'homosexual',
-		'show_option_none'	=> false,
-	) );
-
-	// Field: Show Name
-	$cmb_characters->add_field( array(
-		'name'				=> 'Show',
-		'desc'				=> 'Select the show this character belongs to',
-		'id'				=> $prefix . 'show',
-		'type'				=> 'select',
+		'name'				=> 'Actor Name',
+		'desc'				=> 'Include years (in parens) for multiple actors',
+		'id'				=> $prefix . 'actor',
+		'type'				=> 'text',
 		'repeatable'		=> 'true',
-		'show_option_none'	=> true,
-		'default'			=> 'custom',
-		'options_cb'		=> 'cmb2_get_post_type_shows_options',
 	) );
 	// Field: Character Type
 	$cmb_characters->add_field( array(
@@ -288,7 +255,50 @@ function cmb_post_type_characters_metaboxes() {
 		'default'			=> 'custom',
 		'options'			=> $lez_character_roles,
 	) );
+	// Field: Show Name
 	$cmb_characters->add_field( array(
+		'name'				=> 'Show',
+		'desc'				=> 'Select the show this character belongs to',
+		'id'				=> $prefix . 'show',
+		'type'				=> 'select',
+		'repeatable'		=> 'true',
+		'show_option_none'	=> true,
+		'default'			=> 'custom',
+		'options_cb'		=> 'cmb2_get_post_type_shows_options',
+	) );
+
+	// Metabox Group: Quick Dropdowns
+	$cmb_charside = new_cmb2_box( array(
+		'id'            	=> 'notes_metabox',
+		'title'         	=> 'Additional Data',
+		'object_types'  	=> array( 'post_type_shows', ), // Post type
+		'context'       	=> 'side',
+		'priority'      	=> 'default',
+		'show_names'		=> true, // Show field names on the left
+		'cmb_styles'		=> false,
+	) );
+	// Field: Character Gender Idenity
+	$cmb_charside->add_field( array(
+		'name'				=> 'Gender Identity',
+		'desc'				=> 'Gender with which the character identifies',
+		'id'				=> $prefix . 'gender',
+		'taxonomy'			=> 'lez_gender', //Enter Taxonomy Slug
+		'type'				=> 'taxonomy_select',
+		'default' 			=> 'cisgender',
+		'show_option_none'	=> false,
+	) );
+	// Field: Character Sexual Orientation
+	$cmb_charside->add_field( array(
+		'name'				=> 'Sexuality',
+		'desc'				=> 'Character\'s sexual orientation',
+		'id'				=> $prefix . 'sexuality',
+		'taxonomy'			=> 'lez_sexuality', //Enter Taxonomy Slug
+		'type'				=> 'taxonomy_select',
+		'default' 			=> 'homosexual',
+		'show_option_none'	=> false,
+	) );
+	// Field: Year of Death (if applicable)
+	$cmb_charside->add_field( array(
 		'name'				=> 'Year of Death',
 		'desc'				=> 'If the character is dead, select what year they died.',
 		'id'				=> $prefix .'death_year',
@@ -453,7 +463,7 @@ function lezchars_quick_edit_save($post_id) {
 	global $lez_character_roles;
 
 	// Criteria for not saving: Auto-saves, not post_type_characters, can't edit
-	if ( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || ( 'post_type_characters' != $_POST['post_type'] ) || !current_user_can( 'edit_page', $post_id ) ) {
+	if ( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || ( isset( $_POST['post_type'] ) &&  'post_type_characters' != $_POST['post_type'] ) || !current_user_can( 'edit_page', $post_id ) ) {
 		return $post_id;
 	}
 	$post = get_post($post_id);
