@@ -385,6 +385,75 @@ function custom_post_type_characters_column( $column, $post_id ) {
 	}
 }
 
+// Make columns sortable
+add_filter( 'manage_edit-post_type_characters_sortable_columns', 'sortable_post_type_characters_column' );
+function sortable_post_type_characters_column( $columns ) {
+	unset( $columns['cpt-shows'] ); 			 	// Don't allow sort by shows
+	$columns['postmeta-roletype']		= 'role';	// Allow sort by role
+	$columns['taxonomy-lez_gender']		= 'gender';	// Allow sort by gender identity
+	$columns['taxonomy-lez_sexuality']	= 'sex';	// Allow sort by gender identity
+    return $columns;
+}
+
+// Create Role Sortability
+add_action( 'pre_get_posts', 'post_type_characters_role_orderby' );
+function post_type_characters_role_orderby( $query ) {
+	if( ! is_admin() ) return;
+
+	if ( $query->is_main_query() && ( $orderby = $query->get( 'orderby' ) ) ) {
+    	switch( $orderby ) {
+			case 'role':
+				$query->set( 'meta_key', 'lezchars_type' );
+				$query->set( 'orderby', 'meta_value' );
+				break;
+		}
+	}
+}
+
+// Create Gender Sortability
+function lez_gender_clauses( $clauses, $wp_query ) {
+	global $wpdb;
+
+	if ( isset( $wp_query->query['orderby'] ) && 'gender' == $wp_query->query['orderby'] ) {
+
+		$clauses['join'] .= <<<SQL
+LEFT OUTER JOIN {$wpdb->term_relationships} ON {$wpdb->posts}.ID={$wpdb->term_relationships}.object_id
+LEFT OUTER JOIN {$wpdb->term_taxonomy} USING (term_taxonomy_id)
+LEFT OUTER JOIN {$wpdb->terms} USING (term_id)
+SQL;
+
+		$clauses['where'] .= " AND (taxonomy = 'lez_gender' OR taxonomy IS NULL)";
+		$clauses['groupby'] = "object_id";
+		$clauses['orderby']  = "GROUP_CONCAT({$wpdb->terms}.name ORDER BY name ASC) ";
+		$clauses['orderby'] .= ( 'ASC' == strtoupper( $wp_query->get('order') ) ) ? 'ASC' : 'DESC';
+	}
+
+	return $clauses;
+}
+add_filter( 'posts_clauses', 'lez_gender_clauses', 10, 2 );
+
+// Create Sexuality Sortability
+function lez_sexuality_clauses( $clauses, $wp_query ) {
+	global $wpdb;
+
+	if ( isset( $wp_query->query['orderby'] ) && 'sex' == $wp_query->query['orderby'] ) {
+
+		$clauses['join'] .= <<<SQL
+LEFT OUTER JOIN {$wpdb->term_relationships} ON {$wpdb->posts}.ID={$wpdb->term_relationships}.object_id
+LEFT OUTER JOIN {$wpdb->term_taxonomy} USING (term_taxonomy_id)
+LEFT OUTER JOIN {$wpdb->terms} USING (term_id)
+SQL;
+
+		$clauses['where'] .= " AND (taxonomy = 'lez_sexuality' OR taxonomy IS NULL)";
+		$clauses['groupby'] = "object_id";
+		$clauses['orderby']  = "GROUP_CONCAT({$wpdb->terms}.name ORDER BY name ASC) ";
+		$clauses['orderby'] .= ( 'ASC' == strtoupper( $wp_query->get('order') ) ) ? 'ASC' : 'DESC';
+	}
+
+	return $clauses;
+}
+add_filter( 'posts_clauses', 'lez_sexuality_clauses', 10, 2 );
+
 // Add quick Edit boxes
 add_action('quick_edit_custom_box',  'lezchars_quick_edit_add', 10, 2);
 function lezchars_quick_edit_add($column_name, $post_type) {

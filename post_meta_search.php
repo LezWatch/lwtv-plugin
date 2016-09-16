@@ -7,9 +7,6 @@ Version: 1.0
 Author: Mika Epstein
 */
 
-
-
-
 /**
  * Join posts and postmeta tables
  *
@@ -24,7 +21,6 @@ function lezwatch_search_join( $join ) {
 
     return $join;
 }
-add_filter('posts_join', 'lezwatch_search_join' );
 
 /**
  * Modify the search query with posts_where
@@ -46,7 +42,6 @@ function lezwatch_search_where( $where ) {
 
     return $where;
 }
-add_filter( 'posts_where', 'lezwatch_search_where' );
 
 /**
  * Prevent duplicates
@@ -62,4 +57,14 @@ function lezwatch_search_distinct( $where ) {
 
     return $where;
 }
-add_filter( 'posts_distinct', 'lezwatch_search_distinct' );
+
+/**
+ * Only run if we're NOT in the admin screen!
+ *
+ */
+
+if ( ! is_admin() ) {
+	add_filter('posts_join', 'lezwatch_search_join' );
+	add_filter( 'posts_where', 'lezwatch_search_where' );
+	add_filter( 'posts_distinct', 'lezwatch_search_distinct' );
+}
