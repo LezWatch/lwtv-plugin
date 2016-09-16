@@ -95,7 +95,7 @@ function create_post_type_characters_taxonomies() {
 
 	// CLICHES
 	$names_cliches = array(
-		'name'							=> _x( 'Character Clichés', 'lezwatchtv' ),
+		'name'							=> _x( 'Clichés', 'lezwatchtv' ),
 		'singular_name'					=> _x( 'Cliché', 'taxonomy singular name' ),
 		'search_items'					=> __( 'Search Clichés' ),
 		'popular_items'					=> __( 'Popular Clichés' ),
@@ -158,7 +158,7 @@ function create_post_type_characters_taxonomies() {
 
 	// SEXUALITY
 	$names_sexuality = array(
-		'name'							=> _x( 'Sexual Orientation', 'lezwatchtv' ),
+		'name'							=> _x( 'Sexuality', 'lezwatchtv' ),
 		'singular_name'					=> _x( 'Sexual Orientation', 'taxonomy singular name' ),
 		'search_items'					=> __( 'Search Sexual Orientations' ),
 		'popular_items'					=> __( 'Popular Sexual Orientations' ),
