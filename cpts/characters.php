@@ -20,8 +20,8 @@ $lez_character_roles = array(
 /**
  * CSS tweaks
  */
-add_action( 'admin_enqueue_scripts', 'characters_lez_scripts', 10 );
-function characters_lez_scripts( $hook ) {
+add_action( 'admin_enqueue_scripts', 'lez_characters_scripts', 10 );
+function lez_characters_scripts( $hook ) {
 	global $current_screen;
 	wp_register_style( 'character-styles', plugins_url('characters.css', __FILE__ ) );
 	if( 'post_type_characters' == $current_screen->post_type || 'lez_cliches' == $current_screen->taxonomy ) {
@@ -90,8 +90,8 @@ function lez_add_characters_to_sitemaps( $post_types ) {
  * Custom Taxonomies
  *
  */
-add_action( 'init', 'create_post_type_characters_taxonomies', 0 );
-function create_post_type_characters_taxonomies() {
+add_action( 'init', 'lez_create_post_type_characters_taxonomies', 0 );
+function lez_create_post_type_characters_taxonomies() {
 
 	// CLICHES
 	$names_cliches = array(
@@ -206,8 +206,8 @@ function cmb2_get_post_type_shows_options() {
 		) );
 }
 
-add_filter( 'cmb2_admin_init', 'cmb_post_type_characters_metaboxes' );
-function cmb_post_type_characters_metaboxes() {
+add_filter( 'cmb2_admin_init', 'lez_post_type_characters_metaboxes' );
+function lez_post_type_characters_metaboxes() {
 
 	global $lez_character_roles;
 
@@ -315,8 +315,8 @@ function cmb_post_type_characters_metaboxes() {
  */
 
 // Remove Metaboxes we use elsewhere
-add_action( 'admin_menu', 'remove_meta_boxes_from_post_type_characters');
-function remove_meta_boxes_from_post_type_characters() {
+add_action( 'admin_menu', 'lez_remove_characters_metaboxes');
+function lez_remove_characters_metaboxes() {
 	remove_meta_box( 'tagsdiv-lez_gender', 'post_type_characters', 'side' );
 	remove_meta_box( 'tagsdiv-lez_sexuality', 'post_type_characters', 'side' );
 	remove_meta_box( 'tagsdiv-lez_cliches', 'post_type_characters', 'side' );
@@ -327,15 +327,15 @@ function remove_meta_boxes_from_post_type_characters() {
 }
 
 // change the default "Featured Image" metabox title
-add_action('do_meta_boxes', 'featured_image_title_post_type_characters');
-function featured_image_title_post_type_characters() {
+add_action('do_meta_boxes', 'lez_characters_featured_image_title');
+function lez_characters_featured_image_title() {
 	remove_meta_box( 'postimagediv', 'post_type_characters', 'side' );
 	add_meta_box('postimagediv', __('Character Photo'), 'post_thumbnail_meta_box', 'post_type_characters', 'side');
 }
 
 // change the default "Set Featured Image" text
-add_filter( 'admin_post_thumbnail_html', 'set_featured_image_text_post_type_characters' );
-function set_featured_image_text_post_type_characters( $content ) {
+add_filter( 'admin_post_thumbnail_html', 'lez_characters_set_featured_image_text' );
+function lez_characters_set_featured_image_text( $content ) {
 	global $current_screen;
 
 	if( 'post_type_characters' == $current_screen->post_type ) {
@@ -351,16 +351,16 @@ function set_featured_image_text_post_type_characters( $content ) {
  */
 
 // Add Custom Column Headers
-add_filter( 'manage_post_type_characters_posts_columns', 'set_custom_edit_post_type_characters_columns' );
-function set_custom_edit_post_type_characters_columns($columns) {
+add_filter( 'manage_post_type_characters_posts_columns', 'lez_characters_set_custom_edit_columns' );
+function lez_characters_set_custom_edit_columns($columns) {
 	$columns['cpt-shows']			= 'TV Show(s)';
 	$columns['postmeta-roletype']	= 'Role Type';
 	return $columns;
 }
 
 // Add Custom Column Content
-add_action( 'manage_post_type_characters_posts_custom_column' , 'custom_post_type_characters_column', 10, 2 );
-function custom_post_type_characters_column( $column, $post_id ) {
+add_action( 'manage_post_type_characters_posts_custom_column' , 'lez_characters_custom_column', 10, 2 );
+function lez_characters_custom_column( $column, $post_id ) {
 	// Since SOME characters have multiple shows, we force this to be an array
 	if ( !is_array( get_post_meta( $post_id, 'lezchars_show', true ) ) ) {
 		$character_show_IDs = array( get_post_meta( $post_id, 'lezchars_show', true ) );
@@ -386,8 +386,8 @@ function custom_post_type_characters_column( $column, $post_id ) {
 }
 
 // Make columns sortable
-add_filter( 'manage_edit-post_type_characters_sortable_columns', 'sortable_post_type_characters_column' );
-function sortable_post_type_characters_column( $columns ) {
+add_filter( 'manage_edit-post_type_characters_sortable_columns', 'lez_characters_sortable_columns' );
+function lez_characters_sortable_columns( $columns ) {
 	unset( $columns['cpt-shows'] ); 			 	// Don't allow sort by shows
 	$columns['postmeta-roletype']		= 'role';	// Allow sort by role
 	$columns['taxonomy-lez_gender']		= 'gender';	// Allow sort by gender identity
@@ -396,8 +396,8 @@ function sortable_post_type_characters_column( $columns ) {
 }
 
 // Create Role Sortability
-add_action( 'pre_get_posts', 'post_type_characters_role_orderby' );
-function post_type_characters_role_orderby( $query ) {
+add_action( 'pre_get_posts', 'lez_characters_role_orderby' );
+function lez_characters_role_orderby( $query ) {
 	if( ! is_admin() ) return;
 
 	if ( $query->is_main_query() && ( $orderby = $query->get( 'orderby' ) ) ) {
@@ -411,7 +411,7 @@ function post_type_characters_role_orderby( $query ) {
 }
 
 // Create Gender Sortability
-function lez_gender_clauses( $clauses, $wp_query ) {
+function lez_characters_gender_clauses( $clauses, $wp_query ) {
 	global $wpdb;
 
 	if ( isset( $wp_query->query['orderby'] ) && 'gender' == $wp_query->query['orderby'] ) {
@@ -430,10 +430,10 @@ SQL;
 
 	return $clauses;
 }
-add_filter( 'posts_clauses', 'lez_gender_clauses', 10, 2 );
+add_filter( 'posts_clauses', 'lez_characters_gender_clauses', 10, 2 );
 
 // Create Sexuality Sortability
-function lez_sexuality_clauses( $clauses, $wp_query ) {
+function lez_characters_sexuality_clauses( $clauses, $wp_query ) {
 	global $wpdb;
 
 	if ( isset( $wp_query->query['orderby'] ) && 'sex' == $wp_query->query['orderby'] ) {
@@ -452,11 +452,11 @@ SQL;
 
 	return $clauses;
 }
-add_filter( 'posts_clauses', 'lez_sexuality_clauses', 10, 2 );
+add_filter( 'posts_clauses', 'lez_characters_sexuality_clauses', 10, 2 );
 
 // Add quick Edit boxes
-add_action('quick_edit_custom_box',  'lezchars_quick_edit_add', 10, 2);
-function lezchars_quick_edit_add($column_name, $post_type) {
+add_action('quick_edit_custom_box',  'lez_characters_quick_edit_add', 10, 2);
+function lez_characters_quick_edit_add($column_name, $post_type) {
 	global $lez_character_roles;
 
 	switch ( $column_name ) {
@@ -527,8 +527,8 @@ function lezchars_quick_edit_add($column_name, $post_type) {
 }
 
 // Allow quick edit boxes to save on editing
-add_action('save_post', 'lezchars_quick_edit_save');
-function lezchars_quick_edit_save($post_id) {
+add_action('save_post', 'lez_characters_quick_edit_save');
+function lez_characters_quick_edit_save($post_id) {
 	global $lez_character_roles;
 
 	// Criteria for not saving: Auto-saves, not post_type_characters, can't edit
@@ -565,8 +565,8 @@ function lezchars_quick_edit_save($post_id) {
 }
 
 // Javascript to change 'defaults'
-add_action('admin_footer', 'lezchars_quick_edit_js');
-function lezchars_quick_edit_js() {
+add_action('admin_footer', 'lez_characters_quick_edit_js');
+function lez_characters_quick_edit_js() {
 	global $current_screen;
 	if ( ($current_screen->id !== 'edit-post_type_characters') || ($current_screen->post_type !== 'post_type_characters') ) return;
 	?>
@@ -612,9 +612,9 @@ function lezchars_quick_edit_js() {
 }
 
 // Calls the JS in the previous function
-add_filter('post_row_actions', 'lezchars_quick_edit_link', 10, 2);
+add_filter('post_row_actions', 'lez_characters_quick_edit_link', 10, 2);
 
-function lezchars_quick_edit_link($actions, $post) {
+function lez_characters_quick_edit_link($actions, $post) {
 	global $current_screen;
 	if (($current_screen->id != 'edit-post_type_characters') || ($current_screen->post_type != 'post_type_characters')) return $actions;
 

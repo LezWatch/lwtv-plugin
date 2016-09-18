@@ -393,8 +393,9 @@ function set_featured_image_text_post_type_shows( $content ) {
 // Add Custom Column Headers
 add_filter( 'manage_post_type_shows_posts_columns', 'set_custom_edit_post_type_shows_columns' );
 function set_custom_edit_post_type_shows_columns($columns) {
-	$columns['shows-airdate']	= 'Airdates';
-	$columns['shows-worthit']	= 'Worth It?';
+	$columns['shows-airdate']		= 'Airdates';
+	$columns['shows-worthit']		= 'Worth It?';
+	$columns['shows-queercount']	= '#';
 	return $columns;
 }
 
@@ -416,5 +417,145 @@ function custom_post_type_shows_column( $column, $post_id ) {
 		case 'shows-worthit':
 			echo ucfirst(get_post_meta( $post_id, 'lezshows_worthit_rating', true ));
 			break;
+		case 'shows-queercount':
+			echo get_post_meta( $post_id, 'lezshows_char_count', true );
+			break;
 	}
+}
+
+// Make columns sortable
+add_filter( 'manage_edit-post_type_shows_sortable_columns', 'lez_shows_sortable_columns' );
+function lez_shows_sortable_columns( $columns ) {
+	unset( $columns['cpt-airdate'] ); 			// Don't allow sort by airdates
+	$columns['shows-worthit']		= 'worth';	// Allow sort by worth
+	$columns['shows-queercount']	= 'queers';	// Allow sort by queers
+    return $columns;
+}
+
+// Create Worth Sortability
+add_action( 'pre_get_posts', 'lez_shows_worth_orderby' );
+function lez_shows_worth_orderby( $query ) {
+	if( ! is_admin() ) return;
+
+	if ( $query->is_main_query() && ( $orderby = $query->get( 'orderby' ) ) ) {
+    	switch( $orderby ) {
+			case 'worth':
+				$query->set( 'meta_key', 'lezshows_worthit_rating' );
+				$query->set( 'orderby', 'meta_value' );
+				break;
+			case 'queers':
+				$query->set( 'meta_key', 'lezshows_char_count' );
+				$query->set( 'orderby', 'meta_value_num' );
+		}
+	}
+}
+
+/*
+ * Save post meta for shows on SHOW update
+ *
+ * This will update the metakey 'lezshows_char_count' on save
+ *
+ * @param int $post_id The post ID.
+ * @param post $post The post object.
+ * @param bool $update Whether this is an existing post being updated or not.
+ */
+add_action( 'save_post_post_type_shows', 'lez_shows_update_char_count', 10, 3 );
+function lez_shows_update_char_count( $post_id ) {
+
+	// unhook this function so it doesn't loop infinitely
+	remove_action( 'save_post_post_type_shows', 'lez_shows_update_char_count' );
+
+	$meta_value = lez_count_queers($post_id);
+	update_post_meta( $post_id, 'lezshows_char_count', $meta_value );
+
+	// re-hook this function
+	add_action( 'save_post_post_type_shows', 'lez_shows_update_char_count' );
+}
+
+/*
+ * Save post meta for shows on CHARACTER update
+ *
+ * This will update the metakey 'lezshows_char_count' on save
+ *
+ * @param int $post_id The post ID.
+ * @param post $post The post object.
+ * @param bool $update Whether this is an existing post being updated or not.
+ */
+
+add_action( 'save_post_post_type_characters', 'lez_characters_update_char_count', 10, 3 );
+function lez_characters_update_char_count( $post_id ) {
+
+	if ( !is_array (get_post_meta( $post_id, 'lezchars_show', true)) ) {
+		$shows_array = array( get_post_meta( $post_id, 'lezchars_show', true) );
+	} else {
+		$shows_array = get_post_meta( $post_id, 'lezchars_show', true);
+	}
+
+	// unhook the shows function so it doesn't loop infinitely
+	remove_action( 'save_post_post_type_shows', 'lez_shows_update_char_count' );
+
+	foreach ( $shows_array as $show_id ) {
+		$meta_value = lez_count_queers($show_id);
+		update_post_meta( $show_id, 'lezshows_char_count', $meta_value );
+	}
+
+	// re-hook the shows function
+	add_action( 'save_post_post_type_shows', 'lez_shows_update_char_count' );
+
+}
+
+/*
+ * Count Queers
+ *
+ * This will update the metakey 'lezshows_char_count' on save
+ *
+ * @param int $post_id The post ID.
+ */
+function lez_count_queers( $post_id ) {
+
+	// If this isn't a show post, return nothing.
+	if ( get_post_type( $post_id ) !== 'post_type_shows' )
+		return;
+
+	// Loop to get the list of characters
+	$charactersloop = new WP_Query(
+		array(
+			'post_type'       => 'post_type_characters',
+			'orderby'         => 'title',
+			'order'           => 'ASC',
+			'posts_per_page'  => '-1',
+			'meta_query'      => array(
+				array(
+					'key'     => 'lezchars_show',
+					'value'   => $post_id,
+					'compare' => 'LIKE',
+				),
+			),
+		)
+	);
+
+	$queercount  = 0;
+
+	// Store as array to defeat some stupid with counting and prevent querying the database too many times
+	if ($charactersloop->have_posts() ) {
+		while ( $charactersloop->have_posts() ) {
+
+			$charactersloop->the_post();
+			$char_id = get_the_ID();
+
+			if ( !is_array (get_post_meta( $char_id, 'lezchars_show', true)) ) {
+				$shows_array = array( get_post_meta( $char_id, 'lezchars_show', true) );
+			} else {
+				$shows_array = get_post_meta( $char_id, 'lezchars_show', true);
+			}
+
+			if ( in_array( $post_id, $shows_array  ) ) {
+				$queercount++;
+			}
+		}
+		wp_reset_query();
+	}
+
+	// Return Queers!
+	return $queercount;
 }
