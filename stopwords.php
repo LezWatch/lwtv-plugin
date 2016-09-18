@@ -135,6 +135,6 @@ if (empty($typenow)) {
     }
 }
 
-if ( $typenow !== ( 'post_type_shows' || 'post_type_characters' ) ) {
+if ( $typenow !== ( 'post_type_shows' || 'post_type_characters' ) && ( 'all' !== $_POST['post_status'] ) ) {
 	new Stopwords_Admin;
 }
