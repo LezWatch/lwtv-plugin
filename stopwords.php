@@ -114,7 +114,7 @@ class Stopwords_Admin {
 
 global $typenow;
 
-if ( 'all' !== $_POST['post_status'] ) ) {
+if ( 'all' !== $_POST['post_status'] ) {
 
 	// when editing pages, $typenow isn't set until later!
 	if (empty($typenow)) {
