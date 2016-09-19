@@ -478,10 +478,8 @@ function lez_shows_update_char_count( $post_id ) {
  * This will update the metakey 'lezshows_char_count' on save
  *
  * @param int $post_id The post ID.
- * @param post $post The post object.
- * @param bool $update Whether this is an existing post being updated or not.
  */
-
+add_action( 'lez_shows_do_update_char_count', 'lez_shows_update_char_count', 10, 2 );
 add_action( 'save_post_post_type_characters', 'lez_characters_update_char_count', 10, 3 );
 function lez_characters_update_char_count( $post_id ) {
 
@@ -491,16 +489,9 @@ function lez_characters_update_char_count( $post_id ) {
 		$shows_array = get_post_meta( $post_id, 'lezchars_show', true);
 	}
 
-	// unhook the shows function so it doesn't loop infinitely
-	remove_action( 'save_post_post_type_shows', 'lez_shows_update_char_count' );
-
 	foreach ( $shows_array as $show_id ) {
-		$meta_value = lez_count_queers($show_id);
-		update_post_meta( $show_id, 'lezshows_char_count', $meta_value );
+		do_action( 'lez_shows_do_update_char_count' , $show_id );
 	}
-
-	// re-hook the shows function
-	add_action( 'save_post_post_type_shows', 'lez_shows_update_char_count' );
 
 }
 
