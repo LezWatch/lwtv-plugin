@@ -13,6 +13,11 @@ function lez_check_plugins() {
 	if ( is_plugin_active( 'wp-help/wp-help.php' ) ) {
 		require_once( 'plugins/wp-help.php' );
 	}
+
+	// If Yoast SEO is active, call customizations
+	if (is_plugin_active( 'wordpress-seo/wp-seo.php' ) ) {
+		require_once( 'plugins/yoast-seo.php' );
+	}
 }
 add_action( 'admin_init', 'lez_check_plugins' );
 
