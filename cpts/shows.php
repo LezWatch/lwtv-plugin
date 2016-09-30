@@ -379,7 +379,7 @@ add_filter( 'admin_post_thumbnail_html', 'set_featured_image_text_post_type_show
 function set_featured_image_text_post_type_shows( $content ) {
     global $current_screen;
 
-    if( 'post_type_shows' == $current_screen->post_type )
+    if( !is_null($current_screen) && 'post_type_shows' == $current_screen->post_type )
         return $content = str_replace( __( 'Set featured image' ), __( 'Upload Show Image' ), $content);
     else
         return $content;

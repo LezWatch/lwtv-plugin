@@ -8,9 +8,8 @@ Version: 2.0
 */
 
 // Unless we're on a post or a post editing related page, shut up
-
 global $pagenow;
-if ( $pagenow !== ( 'post-new.php' || 'edit.php' || 'post.php' ) ) {
+if ( $pagenow == 'admin.php' ) {
 	return;
 }
 
@@ -18,7 +17,7 @@ if ( $pagenow !== ( 'post-new.php' || 'edit.php' || 'post.php' ) ) {
 global $typenow;
 
 // when editing pages, $typenow isn't set until later!
-if (empty($typenow)) {
+if ( empty($typenow) ) {
     // try to pick it up from the query string
     if (!empty($_GET['post'])) {
         $post = get_post($_GET['post']);
@@ -38,9 +37,14 @@ if (empty($typenow)) {
     }
 }
 
-if ( $typenow !== ( 'post_type_shows' || 'post_type_characters' ) ) {
-	return;
-} else {
+if ( $typenow == 'nopostfound' ) return;
+
+if ( $typenow == 'post_type_shows' ) {
+	add_filter( 'wpseo_stopwords', '__return_empty_array' );
+	remove_action( 'get_sample_permalink', 'wpseo_remove_stopwords_sample_permalink', 10 );
+}
+
+if ( $typenow == 'post_type_characters' ) {
 	add_filter( 'wpseo_stopwords', '__return_empty_array' );
 	remove_action( 'get_sample_permalink', 'wpseo_remove_stopwords_sample_permalink', 10 );
 }
