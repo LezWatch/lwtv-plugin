@@ -338,7 +338,7 @@ add_filter( 'admin_post_thumbnail_html', 'lez_characters_set_featured_image_text
 function lez_characters_set_featured_image_text( $content ) {
 	global $current_screen;
 
-	if( 'post_type_characters' == $current_screen->post_type ) {
+	if( !is_null($current_screen) && 'post_type_characters' == $current_screen->post_type ) {
 		return $content = str_replace( __( 'Set featured image' ), __( 'Upload Character Photo' ), $content);
 	} else {
 		return $content;
