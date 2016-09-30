@@ -568,7 +568,7 @@ function lez_characters_quick_edit_save($post_id) {
 add_action('admin_footer', 'lez_characters_quick_edit_js');
 function lez_characters_quick_edit_js() {
 	global $current_screen;
-	if ( ($current_screen->id !== 'edit-post_type_characters') || ($current_screen->post_type !== 'post_type_characters') || is_null($current_screen) ) return;
+	if ( is_null($current_screen) || ($current_screen->id !== 'edit-post_type_characters') || ($current_screen->post_type !== 'post_type_characters') ) return;
 	?>
 	<script type="text/javascript">
 	<!--
