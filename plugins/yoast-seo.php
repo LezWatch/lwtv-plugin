@@ -9,7 +9,9 @@ Version: 2.0
 
 // Unless we're on a post or a post editing related page, shut up
 global $pagenow;
-if ( $pagenow == 'admin.php' ) {
+
+$pagenow_array = array( 'post.php', 'edit.php', 'post-new.php' );
+if ( !in_array( $pagenow , $pagenow_array ) ) {
 	return;
 }
 
@@ -37,14 +39,10 @@ if ( empty($typenow) ) {
     }
 }
 
-if ( $typenow == 'nopostfound' ) return;
-
-if ( $typenow == 'post_type_shows' ) {
-	add_filter( 'wpseo_stopwords', '__return_empty_array' );
-	remove_action( 'get_sample_permalink', 'wpseo_remove_stopwords_sample_permalink', 10 );
+$typenow_array = array( 'post_type_shows', 'post_type_characters' );
+if ( !in_array( $typenow , $typenow_array ) ) {
+	return;
 }
 
-if ( $typenow == 'post_type_characters' ) {
-	add_filter( 'wpseo_stopwords', '__return_empty_array' );
-	remove_action( 'get_sample_permalink', 'wpseo_remove_stopwords_sample_permalink', 10 );
-}
+add_filter( 'wpseo_stopwords', '__return_empty_array' );
+remove_action( 'get_sample_permalink', 'wpseo_remove_stopwords_sample_permalink', 10 );
