@@ -235,7 +235,7 @@ function cmb_post_type_shows_metaboxes() {
 	$cmb_ratings->add_field( array(
 	    'name'    => 'Realness Rating',
 	    'id'      => $prefix . 'realness_rating',
-	    'desc'    => 'How realistic are the lesbians?',
+	    'desc'    => 'How realistic are the queers?',
 	    'type'    => 'radio_inline',
 	    'options' => array(
 	        '1' => '1',
@@ -277,7 +277,7 @@ function cmb_post_type_shows_metaboxes() {
 	$cmb_ratings->add_field( array(
 	    'name'    => 'Screentime Rating',
 	    'id'      => $prefix . 'screentime_rating',
-	    'desc'    => 'How much air-time do the lesbians get?',
+	    'desc'    => 'How much air-time do the queers get?',
 	    'type'    => 'radio_inline',
 	    'options' => array(
 	        '1' => '1',
@@ -307,7 +307,7 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 	$cmb_notes->add_field( array(
 	    'name'				=> 'Show Stars',
-	    'desc' 				=> 'Gold is by/for lesbians, No Stars is normal TV',
+	    'desc' 				=> 'Gold is by/for queers, No Stars is normal TV',
 	    'id'    			=> $prefix . 'stars',
 	    'type'				=> 'select',
 	    'show_option_none'	=> 'No Stars',
