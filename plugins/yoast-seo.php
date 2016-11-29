@@ -83,9 +83,16 @@ function lez_retrieve_shows_replacement( ) {
 	return implode(", ", $shows_titles);
 }
 
+// Alternate Keyword
+function lez_retrieve_alt_keyword_replacement() {
+	$keyword = get_post_meta( get_the_ID(), 'lez_termsmeta_alt_keyword', true);
+	return $keyword;
+}
+
 // The actual replacement function
 function lez_register_yoast_extra_replacements() {
 	wpseo_register_var_replacement( '%%actors%%', 'lez_retrieve_actors_replacement', 'basic', 'A list of actors who played the character, separated by commas.' );
 	wpseo_register_var_replacement( '%%shows%%', 'lez_retrieve_shows_replacement', 'basic', 'A list of shows the character was on, separated by commas.' );
+	wpseo_register_var_replacement( '%%lez_term_keyword%%', 'lez_retrieve_alt_keyword_replacement', 'basic', 'An alternate keyword phrase.' );
 }
 add_action( 'wpseo_register_extra_replacements', 'lez_register_yoast_extra_replacements' );

@@ -81,8 +81,8 @@ function lez_register_taxonomy_metabox() {
 	) );
 
 	$cmb_term->add_field( array(
-	    'name'    => 'Alternate Keyword',
-	    'desc'    => 'An alternate keyword (for use with Yoast SEO)',
+	    'name'    => 'Alternate Phrase',
+	    'desc'    => 'An alternate \'keyword\' phrase (for use with Yoast SEO)',
 	    'id'      => $prefix . 'alt_keyword',
 	    'type'    => 'text_medium'
 	) );
