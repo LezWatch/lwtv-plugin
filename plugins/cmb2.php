@@ -84,7 +84,7 @@ function lez_register_taxonomy_metabox() {
 	    'name'    => 'Alternate Keyword',
 	    'desc'    => 'An alternate keyword (for use with Yoast SEO)',
 	    'id'      => $prefix . 'alt_keyword',
-	    'type'    => 'text_small'
+	    'type'    => 'text_medium'
 	) );
 
 	// Only load the icons IF the icon folder is there. This will prevent weird theme switching errors
