@@ -57,7 +57,7 @@ function cmb2_lez_scripts( $hook ) {
  */
 
 $icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality' );
-$symbolicon_path = get_stylesheet_directory().'/images/symbolicons/';
+$symbolicon_path = get_stylesheet_directory().'/images/symbolicons/svg/';
 
 // Add CMB2 Metabox
 add_action( 'cmb2_admin_init', 'lez_register_taxonomy_metabox' );
@@ -78,13 +78,6 @@ function lez_register_taxonomy_metabox() {
 		'object_types'		=> array( 'term' ),
 		'taxonomies'		=> $icon_taxonomies,
 		'new_term_section'	=> true,
-	) );
-
-	$cmb_term->add_field( array(
-	    'name'    => 'Alternate Phrase',
-	    'desc'    => 'An alternate \'keyword\' phrase (for use with Yoast SEO)',
-	    'id'      => $prefix . 'alt_keyword',
-	    'type'    => 'text_medium'
 	) );
 
 	// Only load the icons IF the icon folder is there. This will prevent weird theme switching errors

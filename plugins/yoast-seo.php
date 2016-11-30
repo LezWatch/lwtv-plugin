@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Yoast SEO Customizations
-Description: Some tweaks I have for Yoast SEO
+Description: Some tweaks I have for Yoast SEO - Admin Only
 Version: 2.1
 */
 
@@ -50,4 +50,3 @@ function lez_kill_yoast_stopwords() {
 	add_filter( 'wpseo_stopwords', '__return_empty_array' );
 	remove_action( 'get_sample_permalink', 'wpseo_remove_stopwords_sample_permalink', 10 );
 }
-
