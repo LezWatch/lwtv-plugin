@@ -21,13 +21,14 @@ function lez_opengraph_image( ) {
 	}
 
 	$term_id = get_queried_object_id();
-
 	$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
 	$iconpath = get_stylesheet_directory().'/images/symbolicons/png/'.$icon.'.png';
 	if ( empty($icon) || !file_exists( $iconpath ) ) {
 		$icon = 'square';
 	}
 
-	echo '<meta property="og:image" content="'.get_stylesheet_directory_uri().'/images/symbolicons/png/'.$icon.'.png" />';
+	$image = get_stylesheet_directory_uri().'/images/symbolicons/png/'.$icon.'.png';
+
+	echo '<meta property="og:image" content="'.$image.'" />\n<meta name="twitter:image" content="'.$image.'" />\n';
 
 }
