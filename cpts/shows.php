@@ -539,3 +539,12 @@ function lez_count_queers( $post_id ) {
 	// Return Queers!
 	return $queercount;
 }
+
+/*
+ * AMP
+ */
+
+add_action( 'amp_init', 'lez_amp_add_shows_cpt' );
+function lez_amp_add_shows_cpt() {
+    add_post_type_support( 'post_type_shows', AMP_QUERY_VAR );
+}
