@@ -26,3 +26,32 @@ function add_lez_googleanalytics() {
 
 	<?php
 }
+
+// Google Analytics
+add_filter( 'amp_post_template_analytics', 'add_amp_lez_googleanalytics' );
+function add_amp_lez_googleanalytics( $analytics ) {
+    if ( ! is_array( $analytics ) ) {
+        $analytics = array();
+    }
+
+    // https://developers.google.com/analytics/devguides/collection/amp-analytics/
+    $analytics['helf-googleanalytics'] = array(
+        'type' => 'googleanalytics',
+        'attributes' => array(
+            // 'data-credentials' => 'include',
+        ),
+        'config_data' => array(
+            'vars' => array(
+                'account' => "UA-3187964-11"
+            ),
+            'triggers' => array(
+                'trackPageview' => array(
+                    'on' => 'visible',
+                    'request' => 'pageview',
+                ),
+            ),
+        ),
+    );
+
+    return $analytics;
+}

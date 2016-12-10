@@ -658,3 +658,12 @@ function lez_chars_register_yoast_extra_replacements() {
 	wpseo_register_var_replacement( '%%shows%%', 'lez_retrieve_shows_replacement', 'basic', 'A list of shows the character was on, separated by commas.' );
 }
 add_action( 'wpseo_register_extra_replacements', 'lez_chars_register_yoast_extra_replacements' );
+
+/*
+ * AMP
+ */
+
+add_action( 'amp_init', 'lez_amp_add_chars_cpt' );
+function lez_amp_add_chars_cpt() {
+    add_post_type_support( 'lez_characters_post_type', AMP_QUERY_VAR );
+}
