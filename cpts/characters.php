@@ -665,5 +665,5 @@ add_action( 'wpseo_register_extra_replacements', 'lez_chars_register_yoast_extra
 
 add_action( 'amp_init', 'lez_amp_add_chars_cpt' );
 function lez_amp_add_chars_cpt() {
-    add_post_type_support( 'lez_characters_post_type', AMP_QUERY_VAR );
+    add_post_type_support( 'post_type_characters', AMP_QUERY_VAR );
 }
