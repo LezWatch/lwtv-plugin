@@ -29,6 +29,5 @@ function lez_opengraph_image( ) {
 
 	$image = get_stylesheet_directory_uri().'/images/symbolicons/png/'.$icon.'.png';
 
-	echo '<meta property="og:image" content="'.$image.'" />\n<meta name="twitter:image" content="'.$image.'" />\n';
-
+	echo '<meta property="og:image" content="'.$image.'" /><meta name="twitter:image" content="'.$image.'" />';
 }
