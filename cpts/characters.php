@@ -232,6 +232,12 @@ function lez_post_type_characters_metaboxes() {
 		'id'				=> $prefix . 'actor',
 		'type'				=> 'text',
 		'repeatable'		=> 'true',
+	    'attributes'		=> array(
+	        'autocomplete'		=> 'off',
+	        'autocorrect'		=> 'off',
+	        'autocapitalize'	=> 'off',
+	        'spellcheck'		=> 'false',
+	    ),
 	) );
 	// Field: Character Type
 	$cmb_characters->add_field( array(
