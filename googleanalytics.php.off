@@ -9,7 +9,7 @@ Author: Mika Epstein
 
 // Google Analytics
 
-//add_action('wp_footer', 'add_lez_googleanalytics');
+add_action('wp_footer', 'add_lez_googleanalytics');
 function add_lez_googleanalytics() {
 	?>
 
