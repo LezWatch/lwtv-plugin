@@ -64,7 +64,47 @@ function lezwatch_search_distinct( $where ) {
  */
 
 if ( ! is_admin() ) {
-	add_filter('posts_join', 'lezwatch_search_join' );
+	add_filter( 'posts_join', 'lezwatch_search_join' );
 	add_filter( 'posts_where', 'lezwatch_search_where' );
 	add_filter( 'posts_distinct', 'lezwatch_search_distinct' );
 }
+
+/**
+ * Pretty Permalinks for Search
+ *
+ * Forked from http://wordpress.org/extend/plugins/nice-search/
+ */
+function pretty_permalink_search_redirect() {
+	// grab rewrite globals (tag prefixes, etc)
+	// https://codex.wordpress.org/Class_Reference/WP_Rewrite
+	global $wp_rewrite;
+
+	// if we can't get rewrites or permalinks, we're probably not using pretty permalinks
+	if ( !isset( $wp_rewrite ) || !is_object( $wp_rewrite ) || !$wp_rewrite->using_permalinks() )
+		return;
+
+	// Set Search Base - default is 'search'
+	$search_base = $wp_rewrite->search_base;
+
+	if ( is_search() && !is_admin() && strpos( $_SERVER['REQUEST_URI'], "/{$search_base}/" ) === false ) {
+
+		// Get Post Types
+		$query_post_types = get_query_var('post_type');
+		if ( is_null($query_post_types) || empty($query_post_types) || !array($query_post_types) ) {
+			$query_post_types = array( 'post_type_characters', 'post_type_shows' );
+		}
+
+		$query_post_type_url = '/?';
+		foreach ( $query_post_types as $value ) {
+			$query_post_type_url .= '&post_type[]=' . $value ;
+		}
+
+		wp_redirect(
+			home_url( "/{$search_base}/"
+			. urlencode( get_query_var( 's' ) )
+			. urldecode( $query_post_type_url )
+			) );
+		exit();
+	}
+}
+add_action( 'template_redirect', 'pretty_permalink_search_redirect' );
