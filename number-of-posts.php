@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Number of Posts
-Description: Display Number of Posts
+Description: Display Number of Posts via shortcodes
 Version: 1.0
 Author: Mika Epstein
 */
