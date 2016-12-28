@@ -21,9 +21,6 @@ function lez_check_admin_plugins() {
 }
 add_action( 'admin_init', 'lez_check_admin_plugins' );
 
-// Front end SEO extras
-require_once( 'seo.php' );
-
 // Call CMB2 - it doesn't error if it's not there
 require_once( 'plugins/cmb2.php' );
 

@@ -1,17 +1,21 @@
 <?php
 /*
-Plugin Name: Search Post Meta
-Plugin URI: https://adambalee.com/search-wordpress-by-custom-fields-without-a-plugin/
-Description: Extend WordPress search to include custom fields
-Version: 1.0
+Plugin Name: Search Extras
+Description: Extra search functions
+Version: 2.0
 Author: Mika Epstein
 */
 
 /**
- * Join posts and postmeta tables
+ * Search WordPress by Custom Fields
  *
- * http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_join
+ * https://adambalee.com/search-wordpress-by-custom-fields-without-a-plugin/
+ * Extend WordPress search to include custom fields
+ *
+ * @since 1.0
  */
+
+// Join posts and postmeta tables - http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_join
 function lezwatch_search_join( $join ) {
     global $wpdb;
 
@@ -22,32 +26,20 @@ function lezwatch_search_join( $join ) {
     return $join;
 }
 
-/**
- * Modify the search query with posts_where
- *
- * http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_where
- */
+//Modify the search query with posts_where - http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_where
 function lezwatch_search_where( $where ) {
     global $pagenow, $wpdb;
 
     if ( is_search() ) {
-
 		$keys = "'lezchars_actor', 'lezshows_worthit_details', 'lezshows_plots', 'lezshows_episodes', 'lezshows_realness_details', 'lezshows_quality_details', 'lezshows_screentime_details'";
-
 		$where = preg_replace(
             "/\(\s*".$wpdb->posts.".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
             "(".$wpdb->posts.".post_title LIKE $1) OR ( (".$wpdb->postmeta.".meta_key IN ( ".$keys." ) ) AND (".$wpdb->postmeta.".meta_value LIKE $1)  )", $where );
-
     }
-
     return $where;
 }
 
-/**
- * Prevent duplicates
- *
- * http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_distinct
- */
+// Prevent duplicates - http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_distinct
 function lezwatch_search_distinct( $where ) {
     global $wpdb;
 
@@ -58,11 +50,7 @@ function lezwatch_search_distinct( $where ) {
     return $where;
 }
 
-/**
- * Only run if we're NOT in the admin screen!
- *
- */
-
+// Only run if we're NOT in the admin screen!
 if ( ! is_admin() ) {
 	add_filter( 'posts_join', 'lezwatch_search_join' );
 	add_filter( 'posts_where', 'lezwatch_search_where' );
@@ -73,6 +61,8 @@ if ( ! is_admin() ) {
  * Pretty Permalinks for Search
  *
  * Forked from http://wordpress.org/extend/plugins/nice-search/
+ *
+ * @since 2.0
  */
 function pretty_permalink_search_redirect() {
 	// grab rewrite globals (tag prefixes, etc)
