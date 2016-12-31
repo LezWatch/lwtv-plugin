@@ -15,7 +15,7 @@ add_action( 'admin_enqueue_scripts', 'shows_lez_scripts', 10 );
 function shows_lez_scripts( $hook ) {
 	global $current_screen;
 	wp_register_style( 'shows-styles', plugins_url('shows.css', __FILE__ ) );
-	if( 'post_type_shows' == $current_screen->post_type || 'lez_tags' == $current_screen->taxonomy || 'lez_tropes' == $current_screen->taxonomy ) {
+	if( 'post_type_shows' == $current_screen->post_type || 'lez_stations' == $current_screen->taxonomy || 'lez_tropes' == $current_screen->taxonomy ) {
 		wp_enqueue_style( 'shows-styles' );
 	}
 }
@@ -77,23 +77,23 @@ function create_post_type_shows_taxonomies() {
 	// TV STATIONS
 	$names_tvstations = array(
 		'name'                       => _x( 'TV Station(s)', 'lezwatchtv' ),
-		'singular_name'              => _x( 'TV Station', 'taxonomy singular name' ),
-		'search_items'               => __( 'Search Stations' ),
-		'popular_items'              => __( 'Popular Stations' ),
-		'all_items'                  => __( 'All Stations' ),
+		'singular_name'              => _x( 'TV Station', 'lezwatchtv' ),
+		'search_items'               => __( 'Search Stations', 'lezwatchtv' ),
+		'popular_items'              => __( 'Popular Stations', 'lezwatchtv' ),
+		'all_items'                  => __( 'All Stations', 'lezwatchtv' ),
 		'parent_item'                => null,
 		'parent_item_colon'          => null,
-		'edit_item'                  => __( 'Edit Station' ),
-		'update_item'                => __( 'Update Station' ),
-		'add_new_item'               => __( 'Add New Station' ),
-		'new_item_name'              => __( 'New Station Name' ),
-		'separate_items_with_commas' => __( 'Separate Stations with commas' ),
-		'add_or_remove_items'        => __( 'Add or remove Stations' ),
-		'choose_from_most_used'      => __( 'Choose from the most used Stations' ),
-		'not_found'                  => __( 'No Stations found.' ),
-		'menu_name'                  => __( 'TV Stations' ),
+		'edit_item'                  => __( 'Edit Station', 'lezwatchtv' ),
+		'update_item'                => __( 'Update Station', 'lezwatchtv' ),
+		'add_new_item'               => __( 'Add New Station', 'lezwatchtv' ),
+		'new_item_name'              => __( 'New Station Name', 'lezwatchtv' ),
+		'separate_items_with_commas' => __( 'Separate Stations with commas', 'lezwatchtv' ),
+		'add_or_remove_items'        => __( 'Add or remove Stations', 'lezwatchtv' ),
+		'choose_from_most_used'      => __( 'Choose from the most used Stations', 'lezwatchtv' ),
+		'not_found'                  => __( 'No Stations found.', 'lezwatchtv' ),
+		'menu_name'                  => __( 'TV Stations', 'lezwatchtv' ),
 	);
-	//paramters for the new taxonomy
+	//parameters for the new taxonomy
 	$args_tvstations = array(
 		'hierarchical'          => false,
 		'labels'                => $names_tvstations,
@@ -104,7 +104,7 @@ function create_post_type_shows_taxonomies() {
 		'rewrite'               => array( 'slug' => 'stations' ),
 	);
 
-	register_taxonomy( 'lez_tags', 'post_type_shows', $args_tvstations );
+	register_taxonomy( 'lez_stations', 'post_type_shows', $args_tvstations );
 
 	// SHOW TROPES
     $names_tropes = array(
@@ -152,7 +152,7 @@ function cmb_post_type_shows_metaboxes() {
 	// Must See Metabox - this should be required
 	$cmb_mustsee = new_cmb2_box( array(
 		'id'			=> 'mustsee_metabox',
-		'title'			=> 'Required Details',
+		'title'			=> __( 'Required Details', 'lezwatchtv' ),
 		'object_types'	=> array( 'post_type_shows', ), // Post type
 		'context'		=> 'normal',
 		'priority'		=> 'high',
@@ -160,7 +160,7 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_mustsee->add_field( array(
-	    'name'     => 'Trope Plots',
+	    'name'     => __( 'Trope Plots', 'lezwatchtv' ),
 	    'id'       => $prefix . 'tropes',
 		'taxonomy' => 'lez_tropes', //Enter Taxonomy Slug
 		'type'     => 'taxonomy_multicheck',
@@ -168,7 +168,7 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_mustsee->add_field( array(
-	    'name'    => 'Worth It?',
+	    'name'    => __( 'Worth It?', 'lezwatchtv' ),
 	    'id'      => $prefix . 'worthit_rating',
 	    'desc'    => 'Is the show worth watching?',
 	    'type'    => 'radio_inline',
@@ -179,7 +179,7 @@ function cmb_post_type_shows_metaboxes() {
 	    ),
 	) );
 	$cmb_mustsee->add_field( array(
-		'name'    => 'Worth It Details',
+		'name'    => __( 'Worth It Details', 'lezwatchtv' ),
 		'id'      => $prefix . 'worthit_details',
 		'type'    => 'textarea_small',
 	) );
@@ -187,7 +187,7 @@ function cmb_post_type_shows_metaboxes() {
 	// Basic Show Details
 	$cmb_showdetails = new_cmb2_box( array(
 		'id'			=> 'shows_metabox',
-		'title'			=> 'Shows Details',
+		'title'			=> __( 'Shows Details', 'lezwatchtv' ),
 		'object_types'	=> array( 'post_type_shows', ), // Post type
 		'context'		=> 'normal',
 		'priority'		=> 'high',
@@ -195,16 +195,16 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_showdetails->add_field( array(
-		'name'    => 'Queer Timeline',
-		'desc'    => 'Which seasons/episodes have the gay in it',
+		'name'    => __( 'Queer Timeline', 'lezwatchtv' ),
+		'desc'    => __( 'Which seasons/episodes have the queer in it', 'lezwatchtv' ),
 		'id'      => $prefix . 'plots',
 		'type'    => 'wysiwyg',
 		'options' => array( 'textarea_rows' => 10, ),
 	) );
 
 	$cmb_showdetails->add_field( array(
-		'name'    => 'Notable Episodes',
-		'desc'    => 'Lez-centric episodes and plotlines',
+		'name'    => __( 'Notable Episodes', 'lezwatchtv' ),
+		'desc'    => __( 'Lez-centric episodes and plotlines', 'lezwatchtv' ),
 		'id'      => $prefix . 'episodes',
 		'type'    => 'wysiwyg',
 		'options' => array(	'textarea_rows' => 10, ),
@@ -213,8 +213,8 @@ function cmb_post_type_shows_metaboxes() {
 	// Box for Ratings
 	$cmb_ratings = new_cmb2_box( array(
 		'id'            => 'ratings_metabox',
-		'title'         => 'Show Rating',
-		'desc'          => 'Ratings are subjective 1 to 5, with 1 being low and 5 being The L Word.',
+		'title'         => __( 'Show Rating', 'lezwatchtv' ),
+		'desc'          => __( 'Ratings are subjective 1 to 5, with 1 being low and 5 being The L Word.', 'lezwatchtv' ),
 		'object_types'  => array( 'post_type_shows', ), // Post type
 		'context'       => 'normal',
 		'priority'      => 'high',
@@ -222,9 +222,9 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_ratings->add_field( array(
-	    'name'    => 'Realness Rating',
+	    'name'    => __( 'Realness Rating', 'lezwatchtv' ),
 	    'id'      => $prefix . 'realness_rating',
-	    'desc'    => 'How realistic are the queers?',
+	    'desc'    => __( 'How realistic are the queers?', 'lezwatchtv' ),
 	    'type'    => 'radio_inline',
 	    'options' => array(
 	        '1' => '1',
@@ -236,16 +236,16 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_ratings->add_field( array(
-		'name'    => 'Realness Details',
+		'name'    => __( 'Realness Details', 'lezwatchtv' ),
 		'id'      => $prefix . 'realness_details',
 		'type'    => 'wysiwyg',
 		'options' => array(	'textarea_rows' => 5, ),
 	) );
 
 	$cmb_ratings->add_field( array(
-	    'name'    => 'Show Quality Rating',
+	    'name'    => __( 'Show Quality Rating', 'lezwatchtv' ),
 	    'id'      => $prefix . 'quality_rating',
-	    'desc'    => 'How good is the show for queers?',
+	    'desc'    => __( 'How good is the show for queers?', 'lezwatchtv' ),
 	    'type'    => 'radio_inline',
 	    'options' => array(
 	        '1' => '1',
@@ -257,16 +257,16 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_ratings->add_field( array(
-		'name'    => 'Show Quality Details',
+		'name'    => __( 'Show Quality Details', 'lezwatchtv' ),
 		'id'      => $prefix . 'quality_details',
 		'type'    => 'wysiwyg',
 		'options' => array(	'textarea_rows' => 5, ),
 	) );
 
 	$cmb_ratings->add_field( array(
-	    'name'    => 'Screentime Rating',
+	    'name'    => __( 'Screentime Rating', 'lezwatchtv' ),
 	    'id'      => $prefix . 'screentime_rating',
-	    'desc'    => 'How much air-time do the queers get?',
+	    'desc'    => __( 'How much air-time do the queers get?', 'lezwatchtv' ),
 	    'type'    => 'radio_inline',
 	    'options' => array(
 	        '1' => '1',
@@ -278,7 +278,7 @@ function cmb_post_type_shows_metaboxes() {
 	) );
 
 	$cmb_ratings->add_field( array(
-		'name'    => 'Screentime Details',
+		'name'    => __( 'Screentime Details', 'lezwatchtv' ),
 		'id'      => $prefix . 'screentime_details',
 		'type'    => 'wysiwyg',
 		'options' => array(	'textarea_rows' => 5, ),
@@ -287,7 +287,7 @@ function cmb_post_type_shows_metaboxes() {
 	// Metabox for the side (under shows)
 	$cmb_notes = new_cmb2_box( array(
 		'id'            	=> 'notes_metabox',
-		'title'         	=> 'Additional Data',
+		'title'         	=> __( 'Additional Data', 'lezwatchtv' ),
 		'object_types'  	=> array( 'post_type_shows', ), // Post type
 		'context'       	=> 'side',
 		'priority'      	=> 'default',
@@ -295,8 +295,8 @@ function cmb_post_type_shows_metaboxes() {
 		'cmb_styles'		=> false,
 	) );
 	$cmb_notes->add_field( array(
-	    'name'				=> 'Show Stars',
-	    'desc' 				=> 'Gold is by/for queers, No Stars is normal TV',
+	    'name'				=> __( 'Show Stars', 'lezwatchtv' ),
+	    'desc' 				=> __( 'Gold is by/for queers, No Stars is normal TV', 'lezwatchtv' ),
 	    'id'    			=> $prefix . 'stars',
 	    'type'				=> 'select',
 	    'show_option_none'	=> 'No Stars',
@@ -306,8 +306,8 @@ function cmb_post_type_shows_metaboxes() {
 	    )
 	) );
 	$cmb_notes->add_field( array(
-	    'name' 				=> 'Triggers Warning?',
-	    'desc' 				=> 'i.e. Game of Thrones, Jessica Jones, etc.',
+	    'name' 				=> __( 'Triggers Warning?', 'lezwatchtv' ),
+	    'desc' 				=> __( 'i.e. Game of Thrones, Jessica Jones, etc.', 'lezwatchtv' ),
 	    'id'   				=> $prefix . 'triggerwarning',
 	    'type'				=> 'checkbox'
 	) );
@@ -360,7 +360,7 @@ function remove_meta_boxes_from_post_type_shows() {
 add_action('do_meta_boxes', 'featured_image_title_post_type_shows');
 function featured_image_title_post_type_shows() {
     remove_meta_box( 'postimagediv', 'post_type_shows', 'side' );
-    add_meta_box('postimagediv', __('Show Image'), 'post_thumbnail_meta_box', 'post_type_shows', 'side');
+    add_meta_box('postimagediv', __( 'Show Image/Title Card', 'lezwatchtv' ), 'post_thumbnail_meta_box', 'post_type_shows', 'side');
 }
 
 // change the default "Set Featured Image" text
@@ -369,7 +369,7 @@ function set_featured_image_text_post_type_shows( $content ) {
     global $current_screen;
 
     if( !is_null($current_screen) && 'post_type_shows' == $current_screen->post_type )
-        return $content = str_replace( __( 'Set featured image' ), __( 'Upload Show Image' ), $content);
+        return $content = str_replace( __( 'Set featured image' ), __( 'Set show image', 'lezwatchtv' ), $content);
     else
         return $content;
 }
