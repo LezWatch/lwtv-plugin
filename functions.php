@@ -8,6 +8,7 @@ Version: 1.0
 Author: Mika Epstein
 */
 
+// Functions to run if certain plugins are active
 function lez_check_admin_plugins() {
 	// If WP Help is active, call customizations
 	if ( is_plugin_active( 'wp-help/wp-help.php' ) ) {
@@ -28,7 +29,7 @@ require_once( 'plugins/cmb2.php' );
 include( 'cpts/characters.php' );
 include( 'cpts/shows.php' );
 
-// Customize Featyred images for CPTs
+// Customize Featured images for CPTs
 add_action( 'admin_init', 'lez_featured_images' );
 function lez_featured_images() {
 	$post_type_args = array(
