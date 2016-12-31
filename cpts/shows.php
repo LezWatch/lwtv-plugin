@@ -356,24 +356,6 @@ function remove_meta_boxes_from_post_type_shows() {
 	add_action( 'admin_menu' , 'the_meta_boxes_to_remove' );
 }
 
-// change the default "Featured Image" metabox Title
-add_action('do_meta_boxes', 'featured_image_title_post_type_shows');
-function featured_image_title_post_type_shows() {
-    remove_meta_box( 'postimagediv', 'post_type_shows', 'side' );
-    add_meta_box('postimagediv', __( 'Show Image/Title Card', 'lezwatchtv' ), 'post_thumbnail_meta_box', 'post_type_shows', 'side');
-}
-
-// change the default "Set Featured Image" text
-add_filter( 'admin_post_thumbnail_html', 'set_featured_image_text_post_type_shows' );
-function set_featured_image_text_post_type_shows( $content ) {
-    global $current_screen;
-
-    if( !is_null($current_screen) && 'post_type_shows' == $current_screen->post_type )
-        return $content = str_replace( __( 'Set featured image' ), __( 'Set show image', 'lezwatchtv' ), $content);
-    else
-        return $content;
-}
-
 /*
  * Post List Pages
  * (custom columns, quick edit, etc)

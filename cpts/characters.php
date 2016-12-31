@@ -37,8 +37,8 @@ function lez_characters_scripts( $hook ) {
 add_action( 'init', 'lez_characters_post_type', 0 );
 function lez_characters_post_type() {
 	$labels = array(
-		'name'					=> _x( 'Characters', 'Post Type General Name', 'lezwatchtv' ),
-		'singular_name'			=> _x( 'Character', 'Post Type Singular Name', 'lezwatchtv' ),
+		'name'					=> _x( 'Characters', 'lezwatchtv' ),
+		'singular_name'			=> _x( 'Character', 'lezwatchtv' ),
 		'menu_name'				=> __( 'Characters', 'lezwatchtv' ),
 		'parent_item_colon'		=> __( 'Parent Character:', 'lezwatchtv' ),
 		'all_items'				=> __( 'All Characters', 'lezwatchtv' ),
@@ -84,7 +84,7 @@ function lez_create_post_type_characters_taxonomies() {
 	// CLICHES
 	$names_cliches = array(
 		'name'							=> _x( 'Clichés', 'lezwatchtv' ),
-		'singular_name'					=> _x( 'Cliché', 'taxonomy singular name' ),
+		'singular_name'					=> _x( 'Cliché', 'lezwatchtv' ),
 		'search_items'					=> __( 'Search Clichés' ),
 		'popular_items'					=> __( 'Popular Clichés' ),
 		'all_items'						=> __( 'All Clichés' ),
@@ -319,26 +319,6 @@ function lez_remove_characters_metaboxes() {
 	remove_meta_box( 'postexcerpt' , 'post_type_characters' , 'normal' );
 
 }
-
-// change the default "Featured Image" metabox title
-add_action('do_meta_boxes', 'lez_characters_featured_image_title');
-function lez_characters_featured_image_title() {
-	remove_meta_box( 'postimagediv', 'post_type_characters', 'side' );
-	add_meta_box('postimagediv', __('Character Photo'), 'post_thumbnail_meta_box', 'post_type_characters', 'side');
-}
-
-// change the default "Set Featured Image" text
-add_filter( 'admin_post_thumbnail_html', 'lez_characters_set_featured_image_text' );
-function lez_characters_set_featured_image_text( $content ) {
-	global $current_screen;
-
-	if( !is_null($current_screen) && 'post_type_characters' == $current_screen->post_type ) {
-		return $content = str_replace( __( 'Set featured image' ), __( 'Set Character Photo' ), $content);
-	} else {
-		return $content;
-	}
-}
-
 
 /*
  * Post List Pages
