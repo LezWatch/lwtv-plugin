@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Social Media Icons
-Plugin URI: http://lezwatchtv.com/
+Plugin URI: https://lezwatchtv.com/
 Description: Embed social media icons (which are SVG) as shortcodes
 Version: 1.0
 Author: Mika Epstein
