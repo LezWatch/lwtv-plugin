@@ -334,9 +334,10 @@ function cmb_post_type_shows_metaboxes() {
 	    'type'				=> 'select',
 	    'default'			=> 'tvshow',
 	    'options'	 => array(
-			'tvshow'	=> 'TV Show',
-			'tvmini'	=> 'Mini Series',
+			'tvshow'		=> 'TV Show',
+			'tvmini'		=> 'Mini Series',
 			'tvmovie'	=> 'TV Movie',
+			'webseries' => 'Web Series'
 	    )
 	) );
 
