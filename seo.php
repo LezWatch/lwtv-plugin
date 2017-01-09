@@ -1,9 +1,10 @@
 <?php
 /*
-Plugin Name: SEO Customizations
-Description: Some tweaks I have for SEO that don't work
-Version: 1.0
-*/
+ * Some tweaks I have for SEO that don't work out of the box.
+ *
+ * @since 1.0
+ * Authors: Mika Epstein
+ */
 
 /*
  * Setting OpenGraph image for taxonomies

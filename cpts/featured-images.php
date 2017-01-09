@@ -1,17 +1,14 @@
 <?php
 /*
-Plugin Name: CPT Featured Images
-Plugin URI:  https://lezwatchtv.com
-Description: Customize Featured images for CPTs
-Version: 1.0
-Author: Mika Epstein
-*/
+ * Customize Featured images for CPTs
+ *
+ * @since 1.5
+ * Authors: Mika Epstein
+ */
 
 
 /**
  * Rename Featured Images
- *
- * @since 1.0
  */
 add_action( 'admin_init', 'lez_featured_images' );
 function lez_featured_images() {

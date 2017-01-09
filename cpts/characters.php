@@ -1,11 +1,10 @@
 <?php
 /*
-Plugin Name: Character CPT
-Plugin URI:  https://lezwatchtv.com
-Description: Custom Post Type for characters on LWTV
-Version: 1.0
-Author: Evan Herman, Tracy Levesque, Mika Epstein
-*/
+ * Custom Post Type for characters on LWTV
+ *
+ * @since 1.0
+ * Author: Evan Herman, Tracy Levesque, Mika Epstein
+ */
 
 /**
  * Constants

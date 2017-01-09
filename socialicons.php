@@ -1,15 +1,10 @@
 <?php
 /*
-Plugin Name: Social Media Icons
-Plugin URI: https://lezwatchtv.com/
-Description: Embed social media icons (which are SVG) as shortcodes
-Version: 1.0
-Author: Mika Epstein
-Author URI: http://ipstenu.org/
-Author Email: ipstenu@halfelf.org
-
-Copyright (C) 2016 Mika Epstein.
-*/
+ * Embed social media icons (which are SVG) as shortcodes
+ *
+ * @since 1.0
+ * Authors: Mika Epstein
+ */
 
 function generate_social_shortcode($atts) {
 	$iconsfolder = plugin_dir_path( __FILE__ ) . '/socialicons/';

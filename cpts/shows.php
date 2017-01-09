@@ -1,11 +1,10 @@
 <?php
 /*
-Plugin Name: Shows CPT
-Plugin URI:  https://lezwatchtv.com
-Description: Custom Post Type for shows on LWTV
-Version: 1.0
-Author: Evan Herman, Tracy Levesque, Mika Epstein
-*/
+ * Custom Post Type for Shows on LWTV
+ *
+ * @since 1.0
+ * Author: Evan Herman, Tracy Levesque, Mika Epstein
+ */
 
 
 /**

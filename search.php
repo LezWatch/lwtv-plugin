@@ -1,18 +1,16 @@
 <?php
 /*
-Plugin Name: Search Extras
-Description: Extra search functions
-Version: 2.0
-Author: Mika Epstein
-*/
+ * Extra Search Functions
+ *
+ * @since 1.2
+ * Authors: Mika Epstein
+ */
 
 /**
  * Search WordPress by Custom Fields
  *
  * https://adambalee.com/search-wordpress-by-custom-fields-without-a-plugin/
  * Extend WordPress search to include custom fields
- *
- * @since 1.0
  */
 
 // Join posts and postmeta tables - http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_join
@@ -61,8 +59,6 @@ if ( ! is_admin() ) {
  * Pretty Permalinks for Search
  *
  * Forked from http://wordpress.org/extend/plugins/nice-search/
- *
- * @since 2.0
  */
 function pretty_permalink_search_redirect() {
 	// grab rewrite globals (tag prefixes, etc)

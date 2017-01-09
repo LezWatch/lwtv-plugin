@@ -1,10 +1,10 @@
 <?php
 
 /*
-Plugin Name: Base Functions
+Plugin Name: LezWatch TV
 Plugin URI:  https://lezwatchtv.com
-Description: This file calls all the children files, depending on what other
-Version: 1.0
+Description: All the base code for LezWatch TV - If this isn't active, the site dies. An ugly death.
+Version: 2.0
 Author: Mika Epstein
 */
 

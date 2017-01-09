@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: Number of Posts
-Description: Display Number of Posts via shortcodes
-Version: 1.0
-Author: Mika Epstein
-*/
+ * Display Number of Posts via shortcodes
+ *
+ * @since 1.2
+ * Authors: Mika Epstein
+ */
 
 // [numposts type="posts"]
 function lezwatch_numposts_shortcode( $atts ) {

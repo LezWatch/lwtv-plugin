@@ -1,9 +1,11 @@
 <?php
 /*
-Plugin Name: Yoast SEO Customizations
-Description: Some tweaks I have for Yoast SEO - Admin Only
-Version: 2.1
-*/
+ * Yoast SEO Customizations
+ * Some tweaks I have for Yoast SEO - Admin Only
+ *
+ * @since 1.2
+ * Authors: Mika Epstein
+ */
 
 /*
  * Kill Yoast Stopwords

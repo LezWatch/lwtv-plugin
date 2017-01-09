@@ -1,12 +1,10 @@
-## LezWatchTV MU Plugins
+## LezWatchTV Plugin
 
 This is auto-updated from git. Please don't edit in this folder or your changes will be lost.
 
 ## Includes
 
 * functions.php				- The main file (calls others)
-* googleanalytics.php		- GA code
-* upgrades.php				- Ensures we can auto-upgrade
 * post_meta_search.php		- Searches custom post meta
 
 * /plugins/					- Files for plugins
