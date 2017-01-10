@@ -34,4 +34,4 @@ include( 'cpts/featured-images.php' );
 include( 'number-of-posts.php' );
 include( 'search.php' );
 include( 'seo.php' );
-include( 'socialions.php' );
+include( 'socialicons.php' );
