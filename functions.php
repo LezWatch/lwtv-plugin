@@ -10,11 +10,6 @@ Author: Mika Epstein
 
 // Functions to run if certain plugins are active
 function lez_check_admin_plugins() {
-	// If WP Help is active, call customizations
-	if ( is_plugin_active( 'wp-help/wp-help.php' ) ) {
-		require_once( 'plugins/wp-help.php' );
-	}
-
 	// If Yoast SEO is active, call customizations
 	if (is_plugin_active( 'wordpress-seo/wp-seo.php' ) ) {
 		require_once( 'plugins/yoast-seo.php' );
