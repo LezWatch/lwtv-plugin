@@ -5,11 +5,14 @@ This is auto-updated from git. Please don't edit in this folder or your changes 
 ## Includes
 
 * functions.php				- The main file (calls others)l
-* post_meta_search.php		- Searches custom post meta
+* search.php					- Searches custom post meta
+* seo.php					- Some tweaks for SEO that don't work out of the box.
+
+* /cpts/						- Files for Custom Post Types
+* /characters.[css|php]		- Character Post Type and related Taxonomies
+* /featured-images.php		- Rebranding featured images for CPTs
+* /shows.[css|php]			- Show Post Type and related Taxonomies
 
 * /plugins/					- Files for plugins
-* /plugins/cmb2.[css|php]	- Custom CSS and Code for CMB2
-* /plugins/wp-help.php		- Custom CSS and code for WP Help
-
-* /socialicons/				- Social Media Icons
-* socialicons.php			- The PHP code for shortcodes of social media icons
+* /cmb2.[css|php]			- Custom CSS and Code for CMB2
+* /yoast-seo.php				- Custom code for Yoast's WordPress SEO

@@ -10,8 +10,8 @@
 /**
  * CSS tweaks
  */
-add_action( 'admin_enqueue_scripts', 'shows_lez_scripts', 10 );
-function shows_lez_scripts( $hook ) {
+add_action( 'admin_enqueue_scripts', 'shows_lwtv_scripts', 10 );
+function shows_lwtv_scripts( $hook ) {
 	global $current_screen;
 	wp_register_style( 'shows-styles', plugins_url('shows.css', __FILE__ ) );
 	if( 'post_type_shows' == $current_screen->post_type || 'lez_stations' == $current_screen->taxonomy || 'lez_tropes' == $current_screen->taxonomy ) {
@@ -22,8 +22,8 @@ function shows_lez_scripts( $hook ) {
 /**
  * Custom Post Type
  */
-add_action( 'init', 'lez_shows_post_type', 0 );
-function lez_shows_post_type() {
+add_action( 'init', 'lwtv_shows_post_type', 0 );
+function lwtv_shows_post_type() {
 
 	$labels = array(
 		'name'                => _x( 'TV Shows', 'Post Type General Name', 'lezwatchtv' ),
@@ -395,8 +395,8 @@ function custom_post_type_shows_column( $column, $post_id ) {
 }
 
 // Make columns sortable
-add_filter( 'manage_edit-post_type_shows_sortable_columns', 'lez_shows_sortable_columns' );
-function lez_shows_sortable_columns( $columns ) {
+add_filter( 'manage_edit-post_type_shows_sortable_columns', 'lwtv_shows_sortable_columns' );
+function lwtv_shows_sortable_columns( $columns ) {
 	unset( $columns['cpt-airdate'] ); 			// Don't allow sort by airdates
 	$columns['shows-worthit']		= 'worth';	// Allow sort by worth
 	$columns['shows-queercount']	= 'queers';	// Allow sort by queers
@@ -404,8 +404,8 @@ function lez_shows_sortable_columns( $columns ) {
 }
 
 // Create Worth Sortability
-add_action( 'pre_get_posts', 'lez_shows_worth_orderby' );
-function lez_shows_worth_orderby( $query ) {
+add_action( 'pre_get_posts', 'lwtv_shows_worth_orderby' );
+function lwtv_shows_worth_orderby( $query ) {
 	if( ! is_admin() ) return;
 
 	if ( $query->is_main_query() && ( $orderby = $query->get( 'orderby' ) ) ) {
@@ -430,17 +430,17 @@ function lez_shows_worth_orderby( $query ) {
  * @param post $post The post object.
  * @param bool $update Whether this is an existing post being updated or not.
  */
-add_action( 'save_post_post_type_shows', 'lez_shows_update_char_count', 10, 3 );
-function lez_shows_update_char_count( $post_id ) {
+add_action( 'save_post_post_type_shows', 'lwtv_shows_update_char_count', 10, 3 );
+function lwtv_shows_update_char_count( $post_id ) {
 
 	// unhook this function so it doesn't loop infinitely
-	remove_action( 'save_post_post_type_shows', 'lez_shows_update_char_count' );
+	remove_action( 'save_post_post_type_shows', 'lwtv_shows_update_char_count' );
 
-	$meta_value = lez_count_queers($post_id);
+	$meta_value = lwtv_count_queers($post_id);
 	update_post_meta( $post_id, 'lezshows_char_count', $meta_value );
 
 	// re-hook this function
-	add_action( 'save_post_post_type_shows', 'lez_shows_update_char_count' );
+	add_action( 'save_post_post_type_shows', 'lwtv_shows_update_char_count' );
 }
 
 /*
@@ -450,9 +450,9 @@ function lez_shows_update_char_count( $post_id ) {
  *
  * @param int $post_id The post ID.
  */
-add_action( 'lez_shows_do_update_char_count', 'lez_shows_update_char_count', 10, 2 );
-add_action( 'save_post_post_type_characters', 'lez_characters_update_char_count', 10, 3 );
-function lez_characters_update_char_count( $post_id ) {
+add_action( 'lwtv_shows_do_update_char_count', 'lwtv_shows_update_char_count', 10, 2 );
+add_action( 'save_post_post_type_characters', 'lwtv_characters_update_char_count', 10, 3 );
+function lwtv_characters_update_char_count( $post_id ) {
 
 	if ( !is_array (get_post_meta( $post_id, 'lezchars_show', true)) ) {
 		$shows_array = array( get_post_meta( $post_id, 'lezchars_show', true) );
@@ -461,7 +461,7 @@ function lez_characters_update_char_count( $post_id ) {
 	}
 
 	foreach ( $shows_array as $show_id ) {
-		do_action( 'lez_shows_do_update_char_count' , $show_id );
+		do_action( 'lwtv_shows_do_update_char_count' , $show_id );
 	}
 
 }
@@ -473,7 +473,7 @@ function lez_characters_update_char_count( $post_id ) {
  *
  * @param int $post_id The post ID.
  */
-function lez_count_queers( $post_id ) {
+function lwtv_count_queers( $post_id ) {
 
 	// If this isn't a show post, return nothing.
 	if ( get_post_type( $post_id ) !== 'post_type_shows' )
@@ -526,7 +526,7 @@ function lez_count_queers( $post_id ) {
  * AMP
  */
 
-add_action( 'amp_init', 'lez_amp_add_shows_cpt' );
-function lez_amp_add_shows_cpt() {
+add_action( 'amp_init', 'lwtv_amp_add_shows_cpt' );
+function lwtv_amp_add_shows_cpt() {
     add_post_type_support( 'post_type_shows', AMP_QUERY_VAR );
 }

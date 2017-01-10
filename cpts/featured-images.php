@@ -10,8 +10,8 @@
 /**
  * Rename Featured Images
  */
-add_action( 'admin_init', 'lez_featured_images' );
-function lez_featured_images() {
+add_action( 'admin_init', 'lwtv_featured_images' );
+function lwtv_featured_images() {
 	$post_type_args = array(
 	   'public'   => true,
 	   '_builtin' => false

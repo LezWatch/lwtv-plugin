@@ -1,6 +1,6 @@
 <?php
 /*
- * Extra Search Functions
+ * Extra Search Functions for LezWatchTV.com
  *
  * @since 1.2
  * Authors: Mika Epstein
@@ -14,7 +14,7 @@
  */
 
 // Join posts and postmeta tables - http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_join
-function lezwatch_search_join( $join ) {
+function lwtv_search_join( $join ) {
     global $wpdb;
 
     if ( is_search() ) {
@@ -25,7 +25,7 @@ function lezwatch_search_join( $join ) {
 }
 
 //Modify the search query with posts_where - http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_where
-function lezwatch_search_where( $where ) {
+function lwtv_search_where( $where ) {
     global $pagenow, $wpdb;
 
     if ( is_search() ) {
@@ -38,7 +38,7 @@ function lezwatch_search_where( $where ) {
 }
 
 // Prevent duplicates - http://codex.wordpress.org/Plugin_API/Filter_Reference/posts_distinct
-function lezwatch_search_distinct( $where ) {
+function lwtv_search_distinct( $where ) {
     global $wpdb;
 
     if ( is_search() ) {
@@ -50,9 +50,9 @@ function lezwatch_search_distinct( $where ) {
 
 // Only run if we're NOT in the admin screen!
 if ( ! is_admin() ) {
-	add_filter( 'posts_join', 'lezwatch_search_join' );
-	add_filter( 'posts_where', 'lezwatch_search_where' );
-	add_filter( 'posts_distinct', 'lezwatch_search_distinct' );
+	add_filter( 'posts_join', 'lwtv_search_join' );
+	add_filter( 'posts_where', 'lwtv_search_where' );
+	add_filter( 'posts_distinct', 'lwtv_search_distinct' );
 }
 
 /**

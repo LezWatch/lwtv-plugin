@@ -13,8 +13,8 @@
  * @since 1.0
  */
 
-add_action('wp_head', 'lez_opengraph_image', 5);
-function lez_opengraph_image( ) {
+add_action('wp_head', 'lwtv_opengraph_image', 5);
+function lwtv_opengraph_image( ) {
 
 	// If it's not a taxonomy, die.
 	if ( !is_tax() ) {
@@ -22,7 +22,7 @@ function lez_opengraph_image( ) {
 	}
 
 	$term_id = get_queried_object_id();
-	$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
+	$icon = get_term_meta( $term_id, 'lwtv_termsmeta_icon', true );
 	$iconpath = get_stylesheet_directory().'/images/symbolicons/png/'.$icon.'.png';
 	if ( empty($icon) || !file_exists( $iconpath ) ) {
 		$icon = 'square';

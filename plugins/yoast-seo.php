@@ -14,8 +14,8 @@
  * @since 1.0
  */
 
-add_action('admin_init','lez_kill_yoast_stopwords');
-function lez_kill_yoast_stopwords() {
+add_action('admin_init','lwtv_kill_yoast_stopwords');
+function lwtv_kill_yoast_stopwords() {
 	global $pagenow, $typenow;
 
 	$pagenow_array = array( 'post.php', 'edit.php', 'post-new.php' );
