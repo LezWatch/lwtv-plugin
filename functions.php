@@ -29,3 +29,9 @@ require_once( 'plugins/cmb2.php' );
 include( 'cpts/characters.php' );
 include( 'cpts/shows.php' );
 include( 'cpts/featured-images.php' );
+
+// Include Others
+include( 'number-of-posts.php' );
+include( 'search.php' );
+include( 'seo.php' );
+include( 'socialions.php' );

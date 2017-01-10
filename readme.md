@@ -4,7 +4,7 @@ This is auto-updated from git. Please don't edit in this folder or your changes 
 
 ## Includes
 
-* functions.php				- The main file (calls others)
+* functions.php				- The main file (calls others)l
 * post_meta_search.php		- Searches custom post meta
 
 * /plugins/					- Files for plugins
