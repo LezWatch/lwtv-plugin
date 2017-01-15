@@ -163,7 +163,7 @@ function create_post_type_shows_taxonomies() {
 		'show_admin_column'     => true,
 		'query_var'             => true,
         'show_in_nav_menus'		=> true,
-        'show_in_quick_edit'	=> true,
+        'show_in_quick_edit'	=> false,
 		'rewrite'               => array( 'slug' => 'format' ),
 	);
 
@@ -414,8 +414,9 @@ function custom_post_type_shows_column( $column, $post_id ) {
 add_filter( 'manage_edit-post_type_shows_sortable_columns', 'lwtv_shows_sortable_columns' );
 function lwtv_shows_sortable_columns( $columns ) {
 	unset( $columns['cpt-airdate'] ); 			// Don't allow sort by airdates
-	$columns['shows-worthit']		= 'worth';	// Allow sort by worth
-	$columns['shows-queercount']	= 'queers';	// Allow sort by queers
+	$columns['taxonomy-lez_formats']	= 'format';	// Allow sort by gender identity
+	$columns['shows-worthit']			= 'worth';	// Allow sort by worth
+	$columns['shows-queercount']		= 'queers';	// Allow sort by queers
     return $columns;
 }
 
@@ -435,6 +436,121 @@ function lwtv_shows_worth_orderby( $query ) {
 				$query->set( 'orderby', 'meta_value_num' );
 		}
 	}
+}
+
+// Create Format Sortability
+function lwtv_shows_format_clauses( $clauses, $wp_query ) {
+	global $wpdb;
+
+	if ( isset( $wp_query->query['orderby'] ) && 'format' == $wp_query->query['orderby'] ) {
+
+		$clauses['join'] .= <<<SQL
+LEFT OUTER JOIN {$wpdb->term_relationships} ON {$wpdb->posts}.ID={$wpdb->term_relationships}.object_id
+LEFT OUTER JOIN {$wpdb->term_taxonomy} USING (term_taxonomy_id)
+LEFT OUTER JOIN {$wpdb->terms} USING (term_id)
+SQL;
+
+		$clauses['where'] .= " AND (taxonomy = 'lez_formats' OR taxonomy IS NULL)";
+		$clauses['groupby'] = "object_id";
+		$clauses['orderby']  = "GROUP_CONCAT({$wpdb->terms}.name ORDER BY name ASC) ";
+		$clauses['orderby'] .= ( 'ASC' == strtoupper( $wp_query->get('order') ) ) ? 'ASC' : 'DESC';
+	}
+
+	return $clauses;
+}
+add_filter( 'posts_clauses', 'lwtv_shows_format_clauses', 10, 2 );
+
+// Add quick Edit boxes
+add_action('quick_edit_custom_box',  'lwtv_shows_quick_edit_add', 10, 2);
+function lwtv_shows_quick_edit_add($column_name, $post_type) {
+	switch ( $column_name ) {
+		case 'taxonomy-lez_formats':
+			?>
+			<fieldset class="inline-edit-col-left">
+			<div class="inline-edit-col">
+			<span class="title">Show Format</span>
+				<input type="hidden" name="lez_formats_noncename" id="lez_formats_noncename" value="" />
+				<?php
+					$terms = get_terms( array( 'taxonomy' => 'lez_formats', 'hide_empty' => false ) );
+				?>
+				<select name='terms_lez_formats' id='terms_lez_formats'>
+					<option class='lez_formats-option' value='0'>(Undefined)</option>
+					<?php
+					foreach ($terms as $term) {
+						echo "<option class='lez_formats-option' value='{$term->name}'>{$term->name}</option>\n";
+					}
+						?>
+				</select>
+			</div>
+			</fieldset>
+			<?php
+			break;
+	}
+}
+
+// Allow quick edit boxes to save on editing
+add_action('save_post', 'lwtv_shows_quick_edit_save');
+function lwtv_shows_quick_edit_save($post_id) {
+	// Criteria for not saving: Auto-saves, not post_type_characters, can't edit
+	if ( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || ( isset( $_POST['post_type'] ) &&  'post_type_shows' != $_POST['post_type'] ) || !current_user_can( 'edit_page', $post_id ) ) {
+		return $post_id;
+	}
+	$post = get_post($post_id);
+
+	// Formats
+	if ( isset($_POST['terms_lez_formats']) && ($post->post_type != 'revision') ) {
+		$lez_formats_term = esc_attr($_POST['terms_lez_formats']);
+		$term = term_exists( $lez_formats_term, 'lez_formats');
+		if ( $term !== 0 && $term !== null) {
+			wp_set_object_terms( $post_id, $lez_formats_term, 'lez_formats' );
+		}
+	}
+}
+
+// Javascript to change 'defaults'
+add_action('admin_footer', 'lwtv_shows_quick_edit_js');
+function lwtv_shows_quick_edit_js() {
+	global $current_screen;
+	if ( is_null($current_screen) || ($current_screen->id !== 'edit-post_type_shows') || ($current_screen->post_type !== 'post_type_shows') ) return;
+	?>
+	<script type="text/javascript">
+	<!--
+
+	function set_inline_lwtv_quick_edit_defaults( formatsSet, nonce ) {
+		// revert Quick Edit menu so that it refreshes properly
+		inlineEditPost.revert();
+		var formatsInput = document.getElementById('terms_lez_formats');
+		var nonceInput	 = document.getElementById('lez_formats_noncename');
+		nonceInput.value   = nonce;
+
+		// Set Formats Option
+		for (i = 0; i < formatsInput.options.length; i++) {
+			if (formatsInput.options[i].value == formatsSet) {
+				formatsInput.options[i].setAttribute("selected", "selected");
+			} else { formatsInput.options[i].removeAttribute("selected"); }
+		}
+	}
+
+	//-->
+	</script>
+	<?php
+}
+
+// Calls the JS in the previous function
+add_filter('post_row_actions', 'lwtv_shows_quick_edit_link', 10, 2);
+function lwtv_shows_quick_edit_link($actions, $post) {
+	global $current_screen;
+	if (($current_screen->id != 'edit-post_type_shows') || ($current_screen->post_type != 'post_type_shows')) return $actions;
+
+	$nonce = wp_create_nonce( 'lez_formats_'.$post->ID);
+	$formats_terms = wp_get_post_terms( $post->ID, 'lez_formats', array( 'fields' => 'all' ) );
+
+	$actions['inline hide-if-no-js'] = '<a href="#" class="editinline" title="';
+	$actions['inline hide-if-no-js'] .= esc_attr( __( 'Edit this item inline' ) ) . '" ';
+	$actions['inline hide-if-no-js'] .= " onclick=\"set_inline_lwtv_quick_edit_defaults('{$formats_terms[0]->name}', '{$nonce}')\">";
+	$actions['inline hide-if-no-js'] .= __( 'Quick&nbsp;Edit' );
+	$actions['inline hide-if-no-js'] .= '</a>';
+	return $actions;
 }
 
 /*

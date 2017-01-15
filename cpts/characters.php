@@ -546,7 +546,6 @@ function lwtv_characters_quick_edit_js() {
 	<script type="text/javascript">
 	<!--
 
-	// Sexuality
 	function set_inline_lwtv_quick_edit_defaults( sexualitySet, genderSet, roleSet, nonce ) {
 		// revert Quick Edit menu so that it refreshes properly
 		inlineEditPost.revert();
