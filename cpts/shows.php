@@ -136,9 +136,9 @@ function create_post_type_shows_taxonomies() {
     );
     register_taxonomy( 'lez_tropes', array( 'post_type_shows' ), $args_tropes );
 
-	// SHOW Forat
+	// SHOW Format
 	$names_showformat = array(
-		'name'                       => _x( 'Show Format', 'lezwatchtv' ),
+		'name'                       => _x( 'Show Formats', 'lezwatchtv' ),
 		'singular_name'              => _x( 'Show Format', 'lezwatchtv' ),
 		'search_items'               => __( 'Search Formats', 'lezwatchtv' ),
 		'popular_items'              => __( 'Popular Formats', 'lezwatchtv' ),
@@ -163,6 +163,7 @@ function create_post_type_shows_taxonomies() {
 		'show_admin_column'     => true,
 		'query_var'             => true,
         'show_in_nav_menus'		=> true,
+        'show_in_quick_edit'	=> true,
 		'rewrite'               => array( 'slug' => 'format' ),
 	);
 
