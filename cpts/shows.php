@@ -349,7 +349,7 @@ function cmb_post_type_shows_metaboxes() {
 	    'taxonomy'			=> 'lez_formats',
 	    'type'				=> 'taxonomy_select',
 	    'remove_default'	=> 'true',
-		'default'			=> 'tvshow',
+		'default'			=> 'tv-show',
 		'show_option_none'	=> false,
 	) );
 	$cmb_notes->add_field( array(
