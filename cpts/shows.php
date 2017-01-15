@@ -414,7 +414,7 @@ function custom_post_type_shows_column( $column, $post_id ) {
 add_filter( 'manage_edit-post_type_shows_sortable_columns', 'lwtv_shows_sortable_columns' );
 function lwtv_shows_sortable_columns( $columns ) {
 	unset( $columns['cpt-airdate'] ); 			// Don't allow sort by airdates
-	$columns['taxonomy-lez_formats']	= 'format';	// Allow sort by gender identity
+	$columns['taxonomy-lez_formats']	= 'format';	// Allow sort by show format
 	$columns['shows-worthit']			= 'worth';	// Allow sort by worth
 	$columns['shows-queercount']		= 'queers';	// Allow sort by queers
     return $columns;
@@ -552,6 +552,7 @@ function lwtv_shows_quick_edit_link($actions, $post) {
 	$actions['inline hide-if-no-js'] .= '</a>';
 	return $actions;
 }
+
 
 /*
  * Save post meta for shows on SHOW update
