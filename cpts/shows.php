@@ -100,6 +100,7 @@ function create_post_type_shows_taxonomies() {
 		'show_admin_column'     => true,
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
+        'show_in_nav_menus'		=> true,
 		'rewrite'               => array( 'slug' => 'stations' ),
 	);
 
@@ -134,6 +135,38 @@ function create_post_type_shows_taxonomies() {
         'rewrite'				=> array( 'slug' => 'tropes' ),
     );
     register_taxonomy( 'lez_tropes', array( 'post_type_shows' ), $args_tropes );
+
+	// SHOW Forat
+	$names_showformat = array(
+		'name'                       => _x( 'Show Format', 'lezwatchtv' ),
+		'singular_name'              => _x( 'Show Format', 'lezwatchtv' ),
+		'search_items'               => __( 'Search Formats', 'lezwatchtv' ),
+		'popular_items'              => __( 'Popular Formats', 'lezwatchtv' ),
+		'all_items'                  => __( 'All Formats', 'lezwatchtv' ),
+		'parent_item'                => null,
+		'parent_item_colon'          => null,
+		'edit_item'                  => __( 'Edit Format', 'lezwatchtv' ),
+		'update_item'                => __( 'Update Format', 'lezwatchtv' ),
+		'add_new_item'               => __( 'Add New Format', 'lezwatchtv' ),
+		'new_item_name'              => __( 'New Format Name', 'lezwatchtv' ),
+		'separate_items_with_commas' => __( 'Separate Formats with commas', 'lezwatchtv' ),
+		'add_or_remove_items'        => __( 'Add or remove Formats', 'lezwatchtv' ),
+		'choose_from_most_used'      => __( 'Choose from the most used Formats', 'lezwatchtv' ),
+		'not_found'                  => __( 'No Formats found.', 'lezwatchtv' ),
+		'menu_name'                  => __( 'Show Formats', 'lezwatchtv' ),
+	);
+	//parameters for the new taxonomy
+	$args_showformat = array(
+		'hierarchical'          => false,
+		'labels'                => $names_showformat,
+		'show_ui'               => true,
+		'show_admin_column'     => true,
+		'query_var'             => true,
+        'show_in_nav_menus'		=> true,
+		'rewrite'               => array( 'slug' => 'format' ),
+	);
+
+	register_taxonomy( 'lez_formats', 'post_type_shows', $args_showformat );
 }
 
 add_filter( 'cmb2_admin_init', 'cmb_post_type_shows_metaboxes' );
@@ -164,6 +197,7 @@ function cmb_post_type_shows_metaboxes() {
 		'taxonomy' => 'lez_tropes', //Enter Taxonomy Slug
 		'type'     => 'taxonomy_multicheck',
 		'select_all_button' => false,
+		'remove_default' => 'true',
 	) );
 
 	$cmb_mustsee->add_field( array(
@@ -294,6 +328,31 @@ function cmb_post_type_shows_metaboxes() {
 		'cmb_styles'		=> false,
 	) );
 	$cmb_notes->add_field( array(
+	    'name' 				=> 'Air Dates',
+	    'desc' 				=> 'Years Aired',
+	    'id'   				=> $prefix . 'airdates',
+		'earliest'			=> '1930',
+		'text'     => array(
+			'start_label'		=> '',
+			'finish_label'		=> '',
+		),
+	    'type'				=> 'date_year_range',
+	    'options'  => array(
+	        'start_reverse_sort' => true,
+	        'finish_reverse_sort' => true,
+	    ),
+	) );
+	$cmb_notes->add_field( array(
+	    'name'				=> 'Show Format',
+	    'desc'				=> 'What kind of television entertainment is this?',
+	    'id'				=> $prefix . 'tvtype',
+	    'taxonomy'			=> 'lez_formats',
+	    'type'				=> 'taxonomy_select',
+	    'remove_default'	=> 'true',
+		'default'			=> 'tvshow',
+		'show_option_none'	=> false,
+	) );
+	$cmb_notes->add_field( array(
 	    'name'				=> __( 'Show Stars', 'lezwatchtv' ),
 	    'desc' 				=> __( 'Gold is by/for queers, No Stars is normal TV', 'lezwatchtv' ),
 	    'id'    			=> $prefix . 'stars',
@@ -310,50 +369,6 @@ function cmb_post_type_shows_metaboxes() {
 	    'id'   				=> $prefix . 'triggerwarning',
 	    'type'				=> 'checkbox'
 	) );
-
-	$cmb_notes->add_field( array(
-	    'name' 				=> 'Air Dates',
-	    'desc' 				=> 'Years Aired',
-	    'id'   				=> $prefix . 'airdates',
-		'earliest'			=> '1930',
-		'text'     => array(
-			'start_label'		=> '',
-			'finish_label'		=> '',
-		),
-	    'type'				=> 'date_year_range',
-	    'options'  => array(
-	        'start_reverse_sort' => true,
-	        'finish_reverse_sort' => true,
-	    ),
-	) );
-	$cmb_notes->add_field( array(
-	    'name'				=> 'Show Type',
-	    'desc' 				=> 'What kind of television entertainment is this?',
-	    'id'    			=> $prefix . 'tvtype',
-	    'type'				=> 'select',
-	    'default'			=> 'tvshow',
-	    'options'	 => array(
-			'tvshow'		=> 'TV Show',
-			'tvmini'		=> 'Mini Series',
-			'tvmovie'	=> 'TV Movie',
-			'webseries' => 'Web Series'
-	    )
-	) );
-
-}
-
-/*
- * Meta Box Adjustments
- *
- */
-
-// function to initiate metaboxes to remove
-add_action( 'init', 'remove_meta_boxes_from_post_type_shows');
-function remove_meta_boxes_from_post_type_shows() {
-	function the_meta_boxes_to_remove() {
-		remove_meta_box( 'lez_tropesdiv', 'post_type_shows', 'side' ); // Hide the trope taxonomy
-	}
-	add_action( 'admin_menu' , 'the_meta_boxes_to_remove' );
 }
 
 /*

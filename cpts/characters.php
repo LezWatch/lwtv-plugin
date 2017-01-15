@@ -223,6 +223,7 @@ function lwtv_post_type_characters_metaboxes() {
 		'taxonomy'			=> 'lez_cliches', //Enter Taxonomy Slug
 		'type'	 			=> 'taxonomy_multicheck',
 		'select_all_button'	=> false,
+		'remove_default' => 'true'
 	) );
 	// Field: Actor Name
 	$cmb_characters->add_field( array(
@@ -279,6 +280,7 @@ function lwtv_post_type_characters_metaboxes() {
 		'type'				=> 'taxonomy_select',
 		'default' 			=> 'cisgender',
 		'show_option_none'	=> false,
+		'remove_default' => 'true'
 	) );
 	// Field: Character Sexual Orientation
 	$cmb_charside->add_field( array(
@@ -289,6 +291,7 @@ function lwtv_post_type_characters_metaboxes() {
 		'type'				=> 'taxonomy_select',
 		'default' 			=> 'homosexual',
 		'show_option_none'	=> false,
+		'remove_default' => 'true'
 	) );
 	// Field: Year of Death (if applicable)
 	$cmb_charside->add_field( array(
@@ -310,10 +313,6 @@ function lwtv_post_type_characters_metaboxes() {
 // Remove Metaboxes we use elsewhere
 add_action( 'admin_menu', 'lwtv_remove_characters_metaboxes');
 function lwtv_remove_characters_metaboxes() {
-	remove_meta_box( 'tagsdiv-lez_gender', 'post_type_characters', 'side' );
-	remove_meta_box( 'tagsdiv-lez_sexuality', 'post_type_characters', 'side' );
-	remove_meta_box( 'tagsdiv-lez_cliches', 'post_type_characters', 'side' );
-	remove_meta_box( 'lez_clichesdiv', 'post_type_characters', 'side' );
 	remove_meta_box( 'authordiv', 'post_type_characters', 'normal' );
 	remove_meta_box( 'postexcerpt' , 'post_type_characters' , 'normal' );
 
