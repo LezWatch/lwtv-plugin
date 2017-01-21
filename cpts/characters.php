@@ -650,3 +650,32 @@ add_action( 'amp_init', 'lwtv_amp_add_chars_cpt' );
 function lwtv_amp_add_chars_cpt() {
     add_post_type_support( 'post_type_characters', AMP_QUERY_VAR );
 }
+
+// Adding to Right Now
+add_action( 'dashboard_glance_items', 'lwtv_characters_cpt_right_now' );
+
+function lwtv_characters_cpt_right_now() {
+        	foreach ( array( 'post_type_characters' ) as $post_type ) {
+        		$num_posts = wp_count_posts( $post_type );
+        		if ( $num_posts && $num_posts->publish ) {
+        			if ( 'post_type_characters' == $post_type ) {
+        				$text = _n( '%s Character', '%s Characters', $num_posts->publish );
+        			}
+        			$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
+        			printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', $post_type, $text );
+        		}
+        	}
+}
+
+// Styling Icons
+function lwtv_characters_cpt_css() {
+   echo "<style type='text/css'>
+           #adminmenu #menu-posts-post_type_characters div.wp-menu-image:before, #dashboard_right_now li.post_type_characters-count a:before {
+                content: '\\f484';
+                margin-left: -1px;
+            }
+         </style>";
+
+}
+
+add_action('admin_head', 'lwtv_characters_cpt_css');
