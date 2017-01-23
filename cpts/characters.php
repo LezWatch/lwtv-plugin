@@ -61,7 +61,7 @@ function lwtv_characters_post_type() {
 		'show_in_menu'			=> true,
 		'show_in_nav_menus' 	=> true,
 		'show_in_admin_bar' 	=> true,
-	 	'rewrite' 				=> array( 'slug' => 'characters' ),
+	 	'rewrite' 				=> array( 'slug' => 'character' ),
 		'menu_icon'				=> 'dashicons-nametag',
 		'menu_position'			=> 7,
 		'can_export'			=> true,
@@ -107,7 +107,7 @@ function lwtv_create_post_type_characters_taxonomies() {
 		'show_admin_column'	 	=> true,
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'			 	=> true,
-		'rewrite'				=> array( 'slug' => 'cliches' ),
+		'rewrite'				=> array( 'slug' => 'cliche' ),
 	);
 	register_taxonomy( 'lez_cliches', 'post_type_characters', $args_cliches );
 

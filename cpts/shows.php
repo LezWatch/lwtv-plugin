@@ -52,7 +52,7 @@ function lwtv_shows_post_type() {
 		'show_in_menu'        => true,
 		'show_in_nav_menus'   => true,
 		'show_in_admin_bar'   => true,
-	 	'rewrite' 			  => array( 'slug' => 'shows' ),
+	 	'rewrite' 			  => array( 'slug' => 'show' ),
 		'menu_icon'           => 'dashicons-video-alt',
 		'menu_position'       => 5,
 		'can_export'          => true,
@@ -101,7 +101,7 @@ function create_post_type_shows_taxonomies() {
 		'update_count_callback' => '_update_post_term_count',
 		'query_var'             => true,
         'show_in_nav_menus'		=> true,
-		'rewrite'               => array( 'slug' => 'stations' ),
+		'rewrite'               => array( 'slug' => 'station' ),
 	);
 
 	register_taxonomy( 'lez_stations', 'post_type_shows', $args_tvstations );
@@ -132,7 +132,7 @@ function create_post_type_shows_taxonomies() {
         'show_admin_column'		=> true,
         'show_in_nav_menus'		=> true,
         'show_tagcloud'			=> false,
-        'rewrite'				=> array( 'slug' => 'tropes' ),
+        'rewrite'				=> array( 'slug' => 'trope' ),
     );
     register_taxonomy( 'lez_tropes', array( 'post_type_shows' ), $args_tropes );
 
