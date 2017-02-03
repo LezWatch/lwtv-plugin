@@ -201,49 +201,43 @@ function lwtv_post_type_characters_metaboxes() {
 	// prefix for all custom fields
 	$prefix = 'lezchars_';
 
-	// This is just an array of all years from 1930 on (1930 being the year TV dramas started)
-	$year_array = array();
-	foreach ( range(date('Y'), '1930' ) as $x) {
-		$year_array[$x] = $x;
-	}
-
 	// MetaBox Group: Character Details
 	$cmb_characters = new_cmb2_box( array(
-		'id'				=> 'chars_metabox',
+		'id'					=> 'chars_metabox',
 		'title'				=> 'Character Details',
-		'object_types'  	=> array( 'post_type_characters', ), // Post type
+		'object_types'  		=> array( 'post_type_characters', ), // Post type
 		'context'			=> 'normal',
 		'priority'			=> 'high',
-		'show_names'		=> true, // Show field names on the left
+		'show_names'			=> true, // Show field names on the left
 	) );
 	// Field: Character Clichés
 	$cmb_characters->add_field( array(
 		'name'				=> 'Character Clichés',
-		'id'				=> $prefix . 'cliches',
+		'id'					=> $prefix . 'cliches',
 		'taxonomy'			=> 'lez_cliches', //Enter Taxonomy Slug
 		'type'	 			=> 'taxonomy_multicheck',
 		'select_all_button'	=> false,
-		'remove_default' => 'true'
+		'remove_default'		=> 'true'
 	) );
 	// Field: Actor Name
 	$cmb_characters->add_field( array(
 		'name'				=> 'Actor Name',
 		'desc'				=> 'Include years (in parens) for multiple actors',
-		'id'				=> $prefix . 'actor',
+		'id'					=> $prefix . 'actor',
 		'type'				=> 'text',
-		'repeatable'		=> 'true',
-	    'attributes'		=> array(
+		'repeatable'			=> 'true',
+	    'attributes'			=> array(
 	        'autocomplete'		=> 'off',
 	        'autocorrect'		=> 'off',
-	        'autocapitalize'	=> 'off',
-	        'spellcheck'		=> 'false',
+	        'autocapitalize'		=> 'off',
+	        'spellcheck'			=> 'false',
 	    ),
 	) );
 	// Field: Character Type
 	$cmb_characters->add_field( array(
 		'name'				=> 'Character Type',
 		'desc'				=> 'Mains are in credits. Recurring have their own plots. Guests show up once or twice.',
-		'id'				=> $prefix .'type',
+		'id'					=> $prefix .'type',
 		'type'				=> 'select',
 		'show_option_none'	=> true,
 		'default'			=> 'custom',
@@ -253,55 +247,54 @@ function lwtv_post_type_characters_metaboxes() {
 	$cmb_characters->add_field( array(
 		'name'				=> 'Show',
 		'desc'				=> 'Select the show this character belongs to',
-		'id'				=> $prefix . 'show',
+		'id'					=> $prefix . 'show',
 		'type'				=> 'select',
-		'repeatable'		=> 'true',
+		'repeatable'			=> 'true',
 		'show_option_none'	=> true,
 		'default'			=> 'custom',
-		'options_cb'		=> 'cmb2_get_post_type_shows_options',
+		'options_cb'			=> 'cmb2_get_post_type_shows_options',
 	) );
 
 	// Metabox Group: Quick Dropdowns
 	$cmb_charside = new_cmb2_box( array(
-		'id'            	=> 'charnotes_metabox',
-		'title'         	=> 'Additional Data',
-		'object_types'  	=> array( 'post_type_characters', ), // Post type
-		'context'       	=> 'side',
-		'priority'      	=> 'default',
-		'show_names'		=> true, // Show field names on the left
-		'cmb_styles'		=> false,
+		'id'      	      	=> 'charnotes_metabox',
+		'title'				=> 'Additional Data',
+		'object_types'		=> array( 'post_type_characters', ), // Post type
+		'context'			=> 'side',
+		'priority'			=> 'default',
+		'show_names'			=> true, // Show field names on the left
+		'cmb_styles'			=> false,
 	) );
 	// Field: Character Gender Idenity
 	$cmb_charside->add_field( array(
 		'name'				=> 'Gender Identity',
 		'desc'				=> 'Gender with which the character identifies',
-		'id'				=> $prefix . 'gender',
+		'id'					=> $prefix . 'gender',
 		'taxonomy'			=> 'lez_gender', //Enter Taxonomy Slug
 		'type'				=> 'taxonomy_select',
 		'default' 			=> 'cisgender',
 		'show_option_none'	=> false,
-		'remove_default' => 'true'
+		'remove_default' 	=> 'true'
 	) );
 	// Field: Character Sexual Orientation
 	$cmb_charside->add_field( array(
 		'name'				=> 'Sexuality',
 		'desc'				=> 'Character\'s sexual orientation',
-		'id'				=> $prefix . 'sexuality',
+		'id'					=> $prefix . 'sexuality',
 		'taxonomy'			=> 'lez_sexuality', //Enter Taxonomy Slug
 		'type'				=> 'taxonomy_select',
 		'default' 			=> 'homosexual',
 		'show_option_none'	=> false,
-		'remove_default' => 'true'
+		'remove_default' 	=> 'true'
 	) );
 	// Field: Year of Death (if applicable)
 	$cmb_charside->add_field( array(
-		'name'				=> 'Year of Death',
-		'desc'				=> 'If the character is dead, select what year they died.',
-		'id'				=> $prefix .'death_year',
-		'type'				=> 'select',
-		'show_option_none'	=> true,
-		'default'			=> 'custom',
-		'options'			=> $year_array,
+		'name'				=> 'Date of Death',
+		'desc'				=> 'If the character is dead, select when they died.',
+		'id'					=> $prefix .'death_year',
+		'type'				=> 'text_date',
+		'date_format'		=> 'm/d/Y',
+		'repeatable'			=> false, // Sara Lance may die again, and we'll have to figure this out
 	) );
 }
 
