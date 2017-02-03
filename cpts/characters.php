@@ -93,7 +93,7 @@ function lwtv_create_post_type_characters_taxonomies() {
 		'update_item'					=> __( 'Update Cliché' ),
 		'add_new_item'					=> __( 'Add New Cliché' ),
 		'new_item_name'					=> __( 'New Cliché Name' ),
-		'separate_items_with_commas'	=> __( 'Separate Clichés with commas' ),
+		'separate_items_with_commas'		=> __( 'Separate Clichés with commas' ),
 		'add_or_remove_items'			=> __( 'Add or remove Clichés' ),
 		'choose_from_most_used'			=> __( 'Choose from the most used Clichés' ),
 		'not_found'						=> __( 'No Clichés found.' ),
@@ -102,7 +102,7 @@ function lwtv_create_post_type_characters_taxonomies() {
 	//paramters for the new taxonomy
 	$args_cliches = array(
 		'hierarchical'			=> true,
-		'labels'				=> $names_cliches,
+		'labels'					=> $names_cliches,
 		'show_ui'				=> true,
 		'show_admin_column'	 	=> true,
 		'update_count_callback' => '_update_post_term_count',
@@ -124,7 +124,7 @@ function lwtv_create_post_type_characters_taxonomies() {
 		'update_item'					=> __( 'Update Gender' ),
 		'add_new_item'					=> __( 'Add New Gender' ),
 		'new_item_name'					=> __( 'New Gender Name' ),
-		'separate_items_with_commas'	=> __( 'Separate Genders with commas' ),
+		'separate_items_with_commas'		=> __( 'Separate Genders with commas' ),
 		'add_or_remove_items'			=> __( 'Add or remove Genders' ),
 		'choose_from_most_used'			=> __( 'Choose from the most used Genders' ),
 		'not_found'						=> __( 'No Genders found.' ),
@@ -132,12 +132,12 @@ function lwtv_create_post_type_characters_taxonomies() {
 	);
 	$args_gender = array(
 		'hierarchical'			=> false,
-		'labels'				=> $names_gender,
-		'public'				=> true,
+		'labels'					=> $names_gender,
+		'public'					=> true,
 		'show_ui'				=> true,
 		'show_admin_column'		=> true,
 		'show_in_nav_menus'		=> true,
-		'show_in_quick_edit'	=> false,
+		'show_in_quick_edit'		=> false,
 		'show_tagcloud'			=> false,
 		'rewrite'				=> array( 'slug' => 'gender' ),
 	);
@@ -164,12 +164,12 @@ function lwtv_create_post_type_characters_taxonomies() {
 	);
 	$args_sexuality = array(
 		'hierarchical'			=> false,
-		'labels'				=> $names_sexuality,
-		'public'				=> true,
+		'labels'					=> $names_sexuality,
+		'public'					=> true,
 		'show_ui'				=> true,
 		'show_admin_column'		=> true,
 		'show_in_nav_menus'		=> true,
-		'show_in_quick_edit'	=> false,
+		'show_in_quick_edit'		=> false,
 		'show_tagcloud'		 	=> false,
 		'rewrite'				=> array( 'slug' => 'sexuality' ),
 	);
@@ -294,7 +294,7 @@ function lwtv_post_type_characters_metaboxes() {
 		'id'					=> $prefix .'death_year',
 		'type'				=> 'text_date',
 		'date_format'		=> 'm/d/Y',
-		'repeatable'			=> false, // Sara Lance may die again, and we'll have to figure this out
+		'repeatable'			=> true, // Sara Lance may die again, and we'll have to figure this out
 	) );
 }
 
