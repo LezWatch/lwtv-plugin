@@ -57,7 +57,7 @@ function cmb2_lwtv_scripts( $hook ) {
  */
 
 $icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats' );
-$symbolicon_path = get_stylesheet_directory().'/images/symbolicons/svg/';
+$symbolicon_path = get_stylesheet_directory().'/lez/images/symbolicons/svg/';
 
 // Add CMB2 Metabox
 add_action( 'cmb2_admin_init', 'lwtv_register_taxonomy_metabox' );

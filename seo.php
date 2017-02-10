@@ -23,12 +23,12 @@ function lwtv_opengraph_image( ) {
 
 	$term_id = get_queried_object_id();
 	$icon = get_term_meta( $term_id, 'lwtv_termsmeta_icon', true );
-	$iconpath = get_stylesheet_directory().'/images/symbolicons/png/'.$icon.'.png';
+	$iconpath = get_stylesheet_directory().'/lez/images/symbolicons/png/'.$icon.'.png';
 	if ( empty($icon) || !file_exists( $iconpath ) ) {
 		$icon = 'square';
 	}
 
-	$image = get_stylesheet_directory_uri().'/images/symbolicons/png/'.$icon.'.png';
+	$image = get_stylesheet_directory_uri().'/lez/images/symbolicons/png/'.$icon.'.png';
 
 	echo '<meta property="og:image" content="'.$image.'" /><meta name="twitter:image" content="'.$image.'" />';
 }
