@@ -31,3 +31,4 @@ include( 'last-dead.php' );
 // Include Others
 include( 'search.php' );
 include( 'seo.php' );
+include( 'custom-loops.php' );
