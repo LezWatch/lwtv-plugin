@@ -67,7 +67,7 @@ class LWTV_Dead_JSON {
 	 */
 	public static function last_death() {
 		// Get all our dead queers
-		$dead_chars_loop  = lwtvg_tax_query( 'post_type_characters' , 'lez_cliches', 'slug', 'dead');
+		$dead_chars_loop  = lwtv_tax_query( 'post_type_characters' , 'lez_cliches', 'slug', 'dead');
 		$dead_chars_query = wp_list_pluck( $dead_chars_loop->posts, 'ID' );
 
 		// List all queers and the year they died
