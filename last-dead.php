@@ -56,24 +56,16 @@ class LWTV_Dead_JSON {
 	 * Rest API Callback
 	 */
 	public function last_death_rest_api_callback( $data ) {
-		$response = $this->last_death( 'json' );
+		$response = $this->last_death();
 		return $response;
-	}
-
-	/**
-	 * Register Widget
-	 */
-	public function register_widget() {
-		$this->widget = new LWTV_Dead_Widget();
-		register_widget( $this->widget );
 	}
 
 	/**
 	 * Generate List of Dead
 	 *
-	 * @return echo with last dead character
+	 * @return array with last dead character data
 	 */
-	public static function last_death( $format = '' ) {
+	public static function last_death() {
 		// Get all our dead queers
 		$dead_chars_loop  = lwtvg_tax_query( 'post_type_characters' , 'lez_cliches', 'slug', 'dead');
 		$dead_chars_query = wp_list_pluck( $dead_chars_loop->posts, 'ID' );
@@ -121,26 +113,9 @@ class LWTV_Dead_JSON {
 
 		// Calculate the difference between then and now
 		$diff = abs( time() - $last_death['died'] );
-
-		$years = floor($diff / (365*60*60*24));
-		$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
-		$days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
-
-		$time_since = '';
-		if ( $years != 0 ) $time_since  .= $years .' '. _n( 'year', 'years', $years ) .', ';
-		if ( $months != 0 ) $time_since .= $months .' '. _n( 'month', 'months', $months );
-		if ( $years != 0 ) $time_since  .= ',';
-		if ( $months != 0 ) $time_since .= ' and ';
-		if ( $days != 0 ) $time_since   .= $days .' '. _n( 'day', 'days', $days );
-
 		$last_death['since'] = $diff;
 
-		if ( $format == 'json' ) {
-			$return = $last_death;
-		} else {
-			$return = 'It has been <strong>'. $last_death['since'] .'</strong> since the last death: <a href="'.$last_death['url'].'">'.$last_death['name'].'</a> - '.date('F j, Y', $last_death['died'] );
-		}
-
+		$return = $last_death;
 
 		return $return;
 	}
