@@ -25,6 +25,9 @@ include( 'cpts/characters.php' );
 include( 'cpts/shows.php' );
 include( 'cpts/featured-images.php' );
 
+// Display the last dead
+include( 'last-dead.php' );
+
 // Include Others
 include( 'search.php' );
 include( 'seo.php' );
