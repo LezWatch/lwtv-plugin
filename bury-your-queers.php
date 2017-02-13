@@ -1,6 +1,6 @@
 <?php
 /**
- * LezWatch TV - The Dead
+ * LezWatch TV - Bury Your Queers
  *
  * The much vaunted "It has been X days since the last WLW Death"
  * This includes the code that is later used by a JSON API!
@@ -20,11 +20,11 @@ if ( ! defined('WPINC' ) ) {
 }
 
 /**
- * class LWTV_Dead_JSON
+ * class LWTV_BYQ_JSON
  *
  * The basic constructor class that will set up our JSON API.
  */
-class LWTV_Dead_JSON {
+class LWTV_BYQ_JSON {
 
 	/**
 	 * Constructor
@@ -121,4 +121,4 @@ class LWTV_Dead_JSON {
 	}
 
 }
-new LWTV_Dead_JSON();
+new LWTV_BYQ_JSON();
