@@ -1,11 +1,15 @@
 <?php
 /*
- * Some tweaks I have for SEO that don't work out of the box.
- *
- * @since 1.0
- * Authors: Mika Epstein
- */
+Description: SEO Customizations
 
+Tweaks for SEO that don't work out of the box.
+See also /plugins/yoast-seo.php
+
+Version: 1.0
+Author: Mika Epstein
+*/
+
+if ( ! defined('WPINC' ) ) die;
 
 /**
  * class LWTV_SEO
