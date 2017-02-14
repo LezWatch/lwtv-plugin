@@ -42,14 +42,22 @@ class LWTV_BYQ_JSON {
 	 *   - /lwtv/v1/on-this-day/
 	 */
 	public function rest_api_init() {
+		
 		register_rest_route( 'lwtv/v1', '/last-death', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'last_death_rest_api_callback' ),
 		) );
-		register_rest_route( 'lwtv/v1', '/on-this-day', array(
+		
+		register_rest_route( 'lwtv/v1', '/on-this-day/', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'on_this_day_rest_api_callback' ),
 		) );
+
+		register_rest_route( 'lwtv/v1', '/on-this-day/(?P<date>[\d]{2}-[\d]{2})', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'on_this_day_rest_api_callback' ),
+		) );
+
 	}
 
 	/**
@@ -64,7 +72,9 @@ class LWTV_BYQ_JSON {
 	 * Rest API Callback for On This Day
 	 */
 	public function on_this_day_rest_api_callback( $data ) {
-		$response = $this->on_this_day();
+		$params = $data->get_params();
+		$this_day = ( $params['date'] !== '' )? $params['date'] : 'today';
+		$response = $this->on_this_day( $this_day );		
 		return $response;
 	}
 
@@ -147,9 +157,7 @@ class LWTV_BYQ_JSON {
 	 */
 	public static function on_this_day( $this_day = 'today' ) {
 
-		if ( $this_day != 'today' ) {
-			// Somehow figure out how to let people put in dates like 03-03 format?
-		} else {
+		if ( $this_day == 'today' ) {
 			$this_day = date('m-d');
 		}
 
