@@ -24,7 +24,6 @@ class LWTV_CMB2 {
 	 */
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init') );
-
 		add_action( 'cmb2_admin_init', array( $this, 'register_taxonomy_metabox' ) );
 
 		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats' );
@@ -41,7 +40,6 @@ class LWTV_CMB2 {
 		add_filter( 'cmb2_override_meta_value', array( $this, 'jt_cmb2_date_year_range_get_split_values' ), 10, 4 );
 		add_filter( 'cmb2_sanitize_date_year_range', array( $this, 'jt_cmb2_date_year_range_split_values' ), 12, 4 );
 		add_filter( 'cmb2_render_date_year_range', array( $this, 'jt_cmb2_date_year_range' ), 10, 5 );
-
 	}
 
 	/**
@@ -90,9 +88,9 @@ class LWTV_CMB2 {
 	 * $this->icon_taxonomies   array of taxonomies to show icons on.
 	 * $this->symbolicon_path   location of Symbolicons
 	 *
-	 * register_taxonomy_metabox()   CMB2 mextabox code
+	 * register_taxonomy_metabox()  CMB2 mextabox code
+	 * before_field_icon()          Show an icon if that exists
 	 *
-	 * lez_before_field_icon()    Show an icon if that exists
 	 * @param  array              $field_args  Array of field parameters
 	 * @param  CMB2_Field object  $field       Field object
 	 */
@@ -124,7 +122,7 @@ class LWTV_CMB2 {
 			    'show_option_none'	=> true,
 			    'default'			=> 'custom',
 			    'options'			=> $icon_array,
-				'before_field'		=> 'before_field_icon',
+				'before_field'		=> array( $this, 'before_field_icon' ),
 			) );
 		}
 	}
