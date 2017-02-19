@@ -16,13 +16,6 @@ class LWTV_Featured_Images {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init', array( $this, 'admin_init') );
-	}
-
-	/**
-	 * Admin Init
-	 */
-	public function admin_init() {
 		add_action( 'admin_init', array( $this, 'featured_images' ) );
 	}
 
