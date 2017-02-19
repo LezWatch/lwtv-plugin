@@ -4,10 +4,9 @@ Description: Bury Your Queers
 
 The code that runs the Bury Your Queers API service
   - Last Death - "It has been X days since the last WLW Death"
+  - On This Day - "On this day, X died"
 
-To Do: On This Day
-
-Version: 1.0
+Version: 1.1
 Author: Mika Epstein
 */
 
@@ -24,13 +23,6 @@ class LWTV_BYQ_JSON {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'init', array( $this, 'init') );
-	}
-
-	/**
-	 * Init
-	 */
-	public function init() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init') );
 	}
 
@@ -42,12 +34,12 @@ class LWTV_BYQ_JSON {
 	 *   - /lwtv/v1/on-this-day/
 	 */
 	public function rest_api_init() {
-		
+
 		register_rest_route( 'lwtv/v1', '/last-death', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'last_death_rest_api_callback' ),
 		) );
-		
+
 		register_rest_route( 'lwtv/v1', '/on-this-day/', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'on_this_day_rest_api_callback' ),
@@ -74,7 +66,7 @@ class LWTV_BYQ_JSON {
 	public function on_this_day_rest_api_callback( $data ) {
 		$params = $data->get_params();
 		$this_day = ( $params['date'] !== '' )? $params['date'] : 'today';
-		$response = $this->on_this_day( $this_day );		
+		$response = $this->on_this_day( $this_day );
 		return $response;
 	}
 
@@ -162,7 +154,7 @@ class LWTV_BYQ_JSON {
 		}
 
 		// Get all our dead queers
-		$dead_chars_loop  = lwtv_post_meta_query( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
+		$dead_chars_loop  = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
 		$dead_chars_query = wp_list_pluck( $dead_chars_loop->posts, 'ID' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_query, $dead_chars_loop );
 
