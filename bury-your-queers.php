@@ -125,7 +125,7 @@ class LWTV_BYQ_JSON {
 	 */
 	public static function last_death() {
 		// Get all our dead queers
-		$dead_chars_loop  = lwtv_tax_query( 'post_type_characters' , 'lez_cliches', 'slug', 'dead');
+		$dead_chars_loop  = LWTV_Loops::tax_query( 'post_type_characters' , 'lez_cliches', 'slug', 'dead');
 		$dead_chars_query = wp_list_pluck( $dead_chars_loop->posts, 'ID' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_query, $dead_chars_loop );
 
