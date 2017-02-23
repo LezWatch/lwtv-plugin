@@ -6,7 +6,7 @@ The code that runs the Bury Your Queers API service
   - Last Death - "It has been X days since the last WLW Death"
   - On This Day - "On this day, X died"
 
-Version: 1.1
+Version: 1.2
 Author: Mika Epstein
 */
 
@@ -76,16 +76,15 @@ class LWTV_BYQ_JSON {
 	 * This is a separate function becuase otherwise I use the same call twice
 	 * and that's stupid
 	 */
-	public function list_of_dead_characters( $dead_chars_query , $dead_chars_loop ) {
+	public function list_of_dead_characters( $dead_chars_loop ) {
 
 		$death_list_array = array();
 
 		if ( $dead_chars_loop->have_posts() ) {
 			// Loop through characters to build our list
-			foreach( $dead_chars_query as $dead_char ) {
-
+			foreach( $dead_chars_loop->posts as $dead_char ) {
 				// Date(s) character died
-				$died_date = get_post_meta( $dead_char, 'lezchars_death_year', true);
+				$died_date = get_post_meta( $dead_char->ID, 'lezchars_death_year', true);
 				$died_date_array = array();
 
 				// For each death date, create an item in an array with the unix timestamp
@@ -126,8 +125,9 @@ class LWTV_BYQ_JSON {
 	public static function last_death() {
 		// Get all our dead queers
 		$dead_chars_loop  = LWTV_Loops::tax_query( 'post_type_characters' , 'lez_cliches', 'slug', 'dead');
-		$dead_chars_query = wp_list_pluck( $dead_chars_loop->posts, 'ID' );
-		$death_list_array = self::list_of_dead_characters( $dead_chars_query, $dead_chars_loop );
+		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
+
+		//print_r($dead_chars_loop);
 
 		// Extract the last death
 		$last_death = array_slice($death_list_array, -1, 1, true);
@@ -155,8 +155,7 @@ class LWTV_BYQ_JSON {
 
 		// Get all our dead queers
 		$dead_chars_loop  = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
-		$dead_chars_query = wp_list_pluck( $dead_chars_loop->posts, 'ID' );
-		$death_list_array = self::list_of_dead_characters( $dead_chars_query, $dead_chars_loop );
+		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		$died_today_array = array();
 
