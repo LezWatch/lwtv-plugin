@@ -66,41 +66,49 @@ class LWTV_CPT_Shows {
 	 * Create Custom Post Type
 	 */
 	public function create_post_type() {
+		
+		$name = 'TV Show';
+		
 		$labels = array(
-			'name'                => 'TV Shows',
-			'singular_name'       => 'TV Show',
-			'menu_name'           => 'TV Shows',
-			'parent_item_colon'   => 'Parent Show:',
-			'all_items'           => 'All Shows',
-			'view_item'           => 'View Show',
-			'add_new_item'        => 'Add New Show',
-			'add_new'             => 'Add New',
-			'edit_item'           => 'Edit Show',
-			'update_item'         => 'Update Show',
-			'search_items'        => 'Search Shows',
-			'not_found'           => 'Not found',
-			'not_found_in_trash'  => 'Not found in Trash',
+			'name'                  => $name.'s',
+			'singular_name'         => $name,
+			'menu_name'             => $name.'s',
+			'name_admin_bar'        => $name,
+			'add_new'               => 'Add New',
+			'add_new_item'          => 'Add New '.$name,
+			'edit_item'             => 'Edit '.$name,
+			'new_item'              => 'New '.$name,
+			'view_item'             => 'View '.$name,
+			'all_items'             => 'All '.$name.'s',
+			'search_items'          => 'Search '.$name.'s',
+			'not_found'             => 'No '.$name.'s found',
+			'not_found_in_trash'    => 'No '.$name.'s found in Trash',
+			'update_item'           => 'Update '.$name,
+			'featured_image'        => $name.' Image',
+			'set_featured_image'    => 'Set '.$name.' image',
+			'remove_featured_image' => 'Remove '.$name.' image',
+			'use_featured_image'    => 'Use as '.$name.' image',
+			'archives'              => $name.' archives',
+			'insert_into_item'      => 'Insert into '.$name,
+			'uploaded_to_this_item' => 'Uploaded to this '.$name,
+			'filter_items_list'     => 'Filter '.$name.' list',
+			'items_list_navigation' => $name.' list navigation',
+			'items_list'            => $name.' list',
 		);
 		$args = array(
 			'label'               => 'post_type_shows',
-			'description'         => 'TV Shows',
+			'description'         => $name.'s',
 			'labels'              => $labels,
+			'public'              => true,
+			'show_in_rest'        => true,
+			'rest_base'           => 'show',
+			'menu_position'       => 5,
+			'menu_icon'           => 'dashicons-video-alt',
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo', 'revisions' ),
 			'taxonomies'          => array( 'lez_tropes' ),
-			'hierarchical'        => false,
-			'public'              => true,
-			'show_ui'             => true,
-			'show_in_menu'        => true,
-			'show_in_nav_menus'   => true,
-			'show_in_admin_bar'   => true,
-		 	'rewrite' 			  => array( 'slug' => 'show' ),
-			'menu_icon'           => 'dashicons-video-alt',
-			'menu_position'       => 5,
-			'can_export'          => true,
 			'has_archive'         => true,
-			'exclude_from_search' => false,
-			'publicly_queryable'  => true,
-			'capability_type'     => 'page',
+			'rewrite'             => array( 'slug' => 'show' ),
+			'delete_with_user'    => false,
 		);
 		register_post_type( 'post_type_shows', $args );
 	}
@@ -109,9 +117,10 @@ class LWTV_CPT_Shows {
 	 * Create Custom Taxonomies
 	 */
 	public function create_taxonomies() {
-
+		
 		// TV STATIONS
-		$names_tvstations = array(
+		$name_tvstations   = 'TV Station';
+		$labels_tvstations = array(
 			'name'                       => 'TV Station(s)',
 			'singular_name'              => 'TV Station',
 			'search_items'               => 'Search Stations',
@@ -123,54 +132,54 @@ class LWTV_CPT_Shows {
 			'update_item'                => 'Update Station',
 			'add_new_item'               => 'Add New Station',
 			'new_item_name'              => 'New Station Name',
-			'separate_items_with_commas' => 'Separate Stations with commas',
-			'add_or_remove_items'        => 'Add or remove Stations',
-			'choose_from_most_used'      => 'Choose from the most used Stations',
+			'separate_items_with_commas' => 'Separate stations with commas',
+			'add_or_remove_items'        => 'Add or remove stations',
+			'choose_from_most_used'      => 'Choose from the most used stations',
 			'not_found'                  => 'No Stations found.',
 			'menu_name'                  => 'TV Stations',
 		);
 		//parameters for the new taxonomy
 		$args_tvstations = array(
 			'hierarchical'          => false,
-			'labels'                => $names_tvstations,
+			'labels'                => $labels_tvstations,
 			'show_ui'               => true,
 			'show_admin_column'     => true,
 			'update_count_callback' => '_update_post_term_count',
 			'query_var'             => true,
-	        'show_in_nav_menus'		=> true,
+			'show_in_nav_menus'     => true,
 			'rewrite'               => array( 'slug' => 'station' ),
 		);
 		register_taxonomy( 'lez_stations', 'post_type_shows', $args_tvstations );
 
 		// SHOW TROPES
-	    $names_tropes = array(
-	        'name'							=> 'Show Tropes',
-	        'singular_name'					=> 'Trope',
-	        'menu_name'						=> 'Tropes',
-	        'all_items'						=> 'All Tropes',
-	        'parent_item'					=> 'Parent Trope',
-	        'parent_item_colon'				=> 'Parent Trope:',
-	        'new_item_name'					=> 'New Trope',
-	        'add_new_item'					=> 'Add New Trope',
-	        'edit_item'						=> 'Edit Trope',
-	        'update_item'					=> 'Update Trope',
-	        'separate_items_with_commas'	=> 'Separate tropes with commas',
-	        'search_items'					=> 'Search Tropes',
-	        'add_or_remove_items'			=> 'Add or remove tropes',
-	        'choose_from_most_used'			=> 'Choose from the most used tropes',
-	        'not_found'						=> 'Not Found',
-	    );
-	    $args_tropes = array(
-	        'hierarchical'			=> true,
-	        'labels'				=> $names_tropes,
-	        'public'				=> true,
-	        'show_ui'				=> true,
-	        'show_admin_column'		=> true,
-	        'show_in_nav_menus'		=> true,
-	        'show_tagcloud'			=> false,
-	        'rewrite'				=> array( 'slug' => 'trope' ),
-	    );
-	    register_taxonomy( 'lez_tropes', array( 'post_type_shows' ), $args_tropes );
+		$names_tropes = array(
+			'name'                       => 'Show Tropes',
+			'singular_name'              => 'Trope',
+			'menu_name'                  => 'Tropes',
+			'all_items'                  => 'All Tropes',
+			'parent_item'                => null,
+			'parent_item_colon'          => null,
+			'new_item_name'              => 'New Trope',
+			'add_new_item'               => 'Add New Trope',
+			'edit_item'                  => 'Edit Trope',
+			'update_item'                => 'Update Trope',
+			'separate_items_with_commas' => 'Separate tropes with commas',
+			'search_items'               => 'Search Tropes',
+			'add_or_remove_items'        => 'Add or remove tropes',
+			'choose_from_most_used'      => 'Choose from the most used tropes',
+			'not_found'                  => 'Not Found',
+		);
+		$args_tropes = array(
+			'hierarchical'      => true,
+			'labels'            => $names_tropes,
+			'public'            => true,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'show_in_nav_menus' => true,
+			'show_tagcloud'     => false,
+			'rewrite'           => array( 'slug' => 'trope' ),
+		);
+		register_taxonomy( 'lez_tropes', array( 'post_type_shows' ), $args_tropes );
 
 		// SHOW Format
 		$names_showformat = array(
@@ -198,8 +207,8 @@ class LWTV_CPT_Shows {
 			'show_ui'               => true,
 			'show_admin_column'     => true,
 			'query_var'             => true,
-	        'show_in_nav_menus'		=> true,
-	        'show_in_quick_edit'	=> false,
+			'show_in_nav_menus'		=> true,
+			'show_in_quick_edit'	=> false,
 			'rewrite'               => array( 'slug' => 'format' ),
 		);
 		register_taxonomy( 'lez_formats', 'post_type_shows', $args_showformat );
@@ -221,33 +230,33 @@ class LWTV_CPT_Shows {
 
 		// Must See Metabox - this should be required
 		$cmb_mustsee = new_cmb2_box( array(
-			'id'			=> 'mustsee_metabox',
-			'title'			=> 'Required Details',
-			'object_types'	=> array( 'post_type_shows', ), // Post type
-			'context'		=> 'normal',
-			'priority'		=> 'high',
-			'show_names'	=> true, // Show field names on the left
+			'id'           => 'mustsee_metabox',
+			'title'        => 'Required Details',
+			'object_types' => array( 'post_type_shows', ), // Post type
+			'context'      => 'normal',
+			'priority'     => 'high',
+			'show_names'   => true, // Show field names on the left
 		) );
 
 		$cmb_mustsee->add_field( array(
-		    'name'     => 'Trope Plots',
-		    'id'       => $prefix . 'tropes',
-			'taxonomy' => 'lez_tropes', //Enter Taxonomy Slug
-			'type'     => 'taxonomy_multicheck',
+			'name'              => 'Trope Plots',
+			'id'                => $prefix . 'tropes',
+			'taxonomy'          => 'lez_tropes', //Enter Taxonomy Slug
+			'type'              => 'taxonomy_multicheck',
 			'select_all_button' => false,
-			'remove_default' => 'true',
+			'remove_default'    => 'true',
 		) );
 
 		$cmb_mustsee->add_field( array(
-		    'name'    => 'Worth It?',
-		    'id'      => $prefix . 'worthit_rating',
-		    'desc'    => 'Is the show worth watching?',
-		    'type'    => 'radio_inline',
-		    'options' => array(
-		        'Yes' => 'Yes',
-		        'Meh' => 'Meh',
-		        'No'  => 'No',
-		    ),
+			'name'    => 'Worth It?',
+			'id'      => $prefix . 'worthit_rating',
+			'desc'    => 'Is the show worth watching?',
+			'type'    => 'radio_inline',
+			'options' => array(
+				'Yes' => 'Yes',
+				'Meh' => 'Meh',
+				'No'  => 'No',
+			),
 		) );
 		$cmb_mustsee->add_field( array(
 			'name'    => 'Worth It Details',
@@ -257,12 +266,12 @@ class LWTV_CPT_Shows {
 
 		// Basic Show Details
 		$cmb_showdetails = new_cmb2_box( array(
-			'id'			=> 'shows_metabox',
-			'title'			=> 'Shows Details',
-			'object_types'	=> array( 'post_type_shows', ), // Post type
-			'context'		=> 'normal',
-			'priority'		=> 'high',
-			'show_names'	=> true, // Show field names on the left
+			'id'           => 'shows_metabox',
+			'title'        => 'Shows Details',
+			'object_types' => array( 'post_type_shows', ), // Post type
+			'context'      => 'normal',
+			'priority'     => 'high',
+			'show_names'   => true, // Show field names on the left
 		) );
 
 		$cmb_showdetails->add_field( array(
@@ -293,17 +302,17 @@ class LWTV_CPT_Shows {
 		) );
 
 		$cmb_ratings->add_field( array(
-		    'name'    => 'Realness Rating',
-		    'id'      => $prefix . 'realness_rating',
-		    'desc'    => 'How realistic are the queers?',
-		    'type'    => 'radio_inline',
-		    'options' => array(
-		        '1' => '1',
-		        '2' => '2',
-		        '3' => '3',
-		        '4' => '4',
-		        '5' => '5',
-		    ),
+			'name'    => 'Realness Rating',
+			'id'      => $prefix . 'realness_rating',
+			'desc'    => 'How realistic are the queers?',
+			'type'    => 'radio_inline',
+			'options' => array(
+				'1' => '1',
+				'2' => '2',
+				'3' => '3',
+				'4' => '4',
+				'5' => '5',
+			),
 		) );
 
 		$cmb_ratings->add_field( array(
@@ -314,17 +323,17 @@ class LWTV_CPT_Shows {
 		) );
 
 		$cmb_ratings->add_field( array(
-		    'name'    => 'Show Quality Rating',
-		    'id'      => $prefix . 'quality_rating',
-		    'desc'    => 'How good is the show for queers?',
-		    'type'    => 'radio_inline',
-		    'options' => array(
-		        '1' => '1',
-		        '2' => '2',
-		        '3' => '3',
-		        '4' => '4',
-		        '5' => '5',
-		    ),
+			'name'    => 'Show Quality Rating',
+			'id'      => $prefix . 'quality_rating',
+			'desc'    => 'How good is the show for queers?',
+			'type'    => 'radio_inline',
+			'options' => array(
+				'1' => '1',
+				'2' => '2',
+				'3' => '3',
+				'4' => '4',
+				'5' => '5',
+			),
 		) );
 
 		$cmb_ratings->add_field( array(
@@ -335,17 +344,17 @@ class LWTV_CPT_Shows {
 		) );
 
 		$cmb_ratings->add_field( array(
-		    'name'    => 'Screentime Rating',
-		    'id'      => $prefix . 'screentime_rating',
-		    'desc'    => 'How much air-time do the queers get?',
-		    'type'    => 'radio_inline',
-		    'options' => array(
-		        '1' => '1',
-		        '2' => '2',
-		        '3' => '3',
-		        '4' => '4',
-		        '5' => '5',
-		    ),
+			'name'    => 'Screentime Rating',
+			'id'      => $prefix . 'screentime_rating',
+			'desc'    => 'How much air-time do the queers get?',
+			'type'    => 'radio_inline',
+			'options' => array(
+				'1' => '1',
+				'2' => '2',
+				'3' => '3',
+				'4' => '4',
+				'5' => '5',
+			),
 		) );
 
 		$cmb_ratings->add_field( array(
@@ -366,46 +375,46 @@ class LWTV_CPT_Shows {
 			'cmb_styles'		=> false,
 		) );
 		$cmb_notes->add_field( array(
-		    'name' 				=> 'Air Dates',
-		    'desc' 				=> 'Years the show Aired',
-		    'id'   				=> $prefix . 'airdates',
-			'earliest'			=> '1930',
+			'name'     => 'Air Dates',
+			'desc'     => 'Years the show Aired',
+			'id'       => $prefix . 'airdates',
+			'type'     => 'date_year_range',
+			'earliest' => '1930',
 			'text'     => array(
-				'start_label'		=> '',
-				'finish_label'		=> '',
+				'start_label'  => '',
+				'finish_label' => '',
 			),
-		    'type'				=> 'date_year_range',
-		    'options'  => array(
-		        'start_reverse_sort' => true,
-		        'finish_reverse_sort' => true,
+			'options'  => array(
+				'start_reverse_sort' => true,
+				'finish_reverse_sort' => true,
 		    ),
 		) );
 		$cmb_notes->add_field( array(
-		    'name'				=> 'Show Format',
-		    'desc'				=> 'What kind of television entertainment is this?',
-		    'id'				=> $prefix . 'tvtype',
-		    'taxonomy'			=> 'lez_formats',
-		    'type'				=> 'taxonomy_select',
-		    'remove_default'	=> 'true',
-			'default'			=> 'tv-show',
-			'show_option_none'	=> false,
+			'name'             => 'Show Format',
+			'desc'             => 'What kind of television entertainment is this?',
+			'id'               => $prefix . 'tvtype',
+			'taxonomy'         => 'lez_formats',
+			'type'             => 'taxonomy_select',
+			'remove_default'   => 'true',
+			'default'          => 'tv-show',
+			'show_option_none' => false,
 		) );
 		$cmb_notes->add_field( array(
-		    'name'				=> 'Show Stars',
-		    'desc' 				=> 'Gold is by/for queers, No Stars is normal TV',
-		    'id'    			=> $prefix . 'stars',
-		    'type'				=> 'select',
-		    'show_option_none'	=> 'No Stars',
-		    'options'	 => array(
+			'name'             => 'Show Stars',
+			'desc'             => 'Gold is by/for queers, No Stars is normal TV',
+			'id'               => $prefix . 'stars',
+			'type'             => 'select',
+			'show_option_none' => 'No Stars',
+			'options'          => array(
 				'gold'   => 'Gold Star',
 				'silver' => 'Silver Star',
-		    )
+			)
 		) );
 		$cmb_notes->add_field( array(
-		    'name' 				=> 'Triggers Warning?',
-		    'desc' 				=> 'i.e. Game of Thrones, Jessica Jones, etc.',
-		    'id'   				=> $prefix . 'triggerwarning',
-		    'type'				=> 'checkbox'
+			'name' => 'Triggers Warning?',
+			'desc' => 'i.e. Game of Thrones, Jessica Jones, etc.',
+			'id'   => $prefix . 'triggerwarning',
+			'type' => 'checkbox'
 		) );
 	}
 
@@ -414,9 +423,9 @@ class LWTV_CPT_Shows {
 	 * Used by quick edit, etc
 	 */
 	public function manage_posts_columns($columns) {
-		$columns['shows-airdate']		= 'Airdates';
-		$columns['shows-worthit']		= 'Worth It?';
-		$columns['shows-queercount']	= '#';
+		$columns['shows-airdate']    = 'Airdates';
+		$columns['shows-worthit']    = 'Worth It?';
+		$columns['shows-queercount'] = '#';
 		return $columns;
 	}
 
@@ -448,11 +457,11 @@ class LWTV_CPT_Shows {
 	 * Make Custom Columns Sortable
 	 */
 	public function manage_edit_sortable_columns( $columns ) {
-		unset( $columns['cpt-airdate'] ); 			// Don't allow sort by airdates
-		$columns['taxonomy-lez_formats']	= 'format';	// Allow sort by show format
-		$columns['shows-worthit']			= 'worth';	// Allow sort by worth
-		$columns['shows-queercount']		= 'queers';	// Allow sort by queers
-	    return $columns;
+		unset( $columns['cpt-airdate'] );             // Don't allow sort by airdates
+		$columns['taxonomy-lez_formats'] = 'format';  // Allow sort by show format
+		$columns['shows-worthit']        = 'worth';   // Allow sort by worth
+		$columns['shows-queercount']	     = 'queers';  // Allow sort by queers
+		return $columns;
 	}
 
 	/*
@@ -464,7 +473,7 @@ class LWTV_CPT_Shows {
 		if( ! is_admin() ) return;
 
 		if ( $query->is_main_query() && ( $orderby = $query->get( 'orderby' ) ) ) {
-	    	switch( $orderby ) {
+		switch( $orderby ) {
 				case 'worth':
 					$query->set( 'meta_key', 'lezshows_worthit_rating' );
 					$query->set( 'orderby', 'meta_value' );
@@ -490,8 +499,8 @@ LEFT OUTER JOIN {$wpdb->term_taxonomy} USING (term_taxonomy_id)
 LEFT OUTER JOIN {$wpdb->terms} USING (term_id)
 SQL;
 
-			$clauses['where'] .= " AND (taxonomy = 'lez_formats' OR taxonomy IS NULL)";
-			$clauses['groupby'] = "object_id";
+			$clauses['where']   .= " AND (taxonomy = 'lez_formats' OR taxonomy IS NULL)";
+			$clauses['groupby']  = "object_id";
 			$clauses['orderby']  = "GROUP_CONCAT({$wpdb->terms}.name ORDER BY name ASC) ";
 			$clauses['orderby'] .= ( 'ASC' == strtoupper( $wp_query->get('order') ) ) ? 'ASC' : 'DESC';
 		}
@@ -708,29 +717,28 @@ SQL;
 	 * Add to 'Right Now'
 	 */
 	public function dashboard_glance_items() {
-	        	foreach ( array( 'post_type_shows' ) as $post_type ) {
-	        		$num_posts = wp_count_posts( $post_type );
-	        		if ( $num_posts && $num_posts->publish ) {
-	        			if ( 'post_type_shows' == $post_type ) {
-	        				$text = _n( '%s TV Show', '%s TV Shows', $num_posts->publish );
-	        			}
-	        			$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
-	        			printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', $post_type, $text );
-	        		}
-	        	}
+		foreach ( array( 'post_type_shows' ) as $post_type ) {
+			$num_posts = wp_count_posts( $post_type );
+			if ( $num_posts && $num_posts->publish ) {
+				if ( 'post_type_shows' == $post_type ) {
+					$text = _n( '%s TV Show', '%s TV Shows', $num_posts->publish );
+				}
+				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
+				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', $post_type, $text );
+			}
+		}
 	}
 
 	/*
 	 * Style for dashboard
 	 */
 	public function admin_css() {
-	   echo "<style type='text/css'>
-	           #adminmenu #menu-posts-post_type_shows div.wp-menu-image:before, #dashboard_right_now li.post_type_shows-count a:before {
-	                content: '\\f126';
-	                margin-left: -1px;
-	            }
-	         </style>";
-
+		echo "<style type='text/css'>
+			#adminmenu #menu-posts-post_type_shows div.wp-menu-image:before, #dashboard_right_now li.post_type_shows-count a:before {
+				content: '\\f126';
+				margin-left: -1px;
+			}
+		</style>";
 	}
 
 }

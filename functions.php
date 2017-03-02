@@ -41,10 +41,12 @@ include( 'cpts/characters.php' );
 include( 'cpts/shows.php' );
 include( 'cpts/featured-images.php' );
 
-// BYQ JSON API
-include( 'bury-your-queers.php' );
+// JSON API
+include( 'rest-api/bury-your-queers.php' );
+include( 'rest-api/stats.php' );
 
 // Include Others
 include( 'search.php' );
 include( 'seo.php' );
 include( 'custom-loops.php' );
+include( 'statistics.php' );

@@ -1,6 +1,6 @@
 <?php
 /*
-Description: Bury Your Queers
+Description: REST-API: Bury Your Queers
 
 The code that runs the Bury Your Queers API service
   - Last Death - "It has been X days since the last WLW Death"
