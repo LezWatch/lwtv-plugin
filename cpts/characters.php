@@ -101,7 +101,7 @@ class LWTV_CPT_Characters {
 			'menu_icon'           => 'dashicons-nametag',
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo', 'revisions' ),
 			'has_archive'         => true,
-			'rewrite'             => array( 'slug' => 'show' ),
+			'rewrite'             => array( 'slug' => 'character' ),
 			'delete_with_user'    => false,
 		);
 		register_post_type( 'post_type_characters', $args );

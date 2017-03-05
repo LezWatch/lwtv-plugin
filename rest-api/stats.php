@@ -32,7 +32,7 @@ class LWTV_Stats_JSON {
 	 * Rest API init
 	 *
 	 * Creates callbacks
-	 *   - /lwtv/v1/stats/[shows|characters]
+	 *   - /lwtv/v1/stats/[shows|characters|death]/[simple|complex|years]
 	 */
 	public function rest_api_init() {
 
@@ -295,7 +295,7 @@ class LWTV_Stats_JSON {
 	 */
 	static function death_year() {
 		// Death by year
-		$year_first = 1931;
+		$year_first = 1961;
 		$year_deathlist_array = array();
 		foreach (range(date('Y'), $year_first) as $x) {
 			$year_deathlist_array[$x] = $x;
@@ -307,6 +307,8 @@ class LWTV_Stats_JSON {
 
 			if ( $year_death_query->post_count >= '1' ) {
 				$year_death_array[$year] = $year_death_query->post_count;
+			} else {
+				$year_death_array[$year] = 0;
 			}
 		}
 		return $year_death_array;
