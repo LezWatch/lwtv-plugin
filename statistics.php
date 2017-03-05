@@ -110,6 +110,7 @@ class LWTV_Stats {
 		// Acutally output shit
 		if ( $format == 'barchart' ) self::barcharts( $subject, $data, $array );
 		if ( $format == 'piechart' ) self::piecharts( $subject, $data, $array );
+		if ( $format == 'polararea' ) self::polararea( $subject, $data, $array );
 		if ( $format == 'count' ) return $count;
 		if ( $format == 'list' ) self::lists( $subject, $data, $array, $count );
 		if ( $format == 'percentage' ) self::percentages( $subject, $data, $array, $count );
@@ -445,6 +446,77 @@ class LWTV_Stats {
 			var pie<?php echo ucfirst( $data ); ?> = new Chart(ctx,{
 			    type:'doughnut',
 			    data: pie<?php echo ucfirst( $data ); ?>data,
+			    options: {
+					tooltips: {
+					    callbacks: {
+							label: function(tooltipItem, data) {
+								return data.labels[tooltipItem.index];
+							}
+					    },
+					},
+				}
+			});
+		</script>
+		<?php
+	}
+
+	/*
+	 * Statistics Display Polar Chart
+	 *
+	 * Output the list of data usually from functions like self::meta_array
+	 * It loops through the arrays and outputs data as needed
+	 *
+	 * This relies on ChartJS existing
+	 *
+	 * @param string $subject The content subject
+	 * @param string $data The data 'subject' - used to generate the URLs
+	 * @param array $array The array of data
+	 *
+	 * @return Content
+	 */
+	static function polararea( $subject, $data, $array ) {
+
+		// Strip extra word(s) to make the chart key readable
+		$fixname = '';
+		if ( $data == 'sexuality' || $data == 'dead-sex' ) $fixname = 'sexual';
+		if ( $data == 'gender' || $data == 'dead-gender' ) $fixname = 'gender';
+		if ( $data == 'dead-shows' ) $fixname = 'queers are dead';
+
+		// Strip hypens becuase ChartJS doesn't like it.
+		$data = str_replace('-','',$data)
+		?>
+		<canvas id="polar<?php echo ucfirst( $data ); ?>" width="200" height="200"></canvas>
+
+		<script>
+			// Piechart for stats
+			var polar<?php echo ucfirst( $data ); ?>data = {
+				labels : [<?php
+					foreach ( $array as $item ) {
+						$name = str_replace( $fixname, '', $item['name'] );
+						echo '"'. $name.' ('.$item['count'].')", ';
+					}
+				?>],
+				datasets : [
+					{
+						data : [<?php
+							foreach ( $array as $item ) {
+								echo '"'.$item['count'].'", ';
+							}
+						?>],
+			            backgroundColor: [
+				            "#FF6384",
+				            "#4BC0C0",
+				            "#FFCE56",
+				            "#36A2EB",
+				            "#E7E9ED"
+			            ]
+			        }]
+			};
+
+			var ctx = document.getElementById("polar<?php echo ucfirst( $data ); ?>").getContext("2d");
+			var polar<?php echo ucfirst( $data ); ?> = new Chart(ctx,{
+			    type: 'polarArea',
+			    data: polar<?php echo ucfirst( $data ); ?>data,
 			    options: {
 					tooltips: {
 					    callbacks: {
