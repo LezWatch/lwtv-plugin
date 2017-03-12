@@ -214,7 +214,7 @@ class LWTV_CPT_Characters {
 	public function cmb2_get_shows_options() {
 		return LWTV_CMB2::get_post_options( array(
 				'post_type'   => 'post_type_shows',
-				'numberposts' => -1,
+				'numberposts' => wp_count_posts( 'post_type_shows' )->publish,
 				'post_status' => array('publish', 'pending', 'draft', 'future'),
 			) );
 	}

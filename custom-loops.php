@@ -34,12 +34,14 @@ class LWTV_Loops {
 	 * @return array The WP_Query Array
 	 */
 	public static function tax_query( $post_type, $taxonomy, $field, $term, $operator = 'IN' ) {
+		$count = wp_count_posts( $post_type )->publish;
 		$query = new WP_Query ( array(
-			'post_type'       => $post_type,
-			'posts_per_page'  => -1,
-			'no_found_rows'   => true,
-			'post_status'     => array( 'publish', 'draft' ),
-			'tax_query' => array( array(
+			'post_type'              => $post_type,
+			'posts_per_page'         => $count,
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'post_status'            => array( 'publish' ),
+			'tax_query'              => array( array(
 				'taxonomy' => $taxonomy,
 				'field'    => $field,
 				'terms'    => $term,
@@ -66,12 +68,14 @@ class LWTV_Loops {
 	 * @return array The WP_Query Array
 	 */
 	public static function tax_two_query( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1 = 'IN', $operator2 = 'IN' ) {
+		$count = wp_count_posts( $post_type )->publish;
 		$query = new WP_Query ( array(
-			'post_type'       => $post_type,
-			'posts_per_page'  => -1,
-			'no_found_rows'   => true,
-			'post_status'     => array( 'publish', 'draft' ),
-			'tax_query' => array(
+			'post_type'              => $post_type,
+			'posts_per_page'         => $count,
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'post_status'            => array( 'publish' ),
+			'tax_query'              => array(
 				array(
 					'taxonomy' => $taxonomy1,
 					'field'    => $field1,
@@ -91,7 +95,9 @@ class LWTV_Loops {
 	}
 
 	/*
-	 * Meta Array
+	 * Post Meta Array
+	 *
+	 * For when you need the whole post data
 	 *
 	 * @param string $post_type i.e 'posts' or 'post_type_characters'
 	 * @param string $key The post meta key being searched for.
@@ -100,18 +106,18 @@ class LWTV_Loops {
 	 *
 	 * @return array The WP_Query Array
 	 */
-
 	public static function post_meta_query( $post_type, $key, $value, $compare = '=' ) {
-
+		$count = wp_count_posts( $post_type )->publish;
 		if ( $value != '' ) {
 			$query = new WP_Query( array(
-				'post_type'       => $post_type,
-				'post_status'     => array( 'publish', 'draft' ),
-				'orderby'         => 'title',
-				'order'           => 'ASC',
-				'posts_per_page'  => '-1',
-				'no_found_rows'   => true,
-				'meta_query'      => array( array(
+				'post_type'              => $post_type,
+				'post_status'            => array( 'publish' ),
+				'orderby'                => 'title',
+				'order'                  => 'ASC',
+				'posts_per_page'         => $count,
+				'no_found_rows'          => true,
+				'update_post_term_cache' => false,
+				'meta_query'             => array( array(
 					'key'     => $key,
 					'value'   => $value,
 					'compare' => $compare,
@@ -119,13 +125,14 @@ class LWTV_Loops {
 			) );
 		} else {
 			$query = new WP_Query( array(
-				'post_type'       => $post_type,
-				'post_status'     => array( 'publish', 'draft' ),
-				'orderby'         => 'title',
-				'order'           => 'ASC',
-				'posts_per_page'  => '-1',
-				'no_found_rows'   => true,
-				'meta_query'      => array( array(
+				'post_type'              => $post_type,
+				'post_status'            => array( 'publish' ),
+				'orderby'                => 'title',
+				'order'                  => 'ASC',
+				'posts_per_page'         => $count,
+				'no_found_rows'          => true,
+				'update_post_term_cache' => false,
+				'meta_query'             => array( array(
 					'key'     => $key,
 					'compare' => $compare,
 				),),
@@ -134,7 +141,42 @@ class LWTV_Loops {
 
 		wp_reset_query();
 		return $query;
+	}
 
+	/*
+	 * WP Meta Query
+	 *
+	 * For when you need the whole post data
+	 *
+	 * @param string $post_type i.e 'posts' or 'post_type_characters'
+	 * @param string $key The post meta key being searched for.
+	 * @param string $value The post meta VALUE being searched for.
+	 * @param string $compare Search operator. Default =
+	 *
+	 * @return array The WP_Query Array
+	 */
+	public static function wp_meta_query( $key, $value, $compare = '=', $relation = 'AND' ) {
+
+		global $wpdb;
+
+		$query_args = array(
+			'relation' => $relation,
+			array(
+				'key'     => $key,
+				'value'   => $value,
+				'compare' => $compare,
+			)
+		);
+		$query = new WP_Meta_Query( $query_args );
+
+		$sql = $query->get_sql(
+			'post',
+			$wpdb->posts,
+			'ID',
+			null
+		);
+
+		return $sql;
 	}
 
 	/*
@@ -148,13 +190,16 @@ class LWTV_Loops {
 	 */
 
 	public static function post_type_query( $post_type ) {
+		$count = wp_count_posts( $post_type )->publish;
 		$query = new WP_Query ( array(
-				'post_type'       => $post_type,
-				'posts_per_page'  => -1,
-				'orderby'         => 'title',
-				'order'           => 'ASC',
-				'no_found_rows'   => true,
-				'post_status'     => array( 'publish', 'draft' ),
+				'post_type'              => $post_type,
+				'posts_per_page'         => $count,
+				'orderby'                => 'title',
+				'order'                  => 'ASC',
+				'no_found_rows'          => true,
+				'update_post_term_cache' => false,
+				'update_post_meta_cache' => false,
+				'post_status'            => array( 'publish' ),
 			)
 		);
 		wp_reset_query();
@@ -180,11 +225,12 @@ class LWTV_Loops {
 	 */
 
 	public static function post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, $field, $terms, $compare = '=', $operator = 'IN' ) {
+		$count = wp_count_posts( $post_type )->publish;
 		$query = new WP_Query( array(
 			'post_type'       => $post_type,
-			'posts_per_page'  => -1,
+			'posts_per_page'  => $count,
 			'no_found_rows'   => true,
-			'post_status'     => array( 'publish', 'draft' ),
+			'post_status'     => array( 'publish' ),
 			'meta_query'      => array(
 				array(
 					'key'     => $key,

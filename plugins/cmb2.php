@@ -27,7 +27,7 @@ class LWTV_CMB2 {
 		add_action( 'cmb2_admin_init', array( $this, 'register_taxonomy_metabox' ) );
 
 		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats' );
-		$this->symbolicon_path = get_stylesheet_directory().'/lez/images/symbolicons/svg/';
+		$this->symbolicon_path = LWTV_SYMBOLICONS_PATH.'/svg/';
 
 		// Add all filters and actions to show icons on tax list page
 		foreach ( $this->icon_taxonomies as $tax_name ) {
@@ -55,7 +55,7 @@ class LWTV_CMB2 {
 	public static function get_post_options( $query_args ) {
 	    $args = wp_parse_args( $query_args, array(
 	        'post_type'   => 'post',
-	        'numberposts' => -1,
+	        'numberposts' => wp_count_posts( 'post' )->publish,
 	        'post_status' => array('publish'),
 	    ) );
 

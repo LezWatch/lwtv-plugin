@@ -66,9 +66,9 @@ class LWTV_CPT_Shows {
 	 * Create Custom Post Type
 	 */
 	public function create_post_type() {
-		
+
 		$name = 'TV Show';
-		
+
 		$labels = array(
 			'name'                  => $name.'s',
 			'singular_name'         => $name,
@@ -117,7 +117,7 @@ class LWTV_CPT_Shows {
 	 * Create Custom Taxonomies
 	 */
 	public function create_taxonomies() {
-		
+
 		// TV STATIONS
 		$name_tvstations   = 'TV Station';
 		$labels_tvstations = array(
@@ -669,7 +669,7 @@ SQL;
 				'post_type'       => 'post_type_characters',
 				'orderby'         => 'title',
 				'order'           => 'ASC',
-				'posts_per_page'  => '-1',
+				'posts_per_page'  => wp_count_posts( 'post_type_characters' )->publish,
 				'meta_query'      => array(
 					array(
 						'key'     => 'lezchars_show',

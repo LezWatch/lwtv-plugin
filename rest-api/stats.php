@@ -71,250 +71,6 @@ class LWTV_Stats_JSON {
 	}
 
 	/**
-	 * Generate Array
-	 *
-	 * @return array with data
-	 */
-	static function generate_array( $subject, $data ) {
-
-		// Bail early if we're not an approved subject matter
-		if ( !in_array( $subject, array('characters', 'shows') ) ) exit;
-
-		// Build Variables
-		$array = array();
-		$post_type = 'post_type_'.$subject;
-		$count = wp_count_posts( $post_type )->publish + wp_count_posts( $post_type )->draft;
-		$taxonomy = 'lez_'.$data;
-
-		// The following are simple taxonomy arrays
-		if ( $data == 'cliches' ) $array = self::tax_array( $post_type, $taxonomy );
-		if ( $data == 'sexuality' ) $array = self::tax_array( $post_type, $taxonomy );
-		if ( $data == 'gender' ) $array = self::tax_array( $post_type, $taxonomy );
-		if ( $data == 'tropes' ) $array = self::tax_array( $post_type, $taxonomy );
-		if ( $data == 'formats' ) $array = self::tax_array( $post_type, $taxonomy );
-
-		if ( $data == 'dead-sex' ) $array = self::tax_dead_array( $post_type, 'lez_sexuality' );
-		if ( $data == 'dead-gender' ) $array = self::tax_dead_array( $post_type, 'lez_gender' );
-		if ( $data == 'dead-roles' ) $array = self::meta_tax_dead_array( $post_type, array( 'regular', 'recurring', 'guest' ), 'lezchars_type' );
-		if ( $data == 'dead-shows' ) $array = self::dead_shows();
-		if ( $data == 'dead-years' ) $array = self::death_year();
-
-
-		// The following are simple meta arrays
-		if ( $data == 'roles' ) $array = self::meta_array( $post_type, array( 'regular', 'recurring', 'guest' ), 'lezchars_type', $data );
-		if ( $data == 'thumbs' ) $array = self::meta_array( $post_type, array( 'Yes', 'No', 'Meh' ), 'lezshows_worthit_rating', $data );
-
-		return $array;
-	}
-
-	/*
-	 * Statistics Taxonomy Array
-	 *
-	 * Generate array to parse taxonomy content
-	 *
-	 * @param string $post_type Post Type to be search
-	 * @param string $taxonomy Taxonomy to be searched
-	 * @param string $terms The terms to be matched (default empty)
-	 * @param string $operator Search operator (default IN)
-	 *
-	 * @return array
-	 */
-	static function tax_array( $post_type, $taxonomy, $terms = '', $operator = 'IN' ) {
-		$array = array();
-
-		// If no term provided, use get_terms for the taxonomy
-		$taxonomies = ( $terms == '' )? get_terms( $taxonomy ) : array($terms);
-
-		foreach ( $taxonomies as $term ) {
-			$term_link = get_term_link( $term );
-			$term_slug = ( $terms == '' )? $term->slug : $terms;
-			$term_name = ( $terms == '' )? $term->name : $terms;
-			$count_terms_query = LWTV_Loops::tax_query( $post_type, $taxonomy, 'slug', $term_slug, $operator );
-			$term_count = $count_terms_query->post_count;
-			$array[$term_name] = $term_count;
-		}
-		return $array;
-	}
-
-	/*
-	 * Statistics Meta Array
-	 *
-	 * Generate array to parse post meta data
-	 *
-	 * @param string $post_type Post Type to be search
-	 * @param array $meta_array Meta terms to loop through
-	 * @param string $key Post Meta Key name (i.e. lezchars_type)
-	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param string $compare The type of comparison (default =)
-	 *
-	 * @return array
-	 */
-	static function meta_array( $post_type, $meta_array, $key, $data, $compare = '=' ) {
-		$array = array();
-		foreach ( $meta_array as $value ) {
-			$meta_query = LWTV_Loops::post_meta_query( $post_type, $key, $value, $compare );
-			$array[ucfirst($value)] = $meta_query->post_count;
-		}
-		return $array;
-	}
-
-	/*
-	 * Statistics Taxonomy Array for DEAD
-	 *
-	 * Generate array to parse taxonomy content for
-	 *
-	 * If
-	 *
-	 * @param string $post_type Post Type to be search
-	 * @param string $taxonomy1 Taxonomy to be searched - PRIMARY
-	 * @param string $terms The terms to be matched (default empty)
-	 * @param string $operator Search operator (default IN)
-	 *
-	 * @return array
-	 */
-	static function tax_dead_array( $post_type, $taxonomy ) {
-		$array = array();
-		$taxonomies = get_terms( $taxonomy );
-
-		foreach ( $taxonomies as $term ) {
-			$query = LWTV_Loops::tax_two_query( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
-			$array[$term->name] = $term->count;
-		}
-		return $array;
-	}
-
-	/*
-	 * Statistics Meta and Taxonomy Array for DEAD
-	 *
-	 * Generate array to parse taxonomy content as it relates to post metas
-	 *
-	 * @param string $post_type Post Type to be search
-	 * @param array $meta_array Meta terms to loop through
-	 * @param string $key Post Meta Key name (i.e. lezchars_type)
-	 * @param string $taxonomy Taxonomy to restrict to (default lez_cliches)
-	 * @param string $field Taxonomy to restrict to (default lez_cliches)
-	 *
-	 * @return array
-	 */
-	static function meta_tax_dead_array( $post_type, $meta_array, $key, $taxonomy = 'lez_cliches', $field = 'dead' ) {
-		$array = array();
-
-		foreach ( $meta_array as $value ) {
-			$query = LWTV_Loops::post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, 'slug', $field );
-			$array[ucfirst($value)] =  $query->post_count;
-		}
-		return $array;
-	}
-
-	/*
-	 * Statistics Death on Shows
-	 *
-	 * Death is insane. This is how to figure out who died on what show.
-	 * We can use it to determine how many shows have ALL dead queers, etc.
-	 * It's fucked up. I'm sorry.
-	 *
-	 * @param string $format The format of our output
-	 *
-	 * @return array
-	 */
-	static function dead_shows( ) {
-
-		// Dead Queers Query
-		$dead_queers_query = LWTV_Loops::tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
-
-		// Shows With Dead Query
-		$dead_shows_query = LWTV_Loops::tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
-
-		// Shows With NO Dead Query
-		$alive_shows_query = LWTV_Loops::tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers', 'NOT IN' );
-
-		// Starting Stats
-		$alldead  = 0;
-		$somedead = 0;
-		$nonedead = $alive_shows_query->post_count;
-
-		if ($dead_shows_query->have_posts() ) {
-			while ( $dead_shows_query->have_posts() ) {
-				$dead_shows_query->the_post();
-
-				$show_id = get_the_ID();
-
-				$death_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show', $show_id, 'LIKE' );
-				if ($death_loop->have_posts() ) {
-
-					$fulldeathcount = 0;
-					$chardeathcount = 0;
-
-					while ($death_loop->have_posts()) {
-						$death_loop->the_post();
-						if ( !is_array (get_post_meta(get_the_ID(), 'lezchars_show', true)) ) {
-							$shows_array = array( get_post_meta(get_the_ID(), 'lezchars_show', true) );
-						} else {
-							$shows_array = get_post_meta(get_the_ID(), 'lezchars_show', true);
-						}
-
-						// Because shows are arrays, we have to check if the person REALLY belongs to this show
-						if ( in_array( $show_id, $shows_array ) ) {
-							$chardeathcount++;
-						}
-
-						// If they really belong to the show AND are really most sincerly dead, here you go
-						if ( has_term( 'dead', 'lez_cliches', get_the_ID() ) && in_array( $show_id, $shows_array ) ) {
-							$fulldeathcount++;
-						}
-					}
-
-					if ( $fulldeathcount == $chardeathcount ) {
-						$alldead++;
-					} elseif ( $fulldeathcount <= $chardeathcount ) {
-						$somedead++;
-					}
-
-					wp_reset_query();
-				}
-			}
-			wp_reset_query();
-		}
-
-		$array = array (
-			"all"  => $alldead,
-			"some" => $somedead,
-			"none" => $nonedead,
-		);
-
-		return $array;
-	}
-
-	/*
-	 * Statistics Death By Year
-	 *
-	 * Death is insane. This is just looping a lot of things to sort
-	 * out who died in what year, so we can use it by other functions
-	 *
-	 * @return array
-	 */
-	static function death_year() {
-		// Death by year
-		$year_first = 1961;
-		$year_deathlist_array = array();
-		foreach (range(date('Y'), $year_first) as $x) {
-			$year_deathlist_array[$x] = $x;
-		}
-
-		$year_death_array = array();
-		foreach ( $year_deathlist_array as $year ) {
-			$year_death_query = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-
-			if ( $year_death_query->post_count >= '1' ) {
-				$year_death_array[$year] = $year_death_query->post_count;
-			} else {
-				$year_death_array[$year] = 0;
-			}
-		}
-		return $year_death_array;
-	}
-
-	/**
 	 * Generate Statistics
 	 *
 	 * @return array with stats data
@@ -372,7 +128,7 @@ class LWTV_Stats_JSON {
 					wp_reset_query();
 				}
 			} else {
-				$formats     = self::generate_array( 'shows', 'formats');
+				$formats     = 	LWTV_Stats::generate( 'shows', 'formats', 'array');
 
 				$stats_array = array(
 					'total'    => wp_count_posts( 'post_type_shows' )->publish,
@@ -419,8 +175,8 @@ class LWTV_Stats_JSON {
 				}
 			} else {
 				$dead_count = get_term_by( 'slug', 'dead', 'lez_cliches' );
-				$sexuality  = self::generate_array( 'characters', 'sexuality' );
-				$gender     = self::generate_array( 'characters', 'gender' );
+				$sexuality  = LWTV_Stats::generate( 'characters', 'sexuality', 'array');
+				$gender     = LWTV_Stats::generate( 'characters', 'gender', 'array');
 
 				$stats_array = array(
 					'total'     => wp_count_posts( 'post_type_characters' )->publish,
@@ -434,15 +190,15 @@ class LWTV_Stats_JSON {
 
 			if ( $format == 'complex' ) {
 				$stats_array = array(
-					'shows'     => self::generate_array( 'characters', 'dead-shows' ),
-					'sexuality' => self::generate_array( 'characters', 'dead-sex' ),
-					'gender'    => self::generate_array( 'characters', 'dead-gender' ),
-					'roles'     => self::generate_array( 'characters', 'dead-roles' ),
+					'shows'     => LWTV_Stats::generate( 'characters', 'dead-shows', 'array' ),
+					'sexuality' => LWTV_Stats::generate( 'characters', 'dead-sex', 'array' ),
+					'gender'    => LWTV_Stats::generate( 'characters', 'dead-gender', 'array' ),
+					'roles'     => LWTV_Stats::generate( 'characters', 'dead-roles', 'array' ),
 				);
 
 			} elseif ($format == 'years' ) {
 
-				$stats_array = self::generate_array( 'characters', 'dead-years' );
+				$stats_array = LWTV_Stats::generate( 'characters', 'dead-years', 'array' );
 
 			} else {
 

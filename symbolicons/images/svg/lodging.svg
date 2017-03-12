@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 28 28" enable-background="new 0 0 28 28" xml:space="preserve">
+<rect x="4" y="15" width="4" height="7"/>
+<polygon points="0,11 0,28 3,28 3,27 24.999,27 24.999,28 28,28 28,17 24.999,17 24.999,23 3,23 3,11 "/>
+<g>
+	<defs>
+		<rect id="SVGID_1_" width="28" height="28"/>
+	</defs>
+	<clipPath id="SVGID_2_">
+		<use xlink:href="#SVGID_1_"  overflow="visible"/>
+	</clipPath>
+	<path clip-path="url(#SVGID_2_)" d="M9,15v7h15v-5.503C24,15.47,22.85,15,21.823,15H9z"/>
+	<path clip-path="url(#SVGID_2_)" d="M9.999,7l2,1l2-1l2,1h3.024c0.913,1.208,2.347,2,3.977,2c2.762,0,5-2.238,5-5
+		c0-2.761-2.238-5-5-5c-2.049,0-3.805,1.236-4.577,3H7.999l-3,2l3,3L9.999,7z M23.5,3.5C24.328,3.5,25,4.173,25,5
+		c0,0.828-0.672,1.5-1.5,1.5C22.672,6.5,22,5.829,22,5C22,4.173,22.672,3.5,23.5,3.5"/>
+</g>
+</svg>

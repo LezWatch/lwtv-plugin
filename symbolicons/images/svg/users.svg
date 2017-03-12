@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 28 28"
+	 enable-background="new 0 0 28 28" xml:space="preserve">
+
+		<g>
+			<defs>
+				<rect id="SVGID_1_" width="28" height="28"/>
+			</defs>
+			<clipPath id="SVGID_2_">
+				<use xlink:href="#SVGID_1_"  overflow="visible"/>
+			</clipPath>
+			<path clip-path="url(#SVGID_2_)" fill="#231F20" d="M5,14c1,0,3-0.93,3-3V9c0-1.656-1.344-3-3-3S2,7.344,2,9v2
+				C2,13.07,4,13.999,5,14"/>
+			<path clip-path="url(#SVGID_2_)" fill="#231F20" d="M23,14c1-0.001,3-0.93,3-3V9c0-1.656-1.344-3-3-3c-1.656,0-3,1.344-3,3v2
+				C20,13.07,22,14,23,14"/>
+			<path clip-path="url(#SVGID_2_)" fill="#231F20" d="M14,14c1.666,0,5-1.549,5-5V5c0-2.76-2.239-5-5-5S9,2.24,9,5v4
+				C9,12.451,12.334,13.998,14,14"/>
+			<path clip-path="url(#SVGID_2_)" fill="#231F20" d="M14,15C5.429,15,4,22.333,4,26v2h20v-2C24,22.333,22.572,15,14,15"/>
+			<path clip-path="url(#SVGID_2_)" fill="#231F20" d="M23,15c-1.136,0-2.014,0.285-2.701,0.735
+				c1.099,0.733,2.031,1.684,2.765,2.861c0.489,0.784,0.845,1.599,1.122,2.404H28C28,19,27.285,15,23,15"/>
+			<path clip-path="url(#SVGID_2_)" fill="#231F20" d="M7.701,15.735C7.014,15.286,6.135,15,5,15c-4.285,0-5,4-5,6h3.814
+				c0.277-0.805,0.634-1.62,1.123-2.405C5.671,17.419,6.602,16.467,7.701,15.735"/>
+		</g>
+
+</svg>

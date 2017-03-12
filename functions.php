@@ -7,6 +7,11 @@
  Author: Mika Epstein
 */
 
+// DEFINES
+
+define( 'LWTV_SYMBOLICONS_URL', plugins_url( 'symbolicons/images', __FILE__ ) );
+define( 'LWTV_SYMBOLICONS_PATH', plugin_dir_path( __FILE__ ).'/symbolicons/images' );
+
 /**
  * class LWTV_Functions
  *
@@ -19,6 +24,13 @@ class LWTV_Functions {
 	 */
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init') );
+	}
+
+	/**
+	 * Init
+	 */
+	public function init() {
+		// Nothing to see here.
 	}
 
 	/**
@@ -37,16 +49,20 @@ new LWTV_Functions();
 require_once( 'plugins/cmb2.php' );
 
 // Include CPTs
-include( 'cpts/characters.php' );
-include( 'cpts/shows.php' );
-include( 'cpts/featured-images.php' );
+include_once( 'cpts/characters.php' );
+include_once( 'cpts/shows.php' );
+include_once( 'cpts/featured-images.php' );
 
 // JSON API
-include( 'rest-api/bury-your-queers.php' );
-include( 'rest-api/stats.php' );
+include_once( 'rest-api/bury-your-queers.php' );
+include_once( 'rest-api/stats.php' );
+
+// Symbolicons
+include_once( 'symbolicons/symbolicons.php' );
 
 // Include Others
-include( 'search.php' );
-include( 'seo.php' );
-include( 'custom-loops.php' );
-include( 'statistics.php' );
+include_once( 'search.php' );
+include_once( 'seo.php' );
+include_once( 'custom-loops.php' );
+include_once( 'statistics.php' );
+include_once( 'query_vars.php' );   // Query Variables for custom pages

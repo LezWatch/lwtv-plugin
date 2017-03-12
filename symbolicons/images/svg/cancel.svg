@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 28 28" enable-background="new 0 0 28 28" xml:space="preserve">
+<g>
+	<defs>
+		<rect id="SVGID_1_" width="28" height="28"/>
+	</defs>
+	<clipPath id="SVGID_2_">
+		<use xlink:href="#SVGID_1_"  overflow="visible"/>
+	</clipPath>
+	<path clip-path="url(#SVGID_2_)" d="M23.9,4.1c-5.469-5.467-14.332-5.467-19.799,0c-5.467,5.468-5.467,14.332,0,19.8
+		c5.467,5.467,14.33,5.467,19.799,0C29.366,18.432,29.366,9.568,23.9,4.1 M20.218,17.514l-2.703,2.704l-3.516-3.515l-3.513,3.515
+		l-2.704-2.704L11.296,14l-3.514-3.515l2.704-2.703l3.515,3.514l3.514-3.513l2.703,2.702l-3.514,3.514L20.218,17.514z"/>
+</g>
+</svg>

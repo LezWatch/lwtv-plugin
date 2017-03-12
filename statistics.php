@@ -15,8 +15,25 @@ class LWTV_Stats {
 	 * Actions to happen immediately
 	 */
     public function __construct() {
-        //add_action( 'init', array( &$this, 'init' ) );
+        add_action( 'init', array( &$this, 'init' ) );
     }
+
+	/**
+	 * Init
+	 */
+	public function init() {
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+	}
+
+	/*
+	 * Enqueues
+	 *
+	 * Custom enqueue scripts for chartJS
+	 */
+	function enqueue_scripts() {
+		wp_enqueue_script( 'chart.js', plugin_dir_url( __FILE__ ) .'/js/Chart.bundle.min.js' , array( 'jquery' ), CHILD_THEME_VERSION );
+	}
+
 
 	/*
 	 * Generate: Statistics Base Code
@@ -32,17 +49,14 @@ class LWTV_Stats {
 		if ( !in_array( $subject, array('characters', 'shows') ) ) exit;
 
 		// Build Variables
-		$array = array();
+		$array     = array();
 		$post_type = 'post_type_'.$subject;
-		$count = wp_count_posts( $post_type )->publish + wp_count_posts( $post_type )->draft;
-		$taxonomy = 'lez_'.$data;
+		$count     = wp_count_posts( $post_type )->publish;
+		$taxonomy  = 'lez_'.$data;
 
 		// The following are simple taxonomy arrays
-		if ( $data == 'cliches' ) $array = self::tax_array( $post_type, $taxonomy );
-		if ( $data == 'sexuality' ) $array = self::tax_array( $post_type, $taxonomy );
-		if ( $data == 'gender' ) $array = self::tax_array( $post_type, $taxonomy );
-		if ( $data == 'tropes' ) $array = self::tax_array( $post_type, $taxonomy );
-		if ( $data == 'formats' ) $array = self::tax_array( $post_type, $taxonomy );
+		$simple_tax_array = array( 'cliches', 'sexuality', 'gender', 'tropes', 'formats' );
+		if ( in_array( $data, $simple_tax_array ) ) $array = self::tax_array( $post_type, $taxonomy );
 
 		// The following are simple meta arrays
 		if ( $data == 'roles' ) $array = self::meta_array( $post_type, array( 'regular', 'recurring', 'guest' ), 'lezchars_type', $data );
@@ -101,21 +115,21 @@ class LWTV_Stats {
 				$count = $array['dead-queers']['count'];
 			}
 		}
-		if ( $data == 'dead-sex' ) $array = self::tax_dead_array( $post_type, 'lez_sexuality' );
+		if ( $data == 'dead-sex' )    $array = self::tax_dead_array( $post_type, 'lez_sexuality' );
 		if ( $data == 'dead-gender' ) $array = self::tax_dead_array( $post_type, 'lez_gender' );
-		if ( $data == 'dead-roles' ) $array = self::meta_tax_dead_array( $post_type, array( 'regular', 'recurring', 'guest' ), 'lezchars_type' );
-		if ( $data == 'dead-shows' ) $array = self::dead_shows( 'simple' );
-		if ( $data == 'dead-years' ) $array = self::death_year();
+		if ( $data == 'dead-roles' )  $array = self::meta_tax_dead_array( $post_type, array( 'regular', 'recurring', 'guest' ), 'lezchars_type' );
+		if ( $data == 'dead-shows' )  $array = self::dead_shows( 'simple' );
+		if ( $data == 'dead-years' )  $array = self::death_year();
 
 		// Acutally output shit
-		if ( $format == 'barchart' ) self::barcharts( $subject, $data, $array );
-		if ( $format == 'piechart' ) self::piecharts( $subject, $data, $array );
-		if ( $format == 'polararea' ) self::polararea( $subject, $data, $array );
-		if ( $format == 'count' ) return $count;
-		if ( $format == 'list' ) self::lists( $subject, $data, $array, $count );
+		if ( $format == 'barchart' )   self::barcharts( $subject, $data, $array );
+		if ( $format == 'piechart' )   self::piecharts( $subject, $data, $array );
+		if ( $format == 'trendline' )  self::trendline( $subject, $data, $array );
+		if ( $format == 'count' )      return $count;
+		if ( $format == 'list' )       self::lists( $subject, $data, $array, $count );
 		if ( $format == 'percentage' ) self::percentages( $subject, $data, $array, $count );
-		if ( $format == 'average' ) self::averages( $subject, $data, $array, $count );
-		if ( $format == 'array' ) return $array;
+		if ( $format == 'average' )    self::averages( $subject, $data, $array, $count );
+		if ( $format == 'array' )      return $array;
 	}
 
 	/*
@@ -222,316 +236,6 @@ class LWTV_Stats {
 	}
 
 	/*
-	 * Statistics Display Lists
-	 *
-	 * Output the list of data usually from functions like self::meta_array
-	 * It loops through the arrays and outputs data as needed
-	 *
-	 * @param string $subject The content subject
-	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
-	 * @param string $count The count of posts
-	 *
-	 * @return Content
-	 */
-	static function lists( $subject, $data, $array, $count ) {
-		// Format Clichés properly
-		if ( $data == 'cliches' ) $data = 'clichés';
-
-		// Set title
-		$title = ucfirst( substr($subject, 0, -1) ). ' ' . ucfirst( $data );
-		?>
-		<h3><?php echo $title; ?></h3>
-		<ul>
-		<?php
-		foreach ( $array as $item ) {
-			$name = ( $item['name'] == 'Dead Lesbians (Dead Queers)' )? 'Dead' : $item['name'];
-			echo '<li>';
-				echo '<strong><a href="'.$item['url'].'">' . $name . '</a></strong> &mdash; ' . $item['count'] . ' ' . $subject .' - '. round( ( ( $item['count'] / $count ) * 100) , 1) .'%';
-			echo '</li>';
-		}
-		?>
-		</ul>
-		<?php
-	}
-
-	/*
-	 * Statistics Display Percentages
-	 *
-	 * Output the list of data usually from functions like self::meta_array
-	 * It loops through the arrays and outputs data as needed
-	 *
-	 * @param string $subject The content subject
-	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
-	 * @param string $count The count of posts
-	 *
-	 * @return Content
-	 */
-	static function percentages( $subject, $data, $array, $count ) {
-		?>
-		<ul>
-		<?php
-		foreach ( $array as $item ) {
-			echo '<li>';
-				echo '<strong><a href="'.$item['url'].'">'
-				. $item['name'] . '</a></strong> &mdash; '
-				. round( ( ( $item['count'] / $count ) * 100) , 1) .'%'
-				. ' ('. $item['count'] . ' ' . $subject .')';
-			echo '</li>';
-		}
-		?>
-		</ul>
-		<?php
-	}
-
-	/*
-	 * Statistics Display Average
-	 *
-	 * Output the list of data usually from functions like self::meta_array
-	 * It loops through the arrays and outputs data as needed
-	 *
-	 * @param string $subject The content subject (ex: dead)
-	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
-	 * @param string $count The count of posts (usually all characters)
-	 *
-	 * @return Content
-	 */
-	static function averages( $subject, $data, $array, $count ) {
-		$N = count($array);
-		$sum = 0;
-
-		foreach ( $array as $item ) {
-			$sum = $sum + $item['count'];
-		}
-
-		$average = round ($sum / $N);
-
-		echo $average;
-	}
-
-	/*
-	 * Statistics Display Barcharts
-	 *
-	 * Output the list of data usually from functions like self::meta_array
-	 * It loops through the arrays and outputs data as needed
-	 *
-	 * This relies on ChartJS existing
-	 *
-	 * @param string $subject The content subject
-	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
-	 *
-	 * @return Content
-	 */
-	static function barcharts( $subject, $data, $array ) {
-		// Format Clichés properly
-		if ( $data == 'cliches' ) $data = 'clichés';
-
-		// Set title
-		$title = ( $data == 'dead-years' )? 'Dead Characters by Year' : ucfirst( substr($subject, 0, -1) ). ' ' . ucfirst( $data );
-
-		?>
-		<h3><?php echo $title; ?></h3>
-		<div id="container" style="width: 100%;">
-			<canvas id="bar<?php echo ucfirst( $subject ); ?>" width="700" height="550"></canvas>
-		</div>
-
-		<script>
-		// Defaults
-		Chart.defaults.global.responsive = true;
-		Chart.defaults.global.legend.display = false;
-
-		// Bar Chart
-		var bar<?php echo ucfirst( $subject ); ?>Data = {
-			labels : [<?php
-				foreach ( $array as $item ) {
-					$name = ( $item['name'] == 'Dead Lesbians (Dead Queers)' )? 'Dead' : $item['name'];
-					echo '"'.$name.' ('.$item['count'].')", ';
-				}
-			?>],
-			datasets : [
-				{
-		            backgroundColor: "rgba(255,99,132,0.2)",
-		            borderColor: "rgba(255,99,132,1)",
-		            borderWidth: 2,
-		            hoverBackgroundColor: "rgba(255,99,132,0.4)",
-		            hoverBorderColor: "rgba(255,99,132,1)",
-					data : [<?php
-						foreach ( $array as $item ) {
-							echo '"'.$item['count'].'", ';
-						}
-					?>],
-				}
-			]
-		};
-		var ctx = document.getElementById("bar<?php echo ucfirst( $subject ); ?>").getContext("2d");
-		var bar<?php echo ucfirst( $subject ); ?> = new Chart(ctx, {
-		    type: 'horizontalBar',
-		    data: bar<?php echo ucfirst( $subject ); ?>Data,
-		    options: {
-				tooltips: {
-				    callbacks: {
-				        title: function(tooltipItems, data) {
-				            // return "Bob " + tooltipItems.data;
-				            // This is undefined?
-				        },
-				        label: function(tooltipItems, data) {
-				            return tooltipItems.yLabel;
-				        },
-				    }
-				},
-			}
-		});
-
-		</script>
-		<?php
-	}
-
-	/*
-	 * Statistics Display Piecharts
-	 *
-	 * Output the list of data usually from functions like self::meta_array
-	 * It loops through the arrays and outputs data as needed
-	 *
-	 * This relies on ChartJS existing
-	 *
-	 * @param string $subject The content subject
-	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
-	 *
-	 * @return Content
-	 */
-	static function piecharts( $subject, $data, $array ) {
-
-		// Strip extra word(s) to make the chart key readable
-		$fixname = '';
-		if ( $data == 'sexuality' || $data == 'dead-sex' ) $fixname = 'sexual';
-		if ( $data == 'gender' || $data == 'dead-gender' ) $fixname = 'gender';
-		if ( $data == 'dead-shows' ) $fixname = 'queers are dead';
-
-		// Strip hypens becuase ChartJS doesn't like it.
-		$data = str_replace('-','',$data)
-		?>
-		<canvas id="pie<?php echo ucfirst( $data ); ?>" width="200" height="200"></canvas>
-
-		<script>
-			// Piechart for stats
-			var pie<?php echo ucfirst( $data ); ?>data = {
-				labels : [<?php
-					foreach ( $array as $item ) {
-						$name = str_replace( $fixname, '', $item['name'] );
-						echo '"'. $name.' ('.$item['count'].')", ';
-					}
-				?>],
-				datasets : [
-					{
-						data : [<?php
-							foreach ( $array as $item ) {
-								echo '"'.$item['count'].'", ';
-							}
-						?>],
-			            backgroundColor: [
-				            "#FF6384",
-				            "#4BC0C0",
-				            "#FFCE56",
-				            "#36A2EB",
-				            "#E7E9ED"
-			            ]
-			        }]
-			};
-
-			var ctx = document.getElementById("pie<?php echo ucfirst( $data ); ?>").getContext("2d");
-			var pie<?php echo ucfirst( $data ); ?> = new Chart(ctx,{
-			    type:'doughnut',
-			    data: pie<?php echo ucfirst( $data ); ?>data,
-			    options: {
-					tooltips: {
-					    callbacks: {
-							label: function(tooltipItem, data) {
-								return data.labels[tooltipItem.index];
-							}
-					    },
-					},
-				}
-			});
-		</script>
-		<?php
-	}
-
-	/*
-	 * Statistics Display Polar Chart
-	 *
-	 * Output the list of data usually from functions like self::meta_array
-	 * It loops through the arrays and outputs data as needed
-	 *
-	 * This relies on ChartJS existing
-	 *
-	 * @param string $subject The content subject
-	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
-	 *
-	 * @return Content
-	 */
-	static function polararea( $subject, $data, $array ) {
-
-		// Strip extra word(s) to make the chart key readable
-		$fixname = '';
-		if ( $data == 'sexuality' || $data == 'dead-sex' ) $fixname = 'sexual';
-		if ( $data == 'gender' || $data == 'dead-gender' ) $fixname = 'gender';
-		if ( $data == 'dead-shows' ) $fixname = 'queers are dead';
-
-		// Strip hypens becuase ChartJS doesn't like it.
-		$data = str_replace('-','',$data)
-		?>
-		<canvas id="polar<?php echo ucfirst( $data ); ?>" width="200" height="200"></canvas>
-
-		<script>
-			// Piechart for stats
-			var polar<?php echo ucfirst( $data ); ?>data = {
-				labels : [<?php
-					foreach ( $array as $item ) {
-						$name = str_replace( $fixname, '', $item['name'] );
-						echo '"'. $name.' ('.$item['count'].')", ';
-					}
-				?>],
-				datasets : [
-					{
-						data : [<?php
-							foreach ( $array as $item ) {
-								echo '"'.$item['count'].'", ';
-							}
-						?>],
-			            backgroundColor: [
-				            "#FF6384",
-				            "#4BC0C0",
-				            "#FFCE56",
-				            "#36A2EB",
-				            "#E7E9ED"
-			            ]
-			        }]
-			};
-
-			var ctx = document.getElementById("polar<?php echo ucfirst( $data ); ?>").getContext("2d");
-			var polar<?php echo ucfirst( $data ); ?> = new Chart(ctx,{
-			    type: 'polarArea',
-			    data: polar<?php echo ucfirst( $data ); ?>data,
-			    options: {
-					tooltips: {
-					    callbacks: {
-							label: function(tooltipItem, data) {
-								return data.labels[tooltipItem.index];
-							}
-					    },
-					},
-				}
-			});
-		</script>
-		<?php
-	}
-
-	/*
 	 * Statistics Death By Year
 	 *
 	 * Death is insane. This is just looping a lot of things to sort
@@ -541,7 +245,7 @@ class LWTV_Stats {
 	 */
 	static function death_year() {
 		// Death by year
-		$year_first = 1970;
+		$year_first = 1961;
 		$year_deathlist_array = array();
 		foreach (range(date('Y'), $year_first) as $x) {
 			$year_deathlist_array[$x] = $x;
@@ -551,13 +255,11 @@ class LWTV_Stats {
 		foreach ( $year_deathlist_array as $year ) {
 			$year_death_query = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 
-			if ( $year_death_query->post_count >= '1' ) {
-				$year_death_array[$year] = array(
-					'name' => $year,
-					'count' => $year_death_query->post_count,
-					'url' => site_url( '/this-year/'.$year.'/')
-				);
-			}
+			$year_death_array[$year] = array(
+				'name' => $year,
+				'count' => $year_death_query->post_count,
+				'url' => site_url( '/this-year/'.$year.'/')
+			);
 		}
 		return $year_death_array;
 	}
@@ -744,6 +446,368 @@ class LWTV_Stats {
 		);
 
 		return $array;
+	}
+
+	/*
+	 * Statistics Display Lists
+	 *
+	 * Output the list of data usually from functions like self::meta_array
+	 * It loops through the arrays and outputs data as needed
+	 *
+	 * @param string $subject The content subject
+	 * @param string $data The data 'subject' - used to generate the URLs
+	 * @param array $array The array of data
+	 * @param string $count The count of posts
+	 *
+	 * @return Content
+	 */
+	static function lists( $subject, $data, $array, $count ) {
+		// Format Clichés properly
+		if ( $data == 'cliches' ) $data = 'clichés';
+
+		// Set title
+		$title = ucfirst( substr($subject, 0, -1) ). ' ' . ucfirst( $data );
+		?>
+		<h3><?php echo $title; ?></h3>
+		<ul>
+		<?php
+		foreach ( $array as $item ) {
+			$name = ( $item['name'] == 'Dead Lesbians (Dead Queers)' )? 'Dead' : $item['name'];
+			echo '<li>';
+				echo '<strong><a href="'.$item['url'].'">' . $name . '</a></strong> &mdash; ' . $item['count'] . ' ' . $subject .' - '. round( ( ( $item['count'] / $count ) * 100) , 1) .'%';
+			echo '</li>';
+		}
+		?>
+		</ul>
+		<?php
+	}
+
+	/*
+	 * Statistics Display Percentages
+	 *
+	 * Output the list of data usually from functions like self::meta_array
+	 * It loops through the arrays and outputs data as needed
+	 *
+	 * @param string $subject The content subject
+	 * @param string $data The data 'subject' - used to generate the URLs
+	 * @param array $array The array of data
+	 * @param string $count The count of posts
+	 *
+	 * @return Content
+	 */
+	static function percentages( $subject, $data, $array, $count ) {
+		?>
+		<ul>
+		<?php
+		foreach ( $array as $item ) {
+			echo '<li>';
+				echo '<strong><a href="'.$item['url'].'">'
+				. $item['name'] . '</a></strong> &mdash; '
+				. round( ( ( $item['count'] / $count ) * 100) , 1) .'%'
+				. ' ('. $item['count'] . ' ' . $subject .')';
+			echo '</li>';
+		}
+		?>
+		</ul>
+		<?php
+	}
+
+	/*
+	 * Statistics Display Average
+	 *
+	 * Output the list of data usually from functions like self::meta_array
+	 * It loops through the arrays and outputs data as needed
+	 *
+	 * @param string $subject The content subject (ex: dead)
+	 * @param string $data The data 'subject' - used to generate the URLs
+	 * @param array $array The array of data
+	 * @param string $count The count of posts (usually all characters)
+	 *
+	 * @return Content
+	 */
+	static function averages( $subject, $data, $array, $count ) {
+		$N = count($array);
+		$sum = 0;
+
+		foreach ( $array as $item ) {
+			$sum = $sum + $item['count'];
+		}
+
+		$average = round ($sum / $N);
+
+		echo $average;
+	}
+
+	/**
+	 * linear regression function
+	 * @param $x array x-coords
+	 * @param $y array y-coords
+	 * @returns array() m=>slope, b=>intercept
+	 */
+	static function linear_regression($x, $y) {
+
+		// calculate number points
+		$n = count($x);
+
+		// ensure both arrays of points are the same size
+		if ($n != count($y)) {
+			trigger_error("linear_regression(): Number of elements in coordinate arrays do not match.", E_USER_ERROR);
+		}
+
+		// calculate sums
+		$x_sum = array_sum($x);
+		$y_sum = array_sum($y);
+
+		$xx_sum = 0;
+		$xy_sum = 0;
+
+		for($i = 0; $i < $n; $i++) {
+			$xy_sum+=($x[$i]*$y[$i]);
+			$xx_sum+=($x[$i]*$x[$i]);
+		}
+
+		// calculate slope
+		$m = (($n * $xy_sum) - ($x_sum * $y_sum)) / (($n * $xx_sum) - ($x_sum * $x_sum));
+
+		// calculate intercept
+		$b = ($y_sum - ($m * $x_sum)) / $n;
+
+		return array("slope"=>$m, "intercept"=>$b);
+	}
+
+	/*
+	 * Statistics Display Barcharts
+	 *
+	 * Output the list of data usually from functions like self::meta_array
+	 * It loops through the arrays and outputs data as needed
+	 *
+	 * This relies on ChartJS existing
+	 *
+	 * @param string $subject The content subject
+	 * @param string $data The data 'subject' - used to generate the URLs
+	 * @param array $array The array of data
+	 *
+	 * @return Content
+	 */
+	static function barcharts( $subject, $data, $array ) {
+		// Format Clichés properly
+		if ( $data == 'cliches' ) $data = 'clichés';
+
+		// Set title
+		$title = ( $data == 'dead-years' )? 'Dead Characters by Year' : ucfirst( substr($subject, 0, -1) ). ' ' . ucfirst( $data );
+
+		?>
+		<h3><?php echo $title; ?></h3>
+		<div id="container" style="width: 100%;">
+			<canvas id="bar<?php echo ucfirst( $subject ); ?>" width="700" height="550"></canvas>
+		</div>
+
+		<script>
+		// Defaults
+		Chart.defaults.global.responsive = true;
+		Chart.defaults.global.legend.display = false;
+
+		// Bar Chart
+		var bar<?php echo ucfirst( $subject ); ?>Data = {
+			labels : [<?php
+				foreach ( $array as $item ) {
+					$name = ( $item['name'] == 'Dead Lesbians (Dead Queers)' )? 'Dead' : esc_html( $item['name'] );
+					echo '"'. $name .' ('.$item['count'].')", ';
+				}
+			?>],
+			datasets : [
+				{
+		            backgroundColor: "rgba(255,99,132,0.2)",
+		            borderColor: "rgba(255,99,132,1)",
+		            borderWidth: 2,
+		            hoverBackgroundColor: "rgba(255,99,132,0.4)",
+		            hoverBorderColor: "rgba(255,99,132,1)",
+					data : [<?php
+						foreach ( $array as $item ) {
+							echo '"'.$item['count'].'", ';
+						}
+					?>],
+				}
+			]
+		};
+		var ctx = document.getElementById("bar<?php echo ucfirst( $subject ); ?>").getContext("2d");
+		var bar<?php echo ucfirst( $subject ); ?> = new Chart(ctx, {
+		    type: 'horizontalBar',
+		    data: bar<?php echo ucfirst( $subject ); ?>Data,
+		    options: {
+				tooltips: {
+				    callbacks: {
+				        title: function(tooltipItems, data) {
+				            // return "Bob " + tooltipItems.data;
+				            // This is undefined?
+				        },
+				        label: function(tooltipItems, data) {
+				            return tooltipItems.yLabel;
+				        },
+				    }
+				},
+			}
+		});
+
+		</script>
+		<?php
+	}
+
+	/*
+	 * Statistics Display Piecharts
+	 *
+	 * Output the list of data usually from functions like self::meta_array
+	 * It loops through the arrays and outputs data as needed
+	 *
+	 * This relies on ChartJS existing
+	 *
+	 * @param string $subject The content subject
+	 * @param string $data The data 'subject' - used to generate the URLs
+	 * @param array $array The array of data
+	 *
+	 * @return Content
+	 */
+	static function piecharts( $subject, $data, $array ) {
+
+		// Strip extra word(s) to make the chart key readable
+		$fixname = '';
+		if ( $data == 'sexuality' || $data == 'dead-sex' ) $fixname = 'sexual';
+		if ( $data == 'gender' || $data == 'dead-gender' ) $fixname = 'gender';
+		if ( $data == 'dead-shows' ) $fixname = 'queers are dead';
+
+		// Strip hypens becuase ChartJS doesn't like it.
+		$data = str_replace('-','',$data)
+		?>
+		<canvas id="pie<?php echo ucfirst( $data ); ?>" width="200" height="200"></canvas>
+
+		<script>
+			// Piechart for stats
+			var pie<?php echo ucfirst( $data ); ?>data = {
+				labels : [<?php
+					foreach ( $array as $item ) {
+						$name = str_replace( $fixname, '', $item['name'] );
+						echo '"'. $name.' ('.$item['count'].')", ';
+					}
+				?>],
+				datasets : [
+					{
+						data : [<?php
+							foreach ( $array as $item ) {
+								echo '"'.$item['count'].'", ';
+							}
+						?>],
+			            backgroundColor: [
+				            "#FF6384",
+				            "#4BC0C0",
+				            "#FFCE56",
+				            "#36A2EB",
+				            "#E7E9ED"
+			            ]
+			        }]
+			};
+
+			var ctx = document.getElementById("pie<?php echo ucfirst( $data ); ?>").getContext("2d");
+			var pie<?php echo ucfirst( $data ); ?> = new Chart(ctx,{
+			    type:'doughnut',
+			    data: pie<?php echo ucfirst( $data ); ?>data,
+			    options: {
+					tooltips: {
+					    callbacks: {
+							label: function(tooltipItem, data) {
+								return data.labels[tooltipItem.index];
+							}
+					    },
+					},
+				}
+			});
+		</script>
+		<?php
+	}
+
+	/*
+	 * Statistics Display Trendlines
+	 *
+	 * Output the list of data usually from functions like self::meta_array
+	 * It loops through the arrays and outputs data as needed
+	 *
+	 * This relies on ChartJS existing and really is only useful for death by years
+	 *
+	 * @param string $subject The content subject
+	 * @param string $data The data 'subject' - used to generate the URLs
+	 * @param array $array The array of data
+	 *
+	 * @return Content
+	 */
+	static function trendline( $subject, $data, $array ) {
+
+		if ( $data != 'dead-years' ) return;
+
+		$array = array_reverse( $array );
+
+		// Calculate Trend
+		$names = array();
+		$count = array();
+		foreach( $array as $item ) {
+			$names[] = $item['name'];
+			$count[] = $item['count'];
+		}
+
+		$trendarray = self::linear_regression( $names, $count );
+
+		// Strip hypens becuase ChartJS doesn't like it.
+		$cleandata = str_replace('-','',$data)
+		?>
+
+		<div id="container" style="width: 100%;">
+			<canvas id="trend<?php echo ucfirst( $cleandata ); ?>" width="700" height="550"></canvas>
+		</div>
+
+		<script>
+		var ctx = document.getElementById("trend<?php echo ucfirst( $cleandata ); ?>").getContext("2d");
+		var trend<?php echo ucfirst( $cleandata ); ?> = new Chart(ctx, {
+		    type: 'bar',
+		    data: {
+				labels : [<?php
+					foreach ( $array as $item ) {
+						echo '"'. esc_html( $item['name'] ) .' ('.$item['count'].')", ';
+					}
+				?>],
+				datasets : [
+					{
+						type: 'line',
+						label: 'Number of <?php echo ucfirst( $subject ); ?>',
+			            backgroundColor: "rgba(255,99,132,0.2)",
+			            borderColor: "rgba(255,99,132,1)",
+			            borderWidth: 2,
+			            hoverBackgroundColor: "rgba(255,99,132,0.4)",
+			            hoverBorderColor: "rgba(255,99,132,1)",
+						data : [<?php
+							foreach ( $array as $item ) {
+								echo '"'.$item['count'].'", ';
+							}
+						?>],
+					},
+		            {
+		                type: 'line',
+		                label: 'Trendline',
+		                pointRadius: 0,
+		                borderColor: "rgba(75,192,192,1)",
+		                borderWidth: 2,
+		                fill: false,
+		                data: [<?php
+		                	foreach ( $array as $item ) {
+			                	$number = ( $trendarray['slope'] * $item['name'] ) + $trendarray['intercept'];
+			                	$number = ( $number <= 0 )? 0 : $number;
+			                	echo '"'.$number.'", ';
+			                }
+		                ?>],
+		            }
+		        ]
+		    }
+		});
+		</script>
+
+	<?php
 	}
 
 }

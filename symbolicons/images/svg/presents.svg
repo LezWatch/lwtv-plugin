@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 28 28"
+	 enable-background="new 0 0 28 28" xml:space="preserve">
+
+	<g>
+		<rect y="14.002" fill="#231F20" width="7" height="5.999"/>
+		<rect y="22.001" fill="#231F20" width="7" height="5.999"/>
+		<rect x="9" y="14.001" fill="#231F20" width="7" height="6"/>
+		<rect x="9" y="22.001" fill="#231F20" width="7" height="5.999"/>
+		<polygon fill="#231F20" points="9,10.001 9,13.001 17,13.001 17,28 27,28 27,10.001 		"/>
+		<g>
+			<defs>
+				<rect id="SVGID_1_" width="28" height="28"/>
+			</defs>
+			<clipPath id="SVGID_2_">
+				<use xlink:href="#SVGID_1_"  overflow="visible"/>
+			</clipPath>
+			<path clip-path="url(#SVGID_2_)" fill="#231F20" d="M22.738,6.001C24.191,5.462,25,4.506,25,3.228
+				c0-2.118-1.665-3.227-3.309-3.227c-1.512,0-2.749,1.254-3.691,3.698c-0.941-2.444-2.179-3.698-3.69-3.698
+				C12.665,0.001,11,1.11,11,3.228c0,1.278,0.809,2.234,2.262,2.773H8v3h20v-3H22.738z M12.706,3.228
+				c0-1.351,1.34-1.454,1.604-1.454c0.974,0,1.766,1.566,2.253,2.955C16.563,4.729,12.706,4.729,12.706,3.228 M21.691,1.774
+				c0.264,0,1.604,0.103,1.604,1.454c0,1.501-3.858,1.501-3.858,1.501C19.925,3.34,20.717,1.774,21.691,1.774"/>
+		</g>
+	</g>
+
+</svg>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 28 28"
+	 enable-background="new 0 0 28 28" xml:space="preserve">
+
+	<g>
+		<polygon fill="#231F20" points="4.534,15.689 7.716,18.871 7.009,19.577 8.423,20.992 9.13,20.285 12.312,23.466 13.726,22.052
+			5.948,14.275 		"/>
+		<g>
+			<defs>
+				<rect id="SVGID_1_" width="28" height="28"/>
+			</defs>
+			<clipPath id="SVGID_2_">
+				<use xlink:href="#SVGID_1_"  overflow="visible"/>
+			</clipPath>
+			<path clip-path="url(#SVGID_2_)" fill="#231F20" d="M1.706,24.174l-1.414,1.414c-0.389,0.389-0.389,1.026,0,1.414l0.707,0.708
+				c0.389,0.388,1.025,0.388,1.414,0l1.414-1.415L1.706,24.174z"/>
+
+				<rect x="5.656" y="20.845" transform="matrix(0.7071 0.7071 -0.7071 0.7071 17.0429 1.5455)" clip-path="url(#SVGID_2_)" fill="#231F20" width="2" height="1"/>
+
+				<rect x="4.241" y="22.26" transform="matrix(-0.7071 -0.7071 0.7071 -0.7071 -7.146 42.5592)" clip-path="url(#SVGID_2_)" fill="#231F20" width="2" height="1"/>
+
+				<rect x="2.827" y="23.674" transform="matrix(-0.7071 -0.7071 0.7071 -0.7071 -10.5602 43.9734)" clip-path="url(#SVGID_2_)" fill="#231F20" width="2" height="1"/>
+			<path clip-path="url(#SVGID_2_)" fill="#231F20" d="M27.854,12.875L15.126,0.147c-0.194-0.194-0.513-0.194-0.707,0l-0.707,0.707
+				c-0.195,0.195-0.195,0.513,0,0.707l1.768,1.768l3.182,1.768L8.423,15.335l4.243,4.243L22.904,9.34l1.768,3.181l1.768,1.768
+				c0.194,0.195,0.512,0.195,0.707,0l0.707-0.707C28.048,13.388,28.048,13.069,27.854,12.875"/>
+		</g>
+	</g>
+
+</svg>

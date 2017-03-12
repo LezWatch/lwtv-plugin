@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 28 28"
+	 enable-background="new 0 0 28 28" xml:space="preserve">
+
+	<g>
+		<rect x="5" y="11" fill="#231F20" width="4" height="1"/>
+		<rect x="5" y="15" fill="#231F20" width="4" height="1"/>
+		<rect x="5" y="13" fill="#231F20" width="4" height="1.001"/>
+		<rect x="5" y="17" fill="#231F20" width="4" height="1"/>
+		<rect x="5" y="21" fill="#231F20" width="4" height="1"/>
+		<rect x="5" y="23" fill="#231F20" width="4" height="1"/>
+		<rect x="5" y="19" fill="#231F20" width="4" height="1"/>
+		<rect x="5" y="25" fill="#231F20" width="4" height="3"/>
+		<rect x="5" y="3" fill="#231F20" width="4" height="1"/>
+		<polygon fill="#231F20" points="0,0 0,23 2.001,23 2.001,28 4.001,28 4.001,0 		"/>
+		<path fill="#231F20" d="M13,20h3l-1.499,2L13,20z M25,0v18H12V0h-1.999v28H26v-5h2V0H25z"/>
+		<rect x="5" y="9" fill="#231F20" width="4" height="1"/>
+		<rect x="5" y="5" fill="#231F20" width="4" height="1"/>
+		<rect x="5" y="7" fill="#231F20" width="4" height="1"/>
+	</g>
+
+</svg>
