@@ -59,7 +59,7 @@ class LWTV_Stats {
 		if ( in_array( $data, $simple_tax_array ) ) $array = self::tax_array( $post_type, $taxonomy );
 
 		// The following are simple meta arrays
-		if ( $data == 'roles' ) $array = self::meta_array( $post_type, array( 'regular', 'recurring', 'guest' ), 'lezchars_type', $data );
+		if ( $data == 'role' ) $array = self::meta_array( $post_type, array( 'regular', 'recurring', 'guest' ), 'lezchars_show_group', $data, 'LIKE' );
 		if ( $data == 'thumbs' ) $array = self::meta_array( $post_type, array( 'Yes', 'No', 'Meh' ), 'lezshows_worthit_rating', $data );
 
 		// The following are complicated taxonomy arrays
@@ -117,7 +117,6 @@ class LWTV_Stats {
 		}
 		if ( $data == 'dead-sex' )    $array = self::tax_dead_array( $post_type, 'lez_sexuality' );
 		if ( $data == 'dead-gender' ) $array = self::tax_dead_array( $post_type, 'lez_gender' );
-		if ( $data == 'dead-roles' )  $array = self::meta_tax_dead_array( $post_type, array( 'regular', 'recurring', 'guest' ), 'lezchars_type' );
 		if ( $data == 'dead-shows' )  $array = self::dead_shows( 'simple' );
 		if ( $data == 'dead-years' )  $array = self::death_year();
 
@@ -164,14 +163,10 @@ class LWTV_Stats {
 	/*
 	 * Statistics Taxonomy Array for DEAD
 	 *
-	 * Generate array to parse taxonomy content for
-	 *
-	 * If
+	 * Generate array to parse taxonomy content for death
 	 *
 	 * @param string $post_type Post Type to be search
 	 * @param string $taxonomy1 Taxonomy to be searched - PRIMARY
-	 * @param string $terms The terms to be matched (default empty)
-	 * @param string $operator Search operator (default IN)
 	 *
 	 * @return array
 	 */
@@ -193,7 +188,7 @@ class LWTV_Stats {
 	 *
 	 * @param string $post_type Post Type to be search
 	 * @param array $meta_array Meta terms to loop through
-	 * @param string $key Post Meta Key name (i.e. lezchars_type)
+	 * @param string $key Post Meta Key name (i.e. lezchars_gender)
 	 * @param string $taxonomy Taxonomy to restrict to (default lez_cliches)
 	 * @param string $field Taxonomy to restrict to (default lez_cliches)
 	 *
@@ -220,7 +215,7 @@ class LWTV_Stats {
 	 *
 	 * @param string $post_type Post Type to be search
 	 * @param array $meta_array Meta terms to loop through
-	 * @param string $key Post Meta Key name (i.e. lezchars_type)
+	 * @param string $key Post Meta Key name (i.e. lezchars_gender)
 	 * @param string $data The data 'subject' - used to generate the URLs
 	 * @param string $compare The type of comparison (default =)
 	 *
@@ -309,63 +304,11 @@ class LWTV_Stats {
 			wp_reset_query();
 		}
 
-		if ($dead_shows_query->have_posts() ) {
-			while ( $dead_shows_query->have_posts() ) {
-				$dead_shows_query->the_post();
-				$show_id = get_the_ID();
-
-				$show_name = preg_replace('/\s*/', '', get_the_title( $show_id ));
-				$show_name = strtolower($show_name);
-
-				$death_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show', $show_id, 'LIKE' );
-
-				if ($death_loop->have_posts() ) {
-
-					$fulldeathcount = 0;
-					$chardeathcount = 0;
-
-					while ($death_loop->have_posts()) {
-						$death_loop->the_post();
-						if ( !is_array (get_post_meta(get_the_ID(), 'lezchars_show', true)) ) {
-							$shows_array = array( get_post_meta(get_the_ID(), 'lezchars_show', true) );
-						} else {
-							$shows_array = get_post_meta(get_the_ID(), 'lezchars_show', true);
-						}
-
-						// Because shows are arrays, we have to check if the person REALLY belongs to this show
-						if ( in_array( $show_id, $shows_array ) ) {
-							$chardeathcount++;
-						}
-
-						// If they really belong to the show AND are really most sincerly dead, here you go
-						if ( has_term( 'dead', 'lez_cliches', get_the_ID() ) && in_array( $show_id, $shows_array ) ) {
-							$fulldeathcount++;
-						}
-					}
-
-					if ( $fulldeathcount == $chardeathcount ) {
-						$fullshow_death_array[$show_name] = array(
-							'url'    => get_permalink( $show_id ),
-							'name'   => get_the_title( $show_id ),
-							'status' => get_post_status( $show_id ),
-						);
-					} elseif ( $fulldeathcount <= $chardeathcount ) {
-						$someshow_death_array[$show_name] = array(
-							'url'    => get_permalink( $show_id ),
-							'name'   => get_the_title( $show_id ),
-							'status' => get_post_status( $show_id ),
-						);
-					}
-					wp_reset_query();
-				}
-			}
-			wp_reset_query();
-		}
+		// Broken Code Was Here
 
 		if ( $format == 'simple' ) {
 			$array = array (
-				"all"  => array( 'name' => 'All queers are dead',  'count' => count( $fullshow_death_array ), 'url' => '' ),
-				"some" => array( 'name' => 'Some queers are dead', 'count' => count( $someshow_death_array ), 'url' => '' ),
+				"some" => array( 'name' => 'Some queers are dead', 'count' => $dead_shows_query->post_count, 'url' => '' ),
 				"none" => array( 'name' => 'None queers are dead', 'count' => $alive_shows_query->post_count, 'url' => '' ),
 			);
 		}
@@ -390,7 +333,7 @@ class LWTV_Stats {
 				$show_name = preg_replace('/\s*/', '', get_the_title( $show_id ));
 				$show_name = strtolower($show_name);
 
-				$role_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show', $show_id, 'LIKE' );
+				$role_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 				if ($role_loop->have_posts() ) {
 
@@ -398,17 +341,14 @@ class LWTV_Stats {
 					$maincharcount  = 0;
 					$recurringcharcount = 0;
 
-					while ($role_loop->have_posts()) {
-						$role_loop->the_post();
+					$char_id = get_the_id();
+					$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
 
-						if ( get_post_meta(get_the_id(), 'lezchars_type', true) == 'guest' ) {
-							$guestbiancount++;
-						}
-						if ( get_post_meta(get_the_id(), 'lezchars_type', true) == 'regular' ) {
-							$maincharcount++;
-						}
-						if ( get_post_meta(get_the_id(), 'lezchars_type', true) == 'recurring' ) {
-							$recurringcharcount++;
+					if ( $shows_array !== '' ) {
+						foreach( $shows_array as $each_show ) {
+							if ( $char_show['type'] == 'guest' )     $guestbiancount++;
+							if ( $char_show['type'] == 'regular' )   $maincharcount++;
+							if ( $char_show['type'] == 'recurring' ) $recurringcharcount++;
 						}
 					}
 
@@ -500,12 +440,14 @@ class LWTV_Stats {
 		<ul>
 		<?php
 		foreach ( $array as $item ) {
-			echo '<li>';
-				echo '<strong><a href="'.$item['url'].'">'
-				. $item['name'] . '</a></strong> &mdash; '
-				. round( ( ( $item['count'] / $count ) * 100) , 1) .'%'
-				. ' ('. $item['count'] . ' ' . $subject .')';
-			echo '</li>';
+			if ( $item['count'] !== 0 ) {
+				echo '<li>';
+					echo '<strong><a href="'.$item['url'].'">'
+					. $item['name'] . '</a></strong> &mdash; '
+					. round( ( ( $item['count'] / $count ) * 100) , 1) .'%'
+					. ' ('. $item['count'] . ' ' . $subject .')';
+				echo '</li>';
+			}
 		}
 		?>
 		</ul>
@@ -611,8 +553,10 @@ class LWTV_Stats {
 		var bar<?php echo ucfirst( $subject ); ?>Data = {
 			labels : [<?php
 				foreach ( $array as $item ) {
-					$name = ( $item['name'] == 'Dead Lesbians (Dead Queers)' )? 'Dead' : esc_html( $item['name'] );
-					echo '"'. $name .' ('.$item['count'].')", ';
+					if ( $item['count'] !== 0 ) {
+						$name = ( $item['name'] == 'Dead Lesbians (Dead Queers)' )? 'Dead' : esc_html( $item['name'] );
+						echo '"'. $name .' ('.$item['count'].')", ';
+					}
 				}
 			?>],
 			datasets : [
@@ -624,7 +568,9 @@ class LWTV_Stats {
 		            hoverBorderColor: "rgba(255,99,132,1)",
 					data : [<?php
 						foreach ( $array as $item ) {
-							echo '"'.$item['count'].'", ';
+							if ( $item['count'] !== 0 ) {
+								echo '"'.$item['count'].'", ';
+							}
 						}
 					?>],
 				}

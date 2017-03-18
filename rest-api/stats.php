@@ -92,7 +92,7 @@ class LWTV_Stats_JSON {
 						$show_id = $post->ID;
 
 						// Get character info
-						$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show', $show_id, 'LIKE' );
+						$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 						$havecharcount  = 0;
 						$deadcharcount  = 0;
 
@@ -103,12 +103,15 @@ class LWTV_Stats_JSON {
 
 								$charpost    = get_post();
 								$char_id     = $charpost->ID;
-								$char_shows  = get_post_meta( $char_id, 'lezchars_show', true);
-								$shows_array = ( !is_array ( $char_shows ) )? array( $char_shows ) : $char_shows;
+								$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
 
-								if ( in_array( $show_id, $shows_array  ) && get_post_status ( $char_id ) == 'publish' ) {
-									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) $deadcharcount++;
-									$havecharcount++;
+								if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
+									foreach( $shows_array as $char_show ) {
+										if ( $char_show['show'] == $show_id ) {
+											$havecharcount++;
+											if ( has_term( 'dead', 'lez_cliches', $char_id ) ) $deadcharcount++;
+										}
+									}
 								}
 							}
 							wp_reset_query();
@@ -153,10 +156,13 @@ class LWTV_Stats_JSON {
 						$dod = get_post_meta( $post->ID, 'lezchars_death_year', true);
 						$dod = ( !is_array( $dod) )? array( $dod) : $dod;
 
-						$show_IDs = ( !is_array( get_post_meta( $post->ID, 'lezchars_show', true ) ) )? array( get_post_meta( $post->ID, 'lezchars_show', true ) ) : get_post_meta( $post->ID, 'lezchars_show', true );
+						$show_IDs = get_post_meta( $post->ID, 'lezchars_show_group', true );
 						$shows = array();
-						foreach ( $show_IDs as $show_ID ) {
-							array_push( $shows, get_the_title( $show_ID ) );
+
+						if ( $show_IDs !== '' ) {
+							foreach ( $show_IDs as $each_show ) {
+								array_push( $shows, get_the_title( $each_show['show'] ) );
+							}
 						}
 
 						$actors = get_post_meta( $post->ID, 'lezchars_actor', true);
@@ -193,7 +199,8 @@ class LWTV_Stats_JSON {
 					'shows'     => LWTV_Stats::generate( 'characters', 'dead-shows', 'array' ),
 					'sexuality' => LWTV_Stats::generate( 'characters', 'dead-sex', 'array' ),
 					'gender'    => LWTV_Stats::generate( 'characters', 'dead-gender', 'array' ),
-					'roles'     => LWTV_Stats::generate( 'characters', 'dead-roles', 'array' ),
+					// Current broken :(
+					//'roles'     => LWTV_Stats::generate( 'characters', 'dead-roles', 'array' ),
 				);
 
 			} elseif ($format == 'years' ) {

@@ -639,14 +639,12 @@ SQL;
 	 * @param int $post_id The post ID.
 	 */
 	public function update_char_count_from_chars( $post_id ) {
-		if ( !is_array (get_post_meta( $post_id, 'lezchars_show', true)) ) {
-			$shows_array = array( get_post_meta( $post_id, 'lezchars_show', true) );
-		} else {
-			$shows_array = get_post_meta( $post_id, 'lezchars_show', true);
-		}
 
-		foreach ( $shows_array as $show_id ) {
-			do_action( 'do_update_char_count' , $show_id );
+		$character_show_IDs = get_post_meta($post->ID, 'lezchars_show_group', true);
+		$show_title = array();
+
+		foreach ( $character_show_IDs as $each_show ) {
+			do_action( 'do_update_char_count' , $each_show['show'] );
 		}
 	}
 
@@ -664,21 +662,7 @@ SQL;
 			return;
 
 		// Loop to get the list of characters
-		$charactersloop = new WP_Query(
-			array(
-				'post_type'       => 'post_type_characters',
-				'orderby'         => 'title',
-				'order'           => 'ASC',
-				'posts_per_page'  => wp_count_posts( 'post_type_characters' )->publish,
-				'meta_query'      => array(
-					array(
-						'key'     => 'lezchars_show',
-						'value'   => $post_id,
-						'compare' => 'LIKE',
-					),
-				),
-			)
-		);
+		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
 
 		$queercount  = 0;
 
@@ -688,16 +672,16 @@ SQL;
 
 				$charactersloop->the_post();
 				$char_id = get_the_ID();
+				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
 
-				if ( !is_array (get_post_meta( $char_id, 'lezchars_show', true)) ) {
-					$shows_array = array( get_post_meta( $char_id, 'lezchars_show', true) );
-				} else {
-					$shows_array = get_post_meta( $char_id, 'lezchars_show', true);
+				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
+					foreach( $shows_array as $char_show ) {
+						if ( $char_show['show'] == $show_id ) {
+							$queercount++;
+						}
+					}
 				}
 
-				if ( in_array( $post_id, $shows_array  ) ) {
-					$queercount++;
-				}
 			}
 			wp_reset_query();
 		}

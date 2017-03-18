@@ -47,7 +47,6 @@ class LWTV_CPT_Characters {
 		add_action( 'manage_post_type_characters_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
 		add_filter( 'manage_edit-post_type_characters_sortable_columns', array( $this, 'manage_edit_sortable_columns' ) );
 
-		add_action( 'pre_get_posts', array( $this, 'columns_sortability_simple' ) );
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_sexuality' ), 10, 2 );
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_gender' ), 10, 2 );
 
@@ -228,26 +227,26 @@ class LWTV_CPT_Characters {
 
 		// MetaBox Group: Character Details
 		$cmb_characters = new_cmb2_box( array(
-			'id'					=> 'chars_metabox',
-			'title'				=> 'Character Details',
-			'object_types'  		=> array( 'post_type_characters', ), // Post type
-			'context'			=> 'normal',
-			'priority'			=> 'high',
-			'show_names'			=> true, // Show field names on the left
+			'id'           => 'chars_metabox',
+			'title'        => 'Character Details',
+			'object_types' => array( 'post_type_characters', ), // Post type
+			'context'      => 'normal',
+			'priority'     => 'high',
+			'show_names'   => true, // Show field names on the left
 		) );
 		// Field: Character Clichés
 		$cmb_characters->add_field( array(
-			'name'				=> 'Character Clichés',
-			'id'					=> $prefix . 'cliches',
-			'taxonomy'			=> 'lez_cliches', //Enter Taxonomy Slug
-			'type'	 			=> 'taxonomy_multicheck',
-			'select_all_button'	=> false,
-			'remove_default'		=> 'true'
+			'name'              => 'Character Clichés',
+			'id'                => $prefix . 'cliches',
+			'taxonomy'          => 'lez_cliches', //Enter Taxonomy Slug
+			'type'              => 'taxonomy_multicheck',
+			'select_all_button' => false,
+			'remove_default'    => 'true'
 		) );
 		// Field: Actor Name
 		$cmb_characters->add_field( array(
 			'name'       => 'Actor Name',
-			'desc'       => 'Include years (in parens) for multiple actors',
+			'desc'       => 'Include identifying features (in parens) for multiple actors',
 			'id'         => $prefix . 'actor',
 			'type'       => 'text',
 			'repeatable' => 'true',
@@ -258,26 +257,38 @@ class LWTV_CPT_Characters {
 				'spellcheck'     => 'false',
 		    ),
 		) );
+
+		// Field Group: Character Show information
+		// Made repeatable since each show might have a separate role. Yikes...
+		$group_shows = $cmb_characters->add_field( array(
+			'id'          => $prefix . 'show_group',
+			'type'        => 'group',
+			'repeatable'  => true,
+			'options'     => array(
+				'group_title'   => 'Show #{#}',
+				'add_button'    => 'Add Another Show',
+				'remove_button' => 'Remove Show',
+				'sortable' => true,
+			),
+		) );
+		// Field: Show Name
+		$cmb_characters->add_group_field( $group_shows, array(
+			'name'             => 'TV Show',
+			'id'               => 'show',
+			'type'             => 'select',
+			'show_option_none' => true,
+			'default'          => 'custom',
+			'options_cb'       => array( $this, 'cmb2_get_shows_options'),
+		) );
 		// Field: Character Type
-		$cmb_characters->add_field( array(
+		$cmb_characters->add_group_field( $group_shows, array(
 			'name'             => 'Character Type',
 			'desc'             => 'Mains are in credits. Recurring have their own plots. Guests show up once or twice.',
-			'id'               => $prefix .'type',
+			'id'               => 'type',
 			'type'             => 'select',
 			'show_option_none' => true,
 			'default'          => 'custom',
 			'options'          => $this->character_roles,
-		) );
-		// Field: Show Name
-		$cmb_characters->add_field( array(
-			'name'             => 'Show',
-			'desc'             => 'Select the show this character belongs to',
-			'id'               => $prefix . 'show',
-			'type'             => 'select',
-			'repeatable'       => 'true',
-			'show_option_none' => true,
-			'default'          => 'custom',
-			'options_cb'       => array( $this, 'cmb2_get_shows_options'),
 		) );
 
 		// Metabox Group: Quick Dropdowns
@@ -345,18 +356,16 @@ class LWTV_CPT_Characters {
 	 * Add Custom Column Content
 	 */
 	public function manage_posts_custom_column( $column, $post_id ) {
-		// Since SOME characters have multiple shows, we force this to be an array
-		if ( !is_array( get_post_meta( $post_id, 'lezchars_show', true ) ) ) {
-			$character_show_IDs = array( get_post_meta( $post_id, 'lezchars_show', true ) );
-		} else {
-			$character_show_IDs = get_post_meta( $post_id, 'lezchars_show', true );
-		}
 
-		// Show Title is an array to handle fucking commas
+		$character_show_IDs = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$show_title = array();
+		$role_array = array();
 
-		foreach ( $character_show_IDs as $character_show_ID ) {
-			array_push( $show_title, get_post( $character_show_ID )->post_title );
+		if (  $character_show_IDs !== '' ) {
+			foreach ( $character_show_IDs as $each_show ) {
+				array_push( $show_title, get_the_title( $each_show['show'] ) );
+				array_push( $role_array, $each_show['type'] );
+			}
 		}
 
 		switch ( $column ) {
@@ -364,7 +373,7 @@ class LWTV_CPT_Characters {
 				echo implode(", ", $show_title );
 				break;
 			case 'postmeta-roletype':
-				echo ucfirst(get_post_meta( $post_id, 'lezchars_type', true ));
+				echo implode(", ", $role_array );
 				break;
 		}
 	}
@@ -374,29 +383,10 @@ class LWTV_CPT_Characters {
 	 */
 	public function manage_edit_sortable_columns( $columns ) {
 		unset( $columns['cpt-shows'] );                  // Don't allow sort by shows
-		$columns['postmeta-roletype']      = 'role';     // Allow sort by role
+		unset( $columns['postmeta-roletype'] );          // Don't allow sort by role
 		$columns['taxonomy-lez_gender']    = 'gender';   // Allow sort by gender identity
 		$columns['taxonomy-lez_sexuality'] = 'sex';      // Allow sort by gender identity
 		return $columns;
-	}
-
-	/*
-	 * Create Simple Columns Sortability
-	 *
-	 * Role
-	 */
-	public function columns_sortability_simple( $query ) {
-		if( ! is_admin() ) return;
-		if( ! is_admin() ) return;
-
-		if ( $query->is_main_query() && ( $orderby = $query->get( 'orderby' ) ) ) {
-	    	switch( $orderby ) {
-				case 'role':
-					$query->set( 'meta_key', 'lezchars_type' );
-					$query->set( 'orderby', 'meta_value' );
-					break;
-			}
-		}
 	}
 
 	/*
@@ -453,24 +443,6 @@ SQL;
 			case 'cpt-shows':
 				// Multiselect
 				break;
-			case 'postmeta-roletype':
-				?>
-				<fieldset class="inline-edit-col-left">
-				<div class="inline-edit-col">
-				<span class="title">Character Role</span>
-					<input type="hidden" name="lez_roletype_noncename" id="lez_roletype_noncename" value="" />
-					<select name='postmeta_lez_role' id='postmeta_lez_role'>
-						<option class='lez_role-option' value='0'>(Undefined)</option>
-						<?php
-						foreach ( $this->character_roles as $roleslug => $rolename) {
-							echo "<option class='lez_role-option' value='{$roleslug}'>{$rolename}</option>\n";
-						}
-							?>
-					</select>
-				</div>
-				</fieldset>
-				<?php
-				break;
 			case 'taxonomy-lez_gender':
 				?>
 				<fieldset class="inline-edit-col-left">
@@ -526,14 +498,6 @@ SQL;
 		}
 		$post = get_post($post_id);
 
-		// RoleType
-		if ( isset($_POST['postmeta_lez_role']) && ($post->post_type != 'revision') ) {
-			$lez_roletype = esc_attr($_POST['postmeta_lez_role']);
-			if ( array_key_exists( $lez_roletype, $this->character_roles ) ) {
-				update_post_meta( $post_id, 'lezchars_type', $lez_roletype );
-			}
-		}
-
 		// Sexuality
 		if ( isset($_POST['terms_lez_sexuality']) && ($post->post_type != 'revision') ) {
 			$lez_sexuality_term = esc_attr($_POST['terms_lez_sexuality']);
@@ -570,7 +534,6 @@ SQL;
 			inlineEditPost.revert();
 			var sexualityInput = document.getElementById('terms_lez_sexuality');
 			var genderInput	= document.getElementById('terms_lez_gender');
-			var roleInput	= document.getElementById('postmeta_lez_role');
 			var nonceInput	 = document.getElementById('lez_sexuality_noncename');
 			nonceInput.value   = nonce;
 
@@ -586,13 +549,6 @@ SQL;
 				if (genderInput.options[i].value == genderSet) {
 					genderInput.options[i].setAttribute("selected", "selected");
 				} else { genderInput.options[i].removeAttribute("selected"); }
-			}
-
-			// Set Role Option
-			for (i = 0; i < roleInput.options.length; i++) {
-				if (roleInput.options[i].value == roleSet) {
-					roleInput.options[i].setAttribute("selected", "selected");
-				} else { roleInput.options[i].removeAttribute("selected"); }
 			}
 
 		}
@@ -614,11 +570,10 @@ SQL;
 		$nonce = wp_create_nonce( 'lez_sexuality_'.$post->ID);
 		$sex_terms = wp_get_post_terms( $post->ID, 'lez_sexuality', array( 'fields' => 'all' ) );
 		$gender_terms = wp_get_post_terms( $post->ID, 'lez_gender', array( 'fields' => 'all' ) );
-		$role_term = get_post_meta( $post->ID, 'lezchars_type', true );
 
 		$actions['inline hide-if-no-js'] = '<a href="#" class="editinline" title="';
 		$actions['inline hide-if-no-js'] .= esc_attr( __( 'Edit this item inline' ) ) . '" ';
-		$actions['inline hide-if-no-js'] .= " onclick=\"set_inline_lwtv_quick_edit_defaults('{$sex_terms[0]->name}', '{$gender_terms[0]->name}', '{$role_term}', '{$nonce}')\">";
+		$actions['inline hide-if-no-js'] .= " onclick=\"set_inline_lwtv_quick_edit_defaults('{$sex_terms[0]->name}', '{$gender_terms[0]->name}', '{$nonce}')\">";
 		$actions['inline hide-if-no-js'] .= __( 'Quick&nbsp;Edit' );
 		$actions['inline hide-if-no-js'] .= '</a>';
 		return $actions;
@@ -644,16 +599,12 @@ SQL;
 	 * List of shows featuring a character, for use on character pages
 	 */
 	function lwtv_retrieve_shows_replacement( ) {
-		if ( !is_array (get_post_meta( get_the_ID(), 'lezchars_show', true)) ) {
-			$shows_ids = array( get_post_meta( get_the_ID(), 'lezchars_show', true) );
-		} else {
-			$shows_ids = get_post_meta( get_the_ID(), 'lezchars_show', true);
-		}
 
+		$shows_ids = get_post_meta($post->ID, 'lezchars_show_group', true);
 		$shows_titles = array();
-		foreach ( $shows_ids as $show ) {
-			$post_object = get_post( $show );
-			array_push( $shows_titles, '"'. $post_object->post_title .'"' );
+
+		foreach ( $shows_ids as $each_show ) {
+			array_push( $show_titles, get_the_title( $each_show['show'] ) );
 		}
 		return implode(", ", $shows_titles);
 	}

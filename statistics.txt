@@ -1,0 +1,58 @@
+// This was part of static function dead_shows
+// This whole section is somehow broken!?
+
+		if ($dead_shows_query->have_posts() ) {
+			while ( $dead_shows_query->have_posts() ) {
+				$dead_shows_query->the_post();
+				$show_id = get_the_ID();
+
+				//$show_name = preg_replace('/\s*/', '', get_the_title( $show_id ));
+				$show_name = strtolower($show_name);
+
+				$dead_chars_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+
+				$fulldeathcount = '0';
+				$chardeathcount = '0';
+				if ($dead_chars_loop->have_posts() ) {
+					while ( $dead_chars_loop->have_posts() ) {
+						$charpost    = get_post();
+						$char_id     = $charpost->ID;
+						$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+						if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
+							foreach( $shows_array as $char_show ) {
+								if ( $char_show['show'] == $show_id ) {
+									$chardeathcount++;
+									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) $fulldeathcount++;
+								}
+							}
+						}
+					}
+
+					if ( $fulldeathcount == $chardeathcount ) {
+						$fullshow_death_array[$show_name] = array(
+							'url'    => get_permalink( $show_id ),
+							'name'   => get_the_title( $show_id ),
+							'status' => get_post_status( $show_id ),
+						);
+					} elseif ( $fulldeathcount <= $chardeathcount ) {
+						$someshow_death_array[$show_name] = array(
+							'url'    => get_permalink( $show_id ),
+							'name'   => get_the_title( $show_id ),
+							'status' => get_post_status( $show_id ),
+						);
+					}
+
+					wp_reset_query();
+				}
+			}
+			wp_reset_query();
+		}
+
+		if ( $format == 'simple' ) {
+			$array = array (
+				"all"  => array( 'name' => 'All queers are dead', 'count' => count( $fullshow_death_array ), 'url' => '' ),
+				"some" => array( 'name' => 'Some queers are dead', 'count' => count( $someshow_death_array ), 'url' => '' ),
+				"none" => array( 'name' => 'None queers are dead', 'count' => $alive_shows_query->post_count, 'url' => '' ),
+			);
+		}

@@ -65,7 +65,7 @@ class LWTV_BYQ_JSON {
 	 */
 	public function on_this_day_rest_api_callback( $data ) {
 		$params = $data->get_params();
-		$this_day = ( $params['date'] !== '' )? $params['date'] : 'today';
+		$this_day = ( isset( $params['date'] ) && $params['date'] !== '' )? $params['date'] : 'today';
 		$response = $this->on_this_day( $this_day );
 		return $response;
 	}
@@ -76,7 +76,7 @@ class LWTV_BYQ_JSON {
 	 * This is a separate function becuase otherwise I use the same call twice
 	 * and that's stupid
 	 */
-	public function list_of_dead_characters( $dead_chars_loop ) {
+	public static function list_of_dead_characters( $dead_chars_loop ) {
 
 		$death_list_array = array();
 
