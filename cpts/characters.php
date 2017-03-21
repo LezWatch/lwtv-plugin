@@ -605,9 +605,9 @@ SQL;
 		$shows_ids = get_post_meta( $post->ID, 'lezchars_show_group', true );
 		$shows_titles = array();
 
-		if ( $character_show_IDs !== '' ) {
-			foreach ( $shows_ids as $each_show ) {
-				array_push( $show_titles, get_the_title( $each_show['show'] ) );
+		if ( $shows_ids !== '' && !is_null( $shows_ids ) ) {
+			foreach ( $shows_ids as $each_show ) {	
+				array_push( $shows_titles, get_the_title( $each_show['show'] ) );
 			}
 		}
 		return implode(", ", $shows_titles);
