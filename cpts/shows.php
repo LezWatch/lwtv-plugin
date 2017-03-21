@@ -624,8 +624,8 @@ SQL;
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_shows', array( $this, 'update_char_count' ) );
 
-		$meta_value = $this->count_queers($post_id);
-		update_post_meta( $post_id, 'lezshows_char_count', $meta_value );
+		$number_of_characters = $this->count_queers( $post_id );
+		update_post_meta( $post_id, 'lezshows_char_count', $number_of_characters );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'update_char_count' ) );
@@ -640,7 +640,7 @@ SQL;
 	 */
 	public function update_char_count_from_chars( $post_id ) {
 
-		$character_show_IDs = get_post_meta($post->ID, 'lezchars_show_group', true);
+		$character_show_IDs = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$show_title = array();
 
 		foreach ( $character_show_IDs as $each_show ) {
@@ -663,7 +663,6 @@ SQL;
 
 		// Loop to get the list of characters
 		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
-
 		$queercount  = 0;
 
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
@@ -676,7 +675,7 @@ SQL;
 
 				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
 					foreach( $shows_array as $char_show ) {
-						if ( $char_show['show'] == $show_id ) {
+						if ( $char_show['show'] == $post_id ) {	
 							$queercount++;
 						}
 					}
