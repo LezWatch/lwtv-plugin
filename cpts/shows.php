@@ -643,8 +643,10 @@ SQL;
 		$character_show_IDs = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$show_title = array();
 
-		foreach ( $character_show_IDs as $each_show ) {
-			do_action( 'do_update_char_count' , $each_show['show'] );
+		if ( $character_show_IDs !== '' ) {
+			foreach ( $character_show_IDs as $each_show ) {
+				do_action( 'do_update_char_count' , $each_show['show'] );
+			}
 		}
 	}
 
