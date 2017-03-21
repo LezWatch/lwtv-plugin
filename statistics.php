@@ -165,8 +165,8 @@ class LWTV_Stats {
 	 *
 	 * Generate array to parse taxonomy content for death
 	 *
-	 * @param string $post_type Post Type to be search
-	 * @param string $taxonomy1 Taxonomy to be searched - PRIMARY
+	 * @param string $post_type Post Type to be searched
+	 * @param string $taxonomy Taxonomy to be searched
 	 *
 	 * @return array
 	 */
@@ -175,8 +175,13 @@ class LWTV_Stats {
 		$taxonomies = get_terms( $taxonomy );
 
 		foreach ( $taxonomies as $term ) {
-			$query = LWTV_Loops::tax_two_query( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
-			$array[$term->slug] = array( 'count' => $term->count, 'name'  => $term->name, 'url' => get_term_link( $term ) );
+			$query = LWTV_Loops::tax_two_query(
+				$post_type,
+				$taxonomy, 'slug', $term->slug,
+				'lez_cliches', 'slug', 'dead'
+			);
+
+			$array[$term->slug] = array( 'count' => $query->post_count, 'name'  => $term->name, 'url' => get_term_link( $term ) );
 		}
 		return $array;
 	}
@@ -287,13 +292,13 @@ class LWTV_Stats {
 		$someshow_death_array = array();
 
 		// Shows with no deaths
-		if ($alive_shows_query->have_posts() ) {
+		if ( $alive_shows_query->have_posts() ) {
 			while ( $alive_shows_query->have_posts() ) {
 				$alive_shows_query->the_post();
 				$show_id = get_the_ID();
 
 				$show_name = preg_replace('/\s*/', '', get_the_title( $show_id ));
-				$show_name = strtolower($show_name);
+				$show_name = strtolower( $show_name );
 
 				$noneshow_death_array[$show_name] = array(
 					'url'    => get_permalink( $show_id ),
@@ -304,11 +309,67 @@ class LWTV_Stats {
 			wp_reset_query();
 		}
 
-		// Broken Code Was Here
+		// Shows with deaths
+		if ( $dead_shows_query->have_posts() ) {
+			while ( $dead_shows_query->have_posts() ) {
+				$dead_shows_query->the_post();
+				$show_id = get_the_ID();
+
+				$show_name = preg_replace('/\s*/', '', get_the_title( $show_id ));
+				$show_name = strtolower( $show_name );
+
+				// Loop of characters who MIGHT be in this show
+				$this_show_characters_query = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+
+				$fulldeathcount = '0';
+				$chardeathcount = '0';
+
+				// Begin Character query
+				if ( $this_show_characters_query->have_posts() ) {
+					while ( $this_show_characters_query->have_posts() ) {
+						$this_show_characters_query->the_post();
+						$char_id = get_the_ID();
+						$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+						if ( $shows_array !== '' ) {
+							foreach( $shows_array as $char_show ) {
+								if ( $char_show['show'] == $show_id ) {
+									// If the character is really in this show, +1
+									$chardeathcount++;
+
+									// If the character is dead, bump the full death count
+									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) $fulldeathcount++;
+								}
+							}
+						}
+
+					}
+					wp_reset_query();
+				}
+				// End Character Loop
+
+				if ( $fulldeathcount == $chardeathcount ) {
+					$fullshow_death_array[$show_name] = array(
+						'url'    => get_permalink( $show_id ),
+						'name'   => get_the_title( $show_id ),
+						'status' => get_post_status( $show_id ),
+					);
+				} elseif ( $fulldeathcount <= $chardeathcount ) {
+					$someshow_death_array[$show_name] = array(
+						'url'    => get_permalink( $show_id ),
+						'name'   => get_the_title( $show_id ),
+						'status' => get_post_status( $show_id ),
+					);
+				}
+
+			}
+			wp_reset_query();
+		}
 
 		if ( $format == 'simple' ) {
 			$array = array (
-				"some" => array( 'name' => 'Some queers are dead', 'count' => $dead_shows_query->post_count, 'url' => '' ),
+				"all"  => array( 'name' => 'All queers are dead', 'count' => count( $fullshow_death_array ), 'url' => '' ),
+				"some" => array( 'name' => 'Some queers are dead', 'count' => count( $someshow_death_array ), 'url' => '' ),
 				"none" => array( 'name' => 'None queers are dead', 'count' => $alive_shows_query->post_count, 'url' => '' ),
 			);
 		}

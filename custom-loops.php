@@ -67,7 +67,7 @@ class LWTV_Loops {
 	 *
 	 * @return array The WP_Query Array
 	 */
-	public static function tax_two_query( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1 = 'IN', $operator2 = 'IN' ) {
+	public static function tax_two_query( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1 = 'IN', $operator2 = 'IN' , $relation = 'AND' ) {
 		$count = wp_count_posts( $post_type )->publish;
 		$query = new WP_Query ( array(
 			'post_type'              => $post_type,
@@ -75,6 +75,7 @@ class LWTV_Loops {
 			'no_found_rows'          => true,
 			'update_post_meta_cache' => false,
 			'post_status'            => array( 'publish' ),
+			'relation'               => $relation,
 			'tax_query'              => array(
 				array(
 					'taxonomy' => $taxonomy1,
