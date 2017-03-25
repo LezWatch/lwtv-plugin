@@ -121,6 +121,7 @@ class LWTV_Stats_JSON {
 						$stars = ( get_post_meta( $show_id, "lezshows_stars", true ) )? get_post_meta( $show_id, "lezshows_stars", true ) : 'none';
 
 						$stats_array[ get_the_title( $show_id ) ] = array(
+							'id'         => $post->ID,
 							'characters' => $havecharcount,
 							'dead'       => $deadcharcount,
 							'thumb'      => get_post_meta( $show_id, "lezshows_worthit_rating", true ),
@@ -169,6 +170,7 @@ class LWTV_Stats_JSON {
 						$actors = ( !is_array( $actors) )? array( $actors) : $actors;
 
 						$stats_array[ get_the_title() ] = array(
+							'id'        => $post->ID,
 							'dead'      => $dead,
 							'date-died' => implode(', ', $dod ),
 							'sexuality' => implode(', ', wp_get_post_terms($post->ID, 'lez_sexuality', array("fields" => "names") ) ),
@@ -225,9 +227,12 @@ class LWTV_Stats_JSON {
 			}
 
 		} else {
+
 			$stats_array = array(
 				'shows'      => wp_count_posts( 'post_type_shows' )->publish,
 				'characters' => wp_count_posts( 'post_type_characters' )->publish,
+				'tropes'     => wp_count_terms( 'lez_tropes' ),
+				'cliches'    => wp_count_terms( 'lez_cliches' ),
 			);
 		}
 

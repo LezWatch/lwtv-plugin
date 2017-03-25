@@ -101,6 +101,7 @@ class LWTV_BYQ_JSON {
 
 				// Add this character to the array
 				$death_list_array[$post_slug] = array(
+					'id'   => $dead_char->ID,
 					'slug' => $post_slug,
 					'name' => get_the_title( $dead_char ),
 					'url'  => get_the_permalink( $dead_char ),
@@ -162,7 +163,7 @@ class LWTV_BYQ_JSON {
 		foreach ( $death_list_array as $the_dead ) {
 			if ( $this_day == date('m-d', $the_dead['died'] ) ) {
 				$died_today_array[ $the_dead['slug'] ] = array(
-					'slug' => $the_dead['slug'],
+					'id'   => $the_dead['id'],
 					'name' => $the_dead['name'],
 					'url'  => $the_dead['url'],
 					'died' => date( 'Y', $the_dead['died'] ),
@@ -172,7 +173,7 @@ class LWTV_BYQ_JSON {
 
 		if ( empty( $died_today_array ) ) {
 			$died_today_array[ 'none' ] = array(
-				'slug' => 'none',
+				'id'   => 0,
 				'name' => 'No One',
 				'url'  => site_url( '/cliche/dead/' ),
 				'died' => date('m-d'),
