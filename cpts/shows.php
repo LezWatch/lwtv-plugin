@@ -143,6 +143,7 @@ class LWTV_CPT_Shows {
 			'hierarchical'          => false,
 			'labels'                => $labels_tvstations,
 			'show_ui'               => true,
+			'show_in_rest'          => true,
 			'show_admin_column'     => true,
 			'update_count_callback' => '_update_post_term_count',
 			'query_var'             => true,
@@ -174,6 +175,7 @@ class LWTV_CPT_Shows {
 			'labels'            => $names_tropes,
 			'public'            => true,
 			'show_ui'           => true,
+			'show_in_rest'      => true,
 			'show_admin_column' => true,
 			'show_in_nav_menus' => true,
 			'show_tagcloud'     => false,
@@ -205,6 +207,7 @@ class LWTV_CPT_Shows {
 			'hierarchical'          => false,
 			'labels'                => $names_showformat,
 			'show_ui'               => true,
+			'show_in_rest'          => true,
 			'show_admin_column'     => true,
 			'query_var'             => true,
 			'show_in_nav_menus'		=> true,
@@ -222,22 +225,32 @@ class LWTV_CPT_Shows {
 		// prefix for all custom fields
 		$prefix = 'lezshows_';
 
-		// This is just an array of all years from 1930 on (1930 being the year TV dramas started)
+		// Array of years since 1930
 		$year_array = array();
 		foreach ( range(date('Y'), '1930' ) as $year) {
 			$startyear_array[$year] = $year;
 		}
 
-		// Must See Metabox - this should be required
+		// Array of Valid Ratings
+		$ratings_array = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
+
+		// Array of valid stars we award shows
+		$stars_array = array(
+			'gold'   => 'Gold Star',
+			'silver' => 'Silver Star',
+		);
+
+		// Metabox Group: Must See
 		$cmb_mustsee = new_cmb2_box( array(
 			'id'           => 'mustsee_metabox',
 			'title'        => 'Required Details',
 			'object_types' => array( 'post_type_shows', ), // Post type
 			'context'      => 'normal',
 			'priority'     => 'high',
+			'show_in_rest' => true,
 			'show_names'   => true, // Show field names on the left
 		) );
-
+		// Field: Tropes
 		$cmb_mustsee->add_field( array(
 			'name'              => 'Trope Plots',
 			'id'                => $prefix . 'tropes',
@@ -246,7 +259,7 @@ class LWTV_CPT_Shows {
 			'select_all_button' => false,
 			'remove_default'    => 'true',
 		) );
-
+		// Field: Worth It?
 		$cmb_mustsee->add_field( array(
 			'name'    => 'Worth It?',
 			'id'      => $prefix . 'worthit_rating',
@@ -258,22 +271,24 @@ class LWTV_CPT_Shows {
 				'No'  => 'No',
 			),
 		) );
+		// Field: Worth It Details
 		$cmb_mustsee->add_field( array(
 			'name'    => 'Worth It Details',
 			'id'      => $prefix . 'worthit_details',
 			'type'    => 'textarea_small',
 		) );
 
-		// Basic Show Details
+		// Metabox: Basic Show Details
 		$cmb_showdetails = new_cmb2_box( array(
 			'id'           => 'shows_metabox',
 			'title'        => 'Shows Details',
 			'object_types' => array( 'post_type_shows', ), // Post type
 			'context'      => 'normal',
 			'priority'     => 'high',
+			'show_in_rest' => true,
 			'show_names'   => true, // Show field names on the left
 		) );
-
+		// Field: Queer Timeline
 		$cmb_showdetails->add_field( array(
 			'name'    => 'Queer Timeline',
 			'desc'    => 'Which seasons/episodes have the queer in it',
@@ -281,7 +296,7 @@ class LWTV_CPT_Shows {
 			'type'    => 'wysiwyg',
 			'options' => array( 'textarea_rows' => 10, ),
 		) );
-
+		// Field: Notable Episodes
 		$cmb_showdetails->add_field( array(
 			'name'    => 'Notable Episodes',
 			'desc'    => 'Lez-centric episodes and plotlines',
@@ -290,7 +305,7 @@ class LWTV_CPT_Shows {
 			'options' => array(	'textarea_rows' => 10, ),
 		) );
 
-		// Box for Ratings
+		// Metabox: Ratings
 		$cmb_ratings = new_cmb2_box( array(
 			'id'            => 'ratings_metabox',
 			'title'         => 'Show Rating',
@@ -298,65 +313,48 @@ class LWTV_CPT_Shows {
 			'object_types'  => array( 'post_type_shows', ), // Post type
 			'context'       => 'normal',
 			'priority'      => 'high',
-			'show_names   ' => true, // Show field names on the left
+			'show_names'    => true, // Show field names on the left
+			'show_in_rest'  => true,
 		) );
-
+		// Field: Realness Rating
 		$cmb_ratings->add_field( array(
 			'name'    => 'Realness Rating',
 			'id'      => $prefix . 'realness_rating',
 			'desc'    => 'How realistic are the queers?',
 			'type'    => 'radio_inline',
-			'options' => array(
-				'1' => '1',
-				'2' => '2',
-				'3' => '3',
-				'4' => '4',
-				'5' => '5',
-			),
+			'options' => $ratings_array,
 		) );
-
+		// Field: Realness Details
 		$cmb_ratings->add_field( array(
 			'name'    => 'Realness Details',
 			'id'      => $prefix . 'realness_details',
 			'type'    => 'wysiwyg',
 			'options' => array(	'textarea_rows' => 5, ),
 		) );
-
+		// Field: Show Quality Rating
 		$cmb_ratings->add_field( array(
 			'name'    => 'Show Quality Rating',
 			'id'      => $prefix . 'quality_rating',
 			'desc'    => 'How good is the show for queers?',
 			'type'    => 'radio_inline',
-			'options' => array(
-				'1' => '1',
-				'2' => '2',
-				'3' => '3',
-				'4' => '4',
-				'5' => '5',
-			),
+			'options' => $ratings_array,
 		) );
-
+		// Field: Show Quality Details
 		$cmb_ratings->add_field( array(
 			'name'    => 'Show Quality Details',
 			'id'      => $prefix . 'quality_details',
 			'type'    => 'wysiwyg',
 			'options' => array(	'textarea_rows' => 5, ),
 		) );
-
+		// Field: Screentime Rating
 		$cmb_ratings->add_field( array(
 			'name'    => 'Screentime Rating',
 			'id'      => $prefix . 'screentime_rating',
 			'desc'    => 'How much air-time do the queers get?',
 			'type'    => 'radio_inline',
-			'options' => array(
-				'1' => '1',
-				'2' => '2',
-				'3' => '3',
-				'4' => '4',
-				'5' => '5',
-			),
+			'options' => $ratings_array,
 		) );
-
+		// Field: Screentime Details
 		$cmb_ratings->add_field( array(
 			'name'    => 'Screentime Details',
 			'id'      => $prefix . 'screentime_details',
@@ -364,7 +362,7 @@ class LWTV_CPT_Shows {
 			'options' => array(	'textarea_rows' => 5, ),
 		) );
 
-		// Metabox for the side (under shows)
+		// Metabox: Additional Data
 		$cmb_notes = new_cmb2_box( array(
 			'id'            	=> 'notes_metabox',
 			'title'         	=> 'Additional Data',
@@ -372,8 +370,10 @@ class LWTV_CPT_Shows {
 			'context'       	=> 'side',
 			'priority'      	=> 'default',
 			'show_names'		=> true, // Show field names on the left
+			'show_in_rest'      => true,
 			'cmb_styles'		=> false,
 		) );
+		// Field: Air Dates
 		$cmb_notes->add_field( array(
 			'name'     => 'Air Dates',
 			'desc'     => 'Years the show Aired',
@@ -389,6 +389,7 @@ class LWTV_CPT_Shows {
 				'finish_reverse_sort' => true,
 		    ),
 		) );
+		// Field: Show Format
 		$cmb_notes->add_field( array(
 			'name'             => 'Show Format',
 			'desc'             => 'What kind of television entertainment is this?',
@@ -399,17 +400,16 @@ class LWTV_CPT_Shows {
 			'default'          => 'tv-show',
 			'show_option_none' => false,
 		) );
+		// Field: Show Stars
 		$cmb_notes->add_field( array(
 			'name'             => 'Show Stars',
 			'desc'             => 'Gold is by/for queers, No Stars is normal TV',
 			'id'               => $prefix . 'stars',
 			'type'             => 'select',
 			'show_option_none' => 'No Stars',
-			'options'          => array(
-				'gold'   => 'Gold Star',
-				'silver' => 'Silver Star',
-			)
+			'options'          => $stars_array,
 		) );
+		// Field: Trigger Warning
 		$cmb_notes->add_field( array(
 			'name' => 'Triggers Warning?',
 			'desc' => 'i.e. Game of Thrones, Jessica Jones, etc.',
@@ -677,7 +677,7 @@ SQL;
 
 				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
 					foreach( $shows_array as $char_show ) {
-						if ( $char_show['show'] == $post_id ) {	
+						if ( $char_show['show'] == $post_id ) {
 							$queercount++;
 						}
 					}

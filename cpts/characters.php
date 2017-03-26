@@ -135,6 +135,7 @@ class LWTV_CPT_Characters {
 			'hierarchical'          => true,
 			'labels'                => $names_cliches,
 			'show_ui'               => true,
+			'show_in_rest'          => true,
 			'show_admin_column'     => true,
 			'update_count_callback' => '_update_post_term_count',
 			'query_var'             => true,
@@ -166,6 +167,7 @@ class LWTV_CPT_Characters {
 			'labels'             => $names_gender,
 			'public'             => true,
 			'show_ui'            => true,
+			'show_in_rest'       => true,
 			'show_admin_column'  => true,
 			'show_in_nav_menus'  => true,
 			'show_in_quick_edit' => false,
@@ -198,6 +200,7 @@ class LWTV_CPT_Characters {
 			'labels'             => $names_sexuality,
 			'public'             => true,
 			'show_ui'            => true,
+			'show_in_rest'       => true,
 			'show_admin_column'  => true,
 			'show_in_nav_menus'  => true,
 			'show_in_quick_edit' => false,
@@ -232,6 +235,7 @@ class LWTV_CPT_Characters {
 			'object_types' => array( 'post_type_characters', ), // Post type
 			'context'      => 'normal',
 			'priority'     => 'high',
+			'show_in_rest' => true,
 			'show_names'   => true, // Show field names on the left
 		) );
 		// Field: Character Clichés
@@ -257,7 +261,6 @@ class LWTV_CPT_Characters {
 				'spellcheck'     => 'false',
 		    ),
 		) );
-
 		// Field Group: Character Show information
 		// Made repeatable since each show might have a separate role. Yikes...
 		$group_shows = $cmb_characters->add_field( array(
@@ -268,7 +271,7 @@ class LWTV_CPT_Characters {
 				'group_title'   => 'Show #{#}',
 				'add_button'    => 'Add Another Show',
 				'remove_button' => 'Remove Show',
-				'sortable' => true,
+				'sortable'      => true,
 			),
 		) );
 		// Field: Show Name
@@ -299,6 +302,7 @@ class LWTV_CPT_Characters {
 			'context'      => 'side',
 			'priority'     => 'default',
 			'show_names'   => true, // Show field names on the left
+			'show_in_rest' => true,
 			'cmb_styles'   => false,
 		) );
 		// Field: Character Gender Idenity
@@ -599,14 +603,14 @@ SQL;
 	 * List of shows featuring a character, for use on character pages
 	 */
 	function lwtv_retrieve_shows_replacement( ) {
-		
+
 		global $post;
 
 		$shows_ids = get_post_meta( $post->ID, 'lezchars_show_group', true );
 		$shows_titles = array();
 
 		if ( $shows_ids !== '' && !is_null( $shows_ids ) ) {
-			foreach ( $shows_ids as $each_show ) {	
+			foreach ( $shows_ids as $each_show ) {
 				array_push( $shows_titles, get_the_title( $each_show['show'] ) );
 			}
 		}
