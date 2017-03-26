@@ -30,7 +30,7 @@ class LWTV_CPT_Characters {
 		add_action( 'init', array( $this, 'create_taxonomies'), 0 );
 
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
-		add_action( 'cmb2_admin_init', array( $this, 'cmb2_metaboxes') );
+		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes') );
 		add_action( 'admin_menu', array( $this,'remove_metaboxes' ) );
 
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
