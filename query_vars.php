@@ -8,7 +8,7 @@
  * Author:	  Mika Epstein
  * Author URI:  https://halfelf.org
  *
- * @package LezWatchTV Genesis Theme
+ * @package LezWatch TV Theme
  * @author Mika Epstein
  * @license GPL-2.0+
  *
@@ -34,12 +34,12 @@ class LWTVG_Query_Vars {
 		add_action( 'init', array( $this, 'init' ) );
 
 		$this->lez_query_args = array(
-			'newest'	=> 'newtype',
-			'role'		=> 'roletype',
-			'star'		=> 'starcolor',
-			'stats'		=> 'statistics',
-			'this-year'	=> 'thisyear',
-			'thumbs'	=> 'thumbscore',
+			'newest'	    => 'newtype',
+			'role'      => 'roletype',
+			'star'      => 'starcolor',
+			'stats'     => 'statistics',
+			'this-year' => 'thisyear',
+			'thumbs'    => 'thumbscore',
 		);
 	}
 
@@ -74,6 +74,20 @@ class LWTVG_Query_Vars {
 
 			// add filter for page
 			add_filter( 'page_template', array( $this, 'page_template' ) );
+			
+			// Pluralization of Characters
+			add_rewrite_rule(
+				'^characters/?$',
+				'index.php?post_type=post_type_characters&args=$matches[1]',
+				'top'
+			);
+
+			// Pluralization of Shows
+			add_rewrite_rule(
+				'^shows/?$',
+				'index.php?post_type=post_type_shows&args=$matches[1]',
+				'top'
+			);
 
 		} else {
 			add_action( 'admin_notices', array( $this, 'admin_notice_permalinks' ) );
@@ -94,7 +108,7 @@ class LWTVG_Query_Vars {
 	 *
 	 * @return $vars
 	 */
-	function query_vars($vars){
+	function query_vars( $vars ){
 		foreach ( $this->lez_query_args as $argument ) {
 			$vars[] = $argument;
 		}
@@ -106,7 +120,7 @@ class LWTVG_Query_Vars {
 	 *
 	 * @return $templates
 	 */
-	function page_template($templates = ""){
+	function page_template( $templates = "" ){
 		global $wp_query, $post;
 
 		if ( array_key_exists( $post->post_name, $this->lez_query_args ) )
