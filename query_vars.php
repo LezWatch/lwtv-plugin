@@ -22,7 +22,8 @@ if ( ! defined('WPINC' ) ) {
 class LWTVG_Query_Vars {
 
 	// Constant for the query arguments we allow
-	public $lez_query_args = array();
+	public $lez_query_args     = array();
+	public $lez_plural_types   = array();
 
 	/**
 	 * Construct
@@ -33,14 +34,20 @@ class LWTVG_Query_Vars {
 	function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
 
+		// The custom queries that have special pages
 		$this->lez_query_args = array(
 			'newest'	    => 'newtype',
 			'role'      => 'roletype',
-			'star'      => 'starcolor',
 			'stats'     => 'statistics',
 			'this-year' => 'thisyear',
-			'thumbs'    => 'thumbscore',
 		);
+
+		// Post types that need pluralization
+		$this->lez_plural_types = array( 
+			'characters' => 'post_type_characters', 
+			'shows'      => 'post_type_shows' 
+		);
+
 	}
 
 	/**
@@ -56,11 +63,16 @@ class LWTVG_Query_Vars {
 		// Plugin requires permalink usage - Only setup handling if permalinks enabled
 		if ( get_option('permalink_structure') != '' ) {
 
-			// tell WP not to override
+			// tell WP not to override query vars
 			add_action ('query_vars', array($this, 'query_vars'));
 
+			// add filter for pages
+			add_filter( 'page_template', array( $this, 'page_template' ) );
+
+			// Query Vars for custom pages
+			// Based on $this->lez_query_args
 			foreach( $this->lez_query_args as $slug => $query ) {
-			    add_rewrite_rule(
+				add_rewrite_rule(
 			        '^'.$slug.'/([^/]+)/?$',
 			        'index.php?pagename='.$slug.'&'.$query.'=$matches[1]',
 			        'top'
@@ -69,26 +81,24 @@ class LWTVG_Query_Vars {
 			        '^'.$slug.'/([^/]+)/page/([0-9]+)?/?$',
 			        'index.php?pagename='.$slug.'&'.$query.'=$matches[1]&paged=$matches[2]',
 			        'top'
-			    );
+			    );					
 			}
-
-			// add filter for page
-			add_filter( 'page_template', array( $this, 'page_template' ) );
 			
-			// Pluralization of Characters
-			add_rewrite_rule(
-				'^characters/?$',
-				'index.php?post_type=post_type_characters&args=$matches[1]',
-				'top'
-			);
-
-			// Pluralization of Shows
-			add_rewrite_rule(
-				'^shows/?$',
-				'index.php?post_type=post_type_shows&args=$matches[1]',
-				'top'
-			);
-
+			// Pluralization of Characters and shows
+			// Based on $this->lez_plural_types
+			foreach( $this->lez_plural_types as $slug => $type ) {
+				add_rewrite_rule(
+					'^'.$slug.'/?$',
+					'index.php?post_type='.$type,
+					'top'
+				);
+				add_rewrite_rule(
+					'^'.$slug.'/page/([0-9]+)?/?$',
+					'index.php?post_type='.$type.'&paged=$matches[1]',
+					'top'
+				);
+			}
+			
 		} else {
 			add_action( 'admin_notices', array( $this, 'admin_notice_permalinks' ) );
 		}

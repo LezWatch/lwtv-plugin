@@ -109,6 +109,7 @@ class LWTV_CPT_Shows {
 			'has_archive'         => true,
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,
+			'exclude_from_search' => false,
 		);
 		register_post_type( 'post_type_shows', $args );
 	}

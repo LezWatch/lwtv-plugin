@@ -102,6 +102,7 @@ class LWTV_CPT_Characters {
 			'has_archive'         => true,
 			'rewrite'             => array( 'slug' => 'character' ),
 			'delete_with_user'    => false,
+			'exclude_from_search' => false,
 		);
 		register_post_type( 'post_type_characters', $args );
 	}

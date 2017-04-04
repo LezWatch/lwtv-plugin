@@ -30,7 +30,7 @@ class LWTV_Functions {
 	 * Init
 	 */
 	public function init() {
-		// Nothing to see here.
+		// Nothing to see here
 	}
 
 	/**
@@ -47,6 +47,11 @@ new LWTV_Functions();
 
 // Call CMB2 - it doesn't error if it's not there
 require_once( 'plugins/cmb2.php' );
+
+// If Facet WP is active, call customizations
+if ( is_plugin_active( 'facetwp/index.php' ) ) {
+	require_once( 'plugins/facetwp.php' );
+}
 
 // Include CPTs
 include_once( 'cpts/characters.php' );
