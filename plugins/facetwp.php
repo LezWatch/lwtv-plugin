@@ -1,7 +1,7 @@
 <?php
 /*
 Description:FacetWP Customizations
-Version: 1.0
+Version: 1.1
 Author: Mika Epstein
 */
 
@@ -19,7 +19,34 @@ class LWTV_FacetWP {
 	 * Constructor
 	 */
 	public function __construct() {
+
+		// Filter paged output
 		add_filter( 'facetwp_pager_html', array( $this, 'facetwp_pager_html' ), 10, 2 );
+
+		// Filter data before saving it
+		add_filter( 'facetwp_index_row', array( $this, 'facetwp_index_row' ), 10, 2 );
+
+		// Filter results count
+		add_filter( 'facetwp_result_count', function( $output, $params ) {
+		    $output = $params['total'];
+		    return $output;
+		}, 10, 2 );
+
+		// Filter Facet sources
+		add_filter( 'facetwp_facet_sources', function( $sources ) {
+		    $sources['custom_fields']['choices']['cf/lezshows_airdates_end'] = 'Airdates End';
+		    return $sources;
+		});
+
+		// Filter Facet output
+		add_filter( 'facetwp_facet_html', function( $output, $params ) {
+		    if ( 'show_airdates' == $params['facet']['name'] ) {
+		        $output = str_replace( 'Min', 'First Year', $output );
+		        $output = str_replace( 'Max', 'Last Year', $output );
+		    }
+		    return $output;
+		}, 10, 2 );
+
 	}
 
 	/**
@@ -68,6 +95,60 @@ class LWTV_FacetWP {
 	    return $output;
 	}
 
+	/**
+	 * Filter Data before it's saved
+	 * Useful for serialized data but also capitalizing stars
+	 *
+	 * @since 1.1
+	 */
+	function facetwp_index_row( $params, $class ) {
+	
+		// Stars
+		// Capitalize
+		if ( 'show_stars' == $params['facet_name'] ) {
+			$params['facet_value'] = $params['facet_value'];
+			$params['facet_display_value'] = ucfirst( $params['facet_display_value'] );
+			$class->insert( $params );
+			return false; // skip default indexing
+	    }
+	
+		// Actors
+		// Saves one value for each actor
+		// a:1:{i:0;s:13:"Rachel Bilson";}
+		if ( 'char_actors' == $params['facet_name'] ) {
+			$values = (array) $params['facet_value'];
+			foreach ( $values as $val ) {
+				$params['facet_value'] = $val;
+				$params['facet_display_value'] = $val;
+				$class->insert( $params );
+			}
+			return false; // skip default indexing
+	    }
+	
+		// Airdates
+		// Saves two values for two sources (dude)
+		// a:2:{s:5:"start";s:4:"1994";s:6:"finish";s:4:"2009";}
+		if ( 'show_airdates' == $params['facet_name'] ) {
+			$values = (array) $params['facet_value'];
+			
+			$start = ( isset( $values['start'] ) )? $values['start'] : '';
+			$end   = ( isset( $values['finish'] ) )? $values['finish'] : date( 'Y' );
+
+			$params['facet_value']         = $start;
+			$params['facet_display_value'] = $start;
+			$class->insert( $params );
+
+			$params['facet_source']        = 'cf/lezshows_airdates_end';
+			$params['facet_name']          = 'show_airdates_end';
+			$params['facet_value']         = $end;
+			$params['facet_display_value'] = $end;
+			$class->insert( $params );
+	
+			return false; // skip default indexing
+	    }
+	
+	    return $params;
+	}
 }
 
 new LWTV_FacetWP();
@@ -484,10 +565,3 @@ class FacetWP_Integration_CMB2 {
 
 $instance = FacetWP_Integration_CMB2::instance();
 add_action( 'plugins_loaded', array( $instance, 'setup_hooks' ) );
-
-
-// Facet WP Filter
-add_filter( 'facetwp_result_count', function( $output, $params ) {
-    $output = $params['total'];
-    return $output;
-}, 10, 2 );
