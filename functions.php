@@ -49,7 +49,7 @@ new LWTV_Functions();
 require_once( 'plugins/cmb2.php' );
 
 // If Facet WP is active, call customizations
-if ( is_plugin_active( 'facetwp/index.php' ) ) {
+if ( class_exists( 'FacetWP' ) ) {
 	require_once( 'plugins/facetwp.php' );
 }
 
