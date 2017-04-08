@@ -42,6 +42,7 @@ class LWTV_Functions {
 			require_once( 'plugins/yoast-seo.php' );
 		}
 	}
+
 }
 new LWTV_Functions();
 
@@ -56,7 +57,7 @@ if ( class_exists( 'FacetWP' ) ) {
 // Include CPTs
 include_once( 'cpts/characters.php' );
 include_once( 'cpts/shows.php' );
-include_once( 'cpts/featured-images.php' );
+include_once( 'cpts/all-cpts.php' );
 
 // JSON API
 include_once( 'rest-api/bury-your-queers.php' );

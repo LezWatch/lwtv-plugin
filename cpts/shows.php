@@ -22,6 +22,8 @@ class LWTV_CPT_Shows {
 
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes') );
+
+		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 	}
 
 	/**
@@ -52,11 +54,11 @@ class LWTV_CPT_Shows {
 	}
 
 	/**
-	 * CSS Customizations
+	 * Admin CSS Customizations
 	 */
 	public function admin_enqueue_scripts( $hook ) {
 		global $current_screen;
-		wp_register_style( 'shows-styles', plugins_url('shows.css', __FILE__ ) );
+		wp_register_style( 'shows-styles', plugins_url('shows-admin.css', __FILE__ ) );
 		if( 'post_type_shows' == $current_screen->post_type || 'lez_stations' == $current_screen->taxonomy || 'lez_tropes' == $current_screen->taxonomy ) {
 			wp_enqueue_style( 'shows-styles' );
 		}
@@ -461,7 +463,7 @@ class LWTV_CPT_Shows {
 		unset( $columns['cpt-airdate'] );             // Don't allow sort by airdates
 		$columns['taxonomy-lez_formats'] = 'format';  // Allow sort by show format
 		$columns['shows-worthit']        = 'worth';   // Allow sort by worth
-		$columns['shows-queercount']	     = 'queers';  // Allow sort by queers
+		$columns['shows-queercount']	 = 'queers';  // Allow sort by queers
 		return $columns;
 	}
 
@@ -725,6 +727,22 @@ SQL;
 				margin-left: -1px;
 			}
 		</style>";
+	}
+
+	/*
+	 * Post Page Meta Box
+	 * For listing critical information
+	 */
+	function post_page_metabox() {
+		global $post;
+
+		$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
+
+		?>
+		<div class="misc-pub-section lwtv misc-pub-lwtv">
+			<span id="characters">Characters: <b><?php echo $countqueers; ?></b></span>
+		</div>
+		<?php
 	}
 
 }

@@ -35,3 +35,17 @@
     height: 30px;
     vertical-align: middle;
 }
+
+.lwtv #characters:before {
+	content: "\f484";
+	position: relative;
+	top: -1px;
+	font: 400 20px/1 dashicons;
+	speak: none;
+	display: inline-block;
+	margin-left: -1px;
+	padding-right: 3px;
+	vertical-align: top;
+	-webkit-font-smoothing: antialiased;
+	color: #82878c;
+}
