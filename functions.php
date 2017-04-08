@@ -24,13 +24,14 @@ class LWTV_Functions {
 	 */
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init') );
+		add_action( 'init', array( $this, 'init') );
 	}
 
 	/**
 	 * Init
 	 */
 	public function init() {
-		// Nothing to see here
+		// Placeholder
 	}
 
 	/**
