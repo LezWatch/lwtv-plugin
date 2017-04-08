@@ -20,7 +20,7 @@ class LWTV_All_CPTs {
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'featured_images' ) );
 
-		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
+		add_action( 'edit_form_after_title', array( $this, 'admin_notices' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts') );
 		add_action( 'get_header' , array( $this, 'admin_notices' ), 20 );
 	}
@@ -94,16 +94,16 @@ class LWTV_All_CPTs {
 
 				if ( $worthit < '1' ) {
 					$type     = 'notice-info';
-					$message  = 'Is this show worth watching? We don\'t know.';
+					$message  = 'Is ' . $post->post_title . ' show worth watching? We don\'t know.';
 					$dashicon = 'heart';
 
 					if ( $word_count < '100' ) {
 						$type     = 'notice-error';
-						$message  = 'We clearly know nothing about this show.';
+						$message  = 'We clearly know nothing about ' . $post->post_title . '.';
 						$dashicon = 'warning';
 					} elseif ( $word_count < '200' ) {
 						$type     = 'notice-warning';
-						$message  = 'This post is a stub. Please edit it and make it more awesome.';
+						$message  = $post->post_title . ' is a stub. Please edit it and make it more awesome.';
 						$dashicon = 'info';
 					}
 				}
