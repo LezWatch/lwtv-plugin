@@ -78,6 +78,7 @@ class LWTV_All_CPTs {
 	 */
 	function admin_notices() {
 
+		// Bail if not a post
 		if ( !get_post() ) return;
 
 		$message    = '';
