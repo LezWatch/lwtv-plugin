@@ -109,7 +109,7 @@ class LWTV_All_CPTs {
 				break;
 		}
 
-		if ( $message && is_user_logged_in() && is_single() ) {
+		if ( $message && is_user_logged_in() && ( is_single() || is_admin() ) ) {
 			printf( '<div class="wrap"><div class="notice %1$s"><p><span class="dashicons dashicons-%2$s"></span> %3$s</p></div></div>', esc_attr( $type ), esc_attr( $dashicon ), esc_html( $message ) );
 		}
 

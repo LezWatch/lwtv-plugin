@@ -736,13 +736,16 @@ SQL;
 	function post_page_metabox() {
 		global $post;
 
-		$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
+		switch ( $post->post_type ) {
+			case 'post_type_shows':
+				$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
 
-		?>
-		<div class="misc-pub-section lwtv misc-pub-lwtv">
-			<span id="characters">Characters: <b><?php echo $countqueers; ?></b></span>
-		</div>
-		<?php
+				?><div class="misc-pub-section lwtv misc-pub-lwtv">
+					<span id="characters">Characters: <b><?php echo $countqueers; ?></b></span>
+				</div><?php
+
+				break;
+		}
 	}
 
 }
