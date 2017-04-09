@@ -94,7 +94,7 @@ class LWTV_All_CPTs {
 				$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
 
 				// If there's no worth it data and some queers, we have some data so let's do this thing
-				if ( $worthit < '1' && $countqueers < '0' ) {
+				if ( $worthit < '1' && $countqueers !== '0' ) {
 					$type     = 'notice-info';
 					$message  = 'Is ' . $post->post_title . ' show worth watching? We don\'t know.';
 					$dashicon = 'heart';
