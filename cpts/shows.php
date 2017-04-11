@@ -11,12 +11,18 @@
  */
 class LWTV_CPT_Shows {
 
+	public $year_array;
+	public $ratings_array;
+	public $stars_array;
+
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
+
 		add_action( 'admin_init', array( $this, 'admin_init') );
 
+		add_action( 'init', array( $this, 'init') );
 		add_action( 'init', array( $this, 'create_post_type'), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies'), 0 );
 
@@ -24,6 +30,31 @@ class LWTV_CPT_Shows {
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes') );
 
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
+
+		// Array of years since 1930
+		$this->year_array = array();
+		foreach ( range(date('Y'), '1930' ) as $year) { $startyear_array[$year] = $year; }
+
+		// Array of Valid Ratings
+		$this->ratings_array = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
+
+		// Array of valid stars we award shows
+		$this->stars_array = array( 'gold'   => 'Gold Star', 'silver' => 'Silver Star' );
+	}
+
+	/**
+	 *  Init
+	 */
+	public function init() {
+		// Force saving data to convert select2 saved data to a taxonomy
+		$post_id = ( isset( $_GET['post'] ) )? $_GET['post'] : 0 ;
+
+		// Tropes
+		LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
+
+		// Genres
+		LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
+
 	}
 
 	/**
@@ -50,7 +81,6 @@ class LWTV_CPT_Shows {
 		add_action( 'save_post_post_type_characters', array( $this, 'update_char_count_from_chars' ), 10, 3 );
 
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
-
 	}
 
 	/**
@@ -203,7 +233,7 @@ class LWTV_CPT_Shows {
 			'add_or_remove_items'        => 'Add or remove Formats',
 			'choose_from_most_used'      => 'Choose from the most used Formats',
 			'not_found'                  => 'No Formats found.',
-			'menu_name'                  => 'Show Formats',
+			'menu_name'                  => 'Formats',
 		);
 		//parameters for the new taxonomy
 		$args_showformat = array(
@@ -218,6 +248,39 @@ class LWTV_CPT_Shows {
 			'rewrite'               => array( 'slug' => 'format' ),
 		);
 		register_taxonomy( 'lez_formats', 'post_type_shows', $args_showformat );
+
+		// SHOW Genre
+		$names_showgenre = array(
+			'name'                       => 'Show Genres',
+			'singular_name'              => 'Show Genre',
+			'search_items'               => 'Search Genres',
+			'popular_items'              => 'Popular Genres',
+			'all_items'                  => 'All Genres',
+			'parent_item'                => null,
+			'parent_item_colon'          => null,
+			'edit_item'                  => 'Edit Genre',
+			'update_item'                => 'Update Genre',
+			'add_new_item'               => 'Add New Genre',
+			'new_item_name'              => 'New Genre Name',
+			'separate_items_with_commas' => 'Separate Genres with commas',
+			'add_or_remove_items'        => 'Add or remove Genres',
+			'choose_from_most_used'      => 'Choose from the most used Genres',
+			'not_found'                  => 'No Genres found.',
+			'menu_name'                  => 'Genres',
+		);
+		//parameters for the new taxonomy
+		$args_showgenre = array(
+			'hierarchical'          => false,
+			'labels'                => $names_showgenre,
+			'show_ui'               => true,
+			'show_in_rest'          => true,
+			'show_admin_column'     => true,
+			'query_var'             => true,
+			'show_in_nav_menus'		=> true,
+			'show_in_quick_edit'	=> false,
+			'rewrite'               => array( 'slug' => 'genre' ),
+		);
+		register_taxonomy( 'lez_genres', 'post_type_shows', $args_showgenre );
 	}
 
 	/*
@@ -228,42 +291,31 @@ class LWTV_CPT_Shows {
 		// prefix for all custom fields
 		$prefix = 'lezshows_';
 
-		// Array of years since 1930
-		$year_array = array();
-		foreach ( range(date('Y'), '1930' ) as $year) {
-			$startyear_array[$year] = $year;
-		}
-
-		// Array of Valid Ratings
-		$ratings_array = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
-
-		// Array of valid stars we award shows
-		$stars_array = array(
-			'gold'   => 'Gold Star',
-			'silver' => 'Silver Star',
-		);
-
 		// Metabox Group: Must See
 		$cmb_mustsee = new_cmb2_box( array(
 			'id'           => 'mustsee_metabox',
 			'title'        => 'Required Details',
-			'object_types' => array( 'post_type_shows', ), // Post type
+			'object_types' => array( 'post_type_shows' ),
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_in_rest' => true,
 			'show_names'   => true, // Show field names on the left
 		) );
 		// Field: Tropes
-		$cmb_mustsee->add_field( array(
+		$field_tropes = $cmb_mustsee->add_field( array(
 			'name'              => 'Trope Plots',
 			'id'                => $prefix . 'tropes',
-			'taxonomy'          => 'lez_tropes', //Enter Taxonomy Slug
-			'type'              => 'taxonomy_multicheck',
+			'taxonomy'          => 'lez_tropes',
+			'type'              => 'pw_multiselect',
 			'select_all_button' => false,
 			'remove_default'    => 'true',
+			'options'           => LP_CMB2_Addons::select2_get_options_array_tax( 'lez_tropes' ),
+			'attributes' => array(
+				'placeholder' => 'Common tropes ...'
+			),
 		) );
 		// Field: Worth It?
-		$cmb_mustsee->add_field( array(
+		$field_worththumb = $cmb_mustsee->add_field( array(
 			'name'    => 'Worth It?',
 			'id'      => $prefix . 'worthit_rating',
 			'desc'    => 'Is the show worth watching?',
@@ -275,11 +327,19 @@ class LWTV_CPT_Shows {
 			),
 		) );
 		// Field: Worth It Details
-		$cmb_mustsee->add_field( array(
+		$field_worthdetails = $cmb_mustsee->add_field( array(
 			'name'    => 'Worth It Details',
 			'id'      => $prefix . 'worthit_details',
 			'type'    => 'textarea_small',
 		) );
+		// Must See Grid
+		if( !is_admin() ){
+			return;
+		} else {
+			$grid_mustsee = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_mustsee );
+			$row          = $grid_mustsee->addRow();
+			$row->addColumns( array( $field_worththumb, $field_worthdetails ) );
+		}
 
 		// Metabox: Basic Show Details
 		$cmb_showdetails = new_cmb2_box( array(
@@ -297,21 +357,29 @@ class LWTV_CPT_Shows {
 			'desc'    => 'Which seasons/episodes have the queer in it',
 			'id'      => $prefix . 'plots',
 			'type'    => 'wysiwyg',
-			'options' => array( 'textarea_rows' => 10, ),
+			'options' => array(
+				'textarea_rows' => 10,
+				'teeny'         => true,
+				'media_buttons' => false,
+			),
 		) );
 		// Field: Notable Episodes
 		$cmb_showdetails->add_field( array(
 			'name'    => 'Notable Episodes',
-			'desc'    => 'Lez-centric episodes and plotlines',
+			'desc'    => 'Queer-centric episodes and plotlines',
 			'id'      => $prefix . 'episodes',
 			'type'    => 'wysiwyg',
-			'options' => array(	'textarea_rows' => 10, ),
+			'options' => array(
+				'textarea_rows' => 10,
+				'media_buttons' => false,
+				'teeny'         => true,
+			),
 		) );
 
 		// Metabox: Ratings
 		$cmb_ratings = new_cmb2_box( array(
 			'id'            => 'ratings_metabox',
-			'title'         => 'Show Rating',
+			'title'         => 'Show Ratings',
 			'desc'          => 'Ratings are subjective 1 to 5, with 1 being low and 5 being The L Word.',
 			'object_types'  => array( 'post_type_shows', ), // Post type
 			'context'       => 'normal',
@@ -320,50 +388,74 @@ class LWTV_CPT_Shows {
 			'show_in_rest'  => true,
 		) );
 		// Field: Realness Rating
-		$cmb_ratings->add_field( array(
+		$field_rating_real = $cmb_ratings->add_field( array(
 			'name'    => 'Realness Rating',
 			'id'      => $prefix . 'realness_rating',
 			'desc'    => 'How realistic are the queers?',
 			'type'    => 'radio_inline',
-			'options' => $ratings_array,
+			'options' => $this->ratings_array,
 		) );
 		// Field: Realness Details
-		$cmb_ratings->add_field( array(
+		$field_detail_real = $cmb_ratings->add_field( array(
 			'name'    => 'Realness Details',
 			'id'      => $prefix . 'realness_details',
 			'type'    => 'wysiwyg',
-			'options' => array(	'textarea_rows' => 5, ),
+			'options' => array(
+				'textarea_rows' => 5,
+				'media_buttons' => false,
+				'teeny'         => true,
+			),
 		) );
 		// Field: Show Quality Rating
-		$cmb_ratings->add_field( array(
+		$field_rating_quality = $cmb_ratings->add_field( array(
 			'name'    => 'Show Quality Rating',
 			'id'      => $prefix . 'quality_rating',
 			'desc'    => 'How good is the show for queers?',
 			'type'    => 'radio_inline',
-			'options' => $ratings_array,
+			'options' => $this->ratings_array,
 		) );
 		// Field: Show Quality Details
-		$cmb_ratings->add_field( array(
+		$field_detail_quality = $cmb_ratings->add_field( array(
 			'name'    => 'Show Quality Details',
 			'id'      => $prefix . 'quality_details',
 			'type'    => 'wysiwyg',
-			'options' => array(	'textarea_rows' => 5, ),
+			'options' => array(
+				'textarea_rows' => 5,
+				'media_buttons' => false,
+				'teeny'         => true,
+			),
 		) );
 		// Field: Screentime Rating
-		$cmb_ratings->add_field( array(
+		$field_rating_screen = $cmb_ratings->add_field( array(
 			'name'    => 'Screentime Rating',
 			'id'      => $prefix . 'screentime_rating',
 			'desc'    => 'How much air-time do the queers get?',
 			'type'    => 'radio_inline',
-			'options' => $ratings_array,
+			'options' => $this->ratings_array,
 		) );
 		// Field: Screentime Details
-		$cmb_ratings->add_field( array(
+		$field_detail_screen = $cmb_ratings->add_field( array(
 			'name'    => 'Screentime Details',
 			'id'      => $prefix . 'screentime_details',
 			'type'    => 'wysiwyg',
-			'options' => array(	'textarea_rows' => 5, ),
+			'options' => array(
+				'textarea_rows' => 5,
+				'media_buttons' => false,
+				'teeny'         => true,
+			),
 		) );
+		// Ratings Grid
+		if( !is_admin() ){
+			return;
+		} else {
+			$grid_ratings = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_ratings );
+			$row1 = $grid_ratings->addRow();
+			$row1->addColumns( array( $field_rating_real, $field_detail_real ) );
+			$row2 = $grid_ratings->addRow();
+			$row2->addColumns( array( $field_rating_quality, $field_detail_quality ) );
+			$row3 = $grid_ratings->addRow();
+			$row3->addColumns( array( $field_rating_screen, $field_detail_screen ) );
+		}
 
 		// Metabox: Additional Data
 		$cmb_notes = new_cmb2_box( array(
@@ -377,7 +469,7 @@ class LWTV_CPT_Shows {
 			'cmb_styles'		=> false,
 		) );
 		// Field: Air Dates
-		$cmb_notes->add_field( array(
+		$field_airdates = $cmb_notes->add_field( array(
 			'name'     => 'Air Dates',
 			'desc'     => 'Years the show Aired',
 			'id'       => $prefix . 'airdates',
@@ -393,9 +485,9 @@ class LWTV_CPT_Shows {
 		    ),
 		) );
 		// Field: Show Format
-		$cmb_notes->add_field( array(
-			'name'             => 'Show Format',
-			'desc'             => 'What kind of television entertainment is this?',
+		$field_format = $cmb_notes->add_field( array(
+			'name'             => 'Format',
+			'desc'             => 'Media format.',
 			'id'               => $prefix . 'tvtype',
 			'taxonomy'         => 'lez_formats',
 			'type'             => 'taxonomy_select',
@@ -403,22 +495,48 @@ class LWTV_CPT_Shows {
 			'default'          => 'tv-show',
 			'show_option_none' => false,
 		) );
+		// Field: Show Genre
+		$field_genre = $cmb_notes->add_field( array(
+			'name'              => 'Genre',
+			'desc'              => 'Subject matter.',
+			'id'                => $prefix . 'tvgenre',
+			'taxonomy'          => 'lez_genres',
+			'type'              => 'pw_multiselect',
+			'select_all_button' => false,
+			'remove_default'    => 'true',
+			'options'           => LP_CMB2_Addons::select2_get_options_array_tax( 'lez_genres' ),
+			'attributes'        => array(
+				'placeholder' => 'What kind of show...'
+			),
+
+		) );
 		// Field: Show Stars
-		$cmb_notes->add_field( array(
+		$field_stars = $cmb_notes->add_field( array(
 			'name'             => 'Show Stars',
 			'desc'             => 'Gold is by/for queers, No Stars is normal TV',
 			'id'               => $prefix . 'stars',
 			'type'             => 'select',
 			'show_option_none' => 'No Stars',
-			'options'          => $stars_array,
+			'options'          => $this->stars_array,
 		) );
 		// Field: Trigger Warning
-		$cmb_notes->add_field( array(
-			'name' => 'Triggers Warning?',
-			'desc' => 'i.e. Game of Thrones, Jessica Jones, etc.',
-			'id'   => $prefix . 'triggerwarning',
-			'type' => 'checkbox'
+		$field_trigger = $cmb_notes->add_field( array(
+			'name'             => 'Warning?',
+			'desc'             => 'Trigger Warnings (i.e. Game of Thrones)',
+			'id'               => $prefix . 'triggerwarning',
+			'type'             => 'select',
+			'show_option_none' => 'No',
+			'options'          => array( 'on' => "Yes")
 		) );
+		// Additional Data Grid
+		if( !is_admin() ){
+			return;
+		} else {
+			$grid_additional = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_notes );
+			$row1 = $grid_additional->addRow();
+			$row1->addColumns( array( $field_stars, $field_trigger ) );
+		}
+
 	}
 
 	/*

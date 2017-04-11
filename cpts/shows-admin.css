@@ -1,6 +1,13 @@
+/* .form-field.term-parent-wrap, */
 div#lez_tropesdiv,
 select#newlez_stations_parent,
-select#newlez_tropes_parent,
-.form-field.term-parent-wrap {
+select#newlez_tropes_parent {
     display: none;
+}
+
+
+/* Sidebar */
+
+#side-sortables .cmb-type-checkbox .cmb-td label {
+	display: block!important;
 }

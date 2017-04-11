@@ -32,12 +32,6 @@ class LWTV_FacetWP {
 		    return $output;
 		}, 10, 2 );
 
-		// Filter Facet sources
-		add_filter( 'facetwp_facet_sources', function( $sources ) {
-		    $sources['custom_fields']['choices']['cf/lezshows_airdates_end'] = 'Airdates End';
-		    return $sources;
-		});
-
 		// Filter Facet output
 		add_filter( 'facetwp_facet_html', function( $output, $params ) {
 		    if ( 'show_airdates' == $params['facet']['name'] ) {
@@ -54,14 +48,14 @@ class LWTV_FacetWP {
 	 * Credit: https://gist.github.com/mgibbs189/69176ef41fa4e26d1419
 	 */
 	public function facetwp_pager_html( $output, $params ) {
-	
+
 	    $output = '';
 	    $page = (int) $params['page'];
 	    $total_pages = (int) $params['total_pages'];
-	
+
 	    // Only show pagination when > 1 page
 	    if ( 1 < $total_pages ) {
-	
+
 	        if ( 1 < $page ) {
 	            $output .= '<a class="facetwp-page" data-page="' . ( $page - 1 ) . '">&laquo; Previous</a>';
 	        }
@@ -74,10 +68,10 @@ class LWTV_FacetWP {
 	                $output .= '<a class="facetwp-page" data-page="' . ($page - $i) . '">' . ($page - $i) . '</a>';
 	            }
 	        }
-	
+
 	        // Current page
 	        $output .= '<a class="facetwp-page active" data-page="' . $page . '">' . $page . '</a>';
-	
+
 	        for ( $i = 1; $i <= 2; $i++ ) {
 	            if ( $total_pages >= ( $page + $i ) ) {
 	                $output .= '<a class="facetwp-page" data-page="' . ($page + $i) . '">' . ($page + $i) . '</a>';
@@ -91,7 +85,7 @@ class LWTV_FacetWP {
 	            $output .= '<a class="facetwp-page" data-page="' . ( $page + 1 ) . '">Next &raquo;</a>';
 	        }
 	    }
-	
+
 	    return $output;
 	}
 
@@ -102,7 +96,7 @@ class LWTV_FacetWP {
 	 * @since 1.1
 	 */
 	function facetwp_index_row( $params, $class ) {
-	
+
 		// Stars
 		// Capitalize
 		if ( 'show_stars' == $params['facet_name'] ) {
@@ -111,7 +105,7 @@ class LWTV_FacetWP {
 			$class->insert( $params );
 			return false; // skip default indexing
 	    }
-	
+
 		// Actors
 		// Saves one value for each actor
 		// a:1:{i:0;s:13:"Rachel Bilson";}
@@ -124,29 +118,28 @@ class LWTV_FacetWP {
 			}
 			return false; // skip default indexing
 	    }
-	
+
 		// Airdates
 		// Saves two values for two sources (dude)
 		// a:2:{s:5:"start";s:4:"1994";s:6:"finish";s:4:"2009";}
 		if ( 'show_airdates' == $params['facet_name'] ) {
 			$values = (array) $params['facet_value'];
-			
+
 			$start = ( isset( $values['start'] ) )? $values['start'] : '';
-			$end   = ( isset( $values['finish'] ) )? $values['finish'] : date( 'Y' );
+			$end   = ( isset( $values['finish'] ) && is_int( $values['finish'] ) )? $values['finish'] : date( 'Y' );
 
 			$params['facet_value']         = $start;
 			$params['facet_display_value'] = $start;
 			$class->insert( $params );
 
-			$params['facet_source']        = 'cf/lezshows_airdates_end';
-			$params['facet_name']          = 'show_airdates_end';
-			$params['facet_value']         = $end;
-			$params['facet_display_value'] = $end;
-			$class->insert( $params );
-	
+			$params2 = $params;
+			$params2['facet_value']         = $end;
+			$params2['facet_display_value'] = $end;
+			$class->insert( $params2 );
+
 			return false; // skip default indexing
 	    }
-	
+
 	    return $params;
 	}
 }

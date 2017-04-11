@@ -20,26 +20,11 @@ class LWTV_Yoast_SEO {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init', array( $this, 'admin_init') );
-	}
 
-	/**
-	 * Init
-	 */
-	public function admin_init() {
-		add_action( 'rest_api_init', array( $this, 'kill_yoast_stopwords') );
-	}
-
-	/**
-	 * Prevent Yoast Stopwords from running on custom post types
-	 */
-	public function kill_yoast_stopwords() {
 		global $pagenow, $typenow;
 
 		$pagenow_array = array( 'post.php', 'edit.php', 'post-new.php' );
-		if ( !in_array( $pagenow , $pagenow_array ) ) {
-			return;
-		}
+		if ( !in_array( $pagenow , $pagenow_array ) ) return;
 
 		// when editing pages, $typenow isn't set until later!
 		if ( empty($typenow) ) {

@@ -5,7 +5,7 @@
     padding: 10px 20px 0 0!important;
 }
 
-.cmb2-checkbox-list.cmb2-list li {
+.cmb-type-taxonomy-multicheck-inline .cmb2-checkbox-list.cmb2-list li {
 	display: inline-block;
 	width: 45%;
 }

@@ -26,6 +26,7 @@ class LWTV_CPT_Characters {
 
 		add_action( 'admin_init', array( $this, 'admin_init') );
 
+		add_action( 'init', array( $this, 'init') );
 		add_action( 'init', array( $this, 'create_post_type'), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies'), 0 );
 
@@ -67,6 +68,18 @@ class LWTV_CPT_Characters {
 		if( 'post_type_characters' == $current_screen->post_type || 'lez_cliches' == $current_screen->taxonomy ) {
 			wp_enqueue_style( 'character-styles' );
 		}
+	}
+
+	/**
+	 *  Init
+	 */
+	public function init() {
+		// Force saving data to convert select2 saved data to a taxonomy
+		$post_id = ( isset( $_GET['post'] ) )? $_GET['post'] : 0 ;
+
+		// Cliches
+		LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+
 	}
 
 	/*
@@ -240,16 +253,20 @@ class LWTV_CPT_Characters {
 			'show_names'   => true, // Show field names on the left
 		) );
 		// Field: Character Clichés
-		$cmb_characters->add_field( array(
+		$field_cliches = $cmb_characters->add_field( array(
 			'name'              => 'Character Clichés',
 			'id'                => $prefix . 'cliches',
-			'taxonomy'          => 'lez_cliches', //Enter Taxonomy Slug
-			'type'              => 'taxonomy_multicheck',
+			'taxonomy'          => 'lez_cliches',
+			'type'              => 'pw_multiselect',
 			'select_all_button' => false,
-			'remove_default'    => 'true'
+			'remove_default'    => 'true',
+			'options'           => LP_CMB2_Addons::select2_get_options_array_tax( 'lez_cliches' ),
+			'attributes' => array(
+				'placeholder' => 'Common clichés ...'
+			),
 		) );
-		// Field: Actor Name
-		$cmb_characters->add_field( array(
+		// Field: Actor Name(s)
+		$field_actors = $cmb_characters->add_field( array(
 			'name'       => 'Actor Name',
 			'desc'       => 'Include identifying features (in parens) for multiple actors',
 			'id'         => $prefix . 'actor',
@@ -276,7 +293,7 @@ class LWTV_CPT_Characters {
 			),
 		) );
 		// Field: Show Name
-		$cmb_characters->add_group_field( $group_shows, array(
+		$field_shows = $cmb_characters->add_group_field( $group_shows, array(
 			'name'             => 'TV Show',
 			'id'               => 'show',
 			'type'             => 'select',
@@ -285,7 +302,7 @@ class LWTV_CPT_Characters {
 			'options_cb'       => array( $this, 'cmb2_get_shows_options'),
 		) );
 		// Field: Character Type
-		$cmb_characters->add_group_field( $group_shows, array(
+		$field_chartype = $cmb_characters->add_group_field( $group_shows, array(
 			'name'             => 'Character Type',
 			'desc'             => 'Mains are in credits. Recurring have their own plots. Guests show up once or twice.',
 			'id'               => 'type',
@@ -294,6 +311,7 @@ class LWTV_CPT_Characters {
 			'default'          => 'custom',
 			'options'          => $this->character_roles,
 		) );
+
 
 		// Metabox Group: Quick Dropdowns
 		$cmb_charside = new_cmb2_box( array(
@@ -307,9 +325,9 @@ class LWTV_CPT_Characters {
 			'cmb_styles'   => false,
 		) );
 		// Field: Character Gender Idenity
-		$cmb_charside->add_field( array(
-			'name'             => 'Gender Identity',
-			'desc'             => 'Gender with which the character identifies',
+		$field_gender = $cmb_charside->add_field( array(
+			'name'             => 'Gender',
+			'desc'             => 'Gender identity',
 			'id'               => $prefix . 'gender',
 			'taxonomy'         => 'lez_gender', //Enter Taxonomy Slug
 			'type'             => 'taxonomy_select',
@@ -318,9 +336,9 @@ class LWTV_CPT_Characters {
 			'remove_default'   => 'true'
 		) );
 		// Field: Character Sexual Orientation
-		$cmb_charside->add_field( array(
+		$field_sexuality = $cmb_charside->add_field( array(
 			'name'             => 'Sexuality',
-			'desc'             => 'Character\'s sexual orientation',
+			'desc'             => 'Sexual orientation',
 			'id'               => $prefix . 'sexuality',
 			'taxonomy'         => 'lez_sexuality', //Enter Taxonomy Slug
 			'type'             => 'taxonomy_select',
@@ -329,7 +347,7 @@ class LWTV_CPT_Characters {
 			'remove_default'   => 'true'
 		) );
 		// Field: Year of Death (if applicable)
-		$cmb_charside->add_field( array(
+		$field_death = $cmb_charside->add_field( array(
 			'name'        => 'Date of Death',
 			'desc'        => 'If the character is dead, select when they died.',
 			'id'          => $prefix .'death_year',
@@ -337,6 +355,15 @@ class LWTV_CPT_Characters {
 			'date_format' => 'm/d/Y',
 			'repeatable'  => true, // Sara Lance may die again, and we'll have to figure this out
 		) );
+		// Character Sidebar Grid
+		if( !is_admin() ){
+			return;
+		} else {
+			$grid_charside = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_charside );
+			$row = $grid_charside->addRow();
+			$row->addColumns( array( $field_gender, $field_sexuality ) );
+		}
+
 	}
 
 	/*
@@ -369,7 +396,7 @@ class LWTV_CPT_Characters {
 		if (  $character_show_IDs !== '' ) {
 			foreach ( $character_show_IDs as $each_show ) {
 				array_push( $show_title, get_the_title( $each_show['show'] ) );
-				array_push( $role_array, $each_show['type'] );
+				array_push( $role_array, ucfirst( $each_show['type'] ) );
 			}
 		}
 

@@ -90,11 +90,29 @@ class LWTV_All_CPTs {
 
 		switch ( $post->post_type ) {
 			case 'post_type_shows':
-				$worthit     = get_post_meta( $post->ID, 'lezshows_worthit_details', true );
 				$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
 
+				$worth_desc   = get_post_meta( $post->ID, 'lezshows_worthit_details', true );
+
+/*
+	// Not using this ssection yet, but the idea is to better flag what posts need work
+	// If they're missing data we should know but it makes the page load slower so ...
+				$worth_rating = get_post_meta( $post->ID, 'lezshows_worthit_rating', true);
+				$tropes       = get_the_terms( $post->ID, 'lez_tropes' );
+				$plots        = get_post_meta( $post->ID, 'lezshows_plots', true);
+				$episodes     = get_post_meta( $post->ID, 'lezshows_episodes', true);
+
+				$real_rating  = (int) get_post_meta( $post->ID, 'lezshows_realness_rating', true);
+				$show_quality = (int) get_post_meta( $post->ID, 'lezshows_quality_rating', true);
+				$screen_time  = (int) get_post_meta( $post->ID, 'lezshows_screentime_rating', true);
+
+				$stations     = get_the_terms( $post->ID, 'lez_stations' );
+				$airdates     = get_post_meta( $post->ID, 'lezshows_airdates', true);
+				$formats      = get_the_terms( $post->ID, 'lez_formats' );
+*/
+
 				// If there's no worth it data and some queers, we have some data so let's do this thing
-				if ( $worthit < '1' && $countqueers !== '0' ) {
+				if ( $worth_desc < '1' && $countqueers !== '0' ) {
 					$type     = 'notice-info';
 					$message  = 'Is ' . $post->post_title . ' show worth watching? We don\'t know.';
 					$dashicon = 'heart';

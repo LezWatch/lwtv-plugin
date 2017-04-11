@@ -39,7 +39,7 @@ class LWTV_Functions {
 	 */
 	public function admin_init() {
 		// If Yoast SEO is active, call customizations
-		if (is_plugin_active( 'wordpress-seo/wp-seo.php' ) ) {
+		if ( is_plugin_active( 'wordpress-seo/wp-seo.php' ) || is_plugin_active( 'wordpress-seo-premium/wp-seo-premium.php' ) || defined( 'WPSEO_VERSION' ) ) {
 			require_once( 'plugins/yoast-seo.php' );
 		}
 	}
