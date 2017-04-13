@@ -47,14 +47,17 @@ class LWTV_CPT_Shows {
 	 */
 	public function init() {
 		// Force saving data to convert select2 saved data to a taxonomy
-		$post_id = ( isset( $_GET['post'] ) )? $_GET['post'] : 0 ;
-
-		// Tropes
-		LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
-
-		// Genres
-		LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
-
+		$post_id   = ( isset( $_GET['post'] ) )? $_GET['post'] : 0 ;
+		
+		if ( $post_id !== 0 && is_admin() ) {
+			$post_type = ( isset( $_GET['post_type'] ) )? $_GET['post_type'] : 0 ;
+			switch ( $post_type ) {
+				case 'post_type_shows':
+					LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
+					LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );	
+					break;
+			}
+		}
 	}
 
 	/**
