@@ -106,6 +106,15 @@ class LWTV_FacetWP {
 			return false; // skip default indexing
 	    }
 
+		// Trigger Warning
+		// Capitalize
+		if ( 'show_trigger_warning' == $params['facet_name'] ) {
+			$params['facet_value'] = $params['facet_value'];
+			$params['facet_display_value'] = "Yes";
+			$class->insert( $params );
+			return false; // skip default indexing
+	    }
+
 		// Actors
 		// Saves one value for each actor
 		// a:1:{i:0;s:13:"Rachel Bilson";}
