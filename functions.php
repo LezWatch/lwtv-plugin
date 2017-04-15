@@ -7,11 +7,6 @@
  Author: Mika Epstein
 */
 
-// DEFINES
-
-define( 'LWTV_SYMBOLICONS_URL', plugins_url( 'symbolicons/images', __FILE__ ) );
-define( 'LWTV_SYMBOLICONS_PATH', plugin_dir_path( __FILE__ ).'/symbolicons/images' );
-
 /**
  * class LWTV_Functions
  *
@@ -63,9 +58,6 @@ include_once( 'cpts/all-cpts.php' );
 // JSON API
 include_once( 'rest-api/bury-your-queers.php' );
 include_once( 'rest-api/stats.php' );
-
-// Symbolicons
-include_once( 'symbolicons/symbolicons.php' );
 
 // Include Others
 include_once( 'search.php' );

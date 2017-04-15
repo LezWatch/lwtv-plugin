@@ -16,8 +16,8 @@ if ( ! defined('WPINC' ) ) die;
  */
 class LWTV_CMB2 {
 
-	public $icon_taxonomies;
-	public $symbolicon_path;
+	public $icon_taxonomies; // Taxonomies that have an icon
+	public $symbolicon_path; // Path to symbolicons
 
 	/**
 	 * Constructor
@@ -26,8 +26,8 @@ class LWTV_CMB2 {
 		add_action( 'admin_init', array( $this, 'admin_init') );
 		add_action( 'cmb2_admin_init', array( $this, 'register_taxonomy_metabox' ) );
 
-		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats' );
-		$this->symbolicon_path = LWTV_SYMBOLICONS_PATH.'/svg/';
+		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats', 'lez_genres' );
+		$this->symbolicon_path = LP_SYMBOLICONS_PATH.'/svg/';
 
 		// Add all filters and actions to show icons on tax list page
 		foreach ( $this->icon_taxonomies as $tax_name ) {

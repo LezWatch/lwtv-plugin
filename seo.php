@@ -36,9 +36,9 @@ class LWTV_SEO {
 
 		$term_id = get_queried_object_id();
 		$icon = get_term_meta( $term_id, 'lwtv_termsmeta_icon', true );
-		$iconpath = LWTV_SYMBOLICONS_PATH.'/png/'.$icon.'.png';
+		$iconpath = LP_SYMBOLICONS_PATH.'/png/'.$icon.'.png';
 		if ( empty($icon) || !file_exists( $iconpath ) )  $icon = 'square';
-		$image = LWTV_SYMBOLICONS_URL.'/png/'.$icon.'.png';
+		$image = LP_SYMBOLICONS_URL.'/png/'.$icon.'.png';
 		echo '<meta property="og:image" content="'.$image.'" /><meta name="twitter:image" content="'.$image.'" />';
 	}
 }
