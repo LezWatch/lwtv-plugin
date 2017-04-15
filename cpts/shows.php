@@ -48,13 +48,13 @@ class LWTV_CPT_Shows {
 	public function init() {
 		// Force saving data to convert select2 saved data to a taxonomy
 		$post_id   = ( isset( $_GET['post'] ) )? $_GET['post'] : 0 ;
-		
+
 		if ( $post_id !== 0 && is_admin() ) {
 			$post_type = ( isset( $_GET['post_type'] ) )? $_GET['post_type'] : 0 ;
 			switch ( $post_type ) {
 				case 'post_type_shows':
 					LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
-					LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );	
+					LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
 					break;
 			}
 		}
@@ -190,7 +190,7 @@ class LWTV_CPT_Shows {
 
 		// SHOW TROPES
 		$names_tropes = array(
-			'name'                       => 'Show Tropes',
+			'name'                       => 'Tropes',
 			'singular_name'              => 'Trope',
 			'menu_name'                  => 'Tropes',
 			'all_items'                  => 'All Tropes',
@@ -221,8 +221,8 @@ class LWTV_CPT_Shows {
 
 		// SHOW Format
 		$names_showformat = array(
-			'name'                       => 'Show Formats',
-			'singular_name'              => 'Show Format',
+			'name'                       => 'Formats',
+			'singular_name'              => 'Format',
 			'search_items'               => 'Search Formats',
 			'popular_items'              => 'Popular Formats',
 			'all_items'                  => 'All Formats',
@@ -254,8 +254,8 @@ class LWTV_CPT_Shows {
 
 		// SHOW Genre
 		$names_showgenre = array(
-			'name'                       => 'Show Genres',
-			'singular_name'              => 'Show Genre',
+			'name'                       => 'Genres',
+			'singular_name'              => 'Genre',
 			'search_items'               => 'Search Genres',
 			'popular_items'              => 'Popular Genres',
 			'all_items'                  => 'All Genres',
