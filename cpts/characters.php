@@ -148,7 +148,7 @@ class LWTV_CPT_Characters {
 				'update_count_callback' => '_update_post_term_count',
 				'query_var'             => true,
 				'show_in_nav_menus'     => true,
-				'rewrite'               => array( 'slug' => $slug ),
+				'rewrite'               => array( 'slug' => rtrim( $slug, 's' ) ),
 			);
 			// Taxonomy name
 			$taxonomyname = 'lez_' . $slug;
