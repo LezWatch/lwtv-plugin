@@ -41,7 +41,6 @@ class LWTV_CPT_Characters {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts') );
 		add_action( 'admin_head', array($this, 'admin_css') );
 
 		add_filter( 'manage_post_type_characters_posts_columns', array( $this, 'manage_posts_columns' ) );
@@ -57,17 +56,6 @@ class LWTV_CPT_Characters {
 		add_filter( 'post_row_actions', array( $this, 'quick_edit_link' ), 10, 2 );
 
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
-	}
-
-	/**
-	 * CSS tweaks
-	 */
-	public function admin_enqueue_scripts( $hook ) {
-		global $current_screen;
-		wp_register_style( 'character-styles', plugins_url('characters.css', __FILE__ ) );
-		if( 'post_type_characters' == $current_screen->post_type || 'lez_cliches' == $current_screen->taxonomy ) {
-			wp_enqueue_style( 'character-styles' );
-		}
 	}
 
 	/**
@@ -124,104 +112,50 @@ class LWTV_CPT_Characters {
 	 * Custom Taxonomies
 	 *
 	 */
-	function create_taxonomies() {
-		// CLICHES
-		$names_cliches = array(
-			'name'                       => 'Clichés',
-			'singular_name'              => 'Cliché',
-			'search_items'               => 'Search Clichés',
-			'popular_items'              => 'Popular Clichés',
-			'all_items'                  => 'All Clichés',
-			'parent_item'                => null,
-			'parent_item_colon'          => null,
-			'edit_item'                  => 'Edit Cliché',
-			'update_item'                => 'Update Cliché',
-			'add_new_item'               => 'Add New Cliché',
-			'new_item_name'              => 'New Cliché Name',
-			'separate_items_with_commas' => 'Separate Clichés with commas',
-			'add_or_remove_items'        => 'Add or remove Clichés',
-			'choose_from_most_used'      => 'Choose from the most used Clichés',
-			'not_found'                  => 'No Clichés found.',
-			'menu_name'                  => 'Clichés',
-		);
-		//paramters for the new taxonomy
-		$args_cliches = array(
-			'hierarchical'          => true,
-			'labels'                => $names_cliches,
-			'show_ui'               => true,
-			'show_in_rest'          => true,
-			'show_admin_column'     => true,
-			'update_count_callback' => '_update_post_term_count',
-			'query_var'             => true,
-			'rewrite'               => array( 'slug' => 'cliche' ),
-		);
-		register_taxonomy( 'lez_cliches', 'post_type_characters', $args_cliches );
+	public function create_taxonomies() {
 
-		// GENDER IDENTITY
-		$names_gender = array(
-			'name'                       => 'Gender',
-			'singular_name'              => 'Gender Identity',
-			'search_items'               => 'Search Genders',
-			'popular_items'              => 'Popular Genders',
-			'all_items'                  => 'All Genders',
-			'parent_item'                => null,
-			'parent_item_colon'          => null,
-			'edit_item'                  => 'Edit Gender',
-			'update_item'                => 'Update Gender',
-			'add_new_item'               => 'Add New Gender',
-			'new_item_name'              => 'New Gender Name',
-			'separate_items_with_commas' => 'Separate Genders with commas',
-			'add_or_remove_items'        => 'Add or remove Genders',
-			'choose_from_most_used'      => 'Choose from the most used Genders',
-			'not_found'                  => 'No Genders found.',
-			'menu_name'                  => 'Gender Identity',
+		$taxonomies = array (
+			'cliché'             => 'cliches',
+			'gender'             => 'gender',
+			'sexual orientation' => 'sexuality',
 		);
-		$args_gender = array(
-			'hierarchical'       => false,
-			'labels'             => $names_gender,
-			'public'             => true,
-			'show_ui'            => true,
-			'show_in_rest'       => true,
-			'show_admin_column'  => true,
-			'show_in_nav_menus'  => true,
-			'show_in_quick_edit' => false,
-			'show_tagcloud'      => false,
-			'rewrite'            => array( 'slug' => 'gender' ),
-		);
-		register_taxonomy( 'lez_gender', 'post_type_characters', $args_gender );
 
-		// SEXUALITY
-		$names_sexuality = array(
-			'name'                       => 'Sexuality',
-			'singular_name'              => 'Sexual Orientation',
-			'search_items'               => 'Search Sexual Orientations',
-			'popular_items'              => 'Popular Sexual Orientations',
-			'all_items'                  => 'All Sexual Orientations',
-			'parent_item'                => null,
-			'parent_item_colon'          => null,
-			'edit_item'                  => 'Edit Sexual Orientation',
-			'update_item'                => 'Update Sexual Orientation',
-			'add_new_item'               => 'Add New Sexual Orientation',
-			'new_item_name'              => 'New Sexual Orientation Name',
-			'separate_items_with_commas' => 'Separate Sexual Orientations with commas',
-			'add_or_remove_items'        => 'Add or remove Sexual Orientations',
-			'choose_from_most_used'      => 'Choose from the most used Sexual Orientations',
-			'not_found'                  => 'No Sexual Orientations found.',
-			'menu_name'                  => 'Sexual Orientation',
-		);
-		$args_sexuality = array(
-			'hierarchical'       => false,
-			'labels'             => $names_sexuality,
-			'public'             => true,
-			'show_ui'            => true,
-			'show_in_rest'       => true,
-			'show_admin_column'  => true,
-			'show_in_nav_menus'  => true,
-			'show_in_quick_edit' => false,
-			'show_tagcloud'      => false,
-			'rewrite'            => array( 'slug' => 'sexuality' ),
-		);
-		register_taxonomy( 'lez_sexuality', 'post_type_characters', $args_sexuality );
+		foreach ( $taxonomies as $pretty => $slug ) {
+			// Labels for taxonomy
+			$labels = array(
+				'name'                       => ucwords( $pretty ) . 's',
+				'singular_name'              => ucwords( $pretty ) ,
+				'search_items'               => 'Search ' . ucwords( $pretty ) . 's',
+				'popular_items'              => 'Popular ' . ucwords( $pretty ) . 's',
+				'all_items'                  => 'All' . ucwords( $pretty ) . 's',
+				'edit_item'                  => 'Edit ' . ucwords( $pretty ),
+				'update_item'                => 'Update ' . ucwords( $pretty ),
+				'add_new_item'               => 'Add New ' . ucwords( $pretty ),
+				'new_item_name'              => 'New' . ucwords( $pretty ) . 'Name',
+				'separate_items_with_commas' => 'Separate ' . $pretty . 's with commas',
+				'add_or_remove_items'        => 'Add or remove' . $pretty . 's',
+				'choose_from_most_used'      => 'Choose from the most used ' . $pretty . 's',
+				'not_found'                  => 'No ' . ucwords( $pretty ) . 's found.',
+				'menu_name'                  => ucwords( $pretty ) . 's',
+			);
+			//parameters for the new taxonomy
+			$arguments = array(
+				'hierarchical'          => false,
+				'labels'                => $labels,
+				'show_ui'               => true,
+				'show_in_rest'          => true,
+				'show_admin_column'     => true,
+				'update_count_callback' => '_update_post_term_count',
+				'query_var'             => true,
+				'show_in_nav_menus'     => true,
+				'rewrite'               => array( 'slug' => $slug ),
+			);
+			// Taxonomy name
+			$taxonomyname = 'lez_' . $slug;
+
+			// Register taxonomy
+			register_taxonomy( $taxonomyname, 'post_type_characters', $arguments );
+		}
 	}
 
 	/*
@@ -246,7 +180,7 @@ class LWTV_CPT_Characters {
 		$cmb_characters = new_cmb2_box( array(
 			'id'           => 'chars_metabox',
 			'title'        => 'Character Details',
-			'object_types' => array( 'post_type_characters', ), // Post type
+			'object_types' => array( 'post_type_characters' ),
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_in_rest' => true,
@@ -299,7 +233,7 @@ class LWTV_CPT_Characters {
 			'type'             => 'select',
 			'show_option_none' => true,
 			'default'          => 'custom',
-			'options_cb'       => array( $this, 'cmb2_get_shows_options'),
+			'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
 		) );
 		// Field: Character Type
 		$field_chartype = $cmb_characters->add_group_field( $group_shows, array(
@@ -317,7 +251,7 @@ class LWTV_CPT_Characters {
 		$cmb_charside = new_cmb2_box( array(
 			'id'           => 'charnotes_metabox',
 			'title'        => 'Additional Data',
-			'object_types' => array( 'post_type_characters', ), // Post type
+			'object_types' => array( 'post_type_characters' ),
 			'context'      => 'side',
 			'priority'     => 'default',
 			'show_names'   => true, // Show field names on the left
@@ -329,7 +263,7 @@ class LWTV_CPT_Characters {
 			'name'             => 'Gender',
 			'desc'             => 'Gender identity',
 			'id'               => $prefix . 'gender',
-			'taxonomy'         => 'lez_gender', //Enter Taxonomy Slug
+			'taxonomy'         => 'lez_gender',
 			'type'             => 'taxonomy_select',
 			'default'          => 'cisgender',
 			'show_option_none' => false,
@@ -340,7 +274,7 @@ class LWTV_CPT_Characters {
 			'name'             => 'Sexuality',
 			'desc'             => 'Sexual orientation',
 			'id'               => $prefix . 'sexuality',
-			'taxonomy'         => 'lez_sexuality', //Enter Taxonomy Slug
+			'taxonomy'         => 'lez_sexuality',
 			'type'             => 'taxonomy_select',
 			'default'          => 'homosexual',
 			'show_option_none' => false,
@@ -350,7 +284,7 @@ class LWTV_CPT_Characters {
 		$field_death = $cmb_charside->add_field( array(
 			'name'        => 'Date of Death',
 			'desc'        => 'If the character is dead, select when they died.',
-			'id'          => $prefix .'death_year',
+			'id'          => $prefix . 'death_year',
 			'type'        => 'text_date',
 			'date_format' => 'm/d/Y',
 			'repeatable'  => true, // Sara Lance may die again, and we'll have to figure this out
@@ -378,7 +312,7 @@ class LWTV_CPT_Characters {
 	 * Create Custom Columns
 	 * Used by quick edit, etc
 	 */
-	public function manage_posts_columns($columns) {
+	public function manage_posts_columns( $columns ) {
 		$columns['cpt-shows']         = 'TV Show(s)';
 		$columns['postmeta-roletype'] = 'Role Type';
 		return $columns;
@@ -470,7 +404,7 @@ SQL;
 	/*
 	 * Add Quick Edit Boxes
 	 */
-	public function quick_edit_custom_box($column_name, $post_type) {
+	public function quick_edit_custom_box( $column_name, $post_type ) {
 		switch ( $column_name ) {
 			case 'cpt-shows':
 				// Multiselect
@@ -487,7 +421,7 @@ SQL;
 					<select name='terms_lez_gender' id='terms_lez_gender'>
 						<option class='lez_gender-option' value='0'>(Undefined)</option>
 						<?php
-						foreach ($terms as $term) {
+						foreach ( $terms as $term ) {
 							echo "<option class='lez_gender-option' value='{$term->name}'>{$term->name}</option>\n";
 						}
 							?>
@@ -523,7 +457,7 @@ SQL;
 	/*
 	 * Allow Quick Edit boxes to save
 	 */
-	public function quick_edit_save_post($post_id) {
+	public function quick_edit_save_post( $post_id ) {
 		// Criteria for not saving: Auto-saves, not post_type_characters, can't edit
 		if ( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || ( isset( $_POST['post_type'] ) &&  'post_type_characters' != $_POST['post_type'] ) || !current_user_can( 'edit_page', $post_id ) ) {
 			return $post_id;
@@ -531,18 +465,18 @@ SQL;
 		$post = get_post($post_id);
 
 		// Sexuality
-		if ( isset($_POST['terms_lez_sexuality']) && ($post->post_type != 'revision') ) {
-			$lez_sexuality_term = esc_attr($_POST['terms_lez_sexuality']);
-			$term = term_exists( $lez_sexuality_term, 'lez_sexuality');
+		if ( isset( $_POST['terms_lez_sexuality'] ) && ( $post->post_type != 'revision' ) ) {
+			$lez_sexuality_term = esc_attr( $_POST['terms_lez_sexuality'] );
+			$term = term_exists( $lez_sexuality_term, 'lez_sexuality' );
 			if ( $term !== 0 && $term !== null) {
 				wp_set_object_terms( $post_id, $lez_sexuality_term, 'lez_sexuality' );
 			}
 		}
 
 		// Gender
-		if ( isset($_POST['terms_lez_gender']) && ($post->post_type != 'revision') ) {
-			$lez_gender_term = esc_attr($_POST['terms_lez_gender']);
-			$term = term_exists( $lez_gender_term, 'lez_gender');
+		if ( isset( $_POST['terms_lez_gender'] ) && ( $post->post_type != 'revision' ) ) {
+			$lez_gender_term = esc_attr( $_POST['terms_lez_gender'] );
+			$term = term_exists( $lez_gender_term, 'lez_gender' );
 			if ( $term !== 0 && $term !== null) {
 				wp_set_object_terms( $post_id, $lez_gender_term, 'lez_gender' );
 			}
@@ -556,7 +490,7 @@ SQL;
 	 */
 	public function quick_edit_js() {
 		global $current_screen;
-		if ( is_null($current_screen) || ($current_screen->id !== 'edit-post_type_characters') || ($current_screen->post_type !== 'post_type_characters') ) return;
+		if ( is_null( $current_screen) || ( $current_screen->id !== 'edit-post_type_characters' ) || ( $current_screen->post_type !== 'post_type_characters' ) ) return;
 		?>
 		<script type="text/javascript">
 		<!--
@@ -595,11 +529,11 @@ SQL;
 	 *
 	 * Call the Javascript in Quick Edit Save
 	 */
-	public function quick_edit_link ($actions, $post) {
+	public function quick_edit_link ( $actions, $post ) {
 		global $current_screen;
-		if (($current_screen->id != 'edit-post_type_characters') || ($current_screen->post_type != 'post_type_characters')) return $actions;
+		if ( ( $current_screen->id != 'edit-post_type_characters' ) || ( $current_screen->post_type != 'post_type_characters' ) ) return $actions;
 
-		$nonce = wp_create_nonce( 'lez_sexuality_'.$post->ID);
+		$nonce = wp_create_nonce( 'lez_sexuality_' . $post->ID );
 		$sex_terms = wp_get_post_terms( $post->ID, 'lez_sexuality', array( 'fields' => 'all' ) );
 		$gender_terms = wp_get_post_terms( $post->ID, 'lez_gender', array( 'fields' => 'all' ) );
 
@@ -617,10 +551,10 @@ SQL;
 	 * List of actors who played a character, for use on character pages
 	 */
 	public function lwtv_retrieve_actors_replacement( ) {
-		if ( !is_array (get_post_meta( get_the_ID(), 'lezchars_actor', true)) ) {
-			$actors = array( get_post_meta( get_the_ID(), 'lezchars_actor', true) );
+		if ( !is_array ( get_post_meta( get_the_ID(), 'lezchars_actor', true ) ) ) {
+			$actors = array( get_post_meta( get_the_ID(), 'lezchars_actor', true ) );
 		} else {
-			$actors = get_post_meta( get_the_ID(), 'lezchars_actor', true);
+			$actors = get_post_meta( get_the_ID(), 'lezchars_actor', true );
 		}
 		return implode(", ", $actors);
 	}
@@ -630,7 +564,7 @@ SQL;
 	 *
 	 * List of shows featuring a character, for use on character pages
 	 */
-	function lwtv_retrieve_shows_replacement( ) {
+	function lwtv_retrieve_shows_replacement() {
 
 		global $post;
 

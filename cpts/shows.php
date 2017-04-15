@@ -64,7 +64,6 @@ class LWTV_CPT_Shows {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts') );
 		add_action( 'admin_head', array($this, 'admin_css') );
 
 		add_filter( 'manage_post_type_shows_posts_columns', array( $this, 'manage_posts_columns' ) );
@@ -87,64 +86,50 @@ class LWTV_CPT_Shows {
 	}
 
 	/**
-	 * Admin CSS Customizations
-	 */
-	public function admin_enqueue_scripts( $hook ) {
-		global $current_screen;
-		wp_register_style( 'shows-styles', plugins_url('shows-admin.css', __FILE__ ) );
-		if( 'post_type_shows' == $current_screen->post_type || 'lez_stations' == $current_screen->taxonomy || 'lez_tropes' == $current_screen->taxonomy ) {
-			wp_enqueue_style( 'shows-styles' );
-		}
-	}
-
-	/**
 	 * Create Custom Post Type
 	 */
 	public function create_post_type() {
 
-		$name = 'TV Show';
-
 		$labels = array(
-			'name'                  => $name.'s',
-			'singular_name'         => $name,
-			'menu_name'             => $name.'s',
-			'name_admin_bar'        => $name,
-			'add_new'               => 'Add New',
-			'add_new_item'          => 'Add New '.$name,
-			'edit_item'             => 'Edit '.$name,
-			'new_item'              => 'New '.$name,
-			'view_item'             => 'View '.$name,
-			'all_items'             => 'All '.$name.'s',
-			'search_items'          => 'Search '.$name.'s',
-			'not_found'             => 'No '.$name.'s found',
-			'not_found_in_trash'    => 'No '.$name.'s found in Trash',
-			'update_item'           => 'Update '.$name,
-			'featured_image'        => $name.' Image',
-			'set_featured_image'    => 'Set '.$name.' image',
-			'remove_featured_image' => 'Remove '.$name.' image',
-			'use_featured_image'    => 'Use as '.$name.' image',
-			'archives'              => $name.' archives',
-			'insert_into_item'      => 'Insert into '.$name,
-			'uploaded_to_this_item' => 'Uploaded to this '.$name,
-			'filter_items_list'     => 'Filter '.$name.' list',
-			'items_list_navigation' => $name.' list navigation',
-			'items_list'            => $name.' list',
+			'name'                  => 'TV Shows',
+			'singular_name'         => 'TV Show',
+			'menu_name'             => 'TV Shows',
+			'name_admin_bar'        => 'TV Show',
+			'add_new_item'          => 'Add New TV Show',
+			'edit_item'             => 'Edit TV Show',
+			'new_item'              => 'New TV Show',
+			'view_item'             => 'View TV Show',
+			'all_items'             => 'All TV Shows',
+			'search_items'          => 'Search TV Shows',
+			'not_found'             => 'No TV Shows found',
+			'not_found_in_trash'    => 'No TV Shows found in Trash',
+			'update_item'           => 'Update TV Show',
+			'featured_image'        => 'TV Show Image',
+			'set_featured_image'    => 'Set TV Show image',
+			'remove_featured_image' => 'Remove TV Show image',
+			'use_featured_image'    => 'Use as TV Show image',
+			'archives'              => 'TV Show archives',
+			'insert_into_item'      => 'Insert into TV Show',
+			'uploaded_to_this_item' => 'Uploaded to this TV Show',
+			'filter_items_list'     => 'Filter TV Show list',
+			'items_list_navigation' => 'TV Show list navigation',
+			'items_list'            => 'TV Show list',
 		);
 		$args = array(
 			'label'               => 'post_type_shows',
-			'description'         => $name.'s',
 			'labels'              => $labels,
+			'description'         => 'TV Shows',
 			'public'              => true,
+			'exclude_from_search' => false,
 			'show_in_rest'        => true,
 			'rest_base'           => 'show',
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-video-alt',
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo', 'revisions' ),
-			'taxonomies'          => array( 'lez_tropes' ),
 			'has_archive'         => true,
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,
-			'exclude_from_search' => false,
+
 		);
 		register_post_type( 'post_type_shows', $args );
 	}
@@ -154,136 +139,51 @@ class LWTV_CPT_Shows {
 	 */
 	public function create_taxonomies() {
 
-		// TV STATIONS
-		$name_tvstations   = 'TV Station';
-		$labels_tvstations = array(
-			'name'                       => 'TV Station(s)',
-			'singular_name'              => 'TV Station',
-			'search_items'               => 'Search Stations',
-			'popular_items'              => 'Popular Stations',
-			'all_items'                  => 'All Stations',
-			'parent_item'                => null,
-			'parent_item_colon'          => null,
-			'edit_item'                  => 'Edit Station',
-			'update_item'                => 'Update Station',
-			'add_new_item'               => 'Add New Station',
-			'new_item_name'              => 'New Station Name',
-			'separate_items_with_commas' => 'Separate stations with commas',
-			'add_or_remove_items'        => 'Add or remove stations',
-			'choose_from_most_used'      => 'Choose from the most used stations',
-			'not_found'                  => 'No Stations found.',
-			'menu_name'                  => 'TV Stations',
+		$taxonomies = array (
+			'TV station' => 'stations',
+			'trope'      => 'tropes',
+			'format'     => 'formats',
+			'genre'      => 'genres',
 		);
-		//parameters for the new taxonomy
-		$args_tvstations = array(
-			'hierarchical'          => false,
-			'labels'                => $labels_tvstations,
-			'show_ui'               => true,
-			'show_in_rest'          => true,
-			'show_admin_column'     => true,
-			'update_count_callback' => '_update_post_term_count',
-			'query_var'             => true,
-			'show_in_nav_menus'     => true,
-			'rewrite'               => array( 'slug' => 'station' ),
-		);
-		register_taxonomy( 'lez_stations', 'post_type_shows', $args_tvstations );
 
-		// SHOW TROPES
-		$names_tropes = array(
-			'name'                       => 'Tropes',
-			'singular_name'              => 'Trope',
-			'menu_name'                  => 'Tropes',
-			'all_items'                  => 'All Tropes',
-			'parent_item'                => null,
-			'parent_item_colon'          => null,
-			'new_item_name'              => 'New Trope',
-			'add_new_item'               => 'Add New Trope',
-			'edit_item'                  => 'Edit Trope',
-			'update_item'                => 'Update Trope',
-			'separate_items_with_commas' => 'Separate tropes with commas',
-			'search_items'               => 'Search Tropes',
-			'add_or_remove_items'        => 'Add or remove tropes',
-			'choose_from_most_used'      => 'Choose from the most used tropes',
-			'not_found'                  => 'Not Found',
-		);
-		$args_tropes = array(
-			'hierarchical'      => true,
-			'labels'            => $names_tropes,
-			'public'            => true,
-			'show_ui'           => true,
-			'show_in_rest'      => true,
-			'show_admin_column' => true,
-			'show_in_nav_menus' => true,
-			'show_tagcloud'     => false,
-			'rewrite'           => array( 'slug' => 'trope' ),
-		);
-		register_taxonomy( 'lez_tropes', array( 'post_type_shows' ), $args_tropes );
+		foreach ( $taxonomies as $pretty => $slug ) {
+			// Labels for taxonomy
+			$labels = array(
+				'name'                       => ucwords( $pretty ) . 's',
+				'singular_name'              => ucwords( $pretty ),
+				'search_items'               => 'Search ' . ucwords( $pretty ) . 's',
+				'popular_items'              => 'Popular ' . ucwords( $pretty ) . 's',
+				'all_items'                  => 'All' . ucwords( $pretty ) . 's',
+				'parent_item'                => null,
+				'parent_item_colon'          => null,
+				'edit_item'                  => 'Edit ' . ucwords( $pretty ),
+				'update_item'                => 'Update ' . ucwords( $pretty ),
+				'add_new_item'               => 'Add New ' . ucwords( $pretty ),
+				'new_item_name'              => 'New' . ucwords( $pretty ) . 'Name',
+				'separate_items_with_commas' => 'Separate ' . $pretty . 's with commas',
+				'add_or_remove_items'        => 'Add or remove' . $pretty . 's',
+				'choose_from_most_used'      => 'Choose from the most used ' . $pretty . 's',
+				'not_found'                  => 'No ' . ucwords( $pretty ) . 's found.',
+				'menu_name'                  => ucwords( $pretty ) . 's',
+			);
+			//parameters for the new taxonomy
+			$arguments = array(
+				'hierarchical'          => false,
+				'labels'                => $labels,
+				'show_ui'               => true,
+				'show_in_rest'          => true,
+				'show_admin_column'     => true,
+				'update_count_callback' => '_update_post_term_count',
+				'query_var'             => true,
+				'show_in_nav_menus'     => true,
+				'rewrite'               => array( 'slug' => $slug ),
+			);
+			// Taxonomy name
+			$taxonomyname = 'lez_' . $slug;
 
-		// SHOW Format
-		$names_showformat = array(
-			'name'                       => 'Formats',
-			'singular_name'              => 'Format',
-			'search_items'               => 'Search Formats',
-			'popular_items'              => 'Popular Formats',
-			'all_items'                  => 'All Formats',
-			'parent_item'                => null,
-			'parent_item_colon'          => null,
-			'edit_item'                  => 'Edit Format',
-			'update_item'                => 'Update Format',
-			'add_new_item'               => 'Add New Format',
-			'new_item_name'              => 'New Format Name',
-			'separate_items_with_commas' => 'Separate Formats with commas',
-			'add_or_remove_items'        => 'Add or remove Formats',
-			'choose_from_most_used'      => 'Choose from the most used Formats',
-			'not_found'                  => 'No Formats found.',
-			'menu_name'                  => 'Formats',
-		);
-		//parameters for the new taxonomy
-		$args_showformat = array(
-			'hierarchical'          => false,
-			'labels'                => $names_showformat,
-			'show_ui'               => true,
-			'show_in_rest'          => true,
-			'show_admin_column'     => true,
-			'query_var'             => true,
-			'show_in_nav_menus'		=> true,
-			'show_in_quick_edit'	=> false,
-			'rewrite'               => array( 'slug' => 'format' ),
-		);
-		register_taxonomy( 'lez_formats', 'post_type_shows', $args_showformat );
-
-		// SHOW Genre
-		$names_showgenre = array(
-			'name'                       => 'Genres',
-			'singular_name'              => 'Genre',
-			'search_items'               => 'Search Genres',
-			'popular_items'              => 'Popular Genres',
-			'all_items'                  => 'All Genres',
-			'parent_item'                => null,
-			'parent_item_colon'          => null,
-			'edit_item'                  => 'Edit Genre',
-			'update_item'                => 'Update Genre',
-			'add_new_item'               => 'Add New Genre',
-			'new_item_name'              => 'New Genre Name',
-			'separate_items_with_commas' => 'Separate Genres with commas',
-			'add_or_remove_items'        => 'Add or remove Genres',
-			'choose_from_most_used'      => 'Choose from the most used Genres',
-			'not_found'                  => 'No Genres found.',
-			'menu_name'                  => 'Genres',
-		);
-		//parameters for the new taxonomy
-		$args_showgenre = array(
-			'hierarchical'          => false,
-			'labels'                => $names_showgenre,
-			'show_ui'               => true,
-			'show_in_rest'          => true,
-			'show_admin_column'     => true,
-			'query_var'             => true,
-			'show_in_nav_menus'		=> true,
-			'show_in_quick_edit'	=> false,
-			'rewrite'               => array( 'slug' => 'genre' ),
-		);
-		register_taxonomy( 'lez_genres', 'post_type_shows', $args_showgenre );
+			// Register taxonomy
+			register_taxonomy( $taxonomyname, 'post_type_shows', $arguments );
+		}
 	}
 
 	/*
@@ -348,7 +248,7 @@ class LWTV_CPT_Shows {
 		$cmb_showdetails = new_cmb2_box( array(
 			'id'           => 'shows_metabox',
 			'title'        => 'Shows Details',
-			'object_types' => array( 'post_type_shows', ), // Post type
+			'object_types' => array( 'post_type_shows' ),
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_in_rest' => true,
@@ -384,7 +284,7 @@ class LWTV_CPT_Shows {
 			'id'            => 'ratings_metabox',
 			'title'         => 'Show Ratings',
 			'desc'          => 'Ratings are subjective 1 to 5, with 1 being low and 5 being The L Word.',
-			'object_types'  => array( 'post_type_shows', ), // Post type
+			'object_types'  => array( 'post_type_shows' ),
 			'context'       => 'normal',
 			'priority'      => 'high',
 			'show_names'    => true, // Show field names on the left
@@ -464,7 +364,7 @@ class LWTV_CPT_Shows {
 		$cmb_notes = new_cmb2_box( array(
 			'id'            	=> 'notes_metabox',
 			'title'         	=> 'Additional Data',
-			'object_types'  	=> array( 'post_type_shows', ), // Post type
+			'object_types'  	=> array( 'post_type_shows' ), // Post type
 			'context'       	=> 'side',
 			'priority'      	=> 'default',
 			'show_names'		=> true, // Show field names on the left
@@ -529,7 +429,7 @@ class LWTV_CPT_Shows {
 			'id'               => $prefix . 'triggerwarning',
 			'type'             => 'select',
 			'show_option_none' => 'No',
-			'options'          => array( 'on' => "Yes")
+			'options'          => array( 'on' => 'Yes' )
 		) );
 		// Additional Data Grid
 		if( !is_admin() ){
@@ -546,7 +446,7 @@ class LWTV_CPT_Shows {
 	 * Create Custom Columns
 	 * Used by quick edit, etc
 	 */
-	public function manage_posts_columns($columns) {
+	public function manage_posts_columns( $columns ) {
 		$columns['shows-airdate']    = 'Airdates';
 		$columns['shows-worthit']    = 'Worth It?';
 		$columns['shows-queercount'] = '#';
@@ -635,7 +535,7 @@ SQL;
 	/*
 	 * Add Quick Edit Boxes
 	 */
-	public function quick_edit_custom_box($column_name, $post_type) {
+	public function quick_edit_custom_box( $column_name, $post_type ) {
 		switch ( $column_name ) {
 			case 'taxonomy-lez_formats':
 				?>
@@ -649,7 +549,7 @@ SQL;
 					<select name='terms_lez_formats' id='terms_lez_formats'>
 						<option class='lez_formats-option' value='0'>(Undefined)</option>
 						<?php
-						foreach ($terms as $term) {
+						foreach ( $terms as $term ) {
 							echo "<option class='lez_formats-option' value='{$term->name}'>{$term->name}</option>\n";
 						}
 							?>
@@ -664,17 +564,17 @@ SQL;
 	/*
 	 * Allow Quick Edit boxes to save
 	 */
-	public function quick_edit_save_post($post_id) {
+	public function quick_edit_save_post( $post_id ) {
 		// Criteria for not saving: Auto-saves, not post_type_characters, can't edit
 		if ( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || ( isset( $_POST['post_type'] ) &&  'post_type_shows' != $_POST['post_type'] ) || !current_user_can( 'edit_page', $post_id ) ) {
 			return $post_id;
 		}
-		$post = get_post($post_id);
+		$post = get_post( $post_id );
 
 		// Formats
-		if ( isset($_POST['terms_lez_formats']) && ($post->post_type != 'revision') ) {
-			$lez_formats_term = esc_attr($_POST['terms_lez_formats']);
-			$term = term_exists( $lez_formats_term, 'lez_formats');
+		if ( isset( $_POST['terms_lez_formats'] ) && ( $post->post_type != 'revision' ) ) {
+			$lez_formats_term = esc_attr( $_POST['terms_lez_formats'] );
+			$term = term_exists( $lez_formats_term, 'lez_formats' );
 			if ( $term !== 0 && $term !== null) {
 				wp_set_object_terms( $post_id, $lez_formats_term, 'lez_formats' );
 			}
@@ -688,7 +588,7 @@ SQL;
 	 */
 	public function quick_edit_js() {
 		global $current_screen;
-		if ( is_null($current_screen) || ($current_screen->id !== 'edit-post_type_shows') || ($current_screen->post_type !== 'post_type_shows') ) return;
+		if ( is_null( $current_screen ) || ( $current_screen->id !== 'edit-post_type_shows' ) || ( $current_screen->post_type !== 'post_type_shows' ) ) return;
 		?>
 		<script type="text/javascript">
 		<!--
@@ -718,11 +618,11 @@ SQL;
 	 *
 	 * Call the Javascript in Quick Edit Save
 	 */
-	public function quick_edit_link($actions, $post) {
+	public function quick_edit_link( $actions, $post ) {
 		global $current_screen;
-		if (($current_screen->id != 'edit-post_type_shows') || ($current_screen->post_type != 'post_type_shows')) return $actions;
+		if ( ( $current_screen->id != 'edit-post_type_shows' ) || ( $current_screen->post_type != 'post_type_shows' ) ) return $actions;
 
-		$nonce = wp_create_nonce( 'lez_formats_'.$post->ID);
+		$nonce = wp_create_nonce( 'lez_formats_'.$post->ID );
 		$formats_terms = wp_get_post_terms( $post->ID, 'lez_formats', array( 'fields' => 'all' ) );
 
 		$actions['inline hide-if-no-js'] = '<a href="#" class="editinline" title="';

@@ -64,4 +64,4 @@ include_once( 'search.php' );
 include_once( 'seo.php' );
 include_once( 'custom-loops.php' );
 include_once( 'statistics.php' );
-include_once( 'query_vars.php' );   // Query Variables for custom pages
+include_once( 'query_vars.php' );
