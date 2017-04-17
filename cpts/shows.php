@@ -11,7 +11,6 @@
  */
 class LWTV_CPT_Shows {
 
-	public $year_array;
 	public $ratings_array;
 	public $stars_array;
 
@@ -31,10 +30,6 @@ class LWTV_CPT_Shows {
 
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 
-		// Array of years since 1930
-		$this->year_array = array();
-		foreach ( range(date('Y'), '1930' ) as $year) { $startyear_array[$year] = $year; }
-
 		// Array of Valid Ratings
 		$this->ratings_array = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
 
@@ -46,15 +41,22 @@ class LWTV_CPT_Shows {
 	 *  Init
 	 */
 	public function init() {
-		// Force saving data to convert select2 saved data to a taxonomy
-		$post_id   = ( isset( $_GET['post'] ) )? $_GET['post'] : 0 ;
 
+		// Things that only run for this post type
+		$post_id   = ( isset( $_GET['post'] ) )? $_GET['post'] : 0 ;
 		if ( $post_id !== 0 && is_admin() ) {
 			$post_type = ( isset( $_GET['post_type'] ) )? $_GET['post_type'] : 0 ;
 			switch ( $post_type ) {
 				case 'post_type_shows':
+					// Filter buttons not needed on the teeny MCE
+					add_filter( 'teeny_mce_buttons', array($this, 'teeny_mce_buttons' ) );
+					// Filter text editor quicktags (commented out until it runs on CMB2 only)
+					//add_filter( 'quicktags_settings', array( $this, 'quicktags_settings' ) );
+
+					// Force saving data to convert select2 saved data to a taxonomy
 					LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
 					LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
+					//LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_stations', 'lez_stations' );
 					break;
 			}
 		}
@@ -83,6 +85,23 @@ class LWTV_CPT_Shows {
 		add_action( 'save_post_post_type_characters', array( $this, 'update_char_count_from_chars' ), 10, 3 );
 
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
+	}
+
+	/**
+	 * Remove some Text Editor buttons
+	 */
+	public function quicktags_settings( $buttons ) {
+		$remove = array( 'del', 'ins', 'img', 'code', 'block' );
+		$buttons['buttons'] = implode( ',', array_diff ( explode( ',', $buttons['buttons'] ) , $remove ) );
+		return $buttons;
+	}
+
+	/**
+	 * Remove some TEENY MCE buttons (not TinyMCE, TeenyMCE)
+	 */
+	public function teeny_mce_buttons( $buttons ) {
+		$remove = array( 'alignleft', 'aligncenter', 'alignright', 'undo', 'redo', 'fullscreen' );
+		return array_diff( $buttons, $remove );
 	}
 
 	/**
@@ -190,14 +209,13 @@ class LWTV_CPT_Shows {
 	 * CMB2 Metaboxes
 	 */
 	public function cmb2_metaboxes() {
-
 		// prefix for all custom fields
 		$prefix = 'lezshows_';
 
 		// Metabox Group: Must See
 		$cmb_mustsee = new_cmb2_box( array(
 			'id'           => 'mustsee_metabox',
-			'title'        => 'Required Details',
+			'title'        => 'Must See Details',
 			'object_types' => array( 'post_type_shows' ),
 			'context'      => 'normal',
 			'priority'     => 'high',
@@ -231,9 +249,12 @@ class LWTV_CPT_Shows {
 		) );
 		// Field: Worth It Details
 		$field_worthdetails = $cmb_mustsee->add_field( array(
-			'name'    => 'Worth It Details',
-			'id'      => $prefix . 'worthit_details',
-			'type'    => 'textarea_small',
+			'name'        => 'Worth It Details',
+			'id'          => $prefix . 'worthit_details',
+			'type'        => 'textarea_small',
+			'attributes'  => array(
+				'placeholder' => 'If this is left blank, a warning will show.',
+			),
 		) );
 		// Must See Grid
 		if( !is_admin() ){
@@ -247,42 +268,62 @@ class LWTV_CPT_Shows {
 		// Metabox: Basic Show Details
 		$cmb_showdetails = new_cmb2_box( array(
 			'id'           => 'shows_metabox',
-			'title'        => 'Shows Details',
+			'title'        => 'Plots and Relationship Details',
 			'object_types' => array( 'post_type_shows' ),
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_in_rest' => true,
 			'show_names'   => true, // Show field names on the left
 		) );
+		$field_ships = $cmb_showdetails->add_field( array(
+			'name'       => '#Ships',
+			'id'         => $prefix . 'ships',
+			'type'       => 'text',
+			'attributes' => array(
+				'placeholder' => 'Separate multiple ship names with commas',
+			),
+		) );
 		// Field: Queer Timeline
-		$cmb_showdetails->add_field( array(
-			'name'    => 'Queer Timeline',
-			'desc'    => 'Which seasons/episodes have the queer in it',
-			'id'      => $prefix . 'plots',
-			'type'    => 'wysiwyg',
-			'options' => array(
+		$field_timeline = $cmb_showdetails->add_field( array(
+			'name'       => 'Queer Timeline',
+			'id'         => $prefix . 'plots',
+			'type'       => 'wysiwyg',
+			'options'    => array(
 				'textarea_rows' => 10,
 				'teeny'         => true,
 				'media_buttons' => false,
+			),
+			'attributes' => array(
+				'placeholder' => 'A broad overview of the queerest seasons.',
 			),
 		) );
 		// Field: Notable Episodes
-		$cmb_showdetails->add_field( array(
-			'name'    => 'Notable Episodes',
-			'desc'    => 'Queer-centric episodes and plotlines',
-			'id'      => $prefix . 'episodes',
-			'type'    => 'wysiwyg',
-			'options' => array(
+		$field_episodes = $cmb_showdetails->add_field( array(
+			'name'       => 'Notable Episodes',
+			'id'         => $prefix . 'episodes',
+			'type'       => 'wysiwyg',
+			'options'    => array(
 				'textarea_rows' => 10,
 				'media_buttons' => false,
 				'teeny'         => true,
 			),
+			'attributes' => array(
+				'placeholder' => 'List the best episodes.',
+			),
 		) );
+		// Must See Grid
+		if( !is_admin() ){
+			return;
+		} else {
+			$grid_showdetails = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_showdetails );
+			$row              = $grid_showdetails->addRow();
+			$row->addColumns( array( $field_timeline, $field_episodes ) );
+		}
 
 		// Metabox: Ratings
 		$cmb_ratings = new_cmb2_box( array(
 			'id'            => 'ratings_metabox',
-			'title'         => 'Show Ratings',
+			'title'         => 'Relativistic Ratings',
 			'desc'          => 'Ratings are subjective 1 to 5, with 1 being low and 5 being The L Word.',
 			'object_types'  => array( 'post_type_shows' ),
 			'context'       => 'normal',
@@ -300,18 +341,21 @@ class LWTV_CPT_Shows {
 		) );
 		// Field: Realness Details
 		$field_detail_real = $cmb_ratings->add_field( array(
-			'name'    => 'Realness Details',
-			'id'      => $prefix . 'realness_details',
-			'type'    => 'wysiwyg',
-			'options' => array(
+			'name'       => 'Realness Details',
+			'id'         => $prefix . 'realness_details',
+			'type'       => 'wysiwyg',
+			'options'    => array(
 				'textarea_rows' => 5,
 				'media_buttons' => false,
 				'teeny'         => true,
 			),
+			'attributes' => array(
+				'placeholder' => 'Explain the rating (optional).',
+			),
 		) );
 		// Field: Show Quality Rating
 		$field_rating_quality = $cmb_ratings->add_field( array(
-			'name'    => 'Show Quality Rating',
+			'name'    => 'Quality Rating',
 			'id'      => $prefix . 'quality_rating',
 			'desc'    => 'How good is the show for queers?',
 			'type'    => 'radio_inline',
@@ -319,32 +363,38 @@ class LWTV_CPT_Shows {
 		) );
 		// Field: Show Quality Details
 		$field_detail_quality = $cmb_ratings->add_field( array(
-			'name'    => 'Show Quality Details',
-			'id'      => $prefix . 'quality_details',
-			'type'    => 'wysiwyg',
-			'options' => array(
+			'name'       => 'Quality Details',
+			'id'         => $prefix . 'quality_details',
+			'type'       => 'wysiwyg',
+			'options'    => array(
 				'textarea_rows' => 5,
 				'media_buttons' => false,
 				'teeny'         => true,
+			),
+			'attributes' => array(
+				'placeholder' => 'Explain the rating (optional).',
 			),
 		) );
 		// Field: Screentime Rating
 		$field_rating_screen = $cmb_ratings->add_field( array(
 			'name'    => 'Screentime Rating',
 			'id'      => $prefix . 'screentime_rating',
-			'desc'    => 'How much air-time do the queers get?',
+			'desc'    => 'How much air-time do they get?',
 			'type'    => 'radio_inline',
 			'options' => $this->ratings_array,
 		) );
 		// Field: Screentime Details
 		$field_detail_screen = $cmb_ratings->add_field( array(
-			'name'    => 'Screentime Details',
-			'id'      => $prefix . 'screentime_details',
-			'type'    => 'wysiwyg',
-			'options' => array(
+			'name'       => 'Screentime Details',
+			'id'         => $prefix . 'screentime_details',
+			'type'       => 'wysiwyg',
+			'options'    => array(
 				'textarea_rows' => 5,
 				'media_buttons' => false,
 				'teeny'         => true,
+			),
+			'attributes' => array(
+				'placeholder' => 'Explain the rating (optional).',
 			),
 		) );
 		// Ratings Grid

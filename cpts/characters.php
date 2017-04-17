@@ -246,7 +246,6 @@ class LWTV_CPT_Characters {
 			'options'          => $this->character_roles,
 		) );
 
-
 		// Metabox Group: Quick Dropdowns
 		$cmb_charside = new_cmb2_box( array(
 			'id'           => 'charnotes_metabox',
