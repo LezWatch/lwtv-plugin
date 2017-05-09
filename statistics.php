@@ -69,7 +69,7 @@ class LWTV_Stats {
 			$array['queer'] = array( 'count' => $array['queer-irl']['count'], 'name' => 'Queer', 'url' => site_url( '/cliche/queer-irl/' ) );
 			$array['not-queer'] = array( 'count' => ( $count - $array['queer-irl']['count'] ), 'name' => 'Not Queer', 'url' => '' );
 			unset($array['queer-irl']);
-			$count = $array['queer']['count'];
+			//$count = $array['queer']['count'];
 		}
 
 		// The following are complicated meta arrays
