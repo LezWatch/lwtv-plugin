@@ -23,6 +23,9 @@ class LWTV_FacetWP {
 		// Filter data before saving it
 		add_filter( 'facetwp_index_row', array( $this, 'facetwp_index_row' ), 10, 2 );
 
+		// Filter sort options to add our own
+		add_filter( 'facetwp_sort_options', array( $this, 'facetwp_sort_options' ), 10, 2 );
+
 		// Filter results count
 		add_filter( 'facetwp_result_count', function( $output, $params ) {
 		    $output = $params['total'];
@@ -102,6 +105,59 @@ class LWTV_FacetWP {
 
 	    return $params;
 	}
+
+	/**
+	 * Filter Sort Options.
+	 *
+	 * @access public
+	 * @param mixed $options
+	 * @param mixed $params
+	 * @return void
+	 */
+	function facetwp_sort_options( $options, $params ) {
+
+		if ( is_post_type_archive( 'post_type_shows' ) ) {
+		    $options['most_queers'] = array(
+		        'label' => 'Most Characters',
+		        'query_args' => array(
+		            'orderby'  => 'meta_value_num', // sort by numerical custom field
+		            'meta_key' => 'lezshows_char_count', // required when sorting by custom fields
+		            'order'    => 'DESC', // descending order
+		        )
+		    );
+
+		    $options['least_queers'] = array(
+		        'label' => 'Least Characters',
+		        'query_args' => array(
+		            'orderby'  => 'meta_value_num', // sort by numerical custom field
+		            'meta_key' => 'lezshows_char_count', // required when sorting by custom fields
+		            'order'    => 'ASC', // ascending order
+		        )
+		    );
+
+		    $options['most_dead'] = array(
+		        'label' => 'Most Dead',
+		        'query_args' => array(
+		            'orderby'  => 'meta_value_num', // sort by numerical custom field
+		            'meta_key' => 'lezshows_dead_count', // required when sorting by custom fields
+		            'order'    => 'DESC', // descending order
+		        )
+		    );
+
+		    $options['least_dead'] = array(
+		        'label' => 'Least Dead',
+		        'query_args' => array(
+		            'orderby'  => 'meta_value_num', // sort by numerical custom field
+		            'meta_key' => 'lezshows_dead_count', // required when sorting by custom fields
+		            'order'    => 'ASC', // ascending order
+		        )
+		    );
+
+		}
+
+	    return $options;
+	}
+
 }
 
 new LWTV_FacetWP();
