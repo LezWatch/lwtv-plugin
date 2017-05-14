@@ -614,7 +614,7 @@ SQL;
 	/*
 	 * Allow Quick Edit boxes to save
 	 */
-	public function quick_edit_save_post( $post_id ) {
+	public function quick_edit_save_post( $post_id) {
 		// Criteria for not saving: Auto-saves, not post_type_characters, can't edit
 		if ( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || ( isset( $_POST['post_type'] ) &&  'post_type_shows' != $_POST['post_type'] ) || !current_user_can( 'edit_page', $post_id ) ) {
 			return $post_id;
@@ -683,11 +683,11 @@ SQL;
 		return $actions;
 	}
 
-
 	/*
 	 * Save post meta for shows on SHOW update
 	 *
-	 * This will update the metakey 'lezshows_char_count' on save
+	 * This will update the metakey 'lezshows_char_count' and
+	 * 'lezshows_dead_count' on save
 	 *
 	 * @param int $post_id The post ID.
 	 * @param post $post The post object.
@@ -698,8 +698,11 @@ SQL;
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_shows', array( $this, 'update_char_count' ) );
 
-		$number_of_characters = $this->count_queers( $post_id );
-		update_post_meta( $post_id, 'lezshows_char_count', $number_of_characters );
+		$number_chars = $this->count_queers( $post_id, 'count' );
+		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
+
+		$number_dead = $this->count_queers( $post_id, 'dead' );
+		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'update_char_count' ) );
@@ -731,7 +734,7 @@ SQL;
 	 *
 	 * @param int $post_id The post ID.
 	 */
-	public function count_queers( $post_id ) {
+	public function count_queers( $post_id , $type = 'count' ) {
 
 		// If this isn't a show post, return nothing.
 		if ( get_post_type( $post_id ) !== 'post_type_shows' )
@@ -739,30 +742,33 @@ SQL;
 
 		// Loop to get the list of characters
 		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
-		$queercount  = 0;
+		$queercount = 0;
+		$deadcount  = 0;
 
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
 		if ($charactersloop->have_posts() ) {
 			while ( $charactersloop->have_posts() ) {
 
 				$charactersloop->the_post();
-				$char_id = get_the_ID();
+				$char_id     = get_the_ID();
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
+				$is_dead     = has_term( 'dead', 'lez_cliches', $char_id);
 
 				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
 					foreach( $shows_array as $char_show ) {
 						if ( $char_show['show'] == $post_id ) {
 							$queercount++;
+							if ( $is_dead == true ) $deadcount++;
 						}
 					}
 				}
-
 			}
 			wp_reset_query();
 		}
 
 		// Return Queers!
-		return $queercount;
+		if ( $type == 'count' ) return $queercount;
+		if ( $type == 'dead' ) return $deadcount;
 	}
 
 	/*
@@ -810,10 +816,15 @@ SQL;
 		switch ( $post->post_type ) {
 			case 'post_type_shows':
 				$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
+				$deadqueers  = get_post_meta( $post->ID, 'lezshows_dead_count', true );
 
-				?><div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="characters">Characters: <b><?php echo $countqueers; ?></b></span>
-				</div><?php
+				?>
+				<div class="misc-pub-section lwtv misc-pub-lwtv">
+					<span id="characters">Characters: <b><?php echo $countqueers; ?></b> total
+						<?php if ( $deadqueers ) { ?> / <b><?php echo $deadqueers; ?></b> dead<?php } ?>
+					</span>
+				</div>
+				<?php
 
 				break;
 		}
