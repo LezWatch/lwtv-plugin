@@ -12,17 +12,17 @@ This is auto-updated from git. Please don't edit in this folder or your changes 
 * statistics.php         - The basic design for all stats
 
 * /cpts/                 - Files for Custom Post Types
-* /characters.php        - Character Post Type and related Taxonomies
-* /featured-images.php   - Rebranding featured images for CPTs
-* /shows.[css|php]       - Show Post Type and related Taxonomies
+* characters.php         - Character Post Type and related Taxonomies
+* featured-images.php    - Rebranding featured images for CPTs
+* shows.[css|php]        - Show Post Type and related Taxonomies
 
 * /js/                   - Javascript Files
 * Chart.bundle.min.js    - Stat charts
 
 * /plugins/              - Files for plugins
-* /cmb2.[css|php]        - Custom CSS and Code for CMB2
+* cmb2.[css|php]         - Custom CSS and Code for CMB2
 * facetwp.php            - Custom code for FacetWP
-* /yoast-seo.php         - Custom code for Yoast's WordPress SEO
+* yoast-seo.php          - Custom code for Yoast's WordPress SEO
 
 * /rest-api/             - JSON API code
 * bury-your-queers.php   - for the BYQ plugin
