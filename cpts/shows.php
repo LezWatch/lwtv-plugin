@@ -795,7 +795,7 @@ SQL;
 
 		// Calculate the score
 		$max_score = 25;
-		$this_show = $realness + $quality + $screentime + $worthit + $stars + $trigger;
+		$this_show = $realness + $quality + $screentime + ( $worthit ) + ( $stars ) + ( $trigger );
 
 		$score = ( $this_show / $max_score );
 
