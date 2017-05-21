@@ -721,6 +721,10 @@ SQL;
 			$percent_rating = $this->score_show_ratings( $post_id );
 			update_post_meta( $post_id, 'lezshows_score_ratings', $percent_rating );
 
+		// Calculate the full score
+			$percent_the_score = ( $percent_rating + $percent_alive ) / 2;
+			update_post_meta( $post_id, 'lezshows_the_score', $percent_the_score );
+
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ) );
 	}
@@ -889,8 +893,7 @@ SQL;
 			case 'post_type_shows':
 				$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
 				$deadqueers  = get_post_meta( $post->ID, 'lezshows_dead_count', true );
-
-				$score  = ( get_post_meta( $post->ID, 'lezshows_score_ratings', true ) + get_post_meta( $post->ID, 'lezshows_score_chars', true ) ) / 2;
+				$score       = get_post_meta( $post->ID, 'lezshows_the_score', true );
 
 				?>
 				<div class="misc-pub-section lwtv misc-pub-lwtv">

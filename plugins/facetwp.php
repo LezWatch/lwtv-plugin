@@ -158,6 +158,24 @@ class LWTV_FacetWP {
 		        )
 		    );
 
+		    $options['high_score'] = array(
+		        'label' => 'Overall Score (Descending)',
+		        'query_args' => array(
+		            'orderby'  => 'meta_value_num', // sort by numerical custom field
+		            'meta_key' => 'lezshows_the_score', // required when sorting by custom fields
+		            'order'    => 'DESC', // descending order
+		        )
+		    );
+
+		    $options['low_score'] = array(
+		        'label' => 'Overall Score (Ascending)',
+		        'query_args' => array(
+		            'orderby'  => 'meta_value_num', // sort by numerical custom field
+		            'meta_key' => 'lezshows_the_score', // required when sorting by custom fields
+		            'order'    => 'ASC', // ascending order
+		        )
+		    );
+
 		}
 
 	    return $options;
