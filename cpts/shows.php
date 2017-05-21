@@ -80,9 +80,9 @@ class LWTV_CPT_Shows {
 		add_action( 'admin_footer', array( $this, 'quick_edit_js') );
 		add_filter( 'post_row_actions', array( $this, 'quick_edit_link' ), 10, 2 );
 
-		add_action( 'do_update_char_count', array( $this, 'update_char_count' ), 10, 2 );
-		add_action( 'save_post_post_type_shows', array( $this, 'update_char_count' ), 10, 3 );
-		add_action( 'save_post_post_type_characters', array( $this, 'update_char_count_from_chars' ), 10, 3 );
+		add_action( 'do_update_show_meta', array( $this, 'update_show_meta' ), 10, 2 );
+		add_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ), 10, 3 );
+		add_action( 'save_post_post_type_characters', array( $this, 'update_show_meta_from_chars' ), 10, 3 );
 
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 	}
@@ -686,26 +686,39 @@ SQL;
 	/*
 	 * Save post meta for shows on SHOW update
 	 *
-	 * This will update the metakey 'lezshows_char_count' and
-	 * 'lezshows_dead_count' on save
+	 * This will update the following metakeys on save:
+	 *  - lezshows_char_count     Number of characters
+	 *  - lezshows_dead_count     Number of dead characters
+	 *  - lezshows_score_chars    Percentage score of character survival
+	 *  - lezshows_score_ratings  Percentage score of show data
 	 *
 	 * @param int $post_id The post ID.
 	 * @param post $post The post object.
 	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
-	public function update_char_count( $post_id ) {
+	public function update_show_meta( $post_id ) {
 
 		// unhook this function so it doesn't loop infinitely
-		remove_action( 'save_post_post_type_shows', array( $this, 'update_char_count' ) );
+		remove_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ) );
 
-		$number_chars = $this->count_queers( $post_id, 'count' );
-		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
+		// Count characters
+			$number_chars = $this->count_queers( $post_id, 'count' );
+			update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
 
-		$number_dead = $this->count_queers( $post_id, 'dead' );
-		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
+		// Count dead characters
+			$number_dead = $this->count_queers( $post_id, 'dead' );
+			update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
+
+		// Calculate percentage alive
+			$percent_alive = ( ( $number_chars - $number_dead ) / $number_chars );
+			update_post_meta( $post_id, 'lezshows_score_chars', $percent_alive );
+
+		// Calculate percentage of value for show
+			$percent_rating = $this->score_show_ratings( $post_id );
+			update_post_meta( $post_id, 'lezshows_score_ratings', $percent_rating );
 
 		// re-hook this function
-		add_action( 'save_post_post_type_shows', array( $this, 'update_char_count' ) );
+		add_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ) );
 	}
 
 	/*
@@ -715,16 +728,71 @@ SQL;
 	 *
 	 * @param int $post_id The post ID.
 	 */
-	public function update_char_count_from_chars( $post_id ) {
+	public function update_show_meta_from_chars( $post_id ) {
 
 		$character_show_IDs = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$show_title = array();
 
 		if ( $character_show_IDs !== '' ) {
 			foreach ( $character_show_IDs as $each_show ) {
-				do_action( 'do_update_char_count' , $each_show['show'] );
+				do_action( 'do_update_show_meta' , $each_show['show'] );
 			}
 		}
+	}
+
+
+	/**
+	 * Calculate show rating.
+	 *
+	 * @access public
+	 * @param mixed $post_id
+	 * @return void
+	 */
+	public function score_show_ratings ( $post_id ) {
+
+		$realness   = min( get_post_meta( $post_id, 'lezshows_realness_rating', true) , 5 );
+		$quality    = min( get_post_meta( $post_id, 'lezshows_quality_rating', true) , 5 );
+		$screentime = min( get_post_meta( $post_id, 'lezshows_screentime_rating', true) , 5 );
+
+		// Thumb Score Rating:
+		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
+			case "Yes":
+				$worthit = 5;
+				break;
+			case "No":
+				$worthit = -5;
+				break;
+			case "Meh":
+			default:
+				$worthit = 0;
+		}
+
+		// Star Rating:
+		switch ( get_post_meta( $post_id, 'lezshows_stars', true ) ) {
+			case "gold":
+				$stars = 5;
+				break;
+			case "silver":
+				$stars = 3;
+				break;
+			default:
+				$stars = 0;
+		}
+
+		// Trigger Warning
+		$trigger = 0;
+		if ( get_post_meta( $post_id, 'lezshows_triggerwarning', true ) == 'on' ) {
+			$trigger = -5;
+		}
+
+		// Calculate the score
+		$max_score = 25;
+		$this_show = $realness + $quality + $screentime + $worthit + $stars + $trigger;
+
+		$score = ( $this_show / $max_score );
+
+		return $score;
+
 	}
 
 	/*
@@ -818,11 +886,16 @@ SQL;
 				$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
 				$deadqueers  = get_post_meta( $post->ID, 'lezshows_dead_count', true );
 
+				$score  = ( get_post_meta( $post->ID, 'lezshows_score_ratings', true ) + get_post_meta( $post->ID, 'lezshows_score_chars', true ) ) / 2;
+
 				?>
 				<div class="misc-pub-section lwtv misc-pub-lwtv">
 					<span id="characters">Characters: <b><?php echo $countqueers; ?></b> total
 						<?php if ( $deadqueers ) { ?> / <b><?php echo $deadqueers; ?></b> dead<?php } ?>
 					</span>
+				</div>
+				<div class="misc-pub-section lwtv misc-pub-lwtv">
+					<span id="score">Score: <b><?php echo round( ( $score * 100 ), 2 ); ?>%</b></span>
 				</div>
 				<?php
 

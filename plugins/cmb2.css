@@ -49,3 +49,17 @@
 	-webkit-font-smoothing: antialiased;
 	color: #82878c;
 }
+
+.lwtv #score:before {
+	content: "\f328";
+	position: relative;
+	top: -1px;
+	font: 400 20px/1 dashicons;
+	speak: none;
+	display: inline-block;
+	margin-left: -1px;
+	padding-right: 3px;
+	vertical-align: top;
+	-webkit-font-smoothing: antialiased;
+	color: #82878c;
+}
