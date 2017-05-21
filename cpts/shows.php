@@ -762,40 +762,40 @@ SQL;
 		$quality    = min( get_post_meta( $post_id, 'lezshows_quality_rating', true) , 5 );
 		$screentime = min( get_post_meta( $post_id, 'lezshows_screentime_rating', true) , 5 );
 
-		// Thumb Score Rating:
+		$this_show = $realness + $quality + $screentime;
+
+		// Add in Thumb Score Rating.
 		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
 			case "Yes":
-				$worthit = 5;
+				$this_show = $this_show + 5;
 				break;
 			case "No":
-				$worthit = -5;
+				$this_show = $this_show - 5;
 				break;
-			case "Meh":
 			default:
-				$worthit = 0;
+				$this_show = $this_show;
 		}
 
-		// Star Rating:
+		// Add in Star Rating
 		switch ( get_post_meta( $post_id, 'lezshows_stars', true ) ) {
 			case "gold":
-				$stars = 5;
+				$this_show = $this_show + 5;
 				break;
 			case "silver":
-				$stars = 3;
+				$this_show = $this_show + 3;
 				break;
 			default:
-				$stars = 0;
+				$this_show = $this_show;
 		}
 
 		// Trigger Warning
 		$trigger = 0;
 		if ( get_post_meta( $post_id, 'lezshows_triggerwarning', true ) == 'on' ) {
-			$trigger = -5;
+			$this_show = $this_show - 5;
 		}
 
 		// Calculate the score
 		$max_score = 25;
-		$this_show = $realness + $quality + $screentime + ( $worthit ) + ( $stars ) + ( $trigger );
 
 		$score = ( $this_show / $max_score );
 
