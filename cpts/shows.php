@@ -710,7 +710,11 @@ SQL;
 			update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
 
 		// Calculate percentage alive
-			$percent_alive = ( ( $number_chars - $number_dead ) / $number_chars );
+			if ( $number_chars == 0 || $number_dead == 0 ) {
+				$percent_alive = 1;
+			} else {
+				$percent_alive = ( ( $number_chars - $number_dead ) / $number_chars );
+			}
 			update_post_meta( $post_id, 'lezshows_score_chars', $percent_alive );
 
 		// Calculate percentage of value for show
