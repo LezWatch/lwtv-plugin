@@ -314,6 +314,7 @@ class LWTV_CPT_Characters {
 	public function manage_posts_columns( $columns ) {
 		$columns['cpt-shows']         = 'TV Show(s)';
 		$columns['postmeta-roletype'] = 'Role Type';
+		$columns['postmeta-death']    = 'Died';
 		return $columns;
 	}
 
@@ -323,15 +324,19 @@ class LWTV_CPT_Characters {
 	public function manage_posts_custom_column( $column, $post_id ) {
 
 		$character_show_IDs = get_post_meta( $post_id, 'lezchars_show_group', true );
-		$show_title = array();
-		$role_array = array();
+		$show_title  = array();
+		$role_array  = array();
 
-		if (  $character_show_IDs !== '' ) {
+		if ( $character_show_IDs !== '' ) {
 			foreach ( $character_show_IDs as $each_show ) {
 				array_push( $show_title, get_the_title( $each_show['show'] ) );
 				array_push( $role_array, ucfirst( $each_show['type'] ) );
 			}
 		}
+
+		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
+
+		if ( empty( $character_death) ) $character_death = array( 'Alive' );
 
 		switch ( $column ) {
 			case 'cpt-shows':
@@ -339,6 +344,9 @@ class LWTV_CPT_Characters {
 				break;
 			case 'postmeta-roletype':
 				echo implode(", ", $role_array );
+				break;
+			case 'postmeta-death':
+				echo implode(", ", $character_death );
 				break;
 		}
 	}
