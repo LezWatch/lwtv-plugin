@@ -58,6 +58,7 @@ include_once( 'cpts/all-cpts.php' );
 // JSON API
 include_once( 'rest-api/bury-your-queers.php' );
 include_once( 'rest-api/stats.php' );
+include_once( 'rest-api/alexa-skills.php' );
 
 // Include Others
 include_once( 'search.php' );
