@@ -111,7 +111,7 @@ class LWTV_Alexa_Skills {
 	 * @access public
 	 * @return void
 	 */
-	public function bury_your_queers( $data ='', $date = 'none' , $when = 'none' ) {
+	public function bury_your_queers( $request = '', $date = 'none' , $when = 'none' ) {
 
 		if ( $date == 'none' ) {
 			$data    = LWTV_BYQ_JSON::last_death();
@@ -128,7 +128,7 @@ class LWTV_Alexa_Skills {
 
 		}
 
-		if ( $data !== '' ) $whodied .= 'has data';
+		if ( $request !== '' ) $whodied .= explode( ',' , $request );
 
 		$response = array(
 			'version'  => '1.0',
