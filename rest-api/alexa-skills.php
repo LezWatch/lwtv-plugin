@@ -61,6 +61,9 @@ class LWTV_Alexa_Skills {
 	 */
 	public function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
 
+
+		return $request;
+
 		$body = $request->get_body();
 		$id   = absint( $request->get_param( 'id' ) );
 
@@ -113,7 +116,7 @@ class LWTV_Alexa_Skills {
 	 * @access public
 	 * @return void
 	 */
-	public function bury_your_queers( $date = 'none' ) {
+	public function bury_your_queers( $date = 'none' , $when = 'none' ) {
 
 		if ( $date == 'none' ) {
 			$data    = LWTV_BYQ_JSON::last_death();
