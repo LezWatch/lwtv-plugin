@@ -61,16 +61,11 @@ class LWTV_Alexa_Skills {
 	 */
 	public function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
 
-
-		return $request;
-
-		$body = $request->get_body();
-		$id   = absint( $request->get_param( 'id' ) );
+		$data = $request['intent']['slots'];
 
 		$application_id = 'amzn1.ask.skill.b1b4f1ce-de9c-48cb-ad65-caa6467e6e8c';
 
-
-		$response = $this->bury_your_queers();
+		$response = $this->bury_your_queers( $data );
 		return $response;
 	}
 
@@ -116,7 +111,7 @@ class LWTV_Alexa_Skills {
 	 * @access public
 	 * @return void
 	 */
-	public function bury_your_queers( $date = 'none' , $when = 'none' ) {
+	public function bury_your_queers( $data ='', $date = 'none' , $when = 'none' ) {
 
 		if ( $date == 'none' ) {
 			$data    = LWTV_BYQ_JSON::last_death();
@@ -132,6 +127,8 @@ class LWTV_Alexa_Skills {
 		*/
 
 		}
+
+		if ( $data !== '' ) $whodied .= 'has data';
 
 		$response = array(
 			'version'  => '1.0',
