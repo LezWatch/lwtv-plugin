@@ -61,14 +61,104 @@ class LWTV_Alexa_Skills {
 	 */
 	public function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
 
-		$data = $request['intent']['slots'];
+		$date       = ( isset( $request['request']['intent']['slots']['Date']['value'] ) )? $request['request']['intent']['slots']['Date']['value'] : false;
+		$request_id = ( isset( $request['request']['session']['application']['applicationId'] ) )? $request['request']['session']['application']['applicationId'] : false;
 
-		$application_id = 'amzn1.ask.skill.b1b4f1ce-de9c-48cb-ad65-caa6467e6e8c';
+		$validate_alexa = $this->alexa_validate_request( $request );
 
-		$response = $this->bury_your_queers( $data );
+		if ( $validate_alexa['success'] == 0 ) return wp_die( $validate_alexa['message'] );
+
+		$response = $this->bury_your_queers( $date );
 		return $response;
 	}
 
+
+	function alexa_validate_request( $request ) {
+
+		$application_id = 'amzn1.ask.skill.b1b4f1ce-de9c-48cb-ad65-caa6467e6e8c';
+		$url            = $request->get_header( 'signaturecertchainurl' );
+		$timestamp      = $request['request']['timestamp'];
+		$signature      = $request->get_header( 'signature' );
+
+	    // Validate that it even came from Amazon ...
+	    if ( !isset( $url ) )
+	    	return array( 'success' => 0, 'message' => 'This request did not come from Amazon.' );
+
+	    // Validate proper format of Amazon provided certificate chain url
+	    $valid_uri = $this->alexa_valid_key_chain_uri( $url );
+	    if ( $valid_uri != 1 )
+	    	return array( 'success' => 0, 'message' => $valid_uri );
+
+	    // Validate certificate signature
+	    $valid_cert = $this->alexa_valid_cert( $request, $signature, $url );
+	    if ( $valid_cert != 1 )
+	    	return array ( 'success' => 0, 'message' => $valid_cert );
+
+	    // Validate time stamp
+		if (time() - strtotime( $timestamp ) > 60)
+			return array ( 'success' => 0, 'message' => 'Timestamp validation failure. Current time: ' . time() . ' vs. Timestamp: ' . $timestamp );
+
+	    return array( 'success' => 1, 'message' => 'Success' );
+	}
+
+	function alexa_valid_key_chain_uri( $keychainUri ){
+
+	    $uriParts = parse_url($keychainUri);
+
+	    if (strcasecmp( $uriParts['host'], 's3.amazonaws.com' ) != 0 )
+	        return ( 'The host for the Certificate provided in the header is invalid' );
+
+	    if (strpos( $uriParts['path'], '/echo.api/' ) !== 0 )
+	        return ( 'The URL path for the Certificate provided in the header is invalid' );
+
+	    if (strcasecmp( $uriParts['scheme'], 'https' ) != 0 )
+	        return ( 'The URL is using an unsupported scheme. Should be https' );
+
+	    if (array_key_exists( 'port', $uriParts ) && $uriParts['port'] != '443' )
+	        return ( 'The URL is using an unsupported https port' );
+
+	    return 1;
+	}
+
+
+	/*
+	    Validate that the certificate and signature are valid
+	*/
+	function alexa_valid_cert( $request, $signature, $url ) {
+
+		$md5pem     = get_temp_dir() . md5( $url ) . '.pem';
+	    $echoDomain = 'echo-api.amazon.com';
+
+	    // If we haven't received a certificate with this URL before,
+	    // store it as a cached copy
+	    if ( !file_exists( $md5pem ) ) file_put_contents( $md5pem, file_get_contents( $url ) );
+
+	    // Validate certificate chain and signature
+	    $pem = file_get_contents( $md5pem );
+	    $ssl_check = openssl_verify( $request, base64_decode( $signature ), $pem, 'sha1' );
+	    if ($ssl_check != 1 ) return( openssl_error_string() );
+
+	    // Parse certificate for validations below
+	    $parsedCertificate = openssl_x509_parse( $pem );
+	    if ( !$parsedCertificate ) return( 'x509 parsing failed' );
+
+	    // Check that the domain echo-api.amazon.com is present in
+	    // the Subject Alternative Names (SANs) section of the signing certificate
+	    if(strpos( $parsedCertificate['extensions']['subjectAltName'], $echoDomain) === false) {
+	        return('subjectAltName Check Failed');
+	    }
+
+	    // Check that the signing certificate has not expired
+	    // (examine both the Not Before and Not After dates)
+	    $validFrom = $parsedCertificate['validFrom_time_t'];
+	    $validTo   = $parsedCertificate['validTo_time_t'];
+	    $time      = time();
+	    if (!($validFrom <= $time && $time <= $validTo)) {
+	        return('certificate expiration check failed');
+	    }
+
+	    return 1;
+	}
 
 	/**
 	 * Generate the Flash Briefing output
@@ -111,24 +201,39 @@ class LWTV_Alexa_Skills {
 	 * @access public
 	 * @return void
 	 */
-	public function bury_your_queers( $request = '', $date = 'none' , $when = 'none' ) {
+	public function bury_your_queers( $date = false ) {
 
-		if ( $date == 'none' ) {
+		// Check the timestamp
+		$timestamp = ( strtotime( $date ) == false )? false : strtotime( $date ) ;
+
+		if ( $date == false || $timestamp == false ) {
 			$data    = LWTV_BYQ_JSON::last_death();
 			$name    = $data['name'];
-			$date    = date('F j, Y', $data['died']);
+			$date    = date( 'F j, Y', $data['died'] );
 			$whodied = 'The last queer female to die was '. $name .' on '. $date;
 		} else {
+			$this_day = date('m-d', $timestamp );
+			$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
+			$count    = ( key( $data ) == 'none' )? 0 : count( $data ) ;
+			$how_many = 'No queer females died';
+			$the_dead = '';
 
-		/*
-			1. Accept the POST with the data
-			2. Spit back the right info based on the post?
+			if ( $count > 0 ) {
+				$how_many  = $count . ' queer female ' . _n( 'character', 'characters', $count ) . ' died';
+				$deadcount = 1;
 
-		*/
+				foreach ( $data as $dead_character ) {
+
+					if ( $deadcount == $count && $count !== 1 ) $the_dead .= ' And ';
+
+					$the_dead .= $dead_character['name'] . ' in ' . $dead_character['died'] . '. ';
+					$deadcount++;
+				}
+			}
+
+			$whodied = $how_many . ' on '. date('F jS', $timestamp ) . '. ' . $the_dead;
 
 		}
-
-		if ( $request !== '' ) $whodied .= explode( ',' , $request );
 
 		$response = array(
 			'version'  => '1.0',
