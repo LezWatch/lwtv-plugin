@@ -764,7 +764,7 @@ SQL;
 
 		$this_show = $realness + $quality + $screentime;
 
-		// Add in Thumb Score Rating.
+		// Add in Thumb Score Rating = +5 or -5
 		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
 			case "Yes":
 				$this_show = $this_show + 5;
@@ -776,7 +776,7 @@ SQL;
 				$this_show = $this_show;
 		}
 
-		// Add in Star Rating
+		// Add in Star Rating = -5, +1.5, +3, or +5
 		switch ( get_post_meta( $post_id, 'lezshows_stars', true ) ) {
 			case "gold":
 				$this_show = $this_show + 5;
@@ -784,18 +784,30 @@ SQL;
 			case "silver":
 				$this_show = $this_show + 3;
 				break;
+			case "bronze":
+				$this_show = $this_show + 1.5;
+				break;
+			case "white":
+				$this_show = $this_show -5;
+				break;
 			default:
 				$this_show = $this_show;
 		}
 
-		// Trigger Warning
+		// Trigger Warning = -5
 		$trigger = 0;
 		if ( get_post_meta( $post_id, 'lezshows_triggerwarning', true ) == 'on' ) {
 			$this_show = $this_show - 5;
 		}
 
+		// No Tropes = +5
+		$tropes = 0;
+		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
+			$this_show = $this_show + 5;
+		}
+
 		// Calculate the score
-		$max_score = 25;
+		$max_score = 30;
 
 		$score = ( $this_show / $max_score );
 
