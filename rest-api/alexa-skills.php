@@ -61,36 +61,41 @@ class LWTV_Alexa_Skills {
 	 */
 	public function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
 
-		$date       = ( isset( $request['request']['intent']['slots']['Date']['value'] ) )? $request['request']['intent']['slots']['Date']['value'] : false;
-		$request_id = ( isset( $request['request']['session']['application']['applicationId'] ) )? $request['request']['session']['application']['applicationId'] : false;
+		$type   = ( isset( $request['request']['type'] ) )? $request['request']['type'] : false;
+		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) )? $request['request']['intent']['slots']['Date']['value'] : false;
+		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) )? $request['request']['session']['application']['applicationId'] : false;
 
 		$validate_alexa = $this->alexa_validate_request( $request );
 
-		if ( $validate_alexa['success'] == 0 ) return wp_die( $validate_alexa['message'] );
+		if ( $validate_alexa['success'] != 1 ) {
+			$error = new WP_REST_Response( array( 'message' => $validate_alexa['message'], 'data' => array( 'status' => 400 ) ) );
+			$error->set_status( 400 );
+			return $error;
+		}
 
-		$response = $this->bury_your_queers( $date );
+		$response = $this->bury_your_queers( $type, $date );
 		return $response;
 	}
 
 
 	function alexa_validate_request( $request ) {
 
-		$application_id = 'amzn1.ask.skill.b1b4f1ce-de9c-48cb-ad65-caa6467e6e8c';
-		$url            = $request->get_header( 'signaturecertchainurl' );
-		$timestamp      = $request['request']['timestamp'];
-		$signature      = $request->get_header( 'signature' );
+		$app_id    = 'amzn1.ask.skill.b1b4f1ce-de9c-48cb-ad65-caa6467e6e8c';
+		$chain_url = $request->get_header( 'signaturecertchainurl' );
+		$timestamp = $request['request']['timestamp'];
+		$signature = $request->get_header( 'signature' );
 
 	    // Validate that it even came from Amazon ...
-	    if ( !isset( $url ) )
+	    if ( !isset( $chain_url ) )
 	    	return array( 'success' => 0, 'message' => 'This request did not come from Amazon.' );
 
 	    // Validate proper format of Amazon provided certificate chain url
-	    $valid_uri = $this->alexa_valid_key_chain_uri( $url );
+	    $valid_uri = $this->alexa_valid_key_chain_uri( $chain_url );
 	    if ( $valid_uri != 1 )
 	    	return array( 'success' => 0, 'message' => $valid_uri );
 
 	    // Validate certificate signature
-	    $valid_cert = $this->alexa_valid_cert( $request, $signature, $url );
+	    $valid_cert = $this->alexa_valid_cert( $request, $chain_url, $signature );
 	    if ( $valid_cert != 1 )
 	    	return array ( 'success' => 0, 'message' => $valid_cert );
 
@@ -101,9 +106,12 @@ class LWTV_Alexa_Skills {
 	    return array( 'success' => 1, 'message' => 'Success' );
 	}
 
+	/*
+		Validate certificate chain URL
+	*/
 	function alexa_valid_key_chain_uri( $keychainUri ){
 
-	    $uriParts = parse_url($keychainUri);
+	    $uriParts = parse_url( $keychainUri );
 
 	    if (strcasecmp( $uriParts['host'], 's3.amazonaws.com' ) != 0 )
 	        return ( 'The host for the Certificate provided in the header is invalid' );
@@ -120,23 +128,28 @@ class LWTV_Alexa_Skills {
 	    return 1;
 	}
 
-
 	/*
 	    Validate that the certificate and signature are valid
 	*/
-	function alexa_valid_cert( $request, $signature, $url ) {
+	function alexa_valid_cert( $request, $chain_url, $signature ) {
 
-		$md5pem     = get_temp_dir() . md5( $url ) . '.pem';
+		$md5pem     = get_temp_dir() . md5( $chain_url ) . '.pem';
 	    $echoDomain = 'echo-api.amazon.com';
 
 	    // If we haven't received a certificate with this URL before,
 	    // store it as a cached copy
-	    if ( !file_exists( $md5pem ) ) file_put_contents( $md5pem, file_get_contents( $url ) );
+	    if ( !file_exists( $md5pem ) ) {
+		    file_put_contents( $md5pem, file_get_contents( $chain_url ) );
+		}
+
+	    $pem = file_get_contents( $md5pem );
 
 	    // Validate certificate chain and signature
-	    $pem = file_get_contents( $md5pem );
-	    $ssl_check = openssl_verify( $request, base64_decode( $signature ), $pem, 'sha1' );
-	    if ($ssl_check != 1 ) return( openssl_error_string() );
+	    $ssl_check = openssl_verify( $request->get_body() , base64_decode( $signature ), $pem, 'sha1' );
+
+	    if ($ssl_check != 1 ) {
+		    return( openssl_error_string() );
+		}
 
 	    // Parse certificate for validations below
 	    $parsedCertificate = openssl_x509_parse( $pem );
@@ -145,7 +158,7 @@ class LWTV_Alexa_Skills {
 	    // Check that the domain echo-api.amazon.com is present in
 	    // the Subject Alternative Names (SANs) section of the signing certificate
 	    if(strpos( $parsedCertificate['extensions']['subjectAltName'], $echoDomain) === false) {
-	        return('subjectAltName Check Failed');
+	        return( 'subjectAltName Check Failed' );
 	    }
 
 	    // Check that the signing certificate has not expired
@@ -153,8 +166,9 @@ class LWTV_Alexa_Skills {
 	    $validFrom = $parsedCertificate['validFrom_time_t'];
 	    $validTo   = $parsedCertificate['validTo_time_t'];
 	    $time      = time();
-	    if (!($validFrom <= $time && $time <= $validTo)) {
-	        return('certificate expiration check failed');
+
+	    if ( !( $validFrom <= $time && $time <= $validTo ) ) {
+	        return( 'certificate expiration check failed' );
 	    }
 
 	    return 1;
@@ -201,40 +215,44 @@ class LWTV_Alexa_Skills {
 	 * @access public
 	 * @return void
 	 */
-	public function bury_your_queers( $date = false ) {
+	public function bury_your_queers( $type = false, $date = false ) {
 
-		// Check the timestamp
-		$timestamp = ( strtotime( $date ) == false )? false : strtotime( $date ) ;
-
-		if ( $date == false || $timestamp == false ) {
-			$data    = LWTV_BYQ_JSON::last_death();
-			$name    = $data['name'];
-			$date    = date( 'F j, Y', $data['died'] );
-			$whodied = 'The last queer female to die was '. $name .' on '. $date;
+		if ( $type == 'LaunchRequest' ) {
+			$whodied = 'Welcome to the LezWatch TV Bury Your Queers skill. To find out what queer females died, and when, you can ask me things like "who died" or "who died today" or "who died on March 3rd." If no one died then, I\'ll let you know.';
+			$endsession = false;
 		} else {
-			$this_day = date('m-d', $timestamp );
-			$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
-			$count    = ( key( $data ) == 'none' )? 0 : count( $data ) ;
-			$how_many = 'No queer females died';
-			$the_dead = '';
+			// Check the timestamp
+			$timestamp = ( strtotime( $date ) == false )? false : strtotime( $date ) ;
 
-			if ( $count > 0 ) {
-				$how_many  = $count . ' queer female ' . _n( 'character', 'characters', $count ) . ' died';
-				$deadcount = 1;
+			if ( $date == false || $timestamp == false ) {
+				$data    = LWTV_BYQ_JSON::last_death();
+				$name    = $data['name'];
+				$date    = date( 'F j, Y', $data['died'] );
+				$whodied = 'The last queer female to die was '. $name .' on '. $date;
+			} else {
+				$this_day = date('m-d', $timestamp );
+				$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
+				$count    = ( key( $data ) == 'none' )? 0 : count( $data ) ;
+				$how_many = 'No queer females died';
+				$the_dead = '';
 
-				foreach ( $data as $dead_character ) {
+				if ( $count > 0 ) {
+					$how_many  = $count . ' queer female ' . _n( 'character', 'characters', $count ) . ' died';
+					$deadcount = 1;
 
-					if ( $deadcount == $count && $count !== 1 ) $the_dead .= ' And ';
+					foreach ( $data as $dead_character ) {
 
-					$the_dead .= $dead_character['name'] . ' in ' . $dead_character['died'] . '. ';
-					$deadcount++;
+						if ( $deadcount == $count && $count !== 1 ) $the_dead .= 'And ';
+						$the_dead .= $dead_character['name'] . ' in ' . $dead_character['died'] . '. ';
+						$deadcount++;
+					}
 				}
+
+				$whodied = $how_many . ' on '. date('F jS', $timestamp ) . '. ' . $the_dead;
+				$sendsession = true;
 			}
 
-			$whodied = $how_many . ' on '. date('F jS', $timestamp ) . '. ' . $the_dead;
-
 		}
-
 		$response = array(
 			'version'  => '1.0',
 			'response' => array (
@@ -242,7 +260,7 @@ class LWTV_Alexa_Skills {
 					'type' => 'PlainText',
 					'text' => $whodied,
 				),
-				'shouldEndSession' => true,
+				'shouldEndSession' => $endsession,
 			)
 		);
 
