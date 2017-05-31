@@ -228,7 +228,7 @@ class LWTV_Alexa_Skills {
 				$data    = LWTV_BYQ_JSON::last_death();
 				$name    = $data['name'];
 				$date    = date( 'F j, Y', $data['died'] );
-				$whodied = 'The last queer female to die was '. $name .' on '. $date;
+				$whodied = 'The last queer female to die was '. $name .' on '. $date .'.';
 			} else {
 				$this_day = date('m-d', $timestamp );
 				$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
