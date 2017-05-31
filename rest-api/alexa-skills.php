@@ -191,7 +191,7 @@ class LWTV_Alexa_Skills {
 					'uid'            => get_the_permalink(),
 					'updateDate'     => get_post_modified_time( 'Y-m-d\TH:i:s.\0\Z' ),
 					'titleText'      => get_the_title(),
-					'mainText'       => get_the_excerpt(),
+					'mainText'       => get_the_title() . '. ' . get_the_excerpt(),
 					'redirectionUrl' => home_url(),
 				);
 
