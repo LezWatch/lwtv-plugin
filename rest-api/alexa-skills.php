@@ -62,6 +62,7 @@ class LWTV_Alexa_Skills {
 	public function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
 
 		$type   = ( isset( $request['request']['type'] ) )? $request['request']['type'] : false;
+		$intent = ( isset( $request['request']['intent']['name'] ) )? $request['request']['intent']['name'] : false;
 		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) )? $request['request']['intent']['slots']['Date']['value'] : false;
 		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) )? $request['request']['session']['application']['applicationId'] : false;
 
@@ -73,7 +74,7 @@ class LWTV_Alexa_Skills {
 			return $error;
 		}
 
-		$response = $this->bury_your_queers( $type, $date );
+		$response = $this->bury_your_queers( $type, $intent, $date );
 		return $response;
 	}
 
@@ -208,50 +209,72 @@ class LWTV_Alexa_Skills {
 
 	}
 
-
 	/**
 	 * Generate Bury Your Queers
 	 *
 	 * @access public
 	 * @return void
 	 */
-	public function bury_your_queers( $type = false, $date = false ) {
+	public function bury_your_queers( $type = false, $intent = false, $date = false ) {
+
+		$whodied    = '';
+		$endsession = true;
+		$timestamp  = ( strtotime( $date ) == false )? false : strtotime( $date ) ;
+		$helptext   = 'You can find out who died on specific dates by asking me questions like "who died" or "who died today" or "who died on March 3rd" or even "How many died in 2017." If no one died then, I\'ll let you know.';
 
 		if ( $type == 'LaunchRequest' ) {
-			$whodied = 'Welcome to the LezWatch TV Bury Your Queers skill. To find out what queer females died, and when, you can ask me things like "who died" or "who died today" or "who died on March 3rd." If no one died then, I\'ll let you know.';
+			$whodied = 'Welcome to the LezWatch TV Bury Your Queers skill. ' . $helptext;
 			$endsession = false;
 		} else {
-			// Check the timestamp
-			$timestamp = ( strtotime( $date ) == false )? false : strtotime( $date ) ;
-
-			if ( $date == false || $timestamp == false ) {
-				$data    = LWTV_BYQ_JSON::last_death();
-				$name    = $data['name'];
-				$date    = date( 'F j, Y', $data['died'] );
-				$whodied = 'The last queer female to die was '. $name .' on '. $date .'.';
-			} else {
-				$this_day = date('m-d', $timestamp );
-				$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
-				$count    = ( key( $data ) == 'none' )? 0 : count( $data ) ;
-				$how_many = 'No queer females died';
-				$the_dead = '';
-
-				if ( $count > 0 ) {
-					$how_many  = $count . ' queer female ' . _n( 'character', 'characters', $count ) . ' died';
-					$deadcount = 1;
-
-					foreach ( $data as $dead_character ) {
-
-						if ( $deadcount == $count && $count !== 1 ) $the_dead .= 'And ';
-						$the_dead .= $dead_character['name'] . ' in ' . $dead_character['died'] . '. ';
-						$deadcount++;
+			if ( $intent == 'AMAZON.HelpIntent' ) {
+				$whodied = 'This is the Bury Your Queers skill by LezWatch TV, home of the world\'s greatest database of queer female on TV. ' . $helptext;
+				$endsession = false;
+			} elseif ( $intent == 'AMAZON.StopIntent' || $intent == 'AMAZON.CancelIntent' ) {
+				// Do nothing
+			} elseif ( $intent == 'HowMany' ) {
+				if ( $date == false || $timestamp == false ) {
+					$data     = LWTV_Stats_JSON::statistics( 'death', 'simple' );
+					$whodied  = 'A total of '. $data['characters']['dead'] .' queer females have died on TV.';
+				} else {
+					$data     = LWTV_Stats_JSON::statistics( 'death', 'years' );
+					$count    = $data[$date]['count'];
+					$how_many = 'No queer female characters died on TV in ' . $date . '.';
+					if ( $count > 0 ) {
+						$how_many = $count .' queer female ' . _n( 'character', 'characters', $count ) . ' died on TV in ' . $date . '.';
 					}
+					$whodied  = $how_many;
 				}
-
-				$whodied = $how_many . ' on '. date('F jS', $timestamp ) . '. ' . $the_dead;
-				$sendsession = true;
+			} elseif ( $intent == 'WhoDied' ) {
+				if ( $date == false || $timestamp == false ) {
+					$data    = LWTV_BYQ_JSON::last_death();
+					$name    = $data['name'];
+					$date    = date( 'F j, Y', $data['died'] );
+					$whodied = 'The last queer female to die was '. $name .' on '. $date .'.';
+				} elseif ( preg_match( '/^[0-9]{4}$/' , $date ) ) {
+					$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but years right now. ' . $helptext;
+					$endsession = false;
+				} else {
+					$this_day = date('m-d', $timestamp );
+					$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
+					$count    = ( key( $data ) == 'none' )? 0 : count( $data ) ;
+					$how_many = 'No queer females died';
+					$the_dead = '';
+					if ( $count > 0 ) {
+						$how_many  = $count . ' queer female ' . _n( 'character', 'characters', $count ) . ' died';
+						$deadcount = 1;
+						foreach ( $data as $dead_character ) {
+							if ( $deadcount == $count && $count !== 1 ) $the_dead .= 'And ';
+							$the_dead .= $dead_character['name'] . ' in ' . $dead_character['died'] . '. ';
+							$deadcount++;
+						}
+					}
+					$whodied = $how_many . ' on '. date('F jS', $timestamp ) . '. ' . $the_dead;
+				}
+			} else {
+				// We have a weird request...
+				$whodied = 'I\'m sorry, I don\'t understand that request. Please ask me something else.';
+				$endsession = false;
 			}
-
 		}
 		$response = array(
 			'version'  => '1.0',
