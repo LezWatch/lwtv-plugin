@@ -235,6 +235,9 @@ class LWTV_Alexa_Skills {
 				if ( $date == false || $timestamp == false ) {
 					$data     = LWTV_Stats_JSON::statistics( 'death', 'simple' );
 					$whodied  = 'A total of '. $data['characters']['dead'] .' queer females have died on TV.';
+				} elseif ( preg_match( '/^[0-9]{4}$/' , $date ) ) {
+					$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but years right now. ' . $helptext;
+					$endsession = false;
 				} else {
 					$data     = LWTV_Stats_JSON::statistics( 'death', 'years' );
 					$count    = $data[$date]['count'];
@@ -248,10 +251,9 @@ class LWTV_Alexa_Skills {
 				if ( $date == false || $timestamp == false ) {
 					$data    = LWTV_BYQ_JSON::last_death();
 					$name    = $data['name'];
-					$date    = date( 'F j, Y', $data['died'] );
-					$whodied = 'The last queer female to die was '. $name .' on '. $date .'.';
-				} elseif ( preg_match( '/^[0-9]{4}$/' , $date ) ) {
-					$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but years right now. ' . $helptext;
+					$whodied = 'The last queer female to die was '. $name .' on '. date( 'F j, Y', $data['died'] ) .'.';
+				} elseif ( preg_match( '/^[0-9]{4}-(0[1-9]|1[0-2])$/' , $date ) ) {
+					$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but days right now. ' . $helptext;
 					$endsession = false;
 				} else {
 					$this_day = date('m-d', $timestamp );
