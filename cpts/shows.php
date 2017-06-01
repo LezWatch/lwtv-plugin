@@ -34,7 +34,7 @@ class LWTV_CPT_Shows {
 		$this->ratings_array = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
 
 		// Array of valid stars we award shows
-		$this->stars_array = array( 'gold'   => 'Gold Star', 'silver' => 'Silver Star' );
+		$this->stars_array = array( 'gold'   => 'Gold Star', 'silver' => 'Silver Star', 'bronze' => 'Bronze Star', 'anti' => 'Anti Star' );
 	}
 
 	/**
@@ -787,7 +787,7 @@ SQL;
 			case "bronze":
 				$this_show = $this_show + 1.5;
 				break;
-			case "white":
+			case "anti":
 				$this_show = $this_show -5;
 				break;
 			default:
