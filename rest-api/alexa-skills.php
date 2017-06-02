@@ -235,7 +235,7 @@ class LWTV_Alexa_Skills {
 				if ( $date == false || $timestamp == false ) {
 					$data     = LWTV_Stats_JSON::statistics( 'death', 'simple' );
 					$whodied  = 'A total of '. $data['characters']['dead'] .' queer females have died on TV.';
-				} elseif ( preg_match( '/^[0-9]{4}$/' , $date ) ) {
+				} elseif ( !preg_match( '/^[0-9]{4}$/' , $date ) ) {
 					$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but years right now. ' . $helptext;
 					$endsession = false;
 				} else {
