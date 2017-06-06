@@ -50,6 +50,16 @@ class LWTV_BYQ_JSON {
 			'callback' => array( $this, 'on_this_day_rest_api_callback' ),
 		) );
 
+		register_rest_route( 'lwtv/v1', '/when-died/', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'when_died_rest_api_callback' ),
+		) );
+
+		register_rest_route( 'lwtv/v1', '/when-died/(?P<name>[a-zA-Z0-9-]+)', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'when_died_rest_api_callback' ),
+		) );
+
 	}
 
 	/**
@@ -64,6 +74,16 @@ class LWTV_BYQ_JSON {
 	 * Rest API Callback for On This Day
 	 */
 	public function on_this_day_rest_api_callback( $data ) {
+		$params   = $data->get_params();
+		$name     = ( isset( $params['name'] ) && $params['name'] !== '' )? $params['name'] : 'no-name-help';
+		$response = $this->when_died( $name );
+		return $response;
+	}
+
+	/**
+	 * Rest API Callback for When someone Died
+	 */
+	public function when_died_rest_api_callback( $data ) {
 		$params = $data->get_params();
 		$this_day = ( isset( $params['date'] ) && $params['date'] !== '' )? $params['date'] : 'today';
 		$response = $this->on_this_day( $this_day );
@@ -128,8 +148,6 @@ class LWTV_BYQ_JSON {
 		$dead_chars_loop  = LWTV_Loops::tax_query( 'post_type_characters' , 'lez_cliches', 'slug', 'dead');
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
-		//print_r($dead_chars_loop);
-
 		// Extract the last death
 		$last_death = array_slice($death_list_array, -1, 1, true);
 		$last_death = array_shift($last_death);
@@ -183,9 +201,55 @@ class LWTV_BYQ_JSON {
 		$return = $died_today_array;
 
 		return $return;
-
 	}
 
+	/**
+	 * Generate when a character died
+	 *
+	 * If no name is passed, kick back last death
+	 *
+	 * @return array with character data
+	 */
+	public static function when_died( $name = 'no-name-help' ) {
+		if ( $name == 'no-name-help' ) {
+			$when_died_array[ 'none' ] = self::last_death();
+		} else {
+
+			$args = array(
+				'name'           => $name,
+				'post_type'      => 'post_type_characters',
+				'post_status'    => 'publish',
+				'posts_per_page' => 1
+			);
+			$the_character = get_posts( $args );
+
+			// If we have NO character
+			if( !$the_character ) {
+				//Do a search - check all people with partials matching that
+
+				// Search ALL character titles for the term given
+				// If the term is found, add it to the list
+
+			}
+		}
+
+		foreach ( $the_character as $post ) :
+			setup_postdata( $post );
+				$when_died_array[ get_the_ID() ] = array(
+					'id'   => get_the_ID(),
+					'name' => get_the_title(),
+					'url'  => get_the_permalink(),
+					'died' => get_post_meta( get_the_ID(), 'died', true ),
+				);
+
+		endforeach;
+		wp_reset_postdata();
+
+
+		$return = $when_died_array;
+
+		return $return;
+	}
 
 }
 new LWTV_BYQ_JSON();
