@@ -106,7 +106,7 @@ class LWTV_BYQ_JSON {
 				// Date(s) character died
 				$died_date = get_post_meta( $dead_char->ID, 'lezchars_death_year', true);
 				$died_date_array = array();
-				
+
 				if ( !is_array( $died_date ) ) $died_date = array( $died_date );
 
 				// For each death date, create an item in an array with the unix timestamp
