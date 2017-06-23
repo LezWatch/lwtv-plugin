@@ -100,7 +100,7 @@ class LWTV_CPT_Characters {
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-nametag',
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo', 'revisions' ),
-			'has_archive'         => true,
+			'has_archive'         => 'characters',
 			'rewrite'             => array( 'slug' => 'character' ),
 			'delete_with_user'    => false,
 			'exclude_from_search' => false,

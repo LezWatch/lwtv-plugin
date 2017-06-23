@@ -42,12 +42,6 @@ class LWTVG_Query_Vars {
 			'this-year' => 'thisyear',
 		);
 
-		// Post types that need pluralization
-		$this->lez_plural_types = array( 
-			'characters' => 'post_type_characters', 
-			'shows'      => 'post_type_shows' 
-		);
-
 	}
 
 	/**
@@ -82,21 +76,6 @@ class LWTVG_Query_Vars {
 			        'index.php?pagename='.$slug.'&'.$query.'=$matches[1]&paged=$matches[2]',
 			        'top'
 			    );					
-			}
-			
-			// Pluralization of Characters and shows
-			// Based on $this->lez_plural_types
-			foreach( $this->lez_plural_types as $slug => $type ) {
-				add_rewrite_rule(
-					'^'.$slug.'/?$',
-					'index.php?post_type='.$type,
-					'top'
-				);
-				add_rewrite_rule(
-					'^'.$slug.'/page/([0-9]+)?/?$',
-					'index.php?post_type='.$type.'&paged=$matches[1]',
-					'top'
-				);
 			}
 			
 		} else {
