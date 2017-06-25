@@ -145,7 +145,7 @@ class LWTV_CPT_Shows {
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-video-alt',
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo', 'revisions' ),
-			'has_archive'         => true,
+			'has_archive'         => 'shows',
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,
 
