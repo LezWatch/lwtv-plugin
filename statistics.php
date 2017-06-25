@@ -570,12 +570,12 @@ class LWTV_Stats {
 		}
 
 		// calculate slope
-		$m = (($n * $xy_sum) - ($x_sum * $y_sum)) / (($n * $xx_sum) - ($x_sum * $x_sum));
+		$slope = (($n * $xy_sum) - ($x_sum * $y_sum)) / (($n * $xx_sum) - ($x_sum * $x_sum));
 
 		// calculate intercept
-		$b = ($y_sum - ($m * $x_sum)) / $n;
+		$intercept = ($y_sum - ($slope * $x_sum)) / $n;
 
-		return array("slope"=>$m, "intercept"=>$b);
+		return array("slope"=>$slope, "intercept"=>$intercept);
 	}
 
 	/*
