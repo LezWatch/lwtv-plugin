@@ -24,6 +24,8 @@ class LWTV_BYQ_JSON {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init') );
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+		add_filter( 'posts_search', array( $this, 'search_by_title_only' ), 500, 2 );
 	}
 
 	/**
@@ -74,9 +76,9 @@ class LWTV_BYQ_JSON {
 	 * Rest API Callback for On This Day
 	 */
 	public function on_this_day_rest_api_callback( $data ) {
-		$params   = $data->get_params();
-		$name     = ( isset( $params['name'] ) && $params['name'] !== '' )? $params['name'] : 'no-name-help';
-		$response = $this->when_died( $name );
+		$params = $data->get_params();
+		$this_day = ( isset( $params['date'] ) && $params['date'] !== '' )? $params['date'] : 'today';
+		$response = $this->on_this_day( $this_day );
 		return $response;
 	}
 
@@ -84,9 +86,9 @@ class LWTV_BYQ_JSON {
 	 * Rest API Callback for When someone Died
 	 */
 	public function when_died_rest_api_callback( $data ) {
-		$params = $data->get_params();
-		$this_day = ( isset( $params['date'] ) && $params['date'] !== '' )? $params['date'] : 'today';
-		$response = $this->on_this_day( $this_day );
+		$params   = $data->get_params();
+		$name     = ( isset( $params['name'] ) && $params['name'] !== '' )? $params['name'] : 'no-name';
+		$response = $this->when_died( $name );
 		return $response;
 	}
 
@@ -205,6 +207,37 @@ class LWTV_BYQ_JSON {
 		return $return;
 	}
 
+
+	/**
+	 * Change search to only work by title
+	 *
+	 * @access public
+	 * @param mixed $search
+	 * @param mixed &$wp_query
+	 * @return void
+	 */
+	public static function search_by_title_only( $search, &$wp_query ) {
+		global $wpdb;
+		if ( empty( $search ) )
+			return $search; // skip processing - no search term in query
+
+		$q = $wp_query->query_vars;
+		$n = ! empty( $q['exact'] ) ? '' : '%';
+		$search =
+		$searchand = '';
+		foreach ( (array) $q['search_terms'] as $term ) {
+			$term = esc_sql( like_escape( $term ) );
+			$search .= "{$searchand}($wpdb->posts.post_title LIKE '{$n}{$term}{$n}')";
+			$searchand = ' AND ';
+		}
+		if ( ! empty( $search ) ) {
+			$search = " AND ({$search}) ";
+			if ( ! is_user_logged_in() )
+				$search .= " AND ($wpdb->posts.post_password = '') ";
+		}
+		return $search;
+	}
+
 	/**
 	 * Generate when a character died
 	 *
@@ -213,40 +246,57 @@ class LWTV_BYQ_JSON {
 	 * @return array with character data
 	 */
 	public static function when_died( $name = 'no-name-help' ) {
-		if ( $name == 'no-name-help' ) {
+
+		if ( $name == 'no-name' ) {
 			$when_died_array[ 'none' ] = self::last_death();
 		} else {
 
+			$name = str_replace( '-', ' ', $name);
+
 			$args = array(
-				'name'           => $name,
+				's'              => $name,
 				'post_type'      => 'post_type_characters',
 				'post_status'    => 'publish',
-				'posts_per_page' => 1
+				'posts_per_page' => 100,
 			);
-			$the_character = get_posts( $args );
 
-			// If we have NO character
-			if( !$the_character ) {
-				//Do a search - check all people with partials matching that
+			$the_character = new WP_Query( $args );
 
-				// Search ALL character titles for the term given
-				// If the term is found, add it to the list
+			if ( $the_character->have_posts() ) {
 
+				while ( $the_character->have_posts() ) {
+
+					$the_character->the_post();
+
+					$died = '';
+					if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true) ) {
+						$died = get_post_meta( get_the_ID(), 'lezchars_death_year', true);
+						if ( !is_array ( $died ) ) $died = array( $died );
+						$died = implode(", ", $died );
+					}
+
+					$shows_all = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
+					$shows = '';
+					foreach ( $shows_all as $show ) {
+						$shows .= get_the_title( $show['show'] ) .', ';
+					}
+					$shows = rtrim( $shows , ', ');
+
+					$when_died_array[ get_the_id() ] = array(
+						'id'    => get_the_id(),
+						'name'  => get_the_title(),
+						'shows' => $shows,
+						'url'   => get_the_permalink(),
+						'died'  => $died,
+					);
+
+				}
+				wp_reset_postdata();
+			} else {
+				$when_died_array[ 'none' ] = self::last_death();
 			}
+
 		}
-
-		foreach ( $the_character as $post ) :
-			setup_postdata( $post );
-				$when_died_array[ get_the_ID() ] = array(
-					'id'   => get_the_ID(),
-					'name' => get_the_title(),
-					'url'  => get_the_permalink(),
-					'died' => get_post_meta( get_the_ID(), 'died', true ),
-				);
-
-		endforeach;
-		wp_reset_postdata();
-
 
 		$return = $when_died_array;
 
