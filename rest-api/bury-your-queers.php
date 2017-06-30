@@ -245,14 +245,21 @@ class LWTV_BYQ_JSON {
 	 *
 	 * @return array with character data
 	 */
-	public static function when_died( $name = 'no-name-help' ) {
+	public static function when_died( $name = 'no-name' ) {
+
+		$noname = array(
+			'id'    => 0,
+			'name'  => 'No Name',
+			'shows' => 'None',
+			'url'   => 'None',
+			'died'  => 'None',
+		);
+
+		$name = str_replace( '-', ' ', $name);
 
 		if ( $name == 'no-name' ) {
-			$when_died_array[ 'none' ] = self::last_death();
+			$when_died_array[ 'none' ] = $noname;
 		} else {
-
-			$name = str_replace( '-', ' ', $name);
-
 			$args = array(
 				's'              => $name,
 				'post_type'      => 'post_type_characters',
@@ -268,7 +275,7 @@ class LWTV_BYQ_JSON {
 
 					$the_character->the_post();
 
-					$died = '';
+					$died = 'alive';
 					if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true) ) {
 						$died = get_post_meta( get_the_ID(), 'lezchars_death_year', true);
 						if ( !is_array ( $died ) ) $died = array( $died );
@@ -282,7 +289,7 @@ class LWTV_BYQ_JSON {
 					}
 					$shows = rtrim( $shows , ', ');
 
-					$when_died_array[ get_the_id() ] = array(
+					$when_died_array[ get_post_field( 'post_name' ) ] = array(
 						'id'    => get_the_id(),
 						'name'  => get_the_title(),
 						'shows' => $shows,
@@ -293,9 +300,13 @@ class LWTV_BYQ_JSON {
 				}
 				wp_reset_postdata();
 			} else {
-				$when_died_array[ 'none' ] = self::last_death();
+				$when_died_array[ 'none' ] = $noname;
 			}
+		}
 
+		// If there was an exact match, use that one
+		if( array_key_exists( $name, $when_died_array ) ) {
+			$when_died_array = $when_died_array[ $name ];
 		}
 
 		$return = $when_died_array;
