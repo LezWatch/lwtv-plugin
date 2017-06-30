@@ -24,7 +24,6 @@ class LWTV_BYQ_JSON {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init') );
-		add_filter( 'posts_search', array( $this, 'search_by_title_only' ), 500, 2 );
 	}
 
 	/**
@@ -246,7 +245,31 @@ class LWTV_BYQ_JSON {
 	 */
 	public static function when_died( $name = 'no-name' ) {
 
+		// Remove <!--fwp-loop--> from output
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+
+		// Force to search ONLY by title
+		add_filter( 'posts_search', function( $search, &$wp_query ) {
+			global $wpdb;
+			if ( empty( $search ) )
+				return $search; // skip processing - no search term in query
+
+			$q = $wp_query->query_vars;
+			$n = ! empty( $q['exact'] ) ? '' : '%';
+			$search =
+			$searchand = '';
+			foreach ( (array) $q['search_terms'] as $term ) {
+				$term = esc_sql( like_escape( $term ) );
+				$search .= "{$searchand}($wpdb->posts.post_title LIKE '{$n}{$term}{$n}')";
+				$searchand = ' AND ';
+			}
+			if ( ! empty( $search ) ) {
+				$search = " AND ({$search}) ";
+				if ( ! is_user_logged_in() )
+					$search .= " AND ($wpdb->posts.post_password = '') ";
+			}
+			return $search;
+		} , 500, 2 );
 
 		$noname = array(
 			'id'    => 0,
