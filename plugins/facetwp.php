@@ -43,7 +43,7 @@ class LWTV_FacetWP {
 
 		// Don't output <!--fwp-loop--> on admin pages
 		if ( is_admin() ) {
-			add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+			//add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 		}
 
 	}
