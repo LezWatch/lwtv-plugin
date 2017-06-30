@@ -24,7 +24,6 @@ class LWTV_BYQ_JSON {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init') );
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 		add_filter( 'posts_search', array( $this, 'search_by_title_only' ), 500, 2 );
 	}
 
@@ -246,6 +245,8 @@ class LWTV_BYQ_JSON {
 	 * @return array with character data
 	 */
 	public static function when_died( $name = 'no-name' ) {
+
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 		$noname = array(
 			'id'    => 0,
