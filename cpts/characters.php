@@ -329,8 +329,12 @@ class LWTV_CPT_Characters {
 
 		if ( $character_show_IDs !== '' ) {
 			foreach ( $character_show_IDs as $each_show ) {
-				array_push( $show_title, get_the_title( $each_show['show'] ) );
-				array_push( $role_array, ucfirst( $each_show['type'] ) );
+
+				$show = get_the_title( $each_show[ 'show' ] );
+				$role = ( isset( $each_show[ 'type' ] )? ucfirst( $each_show[ 'type' ] ) : 'ERROR' );
+
+				array_push( $show_title, $show );
+				array_push( $role_array, $role );
 			}
 		}
 
