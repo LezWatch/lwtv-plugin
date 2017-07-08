@@ -163,7 +163,7 @@ class LWTV_CPT_Shows {
 			'trope'      => 'tropes',
 			'format'     => 'formats',
 			'genre'      => 'genres',
-			'country'    => 'country',
+			'nation'    => 'country',
 		);
 
 		foreach ( $taxonomies as $pretty => $slug ) {
