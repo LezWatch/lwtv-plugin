@@ -163,6 +163,7 @@ class LWTV_CPT_Shows {
 			'trope'      => 'tropes',
 			'format'     => 'formats',
 			'genre'      => 'genres',
+			'country'    => 'country',
 		);
 
 		foreach ( $taxonomies as $pretty => $slug ) {
@@ -436,6 +437,19 @@ class LWTV_CPT_Shows {
 				'start_reverse_sort' => true,
 				'finish_reverse_sort' => true,
 		    ),
+		) );
+		// Field: Number of Seasons
+		$field_seasons = $cmb_notes->add_field( array(
+			'name'     => 'Seasons',
+			'desc'     => 'Number of seasons aired',
+			'id'       => $prefix . 'seasons',
+			'type' => 'text',
+			'attributes' => array(
+				'type' => 'number',
+				'pattern' => '\d*',
+			),
+			'sanitization_cb' => 'absint',
+			'escape_cb'       => 'absint',
 		) );
 		// Field: Show Format
 		$field_format = $cmb_notes->add_field( array(
