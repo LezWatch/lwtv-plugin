@@ -69,7 +69,7 @@ class LWTV_FacetWP {
 		// Capitalize
 		if ( 'show_trigger_warning' == $params['facet_name'] ) {
 			$params['facet_value'] = $params['facet_value'];
-			$params['facet_display_value'] = "Yes";
+			$params['facet_display_value'] = ucfirst( $params['facet_display_value'] );
 			$class->insert( $params );
 			return false; // skip default indexing
 	    }

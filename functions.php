@@ -7,6 +7,8 @@
  Author: Mika Epstein
 */
 
+define( 'LWTV_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+
 /**
  * class LWTV_Functions
  *

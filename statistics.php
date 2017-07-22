@@ -34,7 +34,6 @@ class LWTV_Stats {
 		wp_enqueue_script( 'chart.js', plugin_dir_url( __FILE__ ) .'/js/Chart.bundle.min.js' , array( 'jquery' ) );
 	}
 
-
 	/*
 	 * Generate: Statistics Base Code
 	 *
@@ -46,7 +45,7 @@ class LWTV_Stats {
 	 */
 	static function generate( $subject, $data, $format ) {
 		// Bail early if we're not an approved subject matter
-		if ( !in_array( $subject, array('characters', 'shows') ) ) exit;
+		if ( !in_array( $subject, array( 'characters', 'shows' ) ) ) exit;
 
 		// Build Variables
 		$array     = array();
@@ -80,12 +79,15 @@ class LWTV_Stats {
 		}
 
 		if ( $data == 'trigger' ) {
-			$meta_array = array( 'on', 'off' );
+			$meta_array = array( 'on', 'high', 'med', 'low', 'no', 'off' );
 			$array = self::meta_array( $post_type, $meta_array, 'lezshows_triggerwarning', $data );
-			$array['yes'] = array( 'count' => $array['on']['count'], 'name' => 'Trigger Warning', 'url' => '' );
-			$array['no'] = array( 'count' => ( $count - $array['on']['count'] ), 'name' => 'No Warning', 'url' => '' );
-			unset($array['on']);
-			unset($array['off']);
+			$nowarning = $count - $array['on']['count'] - $array['med']['count'] - $array['low']['count'];
+			$array['high'] = array( 'count' => $array['on']['count'], 'name' => 'Warning', 'url' => '' );
+			$array['med']  = array( 'count' => $array['med']['count'], 'name' => 'Caution', 'url' => '' );
+			$array['low']  = array( 'count' => $array['low']['count'], 'name' => 'Notice', 'url' => '' );
+			$array['no']   = array( 'count' => ( $nowarning ), 'name' => 'No Warning', 'url' => '' );
+			unset( $array['on'] );
+			unset( $array['off'] );
 		}
 
 		if ( $data == 'current' ) {
@@ -117,6 +119,7 @@ class LWTV_Stats {
 		}
 		if ( $data == 'dead-sex' )    $array = self::tax_dead_array( $post_type, 'lez_sexuality' );
 		if ( $data == 'dead-gender' ) $array = self::tax_dead_array( $post_type, 'lez_gender' );
+		if ( $data == 'dead-role' )   $array = self::dead_role();
 		if ( $data == 'dead-shows' )  $array = self::dead_shows( 'simple' );
 		if ( $data == 'dead-years' )  $array = self::death_year();
 
@@ -187,6 +190,43 @@ class LWTV_Stats {
 	}
 
 	/*
+	 * Statistics Array for DEAD by ROLE
+	 *
+	 * Generate array to parse content for death by character role
+	 *
+	 * @param string $post_type Post Type to be searched
+	 * @param string $taxonomy Taxonomy to be searched
+	 *
+	 * @return array
+	 */
+	static function dead_role() {
+		$array = array();
+		$all_the_dead = LWTV_Loops::tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead');
+		$by_role = array( 'regular' => 0, 'guest' => 0, 'recurring' => 0 );
+		$alldead = 0;
+		
+		if ( $all_the_dead->have_posts() ) {
+
+			foreach ( $all_the_dead->posts as $dead ) {
+				$all_shows = get_post_meta( $dead->ID, 'lezchars_show_group', true );
+				foreach ( $all_shows as $each_show ) {
+					if ( $each_show['type'] == 'regular' )   $by_role['regular']++;
+					if ( $each_show['type'] == 'guest' )     $by_role['guest']++;
+					if ( $each_show['type'] == 'recurring' ) $by_role['recurring']++;
+				}
+			}
+		}
+		
+		$array = array (
+			'regular' => array( 'count' => $by_role['regular'], 'name'  => 'Regular', 'url' => site_url( '/role/regular/' ) ),
+			'guest'   => array( 'count' => $by_role['guest'], 'name'  => 'Guest', 'url' => site_url( '/role/guest/' ) ),
+			'recurring' => array( 'count' => $by_role['recurring'], 'name'  => 'Recurring', 'url' => site_url( '/role/recurring/' ) ),
+		);
+			
+		return $array;
+	}
+
+	/*
 	 * Statistics Meta and Taxonomy Array
 	 *
 	 * Generate array to parse taxonomy content as it relates to post metas
@@ -207,7 +247,7 @@ class LWTV_Stats {
 			$array[$value] = array(
 				'count' => $query->post_count,
 				'name'  => ucfirst($value),
-				'url' => site_url( '/role/'.$value ),
+				'url' => site_url( '/cliche/'.$value ),
 			);
 		}
 		return $array;
@@ -377,13 +417,12 @@ class LWTV_Stats {
 		return $array;
 	}
 
-	static function show_roles() {
+	static function show_roles( $type = 'dead' ) {
 		// List of shows
 		$all_shows_query = LWTV_Loops::post_type_query( 'post_type_shows' );
 
-		$show_guestonly_array = array();
-		$show_recurringonly_array = array();
-		$show_mainonly_array = array();
+		$guest_alive_array = $recurring_alive_array = $main_alive_array = array();
+		$guest_dead_array = $recurring_dead_array = $main_dead_array = array();
 
 		if ($all_shows_query->have_posts() ) {
 
@@ -396,55 +435,99 @@ class LWTV_Stats {
 
 				$role_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
-				if ($role_loop->have_posts() ) {
+				if ( $role_loop->have_posts() ) {
 
-					$guestbiancount = 0;
-					$maincharcount  = 0;
-					$recurringcharcount = 0;
+					$guest = $regular = $recurring = array( 'alive' => 0, 'dead' => 0 );
 
 					$char_id = get_the_id();
 					$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
-
+					
 					if ( $shows_array !== '' ) {
+						
 						foreach( $shows_array as $each_show ) {
-							if ( $char_show['type'] == 'guest' )     $guestbiancount++;
-							if ( $char_show['type'] == 'regular' )   $maincharcount++;
-							if ( $char_show['type'] == 'recurring' ) $recurringcharcount++;
+							if ( $char_show['type'] == 'guest' ) {
+								$guest['alive']++;
+								if ( has_term( 'dead', 'lez_cliches', $char_id ) ) $guest['dead']++;
+							}
+							if ( $char_show['type'] == 'regular' ) {
+								$regular['alive']++;
+								if ( has_term( 'dead', 'lez_cliches', $char_id ) ) $regular['dead']++;
+							}
+							if ( $char_show['type'] == 'recurring' ) {
+								$recurring['alive']++;
+								if ( has_term( 'dead', 'lez_cliches', $char_id ) ) $recurring['dead']++;
+							}
 						}
 					}
+					
+					print_r( $guest );
 
-					if ( $maincharcount == '0' && $recurringcharcount != '0' && $guestbiancount == '0' ) {
-						$show_recurringonly_array[$show_name] = array(
+					// Make Alive Query
+					if ( $regular['alive'] == '0' && $recurring['alive'] != '0' && $guest['alive'] == '0' ) {
+						$recurring_alive_array[$show_name] = array(
 							'url'    => get_permalink( $show_id ),
 							'name'   => get_the_title( $show_id ),
 							'status' => get_post_status( $show_id ),
 						);
 					}
-					if ( $maincharcount == '0' && $recurringcharcount == '0' && $guestbiancount != '0' ) {
-						$show_guestonly_array[$show_name] = array(
+					if ( $regular['alive'] == '0' && $recurring['alive'] == '0' && $guest['alive'] != '0' ) {
+						$guest_alive_array[$show_name] = array(
 							'url'    => get_permalink( $show_id ),
 							'name'   => get_the_title( $show_id ),
 							'status' => get_post_status( $show_id ),
 						);
 					}
-					if ( $maincharcount !== '0' && $guestbiancount == '0' && $recurringcharcount == '0' ) {
-						$show_mainonly_array[$show_name] = array(
+					if ( $regular['alive'] !== '0' && $guest['alive'] == '0' && $recurring['alive'] == '0' ) {
+						$main_alive_array[$show_name] = array(
 							'url'    => get_permalink( $show_id ),
 							'name'   => get_the_title( $show_id ),
 							'status' => get_post_status( $show_id ),
 						);
 					}
+
+					// Make Dead Data
+					if ( $regular['dead'] == '0' && $recurring['dead'] != '0' && $guest['dead'] == '0' ) {
+						$recurring_dead_array[$show_name] = array(
+							'url'    => get_permalink( $show_id ),
+							'name'   => get_the_title( $show_id ),
+							'status' => get_post_status( $show_id ),
+						);
+					}
+					if ( $regular['dead'] == '0' && $recurring['dead'] == '0' && $guest['dead'] != '0' ) {
+						$guest_dead_array[$show_name] = array(
+							'url'    => get_permalink( $show_id ),
+							'name'   => get_the_title( $show_id ),
+							'status' => get_post_status( $show_id ),
+						);
+					}
+					if ( $regular['dead'] !== '0' && $guest['dead'] == '0' && $recurring['dead'] == '0' ) {
+						$main_dead_array[$show_name] = array(
+							'url'    => get_permalink( $show_id ),
+							'name'   => get_the_title( $show_id ),
+							'status' => get_post_status( $show_id ),
+						);
+					}
+
 					wp_reset_query();
 				}
 			}
 			wp_reset_query();
 		}
 
-		$array = array (
-			"guest"  => array( 'name' => 'Only Guests',  'count' => count( $show_guestonly_array ), 'url' => site_url( '/role/guest/' ) ),
-			"main" => array( 'name' => 'Only Main', 'count' => count( $show_mainonly_array ), 'url' => site_url( '/role/regular/' ) ),
-			"recurring" => array( 'name' => 'Only Recurring', 'count' => count( $show_recurringonly_array ), 'url' => site_url( '/role/recurring/' ) ),
+		$alive_array = array (
+			"guest"  => array( 'name' => 'Only Guests',  'count' => count( $guest_alive_array ), 'url' => site_url( '/role/guest/' ) ),
+			"main" => array( 'name' => 'Only Main', 'count' => count( $main_alive_array ), 'url' => site_url( '/role/regular/' ) ),
+			"recurring" => array( 'name' => 'Only Recurring', 'count' => count( $recurring_alive_array ), 'url' => site_url( '/role/recurring/' ) ),
 		);
+
+		$dead_array = array (
+			"guest"  => array( 'name' => 'Only Guests',  'count' => $guest['dead'], 'url' => site_url( '/role/guest/' ) ),
+			"main" => array( 'name' => 'Only Main', 'count' => $regular['dead'], 'url' => site_url( '/role/regular/' ) ),
+			"recurring" => array( 'name' => 'Only Recurring', 'count' => $recurring['dead'], 'url' => site_url( '/role/recurring/' ) ),
+		);
+		
+		$array = $alive_array;
+		if ( $type == 'dead' ) $array = $dead_array;
 
 		return $array;
 	}
@@ -820,3 +903,295 @@ class LWTV_Stats {
 }
 
 new LWTV_Stats();
+
+
+/**
+ * LWTV_Stats_Display class.
+ */
+class LWTV_Stats_Display {
+
+	public static $iconpath, $intro;
+
+	/*
+	 * Construct
+	 *
+	 * Actions to happen immediately
+	 */
+    public function __construct() {
+	    // N/A
+	}
+	
+	public static function iconpath( $type = 'main' ) {
+
+		if ( $type == 'main' )       $return = LP_SYMBOLICONS_PATH.'/svg/bar_graph.svg';
+		if ( $type == 'death' )      $return = LP_SYMBOLICONS_PATH.'/svg/rip_gravestone.svg';
+		if ( $type == 'characters' ) $return = LP_SYMBOLICONS_PATH.'/svg/users.svg';
+		if ( $type == 'shows' )      $return = LP_SYMBOLICONS_PATH.'/svg/tv_retro.svg';
+		if ( $type == 'lists' )      $return = LP_SYMBOLICONS_PATH.'/svg/bar_graph_alt.svg';
+		if ( $type == 'trends' )     $return = LP_SYMBOLICONS_PATH.'/svg/line_graph.svg';
+		
+		return $return;
+    }
+
+	public static function title( $type = 'main' ) {
+
+		if ( $type == 'main' )       $return = 'Statistics of Queer Females on TV';
+		if ( $type == 'death' )      $return = 'Statistics on Queer Female Deaths';
+		if ( $type == 'characters' ) $return = 'Statistics on Queer Female Characters';
+		if ( $type == 'shows' )      $return = 'Statistics on Shows With Queer Females';
+		if ( $type == 'lists' )      $return = 'Statistics in the form of Lists';
+		if ( $type == 'trends' )     $return = 'Statistics in the form of Trendlines';
+		
+		return $return;
+    }
+    
+	public static function intro( $type = 'main' ) {
+		if ( $type == 'main' )       $return = '';
+		if ( $type == 'death' )      $return = 'For a pure list of all dead, we have <a href="https://lezwatchtv.com/trope/dead-queers/">shows where characters died</a> as well as <a href="https://lezwatchtv.com/cliche/dead/">characters who have died</a> (aka the <a href="https://lezwatchtv.com/cliche/dead/">Dead Lesbians</a> list).';
+		if ( $type == 'characters' ) $return = 'Statistics specific to characters (sexuality, gender IDs, role types, etc).';
+		if ( $type == 'shows' )      $return = 'Statistics specific to shows.';
+		if ( $type == 'lists' )      $return = 'Raw statistics.';
+		if ( $type == 'trends' )     $return = 'Trendlines and predictions.';
+		
+		return $return;
+    }
+
+	public static function display( $type = 'main' ) {
+	
+		if ( $type == 'main' ) {
+			?>
+			<hr>
+	
+			<div id="statistics">
+				<ul>
+					<li><strong><a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?>)</li>
+					<li><strong><a href="/shows/">Total Shows</a></strong> (<?php echo LWTV_Stats::generate( 'shows', 'total', 'count' ); ?>)</li>
+				</ul>
+			</div>
+			
+			<hr>
+	
+			<div id="statistics">
+				<?php
+					LWTV_Stats::generate( 'characters', 'cliches', 'barchart' );
+					LWTV_Stats::generate( 'shows', 'tropes', 'barchart' );
+				?>
+			</div>
+	
+			<hr>
+	
+			<div id="statistics">
+				<?php
+					LWTV_Stats::generate( 'characters', 'cliches', 'list' );
+					LWTV_Stats::generate( 'shows', 'tropes', 'list' );
+				?>
+			</div>
+			<?php
+		}
+	
+		if ( $type == 'characters' ) {
+			?>
+			<h2><a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?>)</h2>
+	
+			<center><a href="#charts">Charts</a> // <a href="#percentages">Percentages</a></center>
+	
+			<div id="statistics">
+				<h2><a name="charts">Charts</a></h2>
+	
+				<div id="container" class="one-half">
+					<h3>Sexuality</h3>
+					<?php LWTV_Stats::generate( 'characters', 'sexuality', 'piechart' ); ?>
+				</div>
+	
+				<div id="container" class="one-half">
+					<h3>Gender Identity</h3>
+					<?php LWTV_Stats::generate( 'characters', 'gender', 'piechart' ); ?>
+				</div>
+	
+				<div id="container" class="one-half">
+					<h3>Queer IRL</h3>
+					<?php LWTV_Stats::generate( 'characters', 'queer-irl', 'piechart' ); ?>
+				</div>
+	
+				<div id="container" class="one-half">
+					<h3>By Role</h3>
+					<?php LWTV_Stats::generate( 'characters', 'role', 'piechart' ); ?>
+				</div>
+			</div>
+	
+			<hr>
+	
+			<div id="statistics">
+				<h2><a name="percentages">Percentages</a></h2>
+	
+					<h3>Sexual Identity</h3>
+					<?php LWTV_Stats::generate( 'characters', 'sexuality', 'percentage' ); ?>
+	
+					<h3>Gender Identity</h3>
+					<?php LWTV_Stats::generate( 'characters', 'gender', 'percentage' ); ?>
+	
+					<h3>Roles</h3>
+					<?php LWTV_Stats::generate( 'characters', 'role', 'percentage' ); ?>
+	
+					<h3>Queer IRL</h3>
+					<?php LWTV_Stats::generate( 'characters', 'queer-irl', 'percentage' ); ?>
+			</div>
+			<?php
+		}
+	
+		if ( $type == 'death' ) {
+			?>
+			<h2>Totals of Death</h2>
+	
+			<div id="statistics">
+				<?php
+					$deadchars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
+					$allchars  = LWTV_Stats::generate( 'characters', 'all', 'count' );
+					$deadshows = LWTV_Stats::generate( 'shows', 'dead', 'count' );
+					$allshows  = LWTV_Stats::generate( 'shows', 'all', 'count' );
+	
+					$deadchar_percent = round( ( $deadchars / $allchars ) * 100 , 2 ) ;
+					$deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
+				?>
+	
+				<ul>
+					<li><a href="/cliche/dead/">Dead Characters</a> — <?php echo $deadchar_percent; ?>% (<?php echo $deadchars; ?> characters)</li>
+					<li><a href="/trope/dead-queers/">Shows with Dead</a> — <?php echo $deadshow_percent; ?>% (<?php echo $deadshows; ?> shows)</li>
+			</div>
+	
+			<center><a href="#charts">Charts</a> // <a href="#percentages">Percentages</a></center>
+	
+			<div id="pies">
+				<h2><a name="charts">Charts</a></h2>
+	
+				<div id="container" class="one-half">
+					<h3>Shows With Dead</h3>
+					<?php LWTV_Stats::generate( 'characters', 'dead-shows', 'piechart' ); ?>
+				</div>
+	
+				<div id="container" class="one-half">
+					<h3>Character Sexuality</h3>
+					<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'piechart' ); ?>
+				</div>
+	
+				<div id="container" class="one-half">
+					<h3>Character Gender Identity</h3>
+					<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'piechart' ); ?>
+				</div>
+	
+				<div id="container" class="one-half">
+					<h3>Character Role</h3>
+					<?php LWTV_Stats::generate( 'characters', 'dead-role', 'piechart' ); ?>
+				</div>
+			</div>
+	
+			<hr>
+	
+			<p>On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
+	
+			<div id="bars">
+				<?php LWTV_Stats::generate( 'characters', 'dead-years', 'barchart' ); ?>
+			</div>
+	
+			<div id="statistics">
+				<h3>Deaths by Year</h3>
+				<?php LWTV_Stats::generate( 'characters', 'dead-years', 'percentage' ); ?>
+			</div>
+	
+			<hr>
+	
+			<div id="statistics">
+				<h2><a name="percentages">Percentages</a></h2>
+	
+				<p>Percentages are of <em>all</em> queers and shows, not just the dead.</p>
+	
+				<h3>Shows</h3>
+				<?php LWTV_Stats::generate( 'shows', 'dead-shows', 'percentage' ); ?>
+	
+				<h3>Sexual Orientation</h3>
+				<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'percentage' ); ?>
+	
+				<h3>Gender Identity</h3>
+				<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'percentage' ); ?>
+	
+				<h3>Character Role</h3>
+				<?php LWTV_Stats::generate( 'characters', 'dead-role', 'percentage' ); ?>
+	
+			</div>
+	
+			<?php
+		}
+	
+		if ( $type == 'shows' ) {
+			?>
+			<h2><a href="/shows/">Total Shows</a></strong> (<?php echo LWTV_Stats::generate( 'shows', 'total', 'count' ); ?>)</h2>
+	
+			<center><a href="#charts">Charts</a> // <a href="#percentages">Percentages</a></center>
+	
+			<div id="pies">
+				<h2><a name="charts">Charts</a></h2>
+	
+				<div id="container" class="one-half">
+					<h3>Worth It?</h3>
+					<?php LWTV_Stats::generate( 'shows', 'thumbs', 'piechart' ); ?>
+				</div>
+	
+				<div id="container" class="one-half">
+					<h3>Stars</h3>
+					<?php LWTV_Stats::generate( 'shows', 'stars', 'piechart' ); ?>
+				</div>
+	
+				<div id="container" class="one-half">
+					<h3>Show Format</h3>
+					<?php LWTV_Stats::generate( 'shows', 'formats', 'piechart' ); ?>
+				</div>
+	
+				<div id="container" class="one-half">
+					<h3>Trigger Warnings</h3>
+					<?php LWTV_Stats::generate( 'shows', 'trigger', 'piechart' ); ?>
+				</div>
+	
+				<div id="container" class="one-half">
+					<h3>Currently Airing</h3>
+					<?php LWTV_Stats::generate( 'shows', 'current', 'piechart' ); ?>
+				</div>
+			</div>
+	
+			<hr>
+	
+			<div id="statistics">
+				<h2><a name="percentages">Percentages</a></h2>
+	
+				<h3>Worth It Scores</h3>
+				<?php LWTV_Stats::generate( 'shows', 'thumbs', 'percentage' ); ?>
+	
+				<h3>Stars Rankings</h3>
+				<?php LWTV_Stats::generate( 'shows', 'stars', 'percentage' ); ?>
+	
+				<h3>Stars Rankings</h3>
+				<?php LWTV_Stats::generate( 'shows', 'formats', 'percentage' ); ?>
+	
+				<h3>Trigger Warnings</h3>
+				<?php LWTV_Stats::generate( 'shows', 'trigger', 'percentage' ); ?>
+	
+				<h3>Currently Airing</h3>
+				<?php LWTV_Stats::generate( 'shows', 'current', 'percentage' ); ?>
+	
+			</div>
+	
+		<?php
+		}
+		if ( $type == 'trends' ) {
+			?>
+			<h2><a name="deathperyear">Death Per Year</a></h2>
+	
+			<div id="statistics">
+				<?php LWTV_Stats::generate( 'characters', 'dead-years', 'trendline' ); ?>
+			</div>
+			<?php
+		}
+	
+	}
+}
+
+new LWTV_Stats_Display();

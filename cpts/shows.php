@@ -493,7 +493,11 @@ class LWTV_CPT_Shows {
 			'id'               => $prefix . 'triggerwarning',
 			'type'             => 'select',
 			'show_option_none' => 'No',
-			'options'          => array( 'on' => 'Yes' )
+			'options'          => array( 
+				'on'  => 'High',
+				'med' => 'Medium',
+				'low' => 'Low'
+			)
 		) );
 		// Additional Data Grid
 		if( !is_admin() ){
@@ -723,6 +727,10 @@ SQL;
 			$number_dead = $this->count_queers( $post_id, 'dead' );
 			update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
 
+		// Count 'no cliche' characters
+			$number_none = $this->count_queers( $post_id, 'none' );
+			update_post_meta( $post_id, 'lezshows_none_count', $number_none );
+
 		// Calculate percentage alive
 			if ( $number_chars == 0 || $number_dead == 0 ) {
 				$percent_alive = 1;
@@ -731,12 +739,20 @@ SQL;
 			}
 			update_post_meta( $post_id, 'lezshows_score_chars', $percent_alive );
 
+		// Calculate percentage of cliche free characters
+			if ( $number_chars == 0 || $number_none == 0 ) {
+				$percent_none = 0;
+			} else {
+				$percent_none = ( $number_none / $number_chars );
+			}
+			update_post_meta( $post_id, 'lezshows_score_chars', $percent_alive );
+		
 		// Calculate percentage of value for show
 			$percent_rating = $this->score_show_ratings( $post_id );
 			update_post_meta( $post_id, 'lezshows_score_ratings', $percent_rating );
 
 		// Calculate the full score
-			$percent_the_score = ( $percent_rating + $percent_alive ) / 2;
+			$percent_the_score = ( $percent_rating + $percent_alive + $percent_none ) / 3;
 			update_post_meta( $post_id, 'lezshows_the_score', $percent_the_score );
 
 		// re-hook this function
@@ -753,7 +769,6 @@ SQL;
 	public function update_show_meta_from_chars( $post_id ) {
 
 		$character_show_IDs = get_post_meta( $post_id, 'lezchars_show_group', true );
-		$show_title = array();
 
 		if ( $character_show_IDs !== '' ) {
 			foreach ( $character_show_IDs as $each_show ) {
@@ -761,7 +776,6 @@ SQL;
 			}
 		}
 	}
-
 
 	/**
 	 * Calculate show rating.
@@ -802,20 +816,28 @@ SQL;
 				$this_show = $this_show + 1.5;
 				break;
 			case "anti":
-				$this_show = $this_show -5;
+				$this_show = $this_show - 5;
 				break;
 			default:
 				$this_show = $this_show;
 		}
 
-		// Trigger Warning = -5
-		$trigger = 0;
-		if ( get_post_meta( $post_id, 'lezshows_triggerwarning', true ) == 'on' ) {
-			$this_show = $this_show - 5;
+		// Trigger Warning = -5, -3, -1
+		switch ( get_post_meta( $post_id, 'lezshows_triggerwarning', true ) ) {
+			case "on":
+				$this_show = $this_show - 5;
+				break;
+			case "med":
+				$this_show = $this_show - 3;
+				break;
+			case "low":
+				$this_show = $this_show - 1;
+				break;
+			default:
+				$this_show = $this_show;
 		}
 
 		// No Tropes = +5
-		$tropes = 0;
 		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
 			$this_show = $this_show + 5;
 		}
@@ -826,7 +848,6 @@ SQL;
 		$score = ( $this_show / $max_score );
 
 		return $score;
-
 	}
 
 	/*
@@ -844,8 +865,7 @@ SQL;
 
 		// Loop to get the list of characters
 		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
-		$queercount = 0;
-		$deadcount  = 0;
+		$queercount = $deadcount = $nonecount = 0;
 
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
 		if ($charactersloop->have_posts() ) {
@@ -855,12 +875,14 @@ SQL;
 				$char_id     = get_the_ID();
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
 				$is_dead     = has_term( 'dead', 'lez_cliches', $char_id);
+				$is_none     = has_term( 'none', 'lez_cliches', $char_id);
 
 				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
 					foreach( $shows_array as $char_show ) {
 						if ( $char_show['show'] == $post_id ) {
 							$queercount++;
 							if ( $is_dead == true ) $deadcount++;
+							if ( $is_none == true ) $nonecount++;
 						}
 					}
 				}
@@ -871,6 +893,7 @@ SQL;
 		// Return Queers!
 		if ( $type == 'count' ) return $queercount;
 		if ( $type == 'dead' ) return $deadcount;
+		if ( $type == 'none' ) return $nonecount;
 	}
 
 	/*
@@ -933,6 +956,38 @@ SQL;
 				<?php
 
 				break;
+		}
+	}
+
+	/**
+	 * Echo content warning if needed.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public static function echo_content_warning( $type = 'full' ) {
+		switch ( get_post_meta( get_the_ID(), 'lezshows_triggerwarning', true ) ) {
+			case "on":
+				$warning = '<strong>WARNING!</strong> This show contains scenes of explicit violence, drug use, suicide, sex, and/or abuse.';
+				break;
+			case "med":
+				$warning = '<strong>CAUTION!</strong> This show regularly discusses and sometimes depicts "strong content" like violence and abuse.';
+				break;
+			case "low":
+				$warning = '<strong>NOTICE!</strong> While generally acceptable for the over 14 crowd, this show may hit some sensitive topics now and then.';
+				break;
+			default:
+				$warning = 'none';
+		}
+		
+		$hand_image = '';
+		if ( $type !== 'amp' ) {
+			$hand_image = '<span role="img" aria-label="Warning Hand" title="Warning Hand">' . file_get_contents( LP_SYMBOLICONS_PATH . '/svg/hand.svg').'</span>';
+		}
+	
+		if ( $warning !== 'none' ) {
+			echo '<div class="callout callout-trigger-' . get_post_meta( get_the_ID(), 'lezshows_triggerwarning', true ) . '">' . $hand_image . '<p>' . $warning . ' If those aren\'t your speed, neither is this show.
+			</p></div>';
 		}
 	}
 
