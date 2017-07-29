@@ -993,29 +993,37 @@ SQL;
 }
 new LWTV_CPT_Shows();
 
-add_filter( 'posts_orderby', function( $orderby, \WP_Query $q ) {
-    if( 'post_type_shows' !== $q->get( 'post_type' ) )
-        return $orderby;
+/**
+ * Filter post order by for shows
+ *
+ * We want to NOT include the/an/a when sorting.
+ *
+ */
+if ( is_archive() && !is_front_page() ) {
+	add_filter( 'posts_orderby', function( $orderby, \WP_Query $q ) {
+	    if( 'post_type_shows' !== $q->get( 'post_type' ) )
+	        return $orderby;
 
-    global $wpdb;
+	    global $wpdb;
 
-    // Adjust this to your needs:
-    $matches = [ 'the ', 'an ', 'a ' ];
+	    // Adjust this to your needs:
+	    $matches = [ 'the ', 'an ', 'a ' ];
 
-    return sprintf(
-        " %s %s ",
-        lwtv_shows_posts_orderby_sql( $matches, " LOWER( {$wpdb->posts}.post_title) " ),
-        'ASC' === strtoupper( $q->get( 'order' ) ) ? 'ASC' : 'DESC'
-    );
+	    return sprintf(
+	        " %s %s ",
+	        lwtv_shows_posts_orderby_sql( $matches, " LOWER( {$wpdb->posts}.post_title) " ),
+	        'ASC' === strtoupper( $q->get( 'order' ) ) ? 'ASC' : 'DESC'
+	    );
 
-}, 10, 2 );
+	}, 10, 2 );
 
-function lwtv_shows_posts_orderby_sql( &$matches, $sql )
-{
-    if( empty( $matches ) || ! is_array( $matches ) )
-        return $sql;
+	function lwtv_shows_posts_orderby_sql( &$matches, $sql )
+	{
+	    if( empty( $matches ) || ! is_array( $matches ) )
+	        return $sql;
 
-    $sql = sprintf( " TRIM( LEADING '%s' FROM ( %s ) ) ", $matches[0], $sql );
-    array_shift( $matches );
-    return lwtv_shows_posts_orderby_sql( $matches, $sql );
+	    $sql = sprintf( " TRIM( LEADING '%s' FROM ( %s ) ) ", $matches[0], $sql );
+	    array_shift( $matches );
+	    return lwtv_shows_posts_orderby_sql( $matches, $sql );
+	}
 }

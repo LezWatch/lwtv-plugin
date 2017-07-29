@@ -7,6 +7,23 @@
  Author: Mika Epstein
 */
 
+// First make sure this only runs on the right sites
+$site_url    = parse_url( get_site_url() );
+$valid_sites = array( 'lezwatchtv.com', 'tv.lezpress.local', 'dev.lezwatchtv.com', 'devlez.local', 'lezwatchtv.dev', 'lezwatchtv.local' );
+
+function lwtv_plugin_deactivation() {
+	global $valid_sites;
+    echo '<div id="message" class="error"><p>';
+    echo 'This plugin can only be run on LezWatch TV. You\'re using <strong>' . get_site_url() . '</strong>. If you\'re trying to run this on a local site, tell Mika your URL or use one of these: ' . implode( ", ", $valid_sites ) .'.';
+    echo '</p></div>';
+}
+
+if ( !in_array( $site_url['host'], $valid_sites ) ) {
+	deactivate_plugins( plugin_basename( __FILE__ ) );
+	add_action( 'admin_notices', 'lwtv_plugin_deactivation' );
+    return;
+}
+
 define( 'LWTV_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 /**
