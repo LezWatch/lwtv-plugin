@@ -493,7 +493,7 @@ class LWTV_CPT_Shows {
 			'id'               => $prefix . 'triggerwarning',
 			'type'             => 'select',
 			'show_option_none' => 'No',
-			'options'          => array( 
+			'options'          => array(
 				'on'  => 'High',
 				'med' => 'Medium',
 				'low' => 'Low'
@@ -746,7 +746,7 @@ SQL;
 				$percent_none = ( $number_none / $number_chars );
 			}
 			update_post_meta( $post_id, 'lezshows_score_chars', $percent_alive );
-		
+
 		// Calculate percentage of value for show
 			$percent_rating = $this->score_show_ratings( $post_id );
 			update_post_meta( $post_id, 'lezshows_score_ratings', $percent_rating );
@@ -961,7 +961,7 @@ SQL;
 
 	/**
 	 * Echo content warning if needed.
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -979,17 +979,43 @@ SQL;
 			default:
 				$warning = 'none';
 		}
-		
+
 		$hand_image = '';
 		if ( $type !== 'amp' ) {
 			$hand_image = '<span role="img" aria-label="Warning Hand" title="Warning Hand">' . file_get_contents( LP_SYMBOLICONS_PATH . '/svg/hand.svg').'</span>';
 		}
-	
+
 		if ( $warning !== 'none' ) {
 			echo '<div class="callout callout-trigger-' . get_post_meta( get_the_ID(), 'lezshows_triggerwarning', true ) . '">' . $hand_image . '<p>' . $warning . ' If those aren\'t your speed, neither is this show.
 			</p></div>';
 		}
 	}
-
 }
 new LWTV_CPT_Shows();
+
+add_filter( 'posts_orderby', function( $orderby, \WP_Query $q ) {
+    if( 'post_type_shows' !== $q->get( 'post_type' ) )
+        return $orderby;
+
+    global $wpdb;
+
+    // Adjust this to your needs:
+    $matches = [ 'the ', 'an ', 'a ' ];
+
+    return sprintf(
+        " %s %s ",
+        lwtv_shows_posts_orderby_sql( $matches, " LOWER( {$wpdb->posts}.post_title) " ),
+        'ASC' === strtoupper( $q->get( 'order' ) ) ? 'ASC' : 'DESC'
+    );
+
+}, 10, 2 );
+
+function lwtv_shows_posts_orderby_sql( &$matches, $sql )
+{
+    if( empty( $matches ) || ! is_array( $matches ) )
+        return $sql;
+
+    $sql = sprintf( " TRIM( LEADING '%s' FROM ( %s ) ) ", $matches[0], $sql );
+    array_shift( $matches );
+    return lwtv_shows_posts_orderby_sql( $matches, $sql );
+}
