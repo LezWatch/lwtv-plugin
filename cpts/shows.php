@@ -312,7 +312,7 @@ class LWTV_CPT_Shows {
 				'placeholder' => 'List the best episodes.',
 			),
 		) );
-		// Must See Grid
+		// Basic Show Details Grid
 		if( !is_admin() ){
 			return;
 		} else {
@@ -462,6 +462,16 @@ class LWTV_CPT_Shows {
 			'default'          => 'tv-show',
 			'show_option_none' => false,
 		) );
+		// Field: IMDb ID
+		$field_imdb = $cmb_notes->add_field( array(
+			'name'       => 'IMDb ID',
+			'id'         => $prefix . 'imdb',
+			'type'       => 'text',
+			'attributes' => array(
+				'placeholder' => 'Example: tt6087250',
+			),
+		) );
+
 		// Field: Show Genre
 		$field_genre = $cmb_notes->add_field( array(
 			'name'              => 'Genre',
@@ -473,9 +483,8 @@ class LWTV_CPT_Shows {
 			'remove_default'    => 'true',
 			'options'           => LP_CMB2_Addons::select2_get_options_array_tax( 'lez_genres' ),
 			'attributes'        => array(
-				'placeholder' => 'What kind of show...'
+				'placeholder' => 'What is this show about ...'
 			),
-
 		) );
 		// Field: Show Stars
 		$field_stars = $cmb_notes->add_field( array(
@@ -505,7 +514,9 @@ class LWTV_CPT_Shows {
 		} else {
 			$grid_additional = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_notes );
 			$row1 = $grid_additional->addRow();
-			$row1->addColumns( array( $field_stars, $field_trigger ) );
+			$row1->addColumns( array( $field_seasons, $field_format ) );
+			$row2 = $grid_additional->addRow();
+			$row2->addColumns( array( $field_stars, $field_trigger ) );
 		}
 
 	}
