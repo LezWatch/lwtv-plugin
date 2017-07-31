@@ -632,6 +632,74 @@ SQL;
 			}
 		</style>";
 	}
+
+
+	/**
+	 * list_characters function.
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $show_id
+	 * @param string $output (default: 'query')
+	 * @return void
+	 */
+	public static function list_characters( $show_id, $output = 'query' ) {
+		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+
+		$characters = array();
+		$charcount  = 0;
+		$deadcount  = 0;
+
+		// Store as array to defeat some stupid with counting and prevent querying the database too many times
+		if ( $charactersloop->have_posts() ) {
+			while ( $charactersloop->have_posts() ) {
+				$charactersloop->the_post();
+				$char_id = get_the_ID();
+				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+				// If the character is in this show, AND a published character
+				// we will pass the following data to the character template
+				// to determine what to display
+
+				if ( $shows_array !== '' && !empty( $shows_array ) && get_post_status ( $char_id ) == 'publish' ) {
+					foreach( $shows_array as $char_show ) {
+						if ( $char_show['show'] == $show_id ) {
+							$characters[$char_id] = array(
+								'id'        => $char_id,
+								'title'     => get_the_title( $char_id ),
+								'url'       => get_the_permalink( $char_id ),
+								'content'   => get_the_content( $char_id ),
+								'shows'     => $shows_array,
+								'show_from' => $show_id,
+							);
+							$charcount++;
+
+							if ( has_term( 'dead', 'lez_cliches', $char_id) ) {
+								$deadcount++;
+							}
+						}
+					}
+				}
+			}
+			wp_reset_query();
+		}
+
+		switch( $output ) {
+			case 'count':
+				$return = $charcount;
+				break;
+			case 'dead':
+				$return = $deadcount;
+				break;
+			case 'query':
+				$return = $characters;
+				break;
+		}
+
+		return $return;
+
+	}
+
 }
 
 new LWTV_CPT_Characters();

@@ -1001,40 +1001,29 @@ SQL;
 			</p></div>';
 		}
 	}
-}
-new LWTV_CPT_Shows();
 
-/**
- * Filter post order by for shows
- *
- * We want to NOT include the/an/a when sorting.
- *
- */
-if ( is_archive() && !is_front_page() ) {
-	add_filter( 'posts_orderby', function( $orderby, \WP_Query $q ) {
-	    if( 'post_type_shows' !== $q->get( 'post_type' ) )
-	        return $orderby;
+	/**
+	 * related_posts function.
+	 *
+	 * @access public
+	 * @param mixed $slug
+	 * @return void
+	 */
+	public function related_posts( $slug ) {
+		$related_post_loop  = LWTV_Loops::related_posts_by_tag( 'post', $slug );
+		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
 
-	    global $wpdb;
+		if ( $related_post_loop->have_posts() ) {
+			$the_related_posts = '<ul>';
 
-	    // Adjust this to your needs:
-	    $matches = [ 'the ', 'an ', 'a ' ];
+			foreach( $related_post_query as $related_post ) {
+				$the_related_posts .= '<li><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a> &mdash; ' . get_the_date( get_option( 'date_format' ), $related_post ) . '</li>';
+			}
 
-	    return sprintf(
-	        " %s %s ",
-	        lwtv_shows_posts_orderby_sql( $matches, " LOWER( {$wpdb->posts}.post_title) " ),
-	        'ASC' === strtoupper( $q->get( 'order' ) ) ? 'ASC' : 'DESC'
-	    );
+			$the_related_posts .= '</ul>';
+		}
 
-	}, 10, 2 );
-
-	function lwtv_shows_posts_orderby_sql( &$matches, $sql )
-	{
-	    if( empty( $matches ) || ! is_array( $matches ) )
-	        return $sql;
-
-	    $sql = sprintf( " TRIM( LEADING '%s' FROM ( %s ) ) ", $matches[0], $sql );
-	    array_shift( $matches );
-	    return lwtv_shows_posts_orderby_sql( $matches, $sql );
+		return $the_related_posts;
 	}
 }
+new LWTV_CPT_Shows();

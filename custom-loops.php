@@ -252,6 +252,36 @@ class LWTV_Loops {
 		wp_reset_query();
 		return $query;
 	}
+
+	/**
+	 * Related Posts by Tags.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $post_type i.e 'posts' or 'post_type_characters'
+	 * @param string $slug i.e. the slug of the post we're trying to relate to
+	 * @return void
+	 */
+	public static function related_posts_by_tag( $post_type, $slug ) {
+		$term = term_exists( $slug, 'post_tag' );
+		if ( $term == 0 || $term == null ) return;
+
+		//$count = wp_count_posts( $post_type )->publish;
+		$count = '5';
+		$query = new WP_Query( array(
+			'post_type'       => $post_type,
+			'posts_per_page'  => $count,
+			'no_found_rows'   => true,
+			'post_status'     => array( 'publish' ),
+			'tag'             => $slug,
+			'orderby'         => 'date',
+			'order'           => 'DESC',
+	    ) );
+
+		wp_reset_query();
+		return $query;
+	}
+
 }
 
 new LWTV_Loops();
