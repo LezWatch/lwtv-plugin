@@ -797,9 +797,10 @@ SQL;
 	 */
 	public function score_show_ratings ( $post_id ) {
 
-		$realness   = min( get_post_meta( $post_id, 'lezshows_realness_rating', true) , 5 );
-		$quality    = min( get_post_meta( $post_id, 'lezshows_quality_rating', true) , 5 );
-		$screentime = min( get_post_meta( $post_id, 'lezshows_screentime_rating', true) , 5 );
+		$realness   = min( (int) get_post_meta( $post_id, 'lezshows_realness_rating', true) , 5 );
+		$quality    = min( (int) get_post_meta( $post_id, 'lezshows_quality_rating', true) , 5 );
+		$screentime = min( (int) get_post_meta( $post_id, 'lezshows_screentime_rating', true) , 5 );
+
 
 		$this_show = $realness + $quality + $screentime;
 
@@ -999,6 +1000,167 @@ SQL;
 		if ( $warning !== 'none' ) {
 			echo '<div class="callout callout-trigger-' . get_post_meta( get_the_ID(), 'lezshows_triggerwarning', true ) . '">' . $hand_image . '<p>' . $warning . ' If those aren\'t your speed, neither is this show.
 			</p></div>';
+		}
+	}
+
+	/**
+	 * display_worthit function.
+	 *
+	 * @access public
+	 * @param string $show_id
+	 * @param string $thumb_rating (default: 'meh')
+	 * @return void
+	 */
+	public function display_worthit( $show_id, $thumb_rating = 'Meh' ) {
+
+		// Bail if not set
+		if ( $thumb_rating == null ) return '<p><em>Coming soon...</em></p>';
+
+		?>
+		<div class="ratings-icons">
+			<div class="worthit worthit-<?php echo esc_attr( $thumb_rating ); ?>">
+				<?php
+				if ( $thumb_rating == "Yes" ) { $thumb = "thumbs_up.svg"; }
+				if ( $thumb_rating == "Meh" ) { $thumb = "meh-o.svg"; }
+				if ( $thumb_rating == "No" ) { $thumb = "thumbs_down.svg"; }
+				$thumb_image = file_get_contents( LP_SYMBOLICONS_PATH . '/svg/' . $thumb);
+				echo '<span role="img" class="show-worthit ' . lcfirst( $thumb_rating ) . '">' . $thumb_image . '</span>';
+				echo get_post_meta( $show_id, 'lezshows_worthit_rating', true );
+				?>
+			</div>
+		</div>
+
+		<div class="ratings-details">
+			<?php
+				if ( ( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) ) {
+					echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) );
+				}
+			?>
+
+			<ul class="network-data">
+				<?php
+				$stations = get_the_terms( $show_id, 'lez_stations' );
+				if ( $stations && ! is_wp_error( $stations ) ) {
+					echo '<li class="network names">'. get_the_term_list( $show_id, 'lez_stations', '<strong>Airs On:</strong> ', ', ' ) .'</li>';
+				}
+				$formats = get_the_terms( $show_id, 'lez_formats' );
+				if ( $formats && ! is_wp_error( $formats ) ) {
+					echo '<li class="network formats">'. get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) .'</li>';
+				}
+				if ( get_post_meta($show_id, 'lezshows_airdates', true) ) {
+					$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
+					echo '<li class="network airdates"><strong>Airdates:</strong> '. $airdates['start'] .' - '. $airdates['finish'] .'</li>';
+				}
+				?>
+			</ul>
+
+		</div>
+		<?php
+	}
+
+	/**
+	 * display_tropes function.
+	 *
+	 * @access public
+	 * @param mixed $show_id
+	 * @return void
+	 */
+	public function display_tropes( $show_id ) {
+
+		// get the tropes associated with this show
+		$terms = get_the_terms( $show_id, 'lez_tropes' );
+		// if tropes are found, and no errors are returned
+		if ( $terms && ! is_wp_error( $terms ) ) {
+			?><ul class="trope-list"><?php
+				// loop over each returned trope
+				foreach( $terms as $term ) { ?>
+					<li class="show trope trope-<?php echo $term->slug; ?>">
+						<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope"><?php
+							$icon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
+							$iconpath = LP_SYMBOLICONS_PATH.'/svg/'.$icon.'.svg';
+							if ( empty( $icon ) || !file_exists( $iconpath ) ) {
+								$iconpath = LP_SYMBOLICONS_PATH.'/svg/square.svg';
+							}
+							echo file_get_contents( $iconpath );
+						?></a>
+						<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope" class="trope-link"><?php
+							echo $term->name;
+						?></a>
+					</li><?php
+				}
+			?></ul><?php
+		} else {
+			echo '<p><em>Coming soon...</em></p>';
+		}
+	}
+
+	/**
+	 * display_hearts function.
+	 *
+	 * @access public
+	 * @param mixed $show_id
+	 * @param string $realness (default: '0')
+	 * @param string $quality (default: '0')
+	 * @param string $screentime (default: '0')
+	 * @return void
+	 */
+	public function display_hearts( $show_id, $realness = '0', $quality = '0', $screentime = '0' ) {
+
+		// Bail if not set
+		if ( $realness == '0' && $quality == '0' && $screentime == '0' ) return '<p><em>Coming soon...</em></p>';
+
+		$heart_types = array( 'realness', 'quality', 'screentime' );
+
+		$positive_heart = '<span role="img" class="show-heart positive">' . file_get_contents( LP_SYMBOLICONS_PATH . '/svg/heart.svg' ) . '</span>';
+		$negative_heart = '<span role="img" class="show-heart negative">' . file_get_contents( LP_SYMBOLICONS_PATH . '/svg/heart.svg' ) . '</span>';
+
+		foreach ( $heart_types as $type ) {
+
+			switch ( $type ) {
+				case 'realness';
+					$rating = $realness;
+					$detail = 'lezshows_realness_details';
+					break;
+				case 'quality';
+					$rating = $quality;
+					$detail = 'lezshows_quality_details';
+					break;
+				case 'screentime';
+					$rating = $screentime;
+					$detail = 'lezshows_screentime_details';
+					break;
+			}
+
+			if ( $rating > '0' ) {
+				?>
+				<div class="ratings-icons">
+					<h3><?php echo ucfirst( $type ); ?></h3>
+					<?php
+					// while loop to display filled in hearts
+					// based on set ratings
+					$i = 1;
+					while( $i <= $rating ) {
+						echo $positive_heart;
+						$i++;
+					}
+					// calculate the remaining empty hearts
+					if ( $i >= 1 ) {
+						$loop_count = $i - 1;
+					} else {
+						$loop_count = 0;
+					}
+					while ( $loop_count < 5 ) {
+						echo $negative_heart;
+						$loop_count++;
+					}
+					?><span class="screen-reader-text">Rating: <?php echo $rating ?> Hearts (out of 5)</span>
+				</div>
+				<?php
+
+				if( ( get_post_meta( $show_id, $detail, true) ) ) {
+					echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, $detail, true ) ) );
+				}
+			}
 		}
 	}
 
