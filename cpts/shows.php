@@ -30,6 +30,8 @@ class LWTV_CPT_Shows {
 
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 
+		add_filter( 'the_content', array( $this, 'related_shows' ) );
+
 		// Array of Valid Ratings
 		$this->ratings_array = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
 
@@ -1187,5 +1189,40 @@ SQL;
 
 		return $the_related_posts;
 	}
+
+
+	/**
+	 * related_shows function.
+	 *
+	 * @access public
+	 * @param mixed $content
+	 * @return void
+	 */
+	public function related_shows( $content ) {
+
+	    if( is_singular( 'post' ) ) {
+
+			$posttags = get_the_tags( get_the_ID() );
+			$shows = '';
+
+			if ( $posttags ) {
+				foreach( $posttags as $tag ) {
+					if ( $post = get_page_by_path( $tag->name, OBJECT, 'post_type_shows' ) ) {
+						$shows .= '<li><a href="/show/' . $post->name . '">'. $tag->name . '</a></li>';
+					}
+				}
+			}
+
+			if ( $shows !== '' ) {
+				$related_shows = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about shows mentioned in this post:</h4><ul>' . $shows . '</ul></div></section>';
+			}
+
+	        $content .= $related_shows;
+
+	    }
+
+	    return $content;
+	}
+
 }
 new LWTV_CPT_Shows();
