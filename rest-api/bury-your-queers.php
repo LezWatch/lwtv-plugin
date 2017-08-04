@@ -133,7 +133,14 @@ class LWTV_BYQ_JSON {
 
 			// Reorder all the dead to sort by DoD
 			uasort($death_list_array, function($a, $b) {
-				return $a['died'] <=> $b['died'];
+				
+				// Spaceship doesn't work
+				// return $a['died'] <=> $b['died'];
+				
+				$return = '0';
+				if ( $a['died'] < $b['died'] ) $return = '-1';
+				if ( $a['died'] > $b['died'] ) $return = '1';
+				return $return;
 			});
 		}
 
