@@ -994,9 +994,10 @@ SQL;
 				$warning = 'none';
 		}
 
-		$hand_image = '';
-		if ( $type !== 'amp' ) {
-			$hand_image = '<span role="img" aria-label="Warning Hand" title="Warning Hand">' . file_get_contents( LP_SYMBOLICONS_PATH . '/svg/hand.svg').'</span>';
+		$hand_image = '⚠';
+		if ( $type !== 'amp' && defined( 'LP_SYMBOLICONS_PATH' ) ) {
+			$hand_request = wp_remote_get( LP_SYMBOLICONS_PATH.'hand.svg' );
+			$hand_image = '<span role="img" aria-label="Warning Hand" title="Warning Hand">' . $hand_request['body'] .'</span>';
 		}
 
 		if ( $warning !== 'none' ) {
@@ -1013,7 +1014,7 @@ SQL;
 	 * @param string $thumb_rating (default: 'meh')
 	 * @return void
 	 */
-	public function display_worthit( $show_id, $thumb_rating = 'Meh' ) {
+	public static function display_worthit( $show_id, $thumb_rating = 'Meh' ) {
 
 		// Bail if not set
 		if ( $thumb_rating == null ) return '<p><em>Coming soon...</em></p>';
@@ -1022,10 +1023,16 @@ SQL;
 		<div class="ratings-icons">
 			<div class="worthit worthit-<?php echo esc_attr( $thumb_rating ); ?>">
 				<?php
-				if ( $thumb_rating == "Yes" ) { $thumb = "thumbs_up.svg"; }
-				if ( $thumb_rating == "Meh" ) { $thumb = "meh-o.svg"; }
-				if ( $thumb_rating == "No" ) { $thumb = "thumbs_down.svg"; }
-				$thumb_image = file_get_contents( LP_SYMBOLICONS_PATH . '/svg/' . $thumb);
+				if ( $thumb_rating == "Yes" ) { $thumb_icon = "thumbs_up.svg"; }
+				if ( $thumb_rating == "Meh" ) { $thumb_icon = "meh-o.svg"; }
+				if ( $thumb_rating == "No" )  { $thumb_icon = "thumbs_down.svg"; }
+
+				$thumb_image = '';
+				if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+					$thumb_request = wp_remote_get( LP_SYMBOLICONS_PATH . '' . $thumb_icon );
+					$thumb_image   = $thumb_request['body'];
+				}
+
 				echo '<span role="img" class="show-worthit ' . lcfirst( $thumb_rating ) . '">' . $thumb_image . '</span>';
 				echo get_post_meta( $show_id, 'lezshows_worthit_rating', true );
 				?>
@@ -1067,7 +1074,7 @@ SQL;
 	 * @param mixed $show_id
 	 * @return void
 	 */
-	public function display_tropes( $show_id ) {
+	public static function display_tropes( $show_id ) {
 
 		// get the tropes associated with this show
 		$terms = get_the_terms( $show_id, 'lez_tropes' );
@@ -1078,12 +1085,17 @@ SQL;
 				foreach( $terms as $term ) { ?>
 					<li class="show trope trope-<?php echo $term->slug; ?>">
 						<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope"><?php
-							$icon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
-							$iconpath = LP_SYMBOLICONS_PATH.'/svg/'.$icon.'.svg';
-							if ( empty( $icon ) || !file_exists( $iconpath ) ) {
-								$iconpath = LP_SYMBOLICONS_PATH.'/svg/square.svg';
+							// Make sure Symbolicons exist
+							$taxicon = $term->name;
+							if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+								$icon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
+								$svg  = wp_remote_get( LP_SYMBOLICONS_PATH.'' . $icon . '.svg' );
+
+								if ( empty( $icon ) || $svg['response']['code'] !== '404' ) {
+									$taxicon = $svg['body'];
+								}
 							}
-							echo file_get_contents( $iconpath );
+							echo $taxicon;
 						?></a>
 						<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope" class="trope-link"><?php
 							echo $term->name;
@@ -1106,15 +1118,21 @@ SQL;
 	 * @param string $screentime (default: '0')
 	 * @return void
 	 */
-	public function display_hearts( $show_id, $realness = '0', $quality = '0', $screentime = '0' ) {
+	public static function display_hearts( $show_id, $realness = '0', $quality = '0', $screentime = '0' ) {
 
 		// Bail if not set
 		if ( $realness == '0' && $quality == '0' && $screentime == '0' ) return '<p><em>Coming soon...</em></p>';
 
 		$heart_types = array( 'realness', 'quality', 'screentime' );
 
-		$positive_heart = '<span role="img" class="show-heart positive">' . file_get_contents( LP_SYMBOLICONS_PATH . '/svg/heart.svg' ) . '</span>';
-		$negative_heart = '<span role="img" class="show-heart negative">' . file_get_contents( LP_SYMBOLICONS_PATH . '/svg/heart.svg' ) . '</span>';
+		$heart = '♥';
+		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+			$heart_request = wp_remote_get( LP_SYMBOLICONS_PATH.'heart.svg' );
+			$heart         = $heart_request['body'];
+		}
+
+		$positive_heart = '<span role="img" class="show-heart positive">' . $heart . '</span>';
+		$negative_heart = '<span role="img" class="show-heart negative">' . $heart . '</span>';
 
 		foreach ( $heart_types as $type ) {
 
@@ -1208,13 +1226,13 @@ SQL;
 			if ( $posttags ) {
 				foreach( $posttags as $tag ) {
 					if ( $post = get_page_by_path( $tag->name, OBJECT, 'post_type_shows' ) ) {
-						$shows .= '<li><a href="/show/' . $post->name . '">'. $tag->name . '</a></li>';
+						$shows .= '<li><a href="/show/' . $tag->slug . '">'. ucwords( $tag->name ) . '</a></li>';
 					}
 				}
 			}
 
 			if ( $shows !== '' ) {
-				$related_shows = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about shows mentioned in this post:</h4><ul>' . $shows . '</ul></div></section>';
+				$related_shows = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about the shows mentioned in this post:</h4><ul>' . $shows . '</ul></div></section>';
 			}
 
 	        $content .= $related_shows;

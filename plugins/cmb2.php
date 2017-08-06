@@ -24,10 +24,14 @@ class LWTV_CMB2 {
 	 */
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init') );
-		add_action( 'cmb2_admin_init', array( $this, 'register_taxonomy_metabox' ) );
 
 		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats', 'lez_genres' );
-		$this->symbolicon_path = LP_SYMBOLICONS_PATH.'/svg/';
+
+		// If we don't have symbolicons, there's not a reason to register the taxonomy box...
+		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+			$this->symbolicon_path = LP_SYMBOLICONS_PATH.'';
+			add_action( 'cmb2_admin_init', array( $this, 'register_taxonomy_metabox' ) );
+		}
 
 		// Add all filters and actions to show icons on tax list page
 		foreach ( $this->icon_taxonomies as $tax_name ) {
@@ -92,9 +96,16 @@ class LWTV_CMB2 {
 	public function register_taxonomy_metabox() {
 		$prefix = 'lez_termsmeta_';
 
+		$imagepath  = LP_SYMBOLICONS_PATH . '/';
+		$upload_dir = wp_upload_dir();
 		$icon_array = array();
-		foreach (glob( $this->symbolicon_path.'*.svg' ) as $file) {
-			$icon_array[ basename($file, '.svg') ] = basename($file);
+
+		$symbol_list = fopen( $upload_dir['basedir'] . '/symbolicons.txt', 'r' );
+
+		if ( $symbol_list ) {
+			while ( ( $line = fgets( $symbol_list ) ) !== false ) {
+				$icon_array[ $line . '.svg' ] = $line;
+			}
 		}
 
 		$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
@@ -107,27 +118,30 @@ class LWTV_CMB2 {
 			'new_term_section'	=> true,
 		) );
 
-		// Only load the icons IF the icon folder is there. This will prevent weird theme switching errors
-		if ( file_exists( $this->symbolicon_path ) && is_dir( $this->symbolicon_path ) ) {
-			$cmb_term->add_field( array(
-				'name'				=> 'Icon',
-				'desc'				=> 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href='.$symbolicon_url.'>Symbolicons List</a>.',
-				'id'				=> $prefix . 'icon',
-			    'type'				=> 'select',
-			    'show_option_none'	=> true,
-			    'default'			=> 'custom',
-			    'options'			=> $icon_array,
-				'before_field'		=> array( $this, 'before_field_icon' ),
-			) );
-		}
+		$cmb_term->add_field( array(
+			'name'				=> 'Icon',
+			'desc'				=> 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href='.$symbolicon_url.'>Symbolicons List</a>.',
+			'id'				=> $prefix . 'icon',
+		    'type'				=> 'select',
+		    'show_option_none'	=> true,
+		    'default'			=> 'custom',
+		    'options'			=> $icon_array,
+			'before_field'		=> array( $this, 'before_field_icon' ),
+		) );
 	}
 
 	// Add before field icon display
 	public function before_field_icon( $field_args, $field ) {
 		$icon = $field->value;
-		$iconpath = $this->symbolicon_path.$icon.'.svg';
-		if ( !empty($icon) || file_exists( $iconpath ) ) {
-			echo '<span role="img" class="cmb2-icon">'.file_get_contents( $iconpath ).'</span>';
+
+		$svg = wp_remote_get( $this->symbolicon_path.$icon.'.svg' );
+		$iconpath = '';
+		if ( $svg['response']['code'] !== '404' ) {
+			$iconpath = $svg['body'];
+		}
+
+		if ( !empty($icon) || $iconpath !== '' ) {
+			echo '<span role="img" class="cmb2-icon">'. $iconpath .'</span>';
 		}
 	}
 
@@ -140,11 +154,18 @@ class LWTV_CMB2 {
 	// Tax list column content
 	public function terms_column_content($value, $content, $term_id){
 		$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
-		$iconpath = $this->symbolicon_path.$icon.'.svg';
-		if ( empty($icon) || !file_exists( $iconpath ) ) {
+
+
+		$svg = wp_remote_get( $this->symbolicon_path.$icon.'.svg' );
+		$iconpath = '';
+		if ( $svg['response']['code'] !== '404' ) {
+			$iconpath = $svg['body'];
+		}
+
+		if ( empty($icon) || $iconpath == '' ) {
 			$content = 'N/A';
 		} else {
-			$content = '<span role="img" class="cmb2-icon">'.file_get_contents($iconpath).'</span>';
+			$content = '<span role="img" class="cmb2-icon">' . $iconpath . '</span>';
 		}
 	    return $content;
 	}

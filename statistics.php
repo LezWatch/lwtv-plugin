@@ -204,7 +204,7 @@ class LWTV_Stats {
 		$all_the_dead = LWTV_Loops::tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead');
 		$by_role = array( 'regular' => 0, 'guest' => 0, 'recurring' => 0 );
 		$alldead = 0;
-		
+
 		if ( $all_the_dead->have_posts() ) {
 
 			foreach ( $all_the_dead->posts as $dead ) {
@@ -216,13 +216,13 @@ class LWTV_Stats {
 				}
 			}
 		}
-		
+
 		$array = array (
 			'regular' => array( 'count' => $by_role['regular'], 'name'  => 'Regular', 'url' => site_url( '/role/regular/' ) ),
 			'guest'   => array( 'count' => $by_role['guest'], 'name'  => 'Guest', 'url' => site_url( '/role/guest/' ) ),
 			'recurring' => array( 'count' => $by_role['recurring'], 'name'  => 'Recurring', 'url' => site_url( '/role/recurring/' ) ),
 		);
-			
+
 		return $array;
 	}
 
@@ -441,9 +441,9 @@ class LWTV_Stats {
 
 					$char_id = get_the_id();
 					$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
-					
+
 					if ( $shows_array !== '' ) {
-						
+
 						foreach( $shows_array as $each_show ) {
 							if ( $char_show['type'] == 'guest' ) {
 								$guest['alive']++;
@@ -459,7 +459,7 @@ class LWTV_Stats {
 							}
 						}
 					}
-					
+
 					print_r( $guest );
 
 					// Make Alive Query
@@ -525,7 +525,7 @@ class LWTV_Stats {
 			"main" => array( 'name' => 'Only Main', 'count' => $regular['dead'], 'url' => site_url( '/role/regular/' ) ),
 			"recurring" => array( 'name' => 'Only Recurring', 'count' => $recurring['dead'], 'url' => site_url( '/role/recurring/' ) ),
 		);
-		
+
 		$array = $alive_array;
 		if ( $type == 'dead' ) $array = $dead_array;
 
@@ -920,16 +920,19 @@ class LWTV_Stats_Display {
     public function __construct() {
 	    // N/A
 	}
-	
+
 	public static function iconpath( $type = 'main' ) {
 
-		if ( $type == 'main' )       $return = LP_SYMBOLICONS_PATH.'/svg/bar_graph.svg';
-		if ( $type == 'death' )      $return = LP_SYMBOLICONS_PATH.'/svg/rip_gravestone.svg';
-		if ( $type == 'characters' ) $return = LP_SYMBOLICONS_PATH.'/svg/users.svg';
-		if ( $type == 'shows' )      $return = LP_SYMBOLICONS_PATH.'/svg/tv_retro.svg';
-		if ( $type == 'lists' )      $return = LP_SYMBOLICONS_PATH.'/svg/bar_graph_alt.svg';
-		if ( $type == 'trends' )     $return = LP_SYMBOLICONS_PATH.'/svg/line_graph.svg';
-		
+		$return = '';
+		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
+			if ( $type == 'main' )       $return = LP_SYMBOLICONS_PATH.'bar_graph.svg';
+			if ( $type == 'death' )      $return = LP_SYMBOLICONS_PATH.'rip_gravestone.svg';
+			if ( $type == 'characters' ) $return = LP_SYMBOLICONS_PATH.'users.svg';
+			if ( $type == 'shows' )      $return = LP_SYMBOLICONS_PATH.'tv_retro.svg';
+			if ( $type == 'lists' )      $return = LP_SYMBOLICONS_PATH.'bar_graph_alt.svg';
+			if ( $type == 'trends' )     $return = LP_SYMBOLICONS_PATH.'line_graph.svg';
+		}
+
 		return $return;
     }
 
@@ -941,10 +944,10 @@ class LWTV_Stats_Display {
 		if ( $type == 'shows' )      $return = 'Statistics on Shows With Queer Females';
 		if ( $type == 'lists' )      $return = 'Statistics in the form of Lists';
 		if ( $type == 'trends' )     $return = 'Statistics in the form of Trendlines';
-		
+
 		return $return;
     }
-    
+
 	public static function intro( $type = 'main' ) {
 		if ( $type == 'main' )       $return = '';
 		if ( $type == 'death' )      $return = 'For a pure list of all dead, we have <a href="https://lezwatchtv.com/trope/dead-queers/">shows where characters died</a> as well as <a href="https://lezwatchtv.com/cliche/dead/">characters who have died</a> (aka the <a href="https://lezwatchtv.com/cliche/dead/">Dead Lesbians</a> list).';
@@ -952,34 +955,34 @@ class LWTV_Stats_Display {
 		if ( $type == 'shows' )      $return = 'Statistics specific to shows.';
 		if ( $type == 'lists' )      $return = 'Raw statistics.';
 		if ( $type == 'trends' )     $return = 'Trendlines and predictions.';
-		
+
 		return $return;
     }
 
 	public static function display( $type = 'main' ) {
-	
+
 		if ( $type == 'main' ) {
 			?>
 			<hr>
-	
+
 			<div id="statistics">
 				<ul>
 					<li><strong><a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?>)</li>
 					<li><strong><a href="/shows/">Total Shows</a></strong> (<?php echo LWTV_Stats::generate( 'shows', 'total', 'count' ); ?>)</li>
 				</ul>
 			</div>
-			
+
 			<hr>
-	
+
 			<div id="statistics">
 				<?php
 					LWTV_Stats::generate( 'characters', 'cliches', 'barchart' );
 					LWTV_Stats::generate( 'shows', 'tropes', 'barchart' );
 				?>
 			</div>
-	
+
 			<hr>
-	
+
 			<div id="statistics">
 				<?php
 					LWTV_Stats::generate( 'characters', 'cliches', 'list' );
@@ -988,209 +991,209 @@ class LWTV_Stats_Display {
 			</div>
 			<?php
 		}
-	
+
 		if ( $type == 'characters' ) {
 			?>
 			<h2><a href="/characters/">Total Characters</a></strong> (<?php echo LWTV_Stats::generate( 'characters', 'total', 'count' ); ?>)</h2>
-	
+
 			<center><a href="#charts">Charts</a> // <a href="#percentages">Percentages</a></center>
-	
+
 			<div id="statistics">
 				<h2><a name="charts">Charts</a></h2>
-	
+
 				<div id="container" class="one-half">
 					<h3>Sexuality</h3>
 					<?php LWTV_Stats::generate( 'characters', 'sexuality', 'piechart' ); ?>
 				</div>
-	
+
 				<div id="container" class="one-half">
 					<h3>Gender Identity</h3>
 					<?php LWTV_Stats::generate( 'characters', 'gender', 'piechart' ); ?>
 				</div>
-	
+
 				<div id="container" class="one-half">
 					<h3>Queer IRL</h3>
 					<?php LWTV_Stats::generate( 'characters', 'queer-irl', 'piechart' ); ?>
 				</div>
-	
+
 				<div id="container" class="one-half">
 					<h3>By Role</h3>
 					<?php LWTV_Stats::generate( 'characters', 'role', 'piechart' ); ?>
 				</div>
 			</div>
-	
+
 			<hr>
-	
+
 			<div id="statistics">
 				<h2><a name="percentages">Percentages</a></h2>
-	
+
 					<h3>Sexual Identity</h3>
 					<?php LWTV_Stats::generate( 'characters', 'sexuality', 'percentage' ); ?>
-	
+
 					<h3>Gender Identity</h3>
 					<?php LWTV_Stats::generate( 'characters', 'gender', 'percentage' ); ?>
-	
+
 					<h3>Roles</h3>
 					<?php LWTV_Stats::generate( 'characters', 'role', 'percentage' ); ?>
-	
+
 					<h3>Queer IRL</h3>
 					<?php LWTV_Stats::generate( 'characters', 'queer-irl', 'percentage' ); ?>
 			</div>
 			<?php
 		}
-	
+
 		if ( $type == 'death' ) {
 			?>
 			<h2>Totals of Death</h2>
-	
+
 			<div id="statistics">
 				<?php
 					$deadchars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
 					$allchars  = LWTV_Stats::generate( 'characters', 'all', 'count' );
 					$deadshows = LWTV_Stats::generate( 'shows', 'dead', 'count' );
 					$allshows  = LWTV_Stats::generate( 'shows', 'all', 'count' );
-	
+
 					$deadchar_percent = round( ( $deadchars / $allchars ) * 100 , 2 ) ;
 					$deadshow_percent = round( ( $deadshows / $allshows ) * 100 , 2 );
 				?>
-	
+
 				<ul>
 					<li><a href="/cliche/dead/">Dead Characters</a> — <?php echo $deadchar_percent; ?>% (<?php echo $deadchars; ?> characters)</li>
 					<li><a href="/trope/dead-queers/">Shows with Dead</a> — <?php echo $deadshow_percent; ?>% (<?php echo $deadshows; ?> shows)</li>
 			</div>
-	
+
 			<center><a href="#charts">Charts</a> // <a href="#percentages">Percentages</a></center>
-	
+
 			<div id="pies">
 				<h2><a name="charts">Charts</a></h2>
-	
+
 				<div id="container" class="one-half">
 					<h3>Shows With Dead</h3>
 					<?php LWTV_Stats::generate( 'characters', 'dead-shows', 'piechart' ); ?>
 				</div>
-	
+
 				<div id="container" class="one-half">
 					<h3>Character Sexuality</h3>
 					<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'piechart' ); ?>
 				</div>
-	
+
 				<div id="container" class="one-half">
 					<h3>Character Gender Identity</h3>
 					<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'piechart' ); ?>
 				</div>
-	
+
 				<div id="container" class="one-half">
 					<h3>Character Role</h3>
 					<?php LWTV_Stats::generate( 'characters', 'dead-role', 'piechart' ); ?>
 				</div>
 			</div>
-	
+
 			<hr>
-	
+
 			<p>On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
-	
+
 			<div id="bars">
 				<?php LWTV_Stats::generate( 'characters', 'dead-years', 'barchart' ); ?>
 			</div>
-	
+
 			<div id="statistics">
 				<h3>Deaths by Year</h3>
 				<?php LWTV_Stats::generate( 'characters', 'dead-years', 'percentage' ); ?>
 			</div>
-	
+
 			<hr>
-	
+
 			<div id="statistics">
 				<h2><a name="percentages">Percentages</a></h2>
-	
+
 				<p>Percentages are of <em>all</em> queers and shows, not just the dead.</p>
-	
+
 				<h3>Shows</h3>
 				<?php LWTV_Stats::generate( 'shows', 'dead-shows', 'percentage' ); ?>
-	
+
 				<h3>Sexual Orientation</h3>
 				<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'percentage' ); ?>
-	
+
 				<h3>Gender Identity</h3>
 				<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'percentage' ); ?>
-	
+
 				<h3>Character Role</h3>
 				<?php LWTV_Stats::generate( 'characters', 'dead-role', 'percentage' ); ?>
-	
+
 			</div>
-	
+
 			<?php
 		}
-	
+
 		if ( $type == 'shows' ) {
 			?>
 			<h2><a href="/shows/">Total Shows</a></strong> (<?php echo LWTV_Stats::generate( 'shows', 'total', 'count' ); ?>)</h2>
-	
+
 			<center><a href="#charts">Charts</a> // <a href="#percentages">Percentages</a></center>
-	
+
 			<div id="pies">
 				<h2><a name="charts">Charts</a></h2>
-	
+
 				<div id="container" class="one-half">
 					<h3>Worth It?</h3>
 					<?php LWTV_Stats::generate( 'shows', 'thumbs', 'piechart' ); ?>
 				</div>
-	
+
 				<div id="container" class="one-half">
 					<h3>Stars</h3>
 					<?php LWTV_Stats::generate( 'shows', 'stars', 'piechart' ); ?>
 				</div>
-	
+
 				<div id="container" class="one-half">
 					<h3>Show Format</h3>
 					<?php LWTV_Stats::generate( 'shows', 'formats', 'piechart' ); ?>
 				</div>
-	
+
 				<div id="container" class="one-half">
 					<h3>Trigger Warnings</h3>
 					<?php LWTV_Stats::generate( 'shows', 'trigger', 'piechart' ); ?>
 				</div>
-	
+
 				<div id="container" class="one-half">
 					<h3>Currently Airing</h3>
 					<?php LWTV_Stats::generate( 'shows', 'current', 'piechart' ); ?>
 				</div>
 			</div>
-	
+
 			<hr>
-	
+
 			<div id="statistics">
 				<h2><a name="percentages">Percentages</a></h2>
-	
+
 				<h3>Worth It Scores</h3>
 				<?php LWTV_Stats::generate( 'shows', 'thumbs', 'percentage' ); ?>
-	
+
 				<h3>Stars Rankings</h3>
 				<?php LWTV_Stats::generate( 'shows', 'stars', 'percentage' ); ?>
-	
+
 				<h3>Stars Rankings</h3>
 				<?php LWTV_Stats::generate( 'shows', 'formats', 'percentage' ); ?>
-	
+
 				<h3>Trigger Warnings</h3>
 				<?php LWTV_Stats::generate( 'shows', 'trigger', 'percentage' ); ?>
-	
+
 				<h3>Currently Airing</h3>
 				<?php LWTV_Stats::generate( 'shows', 'current', 'percentage' ); ?>
-	
+
 			</div>
-	
+
 		<?php
 		}
 		if ( $type == 'trends' ) {
 			?>
 			<h2><a name="deathperyear">Death Per Year</a></h2>
-	
+
 			<div id="statistics">
 				<?php LWTV_Stats::generate( 'characters', 'dead-years', 'trendline' ); ?>
 			</div>
 			<?php
 		}
-	
+
 	}
 }
 
