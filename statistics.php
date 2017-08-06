@@ -417,6 +417,15 @@ class LWTV_Stats {
 		return $array;
 	}
 
+
+	/**
+	 * Statistics Roles on Shows
+	 * 
+	 * @access public
+	 * @static
+	 * @param string $type (default: 'dead')
+	 * @return void
+	 */
 	static function show_roles( $type = 'dead' ) {
 		// List of shows
 		$all_shows_query = LWTV_Loops::post_type_query( 'post_type_shows' );
@@ -921,6 +930,15 @@ class LWTV_Stats_Display {
 	    // N/A
 	}
 
+
+	/**
+	 * Determine icon for each stats page
+	 * 
+	 * @access public
+	 * @static
+	 * @param string $type (default: 'main')
+	 * @return void
+	 */
 	public static function iconpath( $type = 'main' ) {
 
 		$return = '';
@@ -936,6 +954,14 @@ class LWTV_Stats_Display {
 		return $return;
     }
 
+	/**
+	 * Determine Title for each stats page
+	 * 
+	 * @access public
+	 * @static
+	 * @param string $type (default: 'main')
+	 * @return void
+	 */
 	public static function title( $type = 'main' ) {
 
 		if ( $type == 'main' )       $return = 'Statistics of Queer Females on TV';
@@ -948,6 +974,14 @@ class LWTV_Stats_Display {
 		return $return;
     }
 
+	/**
+	 * Determine archive intro for each stats page
+	 * 
+	 * @access public
+	 * @static
+	 * @param string $type (default: 'main')
+	 * @return void
+	 */
 	public static function intro( $type = 'main' ) {
 		if ( $type == 'main' )       $return = '';
 		if ( $type == 'death' )      $return = 'For a pure list of all dead, we have <a href="https://lezwatchtv.com/trope/dead-queers/">shows where characters died</a> as well as <a href="https://lezwatchtv.com/cliche/dead/">characters who have died</a> (aka the <a href="https://lezwatchtv.com/cliche/dead/">Dead Lesbians</a> list).';
@@ -959,6 +993,14 @@ class LWTV_Stats_Display {
 		return $return;
     }
 
+	/**
+	 * Determine display content for each stats page
+	 * 
+	 * @access public
+	 * @static
+	 * @param string $type (default: 'main')
+	 * @return void
+	 */
 	public static function display( $type = 'main' ) {
 
 		if ( $type == 'main' ) {
