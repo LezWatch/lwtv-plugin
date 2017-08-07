@@ -68,6 +68,9 @@ class LWTV_CPT_Shows {
 	 * Admin Init
 	 */
 	public function admin_init() {
+		
+		if ( class_exists( 'VarnishPurger' ) ) $this->varnish_purge = new VarnishPurger();
+		
 		add_action( 'admin_head', array($this, 'admin_css') );
 
 		add_filter( 'manage_post_type_shows_posts_columns', array( $this, 'manage_posts_columns' ) );
@@ -767,6 +770,9 @@ SQL;
 		// Calculate the full score
 			$percent_the_score = ( $percent_rating + $percent_alive + $percent_none ) / 3;
 			update_post_meta( $post_id, 'lezshows_the_score', $percent_the_score );
+
+		// Flush Varnish
+		if ( class_exists( 'VarnishPurger' ) ) $this->varnish_purge->purgeUrl( get_permalink( $post_id ) );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ) );
