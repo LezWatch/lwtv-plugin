@@ -7,6 +7,7 @@
  Author: Mika Epstein
 */
 
+if ( file_exists( WP_CONTENT_DIR . 'library/functions.php' ) ) include_once( WP_CONTENT_DIR . 'library/functions.php' );
 
 /**
  * class LWTV_Functions
