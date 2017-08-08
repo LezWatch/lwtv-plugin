@@ -66,7 +66,7 @@ class LWTV_CPT_Characters {
 		$post_id = ( isset( $_GET['post'] ) )? $_GET['post'] : 0 ;
 
 		// Cliches
-		LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
 
 	}
 
@@ -194,7 +194,7 @@ class LWTV_CPT_Characters {
 			'type'              => 'pw_multiselect',
 			'select_all_button' => false,
 			'remove_default'    => 'true',
-			'options'           => LP_CMB2_Addons::select2_get_options_array_tax( 'lez_cliches' ),
+			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_cliches' ),
 			'attributes' => array(
 				'placeholder' => 'Common clichés ...'
 			),

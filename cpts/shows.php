@@ -56,9 +56,9 @@ class LWTV_CPT_Shows {
 					//add_filter( 'quicktags_settings', array( $this, 'quicktags_settings' ) );
 
 					// Force saving data to convert select2 saved data to a taxonomy
-					LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
-					LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
-					//LP_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_stations', 'lez_stations' );
+					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
+					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
+					//LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_stations', 'lez_stations' );
 					break;
 			}
 		}
@@ -236,7 +236,7 @@ class LWTV_CPT_Shows {
 			'type'              => 'pw_multiselect',
 			'select_all_button' => false,
 			'remove_default'    => 'true',
-			'options'           => LP_CMB2_Addons::select2_get_options_array_tax( 'lez_tropes' ),
+			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_tropes' ),
 			'attributes' => array(
 				'placeholder' => 'Common tropes ...'
 			),
@@ -486,7 +486,7 @@ class LWTV_CPT_Shows {
 			'type'              => 'pw_multiselect',
 			'select_all_button' => false,
 			'remove_default'    => 'true',
-			'options'           => LP_CMB2_Addons::select2_get_options_array_tax( 'lez_genres' ),
+			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_genres' ),
 			'attributes'        => array(
 				'placeholder' => 'What is this show about ...'
 			),

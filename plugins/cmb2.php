@@ -1,173 +1,105 @@
 <?php
 /*
-Description: Customizations for CMB2
+Library: CMB2 Add Ons
+Description: Addons for CMB2 that make life worth living
 Version: 1.0
 Author: Mika Epstein
 */
 
-if ( ! defined('WPINC' ) ) die;
 
 /**
- * class LWTV_CMB2
+ * class LWTV_CMB2_Addons
  *
  * Customize CMB2
  *
  * @since 1.0
  */
-class LWTV_CMB2 {
-
-	public $icon_taxonomies; // Taxonomies that have an icon
-	public $symbolicon_path; // Path to symbolicons
+class LWTV_CMB2_Addons {
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init', array( $this, 'admin_init') );
+		
+		// LWTV weird stuff
+		include_once( dirname( __FILE__ ) . '/cmb2/lwtv.php' );
+		
+		/* CMB2 Grid */
+		//define( 'CMB2GRID_DIR', '/wp-content/library/plugins/cmb2/CMB2-grid/' );
+		include_once( dirname( __FILE__ ) . '/cmb2/CMB2-grid/Cmb2GridPluginLoad.php' );
 
-		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats', 'lez_genres' );
+		/* Select2 */
+		include_once( dirname( __FILE__ ) . '/cmb2/cmb-field-select2/cmb-field-select2.php' );
 
-		// If we don't have symbolicons, there's not a reason to register the taxonomy box...
-		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
-			$this->symbolicon_path = LP_SYMBOLICONS_PATH.'';
-			add_action( 'cmb2_admin_init', array( $this, 'register_taxonomy_metabox' ) );
+		//add_filter( 'pw_cmb2_field_select2_asset_path', 'lezwatch_pw_cmb2_field_select2_asset_path' );
+		function lezwatch_pw_cmb2_field_select2_asset_path() {
+			return '/wp-content/library/plugins/cmb2/cmb-field-select2/';
 		}
 
-		// Add all filters and actions to show icons on tax list page
-		foreach ( $this->icon_taxonomies as $tax_name ) {
-			add_filter( 'manage_edit-'.$tax_name. '_columns', array( $this, 'terms_column_header' ) );
-			add_action( 'manage_'.$tax_name. '_custom_column', array( $this, 'terms_column_content' ), 10, 3 );
-		}
-
+		/* Date Year Range */
+		include_once( dirname( __FILE__ ) . '/cmb2/year-range.php' );
 	}
 
 	/**
-	 * Init
-	 */
-	public function admin_init() {
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts'), 10 );
-	}
-
-	/**
-	 * Extra Get post options.
-	 */
-	public static function get_post_options( $query_args ) {
-	    $args = wp_parse_args( $query_args, array(
-	        'post_type'   => 'post',
-	        'numberposts' => wp_count_posts( 'post' )->publish,
-	        'post_status' => array('publish'),
-	    ) );
-
-	    $posts = get_posts( $args );
-
-	    $post_options = array();
-	    if ( $posts ) {
-	        foreach ( $posts as $post ) {
-	          $post_options[ $post->ID ] = $post->post_title;
-	        }
-	    }
-
-	    asort($post_options);
-	    return $post_options;
-	}
-
-	/**
-	 * CSS tweaks
-	 */
-	public function admin_enqueue_scripts( $hook ) {
-		wp_register_style( 'cmb-styles', plugins_url('cmb2.css', __FILE__ ) );
-		if ( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'edit-tags.php' || $hook == 'term.php' || $hook == 'page-new.php' || $hook == 'page.php' ) {
-			wp_enqueue_style( 'cmb-styles' );
-		}
-	}
-
-	/**
-	 * Add metabox to custom taxonomies to show icon
+	 * Get a list of terms
 	 *
-	 * $this->icon_taxonomies   array of taxonomies to show icons on.
-	 * $this->symbolicon_path   location of Symbolicons
+	 * Generic function to return an array of taxonomy terms formatted for CMB2.
+	 * Simply pass in your get_terms arguments and get back a beautifully formatted
+	 * CMB2 options array.
 	 *
-	 * register_taxonomy_metabox()  CMB2 mextabox code
-	 * before_field_icon()          Show an icon if that exists
+	 * Source: https://gist.github.com/mustardBees/9eb84e47e8afce5ecad2
 	 *
-	 * @param  array              $field_args  Array of field parameters
-	 * @param  CMB2_Field object  $field       Field object
+	 * @param string|array $taxonomies Taxonomy name or list of Taxonomy names
+	 * @param  array|string $query_args Optional. Array or string of arguments to get terms
+	 * @return array CMB2 options array
 	 */
-	public function register_taxonomy_metabox() {
-		$prefix = 'lez_termsmeta_';
-
-		$imagepath  = LP_SYMBOLICONS_PATH . '/';
-		$upload_dir = wp_upload_dir();
-		$icon_array = array();
-
-		$symbol_list = fopen( $upload_dir['basedir'] . '/symbolicons.txt', 'r' );
-
-		if ( $symbol_list ) {
-			while ( ( $line = fgets( $symbol_list ) ) !== false ) {
-				$icon_array[ $line . '.svg' ] = $line;
+	public static function select2_get_options_array_tax( $taxonomies, $query_args = '' ) {
+		$defaults = array(
+			'hide_empty' => false
+		);
+		$args = wp_parse_args( $query_args, $defaults );
+		$terms = get_terms( $taxonomies, $args );
+		$terms_array = array();
+		if ( ! empty( $terms ) ) {
+			foreach ( $terms as $term ) {
+				$terms_array[$term->term_id] = $term->name;
 			}
 		}
-
-		$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
-
-		$cmb_term = new_cmb2_box( array(
-			'id'				=> $prefix . 'edit',
-			'title'				=> 'Category Metabox',
-			'object_types'		=> array( 'term' ),
-			'taxonomies'		=> $this->icon_taxonomies,
-			'new_term_section'	=> true,
-		) );
-
-		$cmb_term->add_field( array(
-			'name'				=> 'Icon',
-			'desc'				=> 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href='.$symbolicon_url.'>Symbolicons List</a>.',
-			'id'				=> $prefix . 'icon',
-		    'type'				=> 'select',
-		    'show_option_none'	=> true,
-		    'default'			=> 'custom',
-		    'options'			=> $icon_array,
-			'before_field'		=> array( $this, 'before_field_icon' ),
-		) );
+		return $terms_array;
 	}
 
-	// Add before field icon display
-	public function before_field_icon( $field_args, $field ) {
-		$icon = $field->value;
+	/**
+	 * Funky stuff done to save taxonomy data
+	 */
+	public static function select2_taxonomy_save( $post_id, $postmeta, $taxonomy ) {
 
-		$svg = wp_remote_get( $this->symbolicon_path.$icon.'.svg' );
-		$iconpath = '';
-		if ( $svg['response']['code'] !== '404' ) {
-			$iconpath = $svg['body'];
+		$get_post_meta = get_post_meta( $post_id, $postmeta, true );
+		$get_the_terms = get_the_terms( $post_id, $taxonomy );
+
+		if ( is_array( $get_post_meta ) ) {
+			// If we already have the post meta, then we should set the terms
+			$get_post_meta   = array_map( 'intval', $get_post_meta );
+			$get_post_meta   = array_unique( $get_post_meta );
+			$set_the_terms = array();
+
+			foreach( $get_post_meta as $term_id ) {
+				$term = get_term_by( 'id' , $term_id, $taxonomy );
+				array_push( $set_the_terms, $term->slug );
+			}
+
+			wp_set_object_terms( $post_id, $set_the_terms , $taxonomy );
+
+		} elseif ( $get_the_terms && ! is_wp_error( $get_the_terms ) ) {
+			// If there's no post meta, we force the terms to be the default
+			$get_post_meta = array();
+			foreach( $get_the_terms as $term ) {
+				$term_id = $term->term_id;
+				array_push( $get_post_meta, $term_id );
+			}
+			update_post_meta( $post_id, $postmeta, $get_post_meta );
 		}
 
-		if ( !empty($icon) || $iconpath !== '' ) {
-			echo '<span role="img" class="cmb2-icon">'. $iconpath .'</span>';
-		}
 	}
 
-	// Tax list column header
-	public function terms_column_header($columns){
-	    $columns['icon'] = 'Icon';
-	    return $columns;
-	}
-
-	// Tax list column content
-	public function terms_column_content($value, $content, $term_id){
-		$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
-
-
-		$svg = wp_remote_get( $this->symbolicon_path.$icon.'.svg' );
-		$iconpath = '';
-		if ( $svg['response']['code'] !== '404' ) {
-			$iconpath = $svg['body'];
-		}
-
-		if ( empty($icon) || $iconpath == '' ) {
-			$content = 'N/A';
-		} else {
-			$content = '<span role="img" class="cmb2-icon">' . $iconpath . '</span>';
-		}
-	    return $content;
-	}
 }
-new LWTV_CMB2();
+new LWTV_CMB2_Addons();

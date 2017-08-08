@@ -52,6 +52,9 @@ if ( class_exists( 'FacetWP' ) ) {
 	require_once( 'plugins/facetwp.php' );
 }
 
+// Call WP Help - It won't error
+require_once( 'plugins/wp-help.php' );
+
 // Include CPTs
 include_once( 'cpts/characters.php' );
 include_once( 'cpts/shows.php' );

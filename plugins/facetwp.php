@@ -1,191 +1,100 @@
 <?php
 /*
-Description:FacetWP Customizations
-Version: 1.1
+Library: FacetWP Add Ons
+Description: Addons for FacetWP that make life worth living
+Version: 1.1.0
 Author: Mika Epstein
 */
 
-if ( ! defined('WPINC' ) ) die;
-
 /**
- * class LWTV_FacetWP
+ * class LWTV_FacetWP_Addons
  *
- * Custom FacetWP Functions
+ * Customize FacetWP
+ *
  * @since 1.0
  */
-class LWTV_FacetWP {
+class LWTV_FacetWP_Addons {
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
 
-		// Filter data before saving it
-		add_filter( 'facetwp_index_row', array( $this, 'facetwp_index_row' ), 10, 2 );
+		// Include extra Plugins
+		include_once( dirname( __FILE__ ) . '/facetwp/cmb2.php' );
+		include_once( dirname( __FILE__ ) . '/facetwp/lwtv.php' );
 
-		// Filter sort options to add our own
-		add_filter( 'facetwp_sort_options', array( $this, 'facetwp_sort_options' ), 10, 2 );
+		// Filter paged output
+		add_filter( 'facetwp_pager_html', array( $this, 'facetwp_pager_html' ), 10, 2 );
 
-		// Filter results count
-		add_filter( 'facetwp_result_count', function( $output, $params ) {
-		    $output = $params['total'];
-		    return $output;
-		}, 10, 2 );
+		// Javascript
+		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 
-		// Filter Facet output
-		add_filter( 'facetwp_facet_html', function( $output, $params ) {
-		    if ( 'show_airdates' == $params['facet']['name'] ) {
-		        $output = str_replace( 'Min', 'First Year', $output );
-		        $output = str_replace( 'Max', 'Last Year', $output );
-		    }
-		    return $output;
-		}, 10, 2 );
+		// Reset Shortcode
+		add_shortcode( 'facetwp-reset', array( $this, 'reset_shortcode' ) );
+	}
 
-		// Don't output <!--fwp-loop--> on admin pages
-		if ( is_admin() ) {
-			add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
-		}
-
+	function wp_enqueue_scripts() {
+		wp_enqueue_script( 'facetwp-pagination', plugins_url( 'facetwp/pagination.js', __FILE__ ), array(), '1.0', true );
 	}
 
 	/**
-	 * Filter Data before it's saved
-	 * Useful for serialized data but also capitalizing stars
-	 *
-	 * @since 1.1
+	 * Only show pagination if there's more than one page
+	 * Credit: https://gist.github.com/mgibbs189/69176ef41fa4e26d1419
 	 */
-	function facetwp_index_row( $params, $class ) {
+	public function facetwp_pager_html( $output, $params ) {
 
-		// Stars
-		// Capitalize
-		if ( 'show_stars' == $params['facet_name'] ) {
-			$params['facet_value'] = $params['facet_value'];
-			$params['facet_display_value'] = ucfirst( $params['facet_display_value'] );
-			$class->insert( $params );
-			return false; // skip default indexing
+	    $output = '';
+	    $page = (int) $params['page'];
+	    $total_pages = (int) $params['total_pages'];
+
+	    // Only show pagination when > 1 page
+	    if ( 1 < $total_pages ) {
+
+	        if ( 1 < $page ) {
+	            $output .= '<a class="facetwp-page" data-page="' . ( $page - 1 ) . '">&laquo; Previous</a>';
+	        }
+	        if ( 3 < $page ) {
+	            $output .= '<a class="facetwp-page first-page" data-page="1">1</a>';
+	            $output .= ' <span class="dots">…</span> ';
+	        }
+	        for ( $i = 2; $i > 0; $i-- ) {
+	            if ( 0 < ( $page - $i ) ) {
+	                $output .= '<a class="facetwp-page" data-page="' . ($page - $i) . '">' . ($page - $i) . '</a>';
+	            }
+	        }
+
+	        // Current page
+	        $output .= '<a class="facetwp-page active" data-page="' . $page . '">' . $page . '</a>';
+
+	        for ( $i = 1; $i <= 2; $i++ ) {
+	            if ( $total_pages >= ( $page + $i ) ) {
+	                $output .= '<a class="facetwp-page" data-page="' . ($page + $i) . '">' . ($page + $i) . '</a>';
+	            }
+	        }
+	        if ( $total_pages > ( $page + 2 ) ) {
+	            $output .= ' <span class="dots">…</span> ';
+	            $output .= '<a class="facetwp-page last-page" data-page="' . $total_pages . '">' . $total_pages . '</a>';
+	        }
+	        if ( $page < $total_pages ) {
+	            $output .= '<a class="facetwp-page" data-page="' . ( $page + 1 ) . '">Next &raquo;</a>';
+	        }
 	    }
 
-		// Trigger Warning
-		// If 'on' change to 'High', else capitalize
-		if ( 'show_trigger_warning' == $params['facet_name'] ) {
-			$params['facet_value'] = $params['facet_value'];
-			$params['facet_display_value'] = ( $params['facet_display_value'] == 'on' )? 'High' : ucfirst( $params['facet_display_value'] );
-			$class->insert( $params );
-			return false; // skip default indexing
-	    }
-
-		// Actors
-		// Saves one value for each actor
-		// a:1:{i:0;s:13:"Rachel Bilson";}
-		if ( 'char_actors' == $params['facet_name'] ) {
-			$values = (array) $params['facet_value'];
-			foreach ( $values as $val ) {
-				$params['facet_value'] = $val;
-				$params['facet_display_value'] = $val;
-				$class->insert( $params );
-			}
-			return false; // skip default indexing
-	    }
-
-		// Airdates
-		// Saves two values for two sources (dude)
-		// a:2:{s:5:"start";s:4:"1994";s:6:"finish";s:4:"2009";}
-		if ( 'show_airdates' == $params['facet_name'] ) {
-			$values = (array) $params['facet_value'];
-
-			$start = ( isset( $values['start'] ) )? $values['start'] : '';
-			$end   = ( isset( $values['finish'] ) && is_int( $values['finish'] ) )? $values['finish'] : date( 'Y' );
-
-			$params['facet_value']         = $start;
-			$params['facet_display_value'] = $start;
-			$class->insert( $params );
-
-			$params2 = $params;
-			$params2['facet_value']         = $end;
-			$params2['facet_display_value'] = $end;
-			$class->insert( $params2 );
-
-			return false; // skip default indexing
-	    }
-
-	    return $params;
+	    return $output;
 	}
 
-	/**
-	 * Filter Sort Options.
+	/*
+	 * Reset Shortcode
 	 *
-	 * @access public
-	 * @param mixed $options
-	 * @param mixed $params
-	 * @return void
+	 * Echo reset button
+	 *
+	 * @since 1.1.0
 	 */
-	function facetwp_sort_options( $options, $params ) {
-
-		$options['default']['label']    = 'Default (Alphabetical)';
-		$options['title_asc']['label']  = 'Name (A-Z)';
-		$options['title_desc']['label'] = 'Name (Z-A)';
-
-		if ( is_post_type_archive( 'post_type_shows' ) ) {
-
-		    $options['most_queers'] = array(
-		        'label' => 'Number of Characters (Descending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_char_count', // required when sorting by custom fields
-		            'order'    => 'DESC', // descending order
-		        )
-		    );
-
-		    $options['least_queers'] = array(
-		        'label' => 'Number of Characters (Ascending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_char_count', // required when sorting by custom fields
-		            'order'    => 'ASC', // ascending order
-		        )
-		    );
-
-		    $options['most_dead'] = array(
-		        'label' => 'Number of Dead Characters (Descending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_dead_count', // required when sorting by custom fields
-		            'order'    => 'DESC', // descending order
-		        )
-		    );
-
-		    $options['least_dead'] = array(
-		        'label' => 'Number of Dead Characters (Ascending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_dead_count', // required when sorting by custom fields
-		            'order'    => 'ASC', // ascending order
-		        )
-		    );
-
-		    $options['high_score'] = array(
-		        'label' => 'Overall Score (Descending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_the_score', // required when sorting by custom fields
-		            'order'    => 'DESC', // descending order
-		        )
-		    );
-
-		    $options['low_score'] = array(
-		        'label' => 'Overall Score (Ascending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_the_score', // required when sorting by custom fields
-		            'order'    => 'ASC', // ascending order
-		        )
-		    );
-
-		}
-
-	    return $options;
+	public function reset_shortcode( $atts ) {
+		$reset = '<center><button class="facetwp-reset" onclick="FWP.reset()">Reset All Parameters</button></center>';
+		return $reset;
 	}
 
 }
-
-new LWTV_FacetWP();
+new LWTV_FacetWP_Addons();

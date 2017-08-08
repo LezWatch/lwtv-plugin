@@ -15,7 +15,6 @@ The main file `functions.php` calls all other needed files.
 * /js/                   - Javascript Files
 * Chart.bundle.min.js    - Stat charts
 
-
 ### Custom Loops
 
 Custom arrays and WP_Query calls that are repeated in multiple places.
@@ -40,9 +39,10 @@ Stored in `/cpts/`:
 
 Stored in `/plugins/`
 
-* CMB2: Custom CSS and Symbolicons
-* FacetWP: Filter Data before it's saved to rename values (capitalization), split actors and shows into separate entries, and add additional orderby params
+* CMB2: Select2, Grid, Year Range, Custom CSS, and Symbolicons
+* FacetWP: CMB2 Integration, filter Data before it's saved to rename values (capitalization), split actors and shows into separate entries, and add additional orderby params, JS for FacetWP Pagination
 * Yoast's WordPress SEO: Remove stopword removal from shows and characters CPTs
+* WP Help: Custom CSS
 
 ### Query Variables
 
