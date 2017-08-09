@@ -32,6 +32,9 @@ class LWTV_CPT_Shows {
 
 		add_filter( 'the_content', array( $this, 'related_shows' ) );
 
+		// varnish support
+		//add_filter( 'varnish_http_purge_events', array( $this, 'varnish_http_purge_events' ) );
+		
 		// Array of Valid Ratings
 		$this->ratings_array = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
 
@@ -201,6 +204,8 @@ class LWTV_CPT_Shows {
 				'update_count_callback' => '_update_post_term_count',
 				'query_var'             => true,
 				'show_in_nav_menus'     => true,
+				'rest_base'             => rtrim( $slug, 's' ),
+				'rest_controller_class' => 'WP_REST_Terms_Controller',
 				'rewrite'               => array( 'slug' => rtrim( $slug, 's' ) ),
 			);
 			// Taxonomy name
@@ -717,6 +722,22 @@ SQL;
 		return $actions;
 	}
 
+	/**
+	 * varnish_http_purge_events function.
+	 * 
+	 * @access public
+	 * @param mixed $actions
+	 * @return void
+	 */
+	public function varnish_http_purge_events( $actions ) {
+		$myactions = array(
+			'updated_postmeta',
+			'do_update_show_meta',
+		);
+		array_merge( $actions, $myactions ) ;
+		return $actions;
+	}
+
 	/*
 	 * Save post meta for shows on SHOW update
 	 *
@@ -773,9 +794,19 @@ SQL;
 
 		// Flush Varnish
 		if ( class_exists( 'VarnishPurger' ) ) {
-			$this->varnish_purge->purgeUrl( get_permalink( $post_id ) );
-			$this->varnish_purge->purgeUrl( get_permalink( $post_id ) . 'amp' );
-			$this->varnish_purge->purgeUrl( get_site_url() . '/wp-json/lwtv/?vhp-regex' );
+
+			// Generate list of URLs based on the show ID:
+			$purgeurls = $this->varnish_purge->generate_urls( $post_id );
+			
+			// Add on the JSON API
+			array_push( $purgeurls, 
+				get_site_url() . '/wp-json/lwtv/?vhp-regex'
+			);
+			
+			// Purge 'em all
+			foreach ( $purgeurls as $url ) {
+				$this->varnish_purge->purgeUrl( $url ) ;
+			}
 		}
 
 		// re-hook this function
