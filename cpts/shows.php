@@ -773,9 +773,18 @@ SQL;
 
 		// Flush Varnish
 		if ( class_exists( 'VarnishPurger' ) ) {
-			$this->varnish_purge->purgeUrl( get_permalink( $post_id ) );
-			$this->varnish_purge->purgeUrl( get_permalink( $post_id ) . 'amp' );
-			$this->varnish_purge->purgeUrl( get_site_url() . '/wp-json/lwtv/?vhp-regex' );
+			$purgeurls = array( 
+				get_permalink( $post_id ) . '?vhp-regex',
+				get_site_url() . '/trope/?vhp-regex',
+				get_site_url() . '/cliche/?vhp-regex',
+				get_site_url() . '/wp-json/wp/v2/lez_tropes/?vhp-regex',
+				get_site_url() . '/wp-json/wp/v2/lez_cliches/?vhp-regex',
+				get_site_url() . '/wp-json/lwtv/?vhp-regex',
+			);
+			
+			foreach ( $purgeurls as $url ) {
+				$this->varnish_purge->purgeUrl( $url ) ;
+			}
 		}
 
 		// re-hook this function
