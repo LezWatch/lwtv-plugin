@@ -772,7 +772,11 @@ SQL;
 			update_post_meta( $post_id, 'lezshows_the_score', $percent_the_score );
 
 		// Flush Varnish
-		if ( class_exists( 'VarnishPurger' ) ) $this->varnish_purge->purgeUrl( get_permalink( $post_id ) );
+		if ( class_exists( 'VarnishPurger' ) ) {
+			$this->varnish_purge->purgeUrl( get_permalink( $post_id ) );
+			$this->varnish_purge->purgeUrl( get_permalink( $post_id ) . 'amp' );
+			$this->varnish_purge->purgeUrl( get_site_url() . '/wp-json/lwtv/?vhp-regex' );
+		}
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ) );
