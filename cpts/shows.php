@@ -1231,7 +1231,7 @@ SQL;
 	 * @param mixed $slug
 	 * @return void
 	 */
-	public function related_posts( $slug ) {
+	public static function related_posts( $slug ) {
 		$related_post_loop  = LWTV_Loops::related_posts_by_tag( 'post', $slug );
 		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
 
