@@ -17,7 +17,6 @@ if ( ! defined('WPINC' ) ) die;
 class LWTV_CMB2 {
 
 	public $icon_taxonomies; // Taxonomies that have an icon
-	public $symbolicon_path; // Path to symbolicons
 
 	/**
 	 * Constructor
@@ -29,7 +28,6 @@ class LWTV_CMB2 {
 
 		// If we don't have symbolicons, there's not a reason to register the taxonomy box...
 		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
-			$this->symbolicon_path = LP_SYMBOLICONS_PATH.'';
 			add_action( 'cmb2_admin_init', array( $this, 'register_taxonomy_metabox' ) );
 		}
 
@@ -85,7 +83,6 @@ class LWTV_CMB2 {
 	 * Add metabox to custom taxonomies to show icon
 	 *
 	 * $this->icon_taxonomies   array of taxonomies to show icons on.
-	 * $this->symbolicon_path   location of Symbolicons
 	 *
 	 * register_taxonomy_metabox()  CMB2 mextabox code
 	 * before_field_icon()          Show an icon if that exists
@@ -95,19 +92,7 @@ class LWTV_CMB2 {
 	 */
 	public function register_taxonomy_metabox() {
 		$prefix = 'lez_termsmeta_';
-
-		$imagepath  = LP_SYMBOLICONS_PATH . '/';
-		$upload_dir = wp_upload_dir();
-		$icon_array = array();
-
-		$symbol_list = fopen( $upload_dir['basedir'] . '/symbolicons.txt', 'r' );
-
-		if ( $symbol_list ) {
-			while ( ( $line = fgets( $symbol_list ) ) !== false ) {
-				$icon_array[ $line . '.svg' ] = $line;
-			}
-		}
-
+		$icon_array = get_option( 'lp_symbolicons' );
 		$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
 
 		$cmb_term = new_cmb2_box( array(
@@ -133,16 +118,22 @@ class LWTV_CMB2 {
 	// Add before field icon display
 	public function before_field_icon( $field_args, $field ) {
 		$icon = $field->value;
-
-		$svg = wp_remote_get( $this->symbolicon_path.$icon.'.svg' );
+		
+		// Bail early if empty
+		if ( empty( $icon ) ) return;
+		
+		$svg = wp_remote_get( LP_SYMBOLICONS_PATH . $icon .'.svg' );
+		
 		$iconpath = '';
-		if ( $svg['response']['code'] !== '404' ) {
-			$iconpath = $svg['body'];
+		if ( wp_remote_retrieve_response_code( $svg ) == '200' ) {
+			$iconpath = wp_remote_retrieve_body( $svg );
 		}
 
-		if ( !empty($icon) || $iconpath !== '' ) {
-			echo '<span role="img" class="cmb2-icon">'. $iconpath .'</span>';
+		$content = 'N/A';
+		if ( $iconpath !== '' ) {
+			$content = '<span role="img" class="cmb2-icon">' . $iconpath . '</span>';
 		}
+		return $content;
 	}
 
 	// Tax list column header
@@ -154,17 +145,15 @@ class LWTV_CMB2 {
 	// Tax list column content
 	public function terms_column_content($value, $content, $term_id){
 		$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
-
-
-		$svg = wp_remote_get( $this->symbolicon_path.$icon.'.svg' );
+		$svg = wp_remote_get( LP_SYMBOLICONS_PATH . $icon .'.svg' );
 		$iconpath = '';
-		if ( $svg['response']['code'] !== '404' ) {
-			$iconpath = $svg['body'];
+		$content = 'N/A';
+
+		if ( wp_remote_retrieve_response_code( $svg ) == '200' ) {
+			$iconpath = wp_remote_retrieve_body( $svg );
 		}
 
-		if ( empty($icon) || $iconpath == '' ) {
-			$content = 'N/A';
-		} else {
+		if ( !empty( $icon ) && $iconpath !== '' ) {
 			$content = '<span role="img" class="cmb2-icon">' . $iconpath . '</span>';
 		}
 	    return $content;
