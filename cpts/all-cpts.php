@@ -20,7 +20,6 @@ class LWTV_All_CPTs {
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'featured_images' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts') );
-		add_action( 'get_header' , array( $this, 'admin_notices' ), 20 );
 	}
 
 	/**
