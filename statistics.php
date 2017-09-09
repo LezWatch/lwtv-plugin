@@ -31,7 +31,7 @@ class LWTV_Stats {
 	 * Custom enqueue scripts for chartJS
 	 */
 	function enqueue_scripts() {
-		wp_enqueue_script( 'chart.js', plugin_dir_url( __FILE__ ) .'/js/Chart.bundle.min.js' , array( 'jquery' ) );
+		wp_enqueue_script( 'chart.js', plugin_dir_url( __FILE__ ) .'/assets/js/Chart.bundle.min.js' , array( 'jquery' ) );
 	}
 
 	/*

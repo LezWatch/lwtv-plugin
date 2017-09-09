@@ -11,9 +11,6 @@
  */
 class LWTV_CPT_Shows {
 
-	public $ratings_array;
-	public $stars_array;
-
 	/**
 	 * Constructor
 	 */
@@ -26,20 +23,8 @@ class LWTV_CPT_Shows {
 		add_action( 'init', array( $this, 'create_taxonomies'), 0 );
 
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
-		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes') );
 
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
-
-		add_filter( 'the_content', array( $this, 'related_shows' ) );
-
-		// varnish support
-		//add_filter( 'varnish_http_purge_events', array( $this, 'varnish_http_purge_events' ) );
-		
-		// Array of Valid Ratings
-		$this->ratings_array = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
-
-		// Array of valid stars we award shows
-		$this->stars_array = array( 'gold'   => 'Gold Star', 'silver' => 'Silver Star', 'bronze' => 'Bronze Star', 'anti' => 'Anti Star' );
 	}
 
 	/**
@@ -61,7 +46,6 @@ class LWTV_CPT_Shows {
 					// Force saving data to convert select2 saved data to a taxonomy
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
-					//LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_stations', 'lez_stations' );
 					break;
 			}
 		}
@@ -214,321 +198,6 @@ class LWTV_CPT_Shows {
 			// Register taxonomy
 			register_taxonomy( $taxonomyname, 'post_type_shows', $arguments );
 		}
-	}
-
-	/*
-	 * CMB2 Metaboxes
-	 */
-	public function cmb2_metaboxes() {
-		// prefix for all custom fields
-		$prefix = 'lezshows_';
-
-		// Metabox Group: Must See
-		$cmb_mustsee = new_cmb2_box( array(
-			'id'           => 'mustsee_metabox',
-			'title'        => 'Must See Details',
-			'object_types' => array( 'post_type_shows' ),
-			'context'      => 'normal',
-			'priority'     => 'high',
-			'show_in_rest' => true,
-			'show_names'   => true, // Show field names on the left
-		) );
-		// Field: Tropes
-		$field_tropes = $cmb_mustsee->add_field( array(
-			'name'              => 'Trope Plots',
-			'id'                => $prefix . 'tropes',
-			'taxonomy'          => 'lez_tropes',
-			'type'              => 'pw_multiselect',
-			'select_all_button' => false,
-			'remove_default'    => 'true',
-			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_tropes' ),
-			'attributes' => array(
-				'placeholder' => 'Common tropes ...'
-			),
-		) );
-		// Field: Worth It?
-		$field_worththumb = $cmb_mustsee->add_field( array(
-			'name'    => 'Worth It?',
-			'id'      => $prefix . 'worthit_rating',
-			'desc'    => 'Is the show worth watching?',
-			'type'    => 'radio_inline',
-			'options' => array(
-				'Yes' => 'Yes',
-				'Meh' => 'Meh',
-				'No'  => 'No',
-			),
-		) );
-		// Field: Worth It Details
-		$field_worthdetails = $cmb_mustsee->add_field( array(
-			'name'        => 'Worth It Details',
-			'id'          => $prefix . 'worthit_details',
-			'type'        => 'textarea_small',
-			'attributes'  => array(
-				'placeholder' => 'If this is left blank, a warning will show.',
-			),
-		) );
-		// Must See Grid
-		if( !is_admin() ){
-			return;
-		} else {
-			$grid_mustsee = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_mustsee );
-			$row          = $grid_mustsee->addRow();
-			$row->addColumns( array( $field_worththumb, $field_worthdetails ) );
-		}
-
-		// Metabox: Basic Show Details
-		$cmb_showdetails = new_cmb2_box( array(
-			'id'           => 'shows_metabox',
-			'title'        => 'Plots and Relationship Details',
-			'object_types' => array( 'post_type_shows' ),
-			'context'      => 'normal',
-			'priority'     => 'high',
-			'show_in_rest' => true,
-			'show_names'   => true, // Show field names on the left
-		) );
-		$field_ships = $cmb_showdetails->add_field( array(
-			'name'       => '#Ships',
-			'id'         => $prefix . 'ships',
-			'type'       => 'text',
-			'attributes' => array(
-				'placeholder' => 'Separate multiple ship names with commas',
-			),
-		) );
-		// Field: Queer Timeline
-		$field_timeline = $cmb_showdetails->add_field( array(
-			'name'       => 'Queer Timeline',
-			'id'         => $prefix . 'plots',
-			'type'       => 'wysiwyg',
-			'options'    => array(
-				'textarea_rows' => 10,
-				'teeny'         => true,
-				'media_buttons' => false,
-			),
-			'attributes' => array(
-				'placeholder' => 'A broad overview of the queerest seasons.',
-			),
-		) );
-		// Field: Notable Episodes
-		$field_episodes = $cmb_showdetails->add_field( array(
-			'name'       => 'Notable Episodes',
-			'id'         => $prefix . 'episodes',
-			'type'       => 'wysiwyg',
-			'options'    => array(
-				'textarea_rows' => 10,
-				'media_buttons' => false,
-				'teeny'         => true,
-			),
-			'attributes' => array(
-				'placeholder' => 'List the best episodes.',
-			),
-		) );
-		// Basic Show Details Grid
-		if( !is_admin() ){
-			return;
-		} else {
-			$grid_showdetails = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_showdetails );
-			$row              = $grid_showdetails->addRow();
-			$row->addColumns( array( $field_timeline, $field_episodes ) );
-		}
-
-		// Metabox: Ratings
-		$cmb_ratings = new_cmb2_box( array(
-			'id'            => 'ratings_metabox',
-			'title'         => 'Relativistic Ratings',
-			'desc'          => 'Ratings are subjective 1 to 5, with 1 being low and 5 being The L Word.',
-			'object_types'  => array( 'post_type_shows' ),
-			'context'       => 'normal',
-			'priority'      => 'high',
-			'show_names'    => true, // Show field names on the left
-			'show_in_rest'  => true,
-		) );
-		// Field: Realness Rating
-		$field_rating_real = $cmb_ratings->add_field( array(
-			'name'    => 'Realness Rating',
-			'id'      => $prefix . 'realness_rating',
-			'desc'    => 'How realistic are the queers?',
-			'type'    => 'radio_inline',
-			'options' => $this->ratings_array,
-		) );
-		// Field: Realness Details
-		$field_detail_real = $cmb_ratings->add_field( array(
-			'name'       => 'Realness Details',
-			'id'         => $prefix . 'realness_details',
-			'type'       => 'wysiwyg',
-			'options'    => array(
-				'textarea_rows' => 5,
-				'media_buttons' => false,
-				'teeny'         => true,
-			),
-			'attributes' => array(
-				'placeholder' => 'Explain the rating (optional).',
-			),
-		) );
-		// Field: Show Quality Rating
-		$field_rating_quality = $cmb_ratings->add_field( array(
-			'name'    => 'Quality Rating',
-			'id'      => $prefix . 'quality_rating',
-			'desc'    => 'How good is the show for queers?',
-			'type'    => 'radio_inline',
-			'options' => $this->ratings_array,
-		) );
-		// Field: Show Quality Details
-		$field_detail_quality = $cmb_ratings->add_field( array(
-			'name'       => 'Quality Details',
-			'id'         => $prefix . 'quality_details',
-			'type'       => 'wysiwyg',
-			'options'    => array(
-				'textarea_rows' => 5,
-				'media_buttons' => false,
-				'teeny'         => true,
-			),
-			'attributes' => array(
-				'placeholder' => 'Explain the rating (optional).',
-			),
-		) );
-		// Field: Screentime Rating
-		$field_rating_screen = $cmb_ratings->add_field( array(
-			'name'    => 'Screentime Rating',
-			'id'      => $prefix . 'screentime_rating',
-			'desc'    => 'How much air-time do they get?',
-			'type'    => 'radio_inline',
-			'options' => $this->ratings_array,
-		) );
-		// Field: Screentime Details
-		$field_detail_screen = $cmb_ratings->add_field( array(
-			'name'       => 'Screentime Details',
-			'id'         => $prefix . 'screentime_details',
-			'type'       => 'wysiwyg',
-			'options'    => array(
-				'textarea_rows' => 5,
-				'media_buttons' => false,
-				'teeny'         => true,
-			),
-			'attributes' => array(
-				'placeholder' => 'Explain the rating (optional).',
-			),
-		) );
-		// Ratings Grid
-		if( !is_admin() ){
-			return;
-		} else {
-			$grid_ratings = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_ratings );
-			$row1 = $grid_ratings->addRow();
-			$row1->addColumns( array( $field_rating_real, $field_detail_real ) );
-			$row2 = $grid_ratings->addRow();
-			$row2->addColumns( array( $field_rating_quality, $field_detail_quality ) );
-			$row3 = $grid_ratings->addRow();
-			$row3->addColumns( array( $field_rating_screen, $field_detail_screen ) );
-		}
-
-		// Metabox: Additional Data
-		$cmb_notes = new_cmb2_box( array(
-			'id'            	=> 'notes_metabox',
-			'title'         	=> 'Additional Data',
-			'object_types'  	=> array( 'post_type_shows' ), // Post type
-			'context'       	=> 'side',
-			'priority'      	=> 'default',
-			'show_names'		=> true, // Show field names on the left
-			'show_in_rest'      => true,
-			'cmb_styles'		=> false,
-		) );
-		// Field: Air Dates
-		$field_airdates = $cmb_notes->add_field( array(
-			'name'     => 'Air Dates',
-			'desc'     => 'Years the show Aired',
-			'id'       => $prefix . 'airdates',
-			'type'     => 'date_year_range',
-			'earliest' => '1930',
-			'text'     => array(
-				'start_label'  => '',
-				'finish_label' => '',
-			),
-			'options'  => array(
-				'start_reverse_sort' => true,
-				'finish_reverse_sort' => true,
-		    ),
-		) );
-		// Field: Number of Seasons
-		$field_seasons = $cmb_notes->add_field( array(
-			'name'     => 'Seasons',
-			'desc'     => 'Number of seasons aired',
-			'id'       => $prefix . 'seasons',
-			'type' => 'text',
-			'attributes' => array(
-				'type' => 'number',
-				'pattern' => '\d*',
-			),
-			'sanitization_cb' => 'absint',
-			'escape_cb'       => 'absint',
-		) );
-		// Field: Show Format
-		$field_format = $cmb_notes->add_field( array(
-			'name'             => 'Format',
-			'desc'             => 'Media format.',
-			'id'               => $prefix . 'tvtype',
-			'taxonomy'         => 'lez_formats',
-			'type'             => 'taxonomy_select',
-			'remove_default'   => 'true',
-			'default'          => 'tv-show',
-			'show_option_none' => false,
-		) );
-		// Field: IMDb ID
-		$field_imdb = $cmb_notes->add_field( array(
-			'name'       => 'IMDb ID',
-			'id'         => $prefix . 'imdb',
-			'type'       => 'text',
-			'attributes' => array(
-				'placeholder' => 'Example: tt6087250',
-			),
-		) );
-
-		// Field: Show Genre
-		$field_genre = $cmb_notes->add_field( array(
-			'name'              => 'Genre',
-			'desc'              => 'Subject matter.',
-			'id'                => $prefix . 'tvgenre',
-			'taxonomy'          => 'lez_genres',
-			'type'              => 'pw_multiselect',
-			'select_all_button' => false,
-			'remove_default'    => 'true',
-			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_genres' ),
-			'attributes'        => array(
-				'placeholder' => 'What is this show about ...'
-			),
-		) );
-		// Field: Show Stars
-		$field_stars = $cmb_notes->add_field( array(
-			'name'             => 'Show Stars',
-			'desc'             => 'Gold is by/for queers, No Stars is normal TV',
-			'id'               => $prefix . 'stars',
-			'type'             => 'select',
-			'show_option_none' => 'No Stars',
-			'options'          => $this->stars_array,
-		) );
-		// Field: Trigger Warning
-		$field_trigger = $cmb_notes->add_field( array(
-			'name'             => 'Warning?',
-			'desc'             => 'Trigger Warnings (i.e. Game of Thrones)',
-			'id'               => $prefix . 'triggerwarning',
-			'type'             => 'select',
-			'show_option_none' => 'No',
-			'options'          => array(
-				'on'  => 'High',
-				'med' => 'Medium',
-				'low' => 'Low'
-			)
-		) );
-		// Additional Data Grid
-		if( !is_admin() ){
-			return;
-		} else {
-			$grid_additional = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_notes );
-			$row1 = $grid_additional->addRow();
-			$row1->addColumns( array( $field_seasons, $field_format ) );
-			$row2 = $grid_additional->addRow();
-			$row2->addColumns( array( $field_stars, $field_trigger ) );
-		}
-
 	}
 
 	/*
@@ -722,22 +391,6 @@ SQL;
 		return $actions;
 	}
 
-	/**
-	 * varnish_http_purge_events function.
-	 * 
-	 * @access public
-	 * @param mixed $actions
-	 * @return void
-	 */
-	public function varnish_http_purge_events( $actions ) {
-		$myactions = array(
-			'updated_postmeta',
-			'do_update_show_meta',
-		);
-		array_merge( $actions, $myactions ) ;
-		return $actions;
-	}
-
 	/*
 	 * Save post meta for shows on SHOW update
 	 *
@@ -838,70 +491,7 @@ SQL;
 	 * @return void
 	 */
 	public function score_show_ratings ( $post_id ) {
-
-		$realness   = min( (int) get_post_meta( $post_id, 'lezshows_realness_rating', true) , 5 );
-		$quality    = min( (int) get_post_meta( $post_id, 'lezshows_quality_rating', true) , 5 );
-		$screentime = min( (int) get_post_meta( $post_id, 'lezshows_screentime_rating', true) , 5 );
-
-
-		$this_show = $realness + $quality + $screentime;
-
-		// Add in Thumb Score Rating = +5 or -5
-		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
-			case "Yes":
-				$this_show = $this_show + 5;
-				break;
-			case "No":
-				$this_show = $this_show - 5;
-				break;
-			default:
-				$this_show = $this_show;
-		}
-
-		// Add in Star Rating = -5, +1.5, +3, or +5
-		switch ( get_post_meta( $post_id, 'lezshows_stars', true ) ) {
-			case "gold":
-				$this_show = $this_show + 5;
-				break;
-			case "silver":
-				$this_show = $this_show + 3;
-				break;
-			case "bronze":
-				$this_show = $this_show + 1.5;
-				break;
-			case "anti":
-				$this_show = $this_show - 5;
-				break;
-			default:
-				$this_show = $this_show;
-		}
-
-		// Trigger Warning = -5, -3, -1
-		switch ( get_post_meta( $post_id, 'lezshows_triggerwarning', true ) ) {
-			case "on":
-				$this_show = $this_show - 5;
-				break;
-			case "med":
-				$this_show = $this_show - 3;
-				break;
-			case "low":
-				$this_show = $this_show - 1;
-				break;
-			default:
-				$this_show = $this_show;
-		}
-
-		// No Tropes = +5
-		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
-			$this_show = $this_show + 5;
-		}
-
-		// Calculate the score
-		$max_score = 30;
-
-		$score = ( $this_show / $max_score );
-
-		return $score;
+		return LWTV_Shows_Calculate::show_score( $post_id );
 	}
 
 	/*
@@ -912,42 +502,7 @@ SQL;
 	 * @param int $post_id The post ID.
 	 */
 	public function count_queers( $post_id , $type = 'count' ) {
-
-		// If this isn't a show post, return nothing.
-		if ( get_post_type( $post_id ) !== 'post_type_shows' )
-			return;
-
-		// Loop to get the list of characters
-		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
-		$queercount = $deadcount = $nonecount = 0;
-
-		// Store as array to defeat some stupid with counting and prevent querying the database too many times
-		if ($charactersloop->have_posts() ) {
-			while ( $charactersloop->have_posts() ) {
-
-				$charactersloop->the_post();
-				$char_id     = get_the_ID();
-				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
-				$is_dead     = has_term( 'dead', 'lez_cliches', $char_id);
-				$is_none     = has_term( 'none', 'lez_cliches', $char_id);
-
-				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
-					foreach( $shows_array as $char_show ) {
-						if ( $char_show['show'] == $post_id ) {
-							$queercount++;
-							if ( $is_dead == true ) $deadcount++;
-							if ( $is_none == true ) $nonecount++;
-						}
-					}
-				}
-			}
-			wp_reset_query();
-		}
-
-		// Return Queers!
-		if ( $type == 'count' ) return $queercount;
-		if ( $type == 'dead' ) return $deadcount;
-		if ( $type == 'none' ) return $nonecount;
+		return LWTV_Shows_Calculate::count_queers( $post_id, $type );
 	}
 
 	/*
@@ -1012,6 +567,17 @@ SQL;
 				break;
 		}
 	}
+	
+	/**
+	 * related_posts function.
+	 *
+	 * @access public
+	 * @param mixed $slug
+	 * @return void
+	 */	
+	public static function related_posts( $slug ) {
+		return LWTV_Related_Posts::related_posts( $slug );
+	}
 
 	/**
 	 * Echo content warning if needed.
@@ -1020,30 +586,7 @@ SQL;
 	 * @return void
 	 */
 	public static function echo_content_warning( $type = 'full' ) {
-		switch ( get_post_meta( get_the_ID(), 'lezshows_triggerwarning', true ) ) {
-			case "on":
-				$warning = '<strong>WARNING!</strong> This show contains scenes of explicit violence, drug use, suicide, sex, and/or abuse.';
-				break;
-			case "med":
-				$warning = '<strong>CAUTION!</strong> This show regularly discusses and sometimes depicts "strong content" like violence and abuse.';
-				break;
-			case "low":
-				$warning = '<strong>NOTICE!</strong> While generally acceptable for the over 14 crowd, this show may hit some sensitive topics now and then.';
-				break;
-			default:
-				$warning = 'none';
-		}
-
-		$hand_image = '⚠';
-		if ( $type !== 'amp' && defined( 'LP_SYMBOLICONS_PATH' ) ) {
-			$hand_request = wp_remote_get( LP_SYMBOLICONS_PATH.'hand.svg' );
-			$hand_image = '<span role="img" aria-label="Warning Hand" title="Warning Hand">' . $hand_request['body'] .'</span>';
-		}
-
-		if ( $warning !== 'none' ) {
-			echo '<div class="callout callout-trigger-' . get_post_meta( get_the_ID(), 'lezshows_triggerwarning', true ) . '">' . $hand_image . '<p>' . $warning . ' If those aren\'t your speed, neither is this show.
-			</p></div>';
-		}
+		LWTV_Shows_Display::echo_content_warning( $type );
 	}
 
 	/**
@@ -1055,56 +598,7 @@ SQL;
 	 * @return void
 	 */
 	public static function display_worthit( $show_id, $thumb_rating = 'Meh' ) {
-
-		// Bail if not set
-		if ( $thumb_rating == null ) return '<p><em>Coming soon...</em></p>';
-
-		?>
-		<div class="ratings-icons">
-			<div class="worthit worthit-<?php echo esc_attr( $thumb_rating ); ?>">
-				<?php
-				if ( $thumb_rating == "Yes" ) { $thumb_icon = "thumbs_up.svg"; }
-				if ( $thumb_rating == "Meh" ) { $thumb_icon = "meh-o.svg"; }
-				if ( $thumb_rating == "No" )  { $thumb_icon = "thumbs_down.svg"; }
-
-				$thumb_image = '';
-				if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
-					$thumb_request = wp_remote_get( LP_SYMBOLICONS_PATH . '' . $thumb_icon );
-					$thumb_image   = $thumb_request['body'];
-				}
-
-				echo '<span role="img" class="show-worthit ' . lcfirst( $thumb_rating ) . '">' . $thumb_image . '</span>';
-				echo get_post_meta( $show_id, 'lezshows_worthit_rating', true );
-				?>
-			</div>
-		</div>
-
-		<div class="ratings-details">
-			<?php
-				if ( ( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) ) {
-					echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) );
-				}
-			?>
-
-			<ul class="network-data">
-				<?php
-				$stations = get_the_terms( $show_id, 'lez_stations' );
-				if ( $stations && ! is_wp_error( $stations ) ) {
-					echo '<li class="network names">'. get_the_term_list( $show_id, 'lez_stations', '<strong>Airs On:</strong> ', ', ' ) .'</li>';
-				}
-				$formats = get_the_terms( $show_id, 'lez_formats' );
-				if ( $formats && ! is_wp_error( $formats ) ) {
-					echo '<li class="network formats">'. get_the_term_list( $show_id, 'lez_formats', '<strong>Show Format:</strong> ', ', ' ) .'</li>';
-				}
-				if ( get_post_meta($show_id, 'lezshows_airdates', true) ) {
-					$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
-					echo '<li class="network airdates"><strong>Airdates:</strong> '. $airdates['start'] .' - '. $airdates['finish'] .'</li>';
-				}
-				?>
-			</ul>
-
-		</div>
-		<?php
+		LWTV_Shows_Display::display_worthit( $show_id, $thumb_rating );
 	}
 
 	/**
@@ -1115,37 +609,7 @@ SQL;
 	 * @return void
 	 */
 	public static function display_tropes( $show_id ) {
-
-		// get the tropes associated with this show
-		$terms = get_the_terms( $show_id, 'lez_tropes' );
-		// if tropes are found, and no errors are returned
-		if ( $terms && ! is_wp_error( $terms ) ) {
-			?><ul class="trope-list"><?php
-				// loop over each returned trope
-				foreach( $terms as $term ) { ?>
-					<li class="show trope trope-<?php echo $term->slug; ?>">
-						<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope"><?php
-							// Make sure Symbolicons exist
-							$taxicon = $term->name;
-							if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
-								$icon = get_term_meta( $term->term_id, 'lez_termsmeta_icon', true );
-								$svg  = wp_remote_get( LP_SYMBOLICONS_PATH.'' . $icon . '.svg' );
-
-								if ( empty( $icon ) || $svg['response']['code'] !== '404' ) {
-									$taxicon = $svg['body'];
-								}
-							}
-							echo $taxicon;
-						?></a>
-						<a href="<?php echo get_term_link( $term->slug, 'lez_tropes'); ?>" rel="show trope" class="trope-link"><?php
-							echo $term->name;
-						?></a>
-					</li><?php
-				}
-			?></ul><?php
-		} else {
-			echo '<p><em>Coming soon...</em></p>';
-		}
+		LWTV_Shows_Display::display_tropes( $show_id );
 	}
 
 	/**
@@ -1159,128 +623,26 @@ SQL;
 	 * @return void
 	 */
 	public static function display_hearts( $show_id, $realness = '0', $quality = '0', $screentime = '0' ) {
-
-		// Bail if not set
-		if ( $realness == '0' && $quality == '0' && $screentime == '0' ) return '<p><em>Coming soon...</em></p>';
-
-		$heart_types = array( 'realness', 'quality', 'screentime' );
-
-		$heart = '♥';
-		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
-			$heart_request = wp_remote_get( LP_SYMBOLICONS_PATH.'heart.svg' );
-			$heart         = $heart_request['body'];
-		}
-
-		$positive_heart = '<span role="img" class="show-heart positive">' . $heart . '</span>';
-		$negative_heart = '<span role="img" class="show-heart negative">' . $heart . '</span>';
-
-		foreach ( $heart_types as $type ) {
-
-			switch ( $type ) {
-				case 'realness';
-					$rating = $realness;
-					$detail = 'lezshows_realness_details';
-					break;
-				case 'quality';
-					$rating = $quality;
-					$detail = 'lezshows_quality_details';
-					break;
-				case 'screentime';
-					$rating = $screentime;
-					$detail = 'lezshows_screentime_details';
-					break;
-			}
-
-			if ( $rating > '0' ) {
-				?>
-				<div class="ratings-icons">
-					<h3><?php echo ucfirst( $type ); ?></h3>
-					<?php
-					// while loop to display filled in hearts
-					// based on set ratings
-					$i = 1;
-					while( $i <= $rating ) {
-						echo $positive_heart;
-						$i++;
-					}
-					// calculate the remaining empty hearts
-					if ( $i >= 1 ) {
-						$loop_count = $i - 1;
-					} else {
-						$loop_count = 0;
-					}
-					while ( $loop_count < 5 ) {
-						echo $negative_heart;
-						$loop_count++;
-					}
-					?><span class="screen-reader-text">Rating: <?php echo $rating ?> Hearts (out of 5)</span>
-				</div>
-				<?php
-
-				if( ( get_post_meta( $show_id, $detail, true) ) ) {
-					echo apply_filters( 'the_content', wp_kses_post( get_post_meta( $show_id, $detail, true ) ) );
-				}
-			}
-		}
+		LWTV_Shows_Display::display_hearts( $show_id, $realness, $quality, $screentime );
 	}
-
+	
 	/**
-	 * related_posts function.
-	 *
+	 * display_amazon function.
+	 * 
 	 * @access public
-	 * @param mixed $slug
+	 * @static
+	 * @param mixed $show_id
 	 * @return void
 	 */
-	public static function related_posts( $slug ) {
-		$related_post_loop  = LWTV_Loops::related_posts_by_tag( 'post', $slug );
-		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
-
-		if ( $related_post_loop->have_posts() ) {
-			$the_related_posts = '<ul>';
-
-			foreach( $related_post_query as $related_post ) {
-				$the_related_posts .= '<li><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a> &mdash; ' . get_the_date( get_option( 'date_format' ), $related_post ) . '</li>';
-			}
-
-			$the_related_posts .= '</ul>';
-		}
-
-		return $the_related_posts;
+	public static function display_amazon( $show_id ) {
+		LWTV_Amazon::show_amazon( $show_id );
 	}
-
-
-	/**
-	 * related_shows function.
-	 *
-	 * @access public
-	 * @param mixed $content
-	 * @return void
-	 */
-	public function related_shows( $content ) {
-
-	    if( is_singular( 'post' ) ) {
-
-			$posttags = get_the_tags( get_the_ID() );
-			$shows = '';
-
-			if ( $posttags ) {
-				foreach( $posttags as $tag ) {
-					if ( $post = get_page_by_path( $tag->name, OBJECT, 'post_type_shows' ) ) {
-						$shows .= '<li><a href="/show/' . $tag->slug . '">'. ucwords( $tag->name ) . '</a></li>';
-					}
-				}
-			}
-
-			if ( $shows !== '' ) {
-				$related_shows = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about the shows mentioned in this post:</h4><ul>' . $shows . '</ul></div></section>';
-			}
-
-	        $content .= $related_shows;
-
-	    }
-
-	    return $content;
-	}
-
 }
+
+// Include Sub Files
+include_once( 'shows/calculations.php' );
+include_once( 'shows/cmb2-metaboxes.php' );
+include_once( 'shows/display.php' );
+include_once( 'shows/related-posts.php' );
+
 new LWTV_CPT_Shows();

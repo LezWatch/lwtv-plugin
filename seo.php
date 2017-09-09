@@ -34,7 +34,7 @@ class LWTV_SEO {
 		// If it's not a taxonomy, die.
 		if ( !is_tax() ) return;
 
-		$image = plugins_url( 'images/unicorn.png', __FILE__ );
+		$image = plugins_url( 'assets/images/unicorn.png', __FILE__ );
 
 		echo '<meta property="og:image" content="' . $image . '" /><meta name="twitter:image" content="' . $image . '" />';
 	}

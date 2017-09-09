@@ -3,7 +3,7 @@
  Plugin Name: LezWatch TV
  Plugin URI:  https://lezwatchtv.com
  Description: All the base code for LezWatch TV - If this isn't active, the site dies. An ugly death.
- Version: 2.0
+ Version: 2.1
  Author: Mika Epstein
 */
 
@@ -28,7 +28,9 @@ class LWTV_Functions {
 	 * Init
 	 */
 	public function init() {
-		// Placeholder
+		//if ( is_singular( ) ) {
+			include_once( 'amazon-affiliates.php' );
+		//}
 	}
 
 	/**
@@ -44,6 +46,10 @@ class LWTV_Functions {
 }
 new LWTV_Functions();
 
+/* 
+ * Include Plugins
+ */
+
 // Call CMB2 - it doesn't error if it's not there
 require_once( 'plugins/cmb2.php' );
 
@@ -55,19 +61,28 @@ if ( class_exists( 'FacetWP' ) ) {
 // Call WP Help - It won't error
 require_once( 'plugins/wp-help.php' );
 
-// Include CPTs
+/* 
+ * Include Custom Post Types
+ */
+
 include_once( 'cpts/characters.php' );
 include_once( 'cpts/shows.php' );
 include_once( 'cpts/all-cpts.php' );
 
-// JSON API
+/* 
+ * Include JSON API related tools
+ */
+
 include_once( 'rest-api/bury-your-queers.php' );
 include_once( 'rest-api/stats.php' );
 include_once( 'rest-api/alexa-skills.php' );
 
-// Include Others
+/* 
+ * Include Misc
+ */
+
+include_once( 'custom-loops.php' );
 include_once( 'search.php' );
 include_once( 'seo.php' );
-include_once( 'custom-loops.php' );
 include_once( 'statistics.php' );
 include_once( 'query_vars.php' );

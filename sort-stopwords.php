@@ -3,6 +3,7 @@
  * Filter post order by for shows
  *
  * We want to NOT include the/an/a when sorting.
+ * This is not currently being used becuase it's not working
  *
  * @since 1.2
  * Authors: Mika Epstein
