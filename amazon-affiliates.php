@@ -60,7 +60,11 @@ class LWTV_Amazon {
 		$search->setBrowseNode('163450');
 		$search->setKeywords( $keywords );
 
-		$formattedResponse = $apaiIO->runOperation($search);		
+		$formattedResponse = $apaiIO->runOperation($search);	
+		
+		// Emergency bailout when things aren't what we need
+		if ( !is_array( $formattedResponse ) || !is_array( $formattedResponse['Items']['Item'] ) ) return;
+		
 		$top5items = array_slice( $formattedResponse['Items']['Item'], 0, 2 );
 		
 		echo '<center>';
