@@ -48,8 +48,8 @@ class LWTV_Amazon {
 		
 		$conf
 		    ->setCountry('com')
-		    ->setAccessKey('AKIAIW5JFHJXUZBJTA3A')
-		    ->setSecretKey('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')
+		    ->setAccessKey( AMAZON_PRODUCT_API_KEY )
+		    ->setSecretKey( AMAZON_PRODUCT_API_SECRET )
 		    ->setAssociateTag('lezpress-20')
 		    ->setRequest($request)
 		    ->setResponseTransformer(new \ApaiIO\ResponseTransformer\XmlToArray());
