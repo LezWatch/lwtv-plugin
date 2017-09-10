@@ -56,10 +56,9 @@ class LWTV_Related_Posts {
 	 */
 	public function related_shows( $content ) {
 
-	    if( is_singular( 'post' ) ) {
+	    if ( is_singular( 'post' ) ) {
 
 			$posttags = get_the_tags( get_the_ID() );
-			$shows = '';
 
 			if ( $posttags ) {
 				foreach( $posttags as $tag ) {
@@ -67,13 +66,12 @@ class LWTV_Related_Posts {
 						$shows .= '<li><a href="/show/' . $tag->slug . '">'. ucwords( $tag->name ) . '</a></li>';
 					}
 				}
-			}
 
-			if ( $shows !== '' ) {
-				$related_shows = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about the shows mentioned in this post:</h4><ul>' . $shows . '</ul></div></section>';
+				if ( !null( $shows ) ) {
+					$related_shows = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about the shows mentioned in this post:</h4><ul>' . $shows . '</ul></div></section>';
+					$content .= $related_shows;
+				}
 			}
-
-	        $content .= $related_shows;
 
 	    }
 

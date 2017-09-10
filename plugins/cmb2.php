@@ -25,16 +25,10 @@ class LWTV_CMB2_Addons {
 		include_once( dirname( __FILE__ ) . '/cmb2/lwtv.php' );
 		
 		/* CMB2 Grid */
-		//define( 'CMB2GRID_DIR', '/wp-content/library/plugins/cmb2/CMB2-grid/' );
 		include_once( dirname( __FILE__ ) . '/cmb2/CMB2-grid/Cmb2GridPluginLoad.php' );
 
 		/* Select2 */
 		include_once( dirname( __FILE__ ) . '/cmb2/cmb-field-select2/cmb-field-select2.php' );
-
-		//add_filter( 'pw_cmb2_field_select2_asset_path', 'lezwatch_pw_cmb2_field_select2_asset_path' );
-		function lezwatch_pw_cmb2_field_select2_asset_path() {
-			return '/wp-content/library/plugins/cmb2/cmb-field-select2/';
-		}
 
 		/* Date Year Range */
 		include_once( dirname( __FILE__ ) . '/cmb2/year-range.php' );

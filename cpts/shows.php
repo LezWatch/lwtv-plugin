@@ -625,18 +625,6 @@ SQL;
 	public static function display_hearts( $show_id, $realness = '0', $quality = '0', $screentime = '0' ) {
 		LWTV_Shows_Display::display_hearts( $show_id, $realness, $quality, $screentime );
 	}
-	
-	/**
-	 * display_amazon function.
-	 * 
-	 * @access public
-	 * @static
-	 * @param mixed $show_id
-	 * @return void
-	 */
-	public static function display_amazon( $show_id ) {
-		LWTV_Amazon::show_amazon( $show_id );
-	}
 }
 
 // Include Sub Files
