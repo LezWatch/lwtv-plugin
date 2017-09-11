@@ -67,7 +67,7 @@ class LWTV_Related_Posts {
 					}
 				}
 
-				if ( !null( $shows ) ) {
+				if ( !is_null( $shows ) ) {
 					$related_shows = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about the shows mentioned in this post:</h4><ul>' . $shows . '</ul></div></section>';
 					$content .= $related_shows;
 				}
