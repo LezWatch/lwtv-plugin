@@ -89,12 +89,12 @@ class LWTV_Amazon {
 		
 		// If there are no keywords AND Fallback is false
 		if ( ! empty( $setKeywords ) && !$fallback ) {
-			
-			$conf = new GenericConfiguration();
-			$client = new \GuzzleHttp\Client();
-			$request = new \ApaiIO\Request\GuzzleRequest($client);
 	
 			try {
+				$conf = new GenericConfiguration();
+				$client = new \GuzzleHttp\Client();
+				$request = new \ApaiIO\Request\GuzzleRequest($client);
+
 				$conf
 					->setCountry( 'com' )
 					->setAccessKey( AMAZON_PRODUCT_API_KEY )
