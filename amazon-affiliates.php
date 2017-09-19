@@ -76,13 +76,6 @@ class LWTV_Amazon {
 				}
 
 			}
-		} elseif ( is_singular( 'post_type_characters' ) ) {
-			// Grab ALL the shows for our keywords
-			// Sara. Lance.
-			$all_shows = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
-			foreach ( $all_shows as $each_show ) {
-				$setKeywords .= ' ' . get_the_title( $each_show['show'] );
-			}
 		} else {
 			$fallback = true;
 		}
