@@ -32,10 +32,29 @@ class LWTV_Amazon {
 	 * @return void
 	 */
 	public static function show_amazon( $post_id ) {
+
+		$setKeywords    = '';
+		$fallback       = false;
+		$setCategory    = 'DVD';
 		
-		$setKeywords   = '';
-		$fallback      = false;
-		$setCategory   = 'DVD';
+		// Not used yet but maybe
+		$amazon_nations = array( 
+			'Denmark'        => 'de',
+			'USA'            => 'com',
+			'United Kingdom' => 'co.uk',
+			'Canada'         => 'ca',
+			'France'         => 'fr',
+			'Japan'          => 'co.jp',
+			'Italy'          => 'it',
+			'China'          => 'cn',
+			'Spain'          => 'es',
+			'India'          => 'in',
+			'Brazil'         => 'com.br',
+			'Mexico'         => 'com.mx',
+			'Australia'      => 'com.au'
+		);
+
+		// Disabled becuase of idiots like "Legends of Tomorrow" who use "Action Adventure" and not "Television"
 		//$setBrowseNode = '163450';
 		
 		if ( is_singular( 'post_type_shows' ) ) {
@@ -67,8 +86,6 @@ class LWTV_Amazon {
 				if ( $countries && ! is_wp_error( $countries ) ) {
 					foreach ( $countries as $country ) {
 						if ( $country->name !== 'USA' ) {
-							// Valid countries:
-							// de, com, co.uk, ca, fr, co.jp, it, cn, es, in, com.br, com.mx, com.au
 							//$setKeywords .= ' ' . $country->name;
 							$fallback = true;
 						}
@@ -119,7 +136,20 @@ class LWTV_Amazon {
 		} else {
 			$fallback = true;
 		}
-						
+		
+		// Return the output
+		return $this->output( $fallback, $results );
+	}
+
+	/**
+	 * output function.
+	 * 
+	 * @access public
+	 * @param bool $fallback (default: false)
+	 * @param array $results (default: array())
+	 * @return void
+	 */
+	function output( $fallback = false, $results = array() ) {
 		echo '<center>';
 		if ( !$fallback ) {
 			$top_items = array_slice( $results['Items']['Item'], 0, 2 );
@@ -136,7 +166,6 @@ class LWTV_Amazon {
 			echo do_shortcode( '[amazon-bounties]' );
 		}
 		echo '</center>';
-
 	}
 	
 }
