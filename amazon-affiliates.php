@@ -137,8 +137,10 @@ class LWTV_Amazon {
 			$fallback = true;
 		}
 		
+		$output = $this->output( $fallback, $results );
+		
 		// Return the output
-		return $this->output( $fallback, $results );
+		return $output;
 	}
 
 	/**
@@ -149,7 +151,7 @@ class LWTV_Amazon {
 	 * @param array $results (default: array())
 	 * @return void
 	 */
-	function output( $fallback = false, $results = array() ) {
+	public static function output( $fallback = false, $results = array() ) {
 		echo '<center>';
 		if ( !$fallback ) {
 			$top_items = array_slice( $results['Items']['Item'], 0, 2 );
