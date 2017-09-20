@@ -33,31 +33,19 @@ class LWTV_Amazon {
 	 */
 	public static function show_amazon( $post_id ) {
 
-		$setKeywords    = '';
-		$fallback       = false;
-		$setCategory    = 'DVD';
-		
-		// Not used yet but maybe
-		$amazon_nations = array( 
-			'Denmark'        => 'de',
-			'USA'            => 'com',
-			'United Kingdom' => 'co.uk',
-			'Canada'         => 'ca',
-			'France'         => 'fr',
-			'Japan'          => 'co.jp',
-			'Italy'          => 'it',
-			'China'          => 'cn',
-			'Spain'          => 'es',
-			'India'          => 'in',
-			'Brazil'         => 'com.br',
-			'Mexico'         => 'com.mx',
-			'Australia'      => 'com.au'
-		);
+		$setKeywords  = '';
+		$use_fallback = false;
+		$results      = array();
+		$setCategory  = 'DVD';
 
-		// Disabled becuase of idiots like "Legends of Tomorrow" who use "Action Adventure" and not "Television"
-		//$setBrowseNode = '163450';
+		// Check if the transient expired or not.
+		if ( false === get_transient( 'lezwatchtv_amazon_affiliates' ) ) {
+			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', 59 );
+		} else {
+			$use_fallback = true;
+		}
 		
-		if ( is_singular( 'post_type_shows' ) ) {
+		if ( is_singular( 'post_type_shows' ) && !$use_fallback ) {
 			// Add Title for shows
 			$setKeywords .= get_the_title();
 
@@ -73,32 +61,25 @@ class LWTV_Amazon {
 			} 
 			
 			if ( $setCategory !== 'UnboxVideo' ) {
-				// If there show isn't on Amazon, add genres to keywords
-				$genres = get_the_terms( $post_id, 'lez_genres' );
-				if ( $genres && ! is_wp_error( $genres ) ) {
-					foreach ( $genres as $genre ) {
-						$setKeywords .= ' ' . $genre->name;
-					}
-				}
+				// Checks if the show isn't on amazon.
 
 				// If the country isn't USA, we get insanely dumb results
 				$countries = get_the_terms( $post_id, 'lez_country' );
 				if ( $countries && ! is_wp_error( $countries ) ) {
 					foreach ( $countries as $country ) {
 						if ( $country->name !== 'USA' ) {
-							//$setKeywords .= ' ' . $country->name;
-							$fallback = true;
+							$use_fallback = true;
 						}
 					}
 				}
 
 			}
 		} else {
-			$fallback = true;
+			$use_fallback = true;
 		}
 		
 		// If there are no keywords AND Fallback is false
-		if ( ! empty( $setKeywords ) && !$fallback ) {
+		if ( ! empty( $setKeywords ) && !$use_fallback ) {
 	
 			try {
 				$conf = new GenericConfiguration();
@@ -113,47 +94,44 @@ class LWTV_Amazon {
 					->setResponseTransformer( new \ApaiIO\ResponseTransformer\XmlToArray() )
 					->setRequest( $request );
 			} catch (\Exception $e) {
-				$fallback = true;
+				$use_fallback = true;
 			}
 			$apaiIO = new ApaiIO( $conf );
 		
 			$search = new Search();
 			$search->setCategory( $setCategory );
 			if ( isset( $setBrowseNode ) ) $search->setBrowseNode( $setBrowseNode );
-			if ( isset( $setActor ) )      $search->setActor( $setActor );
 			$search->setKeywords( $setKeywords );
 	
 			$results = $apaiIO->runOperation( $search );
 					
-			// If we don't get a valid array, we will use the fallback
+			// If we don't get a valid array, we will use the use_fallback
 			if ( 
 				!is_array( $results ) || 
 				!array_key_exists( 'Item', $results['Items'] ) ||
 				array_key_exists( 'Errors', $results['Items']['Request'] )
 			) {
-				$fallback = true;
+				$use_fallback = true;
 			}
 		} else {
-			$fallback = true;
+			$use_fallback = true;
 		}
 		
-		$output = $this->output( $fallback, $results );
-		
 		// Return the output
-		return $output;
+		return self::output( $use_fallback, $results );;
 	}
 
 	/**
 	 * output function.
 	 * 
 	 * @access public
-	 * @param bool $fallback (default: false)
+	 * @param bool $use_fallback (default: false)
 	 * @param array $results (default: array())
 	 * @return void
 	 */
-	public static function output( $fallback = false, $results = array() ) {
+	public static function output( $use_fallback = false, $results = array() ) {
 		echo '<center>';
-		if ( !$fallback ) {
+		if ( !$use_fallback ) {
 			$top_items = array_slice( $results['Items']['Item'], 0, 2 );
 			foreach ( $top_items as $item ) {
 				if ( is_array( $item ) && array_key_exists( 'ASIN', $item ) ) {
