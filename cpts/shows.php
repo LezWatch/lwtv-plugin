@@ -552,8 +552,12 @@ SQL;
 				$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
 				$deadqueers  = get_post_meta( $post->ID, 'lezshows_dead_count', true );
 				$score       = get_post_meta( $post->ID, 'lezshows_the_score', true );
+				$loved       = ( get_post_meta( $post->ID, 'lezshows_worthit_show_we_love', true ) == 'on' )? 'Yes' : 'No';
 
 				?>
+				<div class="misc-pub-section lwtv misc-pub-lwtv">
+					<span id="loved">Loved: <b><?php echo $loved ?></b></span>
+				</div>
 				<div class="misc-pub-section lwtv misc-pub-lwtv">
 					<span id="characters">Characters: <b><?php echo $countqueers; ?></b> total
 						<?php if ( $deadqueers ) { ?> / <b><?php echo $deadqueers; ?></b> dead<?php } ?>

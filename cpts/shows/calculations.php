@@ -79,8 +79,13 @@ class LWTV_Shows_Calculate {
 			$this_show = $this_show + 5;
 		}
 
+		// Shows We Love get a +5
+		if ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) == 'on' ) {
+			$this_show = $this_show + 5;
+		}
+
 		// Calculate the score
-		$max_score = 30;
+		$max_score = 35;
 
 		$score = ( $this_show / $max_score );
 

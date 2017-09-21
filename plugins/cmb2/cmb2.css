@@ -47,11 +47,11 @@
 	padding-right: 3px;
 	vertical-align: top;
 	-webkit-font-smoothing: antialiased;
-	color: #82878c;
+	color: #d1548e;
 }
 
 .lwtv #score:before {
-	content: "\f328";
+	content: "\f529";
 	position: relative;
 	top: -1px;
 	font: 400 20px/1 dashicons;
@@ -61,5 +61,19 @@
 	padding-right: 3px;
 	vertical-align: top;
 	-webkit-font-smoothing: antialiased;
-	color: #82878c;
+	color: #d1548e;
+}
+
+.lwtv #loved:before {
+	content: "\f487";
+	position: relative;
+	top: -1px;
+	font: 400 20px/1 dashicons;
+	speak: none;
+	display: inline-block;
+	margin-left: -1px;
+	padding-right: 3px;
+	vertical-align: top;
+	-webkit-font-smoothing: antialiased;
+	color: #d1548e;
 }

@@ -75,9 +75,17 @@ class LWTV_Shows_CMB2 {
 			'id'          => $prefix . 'worthit_details',
 			'type'        => 'textarea_small',
 			'attributes'  => array(
-				'placeholder' => 'If this is left blank, a warning will show.',
+				'placeholder' => 'Why is this show worth watching?',
 			),
 		) );
+		// Field: Worth It - We Love This Shit
+		$field_worthshowwelove = $cmb_mustsee->add_field( array(
+			'name' => 'Show We Love',
+			'desc' => 'Above all else, this is a show everyone loves. If checked, this show will display on the home page. Only use if you are a billion percent sure.',
+			'id'   => $prefix . 'worthit_show_we_love',
+			'type' => 'checkbox',
+		) );
+
 		// Must See Grid
 		if( !is_admin() ){
 			return;
