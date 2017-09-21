@@ -40,7 +40,7 @@ class LWTV_Amazon {
 
 		// Check if the transient expired or not.
 		if ( false === get_transient( 'lezwatchtv_amazon_affiliates' ) ) {
-			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', 59 );
+			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', 90 );
 		} else {
 			$use_fallback = true;
 		}
