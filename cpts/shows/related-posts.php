@@ -59,6 +59,7 @@ class LWTV_Related_Posts {
 	    if ( is_singular( 'post' ) ) {
 
 			$posttags = get_the_tags( get_the_ID() );
+			$shows = '';
 
 			if ( $posttags ) {
 				foreach( $posttags as $tag ) {
