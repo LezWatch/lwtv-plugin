@@ -37,10 +37,11 @@ class LWTV_Amazon {
 		$use_fallback = false;
 		$results      = array();
 		$setCategory  = 'DVD';
+		$amzTransient = get_transient( 'lezwatchtv_amazon_affiliates' );
 
 		// Check if the transient expired or not.
-		if ( false === get_transient( 'lezwatchtv_amazon_affiliates' ) ) {
-			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', 90 );
+		if ( !$amzTransient ) {
+			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', 120 );
 		} else {
 			$use_fallback = true;
 		}
