@@ -26,12 +26,6 @@ class LWTV_FacetWP {
 		// Filter sort options to add our own
 		add_filter( 'facetwp_sort_options', array( $this, 'facetwp_sort_options' ), 10, 2 );
 
-		// Filter results count
-		add_filter( 'facetwp_result_count', function( $output, $params ) {
-		    $output = $params['total'];
-		    return $output;
-		}, 10, 2 );
-
 		// Filter Facet output
 		add_filter( 'facetwp_facet_html', function( $output, $params ) {
 		    if ( 'show_airdates' == $params['facet']['name'] ) {
