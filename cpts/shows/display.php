@@ -48,6 +48,44 @@ class LWTV_Shows_Display {
 	}
 
 	/**
+	 * Rewritten content warning
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public static function content_warning( $post_id ) {
+
+		$warning_array = array(
+			'card'    => 'none',
+			'content' => 'none',
+		);
+		
+		if ( is_null( $post_id ) ) return $warning_array;
+		
+		switch ( get_post_meta( $post_id, 'lezshows_triggerwarning', true ) ) {
+			case "on":
+				$warning_array['card']    = 'danger';
+				$warning_array['content'] = '<strong>WARNING!</strong> This show contains scenes of explicit violence, drug use, suicide, sex, and/or abuse.';
+				break;
+			case "med":
+				$warning_array['card']    = 'warning';
+				$warning_array['content'] = '<strong>CAUTION!</strong> This show regularly discusses and sometimes depicts "strong content" like violence and abuse.';
+				break;
+			case "low":
+				$warning_array['card']    = 'info';
+				$warning_array['content'] = '<strong>NOTICE!</strong> While generally acceptable for the over 14 crowd, this show may hit some sensitive topics now and then.';
+				break;
+			default:
+				$warning_array['card']    = 'none';
+				$warning_array['content'] = 'none';
+		}
+
+		$warning_array['content'] .= ' If those aren\'t your speed, neither is this show.';
+
+		return $warning_array;
+	}
+
+	/**
 	 * display_worthit function.
 	 *
 	 * @access public
