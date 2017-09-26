@@ -90,6 +90,15 @@ class LWTV_Stats {
 			unset( $array['off'] );
 		}
 
+		if ( $data == 'weloveit' ) {
+			$meta_array   = array( 'on' );
+			$array        = self::meta_array( $post_type, $meta_array, 'lezshows_worthit_show_we_love', $data );
+			$nolove       = $count - $array['on']['count'];
+			$array['no']  = array( 'count' => ( $nolove ), 'name' => 'No', 'url' => '' );
+			$array['yes'] = array( 'count' => $array['on']['count'], 'name' => 'Yes', 'url' => '' );
+			unset( $array['on'] );
+		}
+
 		if ( $data == 'current' ) {
 			$meta_array = array( 'current', 'notcurrent' );
 			$array = self::meta_array( $post_type, $meta_array, 'lezshows_airdates', $data, 'REGEXP' );
@@ -800,7 +809,8 @@ class LWTV_Stats {
 				            "#4BC0C0",
 				            "#FFCE56",
 				            "#36A2EB",
-				            "#E7E9ED"
+				            "#8D329F",
+				            "#E7E9ED",
 			            ]
 			        }]
 			};
