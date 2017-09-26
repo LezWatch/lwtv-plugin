@@ -109,9 +109,11 @@ class LWTV_Search {
 			// Get Post Types
 			$query_post_types = get_query_var('post_type');
 			
-			if ( is_null($query_post_types) || empty($query_post_types) || !array($query_post_types) || $query_post_types == 'any' ) {
-				$query_post_types = array( 'post_type_characters', 'post_type_shows', 'post', 'page' );
+			if ( is_null($query_post_types) || empty($query_post_types) || !array($query_post_types) ) {
+				$query_post_types = array( 'post_type_characters', 'post_type_shows' );
 			}
+
+			if ( $query_post_types == 'any' ) $query_post_types = array( 'post', 'page' );
 
 			$query_post_type_url = '/?';
 			foreach ( $query_post_types as $value ) {
