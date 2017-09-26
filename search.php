@@ -113,7 +113,7 @@ class LWTV_Search {
 				$query_post_types = array( 'post_type_characters', 'post_type_shows' );
 			}
 
-			if ( $query_post_types == 'any' ) $query_post_types = array( 'post', 'page' );
+			if ( $query_post_types == 'any' ) $query_post_types = array( 'post', 'page', 'post_type_characters', 'post_type_shows' );
 
 			$query_post_type_url = '/?';
 			foreach ( $query_post_types as $value ) {
