@@ -35,7 +35,7 @@ class LWTV_Related_Posts {
 		$the_related_posts  = '<!-- No related posts published yet. -->';
 
 		if ( $related_post_loop->have_posts() ) {
-			$the_related_posts = '<h2>Related Posts</h2> <ul>';
+			$the_related_posts = '<ul>';
 
 			foreach( $related_post_query as $related_post ) {
 				$the_related_posts .= '<li><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a> &mdash; ' . get_the_date( get_option( 'date_format' ), $related_post ) . '</li>';
