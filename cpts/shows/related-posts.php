@@ -60,7 +60,7 @@ class LWTV_Related_Posts {
 		$term = term_exists( $slug , 'post_tag' );
 		if ( $term == 0 || $term == null ) return false;
 
-
+		// Elsa let it go and return true
 		return true;
 	}
 
