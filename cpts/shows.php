@@ -571,65 +571,6 @@ SQL;
 				break;
 		}
 	}
-	
-	/**
-	 * related_posts function.
-	 *
-	 * @access public
-	 * @param mixed $slug
-	 * @return void
-	 */	
-	public static function related_posts( $slug ) {
-		return LWTV_Related_Posts::related_posts( $slug );
-	}
-
-	/**
-	 * Echo content warning if needed.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public static function echo_content_warning( $type = 'full' ) {
-		LWTV_Shows_Display::echo_content_warning( $type );
-	}
-
-	/**
-	 * display_worthit function.
-	 *
-	 * @access public
-	 * @param string $show_id
-	 * @param string $thumb_rating (default: 'meh')
-	 * @return void
-	 */
-	public static function display_worthit( $show_id, $thumb_rating = 'Meh' ) {
-		LWTV_Shows_Display::display_worthit( $show_id, $thumb_rating );
-	}
-
-	/**
-	 * display_tropes function.
-	 *
-	 * @access public
-	 * @param mixed $show_id
-	 * @return void
-	 */
-	public static function display_tropes( $show_id ) {
-		LWTV_Shows_Display::display_tropes( $show_id );
-	}
-
-	/**
-	 * display_hearts function.
-	 *
-	 * @access public
-	 * @param mixed $show_id
-	 * @param string $realness (default: '0')
-	 * @param string $quality (default: '0')
-	 * @param string $screentime (default: '0')
-	 * @return void
-	 */
-	public static function display_hearts( $show_id, $realness = '0', $quality = '0', $screentime = '0' ) {
-		LWTV_Shows_Display::display_hearts( $show_id, $realness, $quality, $screentime );
-	}
-
 
 	/**
 	 * display_amazon function.
@@ -648,7 +589,6 @@ SQL;
 // Include Sub Files
 include_once( 'shows/calculations.php' );
 include_once( 'shows/cmb2-metaboxes.php' );
-include_once( 'shows/display.php' );
 include_once( 'shows/related-posts.php' );
 
 new LWTV_CPT_Shows();
