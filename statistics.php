@@ -810,8 +810,8 @@ class LWTV_Stats {
 				            "#FFCE56",
 				            "#36A2EB",
 				            "#FF8C08",
-				            "#4F44BB",
-				            "#5EFE08",
+				            "#4959AE",
+				            "#99FF63",
 				            "#E7E9ED",
 			            ]
 			        }]
