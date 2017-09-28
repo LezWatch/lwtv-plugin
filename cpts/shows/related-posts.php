@@ -27,7 +27,7 @@ class LWTV_Related_Posts {
 	 */
 	public static function related_posts( $slug ) {
 
-		if ( !are_there_posts( $slug ) ) return;
+		if ( !self::are_there_posts( $slug ) ) return;
 
 		$related_post_loop  = LWTV_Loops::related_posts_by_tag( 'post', $slug );
 		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
@@ -40,7 +40,7 @@ class LWTV_Related_Posts {
 				$the_related_posts .= '<li><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a> &mdash; ' . get_the_date( get_option( 'date_format' ), $related_post ) . '</li>';
 			}
 
-			$the_related_posts .= '</ul></div>';
+			$the_related_posts .= '</ul>';
 		}
 
 		return $the_related_posts;
