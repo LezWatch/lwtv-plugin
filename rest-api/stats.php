@@ -77,6 +77,9 @@ class LWTV_Stats_JSON {
 	 */
 	public static function statistics( $stat_type = 'none', $format = 'simple' ) {
 
+		// Remove <!--fwp-loop--> from output
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+
 		if ( $stat_type == 'shows' ) {
 
 			if ( $format == 'complex' ) {
