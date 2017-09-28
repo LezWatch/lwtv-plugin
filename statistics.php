@@ -82,10 +82,10 @@ class LWTV_Stats {
 			$meta_array = array( 'on', 'high', 'med', 'low', 'no', 'off' );
 			$array = self::meta_array( $post_type, $meta_array, 'lezshows_triggerwarning', $data );
 			$nowarning = $count - $array['on']['count'] - $array['med']['count'] - $array['low']['count'];
-			$array['high'] = array( 'count' => $array['on']['count'], 'name' => 'Warning', 'url' => '' );
-			$array['med']  = array( 'count' => $array['med']['count'], 'name' => 'Caution', 'url' => '' );
-			$array['low']  = array( 'count' => $array['low']['count'], 'name' => 'Notice', 'url' => '' );
-			$array['no']   = array( 'count' => ( $nowarning ), 'name' => 'No Warning', 'url' => '' );
+			$array['high'] = array( 'count' => $array['on']['count'], 'name' => 'Warning', 'url' => '/shows/?fwp_show_trigger_warning=on' );
+			$array['med']  = array( 'count' => $array['med']['count'], 'name' => 'Caution', 'url' => '/shows/?fwp_show_trigger_warning=med' );
+			$array['low']  = array( 'count' => $array['low']['count'], 'name' => 'Notice', 'url' => '/shows/?fwp_show_trigger_warning=low' );
+			$array['no']   = array( 'count' => ( $nowarning ), 'name' => 'No Warning', 'url' => '/shows/' );
 			unset( $array['on'] );
 			unset( $array['off'] );
 		}
@@ -805,14 +805,14 @@ class LWTV_Stats {
 							}
 						?>],
 			            backgroundColor: [
-				            "#FF6384",
-				            "#4BC0C0",
-				            "#FFCE56",
-				            "#36A2EB",
-				            "#FF8C08",
-				            "#4959AE",
-				            "#99FF63",
-				            "#E7E9ED",
+				            "#FF6384", // 'red'
+				            "#4BC0C0", // 'aqua'
+				            "#FFCE56", // 'goldenrod'
+				            "#5DB6EF", // 'light blue'
+				            "#FF9963", // 'orange sherbert'
+				            "#5C7ECB", // 'purple'
+				            "#B7FF90", // 'green'
+				            "#E7E9ED", // 'grey'
 			            ]
 			        }]
 			};
