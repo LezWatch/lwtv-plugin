@@ -79,13 +79,14 @@ class LWTV_Related_Posts {
 			$shows = '';
 
 			if ( $posttags ) {
+								
 				foreach( $posttags as $tag ) {
 					if ( $post = get_page_by_path( $tag->name, OBJECT, 'post_type_shows' ) ) {
 						$shows .= '<li><a href="/show/' . $tag->slug . '">'. ucwords( $tag->name ) . '</a></li>';
 					}
 				}
 
-				if ( !is_null( $shows ) ) {
+				if ( !empty( $shows ) ) {
 					$related_shows = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about the shows mentioned in this post:</h4><ul>' . $shows . '</ul></div></section>';
 					$content .= $related_shows;
 				}
