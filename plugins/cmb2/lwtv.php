@@ -120,19 +120,15 @@ class LWTV_CMB2 {
 		$icon = $field->value;
 		
 		// Bail early if empty
-		if ( empty( $icon ) ) return;
+		if ( empty( $icon ) || !defined( 'LP_SYMBOLICONS_PATH' ) ) return;
 		
-		$svg = wp_remote_get( LP_SYMBOLICONS_PATH . $icon .'.svg' );
+		if ( !file_exists( LP_SYMBOLICONS_PATH . $icon . '.svg' ) ) {
+			$content = 'N/A';
+		} else {
+			$iconpath = file_get_contents( LP_SYMBOLICONS_PATH . $icon . '.svg' );
+			$content  = '<span role="img" class="cmb2-icon">' . $iconpath . '</span>';
+		}
 		
-		$iconpath = '';
-		if ( wp_remote_retrieve_response_code( $svg ) == '200' ) {
-			$iconpath = wp_remote_retrieve_body( $svg );
-		}
-
-		$content = 'N/A';
-		if ( $iconpath !== '' ) {
-			$content = '<span role="img" class="cmb2-icon">' . $iconpath . '</span>';
-		}
 		return $content;
 	}
 
@@ -145,17 +141,17 @@ class LWTV_CMB2 {
 	// Tax list column content
 	public function terms_column_content($value, $content, $term_id){
 		$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
-		$svg = wp_remote_get( LP_SYMBOLICONS_PATH . $icon .'.svg' );
-		$iconpath = '';
-		$content = 'N/A';
 
-		if ( wp_remote_retrieve_response_code( $svg ) == '200' ) {
-			$iconpath = wp_remote_retrieve_body( $svg );
+		// Bail early if empty
+		if ( empty( $icon ) || !defined( 'LP_SYMBOLICONS_PATH' ) ) return;
+		
+		if ( !file_exists( LP_SYMBOLICONS_PATH . $icon . '.svg' ) ) {
+			$content = 'N/A';
+		} else {
+			$iconpath = file_get_contents( LP_SYMBOLICONS_PATH . $icon . '.svg' );
+			$content  = '<span role="img" class="cmb2-icon">' . $iconpath . '</span>';
 		}
 
-		if ( !empty( $icon ) && $iconpath !== '' ) {
-			$content = '<span role="img" class="cmb2-icon">' . $iconpath . '</span>';
-		}
 	    return $content;
 	}
 }
