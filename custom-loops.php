@@ -266,11 +266,8 @@ class LWTV_Loops {
 		$term = term_exists( $slug, 'post_tag' );
 		if ( $term == 0 || $term == null ) return;
 
-		//$count = wp_count_posts( $post_type )->publish;
-		$count = '5';
 		$query = new WP_Query( array(
 			'post_type'       => $post_type,
-			'posts_per_page'  => $count,
 			'no_found_rows'   => true,
 			'post_status'     => array( 'publish' ),
 			'tag'             => $slug,

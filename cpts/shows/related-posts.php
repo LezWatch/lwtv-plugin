@@ -34,16 +34,40 @@ class LWTV_Related_Posts {
 		$the_related_posts  = '<em>Coming soon...</em>';
 
 		if ( $related_post_loop->have_posts() ) {
+			
+			// We get a max of 10 but we only want to show 5
+			$max_posts  = 5;
+			$count_post = 0;
+			
 			$the_related_posts = '<ul>';
-
 			foreach( $related_post_query as $related_post ) {
-				$the_related_posts .= '<li><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a> &mdash; ' . get_the_date( get_option( 'date_format' ), $related_post ) . '</li>';
+				if ( $count_post < '5' ) {
+					$the_related_posts .= '<li><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a> &mdash; ' . get_the_date( get_option( 'date_format' ), $related_post ) . '</li>';
+					$count_post++;
+				}
 			}
-
 			$the_related_posts .= '</ul>';
 		}
 
 		return $the_related_posts;
+	}
+
+	/**
+	 * Count the related posts
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $slug
+	 * @return void
+	 */
+	public static function count_related_posts( $slug ) {
+
+		if ( !self::are_there_posts( $slug ) ) return;
+
+		$related_post_loop  = LWTV_Loops::related_posts_by_tag( 'post', $slug );
+		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
+		
+		return $related_post_query;
 	}
 
 	/**
