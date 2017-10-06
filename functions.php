@@ -9,6 +9,8 @@
 
 if ( file_exists( WP_CONTENT_DIR . '/library/functions.php' ) ) include_once( WP_CONTENT_DIR . '/library/functions.php' );
 
+if ( !defined( 'FIRST_LWTV_YEAR' ) ) define('FIRST_LWTV_YEAR', '1961');
+
 /**
  * class LWTV_Functions
  *
