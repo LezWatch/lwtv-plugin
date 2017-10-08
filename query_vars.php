@@ -36,7 +36,6 @@ class LWTVG_Query_Vars {
 
 		// The custom queries that have special pages
 		$this->lez_query_args = array(
-			'newest'	 => 'newtype',
 			'role'       => 'roletype',
 			'statistics' => 'statistics',
 			'this-year'  => 'thisyear',
