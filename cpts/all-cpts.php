@@ -27,8 +27,8 @@ class LWTV_All_CPTs {
 	 */
 	public function featured_images() {
 		$post_type_args = array(
-		   'public'   => true,
-		   '_builtin' => false
+			'public'   => true,
+			'_builtin' => false
 		);
 		$post_types = get_post_types( $post_type_args, 'objects' );
 		foreach ( $post_types as $post_type ) {
@@ -46,12 +46,12 @@ class LWTV_All_CPTs {
 			add_filter( 'admin_post_thumbnail_html', function( $content ) use ( $type, $name ) {
 				global $current_screen;
 				if( !is_null($current_screen) && $type == $current_screen->post_type ) {
-				    // Get featured image size
-				    global $_wp_additional_image_sizes;
-				    $genesis_image_size = rtrim( str_replace( 'post_type_', '', $type ), 's' ).'-img';
-				    if ( isset( $_wp_additional_image_sizes[ $genesis_image_size ] ) ) {
-				        $content = '<p>Image Size: ' . $_wp_additional_image_sizes[$genesis_image_size]['width'] . 'x' . $_wp_additional_image_sizes[$genesis_image_size]['height'] . 'px</p>' . $content;
-				    }
+					// Get featured image size
+					global $_wp_additional_image_sizes;
+					$genesis_image_size = rtrim( str_replace( 'post_type_', '', $type ), 's' ).'-img';
+					if ( isset( $_wp_additional_image_sizes[ $genesis_image_size ] ) ) {
+						$content = '<p>Image Size: ' . $_wp_additional_image_sizes[$genesis_image_size]['width'] . 'x' . $_wp_additional_image_sizes[$genesis_image_size]['height'] . 'px</p>' . $content;
+					}
 					$content = str_replace( __( 'featured' ), strtolower( $name ) , $content);
 				}
 				return $content;
