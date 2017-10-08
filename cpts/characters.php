@@ -20,8 +20,8 @@ class LWTV_CPT_Characters {
 
 		$this->character_roles = array(
 			'regular'   => 'Regular/Main Character',
-			'recurring'	=> 'Recurring Character',
-			'guest'	 	=> 'Guest Character',
+			'recurring' => 'Recurring Character',
+			'guest'     => 'Guest Character',
 		);
 
 		add_action( 'admin_init', array( $this, 'admin_init') );
@@ -195,7 +195,7 @@ class LWTV_CPT_Characters {
 			'select_all_button' => false,
 			'remove_default'    => 'true',
 			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_cliches' ),
-			'attributes' => array(
+			'attributes'        => array(
 				'placeholder' => 'Common clichés ...'
 			),
 		) );
