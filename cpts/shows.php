@@ -66,11 +66,8 @@ class LWTV_CPT_Shows {
 
 		add_action( 'pre_get_posts', array( $this, 'columns_sortability_simple' ) );
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_format' ), 10, 2 );
-
-		add_action( 'quick_edit_custom_box',  array( $this, 'quick_edit_custom_box' ), 10, 2 );
-		add_action( 'save_post', array( $this, 'quick_edit_save_post' ) );
-		add_action( 'admin_footer', array( $this, 'quick_edit_js') );
-		add_filter( 'post_row_actions', array( $this, 'quick_edit_link' ), 10, 2 );
+		
+		add_filter( 'quick_edit_show_taxonomy', array( $this, 'hide_tags_from_quick_edit' ), 10, 3 );
 
 		add_action( 'do_update_show_meta', array( $this, 'update_show_meta' ), 10, 2 );
 		add_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ), 10, 3 );
@@ -155,7 +152,7 @@ class LWTV_CPT_Shows {
 			'trope'      => 'tropes',
 			'format'     => 'formats',
 			'genre'      => 'genres',
-			'nation'    => 'country',
+			'nation'     => 'country',
 		);
 
 		foreach ( $taxonomies as $pretty => $slug ) {
@@ -291,114 +288,15 @@ SQL;
 	}
 
 	/*
-	 * Add Quick Edit Boxes
-	 */
-	public function quick_edit_custom_box( $column_name, $post_type ) {
-		switch ( $column_name ) {
-			case 'taxonomy-lez_formats':
-				?>
-				<fieldset class="inline-edit-col-left">
-				<div class="inline-edit-col">
-				<span class="title">Show Format</span>
-					<input type="hidden" name="lez_formats_noncename" id="lez_formats_noncename" value="" />
-					<?php
-						$terms = get_terms( array( 'taxonomy' => 'lez_formats', 'hide_empty' => false ) );
-					?>
-					<select name='terms_lez_formats' id='terms_lez_formats'>
-						<option class='lez_formats-option' value='0'>(Undefined)</option>
-						<?php
-						foreach ( $terms as $term ) {
-							echo "<option class='lez_formats-option' value='{$term->name}'>{$term->name}</option>\n";
-						}
-							?>
-					</select>
-				</div>
-				</fieldset>
-				<?php
-				break;
-		}
-	}
-
-	/*
-	 * Allow Quick Edit boxes to save
-	 */
-	public function quick_edit_save_post( $post_id) {
-		// Criteria for not saving: Auto-saves, not post_type_characters, can't edit
-		if ( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || ( isset( $_POST['post_type'] ) &&  'post_type_shows' != $_POST['post_type'] ) || !current_user_can( 'edit_page', $post_id ) ) {
-			return $post_id;
-		}
-		$post = get_post( $post_id );
-
-		// Formats
-		if ( isset( $_POST['terms_lez_formats'] ) && ( $post->post_type != 'revision' ) ) {
-			$lez_formats_term = esc_attr( $_POST['terms_lez_formats'] );
-			$term = term_exists( $lez_formats_term, 'lez_formats' );
-			if ( $term !== 0 && $term !== null) {
-				wp_set_object_terms( $post_id, $lez_formats_term, 'lez_formats' );
-			}
-		}
-	}
-
-	/*
-	 * Quick Edit Save
-	 *
-	 * Javascript to force defaults
-	 */
-	public function quick_edit_js() {
-		global $current_screen;
-		if ( is_null( $current_screen ) || ( $current_screen->id !== 'edit-post_type_shows' ) || ( $current_screen->post_type !== 'post_type_shows' ) ) return;
-		?>
-		<script type="text/javascript">
-		<!--
-
-		function set_inline_lwtv_quick_edit_defaults( formatsSet, nonce ) {
-			// revert Quick Edit menu so that it refreshes properly
-			inlineEditPost.revert();
-			var formatsInput = document.getElementById('terms_lez_formats');
-			var nonceInput	 = document.getElementById('lez_formats_noncename');
-			nonceInput.value   = nonce;
-
-			// Set Formats Option
-			for (i = 0; i < formatsInput.options.length; i++) {
-				if (formatsInput.options[i].value == formatsSet) {
-					formatsInput.options[i].setAttribute("selected", "selected");
-				} else { formatsInput.options[i].removeAttribute("selected"); }
-			}
-		}
-
-		//-->
-		</script>
-		<?php
-	}
-
-	/*
-	 * Quick Edit Link
-	 *
-	 * Call the Javascript in Quick Edit Save
-	 */
-	public function quick_edit_link( $actions, $post ) {
-		global $current_screen;
-		if ( ( $current_screen->id != 'edit-post_type_shows' ) || ( $current_screen->post_type != 'post_type_shows' ) ) return $actions;
-
-		$nonce = wp_create_nonce( 'lez_formats_'.$post->ID );
-		$formats_terms = wp_get_post_terms( $post->ID, 'lez_formats', array( 'fields' => 'all' ) );
-
-		$actions['inline hide-if-no-js'] = '<a href="#" class="editinline" title="';
-		$actions['inline hide-if-no-js'] .= esc_attr( __( 'Edit this item inline' ) ) . '" ';
-		$actions['inline hide-if-no-js'] .= " onclick=\"set_inline_lwtv_quick_edit_defaults('{$formats_terms[0]->name}', '{$nonce}')\">";
-		$actions['inline hide-if-no-js'] .= __( 'Quick&nbsp;Edit' );
-		$actions['inline hide-if-no-js'] .= '</a>';
-		return $actions;
-	}
-
-	/*
 	 * Save post meta for shows on SHOW update
 	 *
 	 * This will update the following metakeys on save:
-	 *  - lezshows_char_count     Number of characters
-	 *  - lezshows_dead_count     Number of dead characters
-	 *  - lezshows_score_chars    Percentage score of character survival
-	 *  - lezshows_score_ratings  Percentage score of show data
+	 *  - lezshows_char_count         Number of characters
+	 *  - lezshows_dead_count         Number of dead characters
+	 *  - lezshows_none_count         Number of characters without cliches
+	 *  - lezshows_score_chars_alive  Percentage score of character survival
+	 *  - lezshows_score_chars_none   Percentage score of character's without cliches
+	 *  - lezshows_score_ratings      Percentage score of show data
 	 *
 	 * @param int $post_id The post ID.
 	 * @param post $post The post object.
@@ -427,7 +325,7 @@ SQL;
 			} else {
 				$percent_alive = ( ( $number_chars - $number_dead ) / $number_chars );
 			}
-			update_post_meta( $post_id, 'lezshows_score_chars', $percent_alive );
+			update_post_meta( $post_id, 'lezshows_score_chars_alive', $percent_alive );
 
 		// Calculate percentage of cliche free characters
 			if ( $number_chars == 0 || $number_none == 0 ) {
@@ -435,7 +333,7 @@ SQL;
 			} else {
 				$percent_none = ( $number_none / $number_chars );
 			}
-			update_post_meta( $post_id, 'lezshows_score_chars', $percent_alive );
+			update_post_meta( $post_id, 'lezshows_score_chars_none', $percent_none );
 
 		// Calculate percentage of value for show
 			$percent_rating = $this->score_show_ratings( $post_id );
@@ -569,6 +467,22 @@ SQL;
 				<?php
 
 				break;
+		}
+	}
+
+	/**
+	 * Hide taxonomies from quick edit
+	 * 
+	 * @access public
+	 * @param mixed $show_in_quick_edit
+	 * @param mixed $taxonomy_name
+	 * @param mixed $post_type
+	 * @return void
+	 */
+	function hide_tags_from_quick_edit( $show_in_quick_edit, $taxonomy_name, $post_type ) {
+		$taxonomies = array ( 'lez_stations', 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_country' );
+		if ( in_array( $taxonomy_name, $taxonomies ) ) {
+			return false;
 		}
 	}
 
