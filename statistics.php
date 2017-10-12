@@ -879,8 +879,8 @@ class LWTV_Stats {
 		<script>
 		var ctx = document.getElementById("trend<?php echo ucfirst( $cleandata ); ?>").getContext("2d");
 		var trend<?php echo ucfirst( $cleandata ); ?> = new Chart(ctx, {
-		    type: 'bar',
-		    data: {
+			type: 'bar',
+			data: {
 				labels : [
 					<?php
 					foreach ( $array as $item ) {
