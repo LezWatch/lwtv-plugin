@@ -14,9 +14,9 @@ class LWTV_Stats {
 	 *
 	 * Actions to happen immediately
 	 */
-    public function __construct() {
-        add_action( 'init', array( &$this, 'init' ) );
-    }
+	public function __construct() {
+		add_action( 'init', array( &$this, 'init' ) );
+	}
 
 	/**
 	 * Init
@@ -723,11 +723,11 @@ class LWTV_Stats {
 			?>],
 			datasets : [
 				{
-		            backgroundColor: "rgba(255,99,132,0.2)",
-		            borderColor: "rgba(255,99,132,1)",
-		            borderWidth: 2,
-		            hoverBackgroundColor: "rgba(255,99,132,0.4)",
-		            hoverBorderColor: "rgba(255,99,132,1)",
+					backgroundColor: "rgba(255,99,132,0.2)",
+					borderColor: "rgba(255,99,132,1)",
+					borderWidth: 2,
+					hoverBackgroundColor: "rgba(255,99,132,0.4)",
+					hoverBorderColor: "rgba(255,99,132,1)",
 					data : [<?php
 						foreach ( $array as $item ) {
 							if ( $item['count'] !== 0 ) {
@@ -740,19 +740,19 @@ class LWTV_Stats {
 		};
 		var ctx = document.getElementById("bar<?php echo ucfirst( $subject ); ?>").getContext("2d");
 		var bar<?php echo ucfirst( $subject ); ?> = new Chart(ctx, {
-		    type: 'horizontalBar',
-		    data: bar<?php echo ucfirst( $subject ); ?>Data,
-		    options: {
+			type: 'horizontalBar',
+			data: bar<?php echo ucfirst( $subject ); ?>Data,
+			options: {
 				tooltips: {
-				    callbacks: {
-				        title: function(tooltipItems, data) {
-				            // return "Bob " + tooltipItems.data;
-				            // This is undefined?
-				        },
-				        label: function(tooltipItems, data) {
-				            return tooltipItems.yLabel;
-				        },
-				    }
+					callbacks: {
+						title: function(tooltipItems, data) {
+							// return "Bob " + tooltipItems.data;
+							// This is undefined?
+						},
+						label: function(tooltipItems, data) {
+							return tooltipItems.yLabel;
+						},
+					}
 				},
 			}
 		});
@@ -793,41 +793,44 @@ class LWTV_Stats {
 			var pie<?php echo ucfirst( $data ); ?>data = {
 				labels : [<?php
 					foreach ( $array as $item ) {
-						$name = str_replace( $fixname, '', $item['name'] );
-						echo '"'. $name.' ('.$item['count'].')", ';
+						if ( $item['count'] !== 0 ) {
+							$name = str_replace( $fixname, '', $item['name'] );
+							echo '"' . $name .' (' . $item['count'] . ')", ';
+						}
 					}
 				?>],
-				datasets : [
-					{
-						data : [<?php
-							foreach ( $array as $item ) {
-								echo '"'.$item['count'].'", ';
+				datasets : [{
+					data : [<?php
+						foreach ( $array as $item ) {
+							if ( $item['count'] !== 0 ) {
+								echo '"' . $item['count'] . '", ';
 							}
-						?>],
-			            backgroundColor: [
-				            "#FF6384", // 'red'
-				            "#4BC0C0", // 'aqua'
-				            "#FFCE56", // 'goldenrod'
-				            "#5DB6EF", // 'light blue'
-				            "#FF9963", // 'orange sherbert'
-				            "#5C7ECB", // 'purple'
-				            "#B7FF90", // 'green'
-				            "#E7E9ED", // 'grey'
-			            ]
-			        }]
+						}
+					?>],
+					backgroundColor: [
+						"#FF6384", // 'red'
+						"#4BC0C0", // 'aqua'
+						"#FFCE56", // 'goldenrod'
+						"#5DB6EF", // 'light blue'
+						"#FF9963", // 'orange sherbert'
+						"#5C7ECB", // 'purple'
+						"#B7FF90", // 'green'
+						"#E7E9ED", // 'grey'
+					]
+				}]
 			};
 
 			var ctx = document.getElementById("pie<?php echo ucfirst( $data ); ?>").getContext("2d");
 			var pie<?php echo ucfirst( $data ); ?> = new Chart(ctx,{
-			    type:'doughnut',
-			    data: pie<?php echo ucfirst( $data ); ?>data,
-			    options: {
+				type:'doughnut',
+				data: pie<?php echo ucfirst( $data ); ?>data,
+				options: {
 					tooltips: {
-					    callbacks: {
+						callbacks: {
 							label: function(tooltipItem, data) {
 								return data.labels[tooltipItem.index];
 							}
-					    },
+						},
 					},
 				}
 			});
@@ -878,43 +881,47 @@ class LWTV_Stats {
 		var trend<?php echo ucfirst( $cleandata ); ?> = new Chart(ctx, {
 		    type: 'bar',
 		    data: {
-				labels : [<?php
+				labels : [
+					<?php
 					foreach ( $array as $item ) {
 						echo '"'. esc_html( $item['name'] ) .' ('.$item['count'].')", ';
 					}
-				?>],
-				datasets : [
+					?>
+				],
+				datasets : [ 
 					{
 						type: 'line',
 						label: 'Number of <?php echo ucfirst( $subject ); ?>',
-			            backgroundColor: "rgba(255,99,132,0.2)",
-			            borderColor: "rgba(255,99,132,1)",
-			            borderWidth: 2,
-			            hoverBackgroundColor: "rgba(255,99,132,0.4)",
-			            hoverBorderColor: "rgba(255,99,132,1)",
+						backgroundColor: "rgba(255,99,132,0.2)",
+						borderColor: "rgba(255,99,132,1)",
+						borderWidth: 2,
+						hoverBackgroundColor: "rgba(255,99,132,0.4)",
+						hoverBorderColor: "rgba(255,99,132,1)",
 						data : [<?php
 							foreach ( $array as $item ) {
 								echo '"'.$item['count'].'", ';
 							}
 						?>],
 					},
-		            {
-		                type: 'line',
-		                label: 'Trendline',
-		                pointRadius: 0,
-		                borderColor: "rgba(75,192,192,1)",
-		                borderWidth: 2,
-		                fill: false,
-		                data: [<?php
-		                	foreach ( $array as $item ) {
-			                	$number = ( $trendarray['slope'] * $item['name'] ) + $trendarray['intercept'];
-			                	$number = ( $number <= 0 )? 0 : $number;
-			                	echo '"'.$number.'", ';
-			                }
-		                ?>],
-		            }
-		        ]
-		    }
+					{
+						type: 'line',
+						label: 'Trendline',
+						pointRadius: 0,
+						borderColor: "rgba(75,192,192,1)",
+						borderWidth: 2,
+						fill: false,
+						data: [
+							<?php 
+							foreach ( $array as $item ) {
+								$number = ( $trendarray['slope'] * $item['name'] ) + $trendarray['intercept'];
+								$number = ( $number <= 0 )? 0 : $number;
+								echo '"'.$number.'", ';
+							}
+							?>
+						],
+					}
+				]
+			}
 		});
 		</script>
 
@@ -938,8 +945,8 @@ class LWTV_Stats_Display {
 	 *
 	 * Actions to happen immediately
 	 */
-    public function __construct() {
-	    // N/A
+	public function __construct() {
+		// N/A
 	}
 
 
@@ -955,16 +962,16 @@ class LWTV_Stats_Display {
 
 		$return = '';
 		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
-			if ( $type == 'main' )       $return = LP_SYMBOLICONS_PATH.'bar_graph.svg';
-			if ( $type == 'death' )      $return = LP_SYMBOLICONS_PATH.'rip_gravestone.svg';
-			if ( $type == 'characters' ) $return = LP_SYMBOLICONS_PATH.'users.svg';
-			if ( $type == 'shows' )      $return = LP_SYMBOLICONS_PATH.'tv_retro.svg';
-			if ( $type == 'lists' )      $return = LP_SYMBOLICONS_PATH.'bar_graph_alt.svg';
-			if ( $type == 'trends' )     $return = LP_SYMBOLICONS_PATH.'line_graph.svg';
+			if ( $type == 'main' )       $return = LP_SYMBOLICONS_PATH . 'bar_graph.svg';
+			if ( $type == 'death' )      $return = LP_SYMBOLICONS_PATH . 'rip_gravestone.svg';
+			if ( $type == 'characters' ) $return = LP_SYMBOLICONS_PATH . 'users.svg';
+			if ( $type == 'shows' )      $return = LP_SYMBOLICONS_PATH . 'tv_retro.svg';
+			if ( $type == 'lists' )      $return = LP_SYMBOLICONS_PATH . 'bar_graph_alt.svg';
+			if ( $type == 'trends' )     $return = LP_SYMBOLICONS_PATH . 'line_graph.svg';
 		}
 
 		return $return;
-    }
+	}
 
 	/**
 	 * Determine Title for each stats page
@@ -984,7 +991,7 @@ class LWTV_Stats_Display {
 		if ( $type == 'trends' )     $return = 'Statistics in the form of Trendlines';
 
 		return $return;
-    }
+	}
 
 	/**
 	 * Determine archive intro for each stats page
@@ -1003,7 +1010,7 @@ class LWTV_Stats_Display {
 		if ( $type == 'trends' )     $return = 'Trendlines and predictions.';
 
 		return $return;
-    }
+	}
 }
 
 new LWTV_Stats_Display();

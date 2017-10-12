@@ -96,6 +96,7 @@ class LWTV_CMB2 {
 		$prefix     = 'lez_termsmeta_';
 		$imagepath  = LP_SYMBOLICONS_PATH;
 		$icon_array = array();
+		$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
 
 		foreach( glob( $imagepath . '*' ) as $filename ){
 			$filename = str_replace( '.svg', '', str_replace( LP_SYMBOLICONS_PATH, '', $filename ) );
@@ -112,7 +113,7 @@ class LWTV_CMB2 {
 
 		$cmb_term->add_field( array(
 			'name'             => 'Icon',
-			'desc'             => 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href='.$symbolicon_url.'>Symbolicons List</a>.',
+			'desc'             => 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href=' . $symbolicon_url . '>Symbolicons List</a>.',
 			'id'               => $prefix . 'icon',
 			'type'             => 'select',
 			'show_option_none' => true,

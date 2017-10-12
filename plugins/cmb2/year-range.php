@@ -53,6 +53,13 @@ class LWTV_CMB2_DYR {
 		$finish_reverse_sort = $field->options( 'finish_reverse_sort' );
 		$finish_reverse_sort = $finish_reverse_sort ? true : false;
 
+		$start_show_current = $field->options( 'start_show_current' );
+		$start_show_current = $start_show_current ? true : false;
+
+		$finish_show_current = $field->options( 'finish_show_current' );
+		$finish_show_current = $finish_show_current ? true : false;
+
+
 		$value = wp_parse_args( $value, array(
 			'start'  => '',
 			'finish' => '',
@@ -64,7 +71,7 @@ class LWTV_CMB2_DYR {
 
 		echo '<em>'. $type_object->_text( 'start_label', 'Starting Year' ) . '</em> ';
 
-		$start_options = $this->jt_cmb2_date_year_range_options( $type_object, $earliest, $value['start'], $start_reverse_sort );
+		$start_options = $this->jt_cmb2_date_year_range_options( $type_object, $earliest, $value['start'], $start_reverse_sort, $start_show_current );
 		echo $type_object->select( array(
 			'name'    => $type_object->_name( '[start]' ),
 			'id'      => $type_object->_id( '_start' ),
@@ -76,7 +83,7 @@ class LWTV_CMB2_DYR {
 
 		echo $type_object->_text( 'separator', ' &mdash; ' );
 
-		$end_options = $this->jt_cmb2_date_year_range_options( $type_object, $earliest, $value['finish'], $finish_reverse_sort  );
+		$end_options = $this->jt_cmb2_date_year_range_options( $type_object, $earliest, $value['finish'], $finish_reverse_sort, $finish_show_current );
 		echo $type_object->select( array(
 			'name'    => $type_object->_name( '[finish]' ),
 			'id'      => $type_object->_id( '_finish' ),
@@ -124,7 +131,7 @@ class LWTV_CMB2_DYR {
 					if ( start ) {
 						$options = $options.filter( function() {
 							var val = $( this ).val();
-							return'current' === start ? 'current' === val || '' === val : ( val >= start || ! val );
+							return 'current' === start ? 'current' === val || '' === val : ( val >= start || ! val );
 						} );
 					}
 
@@ -153,7 +160,7 @@ class LWTV_CMB2_DYR {
 		<?php
 	}
 
-	public function jt_cmb2_date_year_range_options( $type_object, $earliest, $value, $reverse = false ) {
+	public function jt_cmb2_date_year_range_options( $type_object, $earliest, $value, $reverse = false, $current = true ) {
 		$options = array();
 
 		$not_set = array(
@@ -175,16 +182,17 @@ class LWTV_CMB2_DYR {
 			$options[] = $a;
 		}
 
-		$a = array(
-			'value' => 'current',
-			'label' => __( 'Current' ),
-		);
+		if ( $current ) {
+			$a = array(
+				'value' => 'current',
+				'label' => __( 'Current' ),
+			);
 
-		if ( 'current' === $value ) {
-			$a['checked'] = 'checked';
+			if ( 'current' === $value ) {
+				$a['checked'] = 'checked';
+			}
+			$options[] = $a;
 		}
-
-		$options[] = $a;
 
 		if ( $reverse ) {
 			$options = array_reverse( $options );

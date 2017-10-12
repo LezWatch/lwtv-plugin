@@ -214,14 +214,15 @@ class LWTV_CPT_Shows {
 	public function manage_posts_custom_column( $column, $post_id ) {
 		if ( get_post_meta( $post_id, 'lezshows_airdates', true ) ) {
 			$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
-			$airdates = $airdates['start'] .' - '. $airdates['finish'];
+			$airdate  = $airdates['start'] .' - '. $airdates['finish'];
+			if ( $airdates['start'] == $airdates['finish'] ) { $airdate = $airdates['finish']; }
 		} else {
-			$airdates = "N/A";
+			$airdate = "N/A";
 		}
 
 		switch ( $column ) {
 			case 'shows-airdate':
-				echo $airdates;
+				echo $airdate;
 				break;
 			case 'shows-worthit':
 				echo ucfirst(get_post_meta( $post_id, 'lezshows_worthit_rating', true ));
