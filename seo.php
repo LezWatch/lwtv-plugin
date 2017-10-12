@@ -24,18 +24,16 @@ class LWTV_SEO {
 	}
 
 	/*
-	 * Setting OpenGraph image for taxonomies
-	 * This uses the default image set for the taxonomy via that symbolicons stuff
+	 * Setting OpenGraph image for posts without featured images
 	 *
 	 * @since 1.0
 	 */
 	public function opengraph_image() {
 
-		// If it's not a taxonomy, die.
-		if ( !is_tax() ) return;
+		// If there is no thumbnail, bail early
+		if ( !has_post_thumbnail() ) return;
 
-		$image = plugins_url( 'assets/images/unicorn.png', __FILE__ );
-
+		$image = plugins_url( 'assets/images/toaster.png', __FILE__ );
 		echo '<meta property="og:image" content="' . $image . '" /><meta name="twitter:image" content="' . $image . '" />';
 	}
 }

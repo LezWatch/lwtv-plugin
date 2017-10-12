@@ -75,13 +75,13 @@ class LWTV_Shows_CMB2 {
 			'id'          => $prefix . 'worthit_details',
 			'type'        => 'textarea_small',
 			'attributes'  => array(
-				'placeholder' => 'Why is this show worth watching?',
+				'placeholder' => 'Why is this show worth (or not) watching?',
 			),
 		) );
 		// Field: Worth It - We Love This Shit
 		$field_worthshowwelove = $cmb_mustsee->add_field( array(
 			'name' => 'Show We Love',
-			'desc' => 'Above all else, this is a show everyone loves. If checked, this show will display on the home page. Only use if you are a billion percent sure.',
+			'desc' => 'Above all else, this is a show everyone loves. Only use if you are a billion percent sure and have cleared it on Trello (or over drinks).',
 			'id'   => $prefix . 'worthit_show_we_love',
 			'type' => 'checkbox',
 		) );
@@ -254,7 +254,7 @@ class LWTV_Shows_CMB2 {
 		// Field: Air Dates
 		$field_airdates = $cmb_notes->add_field( array(
 			'name'     => 'Air Dates',
-			'desc'     => 'Years the show Aired',
+			'desc'     => 'Years the show originally aired',
 			'id'       => $prefix . 'airdates',
 			'type'     => 'date_year_range',
 			'earliest' => '1930',
@@ -263,9 +263,11 @@ class LWTV_Shows_CMB2 {
 				'finish_label' => '',
 			),
 			'options'  => array(
-				'start_reverse_sort' => true,
+				'start_reverse_sort'  => true,
 				'finish_reverse_sort' => true,
-		    ),
+				'start_show_current'  => false,
+				'finish_show_current' => true,
+			),
 		) );
 		// Field: Number of Seasons
 		$field_seasons = $cmb_notes->add_field( array(
