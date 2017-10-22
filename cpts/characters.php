@@ -308,6 +308,7 @@ class LWTV_CPT_Characters {
 			$grid_charside = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_charside );
 			$row = $grid_charside->addRow();
 			$row->addColumns( array( $field_gender, $field_sexuality ) );
+			$row->addColumns( array( $field_romantic ) );
 		}
 
 	}
