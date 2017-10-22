@@ -115,9 +115,10 @@ class LWTV_CPT_Characters {
 	public function create_taxonomies() {
 
 		$taxonomies = array (
-			'cliché'             => 'cliches',
-			'gender'             => 'gender',
-			'sexual orientation' => 'sexuality',
+			'cliché'               => 'cliches',
+			'gender'               => 'gender',
+			'sexual orientation'   => 'sexuality',
+			'romantic orientation' => 'romantic',
 		);
 
 		foreach ( $taxonomies as $pretty => $slug ) {
