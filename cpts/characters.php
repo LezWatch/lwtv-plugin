@@ -306,9 +306,10 @@ class LWTV_CPT_Characters {
 			return;
 		} else {
 			$grid_charside = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_charside );
-			$row = $grid_charside->addRow();
-			$row->addColumns( array( $field_gender, $field_sexuality ) );
-			$row->addColumns( array( $field_romantic ) );
+			$row1 = $grid_charside->addRow();
+			$row1->addColumns( array( $field_gender, $field_sexuality ) );
+			$row2 = $grid_charside->addRow();
+			$row2->addColumns( array( $field_romantic ) );
 		}
 
 	}
