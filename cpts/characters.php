@@ -49,6 +49,7 @@ class LWTV_CPT_Characters {
 
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_sexuality' ), 10, 2 );
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_gender' ), 10, 2 );
+		add_filter( 'posts_clauses', array( $this, 'columns_sortability_romantic' ), 10, 2 );
 
 		add_action( 'quick_edit_custom_box',  array( $this, 'quick_edit_custom_box' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'quick_edit_save_post' ) );
@@ -280,6 +281,17 @@ class LWTV_CPT_Characters {
 			'show_option_none' => false,
 			'remove_default'   => 'true'
 		) );
+		// Field: Character Romantic Orientation
+		$field_romantic = $cmb_charside->add_field( array(
+			'name'             => 'Romantic',
+			'desc'             => 'Romantic orientation',
+			'id'               => $prefix . 'romantic',
+			'taxonomy'         => 'lez_romantic',
+			'type'             => 'taxonomy_select',
+			'default'          => 'homoromantic',
+			'show_option_none' => false,
+			'remove_default'   => 'true'
+		) );
 		// Field: Year of Death (if applicable)
 		$field_death = $cmb_charside->add_field( array(
 			'name'        => 'Date of Death',
@@ -364,11 +376,12 @@ class LWTV_CPT_Characters {
 		unset( $columns['postmeta-roletype'] );          // Don't allow sort by role
 		$columns['taxonomy-lez_gender']    = 'gender';   // Allow sort by gender identity
 		$columns['taxonomy-lez_sexuality'] = 'sex';      // Allow sort by gender identity
+		$columns['taxonomy-lez_romantic']  = 'romantic'; // Allow sort by gender identity
 		return $columns;
 	}
 
 	/*
-	 * Create columns sortability for sexuality
+	 * Create columns sortability for gender
 	 */
 	public function columns_sortability_gender( $clauses, $wp_query ) {
 		global $wpdb;
@@ -413,6 +426,30 @@ SQL;
 		return $clauses;
 	}
 
+	/*
+	 * Create columns sortability for romantic
+	 */
+	public function columns_sortability_romantic( $clauses, $wp_query ) {
+
+		global $wpdb;
+
+		if ( isset( $wp_query->query['orderby'] ) && 'sex' == $wp_query->query['orderby'] ) {
+
+			$clauses['join'] .= <<<SQL
+LEFT OUTER JOIN {$wpdb->term_relationships} ON {$wpdb->posts}.ID={$wpdb->term_relationships}.object_id
+LEFT OUTER JOIN {$wpdb->term_taxonomy} USING (term_taxonomy_id)
+LEFT OUTER JOIN {$wpdb->terms} USING (term_id)
+SQL;
+
+			$clauses['where'] .= " AND (taxonomy = 'lez_romantic' OR taxonomy IS NULL)";
+			$clauses['groupby'] = "object_id";
+			$clauses['orderby']  = "GROUP_CONCAT({$wpdb->terms}.name ORDER BY name ASC) ";
+			$clauses['orderby'] .= ( 'ASC' == strtoupper( $wp_query->get('order') ) ) ? 'ASC' : 'DESC';
+		}
+
+		return $clauses;
+	}
+	
 	/*
 	 * Add Quick Edit Boxes
 	 */
@@ -463,6 +500,27 @@ SQL;
 				</fieldset>
 				<?php
 			break;
+			case 'taxonomy-lez_romantic':
+				?>
+				<fieldset class="inline-edit-col-left">
+				<div class="inline-edit-col">
+				<span class="title">Romantic Orientation</span>
+					<input type="hidden" name="lez_romantic_noncename" id="lez_romantic_noncename" value="" />
+					<?php
+						$terms = get_terms( array( 'taxonomy' => 'lez_romantic','hide_empty' => false ) );
+					?>
+					<select name='terms_lez_romantic' id='terms_lez_romantic'>
+						<option class='lez_romantic-option' value='0'>(Undefined)</option>
+						<?php
+						foreach ($terms as $term) {
+							echo "<option class='lez_romantic-option' value='{$term->name}'>{$term->name}</option>\n";
+						}
+							?>
+					</select>
+				</div>
+				</fieldset>
+				<?php
+			break;
 		}
 	}
 
@@ -493,6 +551,15 @@ SQL;
 				wp_set_object_terms( $post_id, $lez_gender_term, 'lez_gender' );
 			}
 		}
+
+		// Romantic
+		if ( isset( $_POST['terms_lez_romantic'] ) && ( $post->post_type != 'revision' ) ) {
+			$lez_gender_term = esc_attr( $_POST['terms_lez_romantic'] );
+			$term = term_exists( $lez_gender_term, 'lez_romantic' );
+			if ( $term !== 0 && $term !== null) {
+				wp_set_object_terms( $post_id, $lez_gender_term, 'lez_romantic' );
+			}
+		}
 	}
 
 	/*
@@ -507,12 +574,13 @@ SQL;
 		<script type="text/javascript">
 		<!--
 
-		function set_inline_lwtv_quick_edit_defaults( sexualitySet, genderSet, roleSet, nonce ) {
+		function set_inline_lwtv_quick_edit_defaults( sexualitySet, genderSet, romanticSet, roleSet, nonce ) {
 			// revert Quick Edit menu so that it refreshes properly
 			inlineEditPost.revert();
 			var sexualityInput = document.getElementById('terms_lez_sexuality');
-			var genderInput	= document.getElementById('terms_lez_gender');
-			var nonceInput	 = document.getElementById('lez_sexuality_noncename');
+			var genderInput    = document.getElementById('terms_lez_gender');
+			var romanticInput  = document.getElementById('terms_lez_romantic');
+			var nonceInput     = document.getElementById('lez_sexuality_noncename');
 			nonceInput.value   = nonce;
 
 			// Set Sexuality Option
@@ -527,6 +595,13 @@ SQL;
 				if (genderInput.options[i].value == genderSet) {
 					genderInput.options[i].setAttribute("selected", "selected");
 				} else { genderInput.options[i].removeAttribute("selected"); }
+			}
+
+			// Set Romantic Option
+			for (i = 0; i < romanticInput.options.length; i++) {
+				if (romanticInput.options[i].value == romanticSet) {
+					romanticInput.options[i].setAttribute("selected", "selected");
+				} else { romanticInput.options[i].removeAttribute("selected"); }
 			}
 
 		}
@@ -545,9 +620,10 @@ SQL;
 		global $current_screen;
 		if ( ( $current_screen->id != 'edit-post_type_characters' ) || ( $current_screen->post_type != 'post_type_characters' ) ) return $actions;
 
-		$nonce = wp_create_nonce( 'lez_sexuality_' . $post->ID );
-		$sex_terms = wp_get_post_terms( $post->ID, 'lez_sexuality', array( 'fields' => 'all' ) );
-		$gender_terms = wp_get_post_terms( $post->ID, 'lez_gender', array( 'fields' => 'all' ) );
+		$nonce          = wp_create_nonce( 'lez_sexuality_' . $post->ID );
+		$sex_terms      = wp_get_post_terms( $post->ID, 'lez_sexuality', array( 'fields' => 'all' ) );
+		$gender_terms   = wp_get_post_terms( $post->ID, 'lez_gender', array( 'fields' => 'all' ) );
+		$romantic_terms = wp_get_post_terms( $post->ID, 'lez_romantic', array( 'fields' => 'all' ) );
 
 		$actions['inline hide-if-no-js'] = '<a href="#" class="editinline" title="';
 		$actions['inline hide-if-no-js'] .= esc_attr( __( 'Edit this item inline' ) ) . '" ';
@@ -603,7 +679,7 @@ SQL;
 	 * AMP
 	 */
 	public function amp_init() {
-	    add_post_type_support( 'post_type_characters', AMP_QUERY_VAR );
+		add_post_type_support( 'post_type_characters', AMP_QUERY_VAR );
 	}
 
 	/*
