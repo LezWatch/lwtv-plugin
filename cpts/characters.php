@@ -288,8 +288,8 @@ class LWTV_CPT_Characters {
 			'id'               => $prefix . 'romantic',
 			'taxonomy'         => 'lez_romantic',
 			'type'             => 'taxonomy_select',
-			'default'          => 'homoromantic',
-			'show_option_none' => false,
+			'default'          => 'none',
+			'show_option_none' => true,
 			'remove_default'   => 'true'
 		) );
 		// Field: Year of Death (if applicable)
@@ -627,7 +627,7 @@ SQL;
 
 		$actions['inline hide-if-no-js'] = '<a href="#" class="editinline" title="';
 		$actions['inline hide-if-no-js'] .= esc_attr( __( 'Edit this item inline' ) ) . '" ';
-		$actions['inline hide-if-no-js'] .= " onclick=\"set_inline_lwtv_quick_edit_defaults('{$sex_terms[0]->name}', '{$gender_terms[0]->name}', '{$nonce}')\">";
+		$actions['inline hide-if-no-js'] .= " onclick=\"set_inline_lwtv_quick_edit_defaults('{$sex_terms[0]->name}', '{$gender_terms[0]->name}', '{$romantic_terms[0]->name}', '{$nonce}')\">";
 		$actions['inline hide-if-no-js'] .= __( 'Quick&nbsp;Edit' );
 		$actions['inline hide-if-no-js'] .= '</a>';
 		return $actions;
