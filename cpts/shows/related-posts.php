@@ -96,8 +96,7 @@ class LWTV_Related_Posts {
 	 * @return void
 	 */
 	public function related_shows( $content ) {
-
-	    if ( is_singular( 'post' ) ) {
+		if ( is_singular( 'post' ) ) {
 
 			$posttags = get_the_tags( get_the_ID() );
 			$shows = '';
@@ -115,10 +114,9 @@ class LWTV_Related_Posts {
 					$content .= $related_shows;
 				}
 			}
+		}
 
-	    }
-
-	    return $content;
+		return $content;
 	}
 }
 

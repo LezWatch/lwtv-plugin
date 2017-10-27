@@ -21,7 +21,7 @@ class LWTV_CMB2_Addons {
 	 */
 	public function __construct() {
 		
-		// LWTV weird stuff
+		/* LWTV weird stuff */
 		include_once( dirname( __FILE__ ) . '/cmb2/lwtv.php' );
 		
 		/* CMB2 Grid */
