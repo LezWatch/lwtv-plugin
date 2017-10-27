@@ -24,6 +24,7 @@ class LWTV_CMB2 {
 	 */
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init') );
+		add_action( 'cmb2_admin_init', array( $this, 'favorite_shows_user_profile_metabox') );
 
 		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats', 'lez_genres' );
 
@@ -162,5 +163,45 @@ class LWTV_CMB2 {
 
 		return $content;
 	}
+
+	/*
+	 * Create a list of all shows
+	 */
+	public function cmb2_get_shows_options() {
+		return self::get_post_options( array(
+				'post_type'   => 'post_type_shows',
+				'numberposts' => wp_count_posts( 'post_type_shows' )->publish,
+				'post_status' => array('publish', 'pending', 'draft', 'future'),
+			) );
+	}
+
+	/**
+	 * favorite_shows_user_profile_metabox function.
+	 */
+	function favorite_shows_user_profile_metabox() {
+		$prefix = 'lez_user_';
+		/**
+		 * Metabox for the user profile screen
+		 */
+		$cmb_user = new_cmb2_box( array(
+			'id'               => $prefix . 'edit',
+			'title'            => 'Super Queer Love',
+			'object_types'     => array( 'user' ),
+			'show_names'       => true,
+			'new_user_section' => 'add-new-user',
+		) );
+		$cmb_user->add_field( array(
+			'name'             => 'Favourite Shows',
+			'desc'             => 'pick your favorite shows',
+			'id'               => $prefix . 'favourite_shows',
+			'type'             => 'select',
+			'show_option_none' => true,
+			'repeatable'       => true,
+			'default'          => 'custom',
+			'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
+			'on_front'         => true,
+		) );
+	}
+
 }
 new LWTV_CMB2();
