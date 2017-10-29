@@ -197,6 +197,9 @@ class LWTV_CMB2 {
 			'type'             => 'select',
 			'show_option_none' => true,
 			'repeatable'       => true,
+			'text' => array(
+				'add_row_text' => 'Add Another Favourite Show',
+			),
 			'default'          => 'custom',
 			'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
 			'on_front'         => true,
