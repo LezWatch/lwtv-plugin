@@ -61,9 +61,6 @@ if ( class_exists( 'FacetWP' ) ) {
 	require_once( 'plugins/facetwp.php' );
 }
 
-// Call WP Help - It won't error
-require_once( 'plugins/wp-help.php' );
-
 /* 
  * Include Custom Post Types
  */

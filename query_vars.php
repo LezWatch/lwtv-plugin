@@ -5,12 +5,8 @@
  * Custom Query Variables that let us have special funky town pages.
  *
  * Version:	 1.0
- * Author:	  Mika Epstein
- * Author URI:  https://halfelf.org
  *
  * @package LezWatch TV Theme
- * @author Mika Epstein
- * @license GPL-2.0+
  *
  */
 
@@ -19,7 +15,7 @@ if ( ! defined('WPINC' ) ) {
 	die;
 }
 
-class LWTVG_Query_Vars {
+class LWTV_Query_Vars {
 
 	// Constant for the query arguments we allow
 	public $lez_query_args     = array();
@@ -125,4 +121,4 @@ class LWTVG_Query_Vars {
 
 }
 
-new LWTVG_Query_Vars();
+new LWTV_Query_Vars();

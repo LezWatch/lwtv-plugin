@@ -2,7 +2,6 @@
 /*
 Description: 'date_year_range' custom field type
 Version: 1.0
-Author: Mika Epstein
 */
 
 if ( ! defined('WPINC' ) ) die;

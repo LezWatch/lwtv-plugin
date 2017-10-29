@@ -6,7 +6,6 @@ Tweaks for SEO that don't work out of the box.
 See also /plugins/yoast-seo.php
 
 Version: 1.0
-Author: Mika Epstein
 */
 
 if ( ! defined('WPINC' ) ) die;
