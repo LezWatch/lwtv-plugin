@@ -5,7 +5,6 @@ Description: REST-API - Alexa Skills
 For Amazon Alexa Skills
 
 Version: 1.0
-Author: Mika Epstein
 */
 
 if ( ! defined('WPINC' ) ) die;

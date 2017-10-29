@@ -2,7 +2,6 @@
 /*
 Description: FacetWP Customizations
 Version: 1.1
-Author: Mika Epstein
 */
 
 if ( ! defined('WPINC' ) ) die;

@@ -7,7 +7,6 @@ The code that runs the Bury Your Queers API service
   - On This Day - "On this day, X died"
 
 Version: 1.2
-Author: Mika Epstein
 */
 
 if ( ! defined('WPINC' ) ) die;

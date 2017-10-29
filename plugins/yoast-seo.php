@@ -2,7 +2,6 @@
 /*
 Description: Yoast SEO Customizations
 Version: 1.2
-Author: Mika Epstein
 */
 
 if ( ! defined('WPINC' ) ) die;

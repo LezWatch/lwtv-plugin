@@ -5,7 +5,6 @@
  * Code that runs on all custom post types.
  *
  * @since 1.5
- * Authors: Mika Epstein
  */
 
 

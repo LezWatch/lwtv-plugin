@@ -3,7 +3,6 @@
  * Extra Search Functions for LezWatchTV.com
  *
  * @since 1.2
- * Authors: Mika Epstein
  */
 
 /**

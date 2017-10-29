@@ -2,7 +2,6 @@
 /*
 Description: Customizations for CMB2
 Version: 1.0
-Author: Mika Epstein
 */
 
 if ( ! defined('WPINC' ) ) die;
