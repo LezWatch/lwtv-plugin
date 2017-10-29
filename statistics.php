@@ -1,7 +1,6 @@
 <?php
 /**
  * Name: Statistics Code
- * Author: Mika Epstein
  *
  * This file has the basic defines for all stats.
  * It's pretty much only called in /page-template/statistics.php

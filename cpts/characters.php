@@ -3,7 +3,6 @@
  * Custom Post Type for characters on LWTV
  *
  * @since 1.0
- * Author: Evan Herman, Tracy Levesque, Mika Epstein
  */
 
 /**

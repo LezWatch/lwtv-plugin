@@ -3,7 +3,6 @@
  * Custom Post Type for Shows on LWTV
  *
  * @since 1.0
- * Author: Evan Herman, Tracy Levesque, Mika Epstein
  */
 
 /**
@@ -40,6 +39,7 @@ class LWTV_CPT_Shows {
 				case 'post_type_shows':
 					// Filter buttons not needed on the teeny MCE
 					add_filter( 'teeny_mce_buttons', array($this, 'teeny_mce_buttons' ) );
+					
 					// Filter text editor quicktags (commented out until it runs on CMB2 only)
 					//add_filter( 'quicktags_settings', array( $this, 'quicktags_settings' ) );
 
@@ -133,7 +133,7 @@ class LWTV_CPT_Shows {
 			'rest_base'           => 'show',
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-video-alt',
-			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'genesis-cpt-archives-settings', 'genesis-seo', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
 			'has_archive'         => 'shows',
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,
@@ -240,7 +240,7 @@ class LWTV_CPT_Shows {
 		unset( $columns['cpt-airdate'] );             // Don't allow sort by airdates
 		$columns['taxonomy-lez_formats'] = 'format';  // Allow sort by show format
 		$columns['shows-worthit']        = 'worth';   // Allow sort by worth
-		$columns['shows-queercount']	 = 'queers';  // Allow sort by queers
+		$columns['shows-queercount']     = 'queers';  // Allow sort by queers
 		return $columns;
 	}
 
@@ -372,7 +372,6 @@ SQL;
 	 * @param int $post_id The post ID.
 	 */
 	public function update_show_meta_from_chars( $post_id ) {
-
 		$character_show_IDs = get_post_meta( $post_id, 'lezchars_show_group', true );
 
 		if ( $character_show_IDs !== '' ) {
