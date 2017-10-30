@@ -322,9 +322,10 @@ class LWTV_Shows_CMB2 {
 			'name'             => 'Show Stars',
 			'desc'             => 'Gold is by/for queers, No Stars is normal TV',
 			'id'               => $prefix . 'stars',
-			'type'             => 'select',
+			'taxonomy'         => 'lez_stars',
+			'type'             => 'taxonomy_select',
+			'remove_default'   => 'true',
 			'show_option_none' => 'No Stars',
-			'options'          => $this->stars_array,
 		) );
 		// Field: Trigger Warning
 		$field_trigger = $cmb_notes->add_field( array(
