@@ -330,15 +330,12 @@ class LWTV_Shows_CMB2 {
 		// Field: Trigger Warning
 		$field_trigger = $cmb_notes->add_field( array(
 			'name'             => 'Warning?',
-			'desc'             => 'Trigger Warnings (i.e. Game of Thrones)',
+			'desc'             => 'Trigger Warnings',
 			'id'               => $prefix . 'triggerwarning',
-			'type'             => 'select',
-			'show_option_none' => 'No',
-			'options'          => array(
-				'on'  => 'High',
-				'med' => 'Medium',
-				'low' => 'Low'
-			)
+			'taxonomy'         => 'lez_triggers',
+			'type'             => 'taxonomy_select',
+			'remove_default'   => 'true',
+			'show_option_none' => 'None',
 		) );
 		// Additional Data Grid
 		if( !is_admin() ){
