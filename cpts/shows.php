@@ -153,6 +153,8 @@ class LWTV_CPT_Shows {
 			'format'     => 'formats',
 			'genre'      => 'genres',
 			'nation'     => 'country',
+			'star'       => 'stars',
+			'trigger'    => 'triggers',
 		);
 
 		foreach ( $taxonomies as $pretty => $slug ) {
@@ -291,14 +293,6 @@ SQL;
 	/*
 	 * Save post meta for shows on SHOW update
 	 *
-	 * This will update the following metakeys on save:
-	 *  - lezshows_char_count         Number of characters
-	 *  - lezshows_dead_count         Number of dead characters
-	 *  - lezshows_none_count         Number of characters without cliches
-	 *  - lezshows_score_chars_alive  Percentage score of character survival
-	 *  - lezshows_score_chars_none   Percentage score of character's without cliches
-	 *  - lezshows_score_ratings      Percentage score of show data
-	 *
 	 * @param int $post_id The post ID.
 	 * @param post $post The post object.
 	 * @param bool $update Whether this is an existing post being updated or not.
@@ -308,41 +302,8 @@ SQL;
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ) );
 
-		// Count characters
-			$number_chars = $this->count_queers( $post_id, 'count' );
-			update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
-
-		// Count dead characters
-			$number_dead = $this->count_queers( $post_id, 'dead' );
-			update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
-
-		// Count 'no cliche' characters
-			$number_none = $this->count_queers( $post_id, 'none' );
-			update_post_meta( $post_id, 'lezshows_none_count', $number_none );
-
-		// Calculate percentage alive
-			if ( $number_chars == 0 || $number_dead == 0 ) {
-				$percent_alive = 1;
-			} else {
-				$percent_alive = ( ( $number_chars - $number_dead ) / $number_chars );
-			}
-			update_post_meta( $post_id, 'lezshows_score_chars_alive', $percent_alive );
-
-		// Calculate percentage of cliche free characters
-			if ( $number_chars == 0 || $number_none == 0 ) {
-				$percent_none = 0;
-			} else {
-				$percent_none = ( $number_none / $number_chars );
-			}
-			update_post_meta( $post_id, 'lezshows_score_chars_none', $percent_none );
-
-		// Calculate percentage of value for show
-			$percent_rating = $this->score_show_ratings( $post_id );
-			update_post_meta( $post_id, 'lezshows_score_ratings', $percent_rating );
-
-		// Calculate the full score
-			$percent_the_score = ( $percent_rating + $percent_alive + $percent_none ) / 3;
-			update_post_meta( $post_id, 'lezshows_the_score', $percent_the_score );
+		// Do the math!! (This updates 
+		LWTV_Shows_Calculate::do_the_math( $post_id );
 
 		// Flush Varnish
 		if ( class_exists( 'VarnishPurger' ) ) {
@@ -381,33 +342,11 @@ SQL;
 		}
 	}
 
-	/**
-	 * Calculate show rating.
-	 *
-	 * @access public
-	 * @param mixed $post_id
-	 * @return void
-	 */
-	public function score_show_ratings ( $post_id ) {
-		return LWTV_Shows_Calculate::show_score( $post_id );
-	}
-
-	/*
-	 * Count Queers
-	 *
-	 * This will update the metakey 'lezshows_char_count' on save
-	 *
-	 * @param int $post_id The post ID.
-	 */
-	public function count_queers( $post_id , $type = 'count' ) {
-		return LWTV_Shows_Calculate::count_queers( $post_id, $type );
-	}
-
 	/*
 	 * Add CPT to AMP
 	 */
 	function amp_init() {
-	    add_post_type_support( 'post_type_shows', AMP_QUERY_VAR );
+		add_post_type_support( 'post_type_shows', AMP_QUERY_VAR );
 	}
 
 	/*
@@ -451,7 +390,6 @@ SQL;
 				$deadqueers  = get_post_meta( $post->ID, 'lezshows_dead_count', true );
 				$score       = get_post_meta( $post->ID, 'lezshows_the_score', true );
 				$loved       = ( get_post_meta( $post->ID, 'lezshows_worthit_show_we_love', true ) == 'on' )? 'Yes' : 'No';
-
 				?>
 				<div class="misc-pub-section lwtv misc-pub-lwtv">
 					<span id="loved">Loved: <b><?php echo $loved ?></b></span>
@@ -462,7 +400,7 @@ SQL;
 					</span>
 				</div>
 				<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="score">Score: <b><?php echo round( ( $score * 100 ), 2 ); ?>%</b></span>
+					<span id="score">Score: <b><?php echo round( $score, 2 ); ?></b></span>
 				</div>
 				<?php
 

@@ -17,7 +17,7 @@ class LWTV_Shows_Calculate {
 	/**
 	 * Calculate show rating.
 	 */
-	public function show_score( $post_id ) {
+	public static function show_score( $post_id ) {
 
 		if ( !isset( $post_id ) ) return;
 
@@ -42,7 +42,9 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Add in Star Rating = -5, +1.5, +3, or +5
-		switch ( get_post_meta( $post_id, 'lezshows_stars', true ) ) {
+		$star_terms = get_the_terms( $post_id, 'lez_stars' );
+		$color = ( !empty( $star_terms ) && !is_wp_error( $star_terms ) )? $star_terms[0]->slug : get_post_meta( $post_id, 'lez_stars', true );
+		switch ( $color ) {
 			case "gold":
 				$this_show = $this_show + 5;
 				break;
@@ -60,11 +62,15 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Trigger Warning = -5, -3, -1
-		switch ( get_post_meta( $post_id, 'lezshows_triggerwarning', true ) ) {
+		$trigger_terms = get_the_terms( $post_id, 'lez_triggers' );
+		$trigger = ( !empty( $trigger_terms ) && !is_wp_error( $trigger_terms ) )? $trigger_terms[0]->slug : get_post_meta( $post_id, 'lezshows_triggerwarning', true );
+		switch ( $trigger ) {
 			case "on":
+			case "high":
 				$this_show = $this_show - 5;
 				break;
 			case "med":
+			case "medium":
 				$this_show = $this_show - 3;
 				break;
 			case "low":
@@ -85,9 +91,8 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Calculate the score
-		$max_score = 35;
-
-		$score = ( $this_show / $max_score );
+		// We add 50 to make this less of a stupid number
+		$score = $this_show + 50;
 
 		return $score;
 	}
@@ -99,7 +104,7 @@ class LWTV_Shows_Calculate {
 	 *
 	 * @param int $post_id The post ID.
 	 */
-	public function count_queers( $post_id , $type = 'count' ) {
+	public static function count_queers( $post_id , $type = 'count' ) {
 
 		// If this isn't a show post, return nothing.
 		if ( get_post_type( $post_id ) !== 'post_type_shows' )
@@ -136,6 +141,60 @@ class LWTV_Shows_Calculate {
 		if ( $type == 'count' ) return $queercount;
 		if ( $type == 'dead' ) return $deadcount;
 		if ( $type == 'none' ) return $nonecount;
+	}
+
+
+	/**
+	 * do_the_math function.
+	 *
+	 * This will update the following metakeys on save:
+	 *  - lezshows_char_count         Number of characters
+	 *  - lezshows_dead_count         Number of dead characters
+	 *  - lezshows_none_count         Number of characters without cliches
+	 *  - lezshows_score_chars_alive  Percentage score of character survival
+	 *  - lezshows_score_chars_none   Percentage score of character's without cliches
+	 *  - lezshows_score_ratings      Percentage score of show data
+	 *
+	 * @access public
+	 * @param mixed $post_id
+	 * @return void
+	 */
+	public static function do_the_math( $post_id ) {
+		// Count characters
+		$number_chars = self::count_queers( $post_id, 'count' );
+		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
+
+		// Count dead characters
+		$number_dead = self::count_queers( $post_id, 'dead' );
+		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
+
+		// Count 'no cliche' characters
+		$number_none = self::count_queers( $post_id, 'none' );
+		update_post_meta( $post_id, 'lezshows_none_count', $number_none );
+
+		// Calculate percentage alive
+		if ( $number_chars == 0 || $number_dead == 0 ) {
+			$percent_alive = 1;
+		} else {
+			$percent_alive = ( ( $number_chars - $number_dead ) / $number_chars );
+		}
+		update_post_meta( $post_id, 'lezshows_score_chars_alive', $percent_alive );
+
+		// Calculate percentage of cliche free characters
+		if ( $number_chars == 0 || $number_none == 0 ) {
+			$percent_none = 0;
+		} else {
+			$percent_none = ( $number_none / $number_chars );
+		}
+		update_post_meta( $post_id, 'lezshows_score_chars_none', $percent_none );
+
+		// Calculate percentage of value for show
+		$percent_rating = self::show_score( $post_id );
+		update_post_meta( $post_id, 'lezshows_score_ratings', $percent_rating );
+
+		// Calculate the full score
+		$percent_the_score = ( $percent_rating + $percent_alive + $percent_none ) / 3;
+		update_post_meta( $post_id, 'lezshows_the_score', $percent_the_score );
 	}
 
 }

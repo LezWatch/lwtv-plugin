@@ -322,22 +322,20 @@ class LWTV_Shows_CMB2 {
 			'name'             => 'Show Stars',
 			'desc'             => 'Gold is by/for queers, No Stars is normal TV',
 			'id'               => $prefix . 'stars',
-			'type'             => 'select',
+			'taxonomy'         => 'lez_stars',
+			'type'             => 'taxonomy_select',
+			'remove_default'   => 'true',
 			'show_option_none' => 'No Stars',
-			'options'          => $this->stars_array,
 		) );
 		// Field: Trigger Warning
 		$field_trigger = $cmb_notes->add_field( array(
 			'name'             => 'Warning?',
-			'desc'             => 'Trigger Warnings (i.e. Game of Thrones)',
+			'desc'             => 'Trigger Warnings',
 			'id'               => $prefix . 'triggerwarning',
-			'type'             => 'select',
-			'show_option_none' => 'No',
-			'options'          => array(
-				'on'  => 'High',
-				'med' => 'Medium',
-				'low' => 'Low'
-			)
+			'taxonomy'         => 'lez_triggers',
+			'type'             => 'taxonomy_select',
+			'remove_default'   => 'true',
+			'show_option_none' => 'None',
 		) );
 		// Additional Data Grid
 		if( !is_admin() ){

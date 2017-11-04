@@ -53,7 +53,7 @@ class LWTV_Stats {
 		$taxonomy  = 'lez_'.$data;
 
 		// The following are simple taxonomy arrays
-		$simple_tax_array = array( 'cliches', 'sexuality', 'gender', 'tropes', 'formats' );
+		$simple_tax_array = array( 'cliches', 'sexuality', 'gender', 'tropes', 'formats', 'triggers', 'stars' );
 		if ( in_array( $data, $simple_tax_array ) ) $array = self::tax_array( $post_type, $taxonomy );
 
 		// The following are simple meta arrays
@@ -71,24 +71,6 @@ class LWTV_Stats {
 		}
 
 		// The following are complicated meta arrays
-		if ( $data == 'stars' ) {
-			$meta_array = array( 'none', 'silver', 'gold' );
-			$array = self::meta_array( $post_type, $meta_array, 'lezshows_stars', $data );
-			$array['none'] = array( 'count' => ( $count - $array['silver']['count'] - $array['gold']['count'] ), 'name' => 'No Stars', 'url' => '' );
-		}
-
-		if ( $data == 'trigger' ) {
-			$meta_array = array( 'on', 'high', 'med', 'low', 'no', 'off' );
-			$array = self::meta_array( $post_type, $meta_array, 'lezshows_triggerwarning', $data );
-			$nowarning = $count - $array['on']['count'] - $array['med']['count'] - $array['low']['count'];
-			$array['high'] = array( 'count' => $array['on']['count'], 'name' => 'Warning', 'url' => '/shows/?fwp_show_trigger_warning=on' );
-			$array['med']  = array( 'count' => $array['med']['count'], 'name' => 'Caution', 'url' => '/shows/?fwp_show_trigger_warning=med' );
-			$array['low']  = array( 'count' => $array['low']['count'], 'name' => 'Notice', 'url' => '/shows/?fwp_show_trigger_warning=low' );
-			$array['no']   = array( 'count' => ( $nowarning ), 'name' => 'No Warning', 'url' => '/shows/' );
-			unset( $array['on'] );
-			unset( $array['off'] );
-		}
-
 		if ( $data == 'weloveit' ) {
 			$meta_array   = array( 'on' );
 			$array        = self::meta_array( $post_type, $meta_array, 'lezshows_worthit_show_we_love', $data );

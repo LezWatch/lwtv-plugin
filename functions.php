@@ -86,3 +86,10 @@ include_once( 'search.php' );
 include_once( 'seo.php' );
 include_once( 'statistics.php' );
 include_once( 'query_vars.php' );
+
+/**
+ * WP CLI
+ */
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	include( 'wp-cli.php' );
+}
