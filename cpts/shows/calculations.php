@@ -25,10 +25,9 @@ class LWTV_Shows_Calculate {
 		$realness   = min( (int) get_post_meta( $post_id, 'lezshows_realness_rating', true) , 5 );
 		$quality    = min( (int) get_post_meta( $post_id, 'lezshows_quality_rating', true) , 5 );
 		$screentime = min( (int) get_post_meta( $post_id, 'lezshows_screentime_rating', true) , 5 );
-
-		// Base score
-		$this_show = $realness + $quality + $screentime;
-
+		$this_show  = $realness + $quality + $screentime;
+		$max_score  = 15;
+		
 		// Add in Thumb Score Rating = +5 or -5
 		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
 			case "Yes":
@@ -40,6 +39,7 @@ class LWTV_Shows_Calculate {
 			default:
 				$this_show = $this_show;
 		}
+		$max_score  = $max_score + 5;
 
 		// Add in Star Rating = -5, +1.5, +3, or +5
 		$star_terms = get_the_terms( $post_id, 'lez_stars' );
@@ -60,6 +60,7 @@ class LWTV_Shows_Calculate {
 			default:
 				$this_show = $this_show;
 		}
+		$max_score  = $max_score + 5;
 
 		// Trigger Warning = -5, -3, -1
 		$trigger_terms = get_the_terms( $post_id, 'lez_triggers' );
@@ -84,15 +85,16 @@ class LWTV_Shows_Calculate {
 		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
 			$this_show = $this_show + 5;
 		}
+		$max_score  = $max_score + 5;
 
 		// Shows We Love get a +5
 		if ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) == 'on' ) {
 			$this_show = $this_show + 5;
 		}
+		$max_score  = $max_score + 5;
 
 		// Calculate the score
-		// We add 50 to make this less of a stupid number
-		$score = $this_show + 50;
+		$score = $this_show + ( 100 - $max_score );
 
 		return $score;
 	}
@@ -106,13 +108,16 @@ class LWTV_Shows_Calculate {
 	 */
 	public static function count_queers( $post_id , $type = 'count' ) {
 
-		// If this isn't a show post, return nothing.
-		if ( get_post_type( $post_id ) !== 'post_type_shows' )
-			return;
+		// If this isn't a show post, return nothing
+		if ( get_post_type( $post_id ) !== 'post_type_shows' ) return;
+
+		// If there's no valid type, return nothing
+		$type_array = array ( 'count', 'none', 'dead', 'queer-irl' );
+		if ( !in_array( esc_attr( $type ), $type_array ) ) return;
 
 		// Loop to get the list of characters
 		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
-		$queercount = $deadcount = $nonecount = 0;
+		$queercount = $deadcount = $nonecount = $queerirlcount = 0;
 
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
 		if ($charactersloop->have_posts() ) {
@@ -123,13 +128,15 @@ class LWTV_Shows_Calculate {
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
 				$is_dead     = has_term( 'dead', 'lez_cliches', $char_id);
 				$is_none     = has_term( 'none', 'lez_cliches', $char_id);
+				$is_queerirl = has_term( 'queer-irl', 'lez_cliches', $char_id);
 
 				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
 					foreach( $shows_array as $char_show ) {
 						if ( $char_show['show'] == $post_id ) {
 							$queercount++;
-							if ( $is_dead == true ) $deadcount++;
-							if ( $is_none == true ) $nonecount++;
+							if ( $is_dead == true )  $deadcount++;
+							if ( $is_none == true )  $nonecount++;
+							if ( $is_queerirl == true ) $queerirlcount++;
 						}
 					}
 				}
@@ -141,19 +148,16 @@ class LWTV_Shows_Calculate {
 		if ( $type == 'count' ) return $queercount;
 		if ( $type == 'dead' ) return $deadcount;
 		if ( $type == 'none' ) return $nonecount;
+		if ( $type == 'queer-irl' ) return $queerirlcount;
 	}
-
 
 	/**
 	 * do_the_math function.
 	 *
 	 * This will update the following metakeys on save:
-	 *  - lezshows_char_count         Number of characters
-	 *  - lezshows_dead_count         Number of dead characters
-	 *  - lezshows_none_count         Number of characters without cliches
-	 *  - lezshows_score_chars_alive  Percentage score of character survival
-	 *  - lezshows_score_chars_none   Percentage score of character's without cliches
-	 *  - lezshows_score_ratings      Percentage score of show data
+	 *  - lezshows_char_count      Number of characters
+	 *  - lezshows_dead_count      Number of dead characters
+	 *  - lezshows_the_score       Score of show data
 	 *
 	 * @access public
 	 * @param mixed $post_id
@@ -170,31 +174,53 @@ class LWTV_Shows_Calculate {
 
 		// Count 'no cliche' characters
 		$number_none = self::count_queers( $post_id, 'none' );
-		update_post_meta( $post_id, 'lezshows_none_count', $number_none );
 
-		// Calculate percentage alive
-		if ( $number_chars == 0 || $number_dead == 0 ) {
-			$percent_alive = 1;
-		} else {
-			$percent_alive = ( ( $number_chars - $number_dead ) / $number_chars );
+		// Count 'queer irl' characters
+		$number_queerirl = self::count_queers( $post_id, 'queer-irl' );
+
+		// Calculate alive characters
+		if ( $number_dead == 0 && $number_chars > 0 ) {
+			$score_alive = 100;
+		} elseif ( $number_chars == 0 ) {
+			$score_alive = 0; 
+		} elseif ( $number_dead == $number_chars ) {
+			$score_alive = 100;
 		}
-		update_post_meta( $post_id, 'lezshows_score_chars_alive', $percent_alive );
+		else {
+			$score_alive = ( ( ( $number_chars - $number_dead ) / $number_chars ) * 100 );
+		}
 
-		// Calculate percentage of cliche free characters
+		// Calculate queer IRL characters
+		if ( $number_chars == 0 || $number_queerirl == 0 ) {
+			$score_queer_irl = 0;
+		} else {
+			$score_queer_irl = ( ( $number_queerirl / $number_chars ) * 100 );
+		}
+
+		// Calculate cliche free characters
 		if ( $number_chars == 0 || $number_none == 0 ) {
-			$percent_none = 0;
+			$score_no_cliche = 0;
 		} else {
-			$percent_none = ( $number_none / $number_chars );
+			$score_no_cliche = ( ( $number_none / $number_chars ) * 100 );
 		}
-		update_post_meta( $post_id, 'lezshows_score_chars_none', $percent_none );
 
-		// Calculate percentage of value for show
-		$percent_rating = self::show_score( $post_id );
-		update_post_meta( $post_id, 'lezshows_score_ratings', $percent_rating );
+		// Calculate character score
+		if ( $score_no_cliche == 0 && $score_queer_irl == 0 ) {
+			$score_characters = 0;
+		} elseif ( $score_no_cliche == 100 || $score_queer_irl == 100 ) {
+			$score_characters = 100;
+		} else {
+			$score_characters = ( ( $score_no_cliche + $score_queer_irl ) / 2 );
+		}
+
+		// Calculate the ratings value
+		$score_show_rating = self::show_score( $post_id );
 
 		// Calculate the full score
-		$percent_the_score = ( $percent_rating + $percent_alive + $percent_none ) / 3;
-		update_post_meta( $post_id, 'lezshows_the_score', $percent_the_score );
+		$calculate = ( $score_show_rating + $score_alive + $score_characters ) / 3;
+		$the_score = min( $calculate, 100 );
+		
+		update_post_meta( $post_id, 'lezshows_the_score', $the_score );
 	}
 
 }

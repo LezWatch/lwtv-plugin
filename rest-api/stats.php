@@ -120,7 +120,7 @@ class LWTV_Stats_JSON {
 							wp_reset_query();
 						}
 
-						$trigger = ( get_post_meta( $show_id, "lezshows_triggerwarning", true ) )? true : false;
+						$trigger = ( get_post_meta( $show_id, "lezshows_triggers", true ) )? get_post_meta( $show_id, "lezshows_triggers", true ) : 'none';
 						$stars = ( get_post_meta( $show_id, "lezshows_stars", true ) )? get_post_meta( $show_id, "lezshows_stars", true ) : 'none';
 
 						$stats_array[ get_the_title( $show_id ) ] = array(

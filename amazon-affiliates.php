@@ -18,8 +18,6 @@ use ApaiIO\ApaiIO;
 
 /**
  * class LWTV_Amazon
- *
- * @since 1.0
  */
 
 class LWTV_Amazon {
@@ -37,11 +35,10 @@ class LWTV_Amazon {
 		$use_fallback = false;
 		$results      = array();
 		$setCategory  = 'DVD';
-		$amzTransient = get_transient( 'lezwatchtv_amazon_affiliates' );
 
-		// Check if the transient expired or not.
-		if ( !$amzTransient ) {
-			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', 120 );
+		// If there's no transient, set it for half an hour.
+		if ( false === ( $amzTransient = get_transient( 'lezwatchtv_amazon_affiliates' ) ) ) {
+			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', ( HOUR_IN_SECONDS / 4 ) );
 		} else {
 			$use_fallback = true;
 		}
