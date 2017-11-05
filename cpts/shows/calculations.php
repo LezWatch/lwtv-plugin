@@ -22,79 +22,77 @@ class LWTV_Shows_Calculate {
 		if ( !isset( $post_id ) ) return;
 
 		// Get base ratings
+		// Multiply by 3 for a max of 45
 		$realness   = min( (int) get_post_meta( $post_id, 'lezshows_realness_rating', true) , 5 );
 		$quality    = min( (int) get_post_meta( $post_id, 'lezshows_quality_rating', true) , 5 );
 		$screentime = min( (int) get_post_meta( $post_id, 'lezshows_screentime_rating', true) , 5 );
-		$this_show  = $realness + $quality + $screentime;
-		$max_score  = 15;
+		$this_show  = ( $realness + $quality + $screentime ) * 3;
 		
-		// Add in Thumb Score Rating = +5 or -5
+		// Add in Thumb Score Rating
 		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
 			case "Yes":
-				$this_show = $this_show + 5;
+				$this_show = $this_show + 10;
 				break;
+			case "Meh":
+				$this_show = $this_show + 5;
 			case "No":
-				$this_show = $this_show - 5;
+				$this_show = $this_show - 10;
 				break;
 			default:
 				$this_show = $this_show;
 		}
-		$max_score  = $max_score + 5;
 
-		// Add in Star Rating = -5, +1.5, +3, or +5
+		// Add in Star Rating
 		$star_terms = get_the_terms( $post_id, 'lez_stars' );
 		$color = ( !empty( $star_terms ) && !is_wp_error( $star_terms ) )? $star_terms[0]->slug : get_post_meta( $post_id, 'lez_stars', true );
 		switch ( $color ) {
 			case "gold":
-				$this_show = $this_show + 5;
+				$this_show = $this_show + 15;
 				break;
 			case "silver":
-				$this_show = $this_show + 3;
+				$this_show = $this_show + 10;
 				break;
 			case "bronze":
-				$this_show = $this_show + 1.5;
+				$this_show = $this_show + 5;
 				break;
 			case "anti":
-				$this_show = $this_show - 5;
+				$this_show = $this_show - 10;
 				break;
 			default:
 				$this_show = $this_show;
 		}
-		$max_score  = $max_score + 5;
 
-		// Trigger Warning = -5, -3, -1
+		// Trigger Warning
 		$trigger_terms = get_the_terms( $post_id, 'lez_triggers' );
 		$trigger = ( !empty( $trigger_terms ) && !is_wp_error( $trigger_terms ) )? $trigger_terms[0]->slug : get_post_meta( $post_id, 'lezshows_triggerwarning', true );
 		switch ( $trigger ) {
 			case "on":
 			case "high":
-				$this_show = $this_show - 5;
+				$this_show = $this_show - 15;
 				break;
 			case "med":
 			case "medium":
-				$this_show = $this_show - 3;
+				$this_show = $this_show - 10;
 				break;
 			case "low":
-				$this_show = $this_show - 1;
+				$this_show = $this_show - 5;
 				break;
 			default:
 				$this_show = $this_show;
 		}
 
-		// No Tropes = +5
+		// No Tropes
 		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
-			$this_show = $this_show + 5;
+			$this_show = $this_show + 15;
 		}
-		$max_score  = $max_score + 5;
 
-		// Shows We Love get a +5
+		// Shows We Love
 		if ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) == 'on' ) {
-			$this_show = $this_show + 5;
+			$this_show = $this_show + 15;
 		}
-		$max_score  = $max_score + 5;
 
 		// Calculate the score
-		$score = $this_show + ( 100 - $max_score );
+		$score = $this_show;
 
 		return $score;
 	}
