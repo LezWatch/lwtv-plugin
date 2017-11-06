@@ -162,6 +162,9 @@ class LWTV_Shows_Calculate {
 		// Count characters
 		$number_chars = self::count_queers( $post_id, 'count' );
 		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
+		
+		// If there are no chars, the score will be zero, so bail early.
+		if ( $number_chars == 0 ) return $number_chars;
 
 		switch( $type ) {
 			
