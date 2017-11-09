@@ -273,7 +273,7 @@ class LWTV_Loops {
 			'tag'             => $slug,
 			'orderby'         => 'date',
 			'order'           => 'DESC',
-	    ) );
+		) );
 
 		wp_reset_query();
 		return $query;

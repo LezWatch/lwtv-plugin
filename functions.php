@@ -81,6 +81,7 @@ include_once( 'rest-api/alexa-skills.php' );
  * Include Misc
  */
 
+include_once( 'cron.php' );
 include_once( 'custom-loops.php' );
 include_once( 'search.php' );
 include_once( 'seo.php' );

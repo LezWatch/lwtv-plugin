@@ -50,7 +50,7 @@ class LWTV_CPT_Characters {
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_gender' ), 10, 2 );
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_romantic' ), 10, 2 );
 
-		add_action( 'quick_edit_custom_box',  array( $this, 'quick_edit_custom_box' ), 10, 2 );
+		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_custom_box' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'quick_edit_save_post' ) );
 		add_action( 'admin_footer', array( $this, 'quick_edit_js') );
 		add_filter( 'post_row_actions', array( $this, 'quick_edit_link' ), 10, 2 );
