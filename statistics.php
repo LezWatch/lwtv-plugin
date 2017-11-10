@@ -546,7 +546,7 @@ class LWTV_Stats {
 	 */
 	static function lists( $subject, $data, $array, $count ) {
 		// Format Clichés properly
-		if ( $data == 'cliches' ) $name = 'clichés';
+		$name = ( $data == 'cliches' )? 'clichés' : $data;
 
 		// Set title
 		$title = ucfirst( substr($subject, 0, -1) ). ' ' . ucfirst( $name );
@@ -984,7 +984,7 @@ class LWTV_Stats_Display {
 	 */
 	public static function intro( $type = 'main' ) {
 		if ( $type == 'main' )       $return = '';
-		if ( $type == 'death' )      $return = 'For a pure list of all dead, we have <a href="https://lezwatchtv.com/trope/dead-queers/">shows where characters died</a> as well as <a href="https://lezwatchtv.com/cliche/dead/">characters who have died</a> (aka the <a href="https://lezwatchtv.com/cliche/dead/">Dead Lesbians</a> list).';
+		if ( $type == 'death' )      $return = 'For a pure list of all dead, we have <a href="https://lezwatchtv.com/trope/dead-queers/">shows where characters died</a> as well as <a href="https://lezwatchtv.com/cliche/dead/">characters who have died</a> (aka the <a href="https://lezwatchtv.com/cliche/dead/">Dead Lesbians</a> list).';
 		if ( $type == 'characters' ) $return = 'Statistics specific to characters (sexuality, gender IDs, role types, etc).';
 		if ( $type == 'shows' )      $return = 'Statistics specific to shows.';
 		if ( $type == 'lists' )      $return = 'Raw statistics.';

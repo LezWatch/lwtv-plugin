@@ -36,8 +36,5 @@ class LWTV_SEO {
 		echo '<meta property="og:image" content="' . $image . '" /><meta name="twitter:image" content="' . $image . '" />';
 	}
 }
+
 new LWTV_SEO();
-
-
-
-
