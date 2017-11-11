@@ -62,15 +62,15 @@ class LWTV_Query_Vars {
 			// Based on $this->lez_query_args
 			foreach( $this->lez_query_args as $slug => $query ) {
 				add_rewrite_rule(
-			        '^'.$slug.'/([^/]+)/?$',
-			        'index.php?pagename='.$slug.'&'.$query.'=$matches[1]',
-			        'top'
-			    );
-			    add_rewrite_rule(
-			        '^'.$slug.'/([^/]+)/page/([0-9]+)?/?$',
-			        'index.php?pagename='.$slug.'&'.$query.'=$matches[1]&paged=$matches[2]',
-			        'top'
-			    );					
+					'^'.$slug.'/([^/]+)/?$',
+					'index.php?pagename='.$slug.'&'.$query.'=$matches[1]',
+					'top'
+				);
+				add_rewrite_rule(
+					'^'.$slug.'/([^/]+)/page/([0-9]+)?/?$',
+					'index.php?pagename='.$slug.'&'.$query.'=$matches[1]&paged=$matches[2]',
+					'top'
+				);					
 			}
 			
 		} else {

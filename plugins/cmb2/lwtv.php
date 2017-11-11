@@ -62,12 +62,29 @@ class LWTV_CMB2 {
 		$post_options = array();
 		if ( $posts ) {
 			foreach ( $posts as $post ) {
-			  $post_options[ $post->ID ] = $post->post_title;
+				$post_options[ $post->ID ] = $post->post_title;
 			}
 		}
 
-		asort($post_options);
+		// If we're a show, we want to sort and remove stopwords
+		if ( $query_args['post_type'] == 'post_type_shows' ) {
+			uasort( $post_options, function( $a, $b ) {
+				return strnatcasecmp( self::showshort( $a ), self::showshort( $b ) );
+			} );
+		} else {
+			asort($post_options);
+		}
+		
 		return $post_options;
+	}
+
+	public static function showshort( $str ) {
+		list( $first, $rest ) = explode( ' ' , $str . ' ' , 2 );
+		// the extra space is to prevent "undefined offset" notices
+		// on single-word titles
+		$validarticles = array( 'a', 'an', 'the' );
+		if( in_array( strtolower( $first ), $validarticles ) ) return $rest . ', ' . $first;
+		return $str;
 	}
 
 	/**

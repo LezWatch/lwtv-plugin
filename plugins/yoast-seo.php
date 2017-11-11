@@ -27,23 +27,23 @@ class LWTV_Yoast_SEO {
 
 		// when editing pages, $typenow isn't set until later!
 		if ( empty($typenow) ) {
-		    // try to pick it up from the query string
-		    if (!empty($_GET['post'])) {
-		        $post = get_post( sanitize_text_field($_GET['post']) );
-		        $typenow = $post->post_type;
-		    }
-		    // try to pick it up from the query string
-		    elseif ( !empty($_GET['post_type']) ) {
-			    $typenow = sanitize_text_field($_GET['post_type']);
-		    }
-		    // try to pick it up from the quick edit AJAX post
-		    elseif (!empty($_POST['post_ID'])) {
-		        $post = get_post( intval($_POST['post_ID']) );
-		        $typenow = $post->post_type;
-		    }
-		    else {
-			    $typenow = 'nopostfound';
-		    }
+			// try to pick it up from the query string
+			if (!empty($_GET['post'])) {
+				$post = get_post( sanitize_text_field($_GET['post']) );
+				$typenow = $post->post_type;
+			}
+			// try to pick it up from the query string
+			elseif ( !empty($_GET['post_type']) ) {
+				$typenow = sanitize_text_field($_GET['post_type']);
+			}
+			// try to pick it up from the quick edit AJAX post
+			elseif (!empty($_POST['post_ID'])) {
+				$post = get_post( intval($_POST['post_ID']) );
+				$typenow = $post->post_type;
+			}
+			else {
+				$typenow = 'nopostfound';
+			}
 		}
 
 		$typenow_array = array( 'post_type_shows', 'post_type_characters' );
