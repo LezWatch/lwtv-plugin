@@ -247,7 +247,7 @@ class LWTV_Loops {
 					'operator' => $operator,
 				),
 			),
-	    ) );
+		) );
 
 		wp_reset_query();
 		return $query;

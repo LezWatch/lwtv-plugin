@@ -50,11 +50,6 @@ class LWTV_CPT_Characters {
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_gender' ), 10, 2 );
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_romantic' ), 10, 2 );
 
-		add_action( 'quick_edit_custom_box', array( $this, 'quick_edit_custom_box' ), 10, 2 );
-		add_action( 'save_post', array( $this, 'quick_edit_save_post' ) );
-		add_action( 'admin_footer', array( $this, 'quick_edit_js') );
-		add_filter( 'post_row_actions', array( $this, 'quick_edit_link' ), 10, 2 );
-
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 	}
 
@@ -63,7 +58,7 @@ class LWTV_CPT_Characters {
 	 */
 	public function init() {
 		// Force saving data to convert select2 saved data to a taxonomy
-		$post_id = ( isset( $_GET['post'] ) )? $_GET['post'] : 0 ;
+		$post_id = ( isset( $_GET['post'] ) )? intval( $_GET['post'] ) : 0 ;
 
 		// Cliches
 		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
@@ -212,7 +207,7 @@ class LWTV_CPT_Characters {
 				'autocorrect'    => 'off',
 				'autocapitalize' => 'off',
 				'spellcheck'     => 'false',
-		    ),
+			),
 		) );
 		// Field Group: Character Show information
 		// Made repeatable since each show might have a separate role. Yikes...
@@ -298,7 +293,7 @@ class LWTV_CPT_Characters {
 			'id'          => $prefix . 'death_year',
 			'type'        => 'text_date',
 			'date_format' => 'm/d/Y',
-			'repeatable'  => true, // Sara Lance may die again, and we'll have to figure this out
+			'repeatable'  => true,
 		) );
 		// Character Sidebar Grid
 		if( !is_admin() ){
@@ -450,189 +445,6 @@ SQL;
 
 		return $clauses;
 	}
-	
-	/*
-	 * Add Quick Edit Boxes
-	 */
-	public function quick_edit_custom_box( $column_name, $post_type ) {
-		switch ( $column_name ) {
-			case 'cpt-shows':
-				// Multiselect
-				break;
-			case 'taxonomy-lez_gender':
-				?>
-				<fieldset class="inline-edit-col-left">
-				<div class="inline-edit-col">
-				<span class="title">Gender Identity</span>
-					<input type="hidden" name="lez_gender_noncename" id="lez_gender_noncename" value="" />
-					<?php
-						$terms = get_terms( array( 'taxonomy' => 'lez_gender','hide_empty' => false ) );
-					?>
-					<select name='terms_lez_gender' id='terms_lez_gender'>
-						<option class='lez_gender-option' value='0'>(Undefined)</option>
-						<?php
-						foreach ( $terms as $term ) {
-							echo "<option class='lez_gender-option' value='{$term->name}'>{$term->name}</option>\n";
-						}
-							?>
-					</select>
-				</div>
-				</fieldset>
-				<?php
-				break;
-			case 'taxonomy-lez_sexuality':
-				?>
-				<fieldset class="inline-edit-col-left">
-				<div class="inline-edit-col">
-				<span class="title">Sexual Orientation</span>
-					<input type="hidden" name="lez_sexuality_noncename" id="lez_sexuality_noncename" value="" />
-					<?php
-						$terms = get_terms( array( 'taxonomy' => 'lez_sexuality','hide_empty' => false ) );
-					?>
-					<select name='terms_lez_sexuality' id='terms_lez_sexuality'>
-						<option class='lez_sexuality-option' value='0'>(Undefined)</option>
-						<?php
-						foreach ($terms as $term) {
-							echo "<option class='lez_sexuality-option' value='{$term->name}'>{$term->name}</option>\n";
-						}
-							?>
-					</select>
-				</div>
-				</fieldset>
-				<?php
-			break;
-			case 'taxonomy-lez_romantic':
-				?>
-				<fieldset class="inline-edit-col-left">
-				<div class="inline-edit-col">
-				<span class="title">Romantic Orientation</span>
-					<input type="hidden" name="lez_romantic_noncename" id="lez_romantic_noncename" value="" />
-					<?php
-						$terms = get_terms( array( 'taxonomy' => 'lez_romantic','hide_empty' => false ) );
-					?>
-					<select name='terms_lez_romantic' id='terms_lez_romantic'>
-						<option class='lez_romantic-option' value='0'>(Undefined)</option>
-						<?php
-						foreach ($terms as $term) {
-							echo "<option class='lez_romantic-option' value='{$term->name}'>{$term->name}</option>\n";
-						}
-							?>
-					</select>
-				</div>
-				</fieldset>
-				<?php
-			break;
-		}
-	}
-
-	/*
-	 * Allow Quick Edit boxes to save
-	 */
-	public function quick_edit_save_post( $post_id ) {
-		// Criteria for not saving: Auto-saves, not post_type_characters, can't edit
-		if ( ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) || ( isset( $_POST['post_type'] ) &&  'post_type_characters' != $_POST['post_type'] ) || !current_user_can( 'edit_page', $post_id ) ) {
-			return $post_id;
-		}
-		$post = get_post($post_id);
-
-		// Sexuality
-		if ( isset( $_POST['terms_lez_sexuality'] ) && ( $post->post_type != 'revision' ) ) {
-			$lez_sexuality_term = esc_attr( $_POST['terms_lez_sexuality'] );
-			$term = term_exists( $lez_sexuality_term, 'lez_sexuality' );
-			if ( $term !== 0 && $term !== null) {
-				wp_set_object_terms( $post_id, $lez_sexuality_term, 'lez_sexuality' );
-			}
-		}
-
-		// Gender
-		if ( isset( $_POST['terms_lez_gender'] ) && ( $post->post_type != 'revision' ) ) {
-			$lez_gender_term = esc_attr( $_POST['terms_lez_gender'] );
-			$term = term_exists( $lez_gender_term, 'lez_gender' );
-			if ( $term !== 0 && $term !== null) {
-				wp_set_object_terms( $post_id, $lez_gender_term, 'lez_gender' );
-			}
-		}
-
-		// Romantic
-		if ( isset( $_POST['terms_lez_romantic'] ) && ( $post->post_type != 'revision' ) ) {
-			$lez_gender_term = esc_attr( $_POST['terms_lez_romantic'] );
-			$term = term_exists( $lez_gender_term, 'lez_romantic' );
-			if ( $term !== 0 && $term !== null) {
-				wp_set_object_terms( $post_id, $lez_gender_term, 'lez_romantic' );
-			}
-		}
-	}
-
-	/*
-	 * Quick Edit Save
-	 *
-	 * Javascript to force defaults
-	 */
-	public function quick_edit_js() {
-		global $current_screen;
-		if ( is_null( $current_screen) || ( $current_screen->id !== 'edit-post_type_characters' ) || ( $current_screen->post_type !== 'post_type_characters' ) ) return;
-		?>
-		<script type="text/javascript">
-		<!--
-
-		function set_inline_lwtv_quick_edit_defaults( sexualitySet, genderSet, romanticSet, roleSet, nonce ) {
-			// revert Quick Edit menu so that it refreshes properly
-			inlineEditPost.revert();
-			var sexualityInput = document.getElementById('terms_lez_sexuality');
-			var genderInput    = document.getElementById('terms_lez_gender');
-			var romanticInput  = document.getElementById('terms_lez_romantic');
-			var nonceInput     = document.getElementById('lez_sexuality_noncename');
-			nonceInput.value   = nonce;
-
-			// Set Sexuality Option
-			for (i = 0; i < sexualityInput.options.length; i++) {
-				if (sexualityInput.options[i].value == sexualitySet) {
-					sexualityInput.options[i].setAttribute("selected", "selected");
-				} else { sexualityInput.options[i].removeAttribute("selected"); }
-			}
-
-			// Set Gender Option
-			for (i = 0; i < genderInput.options.length; i++) {
-				if (genderInput.options[i].value == genderSet) {
-					genderInput.options[i].setAttribute("selected", "selected");
-				} else { genderInput.options[i].removeAttribute("selected"); }
-			}
-
-			// Set Romantic Option
-			for (i = 0; i < romanticInput.options.length; i++) {
-				if (romanticInput.options[i].value == romanticSet) {
-					romanticInput.options[i].setAttribute("selected", "selected");
-				} else { romanticInput.options[i].removeAttribute("selected"); }
-			}
-
-		}
-
-		//-->
-		</script>
-		<?php
-	}
-
-	/*
-	 * Quick Edit Link
-	 *
-	 * Call the Javascript in Quick Edit Save
-	 */
-	public function quick_edit_link ( $actions, $post ) {
-		global $current_screen;
-		if ( ( $current_screen->id != 'edit-post_type_characters' ) || ( $current_screen->post_type != 'post_type_characters' ) ) return $actions;
-
-		$nonce          = wp_create_nonce( 'lez_sexuality_' . $post->ID );
-		$sex_terms      = wp_get_post_terms( $post->ID, 'lez_sexuality', array( 'fields' => 'all' ) );
-		$gender_terms   = wp_get_post_terms( $post->ID, 'lez_gender', array( 'fields' => 'all' ) );
-		$romantic_terms = wp_get_post_terms( $post->ID, 'lez_romantic', array( 'fields' => 'all' ) );
-
-		$actions['inline hide-if-no-js'] = '<a href="#" class="editinline" title="';
-		$actions['inline hide-if-no-js'] .= esc_attr( __( 'Edit this item inline' ) ) . '" ';
-		$actions['inline hide-if-no-js'] .= " onclick=\"set_inline_lwtv_quick_edit_defaults('{$sex_terms[0]->name}', '{$gender_terms[0]->name}', '{$romantic_terms[0]->name}', '{$nonce}')\">";
-		$actions['inline hide-if-no-js'] .= __( 'Quick&nbsp;Edit' );
-		$actions['inline hide-if-no-js'] .= '</a>';
-		return $actions;
-	}
 
 	/*
 	 * Extra Meta Variables for Yoast and Characters
@@ -751,7 +563,6 @@ SQL;
 								'show_from' => $show_id,
 							);
 							$charcount++;
-
 							if ( has_term( 'dead', 'lez_cliches', $char_id) ) {
 								$deadcount++;
 							}
@@ -773,9 +584,7 @@ SQL;
 				$return = $characters;
 				break;
 		}
-
 		return $return;
-
 	}
 
 }

@@ -30,13 +30,13 @@ class LWTV_Search {
 	 * @since 1.0
 	 */
 	public function search_join( $join ) {
-	    global $wpdb;
+		global $wpdb;
 
-	    if ( is_search() ) {
-	        $join .=' LEFT JOIN '.$wpdb->postmeta. ' ON '. $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
-	    }
+		if ( is_search() ) {
+			$join .=' LEFT JOIN '.$wpdb->postmeta. ' ON '. $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
+		}
 
-	    return $join;
+		return $join;
 	}
 
 	/**
@@ -52,15 +52,15 @@ class LWTV_Search {
 	 * @since 1.0
 	 */
 	public function search_where( $where ) {
-	    global $pagenow, $wpdb;
+		global $pagenow, $wpdb;
 
-	    if ( is_search() ) {
+		if ( is_search() ) {
 			$keys = "'lezchars_actor', 'lezshows_worthit_details', 'lezshows_plots', 'lezshows_episodes', 'lezshows_realness_details', 'lezshows_quality_details', 'lezshows_screentime_details'";
 			$where = preg_replace(
-	            "/\(\s*".$wpdb->posts.".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
-	            "(".$wpdb->posts.".post_title LIKE $1) OR ( (".$wpdb->postmeta.".meta_key IN ( ".$keys." ) ) AND (".$wpdb->postmeta.".meta_value LIKE $1)  )", $where );
-	    }
-	    return $where;
+			"/\(\s*".$wpdb->posts.".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
+			"(".$wpdb->posts.".post_title LIKE $1) OR ( (".$wpdb->postmeta.".meta_key IN ( ".$keys." ) ) AND (".$wpdb->postmeta.".meta_value LIKE $1)  )", $where );
+		}
+		return $where;
 	}
 
 	/**
@@ -75,13 +75,12 @@ class LWTV_Search {
 	 * @since 1.0
 	 */
 	public function search_distinct( $where ) {
-	    global $wpdb;
+		global $wpdb;
 
-	    if ( is_search() ) {
-	        return "DISTINCT";
-	    }
-
-	    return $where;
+		if ( is_search() ) {
+			return "DISTINCT";
+		}
+		return $where;
 	}
 
 	/**

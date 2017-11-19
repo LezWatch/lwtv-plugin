@@ -1,27 +1,37 @@
 <?php
 /**
- * Filter post order by for shows
+ * Filter post $orderby
  *
- * We want to NOT include the/an/a when sorting.
- * This is not currently being used becuase it's not working
+ * We want to NOT include the/an/a when sorting by changing the params
+ * Massive props to Pascal Birchler for his cleverness with trim.
  *
  * @since 1.2
  *
  */
-if ( !is_front_page() ) {
+
+// Only run this on the front end.
+if ( !is_admin() ) {
+	
 	add_filter( 'posts_orderby', function( $orderby, \WP_Query $q ) {
+		
+		// If this isn't an archive page, don't change $orderby
+		if ( !is_archive() ) return $orderby;
+		
+		// If the post type isn't a show, don't change $orderby
+		if ( 'post_type_shows' !== $q->get( 'post_type' ) ) return $orderby;
 
-		$reorder = false;
-		$valid_tax = array( 'lez_country', 'lez_tropes', 'lez_genres', 'lez_formats', 'lez_stations' );
-		$fwp_sort  = ( isset( $_GET['fwp_sort'] ) )? $_GET['fwp_sort'] : '';
+		// If the sort isn't based on title, don't change $orderby
+		$fwp_sort  = ( isset( $_GET['fwp_sort'] ) )? sanitize_text_field( $_GET['fwp_sort'] ) : 'empty';
+		$fwp_array = array( 'title_asc', 'title_desc', 'empty');
+		if ( !in_array( $fwp_sort, $fwp_array ) ) return $orderby;
 
-		if ( 'post_type_shows' !== $q->get( 'post_type' ) && 'date_desc' !== $fwp_sort ) return $orderby;
-
+		// Okay! Time to go!
 		global $wpdb;
 
 		// Adjust this to your needs:
 		$matches = [ 'the ', 'an ', 'a ' ];
 
+		// Return our customized $orderby
 		return sprintf(
 			" %s %s ",
 			lwtv_shows_posts_orderby_sql( $matches, " LOWER( {$wpdb->posts}.post_title) " ),
@@ -30,6 +40,15 @@ if ( !is_front_page() ) {
 
 	}, 10, 2 );
 
+
+	/**
+	 * lwtv_shows_posts_orderby_sql function.
+	 * 
+	 * @access public
+	 * @param mixed &$matches
+	 * @param mixed $sql
+	 * @return void
+	 */
 	function lwtv_shows_posts_orderby_sql( &$matches, $sql ) {
 		if( empty( $matches ) || ! is_array( $matches ) )
 			return $sql;

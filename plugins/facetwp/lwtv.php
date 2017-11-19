@@ -27,11 +27,11 @@ class LWTV_FacetWP {
 
 		// Filter Facet output
 		add_filter( 'facetwp_facet_html', function( $output, $params ) {
-		    if ( 'show_airdates' == $params['facet']['name'] ) {
-		        $output = str_replace( 'Min', 'First Year', $output );
-		        $output = str_replace( 'Max', 'Last Year', $output );
-		    }
-		    return $output;
+			if ( 'show_airdates' == $params['facet']['name'] ) {
+				$output = str_replace( 'Min', 'First Year', $output );
+				$output = str_replace( 'Max', 'Last Year', $output );
+			}
+			return $output;
 		}, 10, 2 );
 
 		// Don't output <!--fwp-loop--> on admin pages
@@ -56,7 +56,7 @@ class LWTV_FacetWP {
 			$params['facet_display_value'] = ucfirst( $params['facet_display_value'] );
 			$class->insert( $params );
 			return false; // skip default indexing
-	    }
+		}
 
 		// Shows we Love
 		// Change 'on' to 'yes' 
@@ -65,7 +65,7 @@ class LWTV_FacetWP {
 			$params['facet_display_value'] = ( $params['facet_display_value'] == 'on' )? 'Yes' : 'No';
 			$class->insert( $params );
 			return false; // skip default indexing
-	    }
+		}
 
 		// Trigger Warning
 		// If 'on' change to 'High', else capitalize
@@ -74,7 +74,7 @@ class LWTV_FacetWP {
 			$params['facet_display_value'] = ( $params['facet_display_value'] == 'on' )? 'High' : ucfirst( $params['facet_display_value'] );
 			$class->insert( $params );
 			return false; // skip default indexing
-	    }
+		}
 
 		// Actors
 		// Saves one value for each actor
@@ -87,7 +87,7 @@ class LWTV_FacetWP {
 				$class->insert( $params );
 			}
 			return false; // skip default indexing
-	    }
+		}
 
 		// Airdates
 		// Saves two values for two sources (dude)
@@ -108,9 +108,9 @@ class LWTV_FacetWP {
 			$class->insert( $params2 );
 
 			return false; // skip default indexing
-	    }
+		}
 
-	    return $params;
+		return $params;
 	}
 
 	/**
@@ -129,63 +129,63 @@ class LWTV_FacetWP {
 
 		if ( is_post_type_archive( 'post_type_shows' ) ) {
 
-		    $options['most_queers'] = array(
-		        'label' => 'Number of Characters (Descending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_char_count', // required when sorting by custom fields
-		            'order'    => 'DESC', // descending order
-		        )
-		    );
+			$options['most_queers'] = array(
+				'label' => 'Number of Characters (Descending)',
+				'query_args' => array(
+					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'meta_key' => 'lezshows_char_count', // required when sorting by custom fields
+					'order'    => 'DESC', // descending order
+				)
+			);
 
-		    $options['least_queers'] = array(
-		        'label' => 'Number of Characters (Ascending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_char_count', // required when sorting by custom fields
-		            'order'    => 'ASC', // ascending order
-		        )
-		    );
+			$options['least_queers'] = array(
+				'label' => 'Number of Characters (Ascending)',
+				'query_args' => array(
+					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'meta_key' => 'lezshows_char_count', // required when sorting by custom fields
+					'order'    => 'ASC', // ascending order
+				)
+			);
 
-		    $options['most_dead'] = array(
-		        'label' => 'Number of Dead Characters (Descending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_dead_count', // required when sorting by custom fields
-		            'order'    => 'DESC', // descending order
-		        )
-		    );
+			$options['most_dead'] = array(
+				'label' => 'Number of Dead Characters (Descending)',
+				'query_args' => array(
+					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'meta_key' => 'lezshows_dead_count', // required when sorting by custom fields
+					'order'    => 'DESC', // descending order
+				)
+			);
 
-		    $options['least_dead'] = array(
-		        'label' => 'Number of Dead Characters (Ascending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_dead_count', // required when sorting by custom fields
-		            'order'    => 'ASC', // ascending order
-		        )
-		    );
+			$options['least_dead'] = array(
+				'label' => 'Number of Dead Characters (Ascending)',
+				'query_args' => array(
+					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'meta_key' => 'lezshows_dead_count', // required when sorting by custom fields
+					'order'    => 'ASC', // ascending order
+				)
+			);
 
-		    $options['high_score'] = array(
-		        'label' => 'Overall Score (Descending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_the_score', // required when sorting by custom fields
-		            'order'    => 'DESC', // descending order
-		        )
-		    );
+			$options['high_score'] = array(
+				'label' => 'Overall Score (Descending)',
+				'query_args' => array(
+					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'meta_key' => 'lezshows_the_score', // required when sorting by custom fields
+					'order'    => 'DESC', // descending order
+				)
+			);
 
-		    $options['low_score'] = array(
-		        'label' => 'Overall Score (Ascending)',
-		        'query_args' => array(
-		            'orderby'  => 'meta_value_num', // sort by numerical custom field
-		            'meta_key' => 'lezshows_the_score', // required when sorting by custom fields
-		            'order'    => 'ASC', // ascending order
-		        )
-		    );
+			$options['low_score'] = array(
+				'label' => 'Overall Score (Ascending)',
+				'query_args' => array(
+					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'meta_key' => 'lezshows_the_score', // required when sorting by custom fields
+					'order'    => 'ASC', // ascending order
+				)
+			);
 
 		}
 
-	    return $options;
+		return $options;
 	}
 
 }

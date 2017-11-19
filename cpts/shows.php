@@ -32,9 +32,9 @@ class LWTV_CPT_Shows {
 	public function init() {
 
 		// Things that only run for this post type
-		$post_id   = ( isset( $_GET['post'] ) )? $_GET['post'] : 0 ;
+		$post_id   = ( isset( $_GET['post'] ) )? intval( $_GET['post'] ) : 0 ;
 		if ( $post_id !== 0 && is_admin() ) {
-			$post_type = ( isset( $_GET['post_type'] ) )? $_GET['post_type'] : 0 ;
+			$post_type = ( isset( $_GET['post_type'] ) )? sanitize_text_field( $_GET['post_type'] ) : 0 ;
 			switch ( $post_type ) {
 				case 'post_type_shows':
 					// Filter buttons not needed on the teeny MCE
@@ -390,19 +390,17 @@ SQL;
 				$deadqueers  = get_post_meta( $post->ID, 'lezshows_dead_count', true );
 				$score       = get_post_meta( $post->ID, 'lezshows_the_score', true );
 				$loved       = ( get_post_meta( $post->ID, 'lezshows_worthit_show_we_love', true ) == 'on' )? 'Yes' : 'No';
-				?>
-				<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="loved">Loved: <b><?php echo $loved ?></b></span>
+				echo '<div class="misc-pub-section lwtv misc-pub-lwtv">
+					<span id="loved">Loved: <b>' . $loved . '</b></span>
 				</div>
 				<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="characters">Characters: <b><?php echo $countqueers; ?></b> total
-						<?php if ( $deadqueers ) { ?> / <b><?php echo $deadqueers; ?></b> dead<?php } ?>
-					</span>
+					<span id="characters">Characters: <b>' . $countqueers . '</b> total';
+						if ( $deadqueers ) { echo '/ <b>' . $deadqueers . '</b> dead'; }
+				echo '</span>
 				</div>
 				<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="score">Score: <b><?php echo round( $score, 2 ); ?></b></span>
-				</div>
-				<?php
+					<span id="score">Score: <b>' .  round( $score, 2 ) . '</b></span>
+				</div>';
 
 				break;
 		}
