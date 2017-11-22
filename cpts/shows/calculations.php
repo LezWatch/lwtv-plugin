@@ -219,7 +219,7 @@ class LWTV_Shows_Calculate {
 		// Don't go over 100
 		$the_score = min( $calculate, 100 );
 		// Don't go under 0
-		$the_score = max( $calculate, 0 )
+		$the_score = max( $calculate, 0 );
 
 		// Update the meta
 		update_post_meta( $post_id, 'lezshows_the_score', $the_score );
