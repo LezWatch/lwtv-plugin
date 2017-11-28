@@ -63,9 +63,9 @@ class LWTV_Stats_JSON {
 		$params = $data->get_params();
 
 		$stat_type = ( isset( $params['type'] ) && $params['type'] !== '' )? sanitize_title_for_query( $params['type'] ) : 'none';
-		$format = ( isset( $params['format'] ) && $params['format'] !== '' )? sanitize_title_for_query( $params['format'] ) : 'simple';
+		$format    = ( isset( $params['format'] ) && $params['format'] !== '' )? sanitize_title_for_query( $params['format'] ) : 'simple';
 
-		$response = $this->statistics( $stat_type, $format );
+		$response  = $this->statistics( $stat_type, $format );
 
 		return $response;
 	}
