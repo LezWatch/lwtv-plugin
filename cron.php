@@ -15,7 +15,8 @@ if ( ! defined('WPINC' ) ) die;
 
 class LWTV_Cron {
 
-	public $urls;
+	public $hourly_urls;
+	public $daily_urls;
 	
 	/**
 	 * Constructor
@@ -23,7 +24,7 @@ class LWTV_Cron {
 	public function __construct() {
 
 		// URLs we need to prime the pump on a little more often than normal
-		$this->urls = array(
+		$this->hourly_urls = array(
 			'/statistics/',
 			'/statistics/characters/',
 			'/statistics/shows/',
@@ -35,15 +36,36 @@ class LWTV_Cron {
 			'/',
 		);
 
-		add_action( 'lwtv_cache_event', array( $this, 'varnish_cache' ) );
+		// UR:s we need to refresh daily
+		$this->daily_urls = array(
+			'wp-json/lwtv/v1/last-death/',
+			'wp-json/lwtv/v1/stats/',
+			'wp-json/lwtv/v1/of-the-day/',
+			'wp-json/lwtv/v1/of-the-day/character/',
+			'wp-json/lwtv/v1/of-the-day/show/',
+		);
 
-		if ( !wp_next_scheduled ( 'lwtv_cache_event' ) ) {
-			wp_schedule_event( time(), 'hourly', 'lwtv_cache_event' );
+		add_action( 'lwtv_cache_event_hourly', array( $this, 'varnish_cache_hourly' ) );
+		add_action( 'lwtv_cache_event_daily', array( $this, 'varnish_cache_daily' ) );
+
+		if ( !wp_next_scheduled ( 'lwtv_cache_event_hourly' ) ) {
+			wp_schedule_event( time(), 'hourly', 'lwtv_cache_event_hourly' );
+		}
+
+		if ( !wp_next_scheduled ( 'lwtv_cache_event_daily' ) ) {
+			wp_schedule_event( time(), 'hourly', 'lwtv_cache_event_daily' );
+		}
+
+	}
+
+	public function varnish_cache_hourly() {
+		foreach ( $this->hourly_urls as $url ) {
+			wp_remote_get( home_url( $url ) );
 		}
 	}
 
-	public function varnish_cache() {
-		foreach ( $this->urls as $url ) {
+	public function varnish_cache_daily() {
+		foreach ( $this->daily_urls as $url ) {
 			wp_remote_get( home_url( $url ) );
 		}
 	}
