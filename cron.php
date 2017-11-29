@@ -53,7 +53,7 @@ class LWTV_Cron {
 		}
 
 		if ( !wp_next_scheduled ( 'lwtv_cache_event_daily' ) ) {
-			wp_schedule_event( time(), 'hourly', 'lwtv_cache_event_daily' );
+			wp_schedule_event( time(), 'daily', 'lwtv_cache_event_daily' );
 		}
 
 	}

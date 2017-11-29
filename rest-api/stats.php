@@ -120,16 +120,19 @@ class LWTV_Stats_JSON {
 							wp_reset_query();
 						}
 
-						$trigger = ( get_post_meta( $show_id, "lezshows_triggers", true ) )? get_post_meta( $show_id, "lezshows_triggers", true ) : 'none';
-						$stars = ( get_post_meta( $show_id, "lezshows_stars", true ) )? get_post_meta( $show_id, "lezshows_stars", true ) : 'none';
+						$trigger = ( get_post_meta( $show_id, 'lezshows_triggers', true ) )? get_post_meta( $show_id, 'lezshows_triggers', true ) : 'none';
+						$stars   = ( get_post_meta( $show_id, 'lezshows_stars', true ) )? get_post_meta( $show_id, 'lezshows_stars', true ) : 'none';
+						$loved   = ( get_post_meta( $show_id, 'lezshows_worthit_show_we_love', true ) )? 'yes' : 'no';
 
 						$stats_array[ get_the_title( $show_id ) ] = array(
-							'id'         => $post->ID,
+							'id'         => $show_id,
 							'characters' => $havecharcount,
 							'dead'       => $deadcharcount,
-							'thumb'      => get_post_meta( $show_id, "lezshows_worthit_rating", true ),
+							'thumb'      => get_post_meta( $show_id, 'lezshows_worthit_rating', true ),
 							'trigger'    => $trigger,
 							'stars'      => $stars,
+							'loved'      => $loved,
+							'url'        => get_the_permalink( $show_id ),
 						);
 					}
 					wp_reset_query();
@@ -180,6 +183,7 @@ class LWTV_Stats_JSON {
 							'gender'    => implode(', ', wp_get_post_terms($post->ID, 'lez_gender', array("fields" => "names") ) ),
 							'actors'    => implode(', ', $actors ),
 							'shows'     => implode(', ', $shows ),
+							'url'       => get_the_permalink(),
 						);
 					}
 					wp_reset_query();
