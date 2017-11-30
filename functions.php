@@ -88,6 +88,7 @@ include_once( 'search.php' );
 include_once( 'seo.php' );
 include_once( 'sort-stopwords.php' );
 include_once( 'statistics.php' );
+include_once( 'twitter.php' );
 include_once( 'query_vars.php' );
 
 /**
