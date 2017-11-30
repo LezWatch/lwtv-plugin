@@ -28,7 +28,7 @@ class LWTV_OTD_JSON {
 	 * Rest API init
 	 *
 	 * Creates callbacks
-	 *   - /lwtv/v1/otd/
+	 *   - /lwtv/v1/of-the-day/
 	 */
 	public function rest_api_init() {
 
@@ -64,7 +64,22 @@ class LWTV_OTD_JSON {
 			$type = 'character';
 		}
 
-		if ( false === ( $id = get_transient( 'lwtv_otd_' . $type ) ) ) {
+		// Grab the options
+		$default = array (
+			'character' => array( 
+				'time'  => strtotime( 'midnight tomorrow' ),
+				'post'  => 'none',
+			),
+			'show'      =>  array( 
+				'time'  => strtotime( 'midnight tomorrow' ),
+				'post'  => 'none',
+			),
+		);
+		$options = get_option( 'lwtv_otd', $default );
+
+		// If there's no ID or the timestamp has past, we need a new ID
+		if ( $options[ $type ][ 'post' ] == 'none' || time() >= $options[ $type ][ 'time' ] ) {
+			add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 			// Grab a random post
 			$args = array( 
 				'post_type'      => 'post_type_' . $type . 's',
@@ -75,19 +90,23 @@ class LWTV_OTD_JSON {
 
 			// Do the needful
 			while ( $post->have_posts() ) {
-				$post->the_post(); 
-				
+				$post->the_post();
 				$id = get_the_ID();
 			}
 			wp_reset_postdata();
-
-			set_transient( 'lwtv_otd_' . $type, $id, DAY_IN_SECONDS );
+			
+			// Update the options
+			$options[ $type ][ 'post' ] = $id;
+			$options[ $type ][ 'time' ] = strtotime( 'midnight tomorrow' );
+			update_option( 'lwtv_otd', $options );
 		}
+
+		$post_id = $options[ $type ][ 'post' ];
 
 		// Generate Array
 		switch( $type ) {
 			case 'character':
-				$all_shows        = lwtv_yikes_chardata( $id, 'shows' );
+				$all_shows        = lwtv_yikes_chardata( $post_id, 'shows' );
 				if ( $all_shows !== '' ) {
 					$show_title = array();
 					foreach ( $all_shows as $each_show ) {
@@ -95,7 +114,7 @@ class LWTV_OTD_JSON {
 					}
 				}
 				$shows_i_am_on    = ( empty( $show_title ) )? ' None' : implode( ', ', $show_title );
-				$dead_or_alive    = ( has_term( 'dead', 'lez_cliches' , $id ) )? 'dead' : 'alive';
+				$dead_or_alive    = ( has_term( 'dead', 'lez_cliches' , $post_id ) )? 'dead' : 'alive';
 				$of_the_day_array = array(
 					'name'   => get_the_title( $id ),
 					'status' => $dead_or_alive,
@@ -104,7 +123,7 @@ class LWTV_OTD_JSON {
 				);
 				break;
 			case 'show':
-				$show_we_love     = ( get_post_meta( $id, 'lezshows_worthit_show_we_love', true ) )? 'yes' : 'no';
+				$show_we_love     = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) )? 'yes' : 'no';
 				$of_the_day_array = array(
 					'name'  => get_the_title( $id ),
 					'loved' => $show_we_love,
