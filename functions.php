@@ -68,6 +68,7 @@ if ( class_exists( 'FacetWP' ) ) {
 include_once( 'cpts/characters.php' );
 include_once( 'cpts/shows.php' );
 include_once( 'cpts/all-cpts.php' );
+include_once( 'cpts/actors.php' );
 
 /* 
  * Include JSON API related tools

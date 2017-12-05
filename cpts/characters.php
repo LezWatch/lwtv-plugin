@@ -166,6 +166,17 @@ class LWTV_CPT_Characters {
 	}
 
 	/*
+	 * Create a list of all actors
+	 */
+	public function cmb2_get_actors_options() {
+		return LWTV_CMB2::get_post_options( array(
+				'post_type'   => 'post_type_actors',
+				'numberposts' => wp_count_posts( 'post_type_actors' )->publish,
+				'post_status' => array('publish', 'pending', 'draft', 'future'),
+			) );
+	}
+
+	/*
 	 * CMB2 Metaboxes
 	 */
 	public function cmb2_metaboxes() {
