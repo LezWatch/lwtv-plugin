@@ -31,14 +31,6 @@ class LWTV_CPT_Actors {
 	 */
 	public function admin_init() {
 		add_action( 'admin_head', array($this, 'admin_css') );
-
-		add_filter( 'manage_post_type_actors_posts_columns', array( $this, 'manage_posts_columns' ) );
-		add_action( 'manage_post_type_actors_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
-		add_filter( 'manage_edit-post_type_actors_sortable_columns', array( $this, 'manage_edit_sortable_columns' ) );
-
-		add_filter( 'posts_clauses', array( $this, 'columns_sortability_sexuality' ), 10, 2 );
-		add_filter( 'posts_clauses', array( $this, 'columns_sortability_gender' ), 10, 2 );
-
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 	}
 
@@ -77,7 +69,7 @@ class LWTV_CPT_Actors {
 			'show_in_rest'        => true,
 			'rest_base'           => 'actor',
 			'menu_position'       => 7,
-			'menu_icon'           => 'dashicons-star-empty',
+			'menu_icon'           => 'dashicons-id',
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
 			'has_archive'         => 'actors',
 			'rewrite'             => array( 'slug' => 'actor' ),
@@ -94,8 +86,8 @@ class LWTV_CPT_Actors {
 	public function create_taxonomies() {
 
 		$taxonomies = array (
-			'gender'               => 'actor_gender',
-			'sexual orientation'   => 'actor_sexuality',
+			'gender'    => 'actor_gender',
+			'sexuality' => 'actor_sexuality',
 		);
 
 		foreach ( $taxonomies as $pretty => $slug ) {
@@ -144,8 +136,8 @@ class LWTV_CPT_Actors {
 		$prefix = 'lezactors_';
 
 		// Metabox Group: Quick Dropdowns
-		$cmb_charside = new_cmb2_box( array(
-			'id'           => 'charnotes_metabox',
+		$cmb_actorside = new_cmb2_box( array(
+			'id'           => 'actors_metabox',
 			'title'        => 'Additional Data',
 			'object_types' => array( 'post_type_actors' ),
 			'context'      => 'side',
@@ -155,7 +147,7 @@ class LWTV_CPT_Actors {
 			'cmb_styles'   => false,
 		) );
 		// Field: Actor Gender Idenity
-		$field_gender = $cmb_charside->add_field( array(
+		$field_gender = $cmb_actorside->add_field( array(
 			'name'             => 'Gender',
 			'desc'             => 'Gender identity',
 			'id'               => $prefix . 'gender',
@@ -166,7 +158,7 @@ class LWTV_CPT_Actors {
 			'remove_default'   => 'true'
 		) );
 		// Field: Actor Sexual Orientation
-		$field_sexuality = $cmb_charside->add_field( array(
+		$field_sexuality = $cmb_actorside->add_field( array(
 			'name'             => 'Sexuality',
 			'desc'             => 'Sexual orientation',
 			'id'               => $prefix . 'sexuality',
@@ -177,45 +169,44 @@ class LWTV_CPT_Actors {
 			'remove_default'   => 'true'
 		) );
 		// Field: Year of Birth
-		$field_death = $cmb_charside->add_field( array(
+		$field_birth = $cmb_actorside->add_field( array(
 			'name'        => 'Date of Birth',
-			'desc'        => 'When an actor is born.',
 			'id'          => $prefix . 'birth',
 			'type'        => 'text_date',
 			'date_format' => 'Y-m-d',
 		) );
 		// Field: Year of Death (if applicable)
-		$field_death = $cmb_charside->add_field( array(
+		$field_death = $cmb_actorside->add_field( array(
 			'name'        => 'Date of Death',
-			'desc'        => 'If the actor is dead, select when they died.',
+			'desc'        => 'If applicable.',
 			'id'          => $prefix . 'death',
 			'type'        => 'text_date',
 			'date_format' => 'Y-m-d',
 		) );
 		// Field: IMDb ID
-		$field_imdb = $cmb_notes->add_field( array(
+		$field_imdb = $cmb_actorside->add_field( array(
 			'name'       => 'IMDb ID',
 			'id'         => $prefix . 'imdb',
 			'type'       => 'text',
 			'attributes' => array(
-				'placeholder' => 'Example: tt6087250',
+				'placeholder' => 'Ex: tt6087250',
 			),
 		) );
 		// Field: WikiPedia
-		$field_imdb = $cmb_notes->add_field( array(
+		$field_wiki = $cmb_actorside->add_field( array(
 			'name'       => 'WikiPedia URL',
 			'id'         => $prefix . 'wikipedia',
-			'type'       => 'url',
+			'type'       => 'text_url',
 			'attributes' => array(
-				'placeholder' => 'Example: https://en.wikipedia.com/wiki/Caity_Lotz',
+				'placeholder' => 'https://en.wikipedia.org/wiki/Caity_Lotz',
 			),
 		) );
 		// Actor Sidebar Grid
 		if( !is_admin() ){
 			return;
 		} else {
-			$grid_charside = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_charside );
-			$row1 = $grid_charside->addRow();
+			$grid_actorside = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_actorside );
+			$row1 = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
 		}
 
@@ -258,7 +249,7 @@ class LWTV_CPT_Actors {
 	public function admin_css() {
 		echo "<style type='text/css'>
 			#adminmenu #menu-posts-post_type_actors div.wp-menu-image:before, #dashboard_right_now li.post_type_actors-count a:before {
-				content: '\\f484';
+				content: '\\f336';
 				margin-left: -1px;
 			}
 		</style>";
