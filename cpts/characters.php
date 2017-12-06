@@ -460,11 +460,16 @@ SQL;
 	 * List of actors who played a character, for use on character pages
 	 */
 	public function lwtv_retrieve_actors_replacement( ) {
-		if ( !is_array ( get_post_meta( get_the_ID(), 'lezchars_actor', true ) ) ) {
-			$actors = array( get_post_meta( get_the_ID(), 'lezchars_actor', true ) );
-		} else {
-			$actors = get_post_meta( get_the_ID(), 'lezchars_actor', true );
+
+		$actors_IDs = get_post_meta( $post->ID, 'lezchars_actor', true);
+		$actors = array();
+
+		if ( $actors_IDs !== '' ) {
+			foreach ( $actors_IDs as $each_actor ) {
+				array_push( $actors, get_the_title( $each_actor ) );
+			}
 		}
+
 		return implode(", ", $actors);
 	}
 

@@ -165,15 +165,19 @@ class LWTV_Stats_JSON {
 
 						$show_IDs = get_post_meta( $post->ID, 'lezchars_show_group', true );
 						$shows = array();
-
 						if ( $show_IDs !== '' ) {
 							foreach ( $show_IDs as $each_show ) {
 								array_push( $shows, get_the_title( $each_show['show'] ) );
 							}
 						}
 
-						$actors = get_post_meta( $post->ID, 'lezchars_actor', true);
-						$actors = ( !is_array( $actors) )? array( $actors) : $actors;
+						$actors_IDs = get_post_meta( $post->ID, 'lezchars_actor', true);
+						$actors = array();
+						if ( $actors_IDs !== '' ) {
+							foreach ( $actors_IDs as $each_actor ) {
+								array_push( $actors, get_the_title( $each_actor ) );
+							}
+						}
 
 						$stats_array[ get_the_title() ] = array(
 							'id'        => $post->ID,
