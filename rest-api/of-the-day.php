@@ -116,18 +116,18 @@ class LWTV_OTD_JSON {
 				$shows_i_am_on    = ( empty( $show_title ) )? ' None' : implode( ', ', $show_title );
 				$dead_or_alive    = ( has_term( 'dead', 'lez_cliches' , $post_id ) )? 'dead' : 'alive';
 				$of_the_day_array = array(
-					'name'   => get_the_title( $post_id ),
-					'url'    => get_permalink( $post_id ),
-					'shows'  => $shows_i_am_on,
+					'name'   => get_the_title( $id ),
 					'status' => $dead_or_alive,
+					'shows'  => $shows_i_am_on,
+					'url'    => get_the_permalink( $id ),
 				);
 				break;
 			case 'show':
 				$show_we_love     = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) )? 'yes' : 'no';
 				$of_the_day_array = array(
-					'name'  => get_the_title( $post_id ),
-					'url'   => get_permalink( $post_id ),
+					'name'  => get_the_title( $id ),
 					'loved' => $show_we_love,
+					'url'   => get_permalink( $id ),
 				);
 				break;
 		}

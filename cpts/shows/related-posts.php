@@ -102,7 +102,6 @@ class LWTV_Related_Posts {
 			$shows = '';
 
 			if ( $posttags ) {
-								
 				foreach( $posttags as $tag ) {
 					if ( $post = get_page_by_path( $tag->name, OBJECT, 'post_type_shows' ) ) {
 						$shows .= '<li><a href="/show/' . $tag->slug . '">'. ucwords( $tag->name ) . '</a></li>';

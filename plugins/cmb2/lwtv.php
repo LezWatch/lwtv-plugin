@@ -25,7 +25,7 @@ class LWTV_CMB2 {
 		add_action( 'admin_init', array( $this, 'admin_init') );
 		add_action( 'cmb2_admin_init', array( $this, 'favorite_shows_user_profile_metabox') );
 
-		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats', 'lez_genres' );
+		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats', 'lez_genres', 'lez_actor_gender', 'lez_actor_sexuality', );
 
 		// If we don't have symbolicons, there's not a reason to register the taxonomy box...
 		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
@@ -187,6 +187,17 @@ class LWTV_CMB2 {
 		return self::get_post_options( array(
 				'post_type'   => 'post_type_shows',
 				'numberposts' => wp_count_posts( 'post_type_shows' )->publish,
+				'post_status' => array('publish', 'pending', 'draft', 'future'),
+			) );
+	}
+
+	/*
+	 * Create a list of all shows
+	 */
+	public function cmb2_get_actors_options() {
+		return self::get_post_options( array(
+				'post_type'   => 'post_type_actors',
+				'numberposts' => wp_count_posts( 'post_type_actors' )->publish,
 				'post_status' => array('publish', 'pending', 'draft', 'future'),
 			) );
 	}
