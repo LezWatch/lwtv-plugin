@@ -70,7 +70,7 @@ class LWTV_CPT_Actors {
 			'rest_base'           => 'actor',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-id',
-			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'excerpt', 'revisions' ),
 			'has_archive'         => 'actors',
 			'rewrite'             => array( 'slug' => 'actor' ),
 			'delete_with_user'    => false,
@@ -149,7 +149,7 @@ class LWTV_CPT_Actors {
 		// Field: Actor Gender Idenity
 		$field_gender = $cmb_actorside->add_field( array(
 			'name'             => 'Gender',
-			'desc'             => 'Gender identity',
+			'desc'             => 'Gender Identity',
 			'id'               => $prefix . 'gender',
 			'taxonomy'         => 'lez_actor_gender',
 			'type'             => 'taxonomy_select',
@@ -160,7 +160,7 @@ class LWTV_CPT_Actors {
 		// Field: Actor Sexual Orientation
 		$field_sexuality = $cmb_actorside->add_field( array(
 			'name'             => 'Sexuality',
-			'desc'             => 'Sexual orientation',
+			'desc'             => 'Sexual Orientation',
 			'id'               => $prefix . 'sexuality',
 			'taxonomy'         => 'lez_actor_sexuality',
 			'type'             => 'taxonomy_select',
