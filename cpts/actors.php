@@ -187,7 +187,7 @@ class LWTV_CPT_Actors {
 			'id'         => $prefix . 'imdb',
 			'type'       => 'text',
 			'attributes' => array(
-				'placeholder' => 'Ex: tt6087250',
+				'placeholder' => 'Ex: nm6087250',
 			),
 		) );
 		// Field: WikiPedia
