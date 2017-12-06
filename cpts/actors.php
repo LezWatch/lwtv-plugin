@@ -153,8 +153,7 @@ class LWTV_CPT_Actors {
 			'id'               => $prefix . 'gender',
 			'taxonomy'         => 'lez_actor_gender',
 			'type'             => 'taxonomy_select',
-			'default'          => 'cisgender',
-			'show_option_none' => false,
+			'default'          => 'custom',
 			'remove_default'   => 'true'
 		) );
 		// Field: Actor Sexual Orientation
@@ -164,8 +163,7 @@ class LWTV_CPT_Actors {
 			'id'               => $prefix . 'sexuality',
 			'taxonomy'         => 'lez_actor_sexuality',
 			'type'             => 'taxonomy_select',
-			'default'          => 'heterosexual',
-			'show_option_none' => false,
+			'default'          => 'custom',
 			'remove_default'   => 'true'
 		) );
 		// Field: Year of Birth

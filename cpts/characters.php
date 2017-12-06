@@ -216,10 +216,6 @@ class LWTV_CPT_Characters {
 			'default'          => 'custom',
 			'options_cb'       => array( $this, 'cmb2_get_actors_options' ),
 			'repeatable'       => true,
-			'options'          => array(
-				'sortable' => true,
-			),
-
 		) );
 		// Field Group: Character Show information
 		// Made repeatable since each show might have a separate role. Yikes...
