@@ -460,16 +460,17 @@ SQL;
 	 * List of actors who played a character, for use on character pages
 	 */
 	public function lwtv_retrieve_actors_replacement( ) {
-
+		global $post;
+		$actors     = array();
 		$actors_IDs = get_post_meta( $post->ID, 'lezchars_actor', true);
-		$actors = array();
-
-		if ( $actors_IDs !== '' ) {
+		if ( !is_array( $actors_IDs ) ) { 
+			$actors_IDs = array( get_post_meta( $post->ID, 'lezchars_actor', true) );
+		}
+		if ( $actors_IDs !== '' && !is_null( $actors_IDs ) ) {
 			foreach ( $actors_IDs as $each_actor ) {
 				array_push( $actors, get_the_title( $each_actor ) );
 			}
 		}
-
 		return implode(", ", $actors);
 	}
 
@@ -479,12 +480,9 @@ SQL;
 	 * List of shows featuring a character, for use on character pages
 	 */
 	function lwtv_retrieve_shows_replacement() {
-
 		global $post;
-
-		$shows_ids = get_post_meta( $post->ID, 'lezchars_show_group', true );
+		$shows_ids    = get_post_meta( $post->ID, 'lezchars_show_group', true );
 		$shows_titles = array();
-
 		if ( $shows_ids !== '' && !is_null( $shows_ids ) ) {
 			foreach ( $shows_ids as $each_show ) {
 				array_push( $shows_titles, get_the_title( $each_show['show'] ) );

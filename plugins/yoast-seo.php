@@ -46,7 +46,7 @@ class LWTV_Yoast_SEO {
 			}
 		}
 
-		$typenow_array = array( 'post_type_shows', 'post_type_characters' );
+		$typenow_array = array( 'post_type_shows', 'post_type_characters', 'post_type_actors' );
 
 		if ( !in_array( $typenow , $typenow_array ) ) return;
 
