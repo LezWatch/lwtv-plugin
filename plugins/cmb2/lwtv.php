@@ -191,6 +191,17 @@ class LWTV_CMB2 {
 			) );
 	}
 
+	/*
+	 * Create a list of all shows
+	 */
+	public function cmb2_get_actors_options() {
+		return self::get_post_options( array(
+				'post_type'   => 'post_type_actors',
+				'numberposts' => wp_count_posts( 'post_type_actors' )->publish,
+				'post_status' => array('publish', 'pending', 'draft', 'future'),
+			) );
+	}
+
 	/**
 	 * favorite_shows_user_profile_metabox function.
 	 */

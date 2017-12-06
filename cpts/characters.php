@@ -208,17 +208,18 @@ class LWTV_CPT_Characters {
 		) );
 		// Field: Actor Name(s)
 		$field_actors = $cmb_characters->add_field( array(
-			'name'       => 'Actor Name',
-			'desc'       => 'Include identifying features (in parens) for multiple actors',
-			'id'         => $prefix . 'actor',
-			'type'       => 'text',
-			'repeatable' => 'true',
-			'attributes' => array(
-				'autocomplete'   => 'off',
-				'autocorrect'    => 'off',
-				'autocapitalize' => 'off',
-				'spellcheck'     => 'false',
+			'name'             => 'Actor Name',
+			'desc'             => 'Add the actor as a CPT first.',
+			'id'               => $prefix . 'actor',
+			'type'             => 'select',
+			'show_option_none' => true,
+			'default'          => 'custom',
+			'options_cb'       => array( $this, 'cmb2_get_actors_options' ),
+			'repeatable'       => true,
+			'options'          => array(
+				'sortable' => true,
 			),
+
 		) );
 		// Field Group: Character Show information
 		// Made repeatable since each show might have a separate role. Yikes...
