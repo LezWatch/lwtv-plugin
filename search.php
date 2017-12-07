@@ -105,13 +105,13 @@ class LWTV_Search {
 		if ( is_search() && !is_admin() && strpos( $_SERVER['REQUEST_URI'], "/{$search_base}/" ) === false ) {
 
 			// Get Post Types
-			$query_post_types = get_query_var('post_type');
+			$query_post_types = get_query_var( 'post_type' );
 			
-			if ( is_null($query_post_types) || empty($query_post_types) || !array($query_post_types) ) {
-				$query_post_types = array( 'post_type_characters', 'post_type_shows' );
+			if ( is_null( $query_post_types ) || empty( $query_post_types ) || !array( $query_post_types ) ) {
+				$query_post_types = array( 'post_type_characters', 'post_type_shows', 'post_type_actors' );
 			}
 
-			if ( $query_post_types == 'any' ) $query_post_types = array( 'post', 'page', 'post_type_characters', 'post_type_shows' );
+			if ( $query_post_types == 'any' ) $query_post_types = array( 'post', 'page', 'post_type_characters', 'post_type_shows', 'post_type_actors' );
 
 			$query_post_type_url = '/?';
 			foreach ( $query_post_types as $value ) {
