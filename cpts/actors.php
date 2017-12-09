@@ -60,6 +60,10 @@ class LWTV_CPT_Actors {
 			'search_items'       => 'Search Actors',
 			'not_found'          => 'No actors found',
 			'not_found_in_trash' => 'No actors in the Trash',
+			'featured_image' 	 => 'Actor Photo',
+			'set_featured_image' => 'Set Actor Photo',
+			'remove_featured_image' => 'Remove Actor Photo',
+			'use_featured_image' => 'Use as Actor Photo',
 		);
 		$args = array(
 			'label'               => 'post_type_actors',
@@ -70,7 +74,7 @@ class LWTV_CPT_Actors {
 			'rest_base'           => 'actor',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-id',
-			'supports'            => array( 'title', 'editor', 'excerpt', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
 			'has_archive'         => 'actors',
 			'rewrite'             => array( 'slug' => 'actor' ),
 			'delete_with_user'    => false,
