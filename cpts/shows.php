@@ -302,7 +302,7 @@ SQL;
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ) );
 
-		// Do the math!! (This updates 
+		// Do the math!! (This updates the score)
 		LWTV_Shows_Calculate::do_the_math( $post_id );
 
 		// Flush Varnish
