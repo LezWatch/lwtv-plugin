@@ -25,7 +25,7 @@ class LWTV_CMB2 {
 		add_action( 'admin_init', array( $this, 'admin_init') );
 		add_action( 'cmb2_admin_init', array( $this, 'favorite_shows_user_profile_metabox') );
 
-		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats', 'lez_genres', 'lez_actor_gender', 'lez_actor_sexuality', );
+		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats', 'lez_genres' );
 
 		// If we don't have symbolicons, there's not a reason to register the taxonomy box...
 		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
