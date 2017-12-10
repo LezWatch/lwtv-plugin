@@ -32,6 +32,10 @@ class LWTV_CPT_Actors {
 	public function admin_init() {
 		add_action( 'admin_head', array($this, 'admin_css') );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
+
+		add_action( 'do_update_actor_meta', array( $this, 'update_actor_meta' ), 10, 2 );
+		add_action( 'save_post_post_type_actor', array( $this, 'update_actor_meta' ), 10, 3 );
+		add_action( 'save_post_post_type_characters', array( $this, 'update_actor_meta_from_chars' ), 10, 3 );
 	}
 
 	/**
@@ -47,23 +51,23 @@ class LWTV_CPT_Actors {
 	 */
 	function create_post_type() {
 		$labels = array(
-			'name'               => 'Actors',
-			'singular_name'      => 'Actor',
-			'menu_name'          => 'Actors',
-			'parent_item_colon'  => 'Parent Actor:',
-			'all_items'          => 'All Actors',
-			'view_item'          => 'View Actor',
-			'add_new_item'       => 'Add New Actor',
-			'add_new'            => 'Add New',
-			'edit_item'          => 'Edit Actor',
-			'update_item'        => 'Update Actor',
-			'search_items'       => 'Search Actors',
-			'not_found'          => 'No actors found',
-			'not_found_in_trash' => 'No actors in the Trash',
-			'featured_image' 	 => 'Actor Photo',
-			'set_featured_image' => 'Set Actor Photo',
+			'name'                  => 'Actors',
+			'singular_name'         => 'Actor',
+			'menu_name'             => 'Actors',
+			'parent_item_colon'     => 'Parent Actor:',
+			'all_items'             => 'All Actors',
+			'view_item'             => 'View Actor',
+			'add_new_item'          => 'Add New Actor',
+			'add_new'               => 'Add New',
+			'edit_item'             => 'Edit Actor',
+			'update_item'           => 'Update Actor',
+			'search_items'          => 'Search Actors',
+			'not_found'             => 'No actors found',
+			'not_found_in_trash'    => 'No actors in the Trash',
+			'featured_image'        => 'Actor Photo',
+			'set_featured_image'    => 'Set Actor Photo',
 			'remove_featured_image' => 'Remove Actor Photo',
-			'use_featured_image' => 'Use as Actor Photo',
+			'use_featured_image'    => 'Use as Actor Photo',
 		);
 		$args = array(
 			'label'               => 'post_type_actors',
@@ -220,6 +224,44 @@ class LWTV_CPT_Actors {
 	function remove_metaboxes() {
 		remove_meta_box( 'authordiv', 'post_type_actors', 'normal' );
 		remove_meta_box( 'postexcerpt' , 'post_type_actors' , 'normal' );
+	}
+
+	/*
+	 * Save post meta for actors
+	 *
+	 * @param int $post_id The post ID.
+	 * @param post $post The post object.
+	 * @param bool $update Whether this is an existing post being updated or not.
+	 */
+	public function update_actor_meta( $post_id ) {
+
+		// unhook this function so it doesn't loop infinitely
+		remove_action( 'save_post_post_type_actors', array( $this, 'update_actor_meta' ) );
+		
+		$number_chars = lwtv_yikes_actordata( $post_id, 'characters' );
+		$number_dead  = lwtv_yikes_actordata( $post_id, 'dead' );
+		update_post_meta( $post_id, 'lezactors_char_count', $number_chars );
+		update_post_meta( $post_id, 'lezactors_dead_count', $number_dead );
+
+		// re-hook this function
+		add_action( 'save_post_post_type_actors', array( $this, 'update_actor_meta' ) );
+	}
+
+	/*
+	 * Save post meta for shows on CHARACTER update
+	 *
+	 * This will update the metakey 'lezshows_char_count' on save
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	public function update_actor_meta_from_chars( $post_id ) {
+		$character_actor_IDs = get_post_meta( $post_id, 'lezchars_actor', true );
+
+		if ( $character_actor_IDs !== '' ) {
+			foreach ( $character_actor_IDs as $actor ) {
+				do_action( 'do_update_actor_meta' , $actor );
+			}
+		}
 	}
 
 	/*

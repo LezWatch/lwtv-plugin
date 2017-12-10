@@ -44,7 +44,7 @@ class LWTV_Stats {
 	 */
 	static function generate( $subject, $data, $format ) {
 		// Bail early if we're not an approved subject matter
-		if ( !in_array( $subject, array( 'characters', 'shows' ) ) ) exit;
+		if ( !in_array( $subject, array( 'characters', 'shows', 'actors' ) ) ) exit;
 
 		// Build Variables
 		$array     = array();
@@ -76,7 +76,7 @@ class LWTV_Stats {
 			$array        = self::meta_array( $post_type, $meta_array, 'lezshows_worthit_show_we_love', $data );
 			$nolove       = $count - $array['on']['count'];
 			$array['no']  = array( 'count' => ( $nolove ), 'name' => 'No', 'url' => '' );
-			$array['yes'] = array( 'count' => $array['on']['count'], 'name' => 'Yes', 'url' => '' );
+			$array['yes'] = array( 'count' => $array['on']['count'], 'name' => 'Yes', 'url' => '/shows/?fwp_show_loved=on' );
 			unset( $array['on'] );
 		}
 
@@ -92,6 +92,14 @@ class LWTV_Stats {
 		// Custom call for show roles of character in each role
 		if ( $data == 'charroles' ) {
 			$array = self::show_roles();
+		}
+
+		// Custom call for actor/character 
+		if ( $data == 'per-char' ) {
+			$array = self::actor_chars( 'characters' );
+		}
+		if ( $data == 'per-actor' ) {
+			$array = self::actor_chars( 'actors' );
 		}
 
 		// And dead stats? IN-fucking-sane
@@ -407,6 +415,48 @@ class LWTV_Stats {
 		return $array;
 	}
 
+	/**
+	 * Statistics: Actors and Characters
+	 * 
+	 * @access public
+	 * @static
+	 * @param string $type (default: 'chars')
+	 * @return void
+	 */
+	static function actor_chars( $type = 'characters' ) {
+		// list of people
+		$all_query = LWTV_Loops::post_type_query( 'post_type_' . $type );
+		$array     = array();
+		if ( $all_query->have_posts() ) {
+			while ( $all_query->have_posts() ) {
+				$all_query->the_post();
+				// The data we parse depends on the data type
+				switch ( $type ) {
+					case 'characters':
+						$data = get_post_meta( get_the_id(), 'lezchars_actor', true );
+						break;
+					case 'actors':
+						$data = lwtv_yikes_actordata( get_the_ID(), 'characters' );
+						break;
+				}
+				// Now that we have the data, let's count and store
+				if ( !array_key_exists( count( $data ), $array ) && is_numeric( count( $data ) ) ) {
+					$array[ count( $data ) ] = array(
+						'name'  => count( $data ),
+						'count' => '1',
+						'url'   => '',
+					);
+				} else {
+					$array[ count( $data ) ]['count']++;
+				}
+			}
+			wp_reset_query();
+		}
+		
+		ksort( $array );
+		
+		return $array;
+	}
 
 	/**
 	 * Statistics Roles on Shows
@@ -423,7 +473,7 @@ class LWTV_Stats {
 		$guest_alive_array = $recurring_alive_array = $main_alive_array = array();
 		$guest_dead_array = $recurring_dead_array = $main_dead_array = array();
 
-		if ($all_shows_query->have_posts() ) {
+		if ( $all_shows_query->have_posts() ) {
 
 			while ( $all_shows_query->have_posts() ) {
 				$all_shows_query->the_post();
@@ -438,7 +488,7 @@ class LWTV_Stats {
 
 					$guest = $regular = $recurring = array( 'alive' => 0, 'dead' => 0 );
 
-					$char_id = get_the_id();
+					$char_id     = get_the_id();
 					$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
 
 					if ( $shows_array !== '' ) {
@@ -458,8 +508,6 @@ class LWTV_Stats {
 							}
 						}
 					}
-
-					print_r( $guest );
 
 					// Make Alive Query
 					if ( $regular['alive'] == '0' && $recurring['alive'] != '0' && $guest['alive'] == '0' ) {
@@ -679,12 +727,28 @@ class LWTV_Stats {
 		if ( $data == 'cliches' ) $data = 'clichés';
 
 		// Set title
-		$title = ( $data == 'dead-years' )? 'Dead Characters by Year' : ucfirst( substr($subject, 0, -1) ). ' ' . ucfirst( $data );
-
+		switch ( $data ) {
+			case 'dead-years':
+				$title = 'Dead Characters by Year';
+				break;
+			case 'per-char':
+				$title   = 'Actors per Character';
+				$subject = 'actorsPerChar';
+				$height  = '250';
+				break;
+			case 'per-actor':
+				$title   = 'Characters per Actor';
+				$subject = 'charsPerActor';
+				$height  = '250';
+				break;
+			default:
+				$title  = ucfirst( substr($subject, 0, -1) ) . ' ' . ucfirst( $data );
+				$height = '550';
+		}
 		?>
 		<h3><?php echo $title; ?></h3>
 		<div id="container" style="width: 100%;">
-			<canvas id="bar<?php echo ucfirst( $subject ); ?>" width="700" height="550"></canvas>
+			<canvas id="bar<?php echo ucfirst( $subject ); ?>" width="700" height="<?php echo $height; ?>"></canvas>
 		</div>
 
 		<script>
@@ -697,7 +761,14 @@ class LWTV_Stats {
 			labels : [<?php
 				foreach ( $array as $item ) {
 					if ( $item['count'] !== 0 ) {
-						$name = ( $item['name'] == 'Dead Lesbians (Dead Queers)' )? 'Dead' : esc_html( $item['name'] );
+						switch ( $item['name'] ) {
+							case '0':
+								$name = '0';
+							case 'Dead Lesbians (Dead Queers)':
+								$name = 'Dead';
+							default:
+								$name = esc_html( $item['name'] );
+						}
 						echo '"'. $name .' ('.$item['count'].')", ';
 					}
 				}
@@ -835,8 +906,6 @@ class LWTV_Stats {
 	 */
 	static function trendline( $subject, $data, $array ) {
 
-		if ( $data != 'dead-years' ) return;
-
 		$array = array_reverse( $array );
 
 		// Calculate Trend
@@ -850,7 +919,7 @@ class LWTV_Stats {
 		$trendarray = self::linear_regression( $names, $count );
 
 		// Strip hypens becuase ChartJS doesn't like it.
-		$cleandata = str_replace('-','',$data)
+		$cleandata = str_replace('-','',$data);
 		?>
 
 		<div id="container" style="width: 100%;">

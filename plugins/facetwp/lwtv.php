@@ -127,8 +127,44 @@ class LWTV_FacetWP {
 		$options['title_asc']['label']  = 'Name (A-Z)';
 		$options['title_desc']['label'] = 'Name (Z-A)';
 
-		if ( is_post_type_archive( 'post_type_shows' ) ) {
+		if ( is_post_type_archive( 'post_type_actors' ) ) {
+			$options['most_chars'] = array(
+				'label' => 'Number of Characters (Descending)',
+				'query_args' => array(
+					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'meta_key' => 'lezactors_char_count', // required when sorting by custom fields
+					'order'    => 'DESC', // descending order
+				)
+			);
+			$options['least_chars'] = array(
+				'label' => 'Number of Characters (Ascending)',
+				'query_args' => array(
+					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'meta_key' => 'lezactors_char_count', // required when sorting by custom fields
+					'order'    => 'ASC', // ascending order
+				)
+			);
 
+			$options['most_dead'] = array(
+				'label' => 'Number of Dead Characters (Descending)',
+				'query_args' => array(
+					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'meta_key' => 'lezactors_dead_count', // required when sorting by custom fields
+					'order'    => 'DESC', // descending order
+				)
+			);
+
+			$options['least_dead'] = array(
+				'label' => 'Number of Dead Characters (Ascending)',
+				'query_args' => array(
+					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'meta_key' => 'lezactors_dead_count', // required when sorting by custom fields
+					'order'    => 'ASC', // ascending order
+				)
+			);
+		}
+
+		if ( is_post_type_archive( 'post_type_shows' ) ) {
 			$options['most_queers'] = array(
 				'label' => 'Number of Characters (Descending)',
 				'query_args' => array(
