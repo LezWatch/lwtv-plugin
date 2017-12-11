@@ -43,7 +43,10 @@ class LWTV_Alexa_Skills {
 			'callback' => array( $this, 'bury_your_queers_rest_api_callback' ),
 		) );
 
-
+		register_rest_route( 'lwtv/v1', '/alexa-skills/news/', array(
+			'methods' => [ 'GET', 'POST' ],
+			'callback' => array( $this, 'bury_your_queers_rest_api_callback' ),
+		) );
 	}
 
 	/**
@@ -216,26 +219,26 @@ class LWTV_Alexa_Skills {
 	 */
 	public function bury_your_queers( $type = false, $intent = false, $date = false ) {
 
-		$whodied    = '';
+		$output     = '';
 		$endsession = true;
 		$timestamp  = ( strtotime( $date ) == false )? false : strtotime( $date ) ;
-		$helptext   = 'You can find out who died on specific dates by asking me questions like "who died" or "who died today" or "who died on March 3rd" or even "How many died in 2017." If no one died then, I\'ll let you know.';
+		$helptext   = 'You can ask me for information on the latest queer characters or shows added to LezWatch TV, find out who has died recently, and more. Try asking me questions like "who\'s new" or "who died on March 3rd" or even "How many died in 2017." I\'ll let you know what I\'ve found.';
 
 		if ( $type == 'LaunchRequest' ) {
-			$whodied = 'Welcome to the LezWatch TV Bury Your Queers skill. ' . $helptext;
+			$output     = 'Welcome to the LezWatch TV News skill. ' . $helptext;
 			$endsession = false;
 		} else {
 			if ( $intent == 'AMAZON.HelpIntent' ) {
-				$whodied = 'This is the Bury Your Queers skill by LezWatch TV, home of the world\'s greatest database of queer female on TV. ' . $helptext;
+				$output     = 'This is the News skill by LezWatch TV, home of the world\'s greatest database of queer female characters on TV. ' . $helptext;
 				$endsession = false;
 			} elseif ( $intent == 'AMAZON.StopIntent' || $intent == 'AMAZON.CancelIntent' ) {
 				// Do nothing
 			} elseif ( $intent == 'HowMany' ) {
 				if ( $date == false || $timestamp == false ) {
-					$data     = LWTV_Stats_JSON::statistics( 'death', 'simple' );
-					$whodied  = 'A total of '. $data['characters']['dead'] .' queer female characters have died on TV.';
+					$data   = LWTV_Stats_JSON::statistics( 'death', 'simple' );
+					$output = 'A total of '. $data['characters']['dead'] .' queer female characters have died on TV.';
 				} elseif ( !preg_match( '/^[0-9]{4}$/' , $date ) ) {
-					$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but years right now. ' . $helptext;
+					$output     = 'I\'m sorry. I don\'t know how to calculate deaths in anything but years right now. ' . $helptext;
 					$endsession = false;
 				} else {
 					$data     = LWTV_Stats_JSON::statistics( 'death', 'years' );
@@ -244,15 +247,57 @@ class LWTV_Alexa_Skills {
 					if ( $count > 0 ) {
 						$how_many = $count .' queer female ' . _n( 'character', 'characters', $count ) . ' died on TV in ' . $date . '.';
 					}
-					$whodied  = $how_many;
+					$output = $how_many;
+				}
+			} elseif ( $intent == 'CharNew' ) {
+				$data = array();
+				if ( $date == false || $timestamp == false ) {
+					$post_args = array(
+						'post_type' => 'post_type_characters',
+						'posts_per_page' => '1', 
+						'orderby' => 'date', 
+						'order' => 'DESC'
+					);
+					$queery = new WP_Query( $char_args );
+					while ( $queery->have_posts() ) {
+						$queery->the_post();
+						$data['name'] = get_the_title();
+						$data['date'] = get_the_date();
+					}
+					$name   = $data['name'];
+					$output = 'The latest character added to LezWatch TV was '. $name .' on '. date( 'F j, Y', $data['date'] ) .'.';
+				} else {
+					$output     = 'I\'m sorry. I don\'t know how to tell you who was added on a specific day yet. ' . $helptext;
+					$endsession = false;
+				}
+			} elseif ( $intent == 'ShowNew' ) {
+				$data = array();
+				if ( $date == false || $timestamp == false ) {
+					$post_args = array(
+						'post_type' => 'post_type_shows',
+						'posts_per_page' => '1', 
+						'orderby' => 'date', 
+						'order' => 'DESC'
+					);
+					$queery = new WP_Query( $char_args );
+					while ( $queery->have_posts() ) {
+						$queery->the_post();
+						$data['name'] = get_the_title();
+						$data['date'] = get_the_date();
+					}
+					$name   = $data['name'];
+					$output = 'The latest show added to LezWatch TV was '. $name .' on '. date( 'F j, Y', $data['date'] ) .'.';
+				} else {
+					$output     = 'I\'m sorry. I don\'t know how to tell you what show was added on a specific day yet. ' . $helptext;
+					$endsession = false;
 				}
 			} elseif ( $intent == 'WhoDied' ) {
 				if ( $date == false || $timestamp == false ) {
-					$data    = LWTV_BYQ_JSON::last_death();
-					$name    = $data['name'];
-					$whodied = 'The last queer female to die was '. $name .' on '. date( 'F j, Y', $data['died'] ) .'.';
+					$data   = LWTV_BYQ_JSON::last_death();
+					$name   = $data['name'];
+					$output = 'The last queer female to die was '. $name .' on '. date( 'F j, Y', $data['died'] ) .'.';
 				} elseif ( preg_match( '/^[0-9]{4}-(0[1-9]|1[0-2])$/' , $date ) ) {
-					$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but days right now. ' . $helptext;
+					$output     = 'I\'m sorry. I don\'t know how to calculate deaths in anything but days right now. ' . $helptext;
 					$endsession = false;
 				} else {
 					$this_day = date('m-d', $timestamp );
@@ -269,11 +314,11 @@ class LWTV_Alexa_Skills {
 							$deadcount++;
 						}
 					}
-					$whodied = $how_many . ' on '. date('F jS', $timestamp ) . '. ' . $the_dead;
+					$output = $how_many . ' on '. date('F jS', $timestamp ) . '. ' . $the_dead;
 				}
 			} else {
 				// We have a weird request...
-				$whodied = 'I\'m sorry, I don\'t understand that request. Please ask me something else.';
+				$output = 'I\'m sorry, I don\'t understand that request. Please ask me something else.';
 				$endsession = false;
 			}
 		}
@@ -282,7 +327,7 @@ class LWTV_Alexa_Skills {
 			'response' => array (
 				'outputSpeech' => array (
 					'type' => 'PlainText',
-					'text' => $whodied,
+					'text' => $output,
 				),
 				'shouldEndSession' => $endsession,
 			)
