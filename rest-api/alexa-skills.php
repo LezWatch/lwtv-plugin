@@ -219,6 +219,9 @@ class LWTV_Alexa_Skills {
 	 */
 	public function bury_your_queers( $type = false, $intent = false, $date = false ) {
 
+		// Stop Facet.
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+		
 		$output     = '';
 		$endsession = true;
 		$timestamp  = ( strtotime( $date ) == false )? false : strtotime( $date ) ;
@@ -249,23 +252,32 @@ class LWTV_Alexa_Skills {
 					}
 					$output = $how_many;
 				}
+			} elseif ( $intent == 'CharOTD' ) {
+				$data    = get_option( 'lwtv_otd' );
+				$post_id = $data[ 'character' ][ 'post' ];
+				$output = 'The LezWatch TV character of the day is '. get_the_title( $post_id ) .'.';
+			} elseif ( $intent == 'ShowOTD' ) {
+				$data    = get_option( 'lwtv_otd' );
+				$post_id = $data[ 'show' ][ 'post' ];
+				$output = 'The LezWatch TV show of the day is '. get_the_title( $post_id ) .'.';
 			} elseif ( $intent == 'CharNew' ) {
 				$data = array();
 				if ( $date == false || $timestamp == false ) {
 					$post_args = array(
-						'post_type' => 'post_type_characters',
+						'post_type'      => 'post_type_characters',
 						'posts_per_page' => '1', 
-						'orderby' => 'date', 
-						'order' => 'DESC'
+						'orderby'        => 'date', 
+						'order'          => 'DESC'
 					);
-					$queery = new WP_Query( $char_args );
+					$queery = new WP_Query( $post_args );
 					while ( $queery->have_posts() ) {
 						$queery->the_post();
-						$data['name'] = get_the_title();
-						$data['date'] = get_the_date();
+						$id = get_the_ID();
+						$data['name'] = get_the_title( $id );
+						$data['date'] = get_the_date( 'l F j, Y', $id );
 					}
-					$name   = $data['name'];
-					$output = 'The latest character added to LezWatch TV was '. $name .' on '. date( 'F j, Y', $data['date'] ) .'.';
+					wp_reset_postdata();
+					$output = 'The latest character added to LezWatch TV was '. $data['name'] .' on '. $data['date'] .'.';
 				} else {
 					$output     = 'I\'m sorry. I don\'t know how to tell you who was added on a specific day yet. ' . $helptext;
 					$endsession = false;
@@ -279,14 +291,15 @@ class LWTV_Alexa_Skills {
 						'orderby' => 'date', 
 						'order' => 'DESC'
 					);
-					$queery = new WP_Query( $char_args );
+					$queery = new WP_Query( $post_args );
 					while ( $queery->have_posts() ) {
 						$queery->the_post();
-						$data['name'] = get_the_title();
-						$data['date'] = get_the_date();
+						$id = get_the_ID();
+						$data['name'] = get_the_title( $id );
+						$data['date'] = get_the_date( 'l F j, Y', $id );
 					}
-					$name   = $data['name'];
-					$output = 'The latest show added to LezWatch TV was '. $name .' on '. date( 'F j, Y', $data['date'] ) .'.';
+					wp_reset_postdata();
+					$output = 'The latest show added to LezWatch TV was '. $data['name'] .' on '. $data['date'] .'.';
 				} else {
 					$output     = 'I\'m sorry. I don\'t know how to tell you what show was added on a specific day yet. ' . $helptext;
 					$endsession = false;
