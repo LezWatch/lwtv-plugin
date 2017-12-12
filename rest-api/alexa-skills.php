@@ -40,12 +40,12 @@ class LWTV_Alexa_Skills {
 		// Skills
 		register_rest_route( 'lwtv/v1', '/alexa-skills/byq/', array(
 			'methods' => [ 'GET', 'POST' ],
-			'callback' => array( $this, 'bury_your_queers_rest_api_callback' ),
+			'callback' => array( $this, 'news_rest_api_callback' ),
 		) );
 
 		register_rest_route( 'lwtv/v1', '/alexa-skills/news/', array(
 			'methods' => [ 'GET', 'POST' ],
-			'callback' => array( $this, 'bury_your_queers_rest_api_callback' ),
+			'callback' => array( $this, 'news_rest_api_callback' ),
 		) );
 	}
 
@@ -58,10 +58,10 @@ class LWTV_Alexa_Skills {
 	}
 
 	/**
-	 * Rest API Callback for Bury Your Queers
+	 * Rest API Callback for News (formerly Bury Your Queers)
 	 * This accepts POST data
 	 */
-	public function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
+	public function news_rest_api_callback( WP_REST_Request $request ) {
 
 		$type   = ( isset( $request['request']['type'] ) )? $request['request']['type'] : false;
 		$intent = ( isset( $request['request']['intent']['name'] ) )? $request['request']['intent']['name'] : false;
@@ -76,7 +76,7 @@ class LWTV_Alexa_Skills {
 			return $error;
 		}
 
-		$response = $this->bury_your_queers( $type, $intent, $date );
+		$response = $this->news_skill( $type, $intent, $date );
 		return $response;
 	}
 
@@ -184,12 +184,10 @@ class LWTV_Alexa_Skills {
 	 * @return void
 	 */
 	public function flash_briefing() {
-
-		$query = new WP_Query( array( 'numberposts' => '10' ) );
-		if ( $query->have_posts() ) {
-			while ( $query->have_posts() ) {
-				$query->the_post();
-
+		$queery = new WP_Query( array( 'numberposts' => '10' ) );
+		if ( $queery->have_posts() ) {
+			while ( $queery->have_posts() ) {
+				$queery->the_post();
 				$response = array(
 					'uid'            => get_the_permalink(),
 					'updateDate'     => get_post_modified_time( 'Y-m-d\TH:i:s.\0\Z' ),
@@ -197,27 +195,23 @@ class LWTV_Alexa_Skills {
 					'mainText'       => get_the_title() . '. ' . get_the_excerpt(),
 					'redirectionUrl' => home_url(),
 				);
-
 				$responses[] = $response;
 			}
 			wp_reset_postdata();
 		}
-
 		if ( count( $responses ) === 1 ) {
 			$responses = $responses[0];
 		}
-
 		return $responses;
-
 	}
 
 	/**
-	 * Generate Bury Your Queers
+	 * Generate News (formerly Bury Your Queers)
 	 *
 	 * @access public
 	 * @return void
 	 */
-	public function bury_your_queers( $type = false, $intent = false, $date = false ) {
+	public function news_skill( $type = false, $intent = false, $date = false ) {
 
 		// Stop Facet.
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
@@ -261,27 +255,10 @@ class LWTV_Alexa_Skills {
 				$post_id = $data[ 'show' ][ 'post' ];
 				$output = 'The LezWatch TV show of the day is '. get_the_title( $post_id ) .'.';
 			} elseif ( $intent == 'CharNew' ) {
-				$data = array();
-				if ( $date == false || $timestamp == false ) {
-					$post_args = array(
-						'post_type'      => 'post_type_characters',
-						'posts_per_page' => '1', 
-						'orderby'        => 'date', 
-						'order'          => 'DESC'
-					);
-					$queery = new WP_Query( $post_args );
-					while ( $queery->have_posts() ) {
-						$queery->the_post();
-						$id = get_the_ID();
-						$data['name'] = get_the_title( $id );
-						$data['date'] = get_the_date( 'l F j, Y', $id );
-					}
-					wp_reset_postdata();
-					$output = 'The latest character added to LezWatch TV was '. $data['name'] .' on '. $data['date'] .'.';
-				} else {
-					$output     = 'I\'m sorry. I don\'t know how to tell you who was added on a specific day yet. ' . $helptext;
-					$endsession = false;
-				}
+				$queery = new WP_REST_Request( 'GET', '/wp/v2/character' );
+				$queery->set_query_params( array( 'per_page' => 1 ) );
+
+				$output = 'The latest character added to LezWatch TV was '. $data['name'] .' on '. $data['date'] .'.';
 			} elseif ( $intent == 'ShowNew' ) {
 				$data = array();
 				if ( $date == false || $timestamp == false ) {
