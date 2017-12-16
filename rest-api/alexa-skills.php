@@ -44,7 +44,7 @@ class LWTV_Alexa_Skills {
 		) );
 
 		// News Skill (rebranded BYQ)
-		register_rest_route( 'lwtv/v1', '/alexa-skills/news/', array(
+		register_rest_route( 'lwtv/v2', '/alexa-skills/news/', array(
 			'methods' => [ 'GET', 'POST' ],
 			'callback' => array( $this, 'news_rest_api_callback' ),
 		) );
@@ -105,6 +105,7 @@ class LWTV_Alexa_Skills {
 		}
 
 		$response = $this->news_skill( $type, $intent, $date );
+
 		return $response;
 	}
 
@@ -116,63 +117,56 @@ class LWTV_Alexa_Skills {
 	 */
 	public function news_skill( $type = false, $intent = false, $date = false ) {
 
-		// Stop Facet.
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
-		
-		$output     = '';
+		$helptext   = 'You can ask me what happened or for information on the latest queer female and characters or shows added to Lez Watch T. V.. Try asking me "What happened in 1989?" or "Who\'s the newest character?" or "How is 2017?" and I\'ll let you know what I\'ve found.';
+		$output = 'I\'m sorry, I don\'t understand that request. Please ask me something else. ' . $helptext;
 		$endsession = true;
-		$timestamp  = ( strtotime( $date ) == false )? false : strtotime( $date ) ;
-		$helptext   = 'You can ask me for information on the latest queer female and characters or shows added to LezWatch TV, or what the over all status is internationally. Try asking me "Who\'s the newest character?" or "How is 2017?" or "How are we doing?" and I\'ll let you know what I\'ve found.';
 
-		if ( $type == 'LaunchRequest' ) {
-			$output     = 'Welcome to the Lez Watch T. V. News skill. ' . $helptext;
+		if ( $date !== false && is_numeric( substr( $date, 0, 4 ) ) && substr( $date, 0, 4 ) < FIRST_LWTV_YEAR ) {
+			$output     = 'There were no queer female or trans characters on TV prior to ' . FIRST_LWTV_YEAR . '. ' . $helptext;
+			$endsession = false;
+		} elseif ( $type == 'LaunchRequest' ) {
+			$output     = 'Welcome to the Lez Watch T. V. skill. ' . $helptext;
 			$endsession = false;
 		} else {
 			switch ( $intent ) {
 				case 'HowMany':
 					include_once( 'alexa/byq.php' );
-					if ( $date == false || $timestamp == false ) {
+					if ( $date == false ) {
 						$output = LWTV_Alexa_BYQ::how_many( 'simple' );
-					} elseif ( !preg_match( '/^[0-9]{4}$/' , $date ) ) {
-						$output     = 'I\'m sorry. I don\'t know how to calculate deaths in anything but years right now. ';
-						$endsession = false;
 					} else {
-						$output = LWTV_Alexa_BYQ::how_many( 'year', $date );
+						$output = LWTV_Alexa_BYQ::how_many( $date );
 					}
 					break;
 				case 'CharOTD':
-					$data    = get_option( 'lwtv_otd' );
-					$post_id = $data[ 'character' ][ 'post' ];
-					$output = 'The LezWatch TV character of the day is '. get_the_title( $post_id ) .'.';
+					$data       = get_option( 'lwtv_otd' );
+					$post_id    = $data[ 'character' ][ 'post' ];
+					$output     = 'The LezWatch TV character of the day is '. get_the_title( $post_id ) .'.';
 					break;
 				case 'ShowOTD':
-					$data    = get_option( 'lwtv_otd' );
-					$post_id = $data[ 'show' ][ 'post' ];
-					$output = 'The LezWatch TV show of the day is '. get_the_title( $post_id ) .'.';
+					$data       = get_option( 'lwtv_otd' );
+					$post_id    = $data[ 'show' ][ 'post' ];
+					$output     = 'The LezWatch TV show of the day is '. get_the_title( $post_id ) .'.';
 					break;
 				case 'CharNew':
 					include_once( 'alexa/newest.php' );
-					$output = LWTV_Alexa_Newest::characters();
+					$output     = LWTV_Alexa_Newest::characters();
 					break;
 				case 'ShowNew':
 					include_once( 'alexa/newest.php' );
-					$output = LWTV_Alexa_Newest::shows();
+					$output     = LWTV_Alexa_Newest::shows();
 					break;
 				case 'WhoDied':
-					if ( $date == false || $timestamp == false ) {
+					if ( $date == false ) {
 						include_once( 'alexa/newest.php' );
 						$output = LWTV_Alexa_Newest::death();
-					} elseif ( preg_match( '/^[0-9]{4}-(0[1-9]|1[0-2])$/' , $date ) ) {
-						$output     = 'I\'m sorry. I don\'t know how to calculate deaths in anything but days right now. ' . $helptext;
-						$endsession = false;
 					} else {
 						include_once( 'alexa/byq.php' );
 						$output = LWTV_Alexa_BYQ::on_a_day( $timestamp );
 					}
 					break;
-				case 'ThisYear':
-					include_once( 'alexa/this_year.php' );
-					$output = LWTV_Alexa_This_Year::year( $date );
+				case 'WhatHappened':
+					include_once( 'alexa/this-year.php' );
+					$output     = LWTV_Alexa_This_Year::what_happened( $date );
 					break;
 				case 'AMAZON.HelpIntent':
 					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female and trans characters on TV. ' . $helptext;
@@ -180,16 +174,12 @@ class LWTV_Alexa_Skills {
 					break;
 				case 'AMAZON.StopIntent':
 				case 'AMAZON.CancelIntent':
-					// do nothing
-					$output = '';
-					break;
-				default:
-					// We have a weird request...
-					$output = 'I\'m sorry, I don\'t understand that request. Please ask me something else. ' . $helptext;
-					$endsession = false;
+					$output     = '';
 					break;
 			}
 		}
+
+		// Return response
 		$response = array(
 			'version'  => '1.0',
 			'response' => array (
@@ -200,9 +190,7 @@ class LWTV_Alexa_Skills {
 				'shouldEndSession' => $endsession,
 			)
 		);
-
 		return $response;
-
 	}
 
 	/**

@@ -14,7 +14,6 @@ if ( ! defined('WPINC' ) ) die;
  */
 class LWTV_Alexa_Newest {
 
-
 	/**
 	 * Newest Character.
 	 * 
