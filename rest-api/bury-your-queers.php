@@ -71,6 +71,7 @@ class LWTV_BYQ_JSON {
 
 	/**
 	 * Rest API Callback for On This Day
+	 *v1
 	 */
 	public function on_this_day_rest_api_callback( $data ) {
 		$params = $data->get_params();
@@ -210,7 +211,6 @@ class LWTV_BYQ_JSON {
 
 		return $return;
 	}
-
 
 	/**
 	 * Change search to only work by title
