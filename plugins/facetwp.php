@@ -91,7 +91,7 @@ class LWTV_FacetWP_Addons {
 	 * @since 1.1.0
 	 */
 	public function reset_shortcode( $atts ) {
-		$reset = '<center><button class="facetwp-reset" onclick="FWP.reset()">Reset All Parameters</button></center>';
+		$reset = '<center><button class="facetwp-reset" onclick="FWP.reset()">Reset Filters</button></center>';
 		return $reset;
 	}
 
