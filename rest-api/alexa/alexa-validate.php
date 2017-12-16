@@ -25,12 +25,12 @@ class LWTV_Alexa_Validate {
 			return array( 'success' => 0, 'message' => 'This request did not come from Amazon.' );
 
 		// Validate proper format of Amazon provided certificate chain url
-		$valid_uri = $this->key_chain_uri( $chain_url );
+		$valid_uri = self::key_chain_uri( $chain_url );
 		if ( $valid_uri != 1 )
 			return array( 'success' => 0, 'message' => $valid_uri );
 
 		// Validate certificate signature
-		$valid_cert = $this->cert_and_sig( $request, $chain_url, $signature );
+		$valid_cert = self::cert_and_sig( $request, $chain_url, $signature );
 		if ( $valid_cert != 1 )
 			return array ( 'success' => 0, 'message' => $valid_cert );
 
