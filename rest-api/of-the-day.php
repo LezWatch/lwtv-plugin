@@ -138,7 +138,6 @@ class LWTV_OTD_JSON {
 					$of_the_day_array['loved'] = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) )? 'yes' : 'no';
 					break;
 			}
-
 		}
 
 		// Return array
