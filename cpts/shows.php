@@ -14,15 +14,11 @@ class LWTV_CPT_Shows {
 	 * Constructor
 	 */
 	public function __construct() {
-
 		add_action( 'admin_init', array( $this, 'admin_init') );
-
 		add_action( 'init', array( $this, 'init') );
 		add_action( 'init', array( $this, 'create_post_type'), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies'), 0 );
-
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
-
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 	}
 
@@ -30,13 +26,15 @@ class LWTV_CPT_Shows {
 	 *  Init
 	 */
 	public function init() {
-
 		// Things that only run for this post type
 		$post_id   = ( isset( $_GET['post'] ) )? intval( $_GET['post'] ) : 0 ;
 		if ( $post_id !== 0 && is_admin() ) {
 			$post_type = ( isset( $_GET['post_type'] ) )? sanitize_text_field( $_GET['post_type'] ) : 0 ;
 			switch ( $post_type ) {
 				case 'post_type_shows':
+				
+					LWTV_Shows_Calculate::do_the_math( $post_id );
+					
 					// Filter buttons not needed on the teeny MCE
 					add_filter( 'teeny_mce_buttons', array($this, 'teeny_mce_buttons' ) );
 					
@@ -55,24 +53,17 @@ class LWTV_CPT_Shows {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		
 		if ( class_exists( 'VarnishPurger' ) ) $this->varnish_purge = new VarnishPurger();
-		
 		add_action( 'admin_head', array($this, 'admin_css') );
-
 		add_filter( 'manage_post_type_shows_posts_columns', array( $this, 'manage_posts_columns' ) );
 		add_action( 'manage_post_type_shows_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
 		add_filter( 'manage_edit-post_type_shows_sortable_columns', array( $this, 'manage_edit_sortable_columns' ) );
-
 		add_action( 'pre_get_posts', array( $this, 'columns_sortability_simple' ) );
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_format' ), 10, 2 );
-		
 		add_filter( 'quick_edit_show_taxonomy', array( $this, 'hide_tags_from_quick_edit' ), 10, 3 );
-
-		add_action( 'do_update_show_meta', array( $this, 'update_show_meta' ), 10, 2 );
-		add_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ), 10, 3 );
-		add_action( 'save_post_post_type_characters', array( $this, 'update_show_meta_from_chars' ), 10, 3 );
-
+		add_action( 'do_update_show_meta', array( $this, 'update_meta' ), 10, 2 );
+		add_action( 'save_post_post_type_shows', array( $this, 'update_meta' ), 10, 3 );
+		add_action( 'save_post_post_type_characters', array( $this, 'update_meta_from_chars' ), 10, 3 );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 	}
 
@@ -297,10 +288,10 @@ SQL;
 	 * @param post $post The post object.
 	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
-	public function update_show_meta( $post_id ) {
+	public function update_meta( $post_id ) {
 
 		// unhook this function so it doesn't loop infinitely
-		remove_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ) );
+		remove_action( 'save_post_post_type_shows', array( $this, 'update_meta' ) );
 
 		// Do the math!! (This updates the score)
 		LWTV_Shows_Calculate::do_the_math( $post_id );
@@ -322,7 +313,7 @@ SQL;
 		}
 
 		// re-hook this function
-		add_action( 'save_post_post_type_shows', array( $this, 'update_show_meta' ) );
+		add_action( 'save_post_post_type_shows', array( $this, 'update_meta' ) );
 	}
 
 	/*
@@ -332,7 +323,7 @@ SQL;
 	 *
 	 * @param int $post_id The post ID.
 	 */
-	public function update_show_meta_from_chars( $post_id ) {
+	public function update_meta_from_chars( $post_id ) {
 		$character_show_IDs = get_post_meta( $post_id, 'lezchars_show_group', true );
 
 		if ( $character_show_IDs !== '' ) {
@@ -390,6 +381,7 @@ SQL;
 				$deadqueers  = get_post_meta( $post->ID, 'lezshows_dead_count', true );
 				$score       = get_post_meta( $post->ID, 'lezshows_the_score', true );
 				$loved       = ( get_post_meta( $post->ID, 'lezshows_worthit_show_we_love', true ) == 'on' )? 'Yes' : 'No';
+				
 				echo '<div class="misc-pub-section lwtv misc-pub-lwtv">
 					<span id="loved">Loved: <b>' . $loved . '</b></span>
 				</div>

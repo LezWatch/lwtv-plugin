@@ -53,7 +53,7 @@ class LWTV_Stats {
 		$taxonomy  = 'lez_'.$data;
 
 		// The following are simple taxonomy arrays
-		$simple_tax_array = array( 'cliches', 'sexuality', 'gender', 'tropes', 'formats', 'triggers', 'stars' );
+		$simple_tax_array = array( 'cliches', 'sexuality', 'gender', 'tropes', 'formats', 'triggers', 'stars', 'romantic', 'actor_gender', 'actor_sexuality' );
 		if ( in_array( $data, $simple_tax_array ) ) $array = self::tax_array( $post_type, $taxonomy );
 
 		// The following are simple meta arrays
@@ -64,7 +64,7 @@ class LWTV_Stats {
 		if ( $data == 'queer-irl' ) {
 			$array = self::tax_array( $post_type, 'lez_cliches', $data );
 
-			$array['queer'] = array( 'count' => $array['queer-irl']['count'], 'name' => 'Queer', 'url' => site_url( '/cliche/queer-irl/' ) );
+			$array['queer'] = array( 'count' => $array['queer-irl']['count'], 'name' => 'Queer', 'url' => home_url( '/cliche/queer-irl/' ) );
 			$array['not-queer'] = array( 'count' => ( $count - $array['queer-irl']['count'] ), 'name' => 'Not Queer', 'url' => '' );
 			unset($array['queer-irl']);
 			//$count = $array['queer']['count'];
@@ -76,7 +76,7 @@ class LWTV_Stats {
 			$array        = self::meta_array( $post_type, $meta_array, 'lezshows_worthit_show_we_love', $data );
 			$nolove       = $count - $array['on']['count'];
 			$array['no']  = array( 'count' => ( $nolove ), 'name' => 'No', 'url' => '' );
-			$array['yes'] = array( 'count' => $array['on']['count'], 'name' => 'Yes', 'url' => '/shows/?fwp_show_loved=on' );
+			$array['yes'] = array( 'count' => $array['on']['count'], 'name' => 'Yes', 'url' => home_url( '/shows/?fwp_show_loved=on' ) );
 			unset( $array['on'] );
 		}
 
@@ -107,11 +107,11 @@ class LWTV_Stats {
 		if ( $data == 'dead' ) {
 			if ( $subject == 'characters' ) {
 				$array = self::tax_array( $post_type, 'lez_cliches', 'dead' );
-				$array['dead'] = array( 'count' => ( $array['dead']['count']), 'name' => 'Dead Characters', 'url' => site_url( '/cliche/dead/' ) );
+				$array['dead'] = array( 'count' => ( $array['dead']['count']), 'name' => 'Dead Characters', 'url' => home_url( '/cliche/dead/' ) );
 				$count = $array['dead']['count'];
 			} elseif ( $subject == 'shows' ) {
 				$array = self::tax_array( $post_type, 'lez_tropes', 'dead-queers' );
-				$array['dead-queers'] = array( 'count' => ( $array['dead-queers']['count']), 'name' => 'Shows with Dead', 'url' => site_url( '/trope/dead-queers/' ) );
+				$array['dead-queers'] = array( 'count' => ( $array['dead-queers']['count']), 'name' => 'Shows with Dead', 'url' => home_url( '/trope/dead-queers/' ) );
 				$count = $array['dead-queers']['count'];
 			}
 		}
@@ -216,9 +216,9 @@ class LWTV_Stats {
 		}
 
 		$array = array (
-			'regular' => array( 'count' => $by_role['regular'], 'name'  => 'Regular', 'url' => site_url( '/role/regular/' ) ),
-			'guest'   => array( 'count' => $by_role['guest'], 'name'  => 'Guest', 'url' => site_url( '/role/guest/' ) ),
-			'recurring' => array( 'count' => $by_role['recurring'], 'name'  => 'Recurring', 'url' => site_url( '/role/recurring/' ) ),
+			'regular' => array( 'count' => $by_role['regular'], 'name'  => 'Regular', 'url' => home_url( '/role/regular/' ) ),
+			'guest'   => array( 'count' => $by_role['guest'], 'name'  => 'Guest', 'url' => home_url( '/role/guest/' ) ),
+			'recurring' => array( 'count' => $by_role['recurring'], 'name'  => 'Recurring', 'url' => home_url( '/role/recurring/' ) ),
 		);
 
 		return $array;
@@ -245,7 +245,7 @@ class LWTV_Stats {
 			$array[$value] = array(
 				'count' => $query->post_count,
 				'name'  => ucfirst($value),
-				'url' => site_url( '/cliche/'.$value ),
+				'url' => home_url( '/cliche/'.$value ),
 			);
 		}
 		return $array;
@@ -268,7 +268,7 @@ class LWTV_Stats {
 		$array = array();
 		foreach ( $meta_array as $value ) {
 			$meta_query = LWTV_Loops::post_meta_query( $post_type, $key, $value, $compare );
-			$array[$value] = array( 'count' => $meta_query->post_count, 'name' => ucfirst($value), 'url' => site_url( '/'. $data .'/'. lcfirst($value) .'/' ) ) ;
+			$array[$value] = array( 'count' => $meta_query->post_count, 'name' => ucfirst($value), 'url' => home_url( '/'. $data .'/'. lcfirst($value) .'/' ) ) ;
 		}
 		return $array;
 	}
@@ -296,7 +296,7 @@ class LWTV_Stats {
 			$year_death_array[$year] = array(
 				'name' => $year,
 				'count' => $year_death_query->post_count,
-				'url' => site_url( '/this-year/'.$year.'/')
+				'url' => home_url( '/this-year/'.$year.'/')
 			);
 		}
 		return $year_death_array;
@@ -436,18 +436,25 @@ class LWTV_Stats {
 						$data = get_post_meta( get_the_id(), 'lezchars_actor', true );
 						break;
 					case 'actors':
-						$data = lwtv_yikes_actordata( get_the_ID(), 'characters' );
+						$data = get_post_meta( get_the_id(), 'lezactors_char_count', true );
+						//$data = lwtv_yikes_actordata( get_the_ID(), 'characters' );
 						break;
 				}
 				// Now that we have the data, let's count and store
-				if ( !array_key_exists( count( $data ), $array ) && is_numeric( count( $data ) ) ) {
-					$array[ count( $data ) ] = array(
-						'name'  => count( $data ),
+				if ( is_numeric( $data ) ) {
+					$key = $data;
+				} else {
+					$key = count( $data );
+				}
+				
+				if ( !array_key_exists( $key, $array ) && is_numeric( $key ) ) {
+					$array[ $key ] = array(
+						'name'  => $key,
 						'count' => '1',
 						'url'   => '',
 					);
 				} else {
-					$array[ count( $data ) ]['count']++;
+					$array[ $key ]['count']++;
 				}
 			}
 			wp_reset_query();
@@ -562,15 +569,15 @@ class LWTV_Stats {
 		}
 
 		$alive_array = array (
-			"guest"  => array( 'name' => 'Only Guests',  'count' => count( $guest_alive_array ), 'url' => site_url( '/role/guest/' ) ),
-			"main" => array( 'name' => 'Only Main', 'count' => count( $main_alive_array ), 'url' => site_url( '/role/regular/' ) ),
-			"recurring" => array( 'name' => 'Only Recurring', 'count' => count( $recurring_alive_array ), 'url' => site_url( '/role/recurring/' ) ),
+			"guest"  => array( 'name' => 'Only Guests',  'count' => count( $guest_alive_array ), 'url' => home_url( '/role/guest/' ) ),
+			"main" => array( 'name' => 'Only Main', 'count' => count( $main_alive_array ), 'url' => home_url( '/role/regular/' ) ),
+			"recurring" => array( 'name' => 'Only Recurring', 'count' => count( $recurring_alive_array ), 'url' => home_url( '/role/recurring/' ) ),
 		);
 
 		$dead_array = array (
-			"guest"  => array( 'name' => 'Only Guests',  'count' => $guest['dead'], 'url' => site_url( '/role/guest/' ) ),
-			"main" => array( 'name' => 'Only Main', 'count' => $regular['dead'], 'url' => site_url( '/role/regular/' ) ),
-			"recurring" => array( 'name' => 'Only Recurring', 'count' => $recurring['dead'], 'url' => site_url( '/role/recurring/' ) ),
+			"guest"  => array( 'name' => 'Only Guests',  'count' => $guest['dead'], 'url' => home_url( '/role/guest/' ) ),
+			"main" => array( 'name' => 'Only Main', 'count' => $regular['dead'], 'url' => home_url( '/role/regular/' ) ),
+			"recurring" => array( 'name' => 'Only Recurring', 'count' => $recurring['dead'], 'url' => home_url( '/role/recurring/' ) ),
 		);
 
 		$array = $alive_array;

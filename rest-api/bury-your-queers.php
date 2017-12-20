@@ -31,6 +31,7 @@ class LWTV_BYQ_JSON {
 	 * Creates callbacks
 	 *   - /lwtv/v1/last-death/
 	 *   - /lwtv/v1/on-this-day/
+	 *   - /lwtv/v1/when-died/
 	 */
 	public function rest_api_init() {
 
@@ -76,7 +77,7 @@ class LWTV_BYQ_JSON {
 	public function on_this_day_rest_api_callback( $data ) {
 		$params = $data->get_params();
 		$this_day = ( isset( $params['date'] ) && $params['date'] !== '' )? $params['date'] : 'today';
-		$response = $this->on_this_day( $this_day );
+		$response = $this->on_this_day( $this_day, 'json' );
 		return $response;
 	}
 
@@ -175,41 +176,65 @@ class LWTV_BYQ_JSON {
 	 *
 	 * @return array with character data
 	 */
-	public static function on_this_day( $this_day = 'today' ) {
+	public static function on_this_day( $this_day = 'today', $type = 'json' ) {
 
-		if ( $this_day == 'today' ) {
-			$this_day = date('m-d');
-		}
+		// Default to today
+		if ( $this_day == 'today' ) { $this_day = date('m-d'); }
+
+		// Default to JSON (i.e. what the plugin uses)
+		$valid_types = array ( 'json', 'tweet' );
+		if ( !in_array( $type, $valid_types ) ) { $type = 'json'; }
 
 		// Get all our dead queers
 		$dead_chars_loop  = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		$died_today_array = array();
-
-		foreach ( $death_list_array as $the_dead ) {
-			if ( $this_day == date('m-d', $the_dead['died'] ) ) {
-				$died_today_array[ $the_dead['slug'] ] = array(
-					'id'   => $the_dead['id'],
-					'name' => $the_dead['name'],
-					'url'  => $the_dead['url'],
-					'died' => date( 'Y', $the_dead['died'] ),
-				);
-			}
+		
+		switch ( $type ) {
+			case 'tweet':
+				$the_dead_array = array();;
+				foreach ( $death_list_array as $the_dead ) {
+					if ( $this_day == date('m-d', $the_dead['died'] ) ) {
+						$data = $the_dead['name'] . ' (' . date( 'Y', $the_dead['died'] ) . ') -- ' . $the_dead['url'];
+						array_push( $the_dead_array, $data );
+					}
+				}
+				if ( empty( $the_dead_array ) ) {
+					$content = 'NONE';
+				} else {
+					$the_dead_string = implode( '\n', $the_dead_array );
+					$count_the_dead  = count( $the_dead_array );
+					$characters      = sprintf( _n( '%s character', '%s characters', $count_the_dead ), $count_the_dead );
+					$content         = 'On ' . $this_day . ', the following ' . $characters . ' died: \n' . $the_dead_string;
+				}
+				$died_today_array['content'] = $content;
+				break;
+			case 'json':
+				foreach ( $death_list_array as $the_dead ) {
+					if ( $this_day == date('m-d', $the_dead['died'] ) ) {
+						$died_today_array[ $the_dead['slug'] ] = array(
+							'id'   => $the_dead['id'],
+							'name' => $the_dead['name'],
+							'url'  => $the_dead['url'],
+							'died' => date( 'Y', $the_dead['died'] ),
+						);
+					}
+				}
+				if ( empty( $died_today_array ) ) {
+					$died_today_array[ 'none' ] = array(
+						'id'   => 0,
+						'name' => 'No One',
+						'url'  => site_url( '/cliche/dead/' ),
+						'died' => date('m-d'),
+					);
+				}
+				break;
+			default:
+				$died_today_array = wp_send_json_error( 'An unexpected error has occurred.' );
 		}
 
-		if ( empty( $died_today_array ) ) {
-			$died_today_array[ 'none' ] = array(
-				'id'   => 0,
-				'name' => 'No One',
-				'url'  => site_url( '/cliche/dead/' ),
-				'died' => date('m-d'),
-			);
-		}
-
-		$return = $died_today_array;
-
-		return $return;
+		return $died_today_array;
 	}
 
 	/**

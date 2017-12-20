@@ -137,8 +137,8 @@ class LWTV_Shows_Calculate {
 					foreach( $shows_array as $char_show ) {
 						if ( $char_show['show'] == $post_id ) {
 							$queercount++;
-							if ( $is_dead == true )  $deadcount++;
-							if ( $is_none == true )  $nonecount++;
+							if ( $is_dead == true ) $deadcount++;
+							if ( $is_none == true ) $nonecount++;
 							if ( $is_queerirl == true ) $queerirlcount++;
 						}
 					}

@@ -122,7 +122,7 @@ class LWTV_Alexa_Skills {
 		$endsession = true;
 
 		if ( $date !== false && is_numeric( substr( $date, 0, 4 ) ) && substr( $date, 0, 4 ) < FIRST_LWTV_YEAR ) {
-			$output     = 'There were no queer female or trans characters on TV prior to ' . FIRST_LWTV_YEAR . '. ' . $helptext;
+			$output     = 'There were no queer female or trans characters on TV prior to ' . FIRST_LWTV_YEAR . '. Would you like to ask me something else? ' . $helptext;
 			$endsession = false;
 		} elseif ( $type == 'LaunchRequest' ) {
 			$output     = 'Welcome to the Lez Watch T. V. skill. ' . $helptext;

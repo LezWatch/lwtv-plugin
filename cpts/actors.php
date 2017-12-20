@@ -14,16 +14,14 @@ class LWTV_CPT_Actors {
 	 * Constructor
 	 */
 	public function __construct() {
-
 		add_action( 'admin_init', array( $this, 'admin_init') );
-
 		add_action( 'init', array( $this, 'init') );
 		add_action( 'init', array( $this, 'create_post_type'), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies'), 0 );
-
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes') );
 		add_action( 'admin_menu', array( $this,'remove_metaboxes' ) );
+		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 	}
 
 	/**
@@ -32,17 +30,24 @@ class LWTV_CPT_Actors {
 	public function admin_init() {
 		add_action( 'admin_head', array($this, 'admin_css') );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
-
-		add_action( 'do_update_actor_meta', array( $this, 'update_actor_meta' ), 10, 2 );
-		add_action( 'save_post_post_type_actor', array( $this, 'update_actor_meta' ), 10, 3 );
-		add_action( 'save_post_post_type_characters', array( $this, 'update_actor_meta_from_chars' ), 10, 3 );
+		add_action( 'do_update_actor_meta', array( $this, 'update_meta' ), 10, 2 );
+		add_action( 'save_post_post_type_characters', array( $this, 'update_meta_from_chars' ), 10, 3 );
 	}
 
 	/**
 	 *  Init
 	 */
 	public function init() {
-		// TBD
+		// Things that only run for this post type
+		$post_id   = ( isset( $_GET['post'] ) )? intval( $_GET['post'] ) : 0 ;
+		if ( $post_id !== 0 && is_admin() ) {
+			$post_type = ( isset( $_GET['post_type'] ) )? sanitize_text_field( $_GET['post_type'] ) : 0 ;
+			switch ( $post_type ) {
+				case 'post_type_actors':
+					LWTV_Actors_Calculate::do_the_math( $post_id );
+					break;
+			}
+		}
 	}
 
 	/*
@@ -235,18 +240,16 @@ class LWTV_CPT_Actors {
 	 * @param post $post The post object.
 	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
-	public function update_actor_meta( $post_id ) {
+	public function update_meta( $post_id ) {
 
 		// unhook this function so it doesn't loop infinitely
-		remove_action( 'save_post_post_type_actors', array( $this, 'update_actor_meta' ) );
+		remove_action( 'save_post_post_type_actors', array( $this, 'update_meta' ) );
 		
-		$number_chars = lwtv_yikes_actordata( $post_id, 'characters' );
-		$number_dead  = lwtv_yikes_actordata( $post_id, 'dead' );
-		update_post_meta( $post_id, 'lezactors_char_count', $number_chars );
-		update_post_meta( $post_id, 'lezactors_dead_count', $number_dead );
+		// Do the math
+		LWTV_Actors_Calculate::do_the_math( $post_id );
 
 		// re-hook this function
-		add_action( 'save_post_post_type_actors', array( $this, 'update_actor_meta' ) );
+		add_action( 'save_post_post_type_actors', array( $this, 'update_meta' ) );
 	}
 
 	/*
@@ -256,7 +259,7 @@ class LWTV_CPT_Actors {
 	 *
 	 * @param int $post_id The post ID.
 	 */
-	public function update_actor_meta_from_chars( $post_id ) {
+	public function update_meta_from_chars( $post_id ) {
 		$character_actor_IDs = get_post_meta( $post_id, 'lezchars_actor', true );
 
 		if ( $character_actor_IDs !== '' ) {
@@ -301,6 +304,30 @@ class LWTV_CPT_Actors {
 		</style>";
 	}
 
+	/*
+	 * Post Page Meta Box
+	 * For listing critical information
+	 */
+	function post_page_metabox() {
+		global $post;
+
+		switch ( $post->post_type ) {
+			case 'post_type_actors':
+				$countqueers = get_post_meta( $post->ID, 'lezactors_char_count', true );
+				$deadqueers  = get_post_meta( $post->ID, 'lezactors_dead_count', true );
+				echo '<div class="misc-pub-section lwtv misc-pub-lwtv">
+					<span id="characters">Characters: <b>' . $countqueers . '</b> total';
+						if ( $deadqueers ) { echo '/ <b>' . $deadqueers . '</b> dead'; }
+				echo '</span>
+				</div>';
+
+				break;
+		}
+	}
+
 }
+
+// Include Sub Files
+include_once( 'actors/calculations.php' );
 
 new LWTV_CPT_Actors();

@@ -1,7 +1,7 @@
 <?php
 /*
 Description: Various shortcodes used on LezWatchTV
-Version: 1.0
+Version: 1.1
 Author: Mika Epstein
 */
 
@@ -20,6 +20,19 @@ class LWTV_Shortcodes {
 	 */
 	public function init() {
 		add_shortcode( 'thismonth', array( $this, 'this_month' ) );
+		add_shortcode( 'firstyear', array( $this, 'first_year' ) );
+	}
+
+	/*
+	 * Display The first year we had queers
+	 *
+	 * Usage: 
+	 *		[firstyear]
+	 *
+	 * @since 1.1
+	 */
+	public function first_year( $atts ) {
+		return FIRST_LWTV_YEAR;
 	}
 
 	/*
@@ -29,7 +42,7 @@ class LWTV_Shortcodes {
 	 *		[thismonth]
 	 *		[thismonth date="2017-01"]
 	 *
-	 * @since 1.3
+	 * @since 1.0
 	 */
 	public function this_month( $atts ) {
 		
