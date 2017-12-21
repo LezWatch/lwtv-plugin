@@ -160,7 +160,7 @@ class LWTV_CPT_Characters {
 	public function cmb2_get_shows_options() {
 		return LWTV_CMB2::get_post_options( array(
 				'post_type'   => 'post_type_shows',
-				'numberposts' => wp_count_posts( 'post_type_shows' )->publish,
+				'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
 				'post_status' => array('publish', 'pending', 'draft', 'future'),
 			) );
 	}
@@ -171,7 +171,7 @@ class LWTV_CPT_Characters {
 	public function cmb2_get_actors_options() {
 		return LWTV_CMB2::get_post_options( array(
 				'post_type'   => 'post_type_actors',
-				'numberposts' => wp_count_posts( 'post_type_actors' )->publish,
+				'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
 				'post_status' => array('publish', 'pending', 'draft', 'future'),
 			) );
 	}
