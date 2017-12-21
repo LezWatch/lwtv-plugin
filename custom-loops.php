@@ -23,6 +23,45 @@ class LWTV_Loops {
 		// Nothing to see here
 	}
 
+
+	/**
+	 * Determine if an actor is queer
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $the_ID
+	 * @return void
+	 */
+	public static function is_actor_queer( $the_ID ) {
+		
+		if ( !isset( $the_ID ) || get_post_type( $the_ID ) !== 'post_type_actors' ) return 'bork';
+		
+		// Defaults
+		$gender   = $sexuality = 'yes';
+		$is_queer = 'no';
+		
+		// If the actor is cis, they may not be queer...
+		$straight_genders =  array( 'cis-man', 'cis-woman', 'cisgender' );
+		$gender_terms     = get_the_terms( $the_ID, 'lez_actor_gender', true );
+		if ( !$gender_terms || is_wp_error( $gender_terms ) || has_term( $straight_genders, 'lez_actor_gender', $the_ID ) ) {
+			$gender = 'no';
+		}
+		
+		// If the actor is heterosexual they may not be queer...
+		$straight_sexuality =  array( 'heterosexual', 'unknown' );
+		$sexuality_terms    = get_the_terms( $the_ID, 'lez_actor_sexuality', true );
+		if ( !$sexuality_terms || is_wp_error( $sexuality_terms ) || has_term( $straight_sexuality, 'lez_actor_sexuality', $the_ID ) ) {
+			$sexuality = 'no';
+		}
+		
+		// If either the gender or sexuality is queer, we have a queerio!
+		if ( $sexuality == 'yes' || $gender == 'yes' ) {
+			$is_queer = 'yes';
+		}
+		
+		return $is_queer;
+	}
+
 	/*
 	 * Taxonomy Array
 	 *

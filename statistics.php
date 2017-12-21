@@ -62,12 +62,18 @@ class LWTV_Stats {
 
 		// The following are complicated taxonomy arrays
 		if ( $data == 'queer-irl' ) {
-			$array = self::tax_array( $post_type, 'lez_cliches', $data );
+			
+			if ( $subject == 'characters' ) {
+				$array = self::tax_array( $post_type, 'lez_cliches', $data );
+				$array['queer'] = array( 'count' => $array['queer-irl']['count'], 'name' => 'Queer', 'url' => home_url( '/cliche/queer-irl/' ) );
+				$array['not-queer'] = array( 'count' => ( $count - $array['queer-irl']['count'] ), 'name' => 'Not Queer', 'url' => '' );
+				unset($array['queer-irl']);
+			}
+			
+			if ( $subject == 'actors' ) {
+				$array = self::queer_irl( 'actors' );
+			}
 
-			$array['queer'] = array( 'count' => $array['queer-irl']['count'], 'name' => 'Queer', 'url' => home_url( '/cliche/queer-irl/' ) );
-			$array['not-queer'] = array( 'count' => ( $count - $array['queer-irl']['count'] ), 'name' => 'Not Queer', 'url' => '' );
-			unset($array['queer-irl']);
-			//$count = $array['queer']['count'];
 		}
 
 		// The following are complicated meta arrays
@@ -583,6 +589,33 @@ class LWTV_Stats {
 		$array = $alive_array;
 		if ( $type == 'dead' ) $array = $dead_array;
 
+		return $array;
+	}
+	
+	static function queer_irl( $type = 'actors' ) {
+
+		$array = array(
+			'queer'     => array ( 'name' => 'queer',  'count' => 0, 'url' => home_url() ),
+			'not_queer' => array ( 'name' => 'not_queer',  'count' => 0, 'url' => home_url() ),
+		);
+
+		switch ( $type ) {
+			case 'actors':
+				$all_actors_query = LWTV_Loops::post_type_query( 'post_type_actors' );
+					if ( $all_actors_query->have_posts() ) {
+
+						while ( $all_actors_query->have_posts() ) {
+							$all_actors_query->the_post();
+							$the_ID   = get_the_id();
+							$is_queer = LWTV_Loops::is_actor_queer( $the_ID );
+							// And now we set the numbers!
+							if ( $is_queer == 'yes' )  $array['queer']['count']++;
+							if ( $is_queer == 'no' )   $array['not_queer']['count']++;
+						}
+					}
+				break;
+		}
+		
 		return $array;
 	}
 

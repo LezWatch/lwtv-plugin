@@ -82,7 +82,7 @@ class LWTV_Stats_JSON {
 
 		// Valid Data
 		$valid_type   = array( 'characters', 'actors', 'shows', 'death', 'first-year' );
-		$valid_format = array( 'simple', 'complex', 'years', 'cliches', 'tropes', 'worth-it', 'stars', 'formats', 'triggers', 'loved', 'nations', 'sexuality', 'gender', 'romantic', 'genres' );
+		$valid_format = array( 'simple', 'complex', 'years', 'cliches', 'tropes', 'worth-it', 'stars', 'formats', 'triggers', 'loved', 'nations', 'sexuality', 'gender', 'romantic', 'genres', 'queer-irl' );
 
 		// Sanity Check
 		if ( !in_array( $stat_type, $valid_type ) || !in_array( $format, $valid_format ) ) 
@@ -125,7 +125,7 @@ class LWTV_Stats_JSON {
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 		// Validate Data
-		$valid_format = array( 'simple', 'complex', 'sexuality', 'gender' );
+		$valid_format = array( 'simple', 'complex', 'sexuality', 'gender', 'queer-irl' );
 
 		// Sanity Check
 		if ( !in_array( $format, $valid_format ) ) 
@@ -134,11 +134,14 @@ class LWTV_Stats_JSON {
 		$stats_array  = array();
 
 		switch ( $format ) {
-			case 'sexuality':
-				$stats_array = LWTV_Stats::generate( 'actors', 'actor_sexuality', 'array' );
+			case 'queer-irl':
+				$stats_array = LWTV_Stats::generate( 'actors', 'queer-irl', 'array' );
 				break;
 			case 'gender':
 				$stats_array = LWTV_Stats::generate( 'actors', 'actor_gender', 'array' );
+				break;
+			case 'sexuality':
+				$stats_array = LWTV_Stats::generate( 'actors', 'actor_sexuality', 'array' );
 				break;
 			case 'complex':
 				$the_loop = LWTV_Loops::post_type_query('post_type_actors');
@@ -151,6 +154,7 @@ class LWTV_Stats_JSON {
 							'id'         => $post->ID,
 							'characters' => get_post_meta( $post->ID, 'lezactors_char_count', true ),
 							'dead_chars' => get_post_meta( $post->ID, 'lezactors_dead_count', true ),
+							'queer'      => LWTV_Loops::is_actor_queer( $post->ID ),
 							'url'        => get_the_permalink( $post->ID ),
 						);
 					}
