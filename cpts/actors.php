@@ -21,6 +21,7 @@ class LWTV_CPT_Actors {
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes') );
 		add_action( 'admin_menu', array( $this,'remove_metaboxes' ) );
+		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 	}
 
@@ -267,6 +268,38 @@ class LWTV_CPT_Actors {
 				do_action( 'do_update_actor_meta' , $actor );
 			}
 		}
+	}
+
+	/*
+	 * Extra Meta Variables for Yoast and Characters
+	 *
+	 * Information on how many queer characters an actor plays
+	 */
+	public function yoast_retrieve_characters_replacement( ) {
+		global $post;
+		$char_count = get_post_meta( $post->ID, 'lezactors_char_count', true );
+		$characters = ( $char_count == 0 )? 'no queer characters' : sprintf( _n( '%s queer character', '%s queer characters', $char_count ), $char_count );
+		return $characters;
+	}
+
+	/*
+	 * Extra Meta Variables for Yoast and Queer
+	 *
+	 * List of actors who played a character, for use on character pages
+	 */
+	public function yoast_retrieve_queer_replacement( ) {
+		global $post;
+		$is_queer = get_post_meta( $post->ID, 'lezactors_queer', true );
+		$queer    = ( $is_queer )? 'a queer actor' : 'an actor';
+		return $queer;
+	}
+
+	/*
+	 * Extra Replacement Functions for Yoast SEO
+	 */
+	public function yoast_seo_register_extra_replacements() {
+		wpseo_register_var_replacement( '%%characters%%', array( $this, 'yoast_retrieve_characters_replacement' ), 'basic', 'Information on how many queer characters an actor plays.' );
+		wpseo_register_var_replacement( '%%is_queer%%', array( $this, 'yoast_retrieve_queer_replacement' ), 'basic', 'Output if the actor is queer IRL.' );
 	}
 
 	/*
