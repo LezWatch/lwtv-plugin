@@ -131,7 +131,7 @@ class LWTV_FacetWP {
 			$options['most_chars'] = array(
 				'label' => 'Number of Characters (Descending)',
 				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'orderby'  => 'meta_value_num post_title', // sort by numerical custom field
 					'meta_key' => 'lezactors_char_count', // required when sorting by custom fields
 					'order'    => 'DESC', // descending order
 				)
@@ -139,7 +139,7 @@ class LWTV_FacetWP {
 			$options['least_chars'] = array(
 				'label' => 'Number of Characters (Ascending)',
 				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'orderby'  => 'meta_value_num post_title', // sort by numerical custom field
 					'meta_key' => 'lezactors_char_count', // required when sorting by custom fields
 					'order'    => 'ASC', // ascending order
 				)
