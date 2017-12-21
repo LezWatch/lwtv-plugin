@@ -459,7 +459,7 @@ SQL;
 	 *
 	 * List of actors who played a character, for use on character pages
 	 */
-	public function lwtv_retrieve_actors_replacement( ) {
+	public function yoast_retrieve_actors_replacement( ) {
 		global $post;
 		$actors     = array();
 		$actors_IDs = get_post_meta( $post->ID, 'lezchars_actor', true);
@@ -479,7 +479,7 @@ SQL;
 	 *
 	 * List of shows featuring a character, for use on character pages
 	 */
-	function lwtv_retrieve_shows_replacement() {
+	function yoast_retrieve_shows_replacement() {
 		global $post;
 		$shows_ids    = get_post_meta( $post->ID, 'lezchars_show_group', true );
 		$shows_titles = array();
@@ -495,8 +495,8 @@ SQL;
 	 * Extra Replacement Functions for Yoast SEO
 	 */
 	public function yoast_seo_register_extra_replacements() {
-		wpseo_register_var_replacement( '%%actors%%', array( $this, 'lwtv_retrieve_actors_replacement' ), 'basic', 'A list of actors who played the character, separated by commas.' );
-		wpseo_register_var_replacement( '%%shows%%', array( $this, 'lwtv_retrieve_shows_replacement' ), 'basic', 'A list of shows the character was on, separated by commas.' );
+		wpseo_register_var_replacement( '%%actors%%', array( $this, 'yoast_retrieve_actors_replacement' ), 'basic', 'A list of actors who played the character, separated by commas.' );
+		wpseo_register_var_replacement( '%%shows%%', array( $this, 'yoast_retrieve_shows_replacement' ), 'basic', 'A list of shows the character was on, separated by commas.' );
 	}
 
 	/*
