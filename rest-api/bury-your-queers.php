@@ -252,7 +252,7 @@ class LWTV_BYQ_JSON {
 
 		$q = $wp_query->query_vars;
 		$n = ! empty( $q['exact'] ) ? '' : '%';
-		$search =
+		$search = '';
 		$searchand = '';
 		foreach ( (array) $q['search_terms'] as $term ) {
 			$term = esc_sql( like_escape( $term ) );

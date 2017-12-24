@@ -90,10 +90,10 @@ class LWTV_Alexa_Skills {
 	public function news_rest_api_callback( WP_REST_Request $request ) {
 
 		$type   = ( isset( $request['request']['type'] ) )? $request['request']['type'] : false;
-		$intent = ( isset( $request['request']['intent']['name'] ) )? $request['request']['intent']['name'] : false;
+		$intent = ( isset( $request['request']['intent']['name'] ) )? sanitize_text_field( $request['request']['intent']['name'] ) : false;
 		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) )? $request['request']['intent']['slots']['Date']['value'] : false;
-		$actor  = ( isset( $request['request']['intent']['slots']['actor']['value'] ) )? sanitize_text( $request['request']['intent']['slots']['actor']['value'] ) : false;
-		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) )? sanitize_text( $request['request']['session']['application']['applicationId'] ) : false;
+		$actor  = ( isset( $request['request']['intent']['slots']['actor']['value'] ) )? sanitize_text_field( $request['request']['intent']['slots']['actor']['value'] ) : false;
+		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) )? sanitize_text_field( $request['request']['session']['application']['applicationId'] ) : false;
 
 		// Call the validation:
 		include_once( 'alexa/alexa-validate.php' );
@@ -116,7 +116,7 @@ class LWTV_Alexa_Skills {
 	 */
 	public function news_skill( $type = false, $intent = false, $date = false, $actor = false ) {
 
-		$helptext   = 'You can ask me what happened or for information on the latest queer female and characters or shows added to Lez Watch T. V.. Try asking me "What happened this year?" or "What happened in 1989?" or "What\'s new?" or "How is 2017?" and I\'ll let you know what I\'ve found.';
+		$helptext   = 'You can ask me what happened or for information on queer female and characters or shows on Lez Watch T. V.. Try asking me "What happened this year?" or "What happened in 1989?" or "Who is the character of the day?" or "Who is Laverne Cox?" or "Is Ali Liebert queer?" or even "Who died on March 3rd?" -- I\'ll let you know what I\'ve found.';
 		$output = 'I\'m sorry, I don\'t understand that request. Please ask me something else. ' . $helptext;
 		$endsession = true;
 
@@ -168,7 +168,15 @@ class LWTV_Alexa_Skills {
 						$output = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
 					} else {
 						include_once( 'alexa/who-are-you.php' );
-						$output     = LWTV_Alexa_Who::who_is( $name );
+						$output     = LWTV_Alexa_Who::who_is( $actor );
+					}
+					break;
+				case 'IsQueer':
+					if ( !$actor ) {
+						$output = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+					} else {
+						include_once( 'alexa/who-are-you.php' );
+						$output     = LWTV_Alexa_Who::is_gay( $actor );
 					}
 					break;
 				case 'AMAZON.HelpIntent':

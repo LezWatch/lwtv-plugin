@@ -34,9 +34,9 @@ class LWTV_Alexa_Who {
 				$output = 'I found more than one actor matching that name. ';
 			}
 
-			foreach ( $result as $actor ) {
-				$queer      = ( $actor[ 'queer' ] )? 'a queer actor' : 'an actor';
-				$characters = ( $actor[ 'characters' ] == 0 )? 'no queer female or trans characters' : sprintf( _n( '%s queer female or trans character', '%s queer female or trans characters', $char_count ), $char_count );
+			foreach ( $results as $actor ) {
+				$queer      = ( $actor[ 'is_queer' ] )? 'a queer actor' : 'an actor';
+				$characters = ( $actor[ 'characters' ] == 0 )? 'no queer female or trans characters' : sprintf( _n( '%s queer female or trans character', '%s queer female or trans characters', $actor[ 'characters' ] ), $actor[ 'characters' ] );
 				$output .= $actor[ 'name' ] . ' is ' . $queer . ' who has played ' . $characters . ' on television.';
 			}
 
@@ -49,19 +49,66 @@ class LWTV_Alexa_Who {
 
 
 	/**
+	 * is_gay function.
+	 * 
+	 * @access public
+	 * @param bool $name (default: false)
+	 * @return void
+	 */
+	public function is_gay( $name = false ) {
+
+		$failure = 'I\'m sorry, I don\'t recognize that name. Please try again, asking me who a specific actor is.';
+		if ( !$name ) return $failure;
+
+		// Get the actor array:
+		$results = self::search_this( $name );
+
+		if ( isset( $results ) ) {
+			if ( count ( $results ) > 1 ) {
+				$output = 'I found more than one actor matching that name. ';
+			}
+
+			foreach ( $results as $actor ) {
+				$queer      = ( $actor[ 'is_queer' ] )? 'is queer' : 'is not queer';
+				
+				switch ( $actor[ 'gender' ] ) {
+					case 'Cis Woman':
+					case 'Trans Woman':
+						$pronoun = 'She identifies';
+						break;
+					case 'Cis Man':
+					case 'Trans Man':
+						$pronoun = 'He identifies';
+						break;
+					default:
+						$pronoun = 'They identify';
+				}
+				
+				
+				$output .= $actor[ 'name' ] . ' ' . $queer . '. ' . $pronoun . ' as a ' . strtolower( $actor[ 'sexuality' ] ) . ' ' . strtolower( $actor[ 'gender' ] ) . '.';
+			}
+		} else {
+			$output = 'I can\'t find an actor who has played a queer female or trans character by that name.';
+		}
+
+		return $output;
+	}
+
+	/**
 	 * search_this function.
 	 * 
 	 * @access public
 	 * @param mixed $name (default: = false)
 	 * @return void
 	 */
-	public function search_this( $name == false ) {
+	public function search_this( $name = false ) {
 
 		if ( !$name ) return false;
 
 		// Remove <!--fwp-loop--> from output
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
+/*
 		// Force to search ONLY by title
 		add_filter( 'posts_search', function( $search, &$wp_query ) {
 			global $wpdb;
@@ -70,7 +117,7 @@ class LWTV_Alexa_Who {
 
 			$q = $wp_query->query_vars;
 			$n = ! empty( $q['exact'] ) ? '' : '%';
-			$search =
+			$search = 
 			$searchand = '';
 			foreach ( (array) $q['search_terms'] as $term ) {
 				$term = esc_sql( like_escape( $term ) );
@@ -84,7 +131,7 @@ class LWTV_Alexa_Who {
 			}
 			return $search;
 		} , 500, 2 );
-
+*/
 		$args = array(
 			's'              => $name,
 			'post_type'      => 'post_type_actors',
@@ -127,17 +174,17 @@ class LWTV_Alexa_Who {
 				$actor_arr[ get_post_field( 'post_name' ) ] = array(
 					'name'       => get_the_title(),
 					'characters' => get_post_meta( get_the_ID(), 'lezactors_char_count', true ),
-					'characters' => get_post_meta( get_the_ID(), 'lezactors_char_count', true ),
+					'dead'       => get_post_meta( get_the_ID(), 'lezactors_dead_count', true ),
 					'is_queer'   => get_post_meta( get_the_ID(), 'lezactors_queer', true ),
 					'gender'     => implode( ', ', $gender ),
 					'sexuality'  => implode( ', ', $sexuality ),
 					'age'        => $age,
-				)
+				);
 
 			}
 			wp_reset_postdata();
 		}
-		
+
 		return $actor_arr;
 	}
 
