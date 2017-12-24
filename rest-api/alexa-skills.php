@@ -84,7 +84,7 @@ class LWTV_Alexa_Skills {
 	}
 
 	/**
-	 * Rest API Callback for News (formerly Bury Your Queers)
+	 * Rest API Callback for News - aka the general app
 	 * This accepts POST data
 	 */
 	public function news_rest_api_callback( WP_REST_Request $request ) {
@@ -92,19 +92,18 @@ class LWTV_Alexa_Skills {
 		$type   = ( isset( $request['request']['type'] ) )? $request['request']['type'] : false;
 		$intent = ( isset( $request['request']['intent']['name'] ) )? $request['request']['intent']['name'] : false;
 		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) )? $request['request']['intent']['slots']['Date']['value'] : false;
-		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) )? $request['request']['session']['application']['applicationId'] : false;
+		$actor  = ( isset( $request['request']['intent']['slots']['actor']['value'] ) )? sanitize_text( $request['request']['intent']['slots']['actor']['value'] ) : false;
+		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) )? sanitize_text( $request['request']['session']['application']['applicationId'] ) : false;
 
 		// Call the validation:
 		include_once( 'alexa/alexa-validate.php' );
 		$validate_alexa = LWTV_Alexa_Validate::the_request( $request );
-
 		if ( $validate_alexa['success'] != 1 ) {
 			$error = new WP_REST_Response( array( 'message' => $validate_alexa['message'], 'data' => array( 'status' => 400 ) ) );
 			$error->set_status( 400 );
 			return $error;
 		}
-
-		$response = $this->news_skill( $type, $intent, $date );
+		$response = $this->news_skill( $type, $intent, $date, $actor );
 
 		return $response;
 	}
@@ -115,14 +114,14 @@ class LWTV_Alexa_Skills {
 	 * @access public
 	 * @return void
 	 */
-	public function news_skill( $type = false, $intent = false, $date = false ) {
+	public function news_skill( $type = false, $intent = false, $date = false, $actor = false ) {
 
-		$helptext   = 'You can ask me what happened or for information on the latest queer female and characters or shows added to Lez Watch T. V.. Try asking me "What happened in 1989?" or "Who\'s the newest character?" or "How is 2017?" and I\'ll let you know what I\'ve found.';
+		$helptext   = 'You can ask me what happened or for information on the latest queer female and characters or shows added to Lez Watch T. V.. Try asking me "What happened this year?" or "What happened in 1989?" or "What\'s new?" or "How is 2017?" and I\'ll let you know what I\'ve found.';
 		$output = 'I\'m sorry, I don\'t understand that request. Please ask me something else. ' . $helptext;
 		$endsession = true;
 
 		if ( $date !== false && is_numeric( substr( $date, 0, 4 ) ) && substr( $date, 0, 4 ) < FIRST_LWTV_YEAR ) {
-			$output     = 'There were no queer female or trans characters on TV prior to ' . FIRST_LWTV_YEAR . '. Would you like to ask me something else? ' . $helptext;
+			$output     = 'There were no queer female or trans characters on T. V. prior to ' . FIRST_LWTV_YEAR . '. Would you like to ask me something else? ' . $helptext;
 			$endsession = false;
 		} elseif ( $type == 'LaunchRequest' ) {
 			$output     = 'Welcome to the Lez Watch T. V. skill. ' . $helptext;
@@ -140,25 +139,21 @@ class LWTV_Alexa_Skills {
 				case 'CharOTD':
 					$data       = get_option( 'lwtv_otd' );
 					$post_id    = $data[ 'character' ][ 'post' ];
-					$output     = 'The LezWatch TV character of the day is '. get_the_title( $post_id ) .'.';
+					$output     = 'The Lez Watch T. V. character of the day is '. get_the_title( $post_id ) .'.';
 					break;
 				case 'ShowOTD':
 					$data       = get_option( 'lwtv_otd' );
 					$post_id    = $data[ 'show' ][ 'post' ];
-					$output     = 'The LezWatch TV show of the day is '. get_the_title( $post_id ) .'.';
+					$output     = 'The Lez Watch T. V. show of the day is '. get_the_title( $post_id ) .'.';
 					break;
-				case 'CharNew':
+				case 'WhatsNew':
 					include_once( 'alexa/newest.php' );
-					$output     = LWTV_Alexa_Newest::characters();
-					break;
-				case 'ShowNew':
-					include_once( 'alexa/newest.php' );
-					$output     = LWTV_Alexa_Newest::shows();
+					$output     = LWTV_Alexa_Newest::whats_new();
 					break;
 				case 'WhoDied':
-					if ( $date == false ) {
+					if ( !$date ) {
 						include_once( 'alexa/newest.php' );
-						$output = LWTV_Alexa_Newest::death();
+						$output = 'The last character on Lez Watch T. V. to die was ' . LWTV_Alexa_Newest::death() . '.';
 					} else {
 						include_once( 'alexa/byq.php' );
 						$output = LWTV_Alexa_BYQ::on_a_day( $timestamp );
@@ -167,6 +162,14 @@ class LWTV_Alexa_Skills {
 				case 'WhatHappened':
 					include_once( 'alexa/this-year.php' );
 					$output     = LWTV_Alexa_This_Year::what_happened( $date );
+					break;
+				case 'WhoAreYou':
+					if ( !$actor ) {
+						$output = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+					} else {
+						include_once( 'alexa/who-are-you.php' );
+						$output     = LWTV_Alexa_Who::who_is( $name );
+					}
 					break;
 				case 'AMAZON.HelpIntent':
 					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female and trans characters on TV. ' . $helptext;
@@ -206,11 +209,11 @@ class LWTV_Alexa_Skills {
 		$timestamp  = ( strtotime( $date ) == false )? false : strtotime( $date ) ;
 		$helptext   = 'You can find out who died on specific dates by asking me questions like "who died" or "who died today" or "who died on March 3rd" or even "How many died in 2017." If no one died then, I\'ll let you know.';
 		if ( $type == 'LaunchRequest' ) {
-			$whodied = 'Welcome to the LezWatch TV Bury Your Queers skill. ' . $helptext;
+			$whodied = 'Welcome to the Lez Watch T. V. Bury Your Queers skill. ' . $helptext;
 			$endsession = false;
 		} else {
 			if ( $intent == 'AMAZON.HelpIntent' ) {
-				$whodied = 'This is the Bury Your Queers skill by LezWatch TV, home of the world\'s greatest database of queer female on TV. ' . $helptext;
+				$whodied = 'This is the Bury Your Queers skill by Lez Watch T. V., home of the world\'s greatest database of queer female on TV. ' . $helptext;
 				$endsession = false;
 			} elseif ( $intent == 'AMAZON.StopIntent' || $intent == 'AMAZON.CancelIntent' ) {
 				// Do nothing
