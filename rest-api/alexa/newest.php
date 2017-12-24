@@ -15,6 +15,20 @@ if ( ! defined('WPINC' ) ) die;
 class LWTV_Alexa_Newest {
 
 	/**
+	 * What's New Overall
+	 * 
+	 * @access public
+	 * @return string
+	 */
+	public function whats_new() {
+		$character = self::characters();
+		$show      = self::shows();
+		$death     = self::death();
+
+		$output = 'The latest character added to Lez Watch T. V. was ' . $character . '. The latest show added was ' . $show . '. And the latest character who died was ' . $death . '.';
+	}
+
+	/**
 	 * Newest Character.
 	 * 
 	 * @access public
@@ -37,7 +51,7 @@ class LWTV_Alexa_Newest {
 			$data['date'] = get_the_date( 'l F j, Y', $id );
 		}
 		wp_reset_postdata();
-		$output = 'The latest character added to LezWatch TV was '. $data['name'] .' on '. $data['date'] .'.';
+		$output = $data['name'] .' on '. $data['date'];
 		
 		return $output;
 	}
@@ -65,7 +79,7 @@ class LWTV_Alexa_Newest {
 			$data['date'] = get_the_date( 'l F j, Y', $id );
 		}
 		wp_reset_postdata();
-		$output = 'The latest show added to LezWatch TV was '. $data['name'] .' on '. $data['date'] .'.';
+		$output = $data['name'] .' on '. $data['date'];
 		
 		return $output;
 	}
@@ -79,7 +93,7 @@ class LWTV_Alexa_Newest {
 	public function death() {
 		$data   = LWTV_BYQ_JSON::last_death();
 		$name   = $data['name'];
-		$output = 'The last queer female to die was '. $name .' on '. date( 'F j, Y', $data['died'] ) .'.';
+		$output = $name .' on '. date( 'F j, Y', $data['died'] );
 		
 		return $output;
 	}

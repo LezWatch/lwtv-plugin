@@ -24,7 +24,7 @@ class LWTV_Alexa_This_Year {
 	 */
 	public function what_happened( $date = false ) {
 
-		$date  = ( $date == false )? date('Y') : $date;
+		$date  = ( $date == false )? date('Y-m-d') : $date;
 		$today = ( $date !== date( 'Y-m-d' ) )? false : true;
 
 		// Figure out what date we're working with here...
@@ -48,10 +48,10 @@ class LWTV_Alexa_This_Year {
 		}
 
 		// Get the data
-		$count_array = LWTV_What_Happened_JSON::what_happened( $date )
+		$count_array = LWTV_What_Happened_JSON::what_happened( $date );
 
 		// Language of Death
-		$dead = 'Miraculously, no characters died!';
+		$dead = 'Miraculously, no characters died';
 			if ( $count_array['dead'] > 0 ) {
 				$dead = sprintf( _n( '%s character died', '%s characters died', $count_array['dead'] ), $count_array['dead'] );
 			}
@@ -100,11 +100,15 @@ class LWTV_Alexa_This_Year {
 		if ( $datetime->format( 'Y' ) > 2013 ) {
 			$output = $intro . ', Lez Watch T. V. made ' . $posts . ', added ' . $characters . ', and added ' . $shows . '. ' . $dead . '.';
 		} else {
-			$output = 'Looking at the history of queer female and trans characters on television, I can tell you some things about ' . $datetime->format( 'Y' ) . ' ... ' . $dead;
+			$output = 'Looking at the history of queer female and trans characters on television, I can tell you some things about ' . $datetime->format( 'Y' ) . ' ... ' . $dead . '.';
 		}
 		
 		// We always give a year overview
-		$output .= ' Also in ' . $datetime->format( 'Y' ) . ' there were ' . $on_the_air . ' with queer female or trans characters on the air. '  . $started . ' started and '  . $ended . ' ended, while .' . $death_this_year . '.';
+		$output .= ' For ' . $datetime->format( 'Y' ) . ' as a whole, there were ' . $on_the_air . ' with queer female or trans characters on the air. '  . $started . ' started and '  . $ended . ' ended.';
+		
+		if ( $format !== year ) {
+			$output .= ' Overall ' . $death_this_year . ' that year.';
+		}
 
 		return $output;
 	}
