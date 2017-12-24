@@ -96,7 +96,7 @@ class LWTV_Actors_CMB2 {
 		) );
 		// Field: Home URL
 		$field_wiki = $cmb_actorside->add_field( array(
-			'name'       => 'WikiPedia URL',
+			'name'       => 'Homepage URL',
 			'id'         => $prefix . 'homepage',
 			'type'       => 'text_url',
 			'attributes' => array(
@@ -105,7 +105,8 @@ class LWTV_Actors_CMB2 {
 		) );
 		// Field: Twiter ID
 		$field_imdb = $cmb_actorside->add_field( array(
-			'name'       => 'Twiter ID (without the @)',
+			'name'       => 'Twiter ID',
+			'desc'       => '(without the @)',
 			'id'         => $prefix . 'twitter',
 			'type'       => 'text',
 			'attributes' => array(
