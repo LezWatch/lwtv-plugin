@@ -212,6 +212,8 @@ class LWTV_Alexa_Skills {
 	 * @return void
 	 */
 	public function bury_your_queers( $type = false, $intent = false, $date = false ) {
+		
+		$notice     = 'This skill is being retired. Please install "LezWatch TV News" for future development and additional features. ';
 		$whodied    = '';
 		$endsession = true;
 		$timestamp  = ( strtotime( $date ) == false )? false : strtotime( $date ) ;
@@ -277,7 +279,7 @@ class LWTV_Alexa_Skills {
 			'response' => array (
 				'outputSpeech' => array (
 					'type' => 'PlainText',
-					'text' => $whodied,
+					'text' => $notice . $whodied,
 				),
 				'shouldEndSession' => $endsession,
 			)
