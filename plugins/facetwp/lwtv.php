@@ -67,6 +67,15 @@ class LWTV_FacetWP {
 			return false; // skip default indexing
 		}
 
+		// Is Queer
+		// Change 'on' to 'yes' 
+		if ( 'is_queer' == $params['facet_name'] ) {
+			$params['facet_value'] = $params['facet_value'];
+			$params['facet_display_value'] = ( $params['facet_display_value'] == 'on' )? 'Yes' : 'No';
+			$class->insert( $params );
+			return false; // skip default indexing
+		}
+
 		// Trigger Warning
 		// If 'on' change to 'High', else capitalize
 		if ( 'show_trigger_warning' == $params['facet_name'] ) {

@@ -83,13 +83,15 @@ class WP_CLI_LWTV_ShowCalc_Command extends WP_CLI_Command {
 					$sexuality_terms = get_the_terms( $post_id, 'lez_actor_sexuality', true );
 
 					// If no gender is set OR there's an error...
-					if ( !$gender_terms || is_wp_error( $gender_terms ) ) 
+					if ( !$gender_terms || is_wp_error( $gender_terms ) ) {
 						wp_set_object_terms( $post_id, 'cis-woman', 'lez_actor_gender', false );
-						$output .= ', added cisgender';
+						$output .= ', added cis-woman';
+					}
 					// Ditto Gender
-					if ( !$sexuality_terms || is_wp_error( $sexuality_terms ) ) 
+					if ( !$sexuality_terms || is_wp_error( $sexuality_terms ) ) {
 						wp_set_object_terms( $post_id, 'heterosexual', 'lez_actor_sexuality', false );
 						$output .= ', added heterosexual';
+					}
 				}
 
 			} else {
