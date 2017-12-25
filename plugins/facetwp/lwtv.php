@@ -70,8 +70,8 @@ class LWTV_FacetWP {
 		// Is Queer
 		// Change 'on' to 'yes' 
 		if ( 'is_queer' == $params['facet_name'] ) {
-			$params['facet_value'] = $params['facet_value'];
-			$params['facet_display_value'] = ( $params['facet_display_value'] == 'on' )? 'Yes' : 'No';
+			$params['facet_value'] = ( $params['facet_value'] == '1' )? 'yes' : 'no';
+			$params['facet_display_value'] = ( $params['facet_display_value'] == '1' )? 'Yes' : 'No';
 			$class->insert( $params );
 			return false; // skip default indexing
 		}
