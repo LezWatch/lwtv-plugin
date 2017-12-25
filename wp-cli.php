@@ -84,7 +84,7 @@ class WP_CLI_LWTV_ShowCalc_Command extends WP_CLI_Command {
 
 					// If no gender is set OR there's an error...
 					if ( !$gender_terms || is_wp_error( $gender_terms ) ) 
-						wp_set_object_terms( $post_id, 'cisgender', 'lez_actor_gender', false );
+						wp_set_object_terms( $post_id, 'cis-woman', 'lez_actor_gender', false );
 						$output .= ', added cisgender';
 					// Ditto Gender
 					if ( !$sexuality_terms || is_wp_error( $sexuality_terms ) ) 
