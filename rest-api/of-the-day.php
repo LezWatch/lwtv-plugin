@@ -91,6 +91,13 @@ class LWTV_OTD_JSON {
 					'post_type'      => 'post_type_' . $type . 's',
 					'orderby'        => 'rand', 
 					'posts_per_page' =>'1',
+					'meta_query' => array( 
+						array(
+							'key'     => '_thumbnail_id',
+							'value'   => '949', // Mystery woman
+							'compare' => '!=',
+						)
+					)
 				);
 				$post = new WP_Query( $args );
 	
