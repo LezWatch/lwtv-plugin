@@ -95,7 +95,7 @@ class LWTV_Actors_CMB2 {
 			),
 		) );
 		// Field: Home URL
-		$field_wiki = $cmb_actorside->add_field( array(
+		$field_home = $cmb_actorside->add_field( array(
 			'name'       => 'Homepage URL',
 			'id'         => $prefix . 'homepage',
 			'type'       => 'text_url',
@@ -104,13 +104,22 @@ class LWTV_Actors_CMB2 {
 			),
 		) );
 		// Field: Twiter ID
-		$field_imdb = $cmb_actorside->add_field( array(
+		$field_twitter = $cmb_actorside->add_field( array(
 			'name'       => 'Twiter ID',
 			'desc'       => '(without the @)',
 			'id'         => $prefix . 'twitter',
 			'type'       => 'text',
 			'attributes' => array(
 				'placeholder' => 'Ex: aliliebert',
+			),
+		) );
+		// Field: Twiter ID
+		$field_instagram = $cmb_actorside->add_field( array(
+			'name'       => 'Instagram ID',
+			'id'         => $prefix . 'instagram',
+			'type'       => 'text',
+			'attributes' => array(
+				'placeholder' => 'Ex: whododatlikedat',
 			),
 		) );
 		// Actor Sidebar Grid
