@@ -54,6 +54,9 @@ class LWTV_Shortcodes {
 		
 		// A little sanity checking
 		// If it's not a valid date, we defaiult to the time of the post
+		if ( !preg_match( '/^[0-9]{4}-[0-9]{2}$/', $attributes['date'] ) ) {
+			$attributes['date'] = $default;
+		}
 		$datetime = DateTime::createFromFormat( 'Y-m', $attributes['date'] );
 		$errors   = DateTime::getLastErrors();
 		if ( !empty( $errors[ 'warning_count' ] ) ) {
