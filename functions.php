@@ -74,10 +74,10 @@ include_once( 'cpts/actors.php' );
  * Include JSON API related tools
  */
 
-include_once( 'rest-api/bury-your-queers.php' );
-include_once( 'rest-api/stats.php' );
-include_once( 'rest-api/of-the-day.php' );
 include_once( 'rest-api/alexa-skills.php' );
+include_once( 'rest-api/bury-your-queers.php' );
+include_once( 'rest-api/of-the-day.php' );
+include_once( 'rest-api/stats.php' );
 include_once( 'rest-api/what-happened.php' );
 
 /* 

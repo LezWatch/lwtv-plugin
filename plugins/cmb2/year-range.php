@@ -45,7 +45,6 @@ class LWTV_CMB2_DYR {
 	public function jt_cmb2_date_year_range( $field, $value, $object_id, $object_type, $type_object ) {
 		$earliest = $field->options( 'earliest' );
 		$earliest = $earliest ? absint( $earliest ) : 1900;
-		$earliest = ( defined( 'FIRST_LWTV_YEAR' ) )? FIRST_LWTV_YEAR : $earliest;
 
 		$start_reverse_sort = $field->options( 'start_reverse_sort' );
 		$start_reverse_sort = $start_reverse_sort ? true : false;
