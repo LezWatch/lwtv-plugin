@@ -147,6 +147,15 @@ class LWTV_Shows_Calculate {
 			wp_reset_query();
 		}
 
+/*
+		$lezshows_char_gender    = array();
+		$lezshows_char_romantic  = array();
+		$lezshows_char_sexuality = array();
+		update_post_meta( $post_id, 'lezshows_char_gender', $lezshows_char_gender );
+		update_post_meta( $post_id, 'lezshows_char_romantic', $lezshows_char_romantic );
+		update_post_meta( $post_id, 'lezshows_char_sexuality', $lezshows_char_sexuality );
+*/
+
 		// Return Queers!
 		if ( $type == 'count' )     return $queercount;
 		if ( $type == 'dead' )      return $deadcount;
@@ -159,37 +168,41 @@ class LWTV_Shows_Calculate {
 	 */
 	public static function show_character_score( $post_id, $type = '' ) {
 
+		// Base Score
+		$score = 0;
+
 		// Count characters
-		$number_chars = self::count_queers( $post_id, 'count' );
-		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
+		$number_chars     = self::count_queers( $post_id, 'count' );
+		$number_dead      = self::count_queers( $post_id, 'dead' );
+		$number_queerirl  = self::count_queers( $post_id, 'queer-irl' );
 		
 		// If there are no chars, the score will be zero, so bail early.
-		if ( $number_chars == 0 ) return $number_chars;
-
-		switch( $type ) {
-			
-			// Calculate the 'alive' score
-			// Value of alive divided by total, multiplied by 100 
-			case 'alive':
-				// Count dead characters
-				$number_dead = self::count_queers( $post_id, 'dead' );
-				$score_alive = ( ( ( $number_chars - $number_dead ) / $number_chars ) * 100 );
-				$score       = $score_alive;
-				update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
-				break;
-
-			// Calculate the value of cliches
-			// If everyone is queer IRL OR have no cliche, it's 100
-			// Otherwise average the scores of queer IRL and no-cliches
-			case 'cliches':
-				$number_queerirl  = self::count_queers( $post_id, 'queer-irl' );
-				$number_none      = self::count_queers( $post_id, 'none' );
-				$score_characters = ( ( ( $number_queerirl + $number_none ) / $number_chars ) * 100 );
-				$score            = $score_characters;
-				break;
-			default:
-				$score = '';
+		if ( $number_chars !== 0 ) {
+			switch( $type ) {
+				
+				// Calculate the 'alive' score
+				// Value of alive divided by total, multiplied by 100 
+				case 'alive':
+					// Count dead characters
+					$score_alive = ( ( ( $number_chars - $number_dead ) / $number_chars ) * 100 );
+					$score       = $score_alive;
+					break;
+	
+				// Calculate the value of cliches
+				// If everyone is queer IRL OR have no cliche, it's 100
+				// Otherwise average the scores of queer IRL and no-cliches
+				case 'cliches':
+					$number_none      = self::count_queers( $post_id, 'none' );
+					$score_characters = ( ( ( $number_queerirl + $number_none ) / $number_chars ) * 100 );
+					$score            = $score_characters;
+					break;
+				default:
+					$score = '';
+			}
 		}
+
+		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
+		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
 
 		return $score;
 	}

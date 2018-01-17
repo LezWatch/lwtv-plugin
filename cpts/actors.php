@@ -162,7 +162,7 @@ class LWTV_CPT_Actors {
 	/*
 	 * Save post meta for shows on CHARACTER update
 	 *
-	 * This will update the metakey 'lezshows_char_count' on save
+	 * This will update the metakey 'lezactors_char_count' on save
 	 *
 	 * @param int $post_id The post ID.
 	 */
