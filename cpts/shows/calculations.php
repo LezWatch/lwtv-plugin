@@ -128,33 +128,21 @@ class LWTV_Shows_Calculate {
 
 				$charactersloop->the_post();
 				$char_id     = get_the_ID();
-				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true);
-				$is_dead     = has_term( 'dead', 'lez_cliches', $char_id);
-				$is_none     = has_term( 'none', 'lez_cliches', $char_id);
-				$is_queerirl = has_term( 'queer-irl', 'lez_cliches', $char_id);
+				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
 				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
 					foreach( $shows_array as $char_show ) {
 						if ( $char_show['show'] == $post_id ) {
 							$queercount++;
-							if ( $is_dead == true ) $deadcount++;
-							if ( $is_none == true ) $nonecount++;
-							if ( $is_queerirl == true ) $queerirlcount++;
+							if ( has_term( 'dead', 'lez_cliches', $char_id ) )      $deadcount++;
+							if ( has_term( 'none', 'lez_cliches', $char_id ) )      $nonecount++;
+							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) $queerirlcount++;
 						}
 					}
 				}
 			}
 			wp_reset_query();
 		}
-
-/*
-		$lezshows_char_gender    = array();
-		$lezshows_char_romantic  = array();
-		$lezshows_char_sexuality = array();
-		update_post_meta( $post_id, 'lezshows_char_gender', $lezshows_char_gender );
-		update_post_meta( $post_id, 'lezshows_char_romantic', $lezshows_char_romantic );
-		update_post_meta( $post_id, 'lezshows_char_sexuality', $lezshows_char_sexuality );
-*/
 
 		// Return Queers!
 		if ( $type == 'count' )     return $queercount;
@@ -172,9 +160,9 @@ class LWTV_Shows_Calculate {
 		$score = 0;
 
 		// Count characters
-		$number_chars     = self::count_queers( $post_id, 'count' );
-		$number_dead      = self::count_queers( $post_id, 'dead' );
-		$number_queerirl  = self::count_queers( $post_id, 'queer-irl' );
+		$number_chars     = max( 0, self::count_queers( $post_id, 'count' ) );
+		$number_dead      = max( 0, self::count_queers( $post_id, 'dead' ) );
+		$number_queerirl  = max( 0, self::count_queers( $post_id, 'queer-irl' ) );
 		
 		// If there are no chars, the score will be zero, so bail early.
 		if ( $number_chars !== 0 ) {
