@@ -95,6 +95,9 @@ class LWTV_Stats {
 			unset($array['notcurrent']);
 		}
 
+		// Scores
+		if ( $data == 'scores' ) $array = self::scores( $post_type );
+
 		// Custom call for show roles of character in each role
 		if ( $data == 'charroles' ) {
 			$array = self::show_roles();
@@ -239,7 +242,7 @@ class LWTV_Stats {
 	 * @param array $meta_array Meta terms to loop through
 	 * @param string $key Post Meta Key name (i.e. lezchars_gender)
 	 * @param string $taxonomy Taxonomy to restrict to (default lez_cliches)
-	 * @param string $field Taxonomy to restrict to (default lez_cliches)
+	 * @param string $field Taxonomy to restrict to (default dead)
 	 *
 	 * @return array
 	 */
@@ -289,7 +292,7 @@ class LWTV_Stats {
 	 */
 	static function death_year() {
 		// Death by year
-		$year_first = 1961;
+		$year_first = LWTV_FIRST_YEAR;
 		$year_deathlist_array = array();
 		foreach (range(date('Y'), $year_first) as $x) {
 			$year_deathlist_array[$x] = $x;
@@ -300,9 +303,9 @@ class LWTV_Stats {
 			$year_death_query = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 
 			$year_death_array[$year] = array(
-				'name' => $year,
+				'name'  => $year,
 				'count' => $year_death_query->post_count,
-				'url' => home_url( '/this-year/'.$year.'/')
+				'url'   => home_url( '/this-year/'.$year.'/')
 			);
 		}
 		return $year_death_array;
@@ -419,6 +422,30 @@ class LWTV_Stats {
 		}
 
 		return $array;
+	}
+
+	/*
+	 * Statistics Scores
+	 *
+	 * @return array
+	 */
+	static function scores( $post_type ) {
+		$the_queery   = LWTV_Loops::post_type_query( $post_type );
+		$scores_array = array();
+		if ( $the_queery->have_posts() ) {
+			while ( $the_queery->have_posts() ) {
+				$the_queery->the_post();
+				$post = get_post();
+				$scores_array[ $post->ID ] = array(
+					'id'    => $post->ID,
+					'count' => get_post_meta( $post->ID, 'lezshows_the_score', true ),
+					'url'   => get_the_permalink( $post->ID ),
+				);
+			}
+			wp_reset_query();
+		}
+		
+		return $scores_array;
 	}
 
 	/**
@@ -699,7 +726,7 @@ class LWTV_Stats {
 	 * @return Content
 	 */
 	static function averages( $subject, $data, $array, $count ) {
-		$N = count($array);
+		$N = count( $array );
 		$sum = 0;
 
 		foreach ( $array as $item ) {
