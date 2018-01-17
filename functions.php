@@ -1,9 +1,9 @@
 <?php
 /*
- Plugin Name: LezWatch TV
+ Plugin Name: Core LezWatchTV Plugin
  Plugin URI:  https://lezwatchtv.com
  Description: All the base code for LezWatch TV - If this isn't active, the site dies. An ugly death.
- Version: 2.1
+ Version: 2.2
  Author: Mika Epstein
 */
 
@@ -24,6 +24,7 @@ class LWTV_Functions {
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init') );
 		add_action( 'init', array( $this, 'init') );
+		add_filter( 'http_request_args', array( $this, 'disable_wp_update' ), 10, 2 );
 	}
 
 	/**
@@ -44,6 +45,25 @@ class LWTV_Functions {
 		if ( is_plugin_active( 'wordpress-seo/wp-seo.php' ) || is_plugin_active( 'wordpress-seo-premium/wp-seo-premium.php' ) || defined( 'WPSEO_VERSION' ) ) {
 			require_once( 'plugins/yoast-seo.php' );
 		}
+	}
+
+	/**
+	 * Disable WP from updating this plugin..
+	 * 
+	 * @access public
+	 * @param mixed $return
+	 * @param mixed $url
+	 * @return $return
+	 */
+	public function disable_wp_update( $return, $url ) {
+		if ( 0 === strpos( $url, 'https://api.wordpress.org/plugins/update-check/' ) ) {
+			$my_plugin = plugin_basename( __FILE__ );
+			$plugins = json_decode( $return['body']['plugins'], true );
+			unset( $plugins['plugins'][$my_plugin] );
+			unset( $plugins['active'][array_search( $my_plugin, $plugins['active'] )] );
+			$return['body']['plugins'] = json_encode( $plugins );
+		}
+		return $return;
 	}
 
 }
@@ -74,10 +94,10 @@ include_once( 'cpts/actors.php' );
  * Include JSON API related tools
  */
 
-include_once( 'rest-api/bury-your-queers.php' );
-include_once( 'rest-api/stats.php' );
-include_once( 'rest-api/of-the-day.php' );
 include_once( 'rest-api/alexa-skills.php' );
+include_once( 'rest-api/bury-your-queers.php' );
+include_once( 'rest-api/of-the-day.php' );
+include_once( 'rest-api/stats.php' );
 include_once( 'rest-api/what-happened.php' );
 
 /* 
@@ -87,7 +107,6 @@ include_once( 'rest-api/what-happened.php' );
 include_once( 'cron.php' );
 include_once( 'custom-loops.php' );
 include_once( 'search.php' );
-include_once( 'seo.php' );
 include_once( 'shortcodes.php' );
 include_once( 'sort-stopwords.php' );
 include_once( 'statistics.php' );
