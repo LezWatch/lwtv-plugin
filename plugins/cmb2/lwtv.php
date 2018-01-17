@@ -62,7 +62,15 @@ class LWTV_CMB2 {
 		$post_options = array();
 		if ( $posts ) {
 			foreach ( $posts as $post ) {
-				$post_options[ $post->ID ] = $post->post_title;
+				$post_title = $post->post_title;
+				// If we're an actor, we should check for QUEER
+				if ( $query_args['post_type'] == 'post_type_actors' ) {
+					if ( get_post_meta( $post->ID, 'lezactors_queer', true ) ) {
+						$post_title .= ' (QUEER IRL)';
+					}
+				}
+				$post_options[ $post->ID ] = $post_title;
+
 			}
 		}
 
