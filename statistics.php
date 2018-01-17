@@ -137,7 +137,9 @@ class LWTV_Stats {
 		if ( $format == 'count' )      return $count;
 		if ( $format == 'list' )       self::lists( $subject, $data, $array, $count );
 		if ( $format == 'percentage' ) self::percentages( $subject, $data, $array, $count );
-		if ( $format == 'average' )    self::averages( $subject, $data, $array, $count );
+		if ( $format == 'average' )    self::averages( $subject, $data, $array, $count, 'average' );
+		if ( $format == 'high' )    self::averages( $subject, $data, $array, $count, 'high' );
+		if ( $format == 'low' )    self::averages( $subject, $data, $array, $count, 'low' );
 		if ( $format == 'array' )      return $array;
 	}
 
@@ -470,7 +472,6 @@ class LWTV_Stats {
 						break;
 					case 'actors':
 						$data = get_post_meta( get_the_id(), 'lezactors_char_count', true );
-						//$data = lwtv_yikes_actordata( get_the_ID(), 'characters' );
 						break;
 				}
 				// Now that we have the data, let's count and store
@@ -725,17 +726,44 @@ class LWTV_Stats {
 	 *
 	 * @return Content
 	 */
-	static function averages( $subject, $data, $array, $count ) {
-		$N = count( $array );
-		$sum = 0;
+	static function averages( $subject, $data, $array, $count, $type = 'average' ) {
 
-		foreach ( $array as $item ) {
-			$sum = $sum + $item['count'];
+		$valid_types = array( 'high', 'low', 'average' );
+		if ( !in_array( $type, $valid_types ) ) $type = 'average';
+
+		switch ( $type ) {
+			case 'average':
+				$N   = count( $array );
+				$sum = 0;
+				foreach ( $array as $item ) { $sum = $sum + $item['count']; }
+				$average = round ($sum / $N);
+				$return  = $average;
+				break;
+			case 'high':
+				$high = 0;
+				foreach( $array as $key => $value ) {
+					if( $value['count'] > $high ) {
+						$high = $value['count'];
+						if ( $subject = 'shows' ) {
+							$high .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
+						}
+					}
+				}
+				$return = $high;
+				break;
+			case 'low':
+				$low = $number = 0;
+				foreach( $array as $key => $value ) {
+					if( $value['count'] == 0 ) {
+						if ( $subject = 'shows' ) {
+							$number++;
+						}
+					}
+				}
+				$return = $low . ' (' . $number . ' shows total)';
+				break;
 		}
-
-		$average = round ($sum / $N);
-
-		echo $average;
+		echo $return;
 	}
 
 	/**
