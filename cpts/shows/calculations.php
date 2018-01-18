@@ -196,6 +196,67 @@ class LWTV_Shows_Calculate {
 	}
 
 	/**
+	 * Calculate show character data.
+	 */
+	public static function show_character_data( $post_id ) {
+
+		// If this isn't a show post, return nothing
+		if ( get_post_type( $post_id ) !== 'post_type_shows' ) return;
+
+		// Create a massive array of all the terms we care about...
+		$valid_taxes = array( 
+			'gender'    => 'lez_gender',
+			'sexuality' => 'lez_sexuality',
+			'romantic'  => 'lez_romantic',
+		);
+		$tax_data = array();
+
+		foreach ( $valid_taxes as $title => $taxonomy ) {
+			$terms = get_terms( $taxonomy );
+			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+				$tax_data[ $title ] = array();
+				foreach ( $terms as $term ) {
+					$tax_data[ $title ][ $term->slug ] = 0;
+				}
+			}
+		}
+
+		// Loop to get the list of characters
+		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
+
+		// Store as array to defeat some stupid with counting and prevent querying the database too many times
+		if ($charactersloop->have_posts() ) {
+			while ( $charactersloop->have_posts() ) {
+
+				$charactersloop->the_post();
+				$char_id     = get_the_ID();
+				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
+					foreach( $shows_array as $char_show ) {
+						if ( $char_show['show'] == $post_id ) {
+							foreach ( $valid_taxes as $title => $taxonomy ) {
+								$this_term = get_the_terms( $char_id, $taxonomy, true );
+								if ( $this_term && ! is_wp_error( $this_term ) ) {
+									foreach( $this_term as $term ) {
+										$tax_data[ $title ][ $term->slug ]++;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			wp_reset_query();
+		}
+		
+		foreach ( $valid_taxes as $title => $taxonomy ) { 
+			update_post_meta( $post_id, 'lezshows_char_' . $title , $tax_data[ $title ] );
+		}
+
+	}
+
+	/**
 	 * do_the_math function.
 	 *
 	 * This will update the following metakeys on save:
@@ -213,6 +274,9 @@ class LWTV_Shows_Calculate {
 		$score_show_rating  = self::show_score( $post_id );
 		$score_chars_alive  = self::show_character_score( $post_id, 'alive' );
 		$score_chars_cliche = self::show_character_score( $post_id, 'cliches' );
+
+		// Generate character data
+		self::show_character_data( $post_id );
 
 		// Calculate the full score
 		$calculate = ( $score_show_rating + $score_chars_alive + $score_chars_cliche ) / 3;

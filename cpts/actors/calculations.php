@@ -71,13 +71,9 @@ class LWTV_Actors_Calculate {
 	 */
 	public static function do_the_math( $post_id ) {
 
-		// Count characters
-		$number_chars = self::count_queers( $post_id, 'count' );
-		update_post_meta( $post_id, 'lezactors_char_count', $number_chars );
-
-		// Count Dead
-		$number_dead  = self::count_queers( $post_id, 'dead' );
-		update_post_meta( $post_id, 'lezactors_dead_count', $number_dead );
+		// Calculate Actor Data:
+		update_post_meta( $post_id, 'lezactors_char_count', self::count_queers( $post_id, 'count' ) );
+		update_post_meta( $post_id, 'lezactors_dead_count', self::count_queers( $post_id, 'dead' ) );
 
 		// Is Queer?
 		$is_queer     = ( LWTV_Loops::is_actor_queer( $post_id ) == 'yes' )? true : false;
