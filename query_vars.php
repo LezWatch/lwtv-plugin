@@ -32,9 +32,10 @@ class LWTV_Query_Vars {
 
 		// The custom queries that have special pages
 		$this->lez_query_args = array(
-			'role'       => 'roletype',
-			'statistics' => 'statistics',
-			'this-year'  => 'thisyear',
+			'role'        => 'roletype',
+			'statistics'  => 'statistics',
+			'this-year'   => 'thisyear',
+			'show-finder' => 'showfinder',
 		);
 
 	}
@@ -70,7 +71,7 @@ class LWTV_Query_Vars {
 					'^'.$slug.'/([^/]+)/page/([0-9]+)?/?$',
 					'index.php?pagename='.$slug.'&'.$query.'=$matches[1]&paged=$matches[2]',
 					'top'
-				);					
+				);
 			}
 			
 		} else {
