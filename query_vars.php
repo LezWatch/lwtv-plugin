@@ -35,7 +35,6 @@ class LWTV_Query_Vars {
 			'role'        => 'roletype',
 			'statistics'  => 'statistics',
 			'this-year'   => 'thisyear',
-			'show-finder' => 'showfinder',
 		);
 
 	}
