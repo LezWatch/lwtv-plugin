@@ -171,8 +171,8 @@ class LWTV_Shows_Calculate {
 				$score = ( ( $havegood / $count_tropes ) * 100 );
 			}
 
-			// Dead Queers: halve the score
-			if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) $score = ( $score / 2 );
+			// Dead Queers: remove one-third of the score (Max 56.25)
+			if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) $score = ( $score * .75 );
 		}
 
 		return $score;
