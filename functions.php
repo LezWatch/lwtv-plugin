@@ -84,7 +84,6 @@ if ( class_exists( 'FacetWP' ) ) {
 /* 
  * Include Custom Post Types
  */
-
 include_once( 'cpts/characters.php' );
 include_once( 'cpts/shows.php' );
 include_once( 'cpts/all-cpts.php' );
@@ -93,23 +92,28 @@ include_once( 'cpts/actors.php' );
 /* 
  * Include JSON API related tools
  */
-
 include_once( 'rest-api/alexa-skills.php' );
 include_once( 'rest-api/bury-your-queers.php' );
+include_once( 'rest-api/imdb.php' );
 include_once( 'rest-api/of-the-day.php' );
 include_once( 'rest-api/stats.php' );
 include_once( 'rest-api/what-happened.php' );
 
+/*
+ * Statistics
+ */
+include_once( 'statistics/_main.php' );
+include_once( 'statistics/array.php' );
+include_once( 'statistics/output.php' );
+
 /* 
  * Include Misc
  */
-
 include_once( 'cron.php' );
 include_once( 'custom-loops.php' );
 include_once( 'search.php' );
 include_once( 'shortcodes.php' );
 include_once( 'sort-stopwords.php' );
-include_once( 'statistics.php' );
 include_once( 'query_vars.php' );
 
 /**

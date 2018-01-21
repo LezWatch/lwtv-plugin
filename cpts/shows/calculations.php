@@ -22,13 +22,13 @@ class LWTV_Shows_Calculate {
 		if ( !isset( $post_id ) ) return;
 
 		// Get base ratings
-		// Multiply by 3 for a max of 45
+		// Multiply by 3 for a max of 30
 		$realness   = min( (int) get_post_meta( $post_id, 'lezshows_realness_rating', true) , 5 );
 		$quality    = min( (int) get_post_meta( $post_id, 'lezshows_quality_rating', true) , 5 );
 		$screentime = min( (int) get_post_meta( $post_id, 'lezshows_screentime_rating', true) , 5 );
-		$score  = ( $realness + $quality + $screentime ) * 3;
+		$score  = ( $realness + $quality + $screentime ) * 2;
 		
-		// Add in Thumb Score Rating
+		// Add in Thumb Score Rating: 10, 5, -10
 		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
 			case "Yes":
 				$score += 10;
@@ -38,17 +38,15 @@ class LWTV_Shows_Calculate {
 			case "No":
 				$score -= 10;
 				break;
-			default:
-				$score += 0;
 		}
 
-		// Add in Star Rating
+		// Add in Star Rating: 20, 10, 5, -15
 		$star_terms = get_the_terms( $post_id, 'lez_stars' );
 		$color = ( !empty( $star_terms ) && !is_wp_error( $star_terms ) )? $star_terms[0]->slug : get_post_meta( $post_id, 'lez_stars', true );
 		
 		switch ( $color ) {
 			case "gold":
-				$score += 15;
+				$score += 20;
 				break;
 			case "silver":
 				$score += 10;
@@ -57,13 +55,11 @@ class LWTV_Shows_Calculate {
 				$score += 5;
 				break;
 			case "anti":
-				$score -= 10;
+				$score -= 15;
 				break;
-			default:
-				$score += 0;
 		}
 
-		// Trigger Warning
+		// Trigger Warning: -5, -10, -15
 		$trigger_terms = get_the_terms( $post_id, 'lez_triggers' );
 		$trigger = ( !empty( $trigger_terms ) && !is_wp_error( $trigger_terms ) )? $trigger_terms[0]->slug : get_post_meta( $post_id, 'lezshows_triggerwarning', true );
 		switch ( $trigger ) {
@@ -78,26 +74,11 @@ class LWTV_Shows_Calculate {
 			case "low":
 				$score -= 5;
 				break;
-			default:
-				$score -= 0;
 		}
 
-		// Trope Math
-		$count_tropes = count( wp_get_post_terms( $post_id, 'lez_tropes' ) );
-		$good_tropes  = array( 'happy-ending', 'everyones-queer', 'coming-out' );
-		
-		if ( has_term( 'none', 'lez_tropes', $post_id ) ) $score += 15;
-
-		foreach ( $good_tropes as $trope ) {
-			$value = ( $count_tropes == 1 )? 10 : 5;
-			if ( has_term( $trope, 'lez_tropes', $post_id ) ) $score += $value;
-		}
-
-		if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) $score -= 15;
-
-		// Shows We Love
+		// Shows We Love: 40 points
 		if ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) == 'on' ) 
-			$score += 15;
+			$score += 40;
 
 		return $score;
 	}
@@ -145,10 +126,56 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Return Queers!
-		if ( $type == 'count' )     return $queercount;
-		if ( $type == 'dead' )      return $deadcount;
-		if ( $type == 'none' )      return $nonecount;
-		if ( $type == 'queer-irl' ) return $queerirlcount;
+		switch ( $type ) {
+			case 'count':
+				$return = $queercount;
+				break;
+			case 'dead':
+				$return = $deadcount;
+				break;
+			case 'none':
+				$return = $nonecount;
+				break;
+			case 'queer-irl':
+				$return = $queerirlcount;
+				break;
+		}
+		
+		return $return;
+	}
+
+	/**
+	 * Calculate show tropes score.
+	 */
+	public static function show_tropes_score( $post_id ) {
+
+		$score        = 0;
+		$count_tropes = count( wp_get_post_terms( $post_id, 'lez_tropes' ) );
+		$good_tropes  = array( 'happy-ending', 'everyones-queer', 'coming-out' );
+		
+		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
+			// No tropes: 100
+			$score = 100;
+		} else {
+			// Calculate how many good tropes a show has
+			$havegood = 0;
+			foreach ( $good_tropes as $trope ) {
+				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
+			}
+
+			if ( $havegood == $count_tropes ) { 
+				// If tropes are only good, but not NONE: 85
+				$score = 85;
+			} else {
+				// Percentage of good to total (Max 75)
+				$score = ( ( $havegood / $count_tropes ) * 100 );
+			}
+
+			// Dead Queers: remove one-third of the score (Max 56.25)
+			if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) $score = ( $score * .75 );
+		}
+
+		return $score;
 	}
 
 	/**
@@ -170,6 +197,7 @@ class LWTV_Shows_Calculate {
 				
 				// Calculate the 'alive' score
 				// Value of alive divided by total, multiplied by 100 
+				// If they're all alive, it's a 100
 				case 'alive':
 					// Count dead characters
 					$score_alive = ( ( ( $number_chars - $number_dead ) / $number_chars ) * 100 );
@@ -185,14 +213,76 @@ class LWTV_Shows_Calculate {
 					$score            = $score_characters;
 					break;
 				default:
-					$score = '';
+					$score = 0;
 			}
 		}
 
+		// Update post meta for counts
 		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
 		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
 
 		return $score;
+	}
+
+	/**
+	 * Calculate show character data.
+	 */
+	public static function show_character_data( $post_id ) {
+
+		// If this isn't a show post, return nothing
+		if ( get_post_type( $post_id ) !== 'post_type_shows' ) return;
+
+		// Create a massive array of all the terms we care about...
+		$valid_taxes = array( 
+			'gender'    => 'lez_gender',
+			'sexuality' => 'lez_sexuality',
+			'romantic'  => 'lez_romantic',
+		);
+		$tax_data = array();
+
+		foreach ( $valid_taxes as $title => $taxonomy ) {
+			$terms = get_terms( $taxonomy );
+			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+				$tax_data[ $title ] = array();
+				foreach ( $terms as $term ) {
+					$tax_data[ $title ][ $term->slug ] = 0;
+				}
+			}
+		}
+
+		// Loop to get the list of characters
+		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
+
+		// Store as array to defeat some stupid with counting and prevent querying the database too many times
+		if ($charactersloop->have_posts() ) {
+			while ( $charactersloop->have_posts() ) {
+
+				$charactersloop->the_post();
+				$char_id     = get_the_ID();
+				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
+					foreach( $shows_array as $char_show ) {
+						if ( $char_show['show'] == $post_id ) {
+							foreach ( $valid_taxes as $title => $taxonomy ) {
+								$this_term = get_the_terms( $char_id, $taxonomy, true );
+								if ( $this_term && ! is_wp_error( $this_term ) ) {
+									foreach( $this_term as $term ) {
+										$tax_data[ $title ][ $term->slug ]++;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			wp_reset_query();
+		}
+		
+		foreach ( $valid_taxes as $title => $taxonomy ) { 
+			update_post_meta( $post_id, 'lezshows_char_' . $title , $tax_data[ $title ] );
+		}
+
 	}
 
 	/**
@@ -213,17 +303,20 @@ class LWTV_Shows_Calculate {
 		$score_show_rating  = self::show_score( $post_id );
 		$score_chars_alive  = self::show_character_score( $post_id, 'alive' );
 		$score_chars_cliche = self::show_character_score( $post_id, 'cliches' );
+		$score_show_tropes  = self::show_tropes_score( $post_id );
+
+		// Generate character data
+		self::show_character_data( $post_id );
 
 		// Calculate the full score
-		$calculate = ( $score_show_rating + $score_chars_alive + $score_chars_cliche ) / 3;
+		$calculate = ( $score_show_rating + $score_chars_alive + $score_chars_cliche + $score_show_tropes ) / 4;
 
-		// Don't go over 100
-		$the_score = min( $calculate, 100 );
-		// Don't go under 0
-		$the_score = max( $calculate, 0 );
+		// Keep it between 0 and 100
+		if ( $calculate > 100 ) $calculate = 100;
+		if ( $calculate < 0 )   $calculate = 0;
 
 		// Update the meta
-		update_post_meta( $post_id, 'lezshows_the_score', $the_score );
+		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
 	}
 
 }

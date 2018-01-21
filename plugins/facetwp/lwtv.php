@@ -34,11 +34,25 @@ class LWTV_FacetWP {
 			return $output;
 		}, 10, 2 );
 
-		// Don't output <!--fwp-loop--> on admin pages
 		if ( is_admin() ) {
+			// Don't output <!--fwp-loop--> on admin pages
 			add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+		} else {
+			// DO output on pages where the main-query is set to true anyway. Asshols
+			add_filter( 'facetwp_is_main_query', array( $this, 'facetwp_is_main_query' ), 10, 2 );
 		}
+		
 
+	}
+
+	/**
+	 * Force Facet to show sometimes
+	 */
+	public function facetwp_is_main_query( $is_main_query, $query ) {
+		if ( isset( $query->query_vars['facetwp'] ) ) {
+			$is_main_query = true;
+		}
+		return $is_main_query;
 	}
 
 	/**
@@ -52,7 +66,7 @@ class LWTV_FacetWP {
 		// Stars
 		// Capitalize
 		if ( 'show_stars' == $params['facet_name'] ) {
-			$params['facet_value'] = $params['facet_value'];
+			$params['facet_value']         = $params['facet_value'];
 			$params['facet_display_value'] = ucfirst( $params['facet_display_value'] );
 			$class->insert( $params );
 			return false; // skip default indexing
@@ -61,7 +75,7 @@ class LWTV_FacetWP {
 		// Shows we Love
 		// Change 'on' to 'yes' 
 		if ( 'show_loved' == $params['facet_name'] ) {
-			$params['facet_value'] = $params['facet_value'];
+			$params['facet_value']         = $params['facet_value'];
 			$params['facet_display_value'] = ( $params['facet_display_value'] == 'on' )? 'Yes' : 'No';
 			$class->insert( $params );
 			return false; // skip default indexing
@@ -70,7 +84,7 @@ class LWTV_FacetWP {
 		// Is Queer
 		// Change 'on' to 'yes' 
 		if ( 'is_queer' == $params['facet_name'] ) {
-			$params['facet_value'] = ( $params['facet_value'] == '1' )? 'yes' : 'no';
+			$params['facet_value']         = ( $params['facet_value'] == '1' )? 'yes' : 'no';
 			$params['facet_display_value'] = ( $params['facet_display_value'] == '1' )? 'Yes' : 'No';
 			$class->insert( $params );
 			return false; // skip default indexing
@@ -79,7 +93,7 @@ class LWTV_FacetWP {
 		// Trigger Warning
 		// If 'on' change to 'High', else capitalize
 		if ( 'show_trigger_warning' == $params['facet_name'] ) {
-			$params['facet_value'] = $params['facet_value'];
+			$params['facet_value']         = ( $params['facet_display_value'] == 'on' )? 'high' : $params['facet_display_value'];
 			$params['facet_display_value'] = ( $params['facet_display_value'] == 'on' )? 'High' : ucfirst( $params['facet_display_value'] );
 			$class->insert( $params );
 			return false; // skip default indexing
@@ -91,9 +105,24 @@ class LWTV_FacetWP {
 		if ( 'char_actors' == $params['facet_name'] ) {
 			$values = (array) $params['facet_value'];
 			foreach ( $values as $val ) {
-				$params['facet_value'] = $val;
+				$params['facet_value']         = $val;
 				$params['facet_display_value'] = get_the_title( $val );
 				$class->insert( $params );
+			}
+			return false; // skip default indexing
+		}
+
+		// Shows by Gender, Sexuality, Romance
+		// If they have a count higher than 0, we flag them.
+		$show_char_array = array( 'show_char_gender', 'show_char_sexuality', 'show_char_romance' );
+		if ( in_array( $params['facet_name'], $show_char_array ) ) {
+			$values = (array) $params['facet_value'];
+			foreach ( $values as $title => $val ) {
+				if ( is_numeric( $val ) && $val > 0 ) {
+					$params['facet_value']         = $title;
+					$params['facet_display_value'] = ucfirst( $title );
+					$class->insert( $params );
+				}
 			}
 			return false; // skip default indexing
 		}

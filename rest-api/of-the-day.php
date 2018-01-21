@@ -54,6 +54,9 @@ class LWTV_OTD_JSON {
 		return $response;
 	}
 	
+	/*
+	 * Of the Day function
+	 */
 	public static function of_the_day( $type = 'unknown' ) {
 
 		// Valid types of 'of the day':
