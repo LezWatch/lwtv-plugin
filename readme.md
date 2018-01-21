@@ -113,7 +113,7 @@ Stored in `/rest-api/` - These files generate the REST API output.
     - When Died - "X died on date Y"
 * Of The Day - `/of-the-day.php`
     - The code that runs the X Of the Day API service. Every 24 hours, a new character and show of the day are spawned
-* Statistics - `/stats.phpp`
+* Statistics - `/stats.php`
     - JSON API version of the stats (mostly)
 * What Happened - `/what-happened.php`
     - Outputs data based on what happened in a given year.
@@ -144,34 +144,41 @@ Filter post order by for shows to NOT include the/an/a when sorting.
 
 ### Statistics
 
+Stored in `/statistics/` - These files generate the REST API output.
+
 The basic defines for all stats pages.
 
-In `class LWTV_Stats`
-
-* Generate: Statistics Base Code
-* Statistics Taxonomy Array
-* Statistics Taxonomy Array for DEAD
-* Statistics Array for DEAD by ROLE
-* Statistics Meta and Taxonomy Array
-* Statistics Meta Array
-* Statistics Death By Year
-* Statistics Death on Shows
-* Statistics Roles on Shows
-* Statistics Display Lists
-* Statistics Display Percentages
-* Statistics Display Average
-* linear regression function
-* Statistics Display Barcharts
-* Statistics Display Piecharts
-* Statistics Display Trendlines
-
-In `class LWTV_Stats_Display`
-
-* Determine icon for each stats page
-* Determine Title for each stats page
-* Determine archive intro for each stats page
-* Determine display content for each stats page
-
+* Base Code: `class LWTV_Stats` - `_main.php`
+    - Generate: Statistics Base Code
+* Arrays: `class LWTV_Stats_Arrays` - `array.php`
+    - Taxonomy Array
+    - Taxonomy Array for dead
+    - Array for dead by role
+    - Meta and Taxonomy Array
+    - Simple Meta Array
+    - Yes/No Arrays
+    - Nations
+    - Basic Death
+    - Death By Year
+    - Death on Shows
+    - Show scores
+    - Actors/Characters
+    - Roles on Shows
+    - Queerness
+* Display: `class LWTV_Stats_Display` - `display.php`
+    - Determine icon for each stats page
+    - Determine Title for each stats page
+    - Determine archive intro for each stats page
+    - Determine display content for each stats page
+* Output: `class LWTV_Stats_Output` - `output.php`
+    - Lists
+    - Percentages
+    - Averages
+    - Linear regression function
+    - Barcharts
+    - Stacked Barcharts
+    - Piecharts
+    - Trendlines
 
 ## Deployment
 

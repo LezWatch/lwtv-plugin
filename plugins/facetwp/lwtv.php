@@ -34,11 +34,25 @@ class LWTV_FacetWP {
 			return $output;
 		}, 10, 2 );
 
-		// Don't output <!--fwp-loop--> on admin pages
 		if ( is_admin() ) {
+			// Don't output <!--fwp-loop--> on admin pages
 			add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+		} else {
+			// DO output on pages where the main-query is set to true anyway. Asshols
+			add_filter( 'facetwp_is_main_query', array( $this, 'facetwp_is_main_query' ), 10, 2 );
 		}
+		
 
+	}
+
+	/**
+	 * Force Facet to show sometimes
+	 */
+	public function facetwp_is_main_query( $is_main_query, $query ) {
+		if ( isset( $query->query_vars['facetwp'] ) ) {
+			$is_main_query = true;
+		}
+		return $is_main_query;
 	}
 
 	/**

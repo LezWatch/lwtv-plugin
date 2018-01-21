@@ -32,10 +32,13 @@ class LWTV_Query_Vars {
 
 		// The custom queries that have special pages
 		$this->lez_query_args = array(
-			'role'       => 'roletype',
-			'statistics' => 'statistics',
-			'this-year'  => 'thisyear',
+			'role'        => 'roletype',
+			'statistics'  => 'statistics',
+			'this-year'   => 'thisyear',
 		);
+
+		// The custom queries that DO NOT have special pages
+		$this->naked_query_args = array( 'format' );
 
 	}
 
@@ -70,9 +73,8 @@ class LWTV_Query_Vars {
 					'^'.$slug.'/([^/]+)/page/([0-9]+)?/?$',
 					'index.php?pagename='.$slug.'&'.$query.'=$matches[1]&paged=$matches[2]',
 					'top'
-				);					
+				);
 			}
-			
 		} else {
 			add_action( 'admin_notices', array( $this, 'admin_notice_permalinks' ) );
 		}

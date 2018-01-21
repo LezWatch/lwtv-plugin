@@ -242,14 +242,14 @@ class LWTV_Shows_CMB2 {
 
 		// Metabox: Additional Data
 		$cmb_notes = new_cmb2_box( array(
-			'id'            	=> 'notes_metabox',
-			'title'         	=> 'Additional Data',
-			'object_types'  	=> array( 'post_type_shows' ), // Post type
-			'context'       	=> 'side',
-			'priority'      	=> 'default',
-			'show_names'		=> true, // Show field names on the left
-			'show_in_rest'      => true,
-			'cmb_styles'		=> false,
+			'id'            => 'notes_metabox',
+			'title'         => 'Additional Data',
+			'object_types'  => array( 'post_type_shows' ), // Post type
+			'context'       => 'side',
+			'priority'      => 'default',
+			'show_names'    => true, // Show field names on the left
+			'show_in_rest'  => true,
+			'cmb_styles'    => false,
 		) );
 		// Field: Air Dates
 		$field_airdates = $cmb_notes->add_field( array(

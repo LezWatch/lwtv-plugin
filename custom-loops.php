@@ -74,7 +74,7 @@ class LWTV_Loops {
 	 */
 	public static function tax_query( $post_type, $taxonomy, $field, $term, $operator = 'IN' ) {
 		$count = wp_count_posts( $post_type )->publish;
-		$query = new WP_Query ( array(
+		$queery = new WP_Query ( array(
 			'post_type'              => $post_type,
 			'posts_per_page'         => $count,
 			'no_found_rows'          => true,
@@ -88,7 +88,7 @@ class LWTV_Loops {
 			),),
 		) );
 		wp_reset_query();
-		return $query;
+		return $queery;
 	}
 	/*
 	 * Taxonomy Two Array
