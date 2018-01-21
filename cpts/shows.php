@@ -408,9 +408,11 @@ SQL;
 	 * @return void
 	 */
 	function hide_tags_from_quick_edit( $show_in_quick_edit, $taxonomy_name, $post_type ) {
-		$taxonomies = array ( 'lez_stations', 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_country' );
+		$taxonomies = array ( 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers' );
 		if ( in_array( $taxonomy_name, $taxonomies ) ) {
 			return false;
+		} else {
+			return $show_in_quick_edit;
 		}
 	}
 

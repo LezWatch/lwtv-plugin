@@ -28,7 +28,8 @@ class LWTV_Stats {
 	 * Custom enqueue scripts for chartJS
 	 */
 	function enqueue_scripts() {
-		wp_enqueue_script( 'chart.js', plugin_dir_url( dirname( __FILE__ ) ) .'/assets/js/Chart.bundle.min.js' , array( 'jquery' ) );
+		wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) .'/assets/js/Chart.bundle.min.js' , array( 'jquery' ), '2.7.1', false );
+		wp_enqueue_script( 'chartjs-colors', plugin_dir_url( dirname( __FILE__ ) ) .'/assets/js/Chart.colors.js' , array( 'chartjs' ), '1.0.0', false );
 	}
 
 	/*
@@ -51,7 +52,7 @@ class LWTV_Stats {
 		$taxonomy  = 'lez_'.$data;
 
 		// Simple Taxonomy Arrays
-		$simple_tax_array = array( 'cliches', 'sexuality', 'gender', 'tropes', 'formats', 'triggers', 'stars', 'romantic', 'actor_gender', 'actor_sexuality' );
+		$simple_tax_array = array( 'cliches', 'sexuality', 'gender', 'tropes', 'formats', 'triggers', 'stars', 'romantic', 'actor_gender', 'actor_sexuality', 'genres' );
 		if ( in_array( $data, $simple_tax_array ) ) $array = LWTV_Stats_Arrays::taxonomy( $post_type, $taxonomy );
 
 		// Complicated Taxonomy Array
@@ -62,8 +63,8 @@ class LWTV_Stats {
 		if ( $data == 'thumbs' ) $array = LWTV_Stats_Arrays::meta( $post_type, array( 'Yes', 'No', 'Meh' ), 'lezshows_worthit_rating', $data );
 
 		// Yes/No arrays
-		if ( $data == 'weloveit' ) LWTV_Stats_Arrays::yes_no( $post_type, $meta_array, 'lezshows_worthit_show_we_love', $data, $count );
-		if ( $data == 'current' )  LWTV_Stats_Arrays::yes_no( $post_type, $meta_array, 'lezshows_airdates', $data, $count);
+		if ( $data == 'weloveit' ) $array = LWTV_Stats_Arrays::yes_no( $post_type, $data, $count );
+		if ( $data == 'current' )  $array = LWTV_Stats_Arrays::yes_no( $post_type, $data, $count );
 
 		// SUPER FUCKING COMPLICATED
 		// Custom call for Show Scores
@@ -73,8 +74,14 @@ class LWTV_Stats {
 		// Custom call for actor/character 
 		if ( $data == 'per-char' )  $array = LWTV_Stats_Arrays::actor_chars( 'characters' );
 		if ( $data == 'per-actor' ) $array = LWTV_Stats_Arrays::actor_chars( 'actors' );
-		// Custom call for Nations
-		if ( $data == 'nations' )   $array = LWTV_Stats_Arrays::nations( $count, $format );
+		// Custom call for Nations or Stations
+		if ( substr( $data, 0, 7) == 'country' || substr( $data, 0, 8) == 'stations' ) {
+			$array    = LWTV_Stats_Arrays::characters_details_shows( $count, $format, $data );
+			// Stupid counting shit ...
+			$precount = $count;
+			$count    = LWTV_Stats_Arrays::characters_details_shows( $count, $format, $data );
+			if ( $format == 'percentage' ) $count = $precount;
+		}
 
 		// And dead stats? IN-fucking-sane
 		// Everything gets a custom setup

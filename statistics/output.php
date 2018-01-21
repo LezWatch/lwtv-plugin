@@ -63,8 +63,8 @@ class LWTV_Stats_Output {
 				echo '<li>';
 					echo '<strong><a href="'.$item['url'].'">'
 					. $item['name'] . '</a></strong> &mdash; '
-					. round( ( ( $item['count'] / $count ) * 100) , 1) .'%'
-					. ' ('. $item['count'] . ' ' . $subject .')';
+					. round( ( ( $item['count'] / $count ) * 100 ) , 1 ) .'%'
+					. ' ('. $item['count'] . ' ' . $subject . ')';
 				echo '</li>';
 			}
 		}
@@ -180,7 +180,9 @@ class LWTV_Stats_Output {
 	static function barcharts( $subject, $data, $array ) {
 		// Format Clichés properly
 		if ( $data == 'cliches' ) $data = 'clichés';
-
+		$title  = ucfirst( substr($subject, 0, -1) ) . ' ' . ucfirst( $data );
+		$height = '550';
+		
 		// Set title
 		switch ( $data ) {
 			case 'dead-years':
@@ -196,9 +198,16 @@ class LWTV_Stats_Output {
 				$subject = 'charsPerActor';
 				$height  = '250';
 				break;
-			default:
-				$title  = ucfirst( substr($subject, 0, -1) ) . ' ' . ucfirst( $data );
-				$height = '550';
+			case 'nations':
+				$title   = 'Shows per Nation';
+				$subject = 'showsPerNation';
+				$height  = '350';
+				break;
+			case 'stations':
+				$title   = 'Shows per Station';
+				$subject = 'showsPerNation';
+				$height  = '1500';
+				break;
 		}
 		?>
 		<h3><?php echo $title; ?></h3>
@@ -232,7 +241,7 @@ class LWTV_Stats_Output {
 				{
 					backgroundColor: "rgba(255,99,132,0.2)",
 					borderColor: "rgba(255,99,132,1)",
-					borderWidth: 2,
+					borderWidth: 1,
 					hoverBackgroundColor: "rgba(255,99,132,0.4)",
 					hoverBorderColor: "rgba(255,99,132,1)",
 					data : [<?php
@@ -284,20 +293,30 @@ class LWTV_Stats_Output {
 	 */
 	static function stacked_barcharts( $subject, $data, $array ) {
 
-		$title  = ucfirst( substr($subject, 0, -1) ) . ' ' . ucfirst( $data );
-		$height = '550';
+		// Defaults
+		$data       = ( $data == 'nations' )? 'nations' : substr( $data, 8 );
+		$title      = ucfirst( substr($subject, 0, -1) ) . ' ' . ucfirst( $data );
+		$height     = '550';
 
-		// Define our datasets
+		// Define our settings
 		switch ( $data ) {
-			case 'nations':
-				$datasets = array( 'gender' );
+			case 'gender':
+			case 'sexuality':
+			case 'romantic':
+				$title    = 'Character per Nation by ' . ucfirst( $data );
+				$datasets = array();
+				$terms    = get_terms( 'lez_' . $data );
+				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+					foreach ( $terms as $term ) $datasets[] = $term->slug;
+				}
 				$counter  = 'characters';
+				$height   = '400';
 				break;
 		}
 		?>
 		<h3><?php echo $title; ?></h3>
 		<div id="container" style="width: 100%;">
-			<canvas id="barStacked<?php echo ucfirst( $subject ); ?>" width="700" height="<?php echo $height; ?>"></canvas>
+			<canvas id="barStacked<?php echo ucfirst( $subject ) . ucfirst( $data ); ?>" width="700" height="<?php echo $height; ?>"></canvas>
 		</div>
 
 		<script>
@@ -306,7 +325,7 @@ class LWTV_Stats_Output {
 		Chart.defaults.global.legend.display = false;
 
 		// Bar Chart
-		var barStacked<?php echo ucfirst( $subject ); ?>Data = {
+		var barStacked<?php echo ucfirst( $subject ) . ucfirst( $data ); ?>Data = {
 			labels : [
 			<?php
 				foreach ( $array as $item ) {
@@ -317,44 +336,39 @@ class LWTV_Stats_Output {
 				}
 			?>
 			],
-
 			datasets: [
 			<?php
-			foreach ( $datasets as $dataset ) {
+			foreach ( $datasets as $label ) {
+				$color = ( $label == 'undefined' )? 'nundefined' : str_replace( ["-", "–","-"], "", $label );
 				?>
 				{
-					backgroundColor: "rgba(255,99,132,0.2)",
-					borderColor: "rgba(255,99,132,1)",
 					borderWidth: 1,
-					hoverBackgroundColor: "rgba(255,99,132,0.4)",
-					hoverBorderColor: "rgba(255,99,132,1)",
-					label: '<?php echo ucfirst( $dataset ); ?>',
+					backgroundColor: window.chartColors.<?php echo $color; ?>,
+					label: '<?php echo ucfirst( $label ); ?>',
+					stack: 'Stack',
 					data : [<?php
 						foreach ( $array as $item ) {
-								echo implode( ",", $item[ $dataset ] );
+							echo $item[ 'dataset' ][ $label ] . ',';
 						}
 					?>],
-				}
+				},
 				<?php
 			}
 			?>
 			]
 		};
-		var ctx = document.getElementById("barStacked<?php echo ucfirst( $subject ); ?>").getContext("2d");
-		var barStacked<?php echo ucfirst( $subject ); ?> = new Chart(ctx, {
+		var ctx = document.getElementById("barStacked<?php echo ucfirst( $subject ) . ucfirst( $data ); ?>").getContext("2d");
+		var barStacked<?php echo ucfirst( $subject ) . ucfirst( $data ); ?> = new Chart(ctx, {
 			type: 'horizontalBar',
-			data: barStacked<?php echo ucfirst( $subject ); ?>Data,
+			data: barStacked<?php echo ucfirst( $subject ) . ucfirst( $data ); ?>Data,
 			options: {
+				scales: {
+					xAxes: [{ stacked: true }],
+					yAxes: [{ stacked: true }]
+				},
 				tooltips: {
-					callbacks: {
-						title: function(tooltipItems, data) {
-							// return "Bob " + tooltipItems.data;
-							// This is undefined?
-						},
-						label: function(tooltipItems, data) {
-							return tooltipItems.yLabel;
-						},
-					}
+					mode: 'index',
+					intersect: false
 				},
 			}
 		});
@@ -409,15 +423,16 @@ class LWTV_Stats_Output {
 							}
 						}
 					?>],
-					backgroundColor: [
-						"#FF6384", // 'red'
-						"#4BC0C0", // 'aqua'
-						"#FFCE56", // 'goldenrod'
-						"#5DB6EF", // 'light blue'
-						"#FF9963", // 'orange sherbert'
-						"#5C7ECB", // 'purple'
-						"#B7FF90", // 'green'
-						"#E7E9ED", // 'grey'
+					backgroundColor: [ 
+						window.chartColors.red,
+						window.chartColors.aqua,
+						window.chartColors.yellow,
+						window.chartColors.blue,
+						window.chartColors.orange,
+						window.chartColors.purple,
+						window.chartColors.green,
+						window.chartColors.red2,
+						window.chartColors.grey,
 					]
 				}]
 			};

@@ -161,12 +161,14 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array
 	 */
-	static function yes_no( $post_type, $meta_array, $key, $data, $count ) {
+	static function yes_no( $post_type, $data, $count ) {
+
 		$array = array(
 			'no'  => array( 'count' => '0', 'name' => 'No', 'url' => '' ),
 			'yes' => array( 'count' => '0', 'name' => 'Yes', 'url' => '' ),
 		);
 
+		// Define the options
 		switch ( $data ) {
 			case 'weloveit':
 				$meta_array = array( 'on' );
@@ -180,8 +182,10 @@ class LWTV_Stats_Arrays {
 				break;
 		}
 
-		$meta = self::meta( $post_type, $meta_array, 'lezshows_worthit_show_we_love', $data );
+		// Collect the data
+		$meta = self::meta( $post_type, $meta_array, $key, $data, $compare );
 
+		// Parse the data
 		switch ( $data ) {
 			case 'weloveit':
 				$array['no']['count']  = $count - $meta['on']['count'];
@@ -199,7 +203,9 @@ class LWTV_Stats_Arrays {
 
 
 	/**
-	 * Calculate stats for nations
+	 * Calculate stats for characters_details_shows
+	 *
+	 * This means 'characters based on nations' and 'characters based on channels'
 	 * 
 	 * @access public
 	 * @static
@@ -207,78 +213,91 @@ class LWTV_Stats_Arrays {
 	 * @param mixed $format
 	 * @return void
 	 */
-	static function nations( $count, $format ) {
+	static function characters_details_shows( $count, $format, $data ) {
+
+		$array   = array();
+
+		switch( $data ) {
+			case 'country-sexuality':
+			case 'country-gender':
+				$subdata   = substr( $data, 8 ); // ex. sexuality
+				$data      = 'country';
+				break;
+			case 'stations-sexuality':
+			case 'stations-gender':
+				$subdata   = substr( $data, 9 ); // ex. sexuality
+				$data      = 'stations';
+				break;
+		}
 		
-		$nations    = get_terms( 'lez_country' );
-		$array = array();
-		
-		foreach ( $nations as $nation ) {
+		$taxonomy = get_terms( 'lez_' . $data );
+		foreach ( $taxonomy as $the_tax ) {
 			$characters = 0;
 			$shows      = 0;
 			
-			// Create a massive array of all the terms we care about...
+			// Create a massive array of all the character terms we care about...
 			$valid_char_data = array( 
 				'gender'    => 'lez_gender',
 				'sexuality' => 'lez_sexuality',
 				'romantic'  => 'lez_romantic',
 			);
-			$char_data = array();
-	
-			foreach ( $valid_char_data as $title => $taxonomy ) {
-				$terms = get_terms( $taxonomy );
+
+			if ( isset( $subdata ) && !empty( $subdata ) ) {
+				$char_data = array();
+				$terms     = get_terms( $valid_char_data[ $subdata ] );
 				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-					$tax_data[ $title ] = array();
 					foreach ( $terms as $term ) {
-						$char_data[ $title ][ $term->slug ] = 0;
+						$char_data[ $term->slug ] = 0;
 					}
 				}
 			}
 
-			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_country', 'slug', $nation->slug );
+			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $data, 'slug', $the_tax->slug );
 
 			if ( $queery->have_posts() ) {
 				foreach( $queery->posts as $show ) {
 
 					$shows++;
 					// Get all the crazy arrays
-					$gender    = get_post_meta( $show->ID, 'lezshows_char_gender' );
-					$sexuality = get_post_meta( $show->ID, 'lezshows_char_sexuality' );
-					$romantic  = get_post_meta( $show->ID, 'lezshows_char_romantic' );
+					$gender = get_post_meta( $show->ID, 'lezshows_char_gender' );
+					if ( isset( $subdata ) ) { 
+						$dataset = get_post_meta( $show->ID, 'lezshows_char_' . $subdata );
+					}
 
 					// Add the character counts
 					foreach( array_shift( $gender ) as $this_gender => $count ) {
 						$characters += $count;
-						$char_data[ 'gender' ][ $this_gender ] += $count;
 					}
 
-					// Add Sexuality
-					foreach( array_shift( $sexuality ) as $this_sexuality => $count ) {
-						$char_data[ 'sexuality' ][ $this_sexuality ] += $count;
+					if ( !empty( $dataset ) ) {
+						foreach( array_shift( $dataset ) as $this_data => $count ) {
+							$char_data[ $this_data ] += $count;
+						}
 					}
-					// Add romantic
-					foreach( array_shift( $romantic ) as $this_romantic => $count ) {
-						$char_data[ 'romantic' ][ $this_romantic ] += $count;
-					}
+
 				}
 			}
 
 			// Determine what kind of array we need to show...
 			switch( $format ) {
 				case 'barchart':
-					$barchart = array (
-						'name'  => $nation->name,
+					$array[] = array (
+						'name'  => $the_tax->name,
 						'count' => $shows,
 					);
-					array_push( $array, $barchart );
 					break;
-				default:
-					$array[$nation->slug] = array(
-						'name'       => $nation->name,
+				case 'percentage':
+					$array = self::taxonomy( 'post_type_shows', 'lez_' . $data );
+					break;
+				case 'count':
+					$array = count( $taxonomy );
+					break;
+				case 'stackedbar':
+					$array[$the_tax->slug] = array(
+						'name'       => $the_tax->name,
 						'count'      => $shows,
 						'characters' => $characters,
-						'gender'     => $char_data['gender'],
-						'sexuality'  => $char_data['sexuality'],
-						'romantic'   => $char_data['romantic'],
+						'dataset'    => $char_data,
 					);
 			}
 		}
@@ -323,7 +342,7 @@ class LWTV_Stats_Arrays {
 				break;
 		}
 		
-		switch ( $type ) {
+		switch ( $output ) {
 			case 'array':
 				$return = $array;
 				break;
@@ -683,7 +702,7 @@ class LWTV_Stats_Arrays {
 				$taxonomy                    = self::taxonomy( 'post_type_characters', 'lez_cliches', 'queer-irl' );
 				$array['queer']['count']     = $taxonomy['queer-irl']['count'];
 				$array['queer']['url']       = home_url( '/cliche/queer-irl/' );
-				$array['not_queer']['count'] = ( $count - $array['queer-irl']['count'] );
+				$array['not_queer']['count'] = ( $count - $array['queer']['count'] );
 				break;
 			case 'actors':
 				$all_actors_query = LWTV_Loops::post_type_query( 'post_type_actors' );

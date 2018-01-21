@@ -37,6 +37,9 @@ class LWTV_Query_Vars {
 			'this-year'   => 'thisyear',
 		);
 
+		// The custom queries that DO NOT have special pages
+		$this->naked_query_args = array( 'format' );
+
 	}
 
 	/**
@@ -72,7 +75,6 @@ class LWTV_Query_Vars {
 					'top'
 				);
 			}
-			
 		} else {
 			add_action( 'admin_notices', array( $this, 'admin_notice_permalinks' ) );
 		}

@@ -104,7 +104,6 @@ include_once( 'rest-api/what-happened.php' );
  */
 include_once( 'statistics/_main.php' );
 include_once( 'statistics/array.php' );
-include_once( 'statistics/display.php' );
 include_once( 'statistics/output.php' );
 
 /* 
