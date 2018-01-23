@@ -305,7 +305,7 @@ class LWTV_Stats_Output {
 			case 'romantic':
 				$title    = 'Character per Nation by ' . ucfirst( $data );
 				$datasets = array();
-				$terms    = get_terms( 'lez_' . $data );
+				$terms    = get_terms( 'lez_' . $data, array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
 				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 					foreach ( $terms as $term ) $datasets[] = $term->slug;
 				}

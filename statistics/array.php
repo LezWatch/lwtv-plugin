@@ -244,7 +244,8 @@ class LWTV_Stats_Arrays {
 
 			if ( isset( $subdata ) && !empty( $subdata ) ) {
 				$char_data = array();
-				$terms     = get_terms( $valid_char_data[ $subdata ] );
+				$terms     = get_terms( $valid_char_data[ $subdata ], array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
+
 				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 					foreach ( $terms as $term ) {
 						$char_data[ $term->slug ] = 0;
