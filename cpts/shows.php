@@ -218,9 +218,11 @@ class LWTV_CPT_Shows {
 				echo $airdate;
 				break;
 			case 'shows-worthit':
-				echo ucfirst(get_post_meta( $post_id, 'lezshows_worthit_rating', true ));
+				echo ucfirst( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) );
 				break;
 			case 'shows-queercount':
+				// If it HAS update_post_meta( $post_id, 'lezshows_characters', $character_array ); use that
+				// Else use charcount
 				echo get_post_meta( $post_id, 'lezshows_char_count', true );
 				break;
 		}
