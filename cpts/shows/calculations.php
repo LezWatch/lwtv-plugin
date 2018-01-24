@@ -86,7 +86,7 @@ class LWTV_Shows_Calculate {
 	/*
 	 * Count Queers
 	 *
-	 * This will update the metakey 'lezshows_char_count' on save
+	 * This will update the metakeys on save
 	 *
 	 * @param int $post_id The post ID.
 	 */
@@ -106,11 +106,9 @@ class LWTV_Shows_Calculate {
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
 		if ($charactersloop->have_posts() ) {
 			while ( $charactersloop->have_posts() ) {
-
 				$charactersloop->the_post();
 				$char_id     = get_the_ID();
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
-
 				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
 					foreach( $shows_array as $char_show ) {
 						if ( $char_show['show'] == $post_id ) {
@@ -191,10 +189,7 @@ class LWTV_Shows_Calculate {
 		$number_dead      = max( 0, self::count_queers( $post_id, 'dead' ) );
 		$number_queerirl  = max( 0, self::count_queers( $post_id, 'queer-irl' ) );
 		$number_none      = self::count_queers( $post_id, 'none' );
-		
-		// The values:
-		$character_array = array( 'total' => $number_chars, 'dead' => $number_dead );
-		
+
 		// If there are no chars, the score will be zero, so bail early.
 		if ( $number_chars !== 0 ) {
 			$score['alive']   = ( ( ( $number_chars - $number_dead ) / $number_chars ) * 100 );
@@ -202,9 +197,10 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Update post meta for counts
+		// NOTE: This cannot be an array becuase of how it's used for Facet later on
+		// ... Mika. Seriously. No.
 		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
 		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
-		update_post_meta( $post_id, 'lezshows_characters', $character_array );
 
 		return $score;
 	}
