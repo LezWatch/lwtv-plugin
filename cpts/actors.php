@@ -150,8 +150,8 @@ class LWTV_CPT_Actors {
 	 * Used by quick edit, etc
 	 */
 	public function manage_posts_columns( $columns ) {
-		$columns['actors-queer']     = 'Q?';
-		$columns['actors-charcount'] = '#';
+		$columns['actors-queer']     = '<span class="dashicons dashicons-smiley"><span class="screen-reader-text">Queer IRL</span></span>';
+		$columns['actors-charcount'] = '<span class="dashicons dashicons-nametag"><span class="screen-reader-text">Characters</span></span>';
 		return $columns;
 	}
 
@@ -295,6 +295,10 @@ class LWTV_CPT_Actors {
 			#adminmenu #menu-posts-post_type_actors div.wp-menu-image:before, #dashboard_right_now li.post_type_actors-count a:before {
 				content: '\\f336';
 				margin-left: -1px;
+			}
+			
+			.fixed th.column-actors-charcount, .fixed th.column-actors-queer {
+				width: 4em;
 			}
 		</style>";
 	}
