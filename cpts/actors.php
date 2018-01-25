@@ -31,6 +31,11 @@ class LWTV_CPT_Actors {
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'do_update_actor_meta', array( $this, 'update_meta' ), 10, 2 );
 		add_action( 'save_post_post_type_characters', array( $this, 'update_meta_from_chars' ), 10, 3 );
+		add_filter( 'manage_post_type_actors_posts_columns', array( $this, 'manage_posts_columns' ) );
+		add_action( 'manage_post_type_actors_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
+		add_filter( 'manage_edit-post_type_actors_sortable_columns', array( $this, 'manage_edit_sortable_columns' ) );
+		add_action( 'pre_get_posts', array( $this, 'columns_sortability_simple' ) );
+
 	}
 
 	/**
@@ -137,6 +142,57 @@ class LWTV_CPT_Actors {
 
 			// Register taxonomy
 			register_taxonomy( $taxonomyname, 'post_type_actors', $arguments );
+		}
+	}
+
+	/*
+	 * Create Custom Columns
+	 * Used by quick edit, etc
+	 */
+	public function manage_posts_columns( $columns ) {
+		$columns['actors-queer']     = 'Q?';
+		$columns['actors-charcount'] = '#';
+		return $columns;
+	}
+
+	/*
+	 * Add Custom Column Content
+	 */
+	public function manage_posts_custom_column( $column, $post_id ) {
+		switch ( $column ) {
+			case 'actors-queer':
+				$is_queer = get_post_meta( $post_id, 'lezactors_queer', true );
+				$queer    = ( $is_queer )? 'Y' : 'N';
+				echo $queer;
+				break;
+			case 'actors-charcount':
+				echo get_post_meta( $post_id, 'lezactors_char_count', true );
+				break;
+		}
+	}
+
+	/*
+	 * Make Custom Columns Sortable
+	 */
+	public function manage_edit_sortable_columns( $columns ) {
+		$columns['actors-charcount']     = 'characters';  // Allow sort by queers
+		return $columns;
+	}
+
+	/*
+	 * Create Simple Columns Sortability
+	 *
+	 * Worth It, Char Count
+	 */
+	public function columns_sortability_simple( $query ) {
+		if( ! is_admin() ) return;
+
+		if ( $query->is_main_query() && ( $orderby = $query->get( 'orderby' ) ) ) {
+		switch( $orderby ) {
+				case 'characters':
+					$query->set( 'meta_key', 'lezactors_char_count' );
+					$query->set( 'orderby', 'meta_value_num' );
+			}
 		}
 	}
 
