@@ -86,7 +86,7 @@ class LWTV_Shows_Calculate {
 	/*
 	 * Count Queers
 	 *
-	 * This will update the metakey 'lezshows_char_count' on save
+	 * This will update the metakeys on save
 	 *
 	 * @param int $post_id The post ID.
 	 */
@@ -106,11 +106,9 @@ class LWTV_Shows_Calculate {
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
 		if ($charactersloop->have_posts() ) {
 			while ( $charactersloop->have_posts() ) {
-
 				$charactersloop->the_post();
 				$char_id     = get_the_ID();
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
-
 				if ( $shows_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
 					foreach( $shows_array as $char_show ) {
 						if ( $char_show['show'] == $post_id ) {
@@ -181,43 +179,26 @@ class LWTV_Shows_Calculate {
 	/**
 	 * Calculate show character score.
 	 */
-	public static function show_character_score( $post_id, $type = '' ) {
+	public static function show_character_score( $post_id ) {
 
 		// Base Score
-		$score = 0;
+		$score = array( 'alive' => 0, 'cliches' => 0 );
 
 		// Count characters
 		$number_chars     = max( 0, self::count_queers( $post_id, 'count' ) );
 		$number_dead      = max( 0, self::count_queers( $post_id, 'dead' ) );
 		$number_queerirl  = max( 0, self::count_queers( $post_id, 'queer-irl' ) );
-		
+		$number_none      = self::count_queers( $post_id, 'none' );
+
 		// If there are no chars, the score will be zero, so bail early.
 		if ( $number_chars !== 0 ) {
-			switch( $type ) {
-				
-				// Calculate the 'alive' score
-				// Value of alive divided by total, multiplied by 100 
-				// If they're all alive, it's a 100
-				case 'alive':
-					// Count dead characters
-					$score_alive = ( ( ( $number_chars - $number_dead ) / $number_chars ) * 100 );
-					$score       = $score_alive;
-					break;
-	
-				// Calculate the value of cliches
-				// If everyone is queer IRL OR have no cliche, it's 100
-				// Otherwise average the scores of queer IRL and no-cliches
-				case 'cliches':
-					$number_none      = self::count_queers( $post_id, 'none' );
-					$score_characters = ( ( ( $number_queerirl + $number_none ) / $number_chars ) * 100 );
-					$score            = $score_characters;
-					break;
-				default:
-					$score = 0;
-			}
+			$score['alive']   = ( ( ( $number_chars - $number_dead ) / $number_chars ) * 100 );
+			$score['cliches'] = ( ( ( $number_queerirl + $number_none ) / $number_chars ) * 100 );
 		}
 
 		// Update post meta for counts
+		// NOTE: This cannot be an array becuase of how it's used for Facet later on
+		// ... Mika. Seriously. No.
 		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
 		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
 
@@ -301,8 +282,9 @@ class LWTV_Shows_Calculate {
 
 		// Get the ratings
 		$score_show_rating  = self::show_score( $post_id );
-		$score_chars_alive  = self::show_character_score( $post_id, 'alive' );
-		$score_chars_cliche = self::show_character_score( $post_id, 'cliches' );
+		$score_chars_total  = self::show_character_score( $post_id );
+		$score_chars_alive  = $score_chars_total['alive'];
+		$score_chars_cliche = $score_chars_total['cliches'];
 		$score_show_tropes  = self::show_tropes_score( $post_id );
 
 		// Generate character data
