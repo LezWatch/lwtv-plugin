@@ -87,13 +87,15 @@ class LWTV_OTD_JSON {
 			$options = get_option( 'lwtv_otd', $default );
 	
 			// If there's no ID or the timestamp has past, we need a new ID
-			if ( $options[ $type ][ 'post' ] == 'none' || time() >= $options[ $type ][ 'time' ] ) {
+			//if ( $options[ $type ][ 'post' ] == 'none' || time() >= $options[ $type ][ 'time' ] ) 
+			{
 				add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 				// Grab a random post
 				$args = array( 
 					'post_type'      => 'post_type_' . $type . 's',
 					'orderby'        => 'rand', 
-					'posts_per_page' =>'1',
+					'posts_per_page' => '1',
+					's'              => '-TBD',
 					'meta_query' => array( 
 						array(
 							'key'     => '_thumbnail_id',
