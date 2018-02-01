@@ -99,7 +99,12 @@ class LWTV_OTD_JSON {
 							'key'     => '_thumbnail_id',
 							'value'   => '949', // Mystery woman
 							'compare' => '!=',
-						)
+						),
+						array(
+							'key'     => 'lezchars_show_group',
+							'value'   => array ( 'regular', 'recurring' ),
+							'compare' => 'LIKE',
+						),
 					)
 				);
 				$post = new WP_Query( $args );
