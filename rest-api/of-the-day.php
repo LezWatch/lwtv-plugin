@@ -114,7 +114,7 @@ class LWTV_OTD_JSON {
 					'orderby'        => 'rand', 
 					'posts_per_page' => '1',
 					's'              => '-TBD',
-					'meta_query' => $meta_query_array,
+					'meta_query'     => $meta_query_array,
 				);
 				$post = new WP_Query( $args );
 	
