@@ -32,7 +32,6 @@ class LWTV_Query_Vars {
 
 		// The custom queries that have special pages
 		$this->lez_query_args = array(
-			'role'        => 'roletype',
 			'statistics'  => 'statistics',
 			'this-year'   => 'thisyear',
 		);
