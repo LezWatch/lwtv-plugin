@@ -229,11 +229,18 @@ class LWTV_Loops {
 	 * @return array The WP_Query Array
 	 */
 
-	public static function post_type_query( $post_type ) {
-		$count = wp_count_posts( $post_type )->publish;
+	public static function post_type_query( $post_type , $page = 0 ) {
+		if ( $page == 0 ){
+			$count  = wp_count_posts( $post_type )->publish;
+			$offset = 0;
+		} else {
+			$count  = 100;
+			$offset = ( 100 * $page ) - 100;
+		}
 		$query = new WP_Query ( array(
 				'post_type'              => $post_type,
 				'posts_per_page'         => $count,
+				'offset'                 => $offset,
 				'orderby'                => 'title',
 				'order'                  => 'ASC',
 				'no_found_rows'          => true,

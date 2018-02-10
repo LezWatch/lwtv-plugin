@@ -120,7 +120,7 @@ class LWTV_Stats_Output {
 						}
 					}
 				}
-				$return = $low . ' (' . $number . ' shows total)';
+				$return = $low . ' (<a href="/shows/?fwp_shows_scores=0%2C0">' . $number . ' shows total</a>)';
 				break;
 		}
 		echo $return;
