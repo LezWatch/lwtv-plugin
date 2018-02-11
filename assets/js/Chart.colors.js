@@ -21,6 +21,11 @@ window.chartColors = {
 	queer: 'rgba(0, 169, 80, 0.6)', // 'green'
 	demisexual: 'rgba(153, 102, 255, 0.6)', // 'purple'
 
+	// Stacks
+	shows: 'rgba(153, 102, 255, 0.6)', // 'purple'
+	characters: 'rgba(0, 169, 80, 0.6)', // 'green'
+
+	// Name
 	red: 'rgba(255, 99, 132, 0.6)', // 'red'
 	red2: 'rgba(204, 0, 0, 0.6)', //red2
 	aqua: 'rgba(75, 192, 192, 0.6)', // 'aqua'

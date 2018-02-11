@@ -26,9 +26,10 @@ class LWTV_Stats_Arrays {
 		$taxonomies = ( $terms == '' )? get_terms( $taxonomy ) : array($terms);
 
 		foreach ( $taxonomies as $term ) {
-			$term_link = get_term_link( $term );
+			$term_obj  = ( $terms !== '' )? get_term_by( 'slug', $term, $taxonomy, 'ARRAY_A' ) : '';
+			$term_link = get_term_link( $term, $taxonomy );
 			$term_slug = ( $terms == '' )? $term->slug : $terms;
-			$term_name = ( $terms == '' )? $term->name : $terms;
+			$term_name = ( $terms == '' )? $term->name : $term_obj['name'];
 			$count_terms_query = LWTV_Loops::tax_query( $post_type, $taxonomy, 'slug', $term_slug, $operator );
 			$term_count = $count_terms_query->post_count;
 			$array[$term_slug] = array( 'count' => $term_count, 'name' => $term_name, 'url' => $term_link );
@@ -217,35 +218,45 @@ class LWTV_Stats_Arrays {
 
 		$array   = array();
 
-		switch( $data ) {
-			case 'country-sexuality':
-			case 'country-gender':
-				$subdata   = substr( $data, 8 ); // ex. sexuality
-				$data      = 'country';
-				break;
-			case 'stations-sexuality':
-			case 'stations-gender':
-				$subdata   = substr( $data, 9 ); // ex. sexuality
-				$data      = 'stations';
-				break;
+		// Create a massive array of all the character terms we care about...
+		$valid_subtaxes = array( 
+			'gender'    => 'lez_gender',
+			'sexuality' => 'lez_sexuality',
+			'romantic'  => 'lez_romantic',
+		);
+
+		// [main-term-subtax]
+		// [main taxonomy]-[term of main]-[subtaxonomy to parse]
+		// ex: [country-all-gender]
+		//     [station-abc-sexuality]
+		//     [country-usa-all]
+		$pieces  = explode( '-', $data);
+
+		$data_main   = $pieces[0];
+		$data_term   = ( isset( $pieces[1] ) )? $pieces[1] : 'all';
+		$data_subtax = ( isset( $pieces[2] ) && in_array( $pieces[2], array_keys( $valid_subtaxes ) ) )? $pieces[2] : 'all';
+
+		// Get the taxonomy data:
+		if ( $data_term !== 'all' ) {
+			$tax_term = get_term_by( 'slug', $data_term, 'lez_' . $data_main );
+			$taxonomy = array( $data_term => array(
+				'name' => $tax_term->name,
+				'slug' => $data_term,
+			) );
+		} else {
+			$taxonomy = get_terms( 'lez_' . $data_main );
 		}
-		
-		$taxonomy = get_terms( 'lez_' . $data );
+
+		// Parse the taxonomy
 		foreach ( $taxonomy as $the_tax ) {
 			$characters = 0;
 			$shows      = 0;
 			
-			// Create a massive array of all the character terms we care about...
-			$valid_char_data = array( 
-				'gender'    => 'lez_gender',
-				'sexuality' => 'lez_sexuality',
-				'romantic'  => 'lez_romantic',
-			);
-
-			if ( isset( $subdata ) && !empty( $subdata ) ) {
+			// If the subtaxonomy isn't 'all' then we're okay
+			// It should be 'sexuality' or 'romantic' etc.
+			if ( $data_subtax !== 'all' ) {
 				$char_data = array();
-				$terms     = get_terms( $valid_char_data[ $subdata ], array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
-
+				$terms     = get_terms( $valid_subtaxes[ $data_subtax ], array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
 				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 					foreach ( $terms as $term ) {
 						$char_data[ $term->slug ] = 0;
@@ -253,16 +264,21 @@ class LWTV_Stats_Arrays {
 				}
 			}
 
-			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $data, 'slug', $the_tax->slug );
+			$slug = ( !isset( $the_tax->slug ) )? $the_tax['slug'] : $the_tax->slug;
+			$name = ( !isset( $the_tax->name ) )? $the_tax['name'] : $the_tax->name;
 
+			// Get the posts
+			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
+
+			// Process
 			if ( $queery->have_posts() ) {
 				foreach( $queery->posts as $show ) {
 
 					$shows++;
 					// Get all the crazy arrays
 					$gender = get_post_meta( $show->ID, 'lezshows_char_gender' );
-					if ( isset( $subdata ) ) { 
-						$dataset = get_post_meta( $show->ID, 'lezshows_char_' . $subdata );
+					if ( $data_subtax !== 'all' ) {
+						$dataset = get_post_meta( $show->ID, 'lezshows_char_' . $data_subtax );
 					}
 
 					// Add the character counts
@@ -282,20 +298,43 @@ class LWTV_Stats_Arrays {
 			// Determine what kind of array we need to show...
 			switch( $format ) {
 				case 'barchart':
-					$array[] = array (
-						'name'  => $the_tax->name,
-						'count' => $shows,
-					);
+					if ( $data_term !== 'all' && $data_subtax !== 'all' ) {
+						foreach ( $char_data as $char_name => $char_count ) {
+							$array[] = array (
+								'name'  => $char_name,
+								'count' => $char_count,
+							);
+						}
+					} else {
+						$array[] = array (
+							'name'  => $name,
+							'count' => $shows,
+						);
+					}
 					break;
 				case 'percentage':
-					$array = self::taxonomy( 'post_type_shows', 'lez_' . $data );
+				case 'piechart':
+					if ( $data_term !== 'all' ) {
+						if ( $data_subtax !== 'all' ) {
+							foreach ( $char_data as $char_name => $char_count ) {
+								$array[] = array (
+									'name'  => $char_name,
+									'count' => $char_count,
+								);
+							}
+						} else {
+							$array = self::taxonomy( 'post_type_shows', 'lez_' . $data_main, $slug );
+						}
+					} else {
+						$array = self::taxonomy( 'post_type_shows', 'lez_' . $data_main );
+					}
 					break;
 				case 'count':
 					$array = count( $taxonomy );
 					break;
 				case 'stackedbar':
-					$array[$the_tax->slug] = array(
-						'name'       => $the_tax->name,
+					$array[$slug] = array(
+						'name'       => $name,
 						'count'      => $shows,
 						'characters' => $characters,
 						'dataset'    => $char_data,
@@ -540,9 +579,11 @@ class LWTV_Stats_Arrays {
 				switch ( $type ) {
 					case 'characters':
 						$data = get_post_meta( get_the_id(), 'lezchars_actor', true );
+						$name = 'actors';
 						break;
 					case 'actors':
 						$data = get_post_meta( get_the_id(), 'lezactors_char_count', true );
+						$name = 'characters';
 						break;
 				}
 				// Now that we have the data, let's count and store
@@ -551,10 +592,10 @@ class LWTV_Stats_Arrays {
 				} else {
 					$key = count( $data );
 				}
-				
+
 				if ( !array_key_exists( $key, $array ) && is_numeric( $key ) ) {
 					$array[ $key ] = array(
-						'name'  => $key,
+						'name'  => $key . ' ' . $name ,
 						'count' => '1',
 						'url'   => '',
 					);

@@ -23,7 +23,6 @@ class LWTV_Loops {
 		// Nothing to see here
 	}
 
-
 	/**
 	 * Determine if an actor is queer
 	 * 
