@@ -103,17 +103,16 @@ class LWTV_Actors_CMB2 {
 				'placeholder' => 'https://actorname.com',
 			),
 		) );
-		// Field: Twiter ID
+		// Field: Twitter ID
 		$field_twitter = $cmb_actorside->add_field( array(
 			'name'       => 'Twiter ID',
-			'desc'       => '(without the @)',
-			'id'         => $prefix . 'twitter',
+			'id'         => $prefix . 'Twitter',
 			'type'       => 'text',
 			'attributes' => array(
-				'placeholder' => 'Ex: aliliebert',
+				'placeholder' => 'Ex: aliliebert - without the @',
 			),
 		) );
-		// Field: Twiter ID
+		// Field: Instagram ID
 		$field_instagram = $cmb_actorside->add_field( array(
 			'name'       => 'Instagram ID',
 			'id'         => $prefix . 'instagram',
