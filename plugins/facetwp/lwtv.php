@@ -63,7 +63,7 @@ class LWTV_FacetWP {
 	 */
 	function facetwp_index_row( $params, $class ) {
 
-		// Actors
+		// Shows
 		if ( get_post_type( $params['post_id'] ) == 'post_type_shows' ) {
 			// Stars
 			// Capitalize
@@ -76,8 +76,16 @@ class LWTV_FacetWP {
 			// Shows we Love
 			// Change 'on' to 'yes' 
 			if ( 'show_loved' == $params['facet_name'] ) {
-				$params['facet_value']         = $params['facet_value'];
+				$params['facet_value']         = ( $params['facet_value'] == 'on' )? 'yes' : 'no';
 				$params['facet_display_value'] = ( $params['facet_display_value'] == 'on' )? 'Yes' : 'No';
+				$class->insert( $params );
+				return false; // skip default indexing
+			}
+			// Shows with Death
+			// If the count is 1 or more, there's death
+			if ( 'show_death' == $params['facet_name'] ) {
+				$params['facet_value']         = ( $params['facet_value'] >= 1 )? 'yes' : 'no';
+				$params['facet_display_value'] = ( $params['facet_display_value'] >= 1 )? 'Yes' : 'No';
 				$class->insert( $params );
 				return false; // skip default indexing
 			}
@@ -89,7 +97,6 @@ class LWTV_FacetWP {
 				$class->insert( $params );
 				return false; // skip default indexing
 			}
-
 			// Airdates
 			// Saves two values for two sources (dude)
 			// a:2:{s:5:"start";s:4:"1994";s:6:"finish";s:4:"2009";}
@@ -128,7 +135,7 @@ class LWTV_FacetWP {
 			// Change 'on' to 'yes' 
 			if ( 'is_queer' == $params['facet_name'] ) {
 				$params['facet_value']         = ( $params['facet_value'] == '1' )? 'yes' : 'no';
-				$params['facet_display_value'] = ( $params['facet_display_value'] == '1' )? 'Yes' : 'No';
+				$params['facet_display_value'] = ( $params['facet_display_value'] == '1' )? 'Is Queer' : 'Is Not Queer';
 				$class->insert( $params );
 				return false; // skip default indexing
 			}
