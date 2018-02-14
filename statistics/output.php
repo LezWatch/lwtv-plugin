@@ -182,12 +182,12 @@ class LWTV_Stats_Output {
 			case 'cliches':
 				$height = '550';
 				break;
-			case 'country-all-overview':
+			case 'country_all_overview':
 				$height = '550';
 				break;
 			case 'per-actor':
-			case ( preg_match( '/country-.*-sexuality/', $data ) ? true : false ):
-			case ( preg_match( '/country-.*-gender/', $data ) ? true : false ):
+			case ( preg_match( '/country_.*_sexuality/', $data ) ? true : false ):
+			case ( preg_match( '/country_.*_gender/', $data ) ? true : false ):
 				$subject  = 'charsPerActor';
 				$height   = '150';
 				$stepSize = '2';

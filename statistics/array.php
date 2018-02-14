@@ -225,12 +225,12 @@ class LWTV_Stats_Arrays {
 			'romantic'  => 'lez_romantic',
 		);
 
-		// [main-term-subtax]
-		// [main taxonomy]-[term of main]-[subtaxonomy to parse]
-		// ex: [country-all-gender]
-		//     [station-abc-sexuality]
-		//     [country-usa-all]
-		$pieces  = explode( '-', $data);
+		// [main_term_subtax]
+		// [main taxonomy]_[term of main]_[subtaxonomy to parse]
+		// ex: [country_all_gender]
+		//     [station_abc_sexuality]
+		//     [country_usa_all]
+		$pieces  = explode( '_', $data);
 
 		$data_main   = $pieces[0];
 		$data_term   = ( isset( $pieces[1] ) )? $pieces[1] : 'all';
