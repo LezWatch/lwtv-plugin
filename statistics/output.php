@@ -21,13 +21,7 @@ class LWTV_Stats_Output {
 	 * @return Content
 	 */
 	static function lists( $subject, $data, $array, $count ) {
-		// Format Clichés properly
-		$name = ( $data == 'cliches' )? 'clichés' : $data;
-
-		// Set title
-		$title = ucfirst( substr($subject, 0, -1) ). ' ' . ucfirst( $name );
 		?>
-		<h3><?php echo $title; ?></h3>
 		<ul class="statistics lists <?php echo $data; ?>">
 		<?php
 		foreach ( $array as $item ) {
@@ -120,7 +114,7 @@ class LWTV_Stats_Output {
 						}
 					}
 				}
-				$return = $low . ' (' . $number . ' shows total)';
+				$return = $low . ' (<a href="/shows/?fwp_shows_scores=0%2C0">' . $number . ' shows total</a>)';
 				break;
 		}
 		echo $return;
@@ -178,39 +172,36 @@ class LWTV_Stats_Output {
 	 * @return Content
 	 */
 	static function barcharts( $subject, $data, $array ) {
-		// Format Clichés properly
-		if ( $data == 'cliches' ) $data = 'clichés';
-		$title  = ucfirst( substr($subject, 0, -1) ) . ' ' . ucfirst( $data );
-		$height = '550';
-		
-		// Set title
+		$height   = '250';
+		$stepSize = '5';
 		switch ( $data ) {
-			case 'dead-years':
-				$title = 'Dead Characters by Year';
-				break;
 			case 'per-char':
-				$title   = 'Actors per Character';
 				$subject = 'actorsPerChar';
-				$height  = '250';
+				$height = '100';
+				break;
+			case 'cliches':
+				$height = '550';
+				break;
+			case 'country-all-overview':
+				$height = '550';
 				break;
 			case 'per-actor':
-				$title   = 'Characters per Actor';
-				$subject = 'charsPerActor';
-				$height  = '250';
+			case ( preg_match( '/country-.*-sexuality/', $data ) ? true : false ):
+			case ( preg_match( '/country-.*-gender/', $data ) ? true : false ):
+				$subject  = 'charsPerActor';
+				$height   = '150';
+				$stepSize = '2';
 				break;
-			case 'nations':
-				$title   = 'Shows per Nation';
-				$subject = 'showsPerNation';
-				$height  = '350';
+			case 'tropes':
+			case 'dead-years':
+				$height = '350';
 				break;
 			case 'stations':
-				$title   = 'Shows per Station';
-				$subject = 'showsPerNation';
+				$subject = 'showsPerStation';
 				$height  = '1500';
 				break;
 		}
 		?>
-		<h3><?php echo $title; ?></h3>
 		<div id="container" style="width: 100%;">
 			<canvas id="bar<?php echo ucfirst( $subject ); ?>" width="700" height="<?php echo $height; ?>"></canvas>
 		</div>
@@ -231,9 +222,9 @@ class LWTV_Stats_Output {
 							case 'Dead Lesbians (Dead Queers)':
 								$name = 'Dead';
 							default:
-								$name = esc_html( $item['name'] );
+								$name = wp_specialchars_decode( $item['name'] );
 						}
-						echo '"'. $name .' ('.$item['count'].')", ';
+						echo '"'. $name . ' ('.$item['count'].')", ';
 					}
 				}
 			?>],
@@ -253,6 +244,7 @@ class LWTV_Stats_Output {
 					?>],
 				}
 			]
+
 		};
 		var ctx = document.getElementById("bar<?php echo ucfirst( $subject ); ?>").getContext("2d");
 		var bar<?php echo ucfirst( $subject ); ?> = new Chart(ctx, {
@@ -262,13 +254,19 @@ class LWTV_Stats_Output {
 				tooltips: {
 					callbacks: {
 						title: function(tooltipItems, data) {
-							// return "Bob " + tooltipItems.data;
-							// This is undefined?
 						},
 						label: function(tooltipItems, data) {
 							return tooltipItems.yLabel;
 						},
 					}
+				},
+				scales: {
+					xAxes: [{
+						ticks: {
+							beginAtZero: true,
+							stepSize: <?php echo $stepSize; ?>,
+						}
+					}]
 				},
 			}
 		});
@@ -293,19 +291,26 @@ class LWTV_Stats_Output {
 	 */
 	static function stacked_barcharts( $subject, $data, $array ) {
 
+		// [main-term-subtax]
+		// [main taxonomy]-[term of main]-[subtaxonomy to parse]
+		// ex: [country-all-gender]
+		//     [station-abc-sexuality]
+		//     [country-usa-all]
+		$pieces  = explode( '-', $data);
+		$data_main   = $pieces[0];
+		$data_term   = ( isset( $pieces[1] ) )? $pieces[1] : 'all';
+		$data_subtax = ( isset( $pieces[2] ) )? $pieces[2] : 'all';
+
 		// Defaults
-		$data       = ( $data == 'nations' )? 'nations' : substr( $data, 8 );
-		$title      = ucfirst( substr($subject, 0, -1) ) . ' ' . ucfirst( $data );
 		$height     = '550';
 
 		// Define our settings
-		switch ( $data ) {
+		switch ( $data_subtax ) {
 			case 'gender':
 			case 'sexuality':
 			case 'romantic':
-				$title    = 'Character per Nation by ' . ucfirst( $data );
 				$datasets = array();
-				$terms    = get_terms( 'lez_' . $data, array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
+				$terms    = get_terms( 'lez_' . $data_subtax, array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
 				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 					foreach ( $terms as $term ) $datasets[] = $term->slug;
 				}
@@ -314,9 +319,8 @@ class LWTV_Stats_Output {
 				break;
 		}
 		?>
-		<h3><?php echo $title; ?></h3>
 		<div id="container" style="width: 100%;">
-			<canvas id="barStacked<?php echo ucfirst( $subject ) . ucfirst( $data ); ?>" width="700" height="<?php echo $height; ?>"></canvas>
+			<canvas id="barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?>" width="700" height="<?php echo $height; ?>"></canvas>
 		</div>
 
 		<script>
@@ -325,7 +329,7 @@ class LWTV_Stats_Output {
 		Chart.defaults.global.legend.display = false;
 
 		// Bar Chart
-		var barStacked<?php echo ucfirst( $subject ) . ucfirst( $data ); ?>Data = {
+		var barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?>Data = {
 			labels : [
 			<?php
 				foreach ( $array as $item ) {
@@ -347,7 +351,7 @@ class LWTV_Stats_Output {
 					label: '<?php echo ucfirst( $label ); ?>',
 					stack: 'Stack',
 					data : [<?php
-						foreach ( $array as $item ) {
+						foreach ( $array as $name => $item ) {
 							echo $item[ 'dataset' ][ $label ] . ',';
 						}
 					?>],
@@ -357,10 +361,10 @@ class LWTV_Stats_Output {
 			?>
 			]
 		};
-		var ctx = document.getElementById("barStacked<?php echo ucfirst( $subject ) . ucfirst( $data ); ?>").getContext("2d");
-		var barStacked<?php echo ucfirst( $subject ) . ucfirst( $data ); ?> = new Chart(ctx, {
+		var ctx = document.getElementById("barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?>").getContext("2d");
+		var barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?> = new Chart(ctx, {
 			type: 'horizontalBar',
-			data: barStacked<?php echo ucfirst( $subject ) . ucfirst( $data ); ?>Data,
+			data: barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?>Data,
 			options: {
 				scales: {
 					xAxes: [{ stacked: true }],
@@ -392,7 +396,6 @@ class LWTV_Stats_Output {
 	 * @return Content
 	 */
 	static function piecharts( $subject, $data, $array ) {
-
 		// Strip extra word(s) to make the chart key readable
 		$fixname = '';
 		if ( $data == 'sexuality' || $data == 'dead-sex' ) $fixname = 'sexual';
@@ -400,12 +403,17 @@ class LWTV_Stats_Output {
 		if ( $data == 'dead-shows' ) $fixname = 'queers are dead';
 
 		// Strip hypens becuase ChartJS doesn't like it.
-		$data = str_replace('-','',$data)
+		$data = str_replace('-','',$data);
+
+		// Reorder by item count
+		usort( $array, function( $a, $b ) { return $a['count'] - $b['count']; } );
+		
 		?>
-		<canvas id="pie<?php echo ucfirst( $data ); ?>" width="200" height="200"></canvas>
+		<canvas id="pie<?php echo ucfirst( $data ); ?>" width="500px" height="500px"></canvas>
 
 		<script>
 			// Piechart for stats
+			var pie<?php echo ucfirst( $data ); ?>Dataset = [<?php foreach ( $array as $item ) { if ( $item['count'] !== 0 ) { echo '"' . $item['count'] . '", '; } } ?>];
 			var pie<?php echo ucfirst( $data ); ?>data = {
 				labels : [<?php
 					foreach ( $array as $item ) {
@@ -416,24 +424,8 @@ class LWTV_Stats_Output {
 					}
 				?>],
 				datasets : [{
-					data : [<?php
-						foreach ( $array as $item ) {
-							if ( $item['count'] !== 0 ) {
-								echo '"' . $item['count'] . '", ';
-							}
-						}
-					?>],
-					backgroundColor: [ 
-						window.chartColors.red,
-						window.chartColors.aqua,
-						window.chartColors.yellow,
-						window.chartColors.blue,
-						window.chartColors.orange,
-						window.chartColors.purple,
-						window.chartColors.green,
-						window.chartColors.red2,
-						window.chartColors.grey,
-					]
+					data : pie<?php echo ucfirst( $data ); ?>Dataset,
+					backgroundColor: palette('tol-rainbow', pie<?php echo ucfirst( $data ); ?>Dataset.length).map(function(hex) { return '#' + hex; }),
 				}]
 			};
 
@@ -542,7 +534,6 @@ class LWTV_Stats_Output {
 
 	<?php
 	}
-
 }
 
 new LWTV_Stats_Output();
