@@ -296,7 +296,7 @@ class LWTV_Stats_Output {
 		// ex: [country-all-gender]
 		//     [station-abc-sexuality]
 		//     [country-usa-all]
-		$pieces  = explode( '-', $data);
+		$pieces  = explode( '_', $data);
 		$data_main   = $pieces[0];
 		$data_term   = ( isset( $pieces[1] ) )? $pieces[1] : 'all';
 		$data_subtax = ( isset( $pieces[2] ) )? $pieces[2] : 'all';
