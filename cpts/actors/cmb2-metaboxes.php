@@ -105,8 +105,8 @@ class LWTV_Actors_CMB2 {
 		) );
 		// Field: Twitter ID
 		$field_twitter = $cmb_actorside->add_field( array(
-			'name'       => 'Twiter ID',
-			'id'         => $prefix . 'Twitter',
+			'name'       => 'Twitter ID',
+			'id'         => $prefix . 'twitter',
 			'type'       => 'text',
 			'attributes' => array(
 				'placeholder' => 'Ex: aliliebert - without the @',
