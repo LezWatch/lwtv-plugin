@@ -14,17 +14,12 @@ if ( ! defined('WPINC' ) ) die;
 class LWTV_Shows_CMB2 {
 
 	public $ratings_array;
-	public $stars_array;
 
 	public function __construct() {
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes') );
 
 		// Array of Valid Ratings
 		$this->ratings_array = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
-
-		// Array of valid stars we award shows
-		$this->stars_array = array( 'gold'   => 'Gold Star', 'silver' => 'Silver Star', 'bronze' => 'Bronze Star', 'anti' => 'Anti Star' );
-
 	}
 
 	/*
@@ -302,7 +297,6 @@ class LWTV_Shows_CMB2 {
 				'placeholder' => 'Example: tt6087250',
 			),
 		) );
-
 		// Field: Show Genre
 		$field_genre = $cmb_notes->add_field( array(
 			'name'              => 'Genre',
@@ -315,6 +309,20 @@ class LWTV_Shows_CMB2 {
 			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_genres' ),
 			'attributes'        => array(
 				'placeholder' => 'What is this show about ...'
+			),
+		) );
+		// Field: Show Intersectionality
+		$field_intersectional = $cmb_notes->add_field( array(
+			'name'              => 'Intersectionality',
+			'desc'              => 'Positive represenation.',
+			'id'                => $prefix . 'intersectional',
+			'taxonomy'          => 'lez_intersections',
+			'type'              => 'pw_multiselect',
+			'select_all_button' => false,
+			'remove_default'    => 'true',
+			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_intersections' ),
+			'attributes'        => array(
+				'placeholder' => 'What does this show get RIGHT?'
 			),
 		) );
 		// Field: Show Stars

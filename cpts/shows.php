@@ -139,13 +139,14 @@ class LWTV_CPT_Shows {
 	public function create_taxonomies() {
 
 		$taxonomies = array (
-			'TV station' => 'stations',
-			'trope'      => 'tropes',
-			'format'     => 'formats',
-			'genre'      => 'genres',
-			'nation'     => 'country',
-			'star'       => 'stars',
-			'trigger'    => 'triggers',
+			'TV station'   => 'stations',
+			'trope'        => 'tropes',
+			'format'       => 'formats',
+			'genre'        => 'genres',
+			'nation'       => 'country',
+			'star'         => 'stars',
+			'trigger'      => 'triggers',
+			'intersection' => 'intersections',
 		);
 
 		foreach ( $taxonomies as $pretty => $slug ) {

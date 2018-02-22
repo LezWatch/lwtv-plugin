@@ -80,6 +80,15 @@ class LWTV_Shows_Calculate {
 		if ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) == 'on' ) 
 			$score += 40;
 
+		
+		// Add Intersectionality Bonus
+		// If you do good with intersectionality you can have more points up to 10
+		if ( ( count( wp_get_post_terms( $post_id, 'lez_intersections' ) ) * 2 ) >= 10 ) {
+			$score += 10;
+		} else {
+			$score += ( count( wp_get_post_terms( $post_id, 'lez_intersections' ) ) * 2 );
+		}
+
 		return $score;
 	}
 
