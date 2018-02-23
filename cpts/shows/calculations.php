@@ -78,7 +78,7 @@ class LWTV_Shows_Calculate {
 
 		// Shows We Love: 40 points
 		if ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) == 'on' ) 
-			$score += 40
+			$score += 40;
 
 		return $score;
 	}
