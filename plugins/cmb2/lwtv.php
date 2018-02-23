@@ -25,7 +25,7 @@ class LWTV_CMB2 {
 		add_action( 'admin_init', array( $this, 'admin_init') );
 		add_action( 'cmb2_admin_init', array( $this, 'favorite_shows_user_profile_metabox') );
 
-		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats', 'lez_genres' );
+		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_gender', 'lez_sexuality', 'lez_formats', 'lez_genres', 'lez_intersections' );
 
 		// If we don't have symbolicons, there's not a reason to register the taxonomy box...
 		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
@@ -226,14 +226,14 @@ class LWTV_CMB2 {
 			'new_user_section' => 'add-new-user',
 		) );
 		$cmb_user->add_field( array(
-			'name'             => 'Favourite Shows',
+			'name'             => 'Favorite Shows',
 			'desc'             => 'pick your favorite shows',
 			'id'               => $prefix . 'favourite_shows',
 			'type'             => 'select',
 			'show_option_none' => true,
 			'repeatable'       => true,
 			'text' => array(
-				'add_row_text' => 'Add Another Favourite Show',
+				'add_row_text' => 'Add Another Favorite Show',
 			),
 			'default'          => 'custom',
 			'options_cb'       => array( $this, 'cmb2_get_shows_options' ),

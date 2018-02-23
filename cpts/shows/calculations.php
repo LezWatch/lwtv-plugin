@@ -293,6 +293,14 @@ class LWTV_Shows_Calculate {
 		// Calculate the full score
 		$calculate = ( $score_show_rating + $score_chars_alive + $score_chars_cliche + $score_show_tropes ) / 4;
 
+		// Add Intersectionality Bonus
+		// If you do good with intersectionality you can have more points up to 10
+		if ( ( count( wp_get_post_terms( $post_id, 'lez_intersections' ) ) * 2 ) >= 10 ) {
+			$calculate += 10;
+		} else {
+			$calculate += ( count( wp_get_post_terms( $post_id, 'lez_intersections' ) ) * 2 );
+		}
+
 		// Keep it between 0 and 100
 		if ( $calculate > 100 ) $calculate = 100;
 		if ( $calculate < 0 )   $calculate = 0;
