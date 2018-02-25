@@ -98,7 +98,6 @@ class LWTV_FacetWP {
 			// Trigger Warning
 			// If 'on' change to 'High', else capitalize
 			if ( 'show_trigger_warning' == $params['facet_name'] ) {
-				echo 'test';
 				$params['facet_value']         = ( $params['facet_display_value'] == 'on' )? 'high' : $params['facet_display_value'];
 				$params['facet_display_value'] = ( $params['facet_display_value'] == 'on' )? 'High' : ucfirst( $params['facet_display_value'] );
 				$class->insert( $params );
