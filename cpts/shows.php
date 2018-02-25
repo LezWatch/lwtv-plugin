@@ -32,8 +32,9 @@ class LWTV_CPT_Shows {
 			$post_type = ( isset( $_GET['post_type'] ) )? sanitize_text_field( $_GET['post_type'] ) : 0 ;
 			switch ( $post_type ) {
 				case 'post_type_shows':
-				
-					LWTV_Shows_Calculate::do_the_math( $post_id );
+
+					// Don't run do the math on every page load now
+					//LWTV_Shows_Calculate::do_the_math( $post_id );
 					
 					// Filter buttons not needed on the teeny MCE
 					add_filter( 'teeny_mce_buttons', array($this, 'teeny_mce_buttons' ) );
