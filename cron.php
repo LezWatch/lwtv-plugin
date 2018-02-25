@@ -30,13 +30,15 @@ class LWTV_Cron {
 			'/statistics/shows/',
 			'/statistics/death/',
 			'/statistics/trends/',
+			'/statistics/nations/',
+			'/statistics/stations/',
 			'/characters/',
 			'/shows/',
 			'/show/the-l-word/',
 			'/',
 		);
 
-		// UR:s we need to refresh daily
+		// URLs we need to refresh daily
 		$this->daily_urls = array(
 			'wp-json/lwtv/v1/last-death/',
 			'wp-json/lwtv/v1/stats/',

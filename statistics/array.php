@@ -305,11 +305,11 @@ class LWTV_Stats_Arrays {
 								'count' => $char_count,
 							);
 						}
+					} elseif ( $data_term !== 'all' && $data_subtax == 'all' ) {
+						$array['shows'] = array ( 'name'  => 'Shows', 'count' => $shows );
+						$array['characters'] = array( 'name' => 'Characters', 'count' => $characters );
 					} else {
-						$array[] = array (
-							'name'  => $name,
-							'count' => $shows,
-						);
+						$array = self::taxonomy( 'post_type_shows', 'lez_' . $data_main );
 					}
 					break;
 				case 'percentage':
@@ -323,7 +323,8 @@ class LWTV_Stats_Arrays {
 								);
 							}
 						} else {
-							$array = self::taxonomy( 'post_type_shows', 'lez_' . $data_main, $slug );
+							$array['shows'] = array( 'count' => $shows, 'name' => 'Shows', 'url' => '#' );
+							$array['chars'] = array( 'count' => $characters, 'name' => 'Characters', 'url' => '#' );
 						}
 					} else {
 						$array = self::taxonomy( 'post_type_shows', 'lez_' . $data_main );

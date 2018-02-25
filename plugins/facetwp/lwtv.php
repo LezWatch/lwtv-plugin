@@ -34,6 +34,12 @@ class LWTV_FacetWP {
 			return $output;
 		}, 10, 2 );
 
+		// Adding a weird filter...
+		add_filter( 'facetwp_facet_sources', function( $sources ) {
+			$sources['custom_fields']['choices']['cf/lwtv_data'] = 'lwtv_data';
+			return $sources;
+		});
+
 		if ( is_admin() ) {
 			// Don't output <!--fwp-loop--> on admin pages
 			add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
@@ -92,6 +98,7 @@ class LWTV_FacetWP {
 			// Trigger Warning
 			// If 'on' change to 'High', else capitalize
 			if ( 'show_trigger_warning' == $params['facet_name'] ) {
+				echo 'test';
 				$params['facet_value']         = ( $params['facet_display_value'] == 'on' )? 'high' : $params['facet_display_value'];
 				$params['facet_display_value'] = ( $params['facet_display_value'] == 'on' )? 'High' : ucfirst( $params['facet_display_value'] );
 				$class->insert( $params );
@@ -115,6 +122,7 @@ class LWTV_FacetWP {
 			}
 			// Shows by Gender, Sexuality, Romance
 			// If they have a count higher than 0, we flag them.
+			// This is just going to list if they have that gender. We're not using it yet. We might.
 			$show_char_array = array( 'show_char_gender', 'show_char_sexuality', 'show_char_romance' );
 			if ( in_array( $params['facet_name'], $show_char_array ) ) {
 				$values = (array) $params['facet_value'];
@@ -124,6 +132,43 @@ class LWTV_FacetWP {
 						$params['facet_display_value'] = ucfirst( $title );
 						$class->insert( $params );
 					}
+				}
+				return false; // skip default indexing
+			}
+
+			// Some extra weird things...
+			// Becuase you can't store data for EMPTY fields so there's a 'fake' 
+			// facet called 'all_the_missing'and we use 
+			if ( 'all_the_missing' == $params['facet_name'] ) {
+				// If we do not love the show...
+				$loved = get_post_meta( $params['post_id'], 'lezshows_worthit_show_we_love', true);
+				if ( empty( $loved ) ) {
+					$params_loved = $params;
+					$params_loved['facet_name']           = 'show_loved';
+					$params_loved['facet_source']         = 'cf/lezshows_worthit_show_we_love';
+					$params_loved['facet_value']          = 'no';
+					$params_loved['facet_display_value']  = 'No';
+					$class->insert( $params_loved );
+				}
+				// If there are no warnings
+				$warn = get_the_terms( $params['post_id'], 'lez_triggers' );
+				if ( empty( $warn ) ) {
+					$params_warn = $params;
+					$params_warn['facet_name']           = 'show_trigger_warning';
+					$params_warn['facet_source']         = 'tax/lez_triggers';
+					$params_warn['facet_value']          = 'none';
+					$params_warn['facet_display_value']  = 'None';
+					$class->insert( $params_warn );
+				}
+				// If there are no stars
+				$stars = get_the_terms( $params['post_id'], 'lez_stars' );
+				if ( empty( $stars ) ) {
+					$params_stars = $params;
+					$params_stars['facet_name']           = 'show_stars';
+					$params_stars['facet_source']         = 'tax/lez_stars';
+					$params_stars['facet_value']          = 'none';
+					$params_stars['facet_display_value']  = 'None';
+					$class->insert( $params_stars );
 				}
 				return false; // skip default indexing
 			}

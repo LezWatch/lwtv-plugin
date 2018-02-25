@@ -79,6 +79,7 @@ class LWTV_Shows_CMB2 {
 			'desc' => 'Above all else, this is a show everyone loves. Only use if you are a billion percent sure and have cleared it on Trello (or over drinks).',
 			'id'   => $prefix . 'worthit_show_we_love',
 			'type' => 'checkbox',
+			'default' => false,
 		) );
 
 		// Must See Grid

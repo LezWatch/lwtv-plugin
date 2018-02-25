@@ -71,13 +71,19 @@ class LWTV_Actors_Calculate {
 	 */
 	public static function do_the_math( $post_id ) {
 
-		// Calculate Actor Data:
-		update_post_meta( $post_id, 'lezactors_char_count', self::count_queers( $post_id, 'count' ) );
-		update_post_meta( $post_id, 'lezactors_dead_count', self::count_queers( $post_id, 'dead' ) );
-
-		// Is Queer?
-		$is_queer     = ( LWTV_Loops::is_actor_queer( $post_id ) == 'yes' )? true : false;
-		update_post_meta( $post_id, 'lezactors_queer', $is_queer );
+		if ( get_post_type( $post_id ) == 'post_type_actors' ) {
+			// Calculate Actor Data:
+			update_post_meta( $post_id, 'lezactors_char_count', self::count_queers( $post_id, 'count' ) );
+			update_post_meta( $post_id, 'lezactors_dead_count', self::count_queers( $post_id, 'dead' ) );
+	
+			// Is Queer?
+			$is_queer     = ( LWTV_Loops::is_actor_queer( $post_id ) == 'yes' )? true : false;
+			update_post_meta( $post_id, 'lezactors_queer', $is_queer );
+		} else {
+			delete_post_meta( $post_id, 'lezactors_char_count' );
+			delete_post_meta( $post_id, 'lezactors_dead_count' );
+			delete_post_meta( $post_id, 'lezactors_queer' );
+		}
 	}
 	
 }

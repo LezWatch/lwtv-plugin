@@ -418,7 +418,7 @@ class LWTV_Stats_Output {
 				labels : [<?php
 					foreach ( $array as $item ) {
 						if ( $item['count'] !== 0 ) {
-							$name = str_replace( $fixname, '', $item['name'] );
+							$name = ucfirst ( str_replace( $fixname, '', $item['name'] ) );
 							echo '"' . $name .' (' . $item['count'] . ')", ';
 						}
 					}

@@ -199,8 +199,13 @@ class LWTV_Shows_Calculate {
 		// Update post meta for counts
 		// NOTE: This cannot be an array becuase of how it's used for Facet later on
 		// ... Mika. Seriously. No.
-		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
-		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
+		if ( get_post_type( $post_id ) == 'post_type_shows' ) {
+			update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
+			update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
+		} else {
+			delete_post_meta( $post_id, 'lezshows_char_count' );
+			delete_post_meta( $post_id, 'lezshows_dead_count' );
+		}
 
 		return $score;
 	}
@@ -295,10 +300,11 @@ class LWTV_Shows_Calculate {
 
 		// Add Intersectionality Bonus
 		// If you do good with intersectionality you can have more points up to 10
-		if ( ( count( wp_get_post_terms( $post_id, 'lez_intersections' ) ) * 2 ) >= 10 ) {
+		$intersection = count( get_the_terms( $post_id, 'lez_intersections' ) );
+		if ( ( $intersection * 2 ) >= 10 ) {
 			$calculate += 10;
 		} else {
-			$calculate += ( count( wp_get_post_terms( $post_id, 'lez_intersections' ) ) * 2 );
+			$calculate += ( $intersection * 2 );
 		}
 
 		// Keep it between 0 and 100
@@ -306,7 +312,13 @@ class LWTV_Shows_Calculate {
 		if ( $calculate < 0 )   $calculate = 0;
 
 		// Update the meta
-		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
+		if ( get_post_type( $post_id ) == 'post_type_shows' ) {
+			update_post_meta( $post_id, 'lezshows_the_score', $calculate );
+		} else {
+			delete_post_meta( $post_id, 'lezshows_the_score' );
+		}
+
+		
 	}
 
 }

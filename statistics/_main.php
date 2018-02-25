@@ -28,9 +28,9 @@ class LWTV_Stats {
 	 * Custom enqueue scripts for chartJS
 	 */
 	function enqueue_scripts() {
-		wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) .'/assets/js/Chart.bundle.min.js' , array( 'jquery' ), '2.7.1', false );
-		wp_enqueue_script( 'chartjs-colors', plugin_dir_url( dirname( __FILE__ ) ) .'/assets/js/Chart.colors.js' , array( 'chartjs' ), '1.0.0', false );
-		wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) .'/assets/js/palette.js', '1.0.0', false );
+		wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . '/assets/js/Chart.bundle.min.js' , array( 'jquery' ), '2.7.1', false );
+		wp_enqueue_script( 'chartjs-colors', plugin_dir_url( dirname( __FILE__ ) ) . '/assets/js/Chart.colors.js' , array( 'chartjs' ), '1.0.0', false );
+		wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . '/assets/js/palette.js', '1.0.0', false );
 	}
 
 	/*
