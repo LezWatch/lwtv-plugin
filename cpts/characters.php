@@ -51,6 +51,7 @@ class LWTV_CPT_Characters {
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_romantic' ), 10, 2 );
 
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
+		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ), 10, 3 );
 	}
 
 	/**
@@ -62,7 +63,6 @@ class LWTV_CPT_Characters {
 
 		// Cliches
 		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
-
 	}
 
 	/*
@@ -300,7 +300,7 @@ class LWTV_CPT_Characters {
 			'desc'        => 'If the character is dead, select when they died.',
 			'id'          => $prefix . 'death_year',
 			'type'        => 'text_date',
-			'date_format' => 'm/d/Y',
+			'date_format' => 'Y-m-d',
 			'repeatable'  => true,
 		) );
 		// Character Sidebar Grid
@@ -596,6 +596,31 @@ SQL;
 				break;
 		}
 		return $return;
+	}
+
+	/*
+	 * Save post meta for characters
+	 *
+	 * @param int $post_id The post ID.
+	 * @param post $post The post object.
+	 * @param bool $update Whether this is an existing post being updated or not.
+	 */
+	public function update_meta( $post_id ) {
+
+		// unhook this function so it doesn't loop infinitely
+		remove_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
+		
+		// get the most recent death and save it as a new meta
+		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
+		$newest_death    = 0000-00-00;
+		foreach ( $character_death as $death ) {
+			if ( $death > $newest_death ) $newest_death = $death;
+		}
+		
+		update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
+
+		// re-hook this function
+		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
 	}
 
 }
