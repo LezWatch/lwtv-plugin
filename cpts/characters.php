@@ -613,14 +613,16 @@ SQL;
 		// get the most recent death and save it as a new meta
 		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
 		$newest_death    = 0000-00-00;
-		foreach ( $character_death as $death ) {
-			if ( $death > $newest_death ) $newest_death = $death;
-		}
 		
-		if ( $newest_death !== 0000-00-00 ) {
-			update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
+		if ( $character_death != '' ) {
+			foreach ( $character_death as $death ) {
+				if ( $death > $newest_death ) $newest_death = $death;
+			}
+			
+			if ( $newest_death !== 0000-00-00 ) {
+				update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
+			}
 		}
-
 		// re-hook this function
 		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
 	}
