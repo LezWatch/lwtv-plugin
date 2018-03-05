@@ -254,7 +254,7 @@ class LWTV_FacetWP {
 				'label' => 'Most Recent Death',
 				'query_args' => array(
 					'orderby'  => 'meta_value_num', // sort by numerical custom field
-					'meta_key' => 'lezchars_death_year', // required when sorting by custom fields
+					'meta_key' => 'lezchars_last_death', // required when sorting by custom fields
 					'order'    => 'DESC', // descending order
 				)
 			);
@@ -262,7 +262,7 @@ class LWTV_FacetWP {
 				'label' => 'Oldest Death',
 				'query_args' => array(
 					'orderby'  => 'meta_value_num', // sort by numerical custom field
-					'meta_key' => 'lezchars_death_year', // required when sorting by custom fields
+					'meta_key' => 'lezchars_last_death', // required when sorting by custom fields
 					'order'    => 'ASC', // ascending order
 				)
 			);
