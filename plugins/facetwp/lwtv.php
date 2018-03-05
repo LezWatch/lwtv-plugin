@@ -318,7 +318,6 @@ class LWTV_FacetWP {
 					'order'    => 'ASC', // ascending order
 				)
 			);
-
 			$options['most_dead'] = array(
 				'label' => 'Number of Dead Characters (Descending)',
 				'query_args' => array(
@@ -327,7 +326,6 @@ class LWTV_FacetWP {
 					'order'    => 'DESC', // descending order
 				)
 			);
-
 			$options['least_dead'] = array(
 				'label' => 'Number of Dead Characters (Ascending)',
 				'query_args' => array(
@@ -348,7 +346,6 @@ class LWTV_FacetWP {
 					'order'    => 'DESC', // descending order
 				)
 			);
-
 			$options['least_queers'] = array(
 				'label' => 'Number of Characters (Ascending)',
 				'query_args' => array(
