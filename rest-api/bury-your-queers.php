@@ -6,7 +6,7 @@ The code that runs the Bury Your Queers API service
   - Last Death - "It has been X days since the last WLW Death"
   - On This Day - "On this day, X died"
 
-Version: 1.2
+Version: 1.2.1
 */
 
 if ( ! defined('WPINC' ) ) die;
@@ -112,7 +112,7 @@ class LWTV_BYQ_JSON {
 
 				// For each death date, create an item in an array with the unix timestamp
 				foreach ( $died_date as $date ) {
-					$date_parse = date_parse_from_format( 'm/d/Y' , $date);
+					$date_parse = date_parse_from_format( 'Y-m-d' , $date);
 					$died_date_array[] = mktime( $date_parse['hour'], $date_parse['minute'], $date_parse['second'], $date_parse['month'], $date_parse['day'], $date_parse['year'] );
 				}
 
@@ -129,6 +129,7 @@ class LWTV_BYQ_JSON {
 					'name' => get_the_title( $dead_char ),
 					'url'  => get_the_permalink( $dead_char ),
 					'died' => $died,
+					'date' => $died_date,
 				);
 			}
 
