@@ -13,13 +13,57 @@ if ( !defined( 'WP_CLI' ) ) return;
 /**
  * Calculate Show Score
  */
-class WP_CLI_LWTV_ShowCalc_Command extends WP_CLI_Command {
+class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 
 	public function __construct() {
 		// Remove <!--fwp-loop--> from output
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 	}
+
+	/**
+	 * Character updates: Fix death date
+	 * 
+	 * ## EXAMPLES
+	 * 
+	 *		wp lwtv chardead ID
+	 *
+	*/
 	
+	function chardead( $args , $assoc_args ) {
+		// Set the post ID
+		if ( !empty($args) ) { list( $post_id ) = $args; }
+
+		// If the post_id is not empty, make sure it's legit
+		if ( !empty( $post_id ) ) {
+			if ( get_post_type( $post_id ) == 'post_type_characters' ) {
+				$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
+				$return_death    = array();
+				$newest_death    = 0000-00-00;
+				foreach ( $character_death as $death ) {
+					if ( substr( $death, 2, 1 ) != '/' ) {
+						$date = date_format( date_create_from_format( 'Y-m-j', $death ), 'Y-m-d');
+					} else {
+						$date = date_format( date_create_from_format( 'm/d/Y', $death ), 'Y-m-d');
+					}
+					
+					if ( $date > $newest_death ) $newest_death = $date;
+					
+					$return_death[] = $date;
+				}
+
+				update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
+				update_post_meta( $post_id, 'lezchars_death_year', $return_death );
+				update_post_meta( $post_id, 'lezchars_cli', time() );
+			} else {
+				WP_CLI::error( 'You can only update character pages like this.' );
+			}
+		} else {
+			WP_CLI::error( 'You can only update character pages like this.' );
+		}
+		
+		WP_CLI::success( 'Character ' . get_the_title( $post_id ) . ' updated.');
+	}
+
 	/**
 	 * Show calculation
 	 * 
@@ -106,4 +150,4 @@ class WP_CLI_LWTV_ShowCalc_Command extends WP_CLI_Command {
 
 }
 
-WP_CLI::add_command( 'lwtv', 'WP_CLI_LWTV_ShowCalc_Command' );
+WP_CLI::add_command( 'lwtv', 'WP_CLI_LWTV_Commands' );

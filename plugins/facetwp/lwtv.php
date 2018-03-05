@@ -238,11 +238,70 @@ class LWTV_FacetWP {
 	 */
 	function facetwp_sort_options( $options, $params ) {
 
+		// Labels
 		$options['default']['label']    = 'Default (Alphabetical)';
 		$options['title_asc']['label']  = 'Name (A-Z)';
 		$options['title_desc']['label'] = 'Name (Z-A)';
 
-		if ( is_post_type_archive( 'post_type_actors' ) ) {
+		// Valid taxes
+		$char_taxonomies  = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_romantic' );
+		$show_taxonomies  = array( 'lez_tropes', 'lez_stations', 'lez_formats', 'lez_genres', 'lez_nations', 'lez_stars', 'lez_triggers', 'lez_intersections' );
+		$actor_taxonomies = array( 'lez_actor_gender', 'lez_actor_sexuality' );
+
+		// CHARACTERS
+		if ( is_post_type_archive( 'post_type_characters' ) || is_tax( $char_taxonomies ) ) {
+			$options['death_desc'] = array(
+				'label' => 'Most Recent Death',
+				'query_args' => array(
+					'orderby'  => 'meta_value', // sort by numerical custom field
+					'meta_key' => 'lezchars_last_death', // required when sorting by custom fields
+					'order'    => 'DESC', // descending order
+				)
+			);
+			$options['death_asc'] = array(
+				'label' => 'Oldest Death',
+				'query_args' => array(
+					'orderby'  => 'meta_value', // sort by numerical custom field
+					'meta_key' => 'lezchars_last_death', // required when sorting by custom fields
+					'order'    => 'ASC', // ascending order
+				)
+			);
+		}
+
+		// ACTORS
+		if ( is_post_type_archive( 'post_type_actors' ) || is_tax( $actor_taxonomies ) ) {
+			$options['birth_desc'] = array(
+				'label' => 'Most Recent Birth',
+				'query_args' => array(
+					'orderby'  => 'meta_value', // sort by numerical custom field
+					'meta_key' => 'lezactors_birth', // required when sorting by custom fields
+					'order'    => 'DESC', // descending order
+				)
+			);
+			$options['birth_asc'] = array(
+				'label' => 'Oldest Birth',
+				'query_args' => array(
+					'orderby'  => 'meta_value', // sort by numerical custom field
+					'meta_key' => 'lezactors_birth', // required when sorting by custom fields
+					'order'    => 'ASC', // ascending order
+				)
+			);
+			$options['death_desc'] = array(
+				'label' => 'Most Recent Death',
+				'query_args' => array(
+					'orderby'  => 'meta_value', // sort by numerical custom field
+					'meta_key' => 'lezactors_death', // required when sorting by custom fields
+					'order'    => 'DESC', // descending order
+				)
+			);
+			$options['death_asc'] = array(
+				'label' => 'Oldest Death',
+				'query_args' => array(
+					'orderby'  => 'meta_value', // sort by numerical custom field
+					'meta_key' => 'lezactors_death', // required when sorting by custom fields
+					'order'    => 'ASC', // ascending order
+				)
+			);
 			$options['most_chars'] = array(
 				'label' => 'Number of Characters (Descending)',
 				'query_args' => array(
@@ -279,7 +338,8 @@ class LWTV_FacetWP {
 			);
 		}
 
-		if ( is_post_type_archive( 'post_type_shows' ) ) {
+		// SHOWS
+		if ( is_post_type_archive( 'post_type_shows' ) || is_tax( $show_taxonomies ) ) {
 			$options['most_queers'] = array(
 				'label' => 'Number of Characters (Descending)',
 				'query_args' => array(
