@@ -41,9 +41,9 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 				$newest_death    = 0000-00-00;
 				foreach ( $character_death as $death ) {
 					if ( substr( $death, 2, 1 ) != '/' ) {
-						$date = $death;
+						$date = date_format( date_create_from_format( 'Y-m-j', $death ), 'Y-m-d');
 					} else {
-						$date = date_format( date_create_from_format( 'm/j/Y', $death ), 'Y-m-j');
+						$date = date_format( date_create_from_format( 'm/d/Y', $death ), 'Y-m-d');
 					}
 					
 					if ( $date > $newest_death ) $newest_death = $date;

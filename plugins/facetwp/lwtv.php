@@ -253,7 +253,7 @@ class LWTV_FacetWP {
 			$options['death_desc'] = array(
 				'label' => 'Most Recent Death',
 				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'orderby'  => 'meta_value', // sort by numerical custom field
 					'meta_key' => 'lezchars_last_death', // required when sorting by custom fields
 					'order'    => 'DESC', // descending order
 				)
@@ -261,7 +261,7 @@ class LWTV_FacetWP {
 			$options['death_asc'] = array(
 				'label' => 'Oldest Death',
 				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'orderby'  => 'meta_value', // sort by numerical custom field
 					'meta_key' => 'lezchars_last_death', // required when sorting by custom fields
 					'order'    => 'ASC', // ascending order
 				)
@@ -273,7 +273,7 @@ class LWTV_FacetWP {
 			$options['birth_desc'] = array(
 				'label' => 'Most Recent Birth',
 				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'orderby'  => 'meta_value', // sort by numerical custom field
 					'meta_key' => 'lezactors_birth', // required when sorting by custom fields
 					'order'    => 'DESC', // descending order
 				)
@@ -281,7 +281,7 @@ class LWTV_FacetWP {
 			$options['birth_asc'] = array(
 				'label' => 'Oldest Birth',
 				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'orderby'  => 'meta_value', // sort by numerical custom field
 					'meta_key' => 'lezactors_birth', // required when sorting by custom fields
 					'order'    => 'ASC', // ascending order
 				)
@@ -289,7 +289,7 @@ class LWTV_FacetWP {
 			$options['death_desc'] = array(
 				'label' => 'Most Recent Death',
 				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'orderby'  => 'meta_value', // sort by numerical custom field
 					'meta_key' => 'lezactors_death', // required when sorting by custom fields
 					'order'    => 'DESC', // descending order
 				)
@@ -297,7 +297,7 @@ class LWTV_FacetWP {
 			$options['death_asc'] = array(
 				'label' => 'Oldest Death',
 				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
+					'orderby'  => 'meta_value', // sort by numerical custom field
 					'meta_key' => 'lezactors_death', // required when sorting by custom fields
 					'order'    => 'ASC', // ascending order
 				)
