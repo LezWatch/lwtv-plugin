@@ -300,11 +300,15 @@ class LWTV_Shows_Calculate {
 
 		// Add Intersectionality Bonus
 		// If you do good with intersectionality you can have more points up to 10
-		$intersection = count( get_the_terms( $post_id, 'lez_intersections' ) );
-		if ( ( $intersection * 2 ) >= 10 ) {
+		$count_inters = 0;
+		$intersection = get_the_terms( $post_id, 'lez_intersections' );
+
+		if ( is_array( $intersection ) ) $count_inters = count( $intersection );
+
+		if ( ( $count_inters * 2 ) >= 10 ) {
 			$calculate += 10;
 		} else {
-			$calculate += ( $intersection * 2 );
+			$calculate += ( $count_inters * 2 );
 		}
 
 		// Keep it between 0 and 100
