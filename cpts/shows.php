@@ -45,6 +45,7 @@ class LWTV_CPT_Shows {
 					// Force saving data to convert select2 saved data to a taxonomy
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
+					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_intersectional', 'lez_intersections' );
 					break;
 			}
 		}
@@ -410,7 +411,7 @@ SQL;
 	 * @return void
 	 */
 	function hide_tags_from_quick_edit( $show_in_quick_edit, $taxonomy_name, $post_type ) {
-		$taxonomies = array ( 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers' );
+		$taxonomies = array ( 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers', 'lez_intersections' );
 		if ( in_array( $taxonomy_name, $taxonomies ) ) {
 			return false;
 		} else {
