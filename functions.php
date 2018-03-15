@@ -113,7 +113,6 @@ include_once( 'cron.php' );
 include_once( 'custom-loops.php' );
 include_once( 'search.php' );
 include_once( 'shortcodes.php' );
-include_once( 'sort-stopwords.php' );
 include_once( 'query_vars.php' );
 
 /**
