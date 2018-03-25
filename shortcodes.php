@@ -21,6 +21,7 @@ class LWTV_Shortcodes {
 	public function init() {
 		add_shortcode( 'thismonth', array( $this, 'this_month' ) );
 		add_shortcode( 'firstyear', array( $this, 'first_year' ) );
+		add_shortcode( 'screener', array( $this, 'screener' ) );
 	}
 
 	/*
@@ -113,6 +114,73 @@ class LWTV_Shortcodes {
 		$output .= '</ul>';
 
 		return $output;
+	}
+
+
+	/**
+	 * Screeners.
+	 * 
+	 * @access public
+	 * @param mixed $atts
+	 * @return void
+	 */
+	public function screener( $atts ) {
+
+		$attributes = shortcode_atts( array(
+			'title'   => 'Coming Soon',
+			'summary' => 'Coming soon ...',
+			'queer'   => '3',
+			'worth'   => 'meh',
+			'trigger' => 'none',
+		), $atts );
+
+		$queer   = ( !is_numeric( $attributes['queer'] ) || ( $attributes['queer'] < 1 || $attributes['queer'] > 5 ) )? $attributes['queer'] : 0;
+
+		$worth   = ( in_array( $attributes['worth'], array( 'yes', 'no', 'meh' ) ) )? $attributes['worth'] : 'meh';
+		switch ( $worth ) {
+			case 'yes':
+				$worth_icon = 'thumbs-up';
+				$worth_color = 'success';
+				break;
+			case 'no':
+				$worth_icon  = 'thumbs-down';
+				$worth_icon  = 'danger';
+				break;
+			case 'meh':
+				$worth_icon  = 'meh';
+				$worth_icon  = 'warning';
+				break;
+		}
+		$worth_image = lwtv_yikes_symbolicons( $worth_icon . '.svg', 'fa-' . $worth_icon );
+
+		// Get proper triger warning data
+		$warning = '';
+		$trigger = ( in_array( $attributes['trigger'], array( 'high', 'medium', 'low' ) ) )? $attributes['trigger'] : 'none';
+
+		if ( $trigger != 'none' ) {
+			$warn_image    = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
+			switch ( $trigger ) {
+				case 'high':
+					$warn_color = 'danger';
+					break;
+				case 'medium':
+					$warn_color = 'warning';
+					break;
+				case 'low':
+					$warn_color = 'info';
+					break;
+			}
+
+			$warning = '<span data-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers"><button type="button" class="btn btn-' . $warn_color . '"><span class="screener screener-warn ' . $warn_color . '" role="img">' . $warn_image . '</span></button></span>';
+		}
+
+		$output = '<div class="bd-callout"><h5 id="' . esc_attr( $attributes['title'] ) . '">Screener Review on <em>' . esc_html( $attributes['title'] ) . '</em></h5>
+		<p>' . esc_html( $attributes['summary'] ) . '</p>
+		<p><span data-toggle="tooltip" aria-label="How good is this show for queers?" title="How good is this show for queers?"><button type="button" class="btn btn-dark">Queer Score: ' . $queer . '</button></span> <span data-toggle="tooltip" aria-label="Is this show worth watching? ' . ucfirst( $worth ) . '" title="Is this show worth watching? ' . ucfirst( $worth ) . '"><button type="button" class="btn btn-' . $worth_color . '">Worth It? <span role="img" class="screener screener-worthit ' . lcfirst( $worth ) . '">' . $worth_image . '</span></button></span> ' . $warning . '</p>
+		</div>';
+
+		return $output;
+
 	}
 
 }

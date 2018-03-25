@@ -137,6 +137,7 @@ Various shortcodes used on LezWatchTV
 
 * Display The first year we had queers: `[firstyear]`
 * Display This Month recap: `[thismonth]` or `[thismonth date="2017-01"]`
+* Display screener information: `[screener title="Some Like It Hot" summary="A quirky black and white romcom" queer="2" worth="yes" trigger="low"]`
 
 ### Sort Stop Words
 
