@@ -134,9 +134,11 @@ class LWTV_Shortcodes {
 			'trigger' => 'none',
 		), $atts );
 
-		$queer   = ( !is_numeric( $attributes['queer'] ) || ( $attributes['queer'] < 1 || $attributes['queer'] > 5 ) )? $attributes['queer'] : 0;
+		$queer = (float) $attributes['queer'];
+		$queer = ( $queer < 0 )? 0 : $queer;
+		$queer = ( $queer > 5 )? 5 : $queer;
 
-		$worth   = ( in_array( $attributes['worth'], array( 'yes', 'no', 'meh' ) ) )? $attributes['worth'] : 'meh';
+		$worth = ( in_array( $attributes['worth'], array( 'yes', 'no', 'meh' ) ) )? $attributes['worth'] : 'meh';
 		switch ( $worth ) {
 			case 'yes':
 				$worth_icon = 'thumbs-up';

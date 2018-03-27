@@ -3,15 +3,14 @@
 	Copyright 2017 Mika Epstein (email: ipstenu@halfelf.org)
 */
 
-if ( !defined( 'ABSPATH' ) ) {
-    die();
-}
+// Bail if directly accessed
+if ( !defined( 'ABSPATH' ) ) die();
 
 // Bail if WP-CLI is not present
 if ( !defined( 'WP_CLI' ) ) return;
 
 /**
- * Calculate Show Score
+ * LezWatch special commands
  */
 class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 
@@ -94,7 +93,7 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 	}
 
 	/**
-	 * Runs various LWTV related scripts
+	 * Update Actor Meta (and determine sexuality)
 	 * 
 	 * ## EXAMPLES
 	 * 
