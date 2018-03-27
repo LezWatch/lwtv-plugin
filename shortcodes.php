@@ -134,7 +134,7 @@ class LWTV_Shortcodes {
 			'trigger' => 'none',
 		), $atts );
 
-		$queer = (int) $attributes['queer'];
+		$queer = (float) $attributes['queer'];
 		$queer = ( $queer < 1 || $queer > 5 )? 0 : $queer;
 
 		$worth = ( in_array( $attributes['worth'], array( 'yes', 'no', 'meh' ) ) )? $attributes['worth'] : 'meh';
