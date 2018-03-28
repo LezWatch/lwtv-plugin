@@ -60,8 +60,11 @@ class LWTV_Screeners {
 	 */
 	function settings_page() {
 
-		// We need this...
-		require 'assets/aws.phar';
+		// If the file can't be found, bail.
+		if ( !file_exists( WP_CONTENT_DIR . '/library/assets/aws/aws-autoloader.php' ) ) return;
+		
+		// Call the AWS SDK
+		include_once( WP_CONTENT_DIR . '/library/assets/aws/aws-autoloader.php' );
 
 		// Establish connection with DreamObjects with an S3 client.
 		$client = new Aws\S3\S3Client([
