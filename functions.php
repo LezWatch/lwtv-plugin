@@ -22,7 +22,6 @@ class LWTV_Functions {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init', array( $this, 'admin_init') );
 		add_action( 'init', array( $this, 'init') );
 		add_filter( 'http_request_args', array( $this, 'disable_wp_update' ), 10, 2 );
 	}
@@ -34,16 +33,6 @@ class LWTV_Functions {
 		// Only call on the front end
 		if ( !is_admin() ) {
 			include_once( 'amazon-affiliates.php' );
-		}
-	}
-
-	/**
-	 * Admin Init
-	 */
-	public function admin_init() {
-		// If Yoast SEO is active, call customizations
-		if ( is_plugin_active( 'wordpress-seo/wp-seo.php' ) || is_plugin_active( 'wordpress-seo-premium/wp-seo-premium.php' ) || defined( 'WPSEO_VERSION' ) ) {
-			require_once( 'plugins/yoast-seo.php' );
 		}
 	}
 
@@ -112,6 +101,7 @@ include_once( 'statistics/output.php' );
 include_once( 'cron.php' );
 include_once( 'custom-loops.php' );
 include_once( 'search.php' );
+include_once( 'screeners.php' );
 include_once( 'shortcodes.php' );
 include_once( 'query_vars.php' );
 
