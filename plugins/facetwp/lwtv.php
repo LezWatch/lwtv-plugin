@@ -109,7 +109,7 @@ class LWTV_FacetWP {
 			if ( 'show_airdates' == $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];
 				$start  = ( isset( $values['start'] ) )? $values['start'] : '';
-				$end    = ( isset( $values['finish'] ) && is_int( $values['finish'] ) )? $values['finish'] : date( 'Y' );
+				$end    = ( isset( $values['finish'] ) && lcfirst( $values['finish'] ) !== 'current' )? $values['finish'] : date( 'Y' ); 
 				$params['facet_value']         = $start;
 				$params['facet_display_value'] = $start;
 				$class->insert( $params );
@@ -117,6 +117,16 @@ class LWTV_FacetWP {
 				$params2['facet_value']         = $end;
 				$params2['facet_display_value'] = $end;
 				$class->insert( $params2 );
+
+				// Extra check for is it currently on air
+				$params_on_air = $params;
+				$on_air        = 'no';
+				if ( lcfirst( $end ) == 'current' || $end == date( 'Y' ) ) { $on_air = 'yes'; }
+				$params_on_air['facet_name']          = 'show_on_air';
+				$params_on_air['facet_value']         = $on_air;
+				$params_on_air['facet_display_value'] = ucfirst( $on_air );
+				$class->insert( $params_on_air );
+
 				return false; // skip default indexing
 			}
 			// Shows by Gender, Sexuality, Romance
@@ -137,7 +147,7 @@ class LWTV_FacetWP {
 
 			// Some extra weird things...
 			// Becuase you can't store data for EMPTY fields so there's a 'fake' 
-			// facet called 'all_the_missing'and we use 
+			// facet called 'all_the_missing' and we use it to pass through data
 			if ( 'all_the_missing' == $params['facet_name'] ) {
 				// If we do not love the show...
 				$loved = get_post_meta( $params['post_id'], 'lezshows_worthit_show_we_love', true);
