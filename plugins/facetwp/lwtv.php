@@ -104,19 +104,27 @@ class LWTV_FacetWP {
 				return false; // skip default indexing
 			}
 			// Airdates
-			// Saves two values for two sources (dude)
+			// Saves two values for two sources 
+			// Also saves on_air as yes or no
 			// a:2:{s:5:"start";s:4:"1994";s:6:"finish";s:4:"2009";}
 			if ( 'show_airdates' == $params['facet_name'] ) {
+
+				// Parse start and end dates  (use 'now' if 'current' or empty)
 				$values = (array) $params['facet_value'];
 				$start  = ( isset( $values['start'] ) )? $values['start'] : '';
 				$end    = ( isset( $values['finish'] ) && lcfirst( $values['finish'] ) !== 'current' )? $values['finish'] : date( 'Y' ); 
-				$params['facet_value']         = $start;
-				$params['facet_display_value'] = $start;
-				$class->insert( $params );
-				$params2 = $params;
-				$params2['facet_value']         = $end;
-				$params2['facet_display_value'] = $end;
-				$class->insert( $params2 );
+
+				$params_start = $params_end = $params;
+
+				// Add start date
+				$params_start['facet_value']         = $start;
+				$params_start['facet_display_value'] = $start;
+				$class->insert( $params_start );
+
+				// Add end date
+				$params_end['facet_value']           = $end;
+				$params_end['facet_display_value']   = $end;
+				$class->insert( $params_end );
 
 				// Extra check for is it currently on air
 				$params_on_air = $params;
