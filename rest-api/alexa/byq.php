@@ -27,7 +27,7 @@ class LWTV_Alexa_BYQ {
 		// Simple - how many have died total
 		if ( $type == 'simple' ) {
 			$data   = LWTV_Stats_JSON::statistics( 'death', 'simple' );
-			$output = 'A total of '. $data['characters']['dead'] .' queer female and trans characters have died on TV.';
+			$output = 'A total of '. $data['characters']['dead'] .' characters have died on TV.';
 		} else {
 			$date = $type;
 			// Figure out what date we're working with here...
@@ -107,7 +107,7 @@ class LWTV_Alexa_BYQ {
 		$this_day = date('m-d', $timestamp );
 		$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
 		$count    = ( key( $data ) == 'none' )? 0 : count( $data ) ;
-		$how_many = 'No queer females died';
+		$how_many = 'No characters died';
 		$the_dead = '';
 		if ( $count > 0 ) {
 			$how_many  = $count . ' ' . _n( 'character', 'characters', $count ) . ' died';

@@ -240,7 +240,7 @@ class LWTV_CPT_Actors {
 	public function yoast_retrieve_characters_replacement( ) {
 		global $post;
 		$char_count = get_post_meta( $post->ID, 'lezactors_char_count', true );
-		$characters = ( $char_count == 0 )? 'no queer characters' : sprintf( _n( '%s queer character', '%s queer characters', $char_count ), $char_count );
+		$characters = ( $char_count == 0 )? 'no characters' : sprintf( _n( '%s character', '%s characters', $char_count ), $char_count );
 		return $characters;
 	}
 
@@ -260,7 +260,7 @@ class LWTV_CPT_Actors {
 	 * Extra Replacement Functions for Yoast SEO
 	 */
 	public function yoast_seo_register_extra_replacements() {
-		wpseo_register_var_replacement( '%%characters%%', array( $this, 'yoast_retrieve_characters_replacement' ), 'basic', 'Information on how many queer characters an actor plays.' );
+		wpseo_register_var_replacement( '%%characters%%', array( $this, 'yoast_retrieve_characters_replacement' ), 'basic', 'Information on how many characters an actor plays.' );
 		wpseo_register_var_replacement( '%%is_queer%%', array( $this, 'yoast_retrieve_queer_replacement' ), 'basic', 'Output if the actor is queer IRL.' );
 	}
 
