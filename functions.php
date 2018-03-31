@@ -24,6 +24,8 @@ class LWTV_Functions {
 	public function __construct() {
 		add_action( 'init', array( $this, 'init') );
 		add_filter( 'http_request_args', array( $this, 'disable_wp_update' ), 10, 2 );
+		add_filter( 'attachment_fields_to_edit', array( $this, 'add_attachment_attribution' ), 10000, 2);
+		add_action( 'edit_attachment', array( $this, 'save_attachment_attribution' ) );
 	}
 
 	/**
@@ -55,6 +57,28 @@ class LWTV_Functions {
 		return $return;
 	}
 
+	/*
+	 * Add attribution element to images
+	 */
+	function add_attachment_attribution( $form_fields, $post ) {
+		$field_value = get_post_meta( $post->ID, 'attribution', true );
+		$form_fields[ 'attribution' ] = array(
+			'value'    => $field_value ? $field_value : '',
+			'label'    => __( 'Attribution' ),
+			'helps'    => __( 'Insert image attribution here (i.e. "NBCUniversal" etc)' )
+		);
+		return $form_fields;
+	}
+
+	/*
+	 * Save attribution element to attachment post meta
+	 */
+	function save_attachment_attribution( $attachment_id ) {
+		if ( isset( $_REQUEST['attachments'][$attachment_id]['attribution'] ) ) {
+			$attribution = $_REQUEST['attachments'][$attachment_id]['attribution'];
+			update_post_meta( $attachment_id, 'attribution', $attribution );
+		}
+	}
 }
 new LWTV_Functions();
 
