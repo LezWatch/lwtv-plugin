@@ -61,8 +61,8 @@ class LWTV_Functions {
 	 * Add attribution element to images
 	 */
 	function add_attachment_attribution( $form_fields, $post ) {
-		$field_value = get_post_meta( $post->ID, 'attribution', true );
-		$form_fields[ 'attribution' ] = array(
+		$field_value = get_post_meta( $post->ID, 'lwtv_attribution', true );
+		$form_fields[ 'lwtv_attribution' ] = array(
 			'value'    => $field_value ? $field_value : '',
 			'label'    => __( 'Attribution' ),
 			'helps'    => __( 'Insert image attribution here (i.e. "NBCUniversal" etc)' )
@@ -74,9 +74,9 @@ class LWTV_Functions {
 	 * Save attribution element to attachment post meta
 	 */
 	function save_attachment_attribution( $attachment_id ) {
-		if ( isset( $_REQUEST['attachments'][$attachment_id]['attribution'] ) ) {
-			$attribution = $_REQUEST['attachments'][$attachment_id]['attribution'];
-			update_post_meta( $attachment_id, 'attribution', $attribution );
+		if ( isset( $_REQUEST['attachments'][$attachment_id]['lwtv_attribution'] ) ) {
+			$lwtv_attribution = $_REQUEST['attachments'][$attachment_id]['lwtv_attribution'];
+			update_post_meta( $attachment_id, 'lwtv_attribution', $lwtv_attribution );
 		}
 	}
 }
