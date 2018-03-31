@@ -132,6 +132,7 @@ class LWTV_Shortcodes {
 			'queer'   => '3',
 			'worth'   => 'meh',
 			'trigger' => 'none',
+			'star'    => 'none',
 		), $atts );
 
 		$queer = (float) $attributes['queer'];
@@ -146,11 +147,11 @@ class LWTV_Shortcodes {
 				break;
 			case 'no':
 				$worth_icon  = 'thumbs-down';
-				$worth_icon  = 'danger';
+				$worth_color = 'danger';
 				break;
 			case 'meh':
 				$worth_icon  = 'meh';
-				$worth_icon  = 'warning';
+				$worth_color = 'warning';
 				break;
 		}
 		$worth_image = lwtv_yikes_symbolicons( $worth_icon . '.svg', 'fa-' . $worth_icon );
@@ -172,13 +173,20 @@ class LWTV_Shortcodes {
 					$warn_color = 'info';
 					break;
 			}
-
 			$warning = '<span data-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers"><button type="button" class="btn btn-' . $warn_color . '"><span class="screener screener-warn ' . $warn_color . '" role="img">' . $warn_image . '</span></button></span>';
 		}
 
-		$output = '<div class="bd-callout"><h5 id="' . esc_attr( $attributes['title'] ) . '">Screener Review on <em>' . esc_html( $attributes['title'] ) . '</em></h5>
+		// Get proper Star
+		$stars = '';
+		$star  = ( in_array( $attributes['star'], array( 'gold', 'silver', 'bronze', 'anti' ) ) )? $attributes['star'] : 'none';
+
+		if ( $star != 'none' ) {
+			$stars      = '<span data-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-info"><span role="img" class="screener screener-star ' . $star . '">' . lwtv_yikes_symbolicons( 'star.svg', 'fa-star' ) . '</span></button></span>';
+		}
+
+		$output = '<div class="bd-callout screener-shortcode"><h5 id="' . esc_attr( $attributes['title'] ) . '">Screener Review on <em>' . esc_html( $attributes['title'] ) . '</em></h5>
 		<p>' . esc_html( $attributes['summary'] ) . '</p>
-		<p><span data-toggle="tooltip" aria-label="How good is this show for queers?" title="How good is this show for queers?"><button type="button" class="btn btn-dark">Queer Score: ' . $queer . '</button></span> <span data-toggle="tooltip" aria-label="Is this show worth watching? ' . ucfirst( $worth ) . '" title="Is this show worth watching? ' . ucfirst( $worth ) . '"><button type="button" class="btn btn-' . $worth_color . '">Worth It? <span role="img" class="screener screener-worthit ' . lcfirst( $worth ) . '">' . $worth_image . '</span></button></span> ' . $warning . '</p>
+		<p><span data-toggle="tooltip" aria-label="How good is this show for queers?" title="How good is this show for queers?"><button type="button" class="btn btn-dark">Queer Score: ' . $queer . '</button></span> <span data-toggle="tooltip" aria-label="Is this show worth watching? ' . ucfirst( $worth ) . '" title="Is this show worth watching? ' . ucfirst( $worth ) . '"><button type="button" class="btn btn-' . $worth_color . '">Worth It? <span role="img" class="screener screener-worthit ' . lcfirst( $worth ) . '">' . $worth_image . '</span></button></span> ' . $warning . $stars . '</p>
 		</div>';
 
 		return $output;

@@ -36,12 +36,12 @@ class LWTV_Alexa_Who {
 
 			foreach ( $results as $actor ) {
 				$queer      = ( $actor[ 'is_queer' ] )? 'a queer actor' : 'an actor';
-				$characters = ( $actor[ 'characters' ] == 0 )? 'no queer female or trans characters' : sprintf( _n( '%s queer female or trans character', '%s queer female or trans characters', $actor[ 'characters' ] ), $actor[ 'characters' ] );
+				$characters = ( $actor[ 'characters' ] == 0 )? 'no characters' : sprintf( _n( '%s character', '%s characters', $actor[ 'characters' ] ), $actor[ 'characters' ] );
 				$output .= $actor[ 'name' ] . ' is ' . $queer . ' who has played ' . $characters . ' on television.';
 			}
 
 		} else {
-			$output = 'I can\'t find an actor who has played a queer female or trans character by that name.';
+			$output = 'I can\'t find an actor who has played a character by that name.';
 		}
 
 		return $output;
@@ -88,7 +88,7 @@ class LWTV_Alexa_Who {
 				$output .= $actor[ 'name' ] . ' ' . $queer . '. ' . $pronoun . ' as a ' . strtolower( $actor[ 'sexuality' ] ) . ' ' . strtolower( $actor[ 'gender' ] ) . '.';
 			}
 		} else {
-			$output = 'I can\'t find an actor who has played a queer female or trans character by that name.';
+			$output = 'I can\'t find an actor who has played a character by that name.';
 		}
 
 		return $output;

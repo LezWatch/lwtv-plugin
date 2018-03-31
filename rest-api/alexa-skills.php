@@ -116,12 +116,12 @@ class LWTV_Alexa_Skills {
 	 */
 	public function news_skill( $type = false, $intent = false, $date = false, $actor = false ) {
 
-		$helptext   = 'You can ask me what happened or for information on queer female and characters or shows on Lez Watch T. V.. Try asking me "What happened this year?" or "What happened in 1989?" or "Who is the character of the day?" or "Who is Laverne Cox?" or "Is Ali Liebert queer?" or even "Who died on March 3rd?" -- I\'ll let you know what I\'ve found.';
+		$helptext   = 'You can ask me what happened or for information on queer female, non-binary, or transgender characters or shows on Lez Watch T. V.. Try asking me "What happened this year?" or "What happened in 1989?" or "Who is the character of the day?" or "Who is Laverne Cox?" or "Is Ali Liebert queer?" or even "Who died on March 3rd?" -- I\'ll let you know what I\'ve found.';
 		$output = 'I\'m sorry, I don\'t understand that request. Please ask me something else. ' . $helptext;
 		$endsession = true;
 
 		if ( $date !== false && is_numeric( substr( $date, 0, 4 ) ) && substr( $date, 0, 4 ) < FIRST_LWTV_YEAR ) {
-			$output     = 'There were no queer female or trans characters on T. V. prior to ' . FIRST_LWTV_YEAR . '. Would you like to ask me something else? ' . $helptext;
+			$output     = 'There were no known queer female, non-binary, or trans characters on T. V. prior to ' . FIRST_LWTV_YEAR . '. Would you like to ask me something else? ' . $helptext;
 			$endsession = false;
 		} elseif ( $type == 'LaunchRequest' ) {
 			$output     = 'Welcome to the Lez Watch T. V. skill. ' . $helptext;
@@ -180,7 +180,7 @@ class LWTV_Alexa_Skills {
 					}
 					break;
 				case 'AMAZON.HelpIntent':
-					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female and trans characters on TV. ' . $helptext;
+					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female, non-binary and trans characters on TV. ' . $helptext;
 					$endsession = false;
 					break;
 				case 'AMAZON.StopIntent':
@@ -223,23 +223,23 @@ class LWTV_Alexa_Skills {
 			$endsession = false;
 		} else {
 			if ( $intent == 'AMAZON.HelpIntent' ) {
-				$whodied = 'This is the Bury Your Queers skill by Lez Watch T. V., home of the world\'s greatest database of queer female on TV. ' . $helptext;
+				$whodied = 'This is the Bury Your Queers skill by Lez Watch T. V., home of the world\'s greatest database of queer female, non-binary, and trans characters on TV. ' . $helptext;
 				$endsession = false;
 			} elseif ( $intent == 'AMAZON.StopIntent' || $intent == 'AMAZON.CancelIntent' ) {
 				// Do nothing
 			} elseif ( $intent == 'HowMany' ) {
 				if ( $date == false || $timestamp == false ) {
 					$data     = LWTV_Stats_JSON::statistics( 'death', 'simple' );
-					$whodied  = 'A total of '. $data['characters']['dead'] .' queer female characters have died on TV.';
+					$whodied  = 'A total of '. $data['characters']['dead'] .' queer female, non-binary, and trans characters have died on TV.';
 				} elseif ( !preg_match( '/^[0-9]{4}$/' , $date ) ) {
 					$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but years right now. ' . $helptext;
 					$endsession = false;
 				} else {
 					$data     = LWTV_Stats_JSON::statistics( 'death', 'years' );
 					$count    = $data[$date]['count'];
-					$how_many = 'No queer female characters died on TV in ' . $date . '.';
+					$how_many = 'No queer female, non-binary, or trans characters died on TV in ' . $date . '.';
 					if ( $count > 0 ) {
-						$how_many = $count .' queer female ' . _n( 'character', 'characters', $count ) . ' died on TV in ' . $date . '.';
+						$how_many = $count .' queer female, non-binary, or trans ' . _n( 'character', 'characters', $count ) . ' died on TV in ' . $date . '.';
 					}
 					$whodied  = $how_many;
 				}
@@ -247,7 +247,7 @@ class LWTV_Alexa_Skills {
 				if ( $date == false || $timestamp == false ) {
 					$data    = LWTV_BYQ_JSON::last_death();
 					$name    = $data['name'];
-					$whodied = 'The last queer female to die was '. $name .' on '. date( 'F j, Y', $data['died'] ) .'.';
+					$whodied = 'The last queer female, non-binary, or trans character to die was '. $name .' on '. date( 'F j, Y', $data['died'] ) .'.';
 				} elseif ( preg_match( '/^[0-9]{4}-(0[1-9]|1[0-2])$/' , $date ) ) {
 					$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but days right now. ' . $helptext;
 					$endsession = false;
@@ -255,10 +255,10 @@ class LWTV_Alexa_Skills {
 					$this_day = date('m-d', $timestamp );
 					$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
 					$count    = ( key( $data ) == 'none' )? 0 : count( $data ) ;
-					$how_many = 'No queer females died';
+					$how_many = 'No queer female, non-binary, or trans characters died';
 					$the_dead = '';
 					if ( $count > 0 ) {
-						$how_many  = $count . ' queer female ' . _n( 'character', 'characters', $count ) . ' died';
+						$how_many  = $count . ' queer female, non-binary, or trans ' . _n( 'character', 'characters', $count ) . ' died';
 						$deadcount = 1;
 						foreach ( $data as $dead_character ) {
 							if ( $deadcount == $count && $count !== 1 ) $the_dead .= 'And ';
