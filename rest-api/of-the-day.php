@@ -91,9 +91,29 @@ class LWTV_OTD_JSON {
 				add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 				$meta_query_array = '';
+				$tax_query_array  = '';
+				$char_tax_array   = '';
+
+				// Special Days
+				switch( date('m-d') ) {
+					case '03-31': // Transgender Day of Visibility
+					case '11-20': // Transgender Day of Rememberance
+						$char_tax_array = array( array( 'taxonomy' => 'lez_gender', 'field'    => 'slug', 'terms'    => array( 'trans-man', 'trans-woman' ) ) );
+						break;
+					case '04-26': // Lesbian Visibility Day
+						$char_tax_array = array( array( 'taxonomy' => 'lez_sexuality', 'field'    => 'slug', 'terms'    => array( 'bisexual' ) ) );
+					case '09-23': // Celebrate Bisexuality Day
+						$char_tax_array = array( array( 'taxonomy' => 'lez_sexuality', 'field'    => 'slug', 'terms'    => array( 'bisexual' ) ) );
+						break;
+					case '10-26': // Intersex Awareness Day 
+					case '11-08': // Intersex Day of Remembrance
+						$char_tax_array = array( array( 'taxonomy' => 'lez_gender', 'field'    => 'slug', 'terms'    => array( 'intersex' ) ) );
+						break;
+				}
+
 				switch( $type ) {
 					case 'character':
-						$meta_query_array = 	array(
+						$meta_query_array = array(
 							array(
 								'key'     => '_thumbnail_id',
 								'value'   => '949', // Mystery woman
@@ -105,6 +125,7 @@ class LWTV_OTD_JSON {
 								'compare' => 'LIKE',
 							)
 						);
+						$tax_query_array = $char_tax_array;
 						break;
 				}
 
@@ -114,6 +135,7 @@ class LWTV_OTD_JSON {
 					'orderby'        => 'rand', 
 					'posts_per_page' => '1',
 					's'              => '-TBD',
+					'tax_query'      => $tax_query_array,
 					'meta_query'     => $meta_query_array,
 				);
 				$post = new WP_Query( $args );
