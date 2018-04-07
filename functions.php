@@ -3,7 +3,7 @@
  Plugin Name: Core LezWatchTV Plugin
  Plugin URI:  https://lezwatchtv.com
  Description: All the base code for LezWatch TV - If this isn't active, the site dies. An ugly death.
- Version: 2.2
+ Version: 2.3
  Author: Mika Epstein
 */
 
@@ -127,6 +127,7 @@ include_once( 'custom-loops.php' );
 include_once( 'search.php' );
 include_once( 'screeners.php' );
 include_once( 'shortcodes.php' );
+include_once( 'sort-stopwords.php' );
 include_once( 'query_vars.php' );
 
 /**
