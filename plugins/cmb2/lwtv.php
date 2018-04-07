@@ -90,7 +90,7 @@ class LWTV_CMB2 {
 		list( $first, $rest ) = explode( ' ' , $str . ' ' , 2 );
 		// the extra space is to prevent "undefined offset" notices
 		// on single-word titles
-		$validarticles = array( 'a', 'an', 'the' );
+		$validarticles = array( 'a ', 'an ', 'lá ', 'la ', 'las ', 'les ', 'los ', 'el ', 'the ' );
 		if( in_array( strtolower( $first ), $validarticles ) ) return $rest . ', ' . $first;
 		return $str;
 	}
