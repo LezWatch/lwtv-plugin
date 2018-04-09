@@ -20,50 +20,6 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 	}
 
 	/**
-	 * Character updates: Fix death date
-	 * 
-	 * ## EXAMPLES
-	 * 
-	 *		wp lwtv chardead ID
-	 *
-	*/
-	
-	function chardead( $args , $assoc_args ) {
-		// Set the post ID
-		if ( !empty($args) ) { list( $post_id ) = $args; }
-
-		// If the post_id is not empty, make sure it's legit
-		if ( !empty( $post_id ) ) {
-			if ( get_post_type( $post_id ) == 'post_type_characters' ) {
-				$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
-				$return_death    = array();
-				$newest_death    = 0000-00-00;
-				foreach ( $character_death as $death ) {
-					if ( substr( $death, 2, 1 ) != '/' ) {
-						$date = date_format( date_create_from_format( 'Y-m-j', $death ), 'Y-m-d');
-					} else {
-						$date = date_format( date_create_from_format( 'm/d/Y', $death ), 'Y-m-d');
-					}
-					
-					if ( $date > $newest_death ) $newest_death = $date;
-					
-					$return_death[] = $date;
-				}
-
-				update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
-				update_post_meta( $post_id, 'lezchars_death_year', $return_death );
-				update_post_meta( $post_id, 'lezchars_cli', time() );
-			} else {
-				WP_CLI::error( 'You can only update character pages like this.' );
-			}
-		} else {
-			WP_CLI::error( 'You can only update character pages like this.' );
-		}
-		
-		WP_CLI::success( 'Character ' . get_the_title( $post_id ) . ' updated.');
-	}
-
-	/**
 	 * Show calculation
 	 * 
 	 * ## EXAMPLES
@@ -93,58 +49,75 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 	}
 
 	/**
-	 * Update Actor Meta (and determine sexuality)
+	 * Find characters missing certain flag
+	 * Currently just to help find 
 	 * 
 	 * ## EXAMPLES
 	 * 
-	 *		wp lwtv actormeta ID
+	 *		wp lwtv find queerchars
 	 *
 	*/
 	
-	function actormeta( $args , $assoc_args ) {
+	function find( $args , $assoc_args ) {
 
-		// Set the post ID
-		if ( !empty($args) ) { list( $post_id ) = $args; }
+		// What are we looking for?
+		if ( !empty($args) ) list( $find ) = $args;
 
-		// If the post_id is not empty, make sure it's legit
-		if ( !empty( $post_id ) ) {
-			if ( get_post_type( $post_id ) == 'post_type_actors' ) {
+		// Valid things to find...
+		$valid_find = array( 'queerchars' );
+		$format     = ( isset( $assoc_args['format'] ) )? $assoc_args['format'] : 'table';
 
-				$number_chars = count( lwtv_yikes_actordata( $post_id, 'characters' ) );
-				$number_dead  = count( lwtv_yikes_actordata( $post_id, 'dead' ) );
-				$is_queer     = ( LWTV_Loops::is_actor_queer( $post_id ) == 'yes' )? true : false;
-				update_post_meta( $post_id, 'lezactors_char_count', $number_chars );
-				update_post_meta( $post_id, 'lezactors_dead_count', $number_dead );
-				update_post_meta( $post_id, 'lezactors_queer', $is_queer );
-				
-				$output  = $number_chars . ' chars, ' . $number_dead . ' dead';
-				$output .= ( $is_queer )? ', is queer' : '';
+		if ( !in_array( $find, $valid_find ) ) {
+			WP_CLI::error( 'Currently you can only use the "queerchars" param to find character played by queer actors, missing the appropriate flags.' );
+		}
 
-				// If we're not queer, let's check if they need to be updated to have SOME data ...
-				if ( !$is_queer ) {
-					$gender_terms    = get_the_terms( $post_id, 'lez_actor_gender', true );
-					$sexuality_terms = get_the_terms( $post_id, 'lez_actor_sexuality', true );
+		WP_CLI::log( 'This may take a while ....' );
 
-					// If no gender is set OR there's an error...
-					if ( !$gender_terms || is_wp_error( $gender_terms ) ) {
-						wp_set_object_terms( $post_id, 'cis-woman', 'lez_actor_gender', false );
-						$output .= ', added cis-woman';
+		// Get all the characters
+		$the_loop = LWTV_Loops::post_type_query( 'post_type_characters' );
+
+		if ( $the_loop->have_posts() ) {
+			while ( $the_loop->have_posts() ) {
+				$the_loop->the_post();
+				$post = get_post();
+
+				if( !get_post_meta( $post->ID, 'lezchars_actor', true ) ) {
+					// If there are no actors, we have a different problem...
+					$items[] = array( 'name' => get_the_title( $post->ID ), 'slug' => $post->post_name,  'problem' => 'No actors' );
+				} else {
+
+					$flagged_queer = ( has_term( 'queer-irl', 'lez_cliches' ) )? true : false;
+
+					// Get the actors...
+					$character_actors = get_post_meta( $post->ID, 'lezchars_actor', true );
+					$character_actors = get_post_meta( $post->ID, 'lezchars_actor', true );
+					if ( !is_array ( $character_actors ) ) {
+						$character_actors = array( get_post_meta( $post->ID, 'lezchars_actor', true ) );
 					}
-					// Ditto Gender
-					if ( !$sexuality_terms || is_wp_error( $sexuality_terms ) ) {
-						wp_set_object_terms( $post_id, 'heterosexual', 'lez_actor_sexuality', false );
-						$output .= ', added heterosexual';
+
+					foreach ( $character_actors as $actor ) {
+						$actor_queer = ( LWTV_Loops::is_actor_queer( $actor ) == 'yes' )? true : false;
+
+						if ( $actor_queer && !$flagged_queer ) {
+							$items[] = array( 'character' => get_the_title(), 'slug' => $post->post_name, 'problem' => 'Missing Queer IRL tag' );
+						}
+
+						if ( !$actor_queer && $flagged_queer ) {
+							$items[] = array( 'character' => get_the_title(), 'slug' => $post->post_name,  'problem' => 'No actor is queer' );
+						}
 					}
 				}
-
-			} else {
-				WP_CLI::error( 'You can only update actor meta on actor pages.' );
 			}
-		} else {
-			WP_CLI::error( 'You can only update actor meta on actor pages.' );
+			wp_reset_query();
 		}
-		
-		WP_CLI::success( 'Meta data updated for ' . get_the_title( $post_id ) . ': ' . $output );
+
+		if ( empty( $items ) ) {
+			WP_CLI::success( 'Awesome! Everyone\'s great!' );
+		}
+
+		// Output the data
+		WP_CLI\Utils\format_items( $format, $items, array( 'character', 'slug', 'problem' ) );
+		WP_CLI::success( count( $items) . ' characters need your attention.' );
 	}
 
 }
