@@ -83,10 +83,11 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 
 				if( !get_post_meta( $post->ID, 'lezchars_actor', true ) ) {
 					// If there are no actors, we have a different problem...
-					$items[] = array( 'name' => get_the_title( $post->ID ), 'slug' => $post->post_name,  'problem' => 'No actors' );
+					$items[] = array( 'url' => get_permalink(),  'problem' => 'No actors... Ooops.' );
 				} else {
 
 					$flagged_queer = ( has_term( 'queer-irl', 'lez_cliches' ) )? true : false;
+					$actor_queer   = false;
 
 					// Get the actors...
 					$character_actors = get_post_meta( $post->ID, 'lezchars_actor', true );
@@ -95,16 +96,17 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 						$character_actors = array( get_post_meta( $post->ID, 'lezchars_actor', true ) );
 					}
 
+					// If ANY actor is flagged as queer, we're queer.
 					foreach ( $character_actors as $actor ) {
-						$actor_queer = ( LWTV_Loops::is_actor_queer( $actor ) == 'yes' )? true : false;
+						$actor_queer = ( LWTV_Loops::is_actor_queer( $actor ) == 'yes' || $actor_queer )? true : false;
+					}
+					
+					if ( $actor_queer && !$flagged_queer ) {
+						$items[] = array( 'url' => get_permalink(), 'problem' => 'Missing Queer IRL tag' );
+					}
 
-						if ( $actor_queer && !$flagged_queer ) {
-							$items[] = array( 'character' => get_the_title(), 'slug' => $post->post_name, 'problem' => 'Missing Queer IRL tag' );
-						}
-
-						if ( !$actor_queer && $flagged_queer ) {
-							$items[] = array( 'character' => get_the_title(), 'slug' => $post->post_name,  'problem' => 'No actor is queer' );
-						}
+					if ( !$actor_queer && $flagged_queer ) {
+						$items[] = array( 'url' => get_permalink(),  'problem' => 'No actor is queer' );
 					}
 				}
 			}
@@ -116,7 +118,7 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 		}
 
 		// Output the data
-		WP_CLI\Utils\format_items( $format, $items, array( 'character', 'slug', 'problem' ) );
+		WP_CLI\Utils\format_items( $format, $items, array( 'url', 'problem' ) );
 		WP_CLI::success( count( $items) . ' characters need your attention.' );
 	}
 
