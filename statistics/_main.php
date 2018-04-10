@@ -75,7 +75,7 @@ class LWTV_Stats {
 		// Custom call for actor/character 
 		if ( $data == 'per-char' )  $array = LWTV_Stats_Arrays::actor_chars( 'characters' );
 		if ( $data == 'per-actor' ) $array = LWTV_Stats_Arrays::actor_chars( 'actors' );
-		// Custom call for Nations or Stations
+		// Custom call for Nations
 		if ( substr( $data, 0, 7) == 'country' || substr( $data, 0, 8) == 'stations' ) {
 			$array    = LWTV_Stats_Arrays::characters_details_shows( $count, $format, $data );
 			// Stupid counting shit ...
