@@ -131,7 +131,7 @@ class LWTV_Stats {
 					foreach( $queery->posts as $show ) {
 						if ( get_post_meta( $show->ID, 'lezshows_airdates', true ) ) {
 							$airdates = get_post_meta( $show->ID, 'lezshows_airdates', true );
-							$end = $airdates['finish'];
+							$end      = $airdates['finish'];
 							if ( lcfirst( $end ) == 'current' || $end == date( 'Y' ) ) $onair++;
 						}
 					}
@@ -142,10 +142,28 @@ class LWTV_Stats {
 					foreach( $queery->posts as $show ) {
 						if ( get_post_meta( $show->ID, 'lezshows_the_score', true ) ) {
 							$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
-							$score += $this_score;
+							$score     += $this_score;
 						}
 					}
 					$score = ( $score / $queery->post_count );
+					
+					$return = round( $score, 2 );
+					break;
+				case 'onairscore':
+					$score = 0;
+					$onair = 0;
+					foreach( $queery->posts as $show ) {
+						if ( get_post_meta( $show->ID, 'lezshows_the_score', true ) ) {
+							$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
+							$airdates   = get_post_meta( $show->ID, 'lezshows_airdates', true );
+							$end        = $airdates['finish'];
+							if ( lcfirst( $end ) == 'current' || $end == date( 'Y' ) ) {
+								$score += $this_score;
+								$onair++;
+							}
+						}
+					}
+					$score = ( $score / $onair );
 					
 					$return = round( $score, 2 );
 					break;
