@@ -1,6 +1,7 @@
 <?php
 /**
-	Copyright 2017 Mika Epstein (email: ipstenu@halfelf.org)
+	WP CLI Commands for LezWatchTV
+	Copyright 2017-2018 Mika Epstein (email: ipstenu@halfelf.org)
 */
 
 // Bail if directly accessed
@@ -81,43 +82,47 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 				$the_loop->the_post();
 				$post = get_post();
 
-				if( !get_post_meta( $post->ID, 'lezchars_actor', true ) ) {
+				// Get the actors...
+				$character_actors = get_post_meta( $post->ID, 'lezchars_actor', true );
+
+				if( !$character_actors || empty( $character_actors ) ) {
 					// If there are no actors, we have a different problem...
-					$items[] = array( 'name' => get_the_title( $post->ID ), 'slug' => $post->post_name,  'problem' => 'No actors' );
+					$items[] = array( 'url' => get_permalink(),  'problem' => 'No actors... Ooops.' );
 				} else {
 
+					// Get the defaults
 					$flagged_queer = ( has_term( 'queer-irl', 'lez_cliches' ) )? true : false;
+					$actor_queer   = false;
 
-					// Get the actors...
-					$character_actors = get_post_meta( $post->ID, 'lezchars_actor', true );
-					$character_actors = get_post_meta( $post->ID, 'lezchars_actor', true );
 					if ( !is_array ( $character_actors ) ) {
 						$character_actors = array( get_post_meta( $post->ID, 'lezchars_actor', true ) );
 					}
 
+					// If ANY actor is flagged as queer, we're queer.
 					foreach ( $character_actors as $actor ) {
-						$actor_queer = ( LWTV_Loops::is_actor_queer( $actor ) == 'yes' )? true : false;
+						$actor_queer = ( LWTV_Loops::is_actor_queer( $actor ) == 'yes' || $actor_queer )? true : false;
+					}
+					
+					if ( $actor_queer && !$flagged_queer ) {
+						$items[] = array( 'url' => get_permalink(), 'problem' => 'Missing Queer IRL tag' );
+					}
 
-						if ( $actor_queer && !$flagged_queer ) {
-							$items[] = array( 'character' => get_the_title(), 'slug' => $post->post_name, 'problem' => 'Missing Queer IRL tag' );
-						}
-
-						if ( !$actor_queer && $flagged_queer ) {
-							$items[] = array( 'character' => get_the_title(), 'slug' => $post->post_name,  'problem' => 'No actor is queer' );
-						}
+					if ( !$actor_queer && $flagged_queer ) {
+						$items[] = array( 'url' => get_permalink(),  'problem' => 'No actor is queer' );
 					}
 				}
 			}
 			wp_reset_query();
 		}
 
-		if ( empty( $items ) ) {
+		if ( empty( $items ) || !is_array( $item ) ) {
+			// No one needs help
 			WP_CLI::success( 'Awesome! Everyone\'s great!' );
+		} else {
+			// These characters need attention
+			WP_CLI\Utils\format_items( $format, $items, array( 'url', 'problem' ) );
+			WP_CLI::success( count( $items ) . ' character(s) need your attention.' );
 		}
-
-		// Output the data
-		WP_CLI\Utils\format_items( $format, $items, array( 'character', 'slug', 'problem' ) );
-		WP_CLI::success( count( $items) . ' characters need your attention.' );
 	}
 
 }
