@@ -238,7 +238,7 @@ class LWTV_Stats_Arrays {
 		$data_subtax = ( isset( $pieces[2] ) && in_array( $pieces[2], array_keys( $valid_subtaxes ) ) )? $pieces[2] : 'all';
 
 		// Get the taxonomy data:
-		if ( $data_term !== 'all' && $data_term !== 'onair' ) {
+		if ( $data_term !== 'all' ) {
 			$tax_term = get_term_by( 'slug', $data_term, 'lez_' . $data_main );
 			$taxonomy = array( $data_term => array(
 				'name' => $tax_term->name,
@@ -246,14 +246,6 @@ class LWTV_Stats_Arrays {
 			) );
 		} else {
 			$taxonomy = get_terms( 'lez_' . $data_main );
-		}
-
-		if ( $data_term == 'onair' ) {
-			switch( $format ) {
-				case 'count':
-					return '10'; // This is WRONG!! Need to loop...
-					break;
-			}
 		}
 
 		// Parse the taxonomy

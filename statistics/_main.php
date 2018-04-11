@@ -109,6 +109,54 @@ class LWTV_Stats {
 		if ( $format == 'low' )        LWTV_Stats_Output::averages( $subject, $data, $array, $count, 'low' );
 		if ( $format == 'array' )      return $array;
 	}
+
+	/*
+	 * Shows
+	 *
+	 * @param string $type  Type of output (onair, total, score)
+	 * @param string $tax   The taxonomy   (stations, nations, etc)
+	 * @param string $term  The term       (amc, united-kingdom, etc)
+	 *
+	 * @return Content based on $format
+	 */
+	static function showcount( $type, $tax, $term ) {
+
+		$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
+		$return = 0;
+
+		if ( $queery->have_posts() ) {
+			switch( $type ) {
+				case 'onair':
+					$onair = 0;
+					foreach( $queery->posts as $show ) {
+						if ( get_post_meta( $show->ID, 'lezshows_airdates', true ) ) {
+							$airdates = get_post_meta( $show->ID, 'lezshows_airdates', true );
+							$end = $airdates['finish'];
+							if ( lcfirst( $end ) == 'current' || $end == date( 'Y' ) ) $onair++;
+						}
+					}
+					$return = $onair;
+					break;
+				case 'score':
+					$score = 0;
+					foreach( $queery->posts as $show ) {
+						if ( get_post_meta( $show->ID, 'lezshows_the_score', true ) ) {
+							$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
+							$score += $this_score;
+						}
+					}
+					$score = ( $score / $queery->post_count );
+					
+					$return = round( $score, 2 );
+					break;
+				default:
+					$return = $queery->post_count;
+			}
+		}
+		
+		return $return;
+	}
+
 }
 
 new LWTV_Stats();
