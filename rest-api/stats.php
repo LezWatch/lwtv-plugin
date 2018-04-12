@@ -2,11 +2,13 @@
 /*
 Description: REST-API - Stats output
 
-So other people can
+So other people can access our stats data
 
-The code that runs the Stats API service
   - Shows
   - Characters
+  - Death
+  - Stations
+  - Nations
 
 Version: 1.0
 Author: Mika Epstein
@@ -113,6 +115,12 @@ class LWTV_Stats_JSON {
 				break;
 			case 'death':
 				$stats_array = self::get_death( $format );
+				break;
+			case 'stations':
+				$stats_array = self::get_show_taxonomy( 'stations' );
+				break;
+			case 'nations':
+				$stats_array = self::get_show_taxonomy( 'nations' );
 				break;
 			default:
 				$stats_array = self::get_characters( 'simple' );
@@ -401,6 +409,33 @@ class LWTV_Stats_JSON {
 		return $stats_array;
 	}
 
+	/**
+	 * get_show_taxonomy function.
+	 * 
+	 * @access public
+	 * @static
+	 * @return array
+	 */
+	static function get_show_taxonomy( $type ) {
+
+		$valid_types = array ( 'stations', 'nations' );
+
+		// Early bail
+		if ( !in_array( $type, $valid_types ) ) return wp_send_json_error( 'Invalid input.', 404 );
+
+		/*
+			array output should be
+			array (
+				'USA' => array(
+					shows => 3
+					onair => 1
+					characters => 100
+					homosexual => 1
+				)
+			)
+		*/
+
+	}
 
 }
 new LWTV_Stats_JSON();
