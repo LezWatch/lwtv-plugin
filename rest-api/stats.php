@@ -117,10 +117,10 @@ class LWTV_Stats_JSON {
 				$stats_array = self::get_death( $format );
 				break;
 			case 'stations':
-				$stats_array = self::get_show_taxonomy( 'stations', $page );
+				$stats_array = self::get_show_taxonomy( 'stations', $format, $page );
 				break;
 			case 'nations':
-				$stats_array = self::get_show_taxonomy( 'country', $page );
+				$stats_array = self::get_show_taxonomy( 'country', $format, $page );
 				break;
 			default:
 				$stats_array = self::get_characters( 'simple' );
@@ -370,7 +370,7 @@ class LWTV_Stats_JSON {
 				$stats_array = LWTV_Stats::generate( 'shows', 'thumbs', 'array' );
 				break;
 			case 'complex':
-				$showsloop = LWTV_Loops::post_type_query( 'post_type_shows' );
+				$showsloop = LWTV_Loops::post_type_query( 'post_type_shows', $page );
 
 				if ($showsloop->have_posts() ) {
 					while ( $showsloop->have_posts() ) {
@@ -416,17 +416,33 @@ class LWTV_Stats_JSON {
 	 * @static
 	 * @return array
 	 */
-	static function get_show_taxonomy( $type, $page = 1 ) {
+	static function get_show_taxonomy( $type, $format = 'simple', $page = 1 ) {
 
-		$valid_types = array ( 'stations', 'country' );
+		$valid_types   = array ( 'stations', 'country' );
+		$valid_formats = array( 'simple', 'complex' );
 
 		// Early bail
 		if ( !in_array( $type, $valid_types ) ) return wp_send_json_error( 'Invalid input. No such type.', 404 );
 
 		// Get our defaults
 		$char_data      = $return = array();
-		$taxonomy       = get_terms( 'lez_' . $type ); // This is a list of all stations or nations
 		$valid_subtaxes = array( 'gender', 'sexuality', 'romantic' );
+
+		// This is a list of all stations or nations 
+		// If stats are complex, use pagination
+		switch ( $format ) {
+			case 'simple':
+				$taxonomy = get_terms( array( 'taxonomy' => 'lez_' . $type ) );
+				break;
+			case 'complex':
+				$offset = ( $page - 1 ) * 20;
+				$taxonomy = get_terms( array(
+					'taxonomy' => 'lez_' . $type,
+					'number'   => 20,
+					'offset' => $offset,
+				) );
+				break;
+		}
 
 		// Build out the default arrays for character data:
 		foreach ( $valid_subtaxes as $subtax ) {
@@ -446,8 +462,8 @@ class LWTV_Stats_JSON {
 			$name = ( !isset( $the_tax->name ) )? $the_tax['name'] : $the_tax->name;
 
 			// Get the posts for this singular term (i.e. a specific station)
-			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN', $page );
-	
+			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
+
 			// If we have anyone assigned to this station/nation, let's process
 			if ( $queery->have_posts() ) {
 				foreach( $queery->posts as $show ) {
@@ -467,24 +483,34 @@ class LWTV_Stats_JSON {
 						$characters += $count;
 					}
 
-					// Now let's get all the character data!
-					foreach ( $valid_subtaxes as $meta ) {
-						$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
-						foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
-							$char_data[$char_data_meta] += $char_data_count;
+					// If we have a complex format, let's get ALL the data too!
+					if ( $format == 'complex' ) {
+						foreach ( $valid_subtaxes as $meta ) {
+							$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
+							foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
+								$char_data[$char_data_meta] += $char_data_count;
+							}
 						}
 					}
 
+
 					// Build our return array:
 					$return[$slug]['shows']           = $shows;
-					$return[$slug]['onair']           = LWTV_Stats::showcount( 'onair', $type, $slug );
-					$return[$slug]['avg_score']       = LWTV_Stats::showcount( 'score', $type, $slug );
-					$return[$slug]['avg_onair_score'] = LWTV_Stats::showcount( 'onairscore', $type, $slug );
+
+					// Only run this if we're complex...
+					if ( $format == 'complex' ) {
+						$return[$slug]['onair']           = LWTV_Stats::showcount( 'onair', $type, $slug );
+						$return[$slug]['avg_score']       = LWTV_Stats::showcount( 'score', $type, $slug );
+						$return[$slug]['avg_onair_score'] = LWTV_Stats::showcount( 'onairscore', $type, $slug );
+					}
+
 					$return[$slug]['characters']      = $characters;
 
-					// Add the other taxonomies
-					foreach ( $char_data as $ctax_name => $ctax_count ) {
-						$return[$slug][$ctax_name] = $ctax_count ;
+					// If we have a complex format, we need to add that data...
+					if ( $format == 'complex' ) {
+						foreach ( $char_data as $ctax_name => $ctax_count ) {
+							$return[$slug][$ctax_name] = $ctax_count ;
+						}
 					}
 
 				}

@@ -72,19 +72,11 @@ class LWTV_Loops {
 	 *
 	 * @return array The WP_Query Array
 	 */
-	public static function tax_query( $post_type, $taxonomy, $field, $term, $operator = 'IN', $page = 0 ) {
-		if ( $page == 0 ){
-			$count  = wp_count_posts( $post_type )->publish;
-			$offset = 0;
-		} else {
-			$count  = 50;
-			$offset = ( 50 * $page ) - 50;
-		}
-
+	public static function tax_query( $post_type, $taxonomy, $field, $term, $operator = 'IN' ) {
+		$count = wp_count_posts( $post_type )->publish;
 		$queery = new WP_Query ( array(
 			'post_type'              => $post_type,
 			'posts_per_page'         => $count,
-			'offset'                 => $offset,
 			'no_found_rows'          => true,
 			'update_post_meta_cache' => false,
 			'post_status'            => array( 'publish' ),
