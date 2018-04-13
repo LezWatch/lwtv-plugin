@@ -244,6 +244,16 @@ class LWTV_Stats_Arrays {
 			$taxonomy = get_terms( 'lez_' . $data_main );
 		}
 
+		// Fill the char_data if we're showing it all
+		if ( $data_meta == 'all' && $data_term !== 'all' ) {
+			foreach ( $valid_subtaxes as $subtax ) {
+				$terms = get_terms( 'lez_' . $subtax, array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
+				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+					foreach ( $terms as $term ) { $char_data[$term->slug] = 0; }
+				}
+			}
+		}
+
 		// Parse the taxonomy
 		foreach ( $taxonomy as $the_tax ) {
 			$characters = 0;
@@ -269,12 +279,14 @@ class LWTV_Stats_Arrays {
 
 					// Get the data...
 					if ( $data_meta !== 'all' ) {
-						$char_data_array       = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
-						$char_data[$data_meta] = array_shift( $char_data_array );
+						$char_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
+						$char_data       = array_shift( $char_data_array );
 					} elseif ( $data_meta == 'all' && $data_term !== 'all' ) {
 						foreach ( $valid_subtaxes as $meta ) {
 							$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
-							$char_data[$meta] = array_shift( $char_data_array );
+							foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
+								$char_data[$char_data_meta] += $char_data_count;
+							}
 						}
 					}
 				}
@@ -294,11 +306,8 @@ class LWTV_Stats_Arrays {
 					} elseif ( $data_term !== 'all' && $data_meta == 'all' ) {
 						$array['shows'] = array( 'name'  => 'Shows', 'count' => $shows );
 						$array['chars'] = array( 'name' => 'Characters', 'count' => $characters );
-						print_r( $char_data );
-						foreach ( $valid_subtaxes as $meta ) {
-							foreach ( $char_data[$meta] as $char_name => $char_count ) {
-								$array[$char_name] = array( 'name'  => ucfirst( $char_name ), 'count' => $char_count );
-							}
+						foreach ( $char_data as $ctax_name => $ctax_count ) {
+							$array[$ctax_name] = array( 'name' => ucfirst( $ctax_name ), 'count' => $ctax_count );
 						}
 					} else {
 						$array = self::taxonomy( 'post_type_shows', 'lez_' . $data_main );
