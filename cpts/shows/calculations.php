@@ -305,10 +305,10 @@ class LWTV_Shows_Calculate {
 
 		if ( is_array( $intersection ) ) $count_inters = count( $intersection );
 
-		if ( ( $count_inters * 2 ) >= 10 ) {
-			$calculate += 10;
+		if ( ( $count_inters * 3 ) >= 15 ) {
+			$calculate += 15;
 		} else {
-			$calculate += ( $count_inters * 2 );
+			$calculate += ( $count_inters * 3 );
 		}
 
 		// Keep it between 0 and 100

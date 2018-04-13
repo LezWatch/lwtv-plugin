@@ -163,7 +163,7 @@ class LWTV_Stats {
 							}
 						}
 					}
-					$score = ( $score / $onair );
+					$score = ( $onair !== 0 )? ( $score / $onair ): $onair;
 					
 					$return = round( $score, 2 );
 					break;

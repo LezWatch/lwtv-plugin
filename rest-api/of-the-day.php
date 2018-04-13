@@ -20,7 +20,7 @@ class LWTV_OTD_JSON {
 	/**
 	 * Constructor
 	 */
-	public function __construct() {
+	function __construct() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init') );
 	}
 
@@ -30,7 +30,7 @@ class LWTV_OTD_JSON {
 	 * Creates callbacks
 	 *   - /lwtv/v1/of-the-day/
 	 */
-	public function rest_api_init() {
+	static function rest_api_init() {
 
 		register_rest_route( 'lwtv/v1', '/of-the-day/', array(
 			'methods' => 'GET',
@@ -47,7 +47,7 @@ class LWTV_OTD_JSON {
 	/**
 	 * Rest API Callback for Of The Day
 	 */
-	public function otd_rest_api_callback( $data ) {
+	static function otd_rest_api_callback( $data ) {
 		$params = $data->get_params();
 		$type   = ( isset( $params['type'] ) && $params['type'] !== '' )? sanitize_title_for_query( $params['type'] ) : 'unknown';
 		$response = $this->of_the_day( $type );
@@ -57,7 +57,7 @@ class LWTV_OTD_JSON {
 	/*
 	 * Of the Day function
 	 */
-	public static function of_the_day( $type = 'character' ) {
+	static function of_the_day( $type = 'character' ) {
 
 		// Valid types of 'of the day':
 		$valid_types = array( 'birthday', 'character', 'show', 'death' );
@@ -93,7 +93,7 @@ class LWTV_OTD_JSON {
 	 * @param string $type (default: 'character')
 	 * @return array
 	 */
-	public function character_show( $date = '', $type = 'character' ) {
+	static function character_show( $date = '', $type = 'character' ) {
 
 		// Defaults...
 		$return = array();
@@ -131,7 +131,7 @@ class LWTV_OTD_JSON {
 						),
 						array(
 							'key'     => 'lezchars_show_group',
-							'value'   => array ( 'regular', 'recurring' ),
+							'value'   => 're',
 							'compare' => 'LIKE',
 						)
 					);
@@ -204,9 +204,10 @@ class LWTV_OTD_JSON {
 	 * @param mixed $date
 	 * @return array()
 	 */
-	public function character_awareness( $date = '' ) {
+	static function character_awareness( $date = '' ) {
 
-		$date = ( $date == '' )? date('m-d') : $date;
+		$return = '';
+		$date   = ( $date == '' )? date('m-d') : $date;
 
 		switch( $date ) {
 			case '03-31': // Transgender Day of Visibility
@@ -227,7 +228,7 @@ class LWTV_OTD_JSON {
 		return $return;
 	}
 
-	public function birthday( $date = '' ){
+	static function birthday( $date = '' ){
 
 		$date   = ( $date == '' )? date('m-d') : $date;
 
