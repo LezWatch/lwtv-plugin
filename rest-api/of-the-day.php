@@ -227,7 +227,7 @@ class LWTV_OTD_JSON {
 		return $return;
 	}
 
-	public function birthday( $date = '' ){
+	static function birthday( $date = '' ){
 
 		$date   = ( $date == '' )? date('m-d') : $date;
 
