@@ -131,8 +131,8 @@ class LWTV_OTD_JSON {
 						),
 						array(
 							'key'     => 'lezchars_show_group',
-							'value'   => 'guest',
-							'compare' => 'NOT LIKE',
+							'value'   => 're',
+							'compare' => 'LIKE',
 						)
 					);
 					$tax_query_array = $char_tax_array;
