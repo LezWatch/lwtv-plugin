@@ -418,15 +418,23 @@ class LWTV_Stats_JSON {
 	 */
 	static function get_show_taxonomy( $type, $page = 1 ) {
 
-		$valid_types = array ( 'stations', 'county' );
+		$valid_types = array ( 'stations', 'country' );
 
 		// Early bail
-		if ( !in_array( $type, $valid_types ) ) return wp_send_json_error( 'Invalid input.', 404 );
+		if ( !in_array( $type, $valid_types ) ) return wp_send_json_error( 'Invalid input. No such type.', 404 );
 
 		// Get our defaults
 		$char_data      = $return = array();
 		$taxonomy       = get_terms( 'lez_' . $type ); // This is a list of all stations or nations
 		$valid_subtaxes = array( 'gender', 'sexuality', 'romantic' );
+
+		// Build out the default arrays for character data:
+		foreach ( $valid_subtaxes as $subtax ) {
+			$terms = get_terms( 'lez_' . $subtax, array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
+			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+				foreach ( $terms as $term ) { $char_data[$term->slug] = 0; }
+			}
+		}
 
 		// Parse the taxonomy
 		// Loop through the terms (i.e. USA, ABC, The CW) and generate the stats for each one
@@ -438,7 +446,7 @@ class LWTV_Stats_JSON {
 			$name = ( !isset( $the_tax->name ) )? $the_tax['name'] : $the_tax->name;
 
 			// Get the posts for this singular term (i.e. a specific station)
-			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
+			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN', $page );
 	
 			// If we have anyone assigned to this station/nation, let's process
 			if ( $queery->have_posts() ) {
@@ -459,15 +467,26 @@ class LWTV_Stats_JSON {
 						$characters += $count;
 					}
 
+					// Now let's get all the character data!
+					foreach ( $valid_subtaxes as $meta ) {
+						$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
+						foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
+							$char_data[$char_data_meta] += $char_data_count;
+						}
+					}
+
 					// Build our return array:
 					$return[$slug]['shows']           = $shows;
-					$return[$slug]['onair']           = LWTV_Stats::showcount( 'onair', 'stations', $slug );
-					$return[$slug]['avg_score']       = LWTV_Stats::showcount( 'score', 'stations', $slug );
-					$return[$slug]['avg_onair_score'] = LWTV_Stats::showcount( 'onairscore', 'stations', $slug );
+					$return[$slug]['onair']           = LWTV_Stats::showcount( 'onair', $type, $slug );
+					$return[$slug]['avg_score']       = LWTV_Stats::showcount( 'score', $type, $slug );
+					$return[$slug]['avg_onair_score'] = LWTV_Stats::showcount( 'onairscore', $type, $slug );
 					$return[$slug]['characters']      = $characters;
 
 					// Add the other taxonomies
-					$return[$slug] = array_merge( $return[$slug], $char_data );
+					foreach ( $char_data as $ctax_name => $ctax_count ) {
+						$return[$slug][$ctax_name] = $ctax_count ;
+					}
+
 				}
 				wp_reset_query();
 			}

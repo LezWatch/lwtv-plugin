@@ -40,7 +40,8 @@ class LWTV_Loops {
 		$is_queer = 'no';
 		
 		// If the actor is cis, they may not be queer...
-		$straight_genders =  array( 'cis-man', 'cis-woman', 'cisgender' );
+		// Also 'undefined' isn't queer since we just don't know...
+		$straight_genders =  array( 'cis-man', 'cis-woman', 'cisgender', 'undefined' );
 		$gender_terms     = get_the_terms( $the_ID, 'lez_actor_gender', true );
 		if ( !$gender_terms || is_wp_error( $gender_terms ) || has_term( $straight_genders, 'lez_actor_gender', $the_ID ) ) {
 			$gender = 'no';
@@ -71,11 +72,19 @@ class LWTV_Loops {
 	 *
 	 * @return array The WP_Query Array
 	 */
-	public static function tax_query( $post_type, $taxonomy, $field, $term, $operator = 'IN' ) {
-		$count = wp_count_posts( $post_type )->publish;
+	public static function tax_query( $post_type, $taxonomy, $field, $term, $operator = 'IN', $page = 0 ) {
+		if ( $page == 0 ){
+			$count  = wp_count_posts( $post_type )->publish;
+			$offset = 0;
+		} else {
+			$count  = 50;
+			$offset = ( 50 * $page ) - 50;
+		}
+
 		$queery = new WP_Query ( array(
 			'post_type'              => $post_type,
 			'posts_per_page'         => $count,
+			'offset'                 => $offset,
 			'no_found_rows'          => true,
 			'update_post_meta_cache' => false,
 			'post_status'            => array( 'publish' ),
