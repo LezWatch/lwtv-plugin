@@ -89,6 +89,7 @@ class LWTV_Stats_Arrays {
 					if ( $each_show['type'] == 'recurring' ) $by_role['recurring']++;
 				}
 			}
+			wp_reset_query();
 		}
 
 		$array = array (
@@ -217,25 +218,20 @@ class LWTV_Stats_Arrays {
 	static function characters_details_shows( $count, $format, $data ) {
 
 		// Set defaults
-		$array      = array();
-		$char_data  = array();
+		$array = $char_data  = array();
 
 		// Create a massive array of all the character terms we care about...
-		$valid_subtaxes = array( 
-			'gender'    => 'lez_gender',
-			'sexuality' => 'lez_sexuality',
-			'romantic'  => 'lez_romantic',
-		);
+		$valid_subtaxes = array( 'gender', 'sexuality', 'romantic' );
 
-		// [main_term_subtax]
-		// [main taxonomy]_[term of main]_[subtaxonomy to parse]
+		// [main_term_meta]
+		// [main taxonomy]_[term of main]_[metadata to parse]
 		// ex: [country_all_gender]
 		//     [station_abc_sexuality]
 		//     [country_usa_all]
-		$pieces      = explode( '_', $data);
-		$data_main   = $pieces[0];
-		$data_term   = ( isset( $pieces[1] ) )? $pieces[1] : 'all';
-		$data_subtax = ( isset( $pieces[2] ) && in_array( $pieces[2], array_keys( $valid_subtaxes ) ) )? $pieces[2] : 'all';
+		$pieces    = explode( '_', $data);
+		$data_main = $pieces[0];
+		$data_term = ( isset( $pieces[1] ) )? $pieces[1] : 'all';
+		$data_meta = ( isset( $pieces[2] ) && in_array( $pieces[2], array_keys( $valid_subtaxes ) ) )? $pieces[2] : 'all';
 
 		// Get the taxonomy data:
 		if ( $data_term !== 'all' ) {
@@ -248,21 +244,20 @@ class LWTV_Stats_Arrays {
 			$taxonomy = get_terms( 'lez_' . $data_main );
 		}
 
+		// Fill the char_data if we're showing it all
+		if ( $data_meta == 'all' && $data_term !== 'all' ) {
+			foreach ( $valid_subtaxes as $subtax ) {
+				$terms = get_terms( 'lez_' . $subtax, array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
+				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+					foreach ( $terms as $term ) { $char_data[$term->slug] = 0; }
+				}
+			}
+		}
+
 		// Parse the taxonomy
 		foreach ( $taxonomy as $the_tax ) {
 			$characters = 0;
 			$shows      = 0;
-
-			// If the subtaxonomy is ALL then we want everything. Otherwise
-			// it should be 'sexuality' or 'romantic' etc.
-			if ( $data_subtax !== 'all' ) {
-				$terms     = get_terms( $valid_subtaxes[ $data_subtax ], array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
-				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-					foreach ( $terms as $term ) {
-						$char_data[ $term->slug ] = 0;
-					}
-				}
-			}
 
 			$slug = ( !isset( $the_tax->slug ) )? $the_tax['slug'] : $the_tax->slug;
 			$name = ( !isset( $the_tax->name ) )? $the_tax['name'] : $the_tax->name;
@@ -273,9 +268,7 @@ class LWTV_Stats_Arrays {
 			// Process
 			if ( $queery->have_posts() ) {
 				foreach( $queery->posts as $show ) {
-
 					$shows++;
-
 					// Since everyone has a gender, we'll use that as our baseline...
 					$gender = get_post_meta( $show->ID, 'lezshows_char_gender' );
 
@@ -285,28 +278,37 @@ class LWTV_Stats_Arrays {
 					}
 
 					// Get the data...
-					if ( $data_subtax !== 'all' ) {
-						$dataset = get_post_meta( $show->ID, 'lezshows_char_' . $data_subtax );
-						foreach( array_shift( $dataset ) as $this_data => $count ) {
-							$char_data[ $this_data ] += $count;
+					if ( $data_meta !== 'all' ) {
+						$char_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
+						$char_data       = array_shift( $char_data_array );
+					} elseif ( $data_meta == 'all' && $data_term !== 'all' ) {
+						foreach ( $valid_subtaxes as $meta ) {
+							$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
+							foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
+								$char_data[$char_data_meta] += $char_data_count;
+							}
 						}
 					}
 				}
+				wp_reset_query();
 			}
 
 			// Determine what kind of array we need to show...
 			switch( $format ) {
 				case 'barchart':
-					if ( $data_term !== 'all' && $data_subtax !== 'all' ) {
+					if ( $data_term !== 'all' && $data_meta !== 'all' ) {
 						foreach ( $char_data as $char_name => $char_count ) {
 							$array[] = array (
 								'name'  => $char_name,
 								'count' => $char_count,
 							);
 						}
-					} elseif ( $data_term !== 'all' && $data_subtax == 'all' ) {
+					} elseif ( $data_term !== 'all' && $data_meta == 'all' ) {
 						$array['shows'] = array( 'name'  => 'Shows', 'count' => $shows );
 						$array['chars'] = array( 'name' => 'Characters', 'count' => $characters );
+						foreach ( $char_data as $ctax_name => $ctax_count ) {
+							$array[$ctax_name] = array( 'name' => ucfirst( $ctax_name ), 'count' => $ctax_count );
+						}
 					} else {
 						$array = self::taxonomy( 'post_type_shows', 'lez_' . $data_main );
 					}
@@ -314,7 +316,7 @@ class LWTV_Stats_Arrays {
 				case 'percentage':
 				case 'piechart':
 					if ( $data_term !== 'all' ) {
-						if ( $data_subtax !== 'all' ) {
+						if ( $data_meta !== 'all' ) {
 							foreach ( $char_data as $char_name => $char_count ) {
 								$array[] = array (
 									'name'  => $char_name,
@@ -339,51 +341,6 @@ class LWTV_Stats_Arrays {
 						'characters' => $characters,
 						'dataset'    => $char_data,
 					);
-			}
-		}
-
-		// If subtax is ALL then we have an extra check...
-		if ( $data_subtax == 'all' && $data_term !== 'all' ) {
-			foreach ( $valid_subtaxes as $subslug => $subtax ) {
-				$terms = get_terms( $subtax, array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
-				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-					foreach ( $terms as $term ) { $char_data[$term->slug] = 0; }
-				}
-			}
-
-			// Get the posts
-			// All posts in station/nation name.( $data_term)
-			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $data_main, 'slug', $data_term );
-
-			// Process
-			if ( $queery->have_posts() ) {
-				foreach( $queery->posts as $show ) {
-					foreach ( $valid_subtaxes as $subslug => $subtax ) {
-						$dataset = get_post_meta( $show->ID, 'lezshows_char_' . $subslug );
-						foreach( array_shift( $dataset ) as $this_data => $count ) {
-							$char_data[ $this_data ] += $count;
-						}
-					}
-				}
-			}
-
-			// Remove zeros
-			$char_data = array_filter( $char_data );
-
-			// Add to Array based on what we got...
-			switch( $format ) {
-				case 'barchart':
-					foreach ( $char_data as $char_name => $char_count ) {
-						$array[$char_name] = array ( 'name'  => ucfirst( $char_name ), 'count' => $char_count, );
-					}
-					break;
-				case 'count':
-					$array = $queery->post_count;
-					break;
-				case 'percentage':
-				case 'piechart':
-					// TBD
-					break;
 			}
 		}
 
@@ -546,7 +503,6 @@ class LWTV_Stats_Arrays {
 								}
 							}
 						}
-
 					}
 					wp_reset_query();
 				}
@@ -752,7 +708,6 @@ class LWTV_Stats_Arrays {
 							'status' => get_post_status( $show_id ),
 						);
 					}
-
 					wp_reset_query();
 				}
 			}
@@ -802,6 +757,7 @@ class LWTV_Stats_Arrays {
 							if ( $is_queer == 'yes' )  $array['queer']['count']++;
 							if ( $is_queer == 'no' )   $array['not_queer']['count']++;
 						}
+						wp_reset_query();
 					}
 				break;
 		}

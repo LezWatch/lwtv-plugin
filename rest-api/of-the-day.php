@@ -93,7 +93,7 @@ class LWTV_OTD_JSON {
 	 * @param string $type (default: 'character')
 	 * @return array
 	 */
-	public function character_show( $date = '', $type = 'character' ) {
+	static function character_show( $date = '', $type = 'character' ) {
 
 		// Defaults...
 		$return = array();
