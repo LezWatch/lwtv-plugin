@@ -90,7 +90,7 @@ class LWTV_Stats_JSON {
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 		// Valid Data
-		$valid_type   = array( 'characters', 'actors', 'shows', 'death', 'first-year' );
+		$valid_type   = array( 'characters', 'actors', 'shows', 'death', 'first-year', 'stations', 'nations' );
 		$valid_format = array( 'simple', 'complex', 'years', 'cliches', 'tropes', 'worth-it', 'stars', 'formats', 'triggers', 'loved', 'nations', 'sexuality', 'gender', 'romantic', 'genres', 'queer-irl' );
 
 		// Per Page Check
@@ -117,10 +117,10 @@ class LWTV_Stats_JSON {
 				$stats_array = self::get_death( $format );
 				break;
 			case 'stations':
-				$stats_array = self::get_show_taxonomy( 'stations' );
+				$stats_array = self::get_show_taxonomy( 'stations', $page );
 				break;
 			case 'nations':
-				$stats_array = self::get_show_taxonomy( 'nations' );
+				$stats_array = self::get_show_taxonomy( 'country', $page );
 				break;
 			default:
 				$stats_array = self::get_characters( 'simple' );
@@ -162,11 +162,11 @@ class LWTV_Stats_JSON {
 				$stats_array = LWTV_Stats::generate( 'actors', 'actor_sexuality', 'array' );
 				break;
 			case 'complex':
-				$the_loop = LWTV_Loops::post_type_query( 'post_type_actors', $page );
+				$queery = LWTV_Loops::post_type_query( 'post_type_actors', $page );
 
-				if ( $the_loop->have_posts() ) {
-					while ( $the_loop->have_posts() ) {
-						$the_loop->the_post();
+				if ( $queery->have_posts() ) {
+					while ( $queery->have_posts() ) {
+						$queery->the_post();
 						$post = get_post();
 						$stats_array[ get_the_title( $post->ID ) ] = array(
 							'id'         => $post->ID,
@@ -370,7 +370,7 @@ class LWTV_Stats_JSON {
 				$stats_array = LWTV_Stats::generate( 'shows', 'thumbs', 'array' );
 				break;
 			case 'complex':
-				$showsloop = LWTV_Loops::post_type_query('post_type_shows');
+				$showsloop = LWTV_Loops::post_type_query( 'post_type_shows' );
 
 				if ($showsloop->have_posts() ) {
 					while ( $showsloop->have_posts() ) {
@@ -416,24 +416,64 @@ class LWTV_Stats_JSON {
 	 * @static
 	 * @return array
 	 */
-	static function get_show_taxonomy( $type ) {
+	static function get_show_taxonomy( $type, $page = 1 ) {
 
-		$valid_types = array ( 'stations', 'nations' );
+		$valid_types = array ( 'stations', 'county' );
 
 		// Early bail
 		if ( !in_array( $type, $valid_types ) ) return wp_send_json_error( 'Invalid input.', 404 );
 
-		/*
-			array output should be
-			array (
-				'USA' => array(
-					shows => 3
-					onair => 1
-					characters => 100
-					homosexual => 1
-				)
-			)
-		*/
+		// Get our defaults
+		$char_data      = $return = array();
+		$taxonomy       = get_terms( 'lez_' . $type ); // This is a list of all stations or nations
+		$valid_subtaxes = array( 'gender', 'sexuality', 'romantic' );
+
+		// Parse the taxonomy
+		// Loop through the terms (i.e. USA, ABC, The CW) and generate the stats for each one
+		foreach ( $taxonomy as $the_tax ) {
+			$characters = 0;
+			$shows      = 0;
+
+			$slug = ( !isset( $the_tax->slug ) )? $the_tax['slug'] : $the_tax->slug;
+			$name = ( !isset( $the_tax->name ) )? $the_tax['name'] : $the_tax->name;
+
+			// Get the posts for this singular term (i.e. a specific station)
+			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
+	
+			// If we have anyone assigned to this station/nation, let's process
+			if ( $queery->have_posts() ) {
+				foreach( $queery->posts as $show ) {
+
+					// Increase the show count
+					$shows++;
+	
+					// Get the sub taxonomy counts based on post meta
+					foreach ( $valid_subtaxes as $meta ) {
+						$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
+						$char_data[$meta] = array_shift( $char_data_array );
+					}
+
+					// Add the gender count to the character count
+					$counter = get_post_meta( $show->ID, 'lezshows_char_gender' );
+					foreach( array_shift( $counter ) as $this_gender => $count ) {
+						$characters += $count;
+					}
+
+					// Build our return array:
+					$return[$slug]['shows']           = $shows;
+					$return[$slug]['onair']           = LWTV_Stats::showcount( 'onair', 'stations', $slug );
+					$return[$slug]['avg_score']       = LWTV_Stats::showcount( 'score', 'stations', $slug );
+					$return[$slug]['avg_onair_score'] = LWTV_Stats::showcount( 'onairscore', 'stations', $slug );
+					$return[$slug]['characters']      = $characters;
+
+					// Add the other taxonomies
+					$return[$slug] = array_merge( $return[$slug], $char_data );
+				}
+				wp_reset_query();
+			}
+		}
+
+		return $return;
 
 	}
 
