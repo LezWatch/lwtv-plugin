@@ -158,7 +158,8 @@ class LWTV_CMB2 {
 		if ( !file_exists( LP_SYMBOLICONS_PATH . $icon . '.svg' ) ) {
 			$content  = 'N/A';
 		} else {
-			$content = '<span class="cmb2-icon" role="img"><svg width="100%" height="100%" data-src="' . LP_SYMBOLICONS_URL . $icon . '.svg"/></svg></span>';
+			$filename = LP_SYMBOLICONS_URL . $icon . '.svg';
+			$content  = '<span class="cmb2-icon" role="img">' . file_get_contents( $filename ) . '</span>';
 		}
 		
 		return $content;
@@ -180,7 +181,8 @@ class LWTV_CMB2 {
 		if ( !file_exists( LP_SYMBOLICONS_PATH . $icon . '.svg' ) ) {
 			$content = 'N/A';
 		} else {
-			$content = '<span class="cmb2-icon" role="img"><svg width="100%" height="100%" data-src="' . LP_SYMBOLICONS_URL . $icon . '.svg"/></svg></span>';
+			$filename = LP_SYMBOLICONS_URL . $icon . '.svg';
+			$content  = '<span class="cmb2-icon" role="img">' . file_get_contents( $filename ) . '</span>';
 		}
 
 		return $content;
