@@ -425,7 +425,7 @@ class LWTV_Stats_JSON {
 		if ( !in_array( $type, $valid_types ) ) return wp_send_json_error( 'Invalid input. No such type.', 404 );
 
 		// Get our defaults
-		$char_data      = $return = array();
+		$return         = array();
 		$valid_subtaxes = array( 'gender', 'sexuality', 'romantic' );
 
 		// This is a list of all stations or nations 
@@ -455,8 +455,8 @@ class LWTV_Stats_JSON {
 		// Parse the taxonomy
 		// Loop through the terms (i.e. USA, ABC, The CW) and generate the stats for each one
 		foreach ( $taxonomy as $the_tax ) {
-			$characters = 0;
-			$shows      = 0;
+			$characters = $shows = $dead = 0;
+			$char_data  = array();
 
 			$slug = ( !isset( $the_tax->slug ) )? $the_tax['slug'] : $the_tax->slug;
 			$name = ( !isset( $the_tax->name ) )? $the_tax['name'] : $the_tax->name;
@@ -470,17 +470,13 @@ class LWTV_Stats_JSON {
 
 					// Increase the show count
 					$shows++;
+					$dead       += get_post_meta( $show->ID, 'lezshows_dead_count', true );
+					$characters += get_post_meta( $show->ID, 'lezshows_char_count', true );
 	
 					// Get the sub taxonomy counts based on post meta
 					foreach ( $valid_subtaxes as $meta ) {
 						$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
 						$char_data[$meta] = array_shift( $char_data_array );
-					}
-
-					// Add the gender count to the character count
-					$counter = get_post_meta( $show->ID, 'lezshows_char_gender' );
-					foreach( array_shift( $counter ) as $this_gender => $count ) {
-						$characters += $count;
 					}
 
 					// If we have a complex format, let's get ALL the data too!
@@ -489,12 +485,14 @@ class LWTV_Stats_JSON {
 							$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
 							foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
 								$char_data[$char_data_meta] += $char_data_count;
+								unset($char_data[$meta]);
 							}
 						}
 					}
 
 
-					// Build our return array:
+					// Build our return array
+					// Show Count
 					$return[$slug]['shows']           = $shows;
 
 					// Only run this if we're complex...
@@ -504,7 +502,9 @@ class LWTV_Stats_JSON {
 						$return[$slug]['avg_onair_score'] = LWTV_Stats::showcount( 'onairscore', $type, $slug );
 					}
 
-					$return[$slug]['characters']      = $characters;
+					// Character counts
+					$return[$slug]['characters'] = $characters;
+					$return[$slug]['dead']       = $dead;
 
 					// If we have a complex format, we need to add that data...
 					if ( $format == 'complex' ) {

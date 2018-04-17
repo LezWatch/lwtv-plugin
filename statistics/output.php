@@ -172,35 +172,9 @@ class LWTV_Stats_Output {
 	 * @return Content
 	 */
 	static function barcharts( $subject, $data, $array ) {
-		$height   = '250';
+		$count    = sizeof( $array );
 		$stepSize = '5';
-		switch ( $data ) {
-			case 'per-char':
-				$subject = 'actorsPerChar';
-				$height = '100';
-				break;
-			case 'cliches':
-				$height = '550';
-				break;
-			case 'country_all_overview':
-				$height = '550';
-				break;
-			case 'per-actor':
-			case ( preg_match( '/country_.*_sexuality/', $data ) ? true : false ):
-			case ( preg_match( '/country_.*_gender/', $data ) ? true : false ):
-				$subject  = 'charsPerActor';
-				$height   = '150';
-				$stepSize = '2';
-				break;
-			case 'tropes':
-			case 'dead-years':
-				$height = '350';
-				break;
-			case 'stations':
-				$subject = 'showsPerStation';
-				$height  = '1500';
-				break;
-		}
+		$height   = $count * 20;
 		?>
 		<div id="container" style="width: 100%;">
 			<canvas id="bar<?php echo ucfirst( $subject ); ?>" width="700" height="<?php echo $height; ?>"></canvas>
