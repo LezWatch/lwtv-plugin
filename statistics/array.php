@@ -256,8 +256,7 @@ class LWTV_Stats_Arrays {
 
 		// Parse the taxonomy
 		foreach ( $taxonomy as $the_tax ) {
-			$characters = 0;
-			$shows      = 0;
+			$characters = $shows = $dead = 0;
 
 			$slug = ( !isset( $the_tax->slug ) )? $the_tax['slug'] : $the_tax->slug;
 			$name = ( !isset( $the_tax->name ) )? $the_tax['name'] : $the_tax->name;
@@ -269,13 +268,8 @@ class LWTV_Stats_Arrays {
 			if ( $queery->have_posts() ) {
 				foreach( $queery->posts as $show ) {
 					$shows++;
-					// Since everyone has a gender, we'll use that as our baseline...
-					$gender = get_post_meta( $show->ID, 'lezshows_char_gender' );
-
-					// Add the character counts
-					foreach( array_shift( $gender ) as $this_gender => $count ) {
-						$characters += $count;
-					}
+					$dead       += get_post_meta( $show->ID, 'lezshows_dead_count', true );
+					$characters += get_post_meta( $show->ID, 'lezshows_char_count', true );
 
 					// Get the data...
 					if ( $data_meta !== 'all' ) {
@@ -307,7 +301,9 @@ class LWTV_Stats_Arrays {
 						$array['shows'] = array( 'name'  => 'Shows', 'count' => $shows );
 						$array['chars'] = array( 'name' => 'Characters', 'count' => $characters );
 						foreach ( $char_data as $ctax_name => $ctax_count ) {
-							$array[$ctax_name] = array( 'name' => ucfirst( $ctax_name ), 'count' => $ctax_count );
+							if ( $ctax_count !== 0 ) {
+								$array[$ctax_name] = array( 'name' => ucfirst( $ctax_name ), 'count' => $ctax_count );
+							}
 						}
 					} else {
 						$array = self::taxonomy( 'post_type_shows', 'lez_' . $data_main );

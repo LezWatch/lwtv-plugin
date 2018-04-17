@@ -66,8 +66,10 @@ class LWTV_CMB2_Addons {
 	 */
 	public static function select2_taxonomy_save( $post_id, $postmeta, $taxonomy ) {
 
+		global $wpdb;
+
 		$get_post_meta = get_post_meta( $post_id, $postmeta, true );
-		$get_the_terms = get_the_terms( $post_id, $taxonomy );
+		$get_the_terms = wp_get_post_terms( $post_id, $taxonomy );
 
 		if ( is_array( $get_post_meta ) ) {
 			// If we already have the post meta, then we should set the terms
@@ -80,18 +82,12 @@ class LWTV_CMB2_Addons {
 				array_push( $set_the_terms, $term->slug );
 			}
 
-			wp_set_object_terms( $post_id, $set_the_terms , $taxonomy );
-
-		} elseif ( $get_the_terms && ! is_wp_error( $get_the_terms ) ) {
-			// If there's no post meta, we force the terms to be the default
-			$get_post_meta = array();
+			wp_set_object_terms( $post_id, $set_the_terms, $taxonomy );
+		} elseif ( $get_the_terms && !is_wp_error( $get_the_terms ) ) {
 			foreach( $get_the_terms as $term ) {
-				$term_id = $term->term_id;
-				array_push( $get_post_meta, $term_id );
+				wp_remove_object_terms( $post_id, $term->term_id, $taxonomy);
 			}
-			update_post_meta( $post_id, $postmeta, $get_post_meta );
 		}
-
 	}
 
 }

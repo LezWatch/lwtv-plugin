@@ -61,8 +61,15 @@ class LWTV_CPT_Characters {
 		// Force saving data to convert select2 saved data to a taxonomy
 		$post_id = ( isset( $_GET['post'] ) )? intval( $_GET['post'] ) : 0 ;
 
-		// Cliches
-		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		if ( $post_id !== 0 && is_admin() ) {
+			$post_type = ( isset( $_GET['post_type'] ) )? sanitize_text_field( $_GET['post_type'] ) : 0 ;
+			switch ( $post_type ) {
+				case 'post_type_characters':
+					// Force saving data to convert select2 saved data to a taxonomy
+					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+					break;
+			}
+		}
 	}
 
 	/*
