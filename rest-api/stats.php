@@ -91,7 +91,7 @@ class LWTV_Stats_JSON {
 
 		// Valid Data
 		$valid_type   = array( 'characters', 'actors', 'shows', 'death', 'first-year', 'stations', 'nations' );
-		$valid_format = array( 'simple', 'complex', 'years', 'cliches', 'tropes', 'worth-it', 'stars', 'formats', 'triggers', 'loved', 'nations', 'sexuality', 'gender', 'romantic', 'genres', 'queer-irl' );
+		$valid_format = array( 'simple', 'complex', 'years', 'cliches', 'tropes', 'worth-it', 'stars', 'formats', 'triggers', 'loved', 'nations', 'sexuality', 'gender', 'romantic', 'genres', 'queer-irl', 'intersections' );
 
 		// Per Page Check
 		if ( $page == 0 ) $page = 1;
@@ -369,6 +369,9 @@ class LWTV_Stats_JSON {
 			case 'worth-it':
 				$stats_array = LWTV_Stats::generate( 'shows', 'thumbs', 'array' );
 				break;
+			case 'intersections':
+				$stats_array = LWTV_Stats::generate( 'shows', 'intersections', 'array' );
+				break;
 			case 'complex':
 				$showsloop = LWTV_Loops::post_type_query( 'post_type_shows', $page );
 
@@ -485,7 +488,7 @@ class LWTV_Stats_JSON {
 							$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
 							foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
 								$char_data[$char_data_meta] += $char_data_count;
-								unset($char_data[$meta]);
+								unset( $char_data[$meta] );
 							}
 						}
 					}
@@ -493,7 +496,7 @@ class LWTV_Stats_JSON {
 
 					// Build our return array
 					// Show Count
-					$return[$slug]['shows']           = $shows;
+					$return[$slug]['shows']     = $shows;
 
 					// Only run this if we're complex...
 					if ( $format == 'complex' ) {

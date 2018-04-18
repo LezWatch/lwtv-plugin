@@ -53,11 +53,11 @@ class LWTV_Stats {
 		$taxonomy  = 'lez_'.$data;
 
 		// Simple Taxonomy Arrays
-		$simple_tax_array = array( 'cliches', 'sexuality', 'gender', 'tropes', 'formats', 'triggers', 'stars', 'romantic', 'actor_gender', 'actor_sexuality', 'genres' );
+		$simple_tax_array = array( 'cliches', 'sexuality', 'gender', 'tropes', 'formats', 'triggers', 'stars', 'romantic', 'actor_gender', 'actor_sexuality', 'genres', 'intersections' );
 		if ( in_array( $data, $simple_tax_array ) ) $array = LWTV_Stats_Arrays::taxonomy( $post_type, $taxonomy );
 
 		// Complicated Taxonomy Array
-		if ( $data == 'queer-irl' ) $array = LWTV_Stats_Arrays::queer( $count, $subject );
+		if ( $data == 'queer-irl' )     $array = LWTV_Stats_Arrays::queer( $count, $subject );
 
 		// Meta arrays
 		if ( $data == 'role' )   $array = LWTV_Stats_Arrays::meta( $post_type, array( 'regular', 'recurring', 'guest' ), 'lezchars_show_group', $data, 'LIKE' );
