@@ -64,6 +64,7 @@ class LWTV_Actors_Calculate {
 	 * This will update the following metakeys on save:
 	 *  - lezactors_char_count      Number of characters
 	 *  - lezactors_dead_count      Number of dead characters
+	 *  - lezactors_queer           Are they queer? True or false
 	 *
 	 * @access public
 	 * @param mixed $post_id

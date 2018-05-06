@@ -212,16 +212,31 @@ class LWTV_OTD_JSON {
 		switch( $date ) {
 			case '03-31': // Transgender Day of Visibility
 			case '11-20': // Transgender Day of Rememberance
-				$return = array( array( 'taxonomy' => 'lez_gender', 'field'    => 'slug', 'terms'    => array( 'trans-man', 'trans-woman' ) ) );
+				$return = array( 
+					array( 'taxonomy' => 'lez_gender',    'field' => 'slug', 'terms' => array( 'trans-man', 'trans-woman' ) ) 
+				);
 				break;
 			case '04-26': // Lesbian Visibility Day
-				$return = array( array( 'taxonomy' => 'lez_sexuality', 'field'    => 'slug', 'terms'    => array( 'bisexual' ) ) );
+				$return = array( 
+					array( 'taxonomy' => 'lez_sexuality', 'field' => 'slug', 'terms' => array( 'homosexual' ) ),
+					array( 'taxonomy' => 'lez_gender',    'field' => 'slug', 'terms' => array( 'cisgender', 'trans-woman' ) )
+				);
+			case '05-24': // Pansexual Day of Visibility
+			case '12-08': // Pansexual Pride Day
+				$return = array( 
+					array( 'taxonomy' => 'lez_sexuality', 'field' => 'slug', 'terms' => array( 'pansexual' ) )
+				);
+				break;
 			case '09-23': // Celebrate Bisexuality Day
-				$return = array( array( 'taxonomy' => 'lez_sexuality', 'field'    => 'slug', 'terms'    => array( 'bisexual' ) ) );
+				$return = array( 
+					array( 'taxonomy' => 'lez_sexuality', 'field' => 'slug', 'terms' => array( 'bisexual' ) )
+				);
 				break;
 			case '10-26': // Intersex Awareness Day 
 			case '11-08': // Intersex Day of Remembrance
-				$return = array( array( 'taxonomy' => 'lez_gender', 'field'    => 'slug', 'terms'    => array( 'intersex' ) ) );
+				$return = array( 
+					array( 'taxonomy' => 'lez_gender',    'field' => 'slug', 'terms' => array( 'intersex' ) ) 
+				);
 				break;
 		}
 
