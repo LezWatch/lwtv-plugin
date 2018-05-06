@@ -1,8 +1,9 @@
 <?php
-/**
-	WP CLI Commands for LezWatchTV
-	Copyright 2017-2018 Mika Epstein (email: ipstenu@halfelf.org)
-*/
+/*
+ * WP CLI Commands for LezWatchTV
+ *
+ * @since 2.0
+ */
 
 // Bail if directly accessed
 if ( !defined( 'ABSPATH' ) ) die();
@@ -21,37 +22,65 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 	}
 
 	/**
-	 * Show calculation
+	 * Re-run calculations for specific post content.
 	 * 
 	 * ## EXAMPLES
 	 * 
-	 *		wp lwtv showcalc ID
+	 *		wp lwtv calc actor ID
+	 *		wp lwtv calc show ID
 	 *
 	*/
 	
-	function showcalc( $args , $assoc_args ) {
+	function calc( $args , $assoc_args ) {
 
-		// Set the post ID
-		if ( !empty($args) ) { list( $post_id ) = $args; }
-
-		// If the post_id is not empty, make sure it's legit
-		if ( !empty( $post_id ) ) {
-			if ( get_post_type( $post_id ) == 'post_type_shows' ) {
-				LWTV_Shows_Calculate::do_the_math( $post_id );
-				$score = get_post_meta( $post_id, 'lezshows_the_score', true );
-			} else {
-				WP_CLI::error( 'You can only calculate the score on show pages.' );
-			}
-		} else {
-			WP_CLI::error( 'You can only calculate the score on show pages.' );
-		}
+		// Valid things to calculate:
+		$valid_calcs = array( 'actor', 'show' );
 		
-		WP_CLI::success( 'Score reset for ' . get_the_title( $post_id ) . ': ' . $score );
+		// Defaults
+		$format = ( isset( $assoc_args['format'] ) )? $assoc_args['format'] : 'table';
+
+		// Check for valid arguments and post types
+		if ( empty( $args ) || !in_array( $args[0], $valid_calcs ) ) {
+			WP_CLI::error( 'You must provide a valid type of calculation to run: ' . implode( ', ', $valid_calcs ) );
+		}
+
+		// Check for valid IDs
+		if( empty( $args[1] ) || !is_numeric( $args[1] ) ) {
+			WP_CLI::error( 'You must provide a valid post ID to calculate.' );
+		}
+
+		// Set the post IDs:
+		$post_calc = sanitize_text_field( $args[0] );
+		$post_id   = (int)$args[1];
+
+		// Last sanitity check: Is the post ID a member of THIS post type...
+		if ( get_post_type( $post_id ) !== 'post_type_' . $post_calc . 's' ) {
+			WP_CLI::error( 'You can only calculate ' . $post_type . 's on ' . $post_type . ' pages.' );
+		}
+
+		// Do the thing!
+		// i.e. run the calculations
+		switch( $post_calc ) {
+			case 'show':
+				// Rerun show calculations
+				LWTV_Shows_Calculate::do_the_math( $post_id );
+				$score = 'Score: ' . get_post_meta( $post_id, 'lezshows_the_score', true );
+				break;
+			case 'actor':
+				// Recount characters and flag queerness
+				LWTV_Actors_Calculate::do_the_math( $post_id );
+				$queer = ( get_post_meta( $post_id, 'lezactors_queer', true ) )? 'Yes' : 'No';
+				$chars = get_post_meta( $post_id, 'lezactors_char_count', true );
+				$deads = get_post_meta( $post_id, 'lezactors_dead_count', true );
+				$score = ': Is Queer (' . $queer . ') Chars (' . $chars . ') Dead (' . $deads . ')';
+				break;
+		}
+
+		WP_CLI::success( 'Calculations run for ' . get_the_title( $post_id ) . $score );
 	}
 
 	/**
-	 * Find characters missing certain flag
-	 * Currently just to help find 
+	 * Find post content missing certain flags.
 	 * 
 	 * ## EXAMPLES
 	 * 
@@ -69,60 +98,23 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 		$format     = ( isset( $assoc_args['format'] ) )? $assoc_args['format'] : 'table';
 
 		if ( !in_array( $find, $valid_find ) ) {
-			WP_CLI::error( 'Currently you can only use the "queerchars" param to find character played by queer actors, missing the appropriate flags.' );
+			WP_CLI::error( 'Currently you can only use the "queerchars" param to find characters played by queer actors, missing the appropriate flags.' );
 		}
 
-		WP_CLI::log( 'This may take a while ....' );
+		WP_CLI::log( 'Searching all characters for associated actor queerness. This may take a while ....' );
 
-		// Get all the characters
-		$the_loop = LWTV_Loops::post_type_query( 'post_type_characters' );
+		$items = LWTV_Debug::find_queerchars();
 
-		if ( $the_loop->have_posts() ) {
-			while ( $the_loop->have_posts() ) {
-				$the_loop->the_post();
-				$post = get_post();
-
-				// Get the actors...
-				$character_actors = get_post_meta( $post->ID, 'lezchars_actor', true );
-
-				if( !$character_actors || empty( $character_actors ) ) {
-					// If there are no actors, we have a different problem...
-					$items[] = array( 'url' => get_permalink(),  'problem' => 'No actors... Ooops.' );
-				} else {
-
-					// Get the defaults
-					$flagged_queer = ( has_term( 'queer-irl', 'lez_cliches' ) )? true : false;
-					$actor_queer   = false;
-
-					if ( !is_array ( $character_actors ) ) {
-						$character_actors = array( get_post_meta( $post->ID, 'lezchars_actor', true ) );
-					}
-
-					// If ANY actor is flagged as queer, we're queer.
-					foreach ( $character_actors as $actor ) {
-						$actor_queer = ( LWTV_Loops::is_actor_queer( $actor ) == 'yes' || $actor_queer )? true : false;
-					}
-					
-					if ( $actor_queer && !$flagged_queer ) {
-						$items[] = array( 'url' => get_permalink(), 'problem' => 'Missing Queer IRL tag' );
-					}
-
-					if ( !$actor_queer && $flagged_queer ) {
-						$items[] = array( 'url' => get_permalink(),  'problem' => 'No actor is queer' );
-					}
-				}
-			}
-			wp_reset_query();
-		}
-
-		if ( empty( $items ) || !is_array( $item ) ) {
+		if ( empty( $items ) || !is_array( $items ) ) {
 			// No one needs help
 			WP_CLI::success( 'Awesome! Everyone\'s great!' );
 		} else {
 			// These characters need attention
-			WP_CLI\Utils\format_items( $format, $items, array( 'url', 'problem' ) );
-			WP_CLI::success( count( $items ) . ' character(s) need your attention.' );
+			WP_CLI\Utils\format_items( $format, $items, array( 'url', 'id', 'problem' ) );
+			WP_CLI::log( count( $items ) . ' character(s) need your attention.' );
 		}
+
+		WP_CLI::success( 'Search complete.' );
 	}
 
 }

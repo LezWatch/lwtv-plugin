@@ -321,10 +321,7 @@ class LWTV_Shows_Calculate {
 		} else {
 			delete_post_meta( $post_id, 'lezshows_the_score' );
 		}
-
-		
 	}
-
 }
 
 new LWTV_Shows_Calculate();
