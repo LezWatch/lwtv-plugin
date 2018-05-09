@@ -166,6 +166,9 @@ class LWTV_OTD_JSON {
 		$post_id = $options[ $type ][ 'post' ];
 		$image   = ( has_post_thumbnail( $post_id ) )? get_the_post_thumbnail_url( $post_id, 'full' ) : get_site_icon_url();
 
+		// Sara Lance testing
+		//$post_id = 458;
+
 		// Base Array:
 		$return = array(
 			'id'     => $post_id,
@@ -177,15 +180,28 @@ class LWTV_OTD_JSON {
 		// Add custom array items based on type
 		switch( $type ) {
 			case 'character':
-				$all_shows        = lwtv_yikes_chardata( $post_id, 'shows' );
-				if ( $all_shows !== '' ) {
+
+				$all_shows   = get_post_meta( $post_id, 'lezchars_show_group', true );
+				$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
+
+				// Set Hashtag
+				if ( !empty( $shows_value ) ) {
+					$num_shows = count( $all_shows );
+					$showsmore = ( $num_shows > 1 )? ' (plus ' . ( $num_shows - 1 ) .' more)' : '';
+					$show_post = get_post( $shows_value['show'] );
+					$hashtag =  '#' . str_replace( ' ', '', $show_post->post_title );
+				}
+
+				// Set all shows (not used becuase of Sara Lance)
+				if ( $all_shows !== '' && !empty( $shows_value ) ) {
 					$show_title = array();
 					foreach ( $all_shows as $each_show ) {
 						array_push( $show_title, get_the_title( $each_show['show'] ) );
 					}
 				}
-				$return['status'] = ( has_term( 'dead', 'lez_cliches' , $post_id ) )? 'dead' : 'alive';
-				$return['shows']  = ( empty( $show_title ) )? ' None' : implode( ', ', $show_title );
+				$return['status']  = ( has_term( 'dead', 'lez_cliches' , $post_id ) )? 'dead' : 'alive';
+				$return['shows']   = ( empty( $show_title ) )? '' : implode( ', ', $show_title );
+				$return['hashtag'] = $hashtag;
 				break;
 			case 'show':
 				$return['loved'] = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) )? 'yes' : 'no';
