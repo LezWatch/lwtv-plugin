@@ -196,6 +196,7 @@ class LWTV_OTD_JSON {
 						array_push( $show_titles, get_the_title( $each_show['show'] ) );
 					}
 				}
+
 				$return['status']  = ( has_term( 'dead', 'lez_cliches' , $post_id ) )? 'dead' : 'alive';
 				$return['shows']   = ( empty( $show_titles ) )? 'n/a' : implode( ', ', $show_titles );
 				$return['hashtag'] = $hashtag;
