@@ -166,9 +166,6 @@ class LWTV_OTD_JSON {
 		$post_id = $options[ $type ][ 'post' ];
 		$image   = ( has_post_thumbnail( $post_id ) )? get_the_post_thumbnail_url( $post_id, 'full' ) : get_site_icon_url();
 
-		// Sara Lance testing
-		//$post_id = 458;
-
 		// Base Array:
 		$return = array(
 			'id'     => $post_id,
@@ -189,18 +186,18 @@ class LWTV_OTD_JSON {
 					$num_shows = count( $all_shows );
 					$showsmore = ( $num_shows > 1 )? ' (plus ' . ( $num_shows - 1 ) .' more)' : '';
 					$show_post = get_post( $shows_value['show'] );
-					$hashtag =  '#' . str_replace( ' ', '', $show_post->post_title );
+					$hashtag =  '#' . preg_replace( '/[^A-Za-z0-9]/', '', $show_post->post_title );
 				}
 
 				// Set all shows (not used becuase of Sara Lance)
 				if ( $all_shows !== '' && !empty( $shows_value ) ) {
-					$show_title = array();
+					$show_titles = array();
 					foreach ( $all_shows as $each_show ) {
-						array_push( $show_title, get_the_title( $each_show['show'] ) );
+						array_push( $show_titles, get_the_title( $each_show['show'] ) );
 					}
 				}
 				$return['status']  = ( has_term( 'dead', 'lez_cliches' , $post_id ) )? 'dead' : 'alive';
-				$return['shows']   = ( empty( $show_title ) )? '' : implode( ', ', $show_title );
+				$return['shows']   = ( empty( $show_titles ) )? 'n/a' : implode( ', ', $show_titles );
 				$return['hashtag'] = $hashtag;
 				break;
 			case 'show':
