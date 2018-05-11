@@ -34,11 +34,7 @@ class LWTV_IMDb_JSON {
 			'methods' => 'GET',
 			'callback' => array( $this, 'imdb_rest_api_callback' ),
 		) );
-		register_rest_route( 'lwtv/v1', '/imdb/(?P<type>[a-zA-Z]+)', array(
-			'methods' => 'GET',
-			'callback' => array( $this, 'imdb_rest_api_callback' ),
-		) );
-		register_rest_route( 'lwtv/v1', '/imdb/(?P<type>[a-zA-Z]+)/(?P<id>[a-zA-Z0-9-]+)', array(
+		register_rest_route( 'lwtv/v1', '/imdb/(?P<id>[a-zA-Z0-9-]+)', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'imdb_rest_api_callback' ),
 		) );
@@ -49,16 +45,10 @@ class LWTV_IMDb_JSON {
 	 */
 	public function imdb_rest_api_callback( $data ) {
 		$params = $data->get_params();
-		$type   = ( isset( $params['type'] ) && $params['type'] !== '' )? sanitize_title_for_query( $params['type'] ) : false;
 		$id     = ( isset( $params['id'] ) && $params['id'] !== '' )? sanitize_title_for_query( $params['id'] ) : false;
 
-		// Valid Data
-		$valid_type = array( 'title', 'name' );
-		$valid_id   = array( 'tt', 'nm' );
-
-		// If the type and ID are valid, 
-		if ( ( in_array( $type, $valid_type ) && in_array( substr( $id, 0, 2 ), $valid_id ) ) && ( ( $type == 'title' && substr( $id, 0, 2 ) === 'tt' ) || ( $type == 'name' && substr( $id, 0, 2 ) === 'nm' ) ) ) {
-			$return = $this->imdb( $type, $id );
+		if ( in_array( substr( $id, 0, 2 ), array( 'tt', 'nm' ) ) ) {
+			$return = $this->imdb( $id );
 		} else {
 			$return = wp_send_json_error( 'Invalid input.' );
 		}
@@ -69,15 +59,17 @@ class LWTV_IMDb_JSON {
 	/*
 	 * Of the Day function
 	 */
-	public static function imdb( $type, $id ) {
+	public static function imdb( $id ) {
+
+		$type = substr( $id, 0, 2 );
 
 		// Set params based on items...
 		switch ( $type ) {
-			case 'title':
+			case 'tt':
 				$post_type = 'post_type_shows';
 				$meta_key  = 'lezshows_imdb';
 				break;
-			case 'name':
+			case 'nm':
 				$post_type = 'post_type_actors';
 				$meta_key  = 'lezactors_imdb';
 				break;
@@ -108,10 +100,18 @@ class LWTV_IMDb_JSON {
 		$array = array(
 			'id'     => $post_id,
 			'name'   => get_the_title( $post_id ),
-			'url'    => get_the_permalink( $post_id ),
-			'score'  => ( get_post_meta( $post_id, 'lezshows_the_score' ) ) ? get_post_meta( $post_id, 'lezshows_the_score' ) : null,
-			'queer'  => ( get_post_meta( $post_id, 'lezactors_queer' ) ) ? true : null,
+			'url'    => get_the_permalink( $post_id )
 		);
+
+		// Extra bitsys.
+		switch ( $type ) {
+			case 'tt':
+				$array['score'] = get_post_meta( $post_id, 'lezshows_the_score', true );
+				break;
+			case 'nm':
+				$array['queer'] = ( get_post_meta( $post_id, 'lezactors_queer', true ) )? true : false;
+				break;
+		}
 
 		return $array;
 	}

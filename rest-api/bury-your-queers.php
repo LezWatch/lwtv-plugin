@@ -180,7 +180,14 @@ class LWTV_BYQ_JSON {
 	public static function on_this_day( $this_day = 'today', $type = 'json' ) {
 
 		// Default to today
-		if ( $this_day == 'today' ) { $this_day = date('m-d'); }
+		if ( $this_day == 'today' ) { 
+			// Create the date with regards to timezones
+			$tz        = 'America/New_York';
+			$timestamp = time();
+			$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+			$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+			$date      = $dt->format( 'm-d' );
+		}
 
 		// Default to JSON (i.e. what the plugin uses)
 		$valid_types = array ( 'json', 'tweet' );
@@ -227,7 +234,7 @@ class LWTV_BYQ_JSON {
 						'id'   => 0,
 						'name' => 'No One',
 						'url'  => site_url( '/cliche/dead/' ),
-						'died' => date('m-d'),
+						'died' => $date,
 					);
 				}
 				break;

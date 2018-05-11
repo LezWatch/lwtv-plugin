@@ -24,8 +24,14 @@ class LWTV_Alexa_This_Year {
 	 */
 	public function what_happened( $date = false ) {
 
-		$date  = ( $date == false )? date('Y-m-d') : $date;
-		$today = ( $date !== date( 'Y-m-d' ) )? false : true;
+		// Create the date with regards to timezones
+		$tz        = 'America/New_York';
+		$timestamp = time();
+		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+
+		$date  = ( $date == false )? $dt->format( 'Y-m-d' ) : $date;
+		$today = ( $date !== $dt->format( 'Y-m-d' ) )? false : true;
 
 		// Figure out what date we're working with here...
 		if ( preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date ) ) {
