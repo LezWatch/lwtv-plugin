@@ -36,12 +36,14 @@ class LWTV_OTD_JSON {
 			'methods' => 'GET',
 			'callback' => array( $this, 'otd_rest_api_callback' ),
 		) );
-
-		register_rest_route( 'lwtv/v1', '/of-the-day/(?P<type>[a-zA-Z0-9-]+)', array(
+		register_rest_route( 'lwtv/v1', '/of-the-day/(?P<type>[a-zA-Z]+)', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'otd_rest_api_callback' ),
 		) );
-
+		register_rest_route( 'lwtv/v1', '/of-the-day/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z0-9-]+)', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'otd_rest_api_callback' ),
+		) );
 	}
 
 	/**
@@ -50,28 +52,41 @@ class LWTV_OTD_JSON {
 	static function otd_rest_api_callback( $data ) {
 		$params = $data->get_params();
 		$type   = ( isset( $params['type'] ) && $params['type'] !== '' )? sanitize_title_for_query( $params['type'] ) : 'unknown';
-		$response = $this->of_the_day( $type );
+		$format = ( isset( $params['format'] ) && $params['format'] !== '' )? sanitize_title_for_query( $params['format'] ) : 'default';
+
+		$response = $this->of_the_day( $type, $format );
 		return $response;
 	}
 	
 	/*
 	 * Of the Day function
 	 */
-	static function of_the_day( $type = 'character' ) {
+	static function of_the_day( $type = 'character', $format = 'default' ) {
 
-		// Valid types of 'of the day':
-		$valid_types = array( 'birthday', 'character', 'show', 'death' );
-
+		// Valid types of 'of the day'.
 		// If there's no known type, we'll assume character
-		$type = ( !in_array( $type, $valid_types ) )? 'character' : $type;
+		$valid_types = array( 'birthday', 'character', 'show', 'death' );
+		$type        = ( !in_array( $type, $valid_types ) )? 'character' : $type;
+
+		// Valid types of 'format'
+		// If there's no known format, we'll assume character
+		$valid_format = array( 'default', 'twitter', 'wordpress' );
+		$format       = ( !in_array( $format, $valid_format ) )? 'default' : $format;
+
+		// Create the date with regards to timezones
+		$tz        = 'America/New_York';
+		$timestamp = time();
+		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+		$date      = $dt->format( 'm-d' );
 
 		// Create the array
 		if ( $type == 'death' ) {
-			$of_the_day_array = LWTV_BYQ_JSON::on_this_day( date('m-d'), 'tweet' );
+			$of_the_day_array = LWTV_BYQ_JSON::on_this_day( $date, 'tweet' );
 		} elseif ( $type == 'birthday' ) {
-			$of_the_day_array = self::birthday( date('m-d') );
+			$of_the_day_array = self::birthday( $date, $format );
 		} elseif ( $type == 'character' || $type == 'show' ) {
-			$of_the_day_array = self::character_show( date('m-d'), $type );
+			$of_the_day_array = self::character_show( $date, $type );
 		} else {
 			$of_the_day_array = '';
 		}
@@ -97,8 +112,6 @@ class LWTV_OTD_JSON {
 
 		// Defaults...
 		$return = array();
-		$date   = ( $date == '' )? date('m-d') : $date;
-		$type   = ( in_array( $type, array( 'show', 'character' ) ) )? $type : 'character';
 
 		// Grab the options
 		$default = array (
@@ -119,7 +132,7 @@ class LWTV_OTD_JSON {
 
 			$meta_query_array = '';
 			$tax_query_array  = '';
-			$char_tax_array   = self::character_awareness( date('m-d') );
+			$char_tax_array   = self::character_awareness( $date );
 
 			switch( $type ) {
 				case 'character':
@@ -221,7 +234,7 @@ class LWTV_OTD_JSON {
 	static function character_awareness( $date = '' ) {
 
 		$return = '';
-		$date   = ( $date == '' )? date('m-d') : $date;
+		$date   = ( $date == '' )? $date : $date;
 
 		switch( $date ) {
 			case '03-31': // Transgender Day of Visibility
@@ -257,9 +270,7 @@ class LWTV_OTD_JSON {
 		return $return;
 	}
 
-	static function birthday( $date = '' ){
-
-		$date   = ( $date == '' )? date('m-d') : $date;
+	static function birthday( $date = '', $format = 'default' ){
 
 		// Get all our birthdays
 		$actor_loop  = LWTV_Loops::post_meta_query( 'post_type_actors', 'lezactors_birth', $date, 'LIKE' );
@@ -282,29 +293,34 @@ class LWTV_OTD_JSON {
 					$alive = $age_start->diff( $age_end );
 				}
 
+				// Their age is ...
 				$age = $alive->format( '%Y');
 
-				// Number Ordination
-				$number_ends = array('th','st','nd','rd','th','th','th','th','th','th');
-				if ( ($age %100 ) >= 11 && ( $age%100 ) <= 13) {
-					$age .= 'th';
-				} else {
-					$age .= $number_ends[$age % 10];
-				}
+				// Setup the wordpress name (used by LWTV News)
+				$wordpress_name = '<a href="' . get_permalink( $actor ) . '">' . get_the_title( $actor ) . ' (' . $age . ')</a>';
 
-				// If they have a Twitter handle, use that
-				// Else we use their name
-				$name = ( get_post_meta( $actor->ID, 'lezactors_twitter', true ) )? '@' . get_post_meta( $actor->ID, 'lezactors_twitter', true ) :  get_the_title( $actor );
+				// If they have a Twitter handle, use that ; Else use their name
+				$twitter_name = ( get_post_meta( $actor->ID, 'lezactors_twitter', true ) )? '@' . get_post_meta( $actor->ID, 'lezactors_twitter', true ) :  get_the_title( $actor );
 
 				// Add to array:
-				$birthday_array[$post_slug] = $name . ' (' . $age . ')';
+				$twitter_array[$post_slug]   = $twitter_name . ' (' . $age . ')';
+				$wordpress_array[$post_slug] = $wordpress_name;
+
 			}
 		} else {
 			// If no one has a birthday, whomp whomp
-			return;
+			return false;
 		}
 
-		$return = array( 'date' => $date, 'birthdays' => implode( ', ', $birthday_array ) );
+		switch ( $format ) {
+			case 'twitter':
+				$birthdays = implode( ', ', $twitter_array );
+				break;
+			default:
+				$birthdays = '<p>A very happy birthday to:</p><ul><li>' . implode( '</li><li>', $wordpress_array ) . '</li></ul>';
+		}
+
+		$return = array( 'date' => $date, 'birthdays' => $birthdays );
 
 		return $return;
 

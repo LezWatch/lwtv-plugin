@@ -46,7 +46,7 @@ class LWTV_Shortcodes {
 	 * @since 1.0
 	 */
 	public function this_month( $atts ) {
-		
+
 		$default     = get_the_date( 'Y-m' );
 		$count_array = array();
 		$attributes  = shortcode_atts( array(

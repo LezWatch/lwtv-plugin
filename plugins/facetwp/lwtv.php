@@ -129,7 +129,7 @@ class LWTV_FacetWP {
 				// Extra check for is it currently on air
 				$params_on_air = $params;
 				$on_air        = 'no';
-				if ( lcfirst( $end ) == 'current' || $end == date( 'Y' ) ) { $on_air = 'yes'; }
+				if ( lcfirst( $end ) == 'current' || $end >= date( 'Y' ) ) { $on_air = 'yes'; }
 				$params_on_air['facet_name']          = 'show_on_air';
 				$params_on_air['facet_value']         = $on_air;
 				$params_on_air['facet_display_value'] = ucfirst( $on_air );

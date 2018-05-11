@@ -124,6 +124,13 @@ class LWTV_Stats {
 		$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
 		$return = 0;
 
+		// Create the date with regards to timezones
+		$tz        = 'America/New_York';
+		$timestamp = time();
+		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+		$date      = $dt->format( 'Y' );
+
 		if ( $queery->have_posts() ) {
 			switch( $type ) {
 				case 'onair':
@@ -132,7 +139,7 @@ class LWTV_Stats {
 						if ( get_post_meta( $show->ID, 'lezshows_airdates', true ) ) {
 							$airdates = get_post_meta( $show->ID, 'lezshows_airdates', true );
 							$end      = $airdates['finish'];
-							if ( lcfirst( $end ) == 'current' || $end == date( 'Y' ) ) $onair++;
+							if ( lcfirst( $end ) == 'current' || $end >= $date ) $onair++;
 						}
 					}
 					$return = $onair;
@@ -157,7 +164,7 @@ class LWTV_Stats {
 							$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
 							$airdates   = get_post_meta( $show->ID, 'lezshows_airdates', true );
 							$end        = $airdates['finish'];
-							if ( lcfirst( $end ) == 'current' || $end == date( 'Y' ) ) {
+							if ( lcfirst( $end ) == 'current' || $end >= $date ) {
 								$score += $this_score;
 								$onair++;
 							}

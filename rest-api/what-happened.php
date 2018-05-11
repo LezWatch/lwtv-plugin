@@ -57,32 +57,45 @@ class LWTV_What_Happened_JSON {
 	 * Rest API Callback for What Happened
 	 */
 	public function what_happened_rest_api_callback( $data ) {
+
+		// Create the date with regards to timezones
+		$tz        = 'America/New_York';
+		$timestamp = time();
+		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+
 		$params   = $data->get_params();
-		$the_date = ( isset( $params['date'] ) && $params['date'] !== '' )? $params['date'] : date( 'Y' );
+		$the_date = ( isset( $params['date'] ) && $params['date'] !== '' )? $params['date'] : $dt->format( 'Y' );
 		$response = $this->what_happened( $the_date);
 		return $response;
 	}
 
 	public function what_happened( $date = false ) {
 
-		$date        = ( !$date )? date('Y') : $date;
-		$today       = ( $date !== date( 'Y-m-d' ) )? false : true;
+		// Create the date with regards to timezones
+		$tz        = 'America/New_York';
+		$timestamp = time();
+		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+
+		$date        = ( !$date )? $dt->format( 'Y' ) : $date;
+		$today       = ( $date !== $dt->format( 'Y-m-d' ) )? false : true;
 		$count_array = array();
 
 		// Figure out what date we're working with here...
 		if ( preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date ) ) {
 			$format   = 'day';
-			$datetime = DateTime::createFromFormat( 'Y-m-d', $date );
+			$datetime = $dt->createFromFormat( 'Y-m-d', $date );
 		}
 		if ( preg_match( '/^[0-9]{4}-[0-9]{2}$/', $date ) ) {
 			$format   = 'month';
-			$datetime = DateTime::createFromFormat( 'Y-m', $date );
+			$datetime = $dt->createFromFormat( 'Y-m', $date );
 		}
 		if ( preg_match( '/^[0-9]{4}$/', $date ) ) {
 			$format   = 'year';
-			$datetime = DateTime::createFromFormat( 'Y', $date );
+			$datetime = $dt->createFromFormat( 'Y', $date );
 		}
-		
+
 		// If it's the future, be smarter than Alexa...
 		if ( $datetime->format( 'Y' ) > date( 'Y' ) ) {
 			$datetime->modify('-1 year');
@@ -181,7 +194,13 @@ class LWTV_What_Happened_JSON {
 	 */
 	static function count_shows( $thisyear = false ) {
 
-		$thisyear = ( !$thisyear )? date( 'Y' ) : $thisyear;
+		// Create the date with regards to timezones
+		$tz        = 'America/New_York';
+		$timestamp = time();
+		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+
+		$thisyear = ( !$thisyear )? $dt->format( 'Y' ) : $thisyear;
 
 		$shows_queery = LWTV_Loops::post_type_query( 'post_type_shows' );
 		$shows_this_year = array( 'current' => 0, 'ended' => 0, 'started' => 0);
@@ -197,7 +216,7 @@ class LWTV_What_Happened_JSON {
 					$airdates = get_post_meta( $show_id, 'lezshows_airdates', true);
 	
 					if (
-						( $airdates['finish'] == 'current' && $thisyear == date('Y') ) // Still Current and it's NOW
+						( $airdates['finish'] == 'current' && $thisyear == $dt->format( 'Y' ) ) 
 						|| ( $airdates['finish'] >= $thisyear && $airdates['start'] <= $thisyear ) // Airdates between
 					) {
 					// Currently Airing Shows shows for the current year only
