@@ -29,7 +29,7 @@ if ( !is_admin() ) {
 		global $wpdb;
 
 		// Adjust this to your needs:
-		$matches = [ 'a ', 'an ', 'lá ', 'la ', 'las ', 'les ', 'los ', 'el ', 'the '];
+		$matches = [ 'a ', 'an ', 'lá ', 'la ', 'las ', 'les ', 'los ', 'el ', 'the ', '#'];
 
 		// Return our customized $orderby
 		return sprintf(

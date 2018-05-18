@@ -49,7 +49,7 @@ class LWTV_Alexa_This_Year {
 		
 		// If it's the future, be smarter than Alexa...
 		if ( $datetime->format( 'Y' ) > date( 'Y' ) ) {
-			$datetime->modify('-1 year');
+			$datetime->modify( '-1 year' );
 			$date = date( 'Y' );
 		}
 
