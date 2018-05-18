@@ -26,6 +26,8 @@ class LWTV_Alexa_Newest {
 		$death     = self::death();
 
 		$output = 'The latest character added to Lez Watch T. V. was ' . $character . '. The latest show added was ' . $show . '. And the latest character who died was ' . $death . '.';
+		
+		return $output;
 	}
 
 	/**

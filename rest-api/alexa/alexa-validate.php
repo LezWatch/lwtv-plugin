@@ -36,7 +36,7 @@ class LWTV_Alexa_Validate {
 
 		// Validate time stamp
 		if (time() - strtotime( $timestamp ) > 60)
-			return array ( 'success' => 0, 'message' => 'Timestamp validation failure. Current time: ' . time() . ' vs. Timestamp: ' . $timestamp );
+			return array ( 'success' => 0, 'message' => 'Timestamp validation failure. Current time: ' . time() . ' vs. Timestamp: ' . strtotime( $timestamp ) );
 
 		return array( 'success' => 1, 'message' => 'Success' );
 	}

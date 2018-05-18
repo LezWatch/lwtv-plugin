@@ -117,7 +117,7 @@ class LWTV_Alexa_Skills {
 	public function news_skill( $type = false, $intent = false, $date = false, $actor = false ) {
 
 		$helptext   = 'You can ask me what happened or for information on queer female, non-binary, or transgender characters or shows on Lez Watch T. V.. Try asking me "What happened this year?" or "What happened in 1989?" or "Who is the character of the day?" or "Who is Laverne Cox?" or "Is Ali Liebert queer?" or even "Who died on March 3rd?" -- I\'ll let you know what I\'ve found.';
-		$output = 'I\'m sorry, I don\'t understand that request. Please ask me something else. ' . $helptext;
+		$output     = 'I\'m sorry, I don\'t understand that request. Please ask me something else. ' . $helptext;
 		$endsession = true;
 
 		if ( $date !== false && is_numeric( substr( $date, 0, 4 ) ) && substr( $date, 0, 4 ) < FIRST_LWTV_YEAR ) {
@@ -137,9 +137,10 @@ class LWTV_Alexa_Skills {
 					}
 					break;
 				case 'CharOTD':
-					$data       = get_option( 'lwtv_otd' );
-					$post_id    = $data[ 'character' ][ 'post' ];
-					$output     = 'The Lez Watch T. V. character of the day is '. get_the_title( $post_id ) .'.';
+					$data       = LWTV_OTD_JSON::character_show( $date, 'character' );
+					$name       = $data[ 'name' ];
+					$show       = $data[ 'shows' ];
+					$output     = 'The Lez Watch T. V. character of the day is '. $name .' from ' . $show . '.';
 					break;
 				case 'ShowOTD':
 					$data       = get_option( 'lwtv_otd' );
@@ -156,7 +157,7 @@ class LWTV_Alexa_Skills {
 						$output = 'The last character on Lez Watch T. V. to die was ' . LWTV_Alexa_Newest::death() . '.';
 					} else {
 						include_once( 'alexa/byq.php' );
-						$output = LWTV_Alexa_BYQ::on_a_day( $timestamp );
+						$output = LWTV_Alexa_BYQ::on_a_day( $date );
 					}
 					break;
 				case 'WhatHappened':

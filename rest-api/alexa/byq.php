@@ -98,13 +98,13 @@ class LWTV_Alexa_BYQ {
 		return $output;
 	}
 
-	public function on_a_day( $timestamp = false ) {
+	public function on_a_day( $date = false ) {
 
-		// Makesure we have a default timestamp
-		$timestamp  = ( $timestamp == false )? time() : $timestamp ;
+		// Make sure we have a default timestamp
+		$timestamp  = ( strtotime( $date ) == false )? time() : strtotime( $date ) ;
 
 		// Figure out who died on a day...
-		$this_day = date('m-d', $timestamp );
+		$this_day = date( 'm-d', $timestamp );
 		$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
 		$count    = ( key( $data ) == 'none' )? 0 : count( $data ) ;
 		$how_many = 'No characters died';
