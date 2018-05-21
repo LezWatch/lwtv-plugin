@@ -24,11 +24,10 @@ class LWTV_Shows_CMB2 {
 
 		// Array of Affiliates
 		$this->affiliates_array = array( 
-			'amazon'  => 'Amazon',
-			'apple'   => 'Apple',
+			'amazon'  => 'Amazon Prime',
 			'cbs'     => 'CBS',
-			'vimeo'   => 'Vimeo',
-			'youtube' => 'YouTube',
+//			'vimeo'   => 'Vimeo',
+//			'youtube' => 'YouTube',
 			'url'     => 'Direct Link',
 		);
 	}
@@ -95,6 +94,7 @@ class LWTV_Shows_CMB2 {
 		// Field: Worth It - Affiliate Type
 		$field_affiliatetype = $cmb_mustsee->add_field( array(
 			'name'             => 'Affiliate Type',
+			'desc'             => 'Select an affiliate type to be auto generated. If no specific match is found, the link will default to a generic.',
 			'id'               => $prefix . 'affiliate',
 			'type'             => 'select',
 			'options'          => $this->affiliates_array,
@@ -103,6 +103,7 @@ class LWTV_Shows_CMB2 {
 		// Field: Worth It - Affiliate Links
 		$field_affiliateurl = $cmb_mustsee->add_field( array(
 			'name'    => 'Affiliate Link',
+			'desc'    => 'Paste in a direct link to YouTube or Apple etc. Apple links will be auto-converted to affiliate links.',
 			'id'      => $prefix . 'affiliateurl',
 			'type'    => 'text_url',
 		) );

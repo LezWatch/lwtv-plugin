@@ -186,3 +186,7 @@ class LWTV_Stats {
 }
 
 new LWTV_Stats();
+
+// Include sub files
+include_once( 'array.php' );
+include_once( 'output.php' );

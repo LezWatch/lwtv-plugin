@@ -142,7 +142,7 @@ class LWTV_Affiliate_Amazon {
 			$output .= '<p><a href="' . $results['Items']['MoreSearchResultsUrl'] . '" target="_blank">More Results ... </a></p>';
 		} else {
 			// Nothing was related enough, show the default
-			$output .= do_shortcode( '[amazon-bounties]' );
+			$output .= do_shortcode( '[affiliates]' );
 		}
 		$output .= '</center>';
 		
@@ -153,11 +153,41 @@ class LWTV_Affiliate_Amazon {
 	 * Output Text
 	 */
 	function output_text( $post_id ) {
+
+		// Default Amazon Ad
 		$output = array(
 			'link' => 'https://www.amazon.com/gp/video/primesignup?ref_=assoc_tag_ph_1402131641212&_encoding=UTF8&camp=1789&creative=9325&linkCode=pf4&tag=lezpress-20&linkId=18d04cea391b96ac115d798e5bca8788',
 			'text' => 'Watch on Amazon Prime - Start Free Trial Now',
 			'img'  => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
 		);
+
+'<a target="_blank" href="https://www.amazon.com/gp/product/B06VYH1DF2/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B06VYH1DF2&linkCode=as2&tag=lezpress-20&linkId=040fcec94ec1943700fb7e7a0d4ba206">Pilot</a>';
+
+		$slug = get_post_field( 'post_name', $post_id );
+
+		// The possible ads
+		$named_array = array( 
+			'the-marvelous-mrs-maisel' => 'https://www.amazon.com/gp/offer-listing/B06VYH1DF2/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B06VYH1DF2&linkCode=am2&tag=lezpress-20&linkId=801e786b364070b102eaf9f62679ccca',
+			'i-love-dick'              => 'https://www.amazon.com/gp/offer-listing/B01J77GK96/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01J77GK96&linkId=9d7536404d12ac3fba9106aa6dfcd927',
+			'goliath'                  => 'https://www.amazon.com/gp/product/B07CQ8W5VH/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B07CQ8W5VH&linkId=de40c679bbf3f58db49be859dade253f',
+			'alpha-house'              => 'https://www.amazon.com/gp/product/B00KITEHUW/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B00KITEHUW&linkId=6c43703bd45a718655f953fd3d501fdc',
+			'mozart-in-the-jungle'     => 'https://www.amazon.com/gp/offer-listing/B077XPRWY1/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B077XPRWY1&linkCode=am2&tag=lezpress-20&linkId=2f9de0320ec75fba205b1fb0aab12d1b',
+			'one-mississippi'          => 'https://www.amazon.com/gp/product/B0747Z3FPD/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B0747Z3FPD&linkId=7609c635acd397bb754cd5f6b4b27fac',
+			'transparent'              => 'https://www.amazon.com/gp/product/B00I3MMTS8/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B00I3MMTS8&linkId=540e504ce16befc5dae4a002ecee43d1',
+			'vida'                     => 'https://www.amazon.com/gp/product/B07CRQYPD7/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B07CRQYPD7&linkId=94ac413bd4f68c62539a9eb0fef94106',
+			'take-my-wife'             => 'https://www.amazon.com/gp/product/B01IU9EKM6/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01IU9EKM6&linkId=f41eace93980c6b3c366c1e7c547eaac',
+			'person-of-interest'       => 'https://www.amazon.com/gp/product/B009BJBPO6/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B009BJBPO6&linkId=dda9b1f22a40291b0f9a83e0a51ddcb7',
+			'wynonna-earp'             => 'https://www.amazon.com/gp/product/B01F7RBHPM?ie=UTF8&tag=lezpress-20&camp=1789&linkCode=xm2&creativeASIN=B01F7RBHPM',
+			'the-bold-type'            => 'https://www.amazon.com/gp/product/B07B64Z7VD/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B07B64Z7VD&linkId=7d3f1f443f83d60dd2683c81e9ef9732',
+		);
+
+		if ( array_key_exists( $slug, $named_array ) ) {
+			$output['link'] = $named_array[$slug];
+		} else {
+			$ad = $generic_array[array_rand( $generic_array )];
+		}
+
+
 
 		return $output;
 	}
