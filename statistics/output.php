@@ -175,9 +175,11 @@ class LWTV_Stats_Output {
 		$count    = sizeof( $array );
 		$stepSize = '5';
 		$height   = $count * 20;
+		$rand     = substr( md5( microtime() ),rand( 0,26 ), 5 );
+		$bar_id   = ucfirst( $subject ) . $rand;
 		?>
 		<div id="container" style="width: 100%;">
-			<canvas id="bar<?php echo ucfirst( $subject ); ?>" width="700" height="<?php echo $height; ?>"></canvas>
+			<canvas id="bar<?php echo $bar_id; ?>" width="700" height="<?php echo $height; ?>"></canvas>
 		</div>
 
 		<script>
@@ -186,7 +188,7 @@ class LWTV_Stats_Output {
 		Chart.defaults.global.legend.display = false;
 
 		// Bar Chart
-		var bar<?php echo ucfirst( $subject ); ?>Data = {
+		var bar<?php echo $bar_id; ?>Data = {
 			labels : [<?php
 				foreach ( $array as $item ) {
 					if ( $item['count'] !== 0 ) {
@@ -220,10 +222,10 @@ class LWTV_Stats_Output {
 			]
 
 		};
-		var ctx = document.getElementById("bar<?php echo ucfirst( $subject ); ?>").getContext("2d");
-		var bar<?php echo ucfirst( $subject ); ?> = new Chart(ctx, {
+		var ctx = document.getElementById("bar<?php echo $bar_id; ?>").getContext("2d");
+		var bar<?php echo $bar_id; ?> = new Chart(ctx, {
 			type: 'horizontalBar',
-			data: bar<?php echo ucfirst( $subject ); ?>Data,
+			data: bar<?php echo $bar_id; ?>Data,
 			options: {
 				tooltips: {
 					callbacks: {

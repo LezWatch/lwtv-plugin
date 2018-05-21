@@ -1,7 +1,7 @@
 <?php
 /**
- * Name: Amazon Affiliate Code
- * Description: Auto Adds in Amazon Affiliate Code
+ * Name: Affiliate Code for Amazon
+ * Description: Auto Ads in Amazon Affiliate Code
  */
 
 if ( ! defined('WPINC' ) ) die;
@@ -20,8 +20,24 @@ use ApaiIO\ApaiIO;
  * class LWTV_Amazon
  */
 
-class LWTV_Amazon {
-	
+class LWTV_Affiliate_Amazon {
+
+	function show_ads( $post_id, $type ) {
+
+		// Return the proper output
+		switch ( $type ) {
+			case "text":
+				$the_ad = self::output_text( $post_id );
+				break;
+			case "widget":
+			default:
+				$the_ad = self::output_widget( $post_id );
+				break;
+		}
+
+		return $the_ad;
+	}
+
 	/**
 	 * show_amazon function.
 	 *
@@ -29,7 +45,7 @@ class LWTV_Amazon {
 	 * @param mixed $content
 	 * @return void
 	 */
-	public static function show_amazon( $post_id ) {
+	public static function output_widget( $post_id ) {
 
 		$setKeywords  = '';
 		$use_fallback = false;
@@ -114,36 +130,38 @@ class LWTV_Amazon {
 		} else {
 			$use_fallback = true;
 		}
-		
-		// Return the output
-		return self::output( $use_fallback, $results );;
-	}
 
-	/**
-	 * output function.
-	 * 
-	 * @access public
-	 * @param bool $use_fallback (default: false)
-	 * @param array $results (default: array())
-	 * @return void
-	 */
-	public static function output( $use_fallback = false, $results = array() ) {
-		echo '<center>';
+		$output = '<center>';
 		if ( !$use_fallback ) {
 			$top_items = array_slice( $results['Items']['Item'], 0, 2 );
 			foreach ( $top_items as $item ) {
 				if ( is_array( $item ) && array_key_exists( 'ASIN', $item ) ) {
-					echo '<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=US&source=ac&ref=tf_til&ad_type=product_link&tracking_id=lezpress-20&marketplace=amazon&region=US&placement=' . $item['ASIN'] . '&asins=' . $item['ASIN'] . '&show_border=true&link_opens_in_new_window=true&price_color=333333&title_color=0066C0&bg_color=FFFFFF"></iframe>&nbsp;';
+					$output .= '<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=US&source=ac&ref=tf_til&ad_type=product_link&tracking_id=lezpress-20&marketplace=amazon&region=US&placement=' . $item['ASIN'] . '&asins=' . $item['ASIN'] . '&show_border=true&link_opens_in_new_window=true&price_color=333333&title_color=0066C0&bg_color=FFFFFF"></iframe>&nbsp;';
 				}
 			}
-			echo '<p><a href="' . $results['Items']['MoreSearchResultsUrl'] . '" target="_blank">More Results ... </a></p>';
+			$output .= '<p><a href="' . $results['Items']['MoreSearchResultsUrl'] . '" target="_blank">More Results ... </a></p>';
 		} else {
 			// Nothing was related enough, show the default
-			echo do_shortcode( '[amazon-bounties]' );
+			$output .= do_shortcode( '[amazon-bounties]' );
 		}
-		echo '</center>';
+		$output .= '</center>';
+		
+		return $output;
 	}
-	
+
+	/**
+	 * Output Text
+	 */
+	function output_text( $post_id ) {
+		$output = array(
+			'link' => 'https://www.amazon.com/gp/video/primesignup?ref_=assoc_tag_ph_1402131641212&_encoding=UTF8&camp=1789&creative=9325&linkCode=pf4&tag=lezpress-20&linkId=18d04cea391b96ac115d798e5bca8788',
+			'text' => 'Watch on Amazon Prime - Start Free Trial Now',
+			'img'  => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
+		);
+
+		return $output;
+	}
+
 }
 
-new LWTV_Amazon();
+new LWTV_Affiliate_Amazon();

@@ -14,12 +14,23 @@ if ( ! defined('WPINC' ) ) die;
 class LWTV_Shows_CMB2 {
 
 	public $ratings_array;
+	public $affiliates_array;
 
 	public function __construct() {
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes') );
 
 		// Array of Valid Ratings
-		$this->ratings_array = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
+		$this->ratings_array    = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
+
+		// Array of Affiliates
+		$this->affiliates_array = array( 
+			'amazon'  => 'Amazon',
+			'apple'   => 'Apple',
+			'cbs'     => 'CBS',
+			'vimeo'   => 'Vimeo',
+			'youtube' => 'YouTube',
+			'url'     => 'Direct Link',
+		);
 	}
 
 	/*
@@ -80,6 +91,20 @@ class LWTV_Shows_CMB2 {
 			'id'   => $prefix . 'worthit_show_we_love',
 			'type' => 'checkbox',
 			'default' => false,
+		) );
+		// Field: Worth It - Affiliate Type
+		$field_affiliatetype = $cmb_mustsee->add_field( array(
+			'name'             => 'Affiliate Type',
+			'id'               => $prefix . 'affiliate',
+			'type'             => 'select',
+			'options'          => $this->affiliates_array,
+			'show_option_none' => true,
+		) );
+		// Field: Worth It - Affiliate Links
+		$field_affiliateurl = $cmb_mustsee->add_field( array(
+			'name'    => 'Affiliate Link',
+			'id'      => $prefix . 'affiliateurl',
+			'type'    => 'text_url',
 		) );
 
 		// Must See Grid

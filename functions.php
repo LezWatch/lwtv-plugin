@@ -34,7 +34,7 @@ class LWTV_Functions {
 	public function init() {
 		// Only call on the front end
 		if ( !is_admin() ) {
-			include_once( 'amazon-affiliates.php' );
+			include_once( 'affiliates/_main.php' );
 		}
 	}
 
