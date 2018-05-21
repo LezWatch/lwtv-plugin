@@ -142,7 +142,7 @@ class LWTV_Affiliate_Amazon {
 			$output .= '<p><a href="' . $results['Items']['MoreSearchResultsUrl'] . '" target="_blank">More Results ... </a></p>';
 		} else {
 			// Nothing was related enough, show the default
-			$output .= do_shortcode( '[affiliates]' );
+			$output .= self::bounty();
 		}
 		$output .= '</center>';
 		
@@ -160,8 +160,6 @@ class LWTV_Affiliate_Amazon {
 			'text' => 'Watch on Amazon Prime - Start Free Trial Now',
 			'img'  => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
 		);
-
-'<a target="_blank" href="https://www.amazon.com/gp/product/B06VYH1DF2/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B06VYH1DF2&linkCode=as2&tag=lezpress-20&linkId=040fcec94ec1943700fb7e7a0d4ba206">Pilot</a>';
 
 		$slug = get_post_field( 'post_name', $post_id );
 
@@ -187,9 +185,60 @@ class LWTV_Affiliate_Amazon {
 			$ad = $generic_array[array_rand( $generic_array )];
 		}
 
-
-
 		return $output;
+	}
+
+	function bounty() {
+
+		$bounties = array( 
+			'prime'         => array( 
+				'expires'   => 'ongoing',
+				'banner'    => '167KTXY4JXQWA6K8A502',
+				'linkid'    => '897bd791c62bbe1c38f7403ddadf695e',
+				'category'  => 'primeent'
+				),
+			'cbs-2018'      => array( 
+				'expires'   => '2018-12-30',
+				'banner'    => '15WAHRRCWADG8X4F09G2',
+				'linkid'    => '2756b628ece9f8d661b18bc637e247ad',
+				'category'  => 'primevideochannels'
+				),
+			'hbo-2018'      => array( 
+				'expires'   => '2018-12-30',
+				'banner'    => '1E0AR7ZBTK5HEDE0CM82',
+				'linkid'    => '09ad7675f840cbf8a3e5588c5a8d3306',
+				'category'  => 'primevideochannels'
+				),
+			'britbox-2018'  => array( 
+				'expires'   => '2018-12-30',
+				'banner'    => '06V9DZJBZ21E92635K82',
+				'linkid'    => '72a2ae6cb554d90c7a8eb903ff6a878e',
+				'category'  => 'primevideochannels'
+				),
+			'showtime-2018' => array( 
+				'expires'   => '2018-12-30',
+				'banner'    => '1TAG79C3PQ0GFXZ39R82',
+				'linkid'    => '7bb432de00c491af4c9cd22a6b2587a8',
+				'category'  => 'primevideochannels'
+				),
+			);
+
+		// Exclude anything expired
+		foreach ( $bounties as $a_bounty => $value ) {
+			$expires = strtotime( $value['expires'] );
+			
+			if ( $value['expires'] == 'ongoing' || $expires >= time() ) {
+				$bounties[$a_bounty] = $value;
+			}
+		}
+		// Pick a random valid bounty
+		$bounty = $bounties [ array_rand( $bounties ) ];
+
+		// Build the Ad
+		$the_ad = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=' . $bounty['category'] . '&banner=' . $bounty['banner'] . '&f=ifr&lc=pf4&linkID=' . $bounty['linkid'] . '&t=lezpress-20&tracking_id=lezpress-20" width="300" height="250" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
+
+		return $the_ad;
+
 	}
 
 }

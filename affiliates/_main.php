@@ -144,7 +144,6 @@ class LWTV_Affilliates {
 		if ( $type == 'affiliate' ) {
 			$return = self::affiliate_link( $id );
 		} else {
-
 			// Get the slug (needed for Star Trek
 			$slug = get_post_field( 'post_name', $id );
 
