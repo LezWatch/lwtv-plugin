@@ -14,6 +14,7 @@ class LWTV_Affilliates {
 		add_filter( 'widget_text', 'do_shortcode' );
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'wp_footer', array( $this, 'apple_auto_link_maker' ) );
+		add_action( 'wp_head', array( $this, 'add_meta_tags' ), 2 );
 	}
 
 	/**
@@ -24,14 +25,20 @@ class LWTV_Affilliates {
 		add_shortcode( 'affiliates', array( $this, 'shortcode_affiliates' ) );
 	}
 
+	/**
+	 * Add Meta Tags for Affiliates
+	 */
+	public function add_meta_tags() {
+		// https://impact.com
+		echo '<meta name="ir-site-verification-token" value="1145177634" />';
+	}
+
 	/*
 	 * Display Affiliate Ads
 	 * Usage: [affiliates]
 	 * @since 1.0
 	*/
-
 	public function shortcode_affiliates( $atts ) {
-
 		if ( is_archive() ) {
 			$affiliates = $this->widget_affiliates( 'thin' );
 		} else {
