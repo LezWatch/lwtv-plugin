@@ -4,7 +4,6 @@
  * Description: Automagical affiliate things
  */
 
-
 class LWTV_Affilliates {
 
 	/**
@@ -235,34 +234,33 @@ class LWTV_Affilliates {
 
 			// Lets get the URLs!
 			switch ( $hostname ) {
-			case 'amazon':
-				$links[] = self::amazon( $id, 'text' );
-				break;
-			case 'apple':
-				$links[] = '<a href="' . $affiliate_url . '" target="_new">iTunes</a>';
-				break;
-			case 'cbs':
-				$links[] = self::cbs( $id, 'text' );
-				break;
-			case 'vimeo':
-				$links[] = '<a href="' . $affiliate_url . '" target="_new">Vimeo</a>';
-				break;
-			case 'youtube':
-				$links[] = '<a href="' . $affiliate_url . '" target="_new">YouTube</a>';
-				break;
-			default:
-				$links[] = '<a href="' . $affiliate_url . '" target="_new">' . ucfirst( $hostname ) . '</a>';
-				break;
+				case 'amazon':
+					$links[] = self::amazon( $id, 'text' );
+					break;
+				case 'apple':
+					$links[] = '<a href="' . $affiliate_url . '" target="_blank" class="btn btn-primary">iTunes</a>';
+					break;
+				case 'cbs':
+					$links[] = self::cbs( $id, 'text' );
+					break;
+				case 'vimeo':
+					$links[] = '<a href="' . $affiliate_url . '" target="_blank" class="btn btn-primary">Vimeo</a>';
+					break;
+				case 'youtube':
+					$links[] = '<a href="' . $affiliate_url . '" target="_blank" class="btn btn-primary">YouTube</a>';
+					break;
+				default:
+					$links[] = '<a href="' . $affiliate_url . '" target="_blank" class="btn btn-primary">' . ucfirst( $hostname ) . '</a>';
+					break;
 			}
 		}
 
 		$link_output = implode( ', ', $links );
 
 		$icon   = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
-		$output = '<button type="button" class="btn btn-info btn-lg btn-block">' . $icon . 'Watch online now: ' . $link_output . '</button>';
+		$output = $icon . '<span class="how-to-watch">How to Watch:</span>' . $link_output;
 
 		return $output;
-
 	}
 
 }
