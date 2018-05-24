@@ -24,8 +24,7 @@ class LWTV_Affiliate_Vimeo {
 	 */
 	function output_widget( $post_id ) {
 
-		// Code Here
-
+		// Code Here.
 	}
 
 }

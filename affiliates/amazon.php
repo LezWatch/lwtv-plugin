@@ -177,7 +177,7 @@ class LWTV_Affiliate_Amazon {
 		}
 
 		// Build the Link
-		$output = '<a href="' . $link . '" target="_new">Amazon Prime</a><img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
+		$output = '<a href="' . $link . '" target="_blank" class="btn btn-primary">Amazon Prime</a><img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
 		return $output;
 	}
 
