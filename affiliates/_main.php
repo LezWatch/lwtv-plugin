@@ -14,6 +14,8 @@ class LWTV_Affilliates {
 		add_filter( 'widget_text', 'do_shortcode' );
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'wp_footer', array( $this, 'apple_auto_link_maker' ) );
+		// Disabled Amazon until I fully test it
+		// add_action( 'wp_footer', array( $this, 'amazon_publisher_studio' ) );
 		add_action( 'wp_head', array( $this, 'add_meta_tags' ), 2 );
 	}
 
@@ -107,6 +109,15 @@ class LWTV_Affilliates {
 	public function apple_auto_link_maker() {
 		echo "<script type='text/javascript'>var _merchantSettings=_merchantSettings || [];_merchantSettings.push(['AT', '1010lMaT']);(function(){var autolink=document.createElement('script');autolink.type='text/javascript';autolink.async=true; autolink.src= ('https:' == document.location.protocol) ? 'https://autolinkmaker.itunes.apple.com/js/itunes_autolinkmaker.js' : 'http://autolinkmaker.itunes.apple.com/js/itunes_autolinkmaker.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(autolink, s);})();</script>";
 	}
+
+	/**
+	 * Insert Amazon Publisher Linky Thingy
+	 * https://affiliate-program.amazon.com/home/tools/pubstudio
+	 */
+	public function amazon_publisher_studio() {
+		echo '<!-- Amazon Publisher Studio --><script> var amzn_ps_tracking_id = "lezpress-20"; </script><script async="true" type="text/javascript" src="//ps-us.amazon-adsystem.com/scripts/US/studio.js"></script>';
+	}
+
 
 	/**
 	 * Determine what to call for actors
