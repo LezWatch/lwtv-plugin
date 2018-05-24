@@ -736,34 +736,59 @@ class LWTV_Stats_Arrays {
 		return $array;
 	}
 	
-	static function queer( $count, $type = 'actors' ) {
+	static function complex_taxonomy( $count, $data, $type ) {
 
-		$array = array(
-			'queer'     => array ( 'name' => 'Queer',  'count' => 0, 'url' => home_url() ),
-			'not_queer' => array ( 'name' => 'Not Queer',  'count' => 0, 'url' => home_url() ),
-		);
+		// Default
+		$array     = array();
+		$post_type = 'post_type_' . $type;
 
-		switch ( $type ) {
-			case 'characters':
-				$taxonomy                    = self::taxonomy( 'post_type_characters', 'lez_cliches', 'queer-irl' );
-				$array['queer']['count']     = $taxonomy['queer-irl']['count'];
-				$array['queer']['url']       = home_url( '/cliche/queer-irl/' );
-				$array['not_queer']['count'] = ( $count - $array['queer']['count'] );
-				break;
-			case 'actors':
-				$all_actors_query = LWTV_Loops::post_type_query( 'post_type_actors' );
-					if ( $all_actors_query->have_posts() ) {
-						while ( $all_actors_query->have_posts() ) {
-							$all_actors_query->the_post();
-							$the_ID   = get_the_id();
-							$is_queer = LWTV_Loops::is_actor_queer( $the_ID );
-							// And now we set the numbers!
-							if ( $is_queer == 'yes' )  $array['queer']['count']++;
-							if ( $is_queer == 'no' )   $array['not_queer']['count']++;
+		if ( $data == "queer-irl" ) {
+
+			$array = array(
+				'queer'     => array ( 'name' => 'Queer', 'count' => 0, 'url' => home_url() ),
+				'not_queer' => array ( 'name' => 'Not Queer', 'count' => 0, 'url' => home_url() ),
+			);
+
+			switch ( $type ) {
+				case 'characters':
+					$taxonomy                    = self::taxonomy( 'post_type_characters', 'lez_cliches', 'queer-irl' );
+					$array['queer']['count']     = $taxonomy['queer-irl']['count'];
+					$array['queer']['url']       = home_url( '/cliche/queer-irl/' );
+					$array['not_queer']['count'] = ( $count - $array['queer']['count'] );
+					break;
+				case 'actors':
+					$all_actors_query = LWTV_Loops::post_type_query( 'post_type_actors' );
+						if ( $all_actors_query->have_posts() ) {
+							while ( $all_actors_query->have_posts() ) {
+								$all_actors_query->the_post();
+								$the_ID   = get_the_id();
+								$is_queer = LWTV_Loops::is_actor_queer( $the_ID );
+								// And now we set the numbers!
+								if ( $is_queer == 'yes' )  $array['queer']['count']++;
+								if ( $is_queer == 'no' )   $array['not_queer']['count']++;
+							}
+							wp_reset_query();
 						}
-						wp_reset_query();
-					}
-				break;
+					break;
+			}
+		} else {
+			// Get all the terms
+			$taxonomies = get_terms( 'lez_' . $data );
+			foreach ( $taxonomies as $term ) {
+				$term_obj           = get_term_by( 'slug', $term, $data, 'ARRAY_A' );
+				$term_link          = get_term_link( $term, $data );
+				$term_slug          = $term->slug;
+				$term_name          = $term->name;
+				$count_terms_queery = LWTV_Loops::tax_query( $post_type, 'lez_' . $data, 'slug', $term_slug, 'IN' );
+				$term_count         = $count_terms_queery->post_count;
+				$array[$term_slug]  = array( 'count' => $term_count, 'name' => $term_name, 'url' => $term_link );
+				$count -= $term_count;
+			}
+
+			if ( isset( $count ) && $count !== 0 ) {
+				$array['none'] = array( 'count' => $count, 'name' => 'None', 'url' => '' );
+			}
+
 		}
 		
 		return $array;
