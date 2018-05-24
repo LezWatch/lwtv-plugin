@@ -27,22 +27,27 @@ class LWTV_Affiliate_CBS {
 	 */
 	function output_text( $post_id ) {
 
-		$link_array = array( 
-			'176086' => 'Subscribe now to CBS All Access',
-			'176094' => 'Try CBS All Access. 1 week free!',
-			'176095' => 'Try CBS All Access FREE for 1 week.',
-			'176096' => 'Get full seasons on CBS All Access. Over 10,000 episodes + live TV and more on demand. Try it for free.',
-			'176088' => 'CBS All Access: Watch CBS Shows Online. Full seasons. Next-day new episodes. Live TV. CBS Classics + much more. Free trial!'
+		$slug        = get_post_field( 'post_name', $post_id );
+		$named_array = array( 
+			'the-good-wife'                 => '456231',
+			'the-good-fight'                => '455992',
+			'star-trek-the-next-generation' => '366250',
+			'star-trek-deep-space-nine'     => '366250',
+			'star-trek-discovery'           => '440479',
+			'macgyver'                      => '379705',
+			'madam-secretary'               => '379710',
+			'ncis'                          => '379721',
+			'ncis-new-orleans'              => '379721',
+			'the-young-and-the-restless'    => '359948',
 		);
 
-		$ad_key = array_rand( $link_array, 1 );
+		if ( array_key_exists( $slug, $named_array ) ) {
+			$link = $named_array[$slug];
+		} else {
+			$link = '176086';
+		}
 
-		$output = array(
-			'link' => 'https://cbs-allaccess.7eer.net/c/1242493/' . $ad_key . '/3065',
-			'text' => $link_array[ $ad_key ],
-			'img'  => '<img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $ad_key . '/3065" style="position:absolute;visibility:hidden;" border="0" />',
-		);
-
+		$output = '<a href="https://cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" target="_new">CBS All Access</a><img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
 		return $output;
 	}
 

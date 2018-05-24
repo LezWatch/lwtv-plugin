@@ -21,15 +21,6 @@ class LWTV_Shows_CMB2 {
 
 		// Array of Valid Ratings
 		$this->ratings_array    = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
-
-		// Array of Affiliates
-		$this->affiliates_array = array( 
-			'amazon'  => 'Amazon Prime',
-			'cbs'     => 'CBS',
-//			'vimeo'   => 'Vimeo',
-//			'youtube' => 'YouTube',
-			'url'     => 'Direct Link',
-		);
 	}
 
 	/*
@@ -91,21 +82,13 @@ class LWTV_Shows_CMB2 {
 			'type' => 'checkbox',
 			'default' => false,
 		) );
-		// Field: Worth It - Affiliate Type
-		$field_affiliatetype = $cmb_mustsee->add_field( array(
-			'name'             => 'Affiliate Type',
-			'desc'             => 'Select an affiliate type to be auto generated. If no specific match is found, the link will default to a generic.',
-			'id'               => $prefix . 'affiliate',
-			'type'             => 'select',
-			'options'          => $this->affiliates_array,
-			'show_option_none' => true,
-		) );
 		// Field: Worth It - Affiliate Links
 		$field_affiliateurl = $cmb_mustsee->add_field( array(
-			'name'    => 'Affiliate Link',
-			'desc'    => 'Paste in a direct link to YouTube or Apple etc. Apple links will be auto-converted to affiliate links.',
-			'id'      => $prefix . 'affiliateurl',
-			'type'    => 'text_url',
+			'name'       => 'Affiliate Link',
+			'desc'       => 'Paste in a direct link. Amazon, Apple, and CBS links will be auto-converted to affiliate links. <br />Examples: <code>https://www.amazon.com/One-Mississippi-Season-1/dp/B017APUVI8</code>, <code>https://itunes.apple.com/us/tv-season/take-my-wife-season-2/id1347392483</code>, <code>https://www.cbs.com/shows/star-trek-discovery/</code>',
+			'id'         => $prefix . 'affiliate',
+			'type'       => 'text_url',
+			'repeatable' => true,
 		) );
 
 		// Must See Grid

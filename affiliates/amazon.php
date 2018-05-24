@@ -154,16 +154,7 @@ class LWTV_Affiliate_Amazon {
 	 */
 	function output_text( $post_id ) {
 
-		// Default Amazon Ad
-		$output = array(
-			'link' => 'https://www.amazon.com/gp/video/primesignup?ref_=assoc_tag_ph_1402131641212&_encoding=UTF8&camp=1789&creative=9325&linkCode=pf4&tag=lezpress-20&linkId=18d04cea391b96ac115d798e5bca8788',
-			'text' => 'Watch on Amazon Prime - Start Free Trial Now',
-			'img'  => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
-		);
-
-		$slug = get_post_field( 'post_name', $post_id );
-
-		// The possible ads
+		$slug        = get_post_field( 'post_name', $post_id );
 		$named_array = array( 
 			'the-marvelous-mrs-maisel' => 'https://www.amazon.com/gp/offer-listing/B06VYH1DF2/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B06VYH1DF2&linkCode=am2&tag=lezpress-20&linkId=801e786b364070b102eaf9f62679ccca',
 			'i-love-dick'              => 'https://www.amazon.com/gp/offer-listing/B01J77GK96/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01J77GK96&linkId=9d7536404d12ac3fba9106aa6dfcd927',
@@ -180,11 +171,13 @@ class LWTV_Affiliate_Amazon {
 		);
 
 		if ( array_key_exists( $slug, $named_array ) ) {
-			$output['link'] = $named_array[$slug];
+			$link = $named_array[$slug];
 		} else {
-			$ad = $generic_array[array_rand( $generic_array )];
+			$link = 'https://www.amazon.com/gp/video/primesignup?ref_=assoc_tag_ph_1402131641212&_encoding=UTF8&camp=1789&creative=9325&linkCode=pf4&tag=lezpress-20&linkId=18d04cea391b96ac115d798e5bca8788';
 		}
 
+		// Build the Link
+		$output = '<a href="' . $link . '" target="_new">Amazon Prime</a><img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
 		return $output;
 	}
 

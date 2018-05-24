@@ -14,8 +14,7 @@ class LWTV_Affilliates {
 		add_filter( 'widget_text', 'do_shortcode' );
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'wp_footer', array( $this, 'apple_auto_link_maker' ) );
-		// Disabled Amazon until I fully test it
-		// add_action( 'wp_footer', array( $this, 'amazon_publisher_studio' ) );
+		add_filter( 'the_content', array( $this, 'amazon_publisher_studio' ), 11 );
 		add_action( 'wp_head', array( $this, 'add_meta_tags' ), 2 );
 	}
 
@@ -111,13 +110,20 @@ class LWTV_Affilliates {
 	}
 
 	/**
-	 * Insert Amazon Publisher Linky Thingy
-	 * https://affiliate-program.amazon.com/home/tools/pubstudio
+	 * Edit Amazon URLs to have our tag at the end.
 	 */
-	public function amazon_publisher_studio() {
-		echo '<!-- Amazon Publisher Studio --><script> var amzn_ps_tracking_id = "lezpress-20"; </script><script async="true" type="text/javascript" src="//ps-us.amazon-adsystem.com/scripts/US/studio.js"></script>';
-	}
+	public function amazon_publisher_studio( $text ) {
+		$regex_url = '#<a href="(?:https://(?:www\.){0,1}amazon\.com(?:/.*){0,1}(?:/dp/|/gp/product/))(.*?)(?:/.*|$)"#';
 
+		if( preg_match( $regex_url, $text, $url ) ) {
+			$linkurl = rtrim( $url[0], '"' );
+			$content = preg_replace( $regex_url, $linkurl . '?tag=lezpress-20"', $text );
+		} else {
+			$content = $text;
+		}
+		
+		return $content;
+	}
 
 	/**
 	 * Determine what to call for actors
@@ -160,6 +166,7 @@ class LWTV_Affilliates {
 		$return = self::amazon( $id, $type );
 		
 		if ( $type == 'affiliate' ) {
+
 			$return = self::affiliate_link( $id );
 		} else {
 			// Get the slug (needed for Star Trek
@@ -209,40 +216,50 @@ class LWTV_Affilliates {
 	 */
 	function affiliate_link( $id ) {
 
-		$aff_type = get_post_meta( $id, 'lezshows_affiliate', true );
-		$aff_url  = get_post_meta( $id, 'lezshows_affiliateurl', true );
+		$affiliate_url = get_post_meta( $id, 'lezshows_affiliate', true );
 
-		// If the type is a URL but URL is empty, bail
-		if ( $aff_type == 'url' && empty( $aff_url ) ) return;
+		// if the URL has CBS, we'll need to reprocess it.
+		// Otherwise we can just show all the urls
+		$links = array();
 
-		$data = array( 'link' => '', 'text' => 'Watch online now', 'img'  => '', );
+		// Parse each URL to figure out who it is...
+		foreach ( $affiliate_url as $url ) {
+			$parsed_url = parse_url( $url );
+			$hostname   = $parsed_url['host'];
 
-		switch( $aff_type ) {
-			case "amazon":
-				$data = self::amazon( $id, 'text' );
+			// Clean the URL to get the top domain ...
+			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk' );
+			foreach ( $removal_array as $removal ) {
+				$hostname = str_replace( $removal, '', $hostname );
+			}
+
+			// Lets get the URLs!
+			switch ( $hostname ) {
+			case 'amazon':
+				$links[] = self::amazon( $id, 'text' );
 				break;
-			case "apple":
-				$data['link'] = 'https://www.apple.com/itunes/charts/tv-shows/';
-				$data['text'] = 'Watch TV on iTunes';
+			case 'apple':
+				$links[] = '<a href="' . $affiliate_url . '" target="_new">iTunes</a>';
 				break;
-			case "cbs":
-				$data = self::cbs( $id, 'text' );
+			case 'cbs':
+				$links[] = self::cbs( $id, 'text' );
 				break;
-			case "vimeo":
-				$data['link'] = 'https://join.vimeo.com';
-				$data['text'] = 'Watch on Vimeo - Buy Directly from Creators';
+			case 'vimeo':
+				$links[] = '<a href="https://join.vimeo.com" target="_new">Vimeo</a>';
 				break;
-			case "youtube":
-				$data['link'] = 'https://www.youtube.com/red';
-				$data['text'] = 'Watch Ad Free on YouTube Red';
+			case 'youtube':
+				$links[] = '<a href="https://www.youtube.com/red" target="_new">YouTube</a>';
 				break;
-			case "url":
-				$data['link'] = $aff_url;
+			default:
+				$links[] = '<a href="' . $affiliate_url . '" target="_new">' . ucfirst( $hostname ) . '</a>';
 				break;
+			}
 		}
 
+		$link_output = implode( ', ', $links );
+
 		$icon   = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
-		$output = '<a target="_blank" href="' . esc_url( $data['link'] ) . '"><button type="button" class="btn btn-info btn-lg btn-block">' . $icon . $data['text'] . $data['img'] . '</button></a>';
+		$output = '<button type="button" class="btn btn-info btn-lg btn-block">' . $icon . 'Watch online now: ' . $link_output . '</button>';
 
 		return $output;
 

@@ -31,19 +31,6 @@ class LWTV_CMB2_Addons {
 
 		/* Date Year Range */
 		include_once( dirname( __FILE__ ) . '/cmb2/year-range.php' );
-		
-		/* Custom JS */
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-	}
-
-	/**
-	 * Enqueue CMB2 only JS
-	 */
-	function admin_enqueue_scripts( ) {
-		$screen = get_current_screen();
-		if ( ! isset( $screen->post_type ) || 'post_type_shows' !== $screen->post_type ) return;
-
-		wp_enqueue_script( 'custom-js', plugins_url( '/cmb2/lwtv.js' , __FILE__ ), array( 'jquery' ) );
 	}
 
 	/**
