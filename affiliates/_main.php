@@ -245,10 +245,10 @@ class LWTV_Affilliates {
 				$links[] = self::cbs( $id, 'text' );
 				break;
 			case 'vimeo':
-				$links[] = '<a href="https://join.vimeo.com" target="_new">Vimeo</a>';
+				$links[] = '<a href="' . $affiliate_url . '" target="_new">Vimeo</a>';
 				break;
 			case 'youtube':
-				$links[] = '<a href="https://www.youtube.com/red" target="_new">YouTube</a>';
+				$links[] = '<a href="' . $affiliate_url . '" target="_new">YouTube</a>';
 				break;
 			default:
 				$links[] = '<a href="' . $affiliate_url . '" target="_new">' . ucfirst( $hostname ) . '</a>';
