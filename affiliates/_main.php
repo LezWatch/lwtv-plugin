@@ -255,7 +255,7 @@ class LWTV_Affilliates {
 			}
 		}
 
-		$link_output = implode( ', ', $links );
+		$link_output = implode( $links );
 
 		$icon   = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
 		$output = $icon . '<span class="how-to-watch">How to Watch:</span>' . $link_output;
