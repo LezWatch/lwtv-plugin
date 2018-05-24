@@ -10,7 +10,7 @@ So other people can access our stats data
   - Stations
   - Nations
 
-Version: 1.0
+Version: 1.2
 Author: Mika Epstein
 */
 
@@ -45,7 +45,7 @@ class LWTV_Stats_JSON {
 		) );
 
 		// Stat Types
-		register_rest_route( 'lwtv/v1', '/stats/(?P<type>[a-zA-Z]+)', array(
+		register_rest_route( 'lwtv/v1', '/stats/(?P<type>[a-zA-Z.\-]+)', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'stats_rest_api_callback' ),
 		) );

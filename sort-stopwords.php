@@ -16,13 +16,20 @@ if ( !is_admin() ) {
 		
 		// If this isn't an archive page, don't change $orderby
 		if ( !is_archive() ) return $orderby;
-		
+
 		// If the post type isn't a show, don't change $orderby
-		if ( 'post_type_shows' !== $q->get( 'post_type' ) ) return $orderby;
+		$all_taxonomies = array ( 'lez_stations', 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_country', 'lez_stars', 'lez_triggers', 'lez_intersections' );
+		if ( null == $q->get( 'post_type' ) ) {
+			if ( !in_array( $q->get( 'taxonomy' ),$all_taxonomies ) ) {
+				return $orderby;
+			}
+		} elseif ( 'post_type_shows' !== $q->get( 'post_type' ) ) {
+			return $orderby;
+		}
 
 		// If the sort isn't based on title, don't change $orderby
 		$fwp_sort  = ( isset( $_GET['fwp_sort'] ) )? sanitize_text_field( $_GET['fwp_sort'] ) : 'empty';
-		$fwp_array = array( 'title_asc', 'title_desc', 'empty');
+		$fwp_array = array( 'title_asc', 'title_desc', 'empty' );
 		if ( !in_array( $fwp_sort, $fwp_array ) ) return $orderby;
 
 		// Okay! Time to go!

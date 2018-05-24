@@ -140,18 +140,22 @@ class LWTV_CPT_Shows {
 	 */
 	public function create_taxonomies() {
 
-		$taxonomies = array (
-			'TV station'   => 'stations',
-			'trope'        => 'tropes',
-			'format'       => 'formats',
-			'genre'        => 'genres',
-			'nation'       => 'country',
-			'star'         => 'stars',
-			'trigger'      => 'triggers',
-			'intersection' => 'intersections',
+		// Define show taxonomies
+		// SLUG => PRETTY NAME
+		$all_taxonomies = array (
+			'lez_stations'      => 'TV station',
+			'lez_tropes'        => 'trope',
+			'lez_formats'       => 'format',
+			'lez_genres'        => 'genre',
+			'lez_country'       => 'nation',
+			'lez_stars'         => 'star',
+			'lez_triggers'      => 'trigger',
+			'lez_intersections' => 'intersection',
 		);
 
-		foreach ( $taxonomies as $pretty => $slug ) {
+		foreach ( $all_taxonomies as $slug => $pretty ) {
+			$slug = str_replace( 'lez_', '', $slug );
+
 			// Labels for taxonomy
 			$labels = array(
 				'name'                       => ucwords( $pretty ) . 's',
@@ -417,18 +421,6 @@ SQL;
 		} else {
 			return $show_in_quick_edit;
 		}
-	}
-
-	/**
-	 * display_amazon function.
-	 * 
-	 * @access public
-	 * @static
-	 * @param mixed $show_id
-	 * @return void
-	 */
-	public static function display_amazon( $show_id ) {
-		echo LWTV_Amazon::show_amazon( $show_id );
 	}
 
 }
