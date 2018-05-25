@@ -89,15 +89,15 @@ class LWTV_Stats_Output {
 			case 'average':
 				$N   = count( $array );
 				$sum = 0;
-				foreach ( $array as $item ) { $sum = $sum + $item['count']; }
+				foreach ( $array as $item ) { $sum = $sum + (int)$item['count']; }
 				$average = round ($sum / $N);
 				$return  = $average;
 				break;
 			case 'high':
 				$high = 0;
 				foreach( $array as $key => $value ) {
-					if( $value['count'] > $high ) {
-						$high = $value['count'];
+					if( (int)$value['count'] > $high ) {
+						$high = (int)$value['count'];
 						if ( $subject = 'shows' ) {
 							$high .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}
@@ -108,7 +108,7 @@ class LWTV_Stats_Output {
 			case 'low':
 				$low = $number = 0;
 				foreach( $array as $key => $value ) {
-					if( $value['count'] == 0 ) {
+					if( (int)$value['count'] == 0 ) {
 						if ( $subject = 'shows' ) {
 							$number++;
 						}
