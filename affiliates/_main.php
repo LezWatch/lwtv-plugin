@@ -238,27 +238,30 @@ class LWTV_Affilliates {
 					$links[] = self::amazon( $id, 'text' );
 					break;
 				case 'apple':
-					$links[] = '<a href="' . $affiliate_url . '" target="_blank" class="btn btn-primary">iTunes</a>';
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">iTunes</a>';
 					break;
 				case 'cbs':
 					$links[] = self::cbs( $id, 'text' );
 					break;
 				case 'vimeo':
-					$links[] = '<a href="' . $affiliate_url . '" target="_blank" class="btn btn-primary">Vimeo</a>';
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Vimeo</a>';
 					break;
 				case 'youtube':
-					$links[] = '<a href="' . $affiliate_url . '" target="_blank" class="btn btn-primary">YouTube</a>';
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">YouTube</a>';
+					break;
+				case 'tellofilms':
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Tello</a>';
 					break;
 				default:
-					$links[] = '<a href="' . $affiliate_url . '" target="_blank" class="btn btn-primary">' . ucfirst( $hostname ) . '</a>';
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">' . ucfirst( $hostname ) . '</a>';
 					break;
 			}
 		}
 
-		$link_output = implode( $links );
+		$link_output = implode( $links, ' ');
 
 		$icon   = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
-		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span>' . $link_output;
+		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span> ' . $link_output;
 
 		return $output;
 	}
