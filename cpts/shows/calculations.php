@@ -149,7 +149,12 @@ class LWTV_Shows_Calculate {
 
 		$score        = 0;
 		$count_tropes = count( wp_get_post_terms( $post_id, 'lez_tropes' ) );
-		$good_tropes  = array( 'happy-ending', 'everyones-queer', 'coming-out' );
+
+		// Good tropes are always good.
+		// Maybe tropes are only good IF there isn't Queer-for-Ratings
+		$good_tropes  = array( 'happy-ending', 'everyones-queer' );
+		$maybe_tropes = array( 'big-queer-wedding', 'coming-out', 'literary-inspired' );
+		$bad_tropes   = array( 'queer-for-ratings', 'queerbaiting' );
 		
 		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
 			// No tropes: 100
@@ -158,6 +163,17 @@ class LWTV_Shows_Calculate {
 			// Calculate how many good tropes a show has
 			$havegood = 0;
 			foreach ( $good_tropes as $trope ) {
+				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
+			}
+
+			// If we don't have any ratings ploys, then we have additional bonuses
+			if ( !has_term( 'queer-for-ratings', 'lez_tropes', $post_id ) ) {
+				foreach ( $maybe_tropes as $trope ) {
+					if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
+				}
+			}
+
+			foreach ( $maybe_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
 			}
 

@@ -22,16 +22,29 @@ class LWTV_Stats_Output {
 	 */
 	static function lists( $subject, $data, $array, $count ) {
 		?>
-		<ul class="statistics lists <?php echo $data; ?>">
-		<?php
-		foreach ( $array as $item ) {
-			$name = ( $item['name'] == 'Dead Lesbians (Dead Queers)' )? 'Dead' : $item['name'];
-			echo '<li>';
-				echo '<strong><a href="'.$item['url'].'">' . $name . '</a></strong> &mdash; ' . $item['count'] . ' ' . $subject .' - '. round( ( ( $item['count'] / $count ) * 100) , 1) .'%';
-			echo '</li>';
-		}
-		?>
-		</ul>
+		<table class="table table-sm table-striped table-hover">
+			<thead>
+				<tr>
+					<th scope="col">&nbsp;</th>
+					<th scope="col">Count</th>
+					<th scope="col">Percent</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?
+				foreach ( $array as $item ) {
+					$name = ( $item['name'] == 'Dead Lesbians (Dead Queers)' )? 'Dead' : $item['name'];
+					if ( $item['count'] !== 0 ) {
+						echo '<tr>';
+							echo '<th scope="row"><a href="'.$item['url'].'">' . $name . '</a></th>';
+							echo '<td>' . $item['count'] . '</td>';
+							echo '<td>' . round( ( ( $item['count'] / $count ) * 100 ) , 1 ) .'%</td>';
+						echo '</tr>';
+					}
+				}
+				?>
+			</tbody>
+		</table>
 		<?php
 	}
 
@@ -49,21 +62,33 @@ class LWTV_Stats_Output {
 	 * @return Content
 	 */
 	static function percentages( $subject, $data, $array, $count ) {
+
+		// Reorder by item count
+		usort( $array, function( $a, $b ) { return $a['count'] - $b['count']; } );
+
 		?>
-		<ul class="statistics percentages <?php echo $data; ?>">
-		<?php
-		foreach ( $array as $item ) {
-			if ( $item['count'] !== 0 ) {
-				echo '<li>';
-					echo '<strong><a href="'.$item['url'].'">'
-					. $item['name'] . '</a></strong> &mdash; '
-					. round( ( ( $item['count'] / $count ) * 100 ) , 1 ) .'%'
-					. ' ('. $item['count'] . ' ' . $subject . ')';
-				echo '</li>';
-			}
-		}
-		?>
-		</ul>
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th scope="col">&nbsp;</th>
+					<th scope="col">Count</th>
+					<th scope="col">Percent</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?
+				foreach ( $array as $item ) {
+					if ( $item['count'] !== 0 ) {
+						echo '<tr>';
+							echo '<th scope="row"><a href="'.$item['url'].'">' . $item['name'] . '</a></th>';
+							echo '<td>' . $item['count'] . '</td>';
+							echo '<td>' . round( ( ( $item['count'] / $count ) * 100 ) , 1 ) .'%</td>';
+						echo '</tr>';
+					}
+				}
+				?>
+			</tbody>
+		</table>
 		<?php
 	}
 
@@ -311,8 +336,8 @@ class LWTV_Stats_Output {
 				foreach ( $array as $item ) {
 					if ( $item[$counter] !== 0 ) {
 						$name = esc_html( $item['name'] );
+						echo '"'. $name .' ('.$item[$counter].')", ';
 					}
-					echo '"'. $name .' ('.$item[$counter].')", ';
 				}
 			?>
 			],
