@@ -146,7 +146,7 @@ class LWTV_Affilliates {
 	public function characters( $id, $type ) {
 		$number = rand();
 
-		if ($number % 2 == 0) {
+		if ( $number % 2 == 0 ) {
 			$return = self::amazon( $id, $type );
 		} else {
 			$return = self::cbs( $id, $type );
@@ -161,26 +161,35 @@ class LWTV_Affilliates {
 	 */
 	public function shows( $id, $type ) {
 
-		// Default
-		$return = self::amazon( $id, $type );
+		// Default: Random
+		$return = self::random( $id, $type );
 		
 		if ( $type == 'affiliate' ) {
-
 			$return = self::affiliate_link( $id );
 		} else {
 			// Get the slug (needed for Star Trek
 			$slug = get_post_field( 'post_name', $id );
 
-			// If Vimeo:
-			if ( has_term( 'vimeo', 'lez_stations', $id ) ) {
-				// Uncomment and fix when Vimeo approves us
-				// $return = self::vimeo( $id, $type );
-			}
-
 			// If CBS (or Star Trek)
 			if ( has_term( 'cbs', 'lez_stations', $id ) || has_term( 'cbs-all-access', 'lez_stations', $id ) || strpos( $slug, 'star-trek' ) !== false ) {
 				$return = self::cbs( $id, $type );
 			}
+		}
+		return $return;
+	}
+
+	/**
+	 * Call something random...
+	 * This is a basic check of a random number
+	 */
+	function random( $id, $type ) {
+		$number = rand();
+		if ( $number % 3 == 0 ) {
+			$return = self::apple( $id, $type );
+		} elseif ( $number % 2 == 0 ) {
+			$return = self::cbs( $id, $type );
+		} else {
+			$return = self::amazon( $id, $type );
 		}
 		return $return;
 	}
@@ -202,11 +211,11 @@ class LWTV_Affilliates {
 	}
 
 	/**
-	 * Call Vimeo Affiliate Data
+	 * Call Apple Affiliate Data
 	 */
-	function vimeo( $id, $type ) {
-		include_once( 'vimeo.php' );
-		return LWTV_Affiliate_Vimeo::show_ads( $id, $type );
+	function apple( $id, $type ) {
+		include_once( 'apple.php' );
+		return LWTV_Affiliate_Apple::show_ads( $id, $type );
 	}
 
 	/**
