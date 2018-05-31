@@ -6,12 +6,14 @@
 
 
 class LWTV_Affiliate_Apple {
+
+	/**
+	 * Determine which ads to show
+	 */
 	function show_ads( $post_id, $type ) {
 
 		// Return the proper output
 		switch ( $type ) {
-			case "text":
-				return self::output_text( $post_id );
 			case "widget":
 			default:
 				return self::output_widget( $post_id );
@@ -20,51 +22,76 @@ class LWTV_Affiliate_Apple {
 	}
 
 	/**
-	 * Figure out which ad we really want to show....
+	 * Search!
 	 */
-	function output_widget( $post_id ) {
+	function search( $post_id ) {
 
-		// Generic TV search
-		$tv_search   = '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=FFFFFF&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=&wt=search&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>';
+		$use_fallback = false;
 
-		// Apple doesn't actually have any shows yet. I know.
-		$slug        = get_post_field( 'post_name', $post_id );
-		$named_array = array( 
-			'steven-universe' => '714962395',
-			'jane-the-virgin' => '912482494',
-			'orphan-black'    => '611208235',
-			'wynonna-earp'    => '1079965614',
-			'the-bold-type'   => '1244274935',
-			'take-my-wife'    => '1341038061',
-			'killing-eve'     => '1357736773',
-			'queen-sugar'     => '1150166775',
-			'station-19'      => '1348873499',
-		);
+		// Build the URL
+		$slug = get_post_field( 'post_name', $post_id );
+		$term = str_replace( '-', '+', $slug );
+		$url  = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch?media=tvShow&entity=tvSeason&limit=1&term=' . $term;
 
-		if ( array_key_exists( $slug, $named_array ) ) {
-			$link   = $named_array[$slug];
-			$the_ad = '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=ffffff&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=' . $link . '&wt=discovery&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>';
+		$request = wp_remote_get( $url );
+
+		if ( is_wp_error( $request ) ) { 
+			$use_fallback = true;
 		} else {
-			$number = rand();
-			if ( $number % 2 == 0 ) {
-				$the_ad = self::podcasts();
+			$body = json_decode( wp_remote_retrieve_body( $request ), true );
+
+			// If the result isn't 1, we have an issue....
+			if ( isset( $body ) && $body['resultCount'] !== 1 ) {
+				$use_fallback = true;
 			} else {
-				$the_ad = $tv_search;
+				// We found a show! Let's show it, eh?
+				$return = $body['results'][0]['collectionId'];
 			}
 		}
 
-		$return = '<center>' . $the_ad . '</center>';
+		if ( $use_fallback ) {
+			$return = 'fallback';
+		}
 
 		return $return;
 
 	}
 
+	/**
+	 * Output Widget
+	 */
+	function output_widget( $post_id ) {
+
+		$link = self::search( $post_id );
+
+		if ( $link !== 'fallback' || is_null( $link ) ) {
+			$the_ad = '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=ffffff&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=' . $link . '&wt=discovery&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>';
+		} else {
+			$the_ad = self::random();
+		}
+
+		$return = '<center>' . $the_ad . '</center>';
+
+		return $return;
+	}
 
 	/**
-	 * Pick a random podcast....
-	 * 
-	 * @access public
-	 * @return void
+	 * Something random...
+	 */
+	function random() {
+
+		$number = rand();
+		if ( $number % 2 == 0 ) {
+			$the_ad = self::podcasts();
+		} else {
+			$the_ad = '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=FFFFFF&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=&wt=search&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>';
+		}
+
+		return $the_ad;
+	}
+
+	/**
+	 * Pick a podcast....
 	 */
 	function podcasts() {
 		$podcasts = array(
