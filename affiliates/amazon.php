@@ -41,12 +41,12 @@ class LWTV_Affiliate_Amazon {
 	/**
 	 * Check if there are some amazon videos we can direct link to...
 	 */
-	public function check_amazon ( $post_id, $fallback = false ) {
+	public function check_amazon ( $post_id, $use_fallback = false ) {
 
-		$setKeywords = '';
-		$use_bounty  = false;
-		$results     = array();
-		$setCategory = 'DVD';
+		$setKeywords  = '';
+		$use_bounty   = false;
+		$results      = array();
+		$setCategory  = 'DVD';
 
 		// If there's no transient, set it for 10 minutes (5 seconds when dev mode).
 		if ( false === ( $amzTransient = get_transient( 'lezwatchtv_amazon_affiliates' ) ) ) {
@@ -89,9 +89,11 @@ class LWTV_Affiliate_Amazon {
 				}
 
 			}
-		} elseif ( $fallback ) {
-			
+		} elseif ( $use_fallback ) {
+			// can't have both true, after all
+			$use_bounty = false;
 		} else {
+			// If we got here, we need to use the bounty
 			$use_bounty = true;
 		}
 		
@@ -133,8 +135,10 @@ class LWTV_Affiliate_Amazon {
 		} else {
 			$use_bounty = true;
 		}
-		
+
 		if ( $use_bounty ) {
+			$return = 'bounty';
+		} elseif ( $use_fallback ) {
 			$return = 'fallback';
 		} else {
 			$return = $results;
@@ -151,18 +155,25 @@ class LWTV_Affiliate_Amazon {
 		$results = self::check_amazon ( $post_id );
 
 		$output = '<center>';
-		if ( $results !== 'fallback' ) {
-			$top_items = array_slice( $results['Items']['Item'], 0, 2 );
-			foreach ( $top_items as $item ) {
-				if ( is_array( $item ) && array_key_exists( 'ASIN', $item ) ) {
-					$output .= '<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=US&source=ac&ref=tf_til&ad_type=product_link&tracking_id=lezpress-20&marketplace=amazon&region=US&placement=' . $item['ASIN'] . '&asins=' . $item['ASIN'] . '&show_border=true&link_opens_in_new_window=true&price_color=333333&title_color=0066C0&bg_color=FFFFFF"></iframe>&nbsp;';
+
+		switch( $results ){
+			case 'bounty':
+				$output .= self::bounty( $post_id );
+				break;
+			case 'fallback':
+				$output .= LWTV_Affilliates::apple( $post_id, 'widget' );
+				break;
+			default:
+				$top_items = array_slice( $results['Items']['Item'], 0, 2 );
+				foreach ( $top_items as $item ) {
+					if ( is_array( $item ) && array_key_exists( 'ASIN', $item ) ) {
+						$output .= '<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=US&source=ac&ref=tf_til&ad_type=product_link&tracking_id=lezpress-20&marketplace=amazon&region=US&placement=' . $item['ASIN'] . '&asins=' . $item['ASIN'] . '&show_border=true&link_opens_in_new_window=true&price_color=333333&title_color=0066C0&bg_color=FFFFFF"></iframe>&nbsp;';
+					}
 				}
-			}
-			$output .= '<p><a href="' . $results['Items']['MoreSearchResultsUrl'] . '" target="_blank">More Results ... </a></p>';
-		} else {
-			// Nothing was related enough, show the default
-			$output .= self::bounty( $post_id );
+				$output .= '<p><a href="' . $results['Items']['MoreSearchResultsUrl'] . '" target="_blank">More Results ... </a></p>';
+				break;
 		}
+
 		$output .= '</center>';
 		
 		return $output;

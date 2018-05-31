@@ -228,7 +228,7 @@ class LWTV_Affilliates {
 	/**
 	 * Call Apple Affiliate Data
 	 */
-	function apple( $id, $type, $url = false ) {
+	function apple( $id, $type ) {
 		include_once( 'apple.php' );
 		return LWTV_Affiliate_Apple::show_ads( $id, $type );
 	}
