@@ -126,17 +126,10 @@ class LWTV_Affilliates {
 
 	/**
 	 * Determine what to call for actors
-	 * Pick a random ad just for fun
 	 */
 	public function actors( $id, $type ) {
-		$number = rand();
-
-		if ($number % 2 == 0) {
-			$return = self::amazon( $id, $type );
-		} else {
-			$return = self::cbs( $id, $type );
-		}
-
+		// Default: Random
+		$return = self::random( $id, $type );
 		return $return;
 	}
 
@@ -144,14 +137,8 @@ class LWTV_Affilliates {
 	 * Determine what to call for characters
 	 */	
 	public function characters( $id, $type ) {
-		$number = rand();
-
-		if ($number % 2 == 0) {
-			$return = self::amazon( $id, $type );
-		} else {
-			$return = self::cbs( $id, $type );
-		}
-
+		// Default: Random
+		$return = self::random( $id, $type );
 		return $return;
 	}
 
@@ -161,26 +148,63 @@ class LWTV_Affilliates {
 	 */
 	public function shows( $id, $type ) {
 
-		// Default
-		$return = self::amazon( $id, $type );
-		
-		if ( $type == 'affiliate' ) {
+		// Default: Amazon if the transient expired, else Apple.
+		if ( false === ( $amzTransient = get_transient( 'lezwatchtv_amazon_affiliates' ) ) ) {
+			$return = self::amazon( $id, $type );
+		} else{
+			$return = self::apple( $id, $type );
+		}
 
+		// Show a different show ad depending on things...
+		if ( $type == 'affiliate' ) {
 			$return = self::affiliate_link( $id );
 		} else {
-			// Get the slug (needed for Star Trek
-			$slug = get_post_field( 'post_name', $id );
-
-			// If Vimeo:
-			if ( has_term( 'vimeo', 'lez_stations', $id ) ) {
-				// Uncomment and fix when Vimeo approves us
-				// $return = self::vimeo( $id, $type );
-			}
-
-			// If CBS (or Star Trek)
-			if ( has_term( 'cbs', 'lez_stations', $id ) || has_term( 'cbs-all-access', 'lez_stations', $id ) || strpos( $slug, 'star-trek' ) !== false ) {
+			// Figure out if this is a CBS show
+			$on_cbs = self::is_show_cbs( $id );
+			if ( $on_cbs ) {
 				$return = self::cbs( $id, $type );
 			}
+		}
+		return $return;
+	}
+
+	/**
+	 * Check if the show is a CBS show...
+	 *
+	 * @return true/false
+	 */
+	function is_show_cbs( $post_id ) {
+		$on_cbs = false;
+
+		$slug         = get_post_field( 'post_name', $post_id );
+		$stations     = get_the_terms( $post_id, 'lez_stations' );
+		$cbs_stations = array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb' );
+
+		// Check if it's a CBS station
+		if ( $stations && ! is_wp_error( $stations ) ) {
+			foreach( $stations as $station ) {
+				if ( in_array( $station->slug, $cbs_stations ) ) $on_cbs = true;
+			}
+		}
+
+		// Check if it's bloody Star Trek
+		if ( strpos( $slug, 'star-trek' ) !== false ) $on_cbs = true;
+
+		return $on_cbs;
+	}
+
+	/**
+	 * Call something random...
+	 * This is a basic check of a random number
+	 */
+	function random( $id, $type ) {
+		$number = rand();
+		if ( $number % 3 == 0 ) {
+			$return = self::apple( $id, $type );
+		} elseif ( $number % 2 == 0 ) {
+			$return = self::cbs( $id, $type );
+		} else {
+			$return = self::amazon( $id, $type );
 		}
 		return $return;
 	}
@@ -202,29 +226,29 @@ class LWTV_Affilliates {
 	}
 
 	/**
-	 * Call Vimeo Affiliate Data
+	 * Call Apple Affiliate Data
 	 */
-	function vimeo( $id, $type ) {
-		include_once( 'vimeo.php' );
-		return LWTV_Affiliate_Vimeo::show_ads( $id, $type );
+	function apple( $id, $type ) {
+		include_once( 'apple.php' );
+		return LWTV_Affiliate_Apple::show_ads( $id, $type );
 	}
 
 	/**
 	 * Call Custom Affiliate Links
 	 * This is used by shows to figure out where people can watch things
+	 * There's some juggling for certain sites
 	 */
 	function affiliate_link( $id ) {
 
 		$affiliate_url = get_post_meta( $id, 'lezshows_affiliate', true );
 
-		// if the URL has CBS, we'll need to reprocess it.
-		// Otherwise we can just show all the urls
 		$links = array();
 
 		// Parse each URL to figure out who it is...
 		foreach ( $affiliate_url as $url ) {
 			$parsed_url = parse_url( $url );
 			$hostname   = $parsed_url['host'];
+			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'];
 
 			// Clean the URL to get the top domain ...
 			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk' );
@@ -235,11 +259,14 @@ class LWTV_Affilliates {
 			// Lets get the URLs!
 			switch ( $hostname ) {
 				case 'amazon':
-					$links[] = self::amazon( $id, 'text' );
+					$url     = $clean_url . '/ref=as_li_tl?ie=UTF8&tag=lezpress-20';
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Amazon Prime</a><img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
 					break;
 				case 'apple':
+					$url     = $clean_url . '?mt=4&at=1010lMaT';
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">iTunes</a>';
 					break;
+				case '7eer':
 				case 'cbs':
 					$links[] = self::cbs( $id, 'text' );
 					break;
@@ -258,7 +285,7 @@ class LWTV_Affilliates {
 			}
 		}
 
-		$link_output = implode( $links, ' ');
+		$link_output = implode( $links, '' );
 
 		$icon   = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
 		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span> ' . $link_output;

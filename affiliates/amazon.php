@@ -22,13 +22,13 @@ use ApaiIO\ApaiIO;
 
 class LWTV_Affiliate_Amazon {
 
+	/**
+	 * Determine what ad to show
+	 */
 	function show_ads( $post_id, $type ) {
 
 		// Return the proper output
 		switch ( $type ) {
-			case "text":
-				$the_ad = self::output_text( $post_id );
-				break;
 			case "widget":
 			default:
 				$the_ad = self::output_widget( $post_id );
@@ -39,27 +39,28 @@ class LWTV_Affiliate_Amazon {
 	}
 
 	/**
-	 * show_amazon function.
-	 *
-	 * @access public
-	 * @param mixed $content
-	 * @return void
+	 * Check if there are some amazon videos we can direct link to...
 	 */
-	public static function output_widget( $post_id ) {
+	public function check_amazon ( $post_id, $use_fallback = false ) {
 
 		$setKeywords  = '';
-		$use_fallback = false;
+		$use_bounty   = false;
 		$results      = array();
 		$setCategory  = 'DVD';
 
-		// If there's no transient, set it for half an hour.
+		// If there's no transient, set it for 10 minutes (5 seconds when dev mode).
 		if ( false === ( $amzTransient = get_transient( 'lezwatchtv_amazon_affiliates' ) ) ) {
-			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', ( HOUR_IN_SECONDS / 4 ) );
+			$checktime = ( HOUR_IN_SECONDS / 6 );
+			if ( WP_DEBUG ) $checktime = 5;
+			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', $checktime );
 		} else {
-			$use_fallback = true;
+			// If there's a transient, we need to limit how many calls we make
+			// else Amazon gets narky with us.
+			$use_bounty = true;
 		}
-		
-		if ( is_singular( 'post_type_shows' ) && !$use_fallback ) {
+
+		// If it's a show and there's no fallback flag...
+		if ( is_singular( 'post_type_shows' ) && !$use_bounty ) {
 			// Add Title for shows
 			$setKeywords .= get_the_title();
 
@@ -82,18 +83,22 @@ class LWTV_Affiliate_Amazon {
 				if ( $countries && ! is_wp_error( $countries ) ) {
 					foreach ( $countries as $country ) {
 						if ( $country->name !== 'USA' ) {
-							$use_fallback = true;
+							$use_bounty = true;
 						}
 					}
 				}
 
 			}
+		} elseif ( $use_fallback ) {
+			// can't have both true, after all
+			$use_bounty = false;
 		} else {
-			$use_fallback = true;
+			// If we got here, we need to use the bounty
+			$use_bounty = true;
 		}
 		
 		// If there are no keywords AND Fallback is false
-		if ( ! empty( $setKeywords ) && !$use_fallback ) {
+		if ( !empty( $setKeywords ) && !$use_bounty ) {
 	
 			try {
 				$conf = new GenericConfiguration();
@@ -108,7 +113,7 @@ class LWTV_Affiliate_Amazon {
 					->setResponseTransformer( new \ApaiIO\ResponseTransformer\XmlToArray() )
 					->setRequest( $request );
 			} catch (\Exception $e) {
-				$use_fallback = true;
+				$use_bounty = true;
 			}
 			$apaiIO = new ApaiIO( $conf );
 		
@@ -119,119 +124,187 @@ class LWTV_Affiliate_Amazon {
 	
 			$results = $apaiIO->runOperation( $search );
 					
-			// If we don't get a valid array, we will use the use_fallback
+			// If we don't get a valid array, we will use the use_bounty
 			if ( 
 				!is_array( $results ) || 
 				!array_key_exists( 'Item', $results['Items'] ) ||
 				array_key_exists( 'Errors', $results['Items']['Request'] )
 			) {
-				$use_fallback = true;
+				$use_bounty = true;
 			}
 		} else {
-			$use_fallback = true;
+			$use_bounty = true;
 		}
 
-		$output = '<center>';
-		if ( !$use_fallback ) {
-			$top_items = array_slice( $results['Items']['Item'], 0, 2 );
-			foreach ( $top_items as $item ) {
-				if ( is_array( $item ) && array_key_exists( 'ASIN', $item ) ) {
-					$output .= '<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=US&source=ac&ref=tf_til&ad_type=product_link&tracking_id=lezpress-20&marketplace=amazon&region=US&placement=' . $item['ASIN'] . '&asins=' . $item['ASIN'] . '&show_border=true&link_opens_in_new_window=true&price_color=333333&title_color=0066C0&bg_color=FFFFFF"></iframe>&nbsp;';
-				}
-			}
-			$output .= '<p><a href="' . $results['Items']['MoreSearchResultsUrl'] . '" target="_blank">More Results ... </a></p>';
+		if ( $use_bounty ) {
+			$return = 'bounty';
+		} elseif ( $use_fallback ) {
+			$return = 'fallback';
 		} else {
-			// Nothing was related enough, show the default
-			$output .= self::bounty();
+			$return = $results;
 		}
+
+		return $return;
+	}
+
+	/**
+	 * Output widget
+	 */
+	public static function output_widget( $post_id ) {
+
+		$results = self::check_amazon ( $post_id );
+
+		$output = '<center>';
+
+		switch( $results ){
+			case 'bounty':
+				$output .= self::bounty( $post_id );
+				break;
+			case 'fallback':
+				$output .= LWTV_Affilliates::apple( $post_id, 'widget' );
+				break;
+			default:
+				$top_items = array_slice( $results['Items']['Item'], 0, 2 );
+				foreach ( $top_items as $item ) {
+					if ( is_array( $item ) && array_key_exists( 'ASIN', $item ) ) {
+						$output .= '<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=US&source=ac&ref=tf_til&ad_type=product_link&tracking_id=lezpress-20&marketplace=amazon&region=US&placement=' . $item['ASIN'] . '&asins=' . $item['ASIN'] . '&show_border=true&link_opens_in_new_window=true&price_color=333333&title_color=0066C0&bg_color=FFFFFF"></iframe>&nbsp;';
+					}
+				}
+				$output .= '<p><a href="' . $results['Items']['MoreSearchResultsUrl'] . '" target="_blank">More Results ... </a></p>';
+				break;
+		}
+
 		$output .= '</center>';
 		
 		return $output;
 	}
 
 	/**
-	 * Output Text
+	 * Generate a random bounty
 	 */
-	function output_text( $post_id ) {
+	function bounty( $post_id ) {
 
-		$slug        = get_post_field( 'post_name', $post_id );
-		$named_array = array( 
-			'the-marvelous-mrs-maisel' => 'https://www.amazon.com/gp/offer-listing/B06VYH1DF2/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B06VYH1DF2&linkCode=am2&tag=lezpress-20&linkId=801e786b364070b102eaf9f62679ccca',
-			'i-love-dick'              => 'https://www.amazon.com/gp/offer-listing/B01J77GK96/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01J77GK96&linkId=9d7536404d12ac3fba9106aa6dfcd927',
-			'goliath'                  => 'https://www.amazon.com/gp/product/B07CQ8W5VH/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B07CQ8W5VH&linkId=de40c679bbf3f58db49be859dade253f',
-			'alpha-house'              => 'https://www.amazon.com/gp/product/B00KITEHUW/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B00KITEHUW&linkId=6c43703bd45a718655f953fd3d501fdc',
-			'mozart-in-the-jungle'     => 'https://www.amazon.com/gp/offer-listing/B077XPRWY1/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B077XPRWY1&linkCode=am2&tag=lezpress-20&linkId=2f9de0320ec75fba205b1fb0aab12d1b',
-			'one-mississippi'          => 'https://www.amazon.com/gp/product/B0747Z3FPD/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B0747Z3FPD&linkId=7609c635acd397bb754cd5f6b4b27fac',
-			'transparent'              => 'https://www.amazon.com/gp/product/B00I3MMTS8/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B00I3MMTS8&linkId=540e504ce16befc5dae4a002ecee43d1',
-			'vida'                     => 'https://www.amazon.com/gp/product/B07CRQYPD7/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B07CRQYPD7&linkId=94ac413bd4f68c62539a9eb0fef94106',
-			'take-my-wife'             => 'https://www.amazon.com/gp/product/B01IU9EKM6/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B01IU9EKM6&linkId=f41eace93980c6b3c366c1e7c547eaac',
-			'person-of-interest'       => 'https://www.amazon.com/gp/product/B009BJBPO6/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B009BJBPO6&linkId=dda9b1f22a40291b0f9a83e0a51ddcb7',
-			'wynonna-earp'             => 'https://www.amazon.com/gp/product/B01F7RBHPM?ie=UTF8&tag=lezpress-20&camp=1789&linkCode=xm2&creativeASIN=B01F7RBHPM',
-			'the-bold-type'            => 'https://www.amazon.com/gp/product/B07B64Z7VD/ref=as_li_tl?ie=UTF8&tag=lezpress-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=B07B64Z7VD&linkId=7d3f1f443f83d60dd2683c81e9ef9732',
+		// First let's check if the show is on a network we know....
+		$networks = array( 
+			'showtime'    => array(
+				'banner'    => '1TAG79C3PQ0GFXZ39R82',
+				'linkid'    => '7a8637a378a920f5283cfa96508e4976',
+				'category'  => 'primevideochannels'
+			),
+			'starz'       => array(
+				'banner'    => '0GJR9JYSTS77TVQ2EH82',
+				'linkid'    => '6944b61eb373fdddc4cea0a94de193d7',
+				'category'  => 'primevideochannels'
+			),
+			'hbo'         => array(
+				'banner'    => '1E0AR7ZBTK5HEDE0CM82',
+				'linkid'    => '5ae0b3481ac50cc4239cc2040980b290',
+				'category'  => 'primevideochannels'
+			),
+			'bbc-america' => array(
+				'banner'    => '06V9DZJBZ21E92635K82',
+				'linkid'    => '21313d1cf4a1e7763f97e3ff8159ad93',
+				'category'  => 'primevideochannels'
+			),
+			'bbc-four'    => array(
+				'banner'    => '06V9DZJBZ21E92635K82',
+				'linkid'    => '21313d1cf4a1e7763f97e3ff8159ad93',
+				'category'  => 'primevideochannels'
+			),
+			'bbc-three'   => array(
+				'banner'    => '06V9DZJBZ21E92635K82',
+				'linkid'    => '21313d1cf4a1e7763f97e3ff8159ad93',
+				'category'  => 'primevideochannels'
+			),
+			'bbc-two'     => array(
+				'banner'    => '06V9DZJBZ21E92635K82',
+				'linkid'    => '21313d1cf4a1e7763f97e3ff8159ad93',
+				'category'  => 'primevideochannels'
+			),
+			'bbc-one'     => array(
+				'banner'    => '06V9DZJBZ21E92635K82',
+				'linkid'    => '21313d1cf4a1e7763f97e3ff8159ad93',
+				'category'  => 'primevideochannels'
+			),
+			'bbc-wales'   => array(
+				'banner'    => '06V9DZJBZ21E92635K82',
+				'linkid'    => '21313d1cf4a1e7763f97e3ff8159ad93',
+				'category'  => 'primevideochannels'
+			),
+			'itv'         => array(
+				'banner'    => '06V9DZJBZ21E92635K82',
+				'linkid'    => '21313d1cf4a1e7763f97e3ff8159ad93',
+				'category'  => 'primevideochannels'
+			),
+			'itv-encore'  => array(
+				'banner'    => '06V9DZJBZ21E92635K82',
+				'linkid'    => '21313d1cf4a1e7763f97e3ff8159ad93',
+				'category'  => 'primevideochannels'
+			),
 		);
 
-		if ( array_key_exists( $slug, $named_array ) ) {
-			$link = $named_array[$slug];
-		} else {
-			$link = 'https://www.amazon.com/gp/video/primesignup?ref_=assoc_tag_ph_1402131641212&_encoding=UTF8&camp=1789&creative=9325&linkCode=pf4&tag=lezpress-20&linkId=18d04cea391b96ac115d798e5bca8788';
+		// If the network is one of the networks above, let's set that:
+		$stations = get_the_terms( $show_id, 'lez_stations' );
+		if ( $stations && ! is_wp_error( $stations ) ) {
+			foreach( $stations as $station ) {
+				if ( array_key_exists( $station->slug, $networks ) ) {
+					$the_ad = $networks[ $station->slug ];
+				}
+			}
 		}
 
-		// Build the Link
-		$output = '<a href="' . $link . '" target="_blank" class="btn btn-primary">Amazon Prime</a><img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
-		return $output;
-	}
-
-	function bounty() {
-
+		// The bounties if nothing else applies
 		$bounties = array( 
-			'prime'         => array( 
+			'primeent'      => array( 
 				'expires'   => 'ongoing',
 				'banner'    => '167KTXY4JXQWA6K8A502',
 				'linkid'    => '897bd791c62bbe1c38f7403ddadf695e',
 				'category'  => 'primeent'
 				),
-			'cbs-2018'      => array( 
-				'expires'   => '2018-12-30',
-				'banner'    => '15WAHRRCWADG8X4F09G2',
-				'linkid'    => '2756b628ece9f8d661b18bc637e247ad',
-				'category'  => 'primevideochannels'
+			'primeent-2'    => array( 
+				'expires'   => 'ongoing',
+				'banner'    => '167KTXY4JXQWA6K8A502',
+				'linkid'    => 'bd40942602aeae4fee219182dbc67a45',
+				'category'  => 'primeent'
 				),
-			'hbo-2018'      => array( 
-				'expires'   => '2018-12-30',
-				'banner'    => '1E0AR7ZBTK5HEDE0CM82',
-				'linkid'    => '09ad7675f840cbf8a3e5588c5a8d3306',
-				'category'  => 'primevideochannels'
+			'primemain'     => array( 
+				'expires'   => 'ongoing',
+				'banner'    => '1MDTME9E9G651CJTDA82',
+				'linkid'    => 'd2554a8e2e75fb1dd2efa7a835f4a182',
+				'category'  => 'primemain'
 				),
-			'britbox-2018'  => array( 
-				'expires'   => '2018-12-30',
-				'banner'    => '06V9DZJBZ21E92635K82',
-				'linkid'    => '72a2ae6cb554d90c7a8eb903ff6a878e',
-				'category'  => 'primevideochannels'
+			'firetv'        => array( 
+				'expires'   => 'ongoing',
+				'banner'    => '1HZB17ZSN14HN5F95FG2',
+				'linkid'    => '36cbf51ed866322a693cdccd1a86b56c',
+				'category'  => 'firetv'
 				),
-			'showtime-2018' => array( 
-				'expires'   => '2018-12-30',
-				'banner'    => '1TAG79C3PQ0GFXZ39R82',
-				'linkid'    => '7bb432de00c491af4c9cd22a6b2587a8',
-				'category'  => 'primevideochannels'
+			'dvd-anime'     => array( 
+				'expires'   => 'ongoing',
+				'banner'    => '0EAD0FBRPQ3YQD8YDM82',
+				'linkid'    => '1b5814d9b0df1553d2cdc3c331696759',
+				'category'  => 'dvd'
 				),
 			);
 
-		// Exclude anything expired
-		foreach ( $bounties as $a_bounty => $value ) {
-			$expires = strtotime( $value['expires'] );
-			
-			if ( $value['expires'] == 'ongoing' || $expires >= time() ) {
-				$bounties[$a_bounty] = $value;
-			}
+		// If bounty isn't set yet, we need to here
+		if( !isset( $the_ad ) ) {
+			// Exclude anything expired
+			foreach ( $bounties as $a_bounty => $value ) {
+				$expires = strtotime( $value['expires'] );
+				
+				if ( $value['expires'] == 'ongoing' || $expires >= time() ) {
+					$bounties[$a_bounty] = $value;
+				}
+			}	
+			// Pick a random valid bounty
+			$the_ad = $bounties [ array_rand( $bounties ) ];
 		}
-		// Pick a random valid bounty
-		$bounty = $bounties [ array_rand( $bounties ) ];
 
 		// Build the Ad
-		$the_ad = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=' . $bounty['category'] . '&banner=' . $bounty['banner'] . '&f=ifr&lc=pf4&linkID=' . $bounty['linkid'] . '&t=lezpress-20&tracking_id=lezpress-20" width="300" height="250" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
+		$return = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=' . $the_ad['category'] . '&banner=' . $the_ad['banner'] . '&f=ifr&lc=pf4&linkID=' . $the_ad['linkid'] . '&t=lezpress-20&tracking_id=lezpress-20" width="300" height="250" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
 
-		return $the_ad;
-
+		return $return;
 	}
 
 }
