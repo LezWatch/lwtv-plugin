@@ -47,7 +47,7 @@ class LWTV_Affilliates {
 
 		$thisad = array_rand( $affiliates );
 
-		$advert = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads ' . sanitize_html_class( $thisad ) . '">' . $affiliates[$thisad] . '</div><!-- END Affiliate Ads -->';
+		$advert = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads ' . sanitize_html_class( $thisad ) . '"><center>' . $affiliates[$thisad] . '</center></div><!-- END Affiliate Ads -->';
 
 		return $advert;
 	}
@@ -68,7 +68,11 @@ class LWTV_Affilliates {
 				'dreamhost'  => '<a href="https://dreamhost.com/dreampress/"><img src="' . plugins_url( 'images/dreamhost-300x250.png', __FILE__ ) . '"></a>',
 				'yikes'      => '<a href="https://www.yikesinc.com"><img src="' . plugins_url( 'images/yikes-300x250.png', __FILE__ ) . '"></a>',
 				'htlpodcast' => '<iframe src="//banners.itunes.apple.com/banner.html?partnerId=&aId=1010lMaT&bt=catalog&t=catalog_white&id=1254294886&c=us&l=en-US&w=300&h=250&store=podcast" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:300px;height:250px;border:0px"></iframe>',
-				'apple'      => '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=FFFFFF&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=&wt=search&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>'
+				'apple'      => '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=FFFFFF&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=&wt=search&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>',
+				'cbs-goodf'  => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/456232/3065/" width="300" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
+				'cbs-disco'  => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/447373/3065/" width="300" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
+				'cbs-madms'  => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/379711/3065/" width="300" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
+				'amazon'     => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=49&l=ur1&category=primeent&banner=1NBTV8WAYWJ1X9PVW582&f=ifr&linkID=e1b38a7992eaf253a93dcf650eac5ca5&t=lezpress-20&tracking_id=lezpress-20" width="300" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
 			),
 			'thin' => array(
 				'amazon1'    => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primeent&banner=0XFKWQVGDFG5VJ2ARBG2&f=ifr&linkID=736cbb4746cfdde557e02035fbef63d5&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
@@ -294,4 +298,6 @@ class LWTV_Affilliates {
 	}
 
 }
-new LWTV_Affilliates();
+
+// If we aren't on an admin page, let's do this
+if ( !is_admin() ) new LWTV_Affilliates();

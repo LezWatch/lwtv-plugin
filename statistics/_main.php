@@ -24,13 +24,16 @@ class LWTV_Stats {
 
 	/*
 	 * Enqueues
-	 *
-	 * Custom enqueue scripts for chartJS
 	 */
 	function enqueue_scripts() {
-		wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . '/assets/js/Chart.bundle.min.js' , array( 'jquery' ), '2.7.2', false );
-		wp_enqueue_script( 'chartjs-colors', plugin_dir_url( dirname( __FILE__ ) ) . '/assets/js/Chart.colors.js' , array( 'chartjs' ), '1.0.0', false );
-		wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . '/assets/js/palette.js', '1.0.0', false );
+
+		if ( is_page( array( 'statistics' ) ) ) {
+			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js' , array( 'jquery' ), '2.7.2', false );
+			wp_enqueue_script( 'chartjs-colors', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.colors.js' , array( 'chartjs' ), '1.0.0', false );
+			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', '1.0.0', false );
+			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js' , array( 'jquery' ), '2.30.5', false );
+			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css/theme.bootstrap_4.css' );
+		}
 	}
 
 	/*
@@ -78,10 +81,10 @@ class LWTV_Stats {
 		if ( $data == 'per-actor' ) $array = LWTV_Stats_Arrays::actor_chars( 'actors' );
 		// Custom call for Nations
 		if ( substr( $data, 0, 7) == 'country' || substr( $data, 0, 8) == 'stations' ) {
-			$array    = LWTV_Stats_Arrays::characters_details_shows( $count, $format, $data );
+			$array    = LWTV_Stats_Arrays::characters_details_shows( $count, $format, $data, $subject );
 			// Stupid counting shit ...
 			$precount = $count;
-			$count    = LWTV_Stats_Arrays::characters_details_shows( $count, $format, $data );
+			$count    = LWTV_Stats_Arrays::characters_details_shows( $count, $format, $data, $subject );
 			if ( $format == 'percentage' ) $count = $precount;
 		}
 

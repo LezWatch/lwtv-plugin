@@ -244,7 +244,7 @@ class LWTV_Affiliate_Amazon {
 		);
 
 		// If the network is one of the networks above, let's set that:
-		$stations = get_the_terms( $show_id, 'lez_stations' );
+		$stations = get_the_terms( $post_id, 'lez_stations' );
 		if ( $stations && ! is_wp_error( $stations ) ) {
 			foreach( $stations as $station ) {
 				if ( array_key_exists( $station->slug, $networks ) ) {

@@ -215,8 +215,7 @@ class LWTV_Stats_Arrays {
 	 * @param mixed $format
 	 * @return void
 	 */
-	static function characters_details_shows( $count, $format, $data ) {
-
+	static function characters_details_shows( $count, $format, $data, $subject ) {
 		// Set defaults
 		$array = $char_data  = array();
 
@@ -274,7 +273,12 @@ class LWTV_Stats_Arrays {
 					// Get the data...
 					if ( $data_meta !== 'all' ) {
 						$char_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
-						$char_data       = array_shift( $char_data_array );
+						foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
+							if ( !isset( $char_data[$char_data_meta] ) ) {
+								$char_data[$char_data_meta] = 0;
+							} 
+							$char_data[$char_data_meta] += $char_data_count;
+						}
 					} elseif ( $data_meta == 'all' && $data_term !== 'all' ) {
 						foreach ( $valid_subtaxes as $meta ) {
 							$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
@@ -310,13 +314,14 @@ class LWTV_Stats_Arrays {
 					}
 					break;
 				case 'percentage':
-				case 'piechart':
+				case 'piechart':;
 					if ( $data_term !== 'all' ) {
 						if ( $data_meta !== 'all' ) {
 							foreach ( $char_data as $char_name => $char_count ) {
 								$array[] = array (
 									'name'  => $char_name,
 									'count' => $char_count,
+									'url'   => '#',
 								);
 							}
 						} else {
@@ -337,6 +342,17 @@ class LWTV_Stats_Arrays {
 						'characters' => $characters,
 						'dataset'    => $char_data,
 					);
+			}
+		}
+
+		if ( $format == 'count' ) {
+			switch ( $subject ) {
+				case 'characters':
+					$array = $characters;
+					break;
+				case 'shows':
+					$array = $shows;
+					break;
 			}
 		}
 
