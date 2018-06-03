@@ -271,7 +271,7 @@ class LWTV_Stats_Arrays {
 					$characters += get_post_meta( $show->ID, 'lezshows_char_count', true );
 
 					// Get the data...
-					if ( $data_meta !== 'all' ) {
+					if ( $data_meta !== 'all' && $format !== 'stackedbar' ) {
 						$char_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
 						foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
 							if ( !isset( $char_data[$char_data_meta] ) ) {
@@ -279,6 +279,10 @@ class LWTV_Stats_Arrays {
 							} 
 							$char_data[$char_data_meta] += $char_data_count;
 						}
+					} elseif ( $data_meta !== 'all' && $format == 'stackedbar'  ) {
+						$char_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
+						$char_data       = array_shift( $char_data_array );
+						
 					} elseif ( $data_meta == 'all' && $data_term !== 'all' ) {
 						foreach ( $valid_subtaxes as $meta ) {
 							$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
