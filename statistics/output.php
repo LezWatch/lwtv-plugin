@@ -306,6 +306,10 @@ class LWTV_Stats_Output {
 	 */
 	static function stacked_barcharts( $subject, $data, $array ) {
 
+		$count    = sizeof( $array );
+		$stepSize = '5';
+		$height   = max( ( $count * 20 ), 30 ) + 20;
+
 		// [main-term-subtax]
 		// [main taxonomy]-[term of main]-[subtaxonomy to parse]
 		// ex: [country-all-gender]
@@ -315,9 +319,6 @@ class LWTV_Stats_Output {
 		$data_main   = $pieces[0];
 		$data_term   = ( isset( $pieces[1] ) )? $pieces[1] : 'all';
 		$data_subtax = ( isset( $pieces[2] ) )? $pieces[2] : 'all';
-
-		// Defaults
-		$height     = '550';
 
 		// Define our settings
 		switch ( $data_subtax ) {
@@ -330,7 +331,6 @@ class LWTV_Stats_Output {
 					foreach ( $terms as $term ) $datasets[] = $term->slug;
 				}
 				$counter  = 'characters';
-				$height   = '400';
 				break;
 		}
 		?>
@@ -348,10 +348,8 @@ class LWTV_Stats_Output {
 			labels : [
 			<?php
 				foreach ( $array as $item ) {
-					if ( $item[$counter] !== 0 ) {
-						$name = esc_html( $item['name'] );
-						echo '"'. $name .' ('.$item[$counter].')", ';
-					}
+					$name = esc_html( $item['name'] );
+					echo '"'. $name .' ('.$item[$counter].')", ';
 				}
 			?>
 			],
