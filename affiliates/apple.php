@@ -62,7 +62,10 @@ class LWTV_Affiliate_Apple {
 	 */
 	function output_widget( $post_id ) {
 
-		$link = self::search( $post_id );
+		$link = 'fallback';
+		if ( get_post_type( $post_id ) == 'post_type_shows' ) {
+			$link = self::search( $post_id );
+		}
 
 		if ( $link !== 'fallback' || is_null( $link ) ) {
 			$the_ad = '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=ffffff&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=' . $link . '&wt=discovery&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>';
@@ -78,7 +81,7 @@ class LWTV_Affiliate_Apple {
 	/**
 	 * Something random...
 	 */
-	function random() {
+	static function random() {
 
 		$number = rand();
 		if ( $number % 2 == 0 ) {

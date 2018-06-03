@@ -63,6 +63,14 @@ class LWTV_Stats_Output {
 	 */
 	static function percentages( $subject, $data, $array, $count ) {
 
+		$pieces = explode( '_', $data);
+		if( in_array( 'country', $pieces ) ) {
+			$count = 0;
+			foreach ( $array as $key => $item ) {
+				$count += $item['count'];
+			}
+		}
+
 		// Reorder by item count
 		usort( $array, function( $a, $b ) { return $a['count'] - $b['count']; } );
 
@@ -80,7 +88,7 @@ class LWTV_Stats_Output {
 				foreach ( $array as $item ) {
 					if ( $item['count'] !== 0 ) {
 						echo '<tr>';
-							echo '<th scope="row"><a href="'.$item['url'].'">' . $item['name'] . '</a></th>';
+							echo '<th scope="row"><a href="'.$item['url'].'">' . ucfirst( $item['name'] ) . '</a></th>';
 							echo '<td>' . $item['count'] . '</td>';
 							echo '<td>' . round( ( ( $item['count'] / $count ) * 100 ) , 1 ) .'%</td>';
 						echo '</tr>';
@@ -197,9 +205,17 @@ class LWTV_Stats_Output {
 	 * @return Content
 	 */
 	static function barcharts( $subject, $data, $array ) {
+
+		// Remove the zeros
+		foreach ( $array as $key => $value ) {
+			if ( $value['count'] == 0 ) {
+				unset( $array[$key] );
+			}
+		}
+		
 		$count    = sizeof( $array );
 		$stepSize = '5';
-		$height   = $count * 20;
+		$height   = max( ( $count * 20 ), 30 ) + 20;
 		$rand     = substr( md5( microtime() ),rand( 0,26 ), 5 );
 		$bar_id   = ucfirst( $subject ) . $rand;
 		?>
@@ -238,9 +254,7 @@ class LWTV_Stats_Output {
 					hoverBorderColor: "rgba(255,99,132,1)",
 					data : [<?php
 						foreach ( $array as $item ) {
-							if ( $item['count'] !== 0 ) {
-								echo '"'.$item['count'].'", ';
-							}
+							echo '"'.$item['count'].'", ';
 						}
 					?>],
 				}

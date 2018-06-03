@@ -66,6 +66,71 @@ class LWTV_Debug {
 
 	}
 
+	/**
+	 * Find Characterless Actors
+	 * 
+	 * Find all actors who are listed as having 0 characters
+	 */
+	static function find_actors_no_chars() {
+
+		// Default
+		$items = array();
+
+		// Get all the actors
+		$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
+
+		if ( $the_loop->have_posts() ) {
+			while ( $the_loop->have_posts() ) {
+				$the_loop->the_post();
+				$post = get_post();
+
+				// Get the characters ...
+				$character_count = get_post_meta( $post->ID, 'lezactors_char_count', true );
+
+				// If there are no characters listed, we have a problem
+				if( !$character_count || empty( $character_count ) ) {
+					$items[] = array( 'url' => get_permalink(), 'id' => get_the_id(), 'problem' => 'No characters listed.' );
+				}
+			}
+			wp_reset_query();
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Fix Characterless Actors
+	 * 
+	 * Find all actors who are listed as having 0 characters and fix.
+	 */
+	static function fix_actors_no_chars() {
+
+		// Default
+		$items = 0;
+
+		// Get all the actors
+		$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
+
+		if ( $the_loop->have_posts() ) {
+			while ( $the_loop->have_posts() ) {
+				$the_loop->the_post();
+				$post = get_post();
+
+				// Get the characters ...
+				$character_count = get_post_meta( $post->ID, 'lezactors_char_count', true );
+
+				// If there are no characters listed, let's try to fix
+				if( !$character_count || empty( $character_count ) ) {
+					LWTV_Actors_Calculate::do_the_math( $post->ID );
+					$items++;
+				}
+			}
+			wp_reset_query();
+		}
+
+		return $items;
+	}
+
 }
 
 new LWTV_Debug();
