@@ -153,8 +153,8 @@ class LWTV_Shows_Calculate {
 		// Good tropes are always good.
 		// Maybe tropes are only good IF there isn't Queer-for-Ratings
 		$good_tropes  = array( 'happy-ending', 'everyones-queer' );
-		$maybe_tropes = array( 'big-queer-wedding', 'coming-out', 'literary-inspired' );
-		$bad_tropes   = array( 'queer-for-ratings', 'queerbaiting' );
+		$maybe_tropes = array( 'big-queer-wedding', 'coming-out', 'subtext' );
+		$bad_tropes   = array( 'queer-for-ratings', 'queerbaiting', 'in-prison', 'queer-laughs' );
 		
 		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
 			// No tropes: 100
@@ -166,15 +166,19 @@ class LWTV_Shows_Calculate {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
 			}
 
-			// If we don't have any ratings ploys, then we have additional bonuses
-			if ( !has_term( 'queer-for-ratings', 'lez_tropes', $post_id ) ) {
-				foreach ( $maybe_tropes as $trope ) {
-					if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
+			// Do we have bad tropes? Yes or no...
+			$havebad = false;
+			foreach ( $bad_tropes as $trope ) {
+				if ( has_term( $trope, 'lez_tropes', $post_id ) && !$havebad ) {
+					$havebad = true;
 				}
 			}
 
-			foreach ( $maybe_tropes as $trope ) {
-				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
+			// If we don't have any ratings ploys, then we have additional bonuses
+			if ( !$havebad ) {
+				foreach ( $maybe_tropes as $trope ) {
+					if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
+				}
 			}
 
 			if ( $havegood == $count_tropes ) { 
