@@ -109,6 +109,7 @@ class LWTV_Affiliate_Apple {
 			'Nancy'           => '1222041050',
 			'AngelOnTop'      => '1383009934',
 			'TalesBlackBadge' => '1097564705',
+			'HistoryIsGay'    => '1327642994',
 		);
 
 		// Randomize the Podcast
