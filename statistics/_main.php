@@ -28,11 +28,22 @@ class LWTV_Stats {
 	function enqueue_scripts() {
 
 		if ( is_page( array( 'statistics' ) ) ) {
+			$statistics = get_query_var( 'statistics', 'none' );
+
 			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js' , array( 'jquery' ), '2.7.2', false );
 			wp_enqueue_script( 'chartjs-colors', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.colors.js' , array( 'chartjs' ), '1.0.0', false );
 			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', '1.0.0', false );
 			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js' , array( 'jquery' ), '2.30.5', false );
 			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css/theme.bootstrap_4.css' );
+
+			switch( $statistics ) {
+				case 'nations':
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#nationsTable").tablesorter({ theme : "bootstrap", }); });' );
+					break;
+				case 'stations':
+					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#stationsTable").tablesorter({ theme : "bootstrap", }); });' );
+					break;
+			}
 		}
 	}
 

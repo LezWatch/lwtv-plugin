@@ -106,8 +106,13 @@ class LWTV_Affiliate_Apple {
 			'LesbianTalkShow' => '1078936307',
 			'StrangeFruit'    => '579402864',
 			'ButchTalk'       => '1203354302',
+			'Nancy'           => '1222041050',
+			'AngelOnTop'      => '1383009934',
+			'TalesBlackBadge' => '1097564705',
+			'HistoryIsGay'    => '1327642994',
 		);
 
+		// Randomize the Podcast
 		$podcast = $podcasts[array_rand( $podcasts )];
 
 		$return = '<iframe src="//banners.itunes.apple.com/banner.html?partnerId=&aId=1010lMaT&bt=catalog&t=smart_color&id=' . $podcast . '&c=us&l=en-US&w=300&h=250&store=podcast" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:300px;height:250px;border:0px"></iframe>';
