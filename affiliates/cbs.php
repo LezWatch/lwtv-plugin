@@ -46,8 +46,57 @@ class LWTV_Affiliate_CBS {
 		} else {
 			$link = '176086';
 		}
+<?php
+/**
+ * Name: Affiliate Code for CBS
+ * Description: Automagical affiliate things
+ */
 
-		$output = '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/' . $link . '/3065/" width="300" height="250" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>';
+
+class LWTV_Affiliate_CBS {
+	function show_ads( $post_id, $type ) {
+
+		// Return the proper output
+		switch ( $type ) {
+			case "text":
+				$the_ad = self::output_text( $post_id );
+				break;
+			case "widget":
+			default:
+				$the_ad = self::output_widget( $post_id );
+				break;
+		}
+
+		return $the_ad;
+	}
+
+	/**
+	 * CBS wants to run specific ad copy, so we're doing this to try theirs...
+	 */
+	function output_text( $post_id ) {
+
+		$slug        = get_post_field( 'post_name', $post_id );
+		$named_array = array( 
+			'the-good-wife'                 => '456231',
+			'the-good-fight'                => '455992',
+			'star-trek-the-next-generation' => '366250',
+			'star-trek-deep-space-nine'     => '366250',
+			'star-trek-discovery'           => '440479',
+			'macgyver'                      => '379705',
+			'madam-secretary'               => '379710',
+			'ncis'                          => '379721',
+			'ncis-new-orleans'              => '379721',
+			'the-young-and-the-restless'    => '359948',
+		);
+
+		if ( array_key_exists( $slug, $named_array ) ) {
+			$link = $named_array[$slug];
+		} else {
+			$link = '176086';
+		}
+		
+		$output = '<a href="https://cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" target="_blank" class="btn btn-primary">CBS All Access</a><img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
+
 		return $output;
 	}
 
