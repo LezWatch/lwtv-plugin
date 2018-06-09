@@ -46,8 +46,9 @@ class LWTV_Affiliate_CBS {
 		} else {
 			$link = '176086';
 		}
+		
+		$output = '<a href="https://cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" target="_blank" class="btn btn-primary">CBS All Access</a><img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
 
-		$output = '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/' . $link . '/3065/" width="300" height="250" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>';
 		return $output;
 	}
 
