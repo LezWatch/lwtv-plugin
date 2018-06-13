@@ -267,6 +267,7 @@ class LWTV_Affilliates {
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Amazon Prime</a><img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
 					break;
 				case 'apple':
+				case 'itunes':
 					$url     = $clean_url . '?mt=4&at=1010lMaT';
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">iTunes</a>';
 					break;
@@ -274,8 +275,12 @@ class LWTV_Affilliates {
 				case 'cbs':
 					$links[] = self::cbs( $id, 'text' );
 					break;
-				case 'vimeo':
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Vimeo</a>';
+				case 'abc':
+				case 'nbc':
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">' . strtoupper( $hostname ) . '</a>';
+					break;
+				case 'cwtv':
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">The CW</a>';
 					break;
 				case 'youtube':
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">YouTube</a>';
