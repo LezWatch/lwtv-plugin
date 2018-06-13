@@ -10,7 +10,7 @@ class LWTV_Affiliate_Apple {
 	/**
 	 * Determine which ads to show
 	 */
-	function show_ads( $post_id, $type ) {
+	static function show_ads( $post_id, $type ) {
 
 		// Return the proper output
 		switch ( $type ) {
@@ -24,7 +24,7 @@ class LWTV_Affiliate_Apple {
 	/**
 	 * Search!
 	 */
-	function search( $post_id ) {
+	static function search( $post_id ) {
 
 		$use_fallback = false;
 
@@ -60,7 +60,7 @@ class LWTV_Affiliate_Apple {
 	/**
 	 * Output Widget
 	 */
-	function output_widget( $post_id ) {
+	static function output_widget( $post_id ) {
 
 		$link = 'fallback';
 		if ( get_post_type( $post_id ) == 'post_type_shows' ) {
@@ -96,7 +96,7 @@ class LWTV_Affiliate_Apple {
 	/**
 	 * Pick a podcast....
 	 */
-	function podcasts() {
+	static function podcasts() {
 		$podcasts = array(
 			'LezRepresent'    => '1308112009',
 			'Queery'          => '1268343859',
