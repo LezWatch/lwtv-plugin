@@ -161,37 +161,46 @@ class LWTV_Shows_Calculate {
 			$score = 100;
 		} else {
 			// Calculate how many good tropes a show has
-			$havegood = 0;
+			$havegood = $havemaybe = $havebad = 0;
 			foreach ( $good_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
 			}
 
-			// Do we have bad tropes? Yes or no...
-			$havebad = false;
-			foreach ( $bad_tropes as $trope ) {
-				if ( has_term( $trope, 'lez_tropes', $post_id ) && !$havebad ) {
-					$havebad = true;
-				}
+			// Calculate Maybe Good Tropes
+			foreach ( $maybe_tropes as $trope ) {
+				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havemaybe++;
 			}
 
-			// If we don't have any ratings ploys, then we have additional bonuses
-			if ( !$havebad ) {
-				foreach ( $maybe_tropes as $trope ) {
-					if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
-				}
+			// Calculate Bad Tropes
+			foreach ( $bad_tropes as $trope ) {
+				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havebad++;
 			}
 
 			if ( $havegood == $count_tropes ) { 
-				// If tropes are only good, but not NONE: 85
+				// If tropes are ONLY good, we give a 95
+				$score = 95;
+			} elseif ( $havebad == 0 && ( ( $havegood + $havemaybe ) == $count_tropes ) ) {
+				// If the tropes are only good and maybegood
 				$score = 85;
+			} elseif ( $havebad == $count_tropes ) {
+				// If the tropes are all bad, then you get 30 - thanks
+				$score = 30;
 			} else {
-				// Percentage of good to total (Max 75)
-				$score = ( ( $havegood / $count_tropes ) * 100 );
+				// Otherise we just have a show that's pretty average so let's max them out at 75
+				$score = ( ( ( $havegood + $havemaybe ) / $count_tropes ) * 100 );
+				$score += 50;
+				if ( $score > 75 ) $score = 75;
 			}
 
-			// Dead Queers: remove one-third of the score (Max 56.25)
-			if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) $score = ( $score * .75 );
+			// Dead Queers: remove one-third of the score (Max 49.5)
+			if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) { 
+				$score = ( $score * .66 );
+			}
 		}
+
+		// Sanity Check
+		if ( $score > 100 ) $score = 100;
+		if ( $score < 0 )   $score = 0;
 
 		return $score;
 	}
@@ -217,8 +226,8 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Update post meta for counts
-		// NOTE: This cannot be an array becuase of how it's used for Facet later on
-		// ... Mika. Seriously. No.
+		// NOTE: This cannot be an array becuase of how it's used for Facet later on.
+		// MIKA! SERIOUSLY! NO!
 		if ( get_post_type( $post_id ) == 'post_type_shows' ) {
 			update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
 			update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
