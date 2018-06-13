@@ -6,7 +6,7 @@
 
 
 class LWTV_Affiliate_CBS {
-	function show_ads( $post_id, $type ) {
+	static function show_ads( $post_id, $type ) {
 
 		// Return the proper output
 		switch ( $type ) {
@@ -25,7 +25,7 @@ class LWTV_Affiliate_CBS {
 	/**
 	 * CBS wants to run specific ad copy, so we're doing this to try theirs...
 	 */
-	function output_text( $post_id ) {
+	static function output_text( $post_id ) {
 
 		$slug        = get_post_field( 'post_name', $post_id );
 		$named_array = array( 
@@ -55,7 +55,7 @@ class LWTV_Affiliate_CBS {
 	/**
 	 * Figure out which ad we really want to show....
 	 */
-	function output_widget( $post_id ) {
+	static function output_widget( $post_id ) {
 
 		// The possible ads
 		$named_array = array( 

@@ -154,44 +154,60 @@ class LWTV_Shows_Calculate {
 		// Maybe tropes are only good IF there isn't Queer-for-Ratings
 		$good_tropes  = array( 'happy-ending', 'everyones-queer' );
 		$maybe_tropes = array( 'big-queer-wedding', 'coming-out', 'subtext' );
-		$bad_tropes   = array( 'queer-for-ratings', 'queerbaiting', 'in-prison', 'queer-laughs' );
+		$bad_tropes   = array( 'queerbashing', 'in-prison', 'big-bad-queers' );
+		$ploy_tropes  = array( 'queer-for-ratings', 'queerbaiting', 'queer-laughs', 'happy-then-not', 'erasure' );
 		
 		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
 			// No tropes: 100
 			$score = 100;
 		} else {
+
 			// Calculate how many good tropes a show has
-			$havegood = 0;
+			$havegood = $havemaybe = $havebad = $haveploy = 0;
 			foreach ( $good_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
 			}
-
-			// Do we have bad tropes? Yes or no...
-			$havebad = false;
-			foreach ( $bad_tropes as $trope ) {
-				if ( has_term( $trope, 'lez_tropes', $post_id ) && !$havebad ) {
-					$havebad = true;
-				}
+			// Calculate Maybe Good Tropes
+			foreach ( $maybe_tropes as $trope ) {
+				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havemaybe++;
 			}
-
-			// If we don't have any ratings ploys, then we have additional bonuses
-			if ( !$havebad ) {
-				foreach ( $maybe_tropes as $trope ) {
-					if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
-				}
+			// Calculate Bad Tropes
+			foreach ( $bad_tropes as $trope ) {
+				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havebad++;
+			}
+			// Calculate Ploy Tropes
+			foreach ( $ploy_tropes as $trope ) {
+				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $haveploy++;
 			}
 
 			if ( $havegood == $count_tropes ) { 
-				// If tropes are only good, but not NONE: 85
+				// If tropes are ONLY good, we give a 95
+				$score = 95;
+			} elseif ( ( $havegood + $havemaybe ) == $count_tropes ) {
+				// If the tropes are only good and maybegood
 				$score = 85;
+			} elseif ( ( $havebad + $haveploy ) == $count_tropes ) {
+				// If the tropes are all bad or ploys, then you get 25
+				$score = 25;
+			} elseif ( ( $havegood + $havemaybe - $havebad - $haveploy ) < 0 ) {
+				// If they have more bad/ploys than good, it's a wash
+				$score = 40;
 			} else {
-				// Percentage of good to total (Max 75)
-				$score = ( ( $havegood / $count_tropes ) * 100 );
+				// Otherise we just have a show that's pretty average so let's max them out at 75
+				$score = ( ( ( $havegood + $havemaybe - $havebad ) / $count_tropes ) * 100 );
+				if ( $haveploy == 0 ) $score += 50;
+				if ( $score > 75 ) $score = 75;
 			}
 
-			// Dead Queers: remove one-third of the score (Max 56.25)
-			if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) $score = ( $score * .75 );
+			// Dead Queers: remove one-third of the score
+			if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) { 
+				$score = ( $score * .66 );
+			}
 		}
+
+		// Sanity Check
+		if ( $score > 100 ) $score = 100;
+		if ( $score < 0 )   $score = 0;
 
 		return $score;
 	}
@@ -217,8 +233,8 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Update post meta for counts
-		// NOTE: This cannot be an array becuase of how it's used for Facet later on
-		// ... Mika. Seriously. No.
+		// NOTE: This cannot be an array becuase of how it's used for Facet later on.
+		// MIKA! SERIOUSLY! NO!
 		if ( get_post_type( $post_id ) == 'post_type_shows' ) {
 			update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
 			update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );

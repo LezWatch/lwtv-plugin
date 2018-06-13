@@ -38,7 +38,7 @@ class LWTV_Affilliates {
 	 * Usage: [affiliates]
 	 * @since 1.0
 	*/
-	public function shortcode_affiliates( $atts ) {
+	static function shortcode_affiliates( $atts ) {
 		if ( is_archive() ) {
 			$affiliates = $this->widget_affiliates( 'thin' );
 		} else {
@@ -60,7 +60,7 @@ class LWTV_Affilliates {
 	 * @access public
 	 * @return array
 	 */
-	function widget_affiliates( $type ) {
+	static function widget_affiliates( $type ) {
 		
 		$affiliates = array(
 			'wide' => array( 
@@ -99,7 +99,7 @@ class LWTV_Affilliates {
 	 * @since 1.0
 	*/
 
-	public function shortcode_amazon_bounties( $atts ) {
+	static function shortcode_amazon_bounties( $atts ) {
 		$ads = '<!-- Deprecated -->';
 		return $ads;
 	}
@@ -115,7 +115,7 @@ class LWTV_Affilliates {
 	/**
 	 * Edit Amazon URLs to have our tag at the end.
 	 */
-	public function amazon_publisher_studio( $text ) {
+	static function amazon_publisher_studio( $text ) {
 		$regex_url = '#<a href="(?:https://(?:www\.){0,1}amazon\.com(?:/.*){0,1}(?:/dp/|/gp/product/))(.*?)(?:/.*|$)"#';
 
 		if( preg_match( $regex_url, $text, $url ) ) {
@@ -131,7 +131,7 @@ class LWTV_Affilliates {
 	/**
 	 * Determine what to call for actors
 	 */
-	public function actors( $id, $type ) {
+	static function actors( $id, $type ) {
 		// Default: Random
 		$return = self::random( $id, $type );
 		return $return;
@@ -140,7 +140,7 @@ class LWTV_Affilliates {
 	/**
 	 * Determine what to call for characters
 	 */	
-	public function characters( $id, $type ) {
+	static function characters( $id, $type ) {
 		// Default: Random
 		$return = self::random( $id, $type );
 		return $return;
@@ -150,7 +150,7 @@ class LWTV_Affilliates {
 	 * Determine what to call for shows
 	 * This is much more complex!
 	 */
-	public function shows( $id, $type ) {
+	static function shows( $id, $type ) {
 
 		// Default: Amazon if the transient expired, else Apple.
 		if ( false === ( $amzTransient = get_transient( 'lezwatchtv_amazon_affiliates' ) ) ) {
@@ -177,7 +177,7 @@ class LWTV_Affilliates {
 	 *
 	 * @return true/false
 	 */
-	function is_show_cbs( $post_id ) {
+	static function is_show_cbs( $post_id ) {
 		$on_cbs = false;
 
 		$slug         = get_post_field( 'post_name', $post_id );
@@ -201,7 +201,7 @@ class LWTV_Affilliates {
 	 * Call something random...
 	 * This is a basic check of a random number
 	 */
-	function random( $id, $type ) {
+	static function random( $id, $type ) {
 		$number = rand();
 		if ( $number % 3 == 0 ) {
 			$return = self::apple( $id, $type );
@@ -216,7 +216,7 @@ class LWTV_Affilliates {
 	/**
 	 * Call Amazon Affilate Data
 	 */
-	function amazon( $id, $type ) {
+	static function amazon( $id, $type ) {
 		include_once( 'amazon.php' );
 		return LWTV_Affiliate_Amazon::show_ads( $id, $type );
 	}
@@ -224,7 +224,7 @@ class LWTV_Affilliates {
 	/**
 	 * Call CBS Affilate Data
 	 */
-	function cbs( $id, $type ) {
+	static function cbs( $id, $type ) {
 		include_once( 'cbs.php' );
 		return LWTV_Affiliate_CBS::show_ads( $id, $type );
 	}
@@ -232,7 +232,7 @@ class LWTV_Affilliates {
 	/**
 	 * Call Apple Affiliate Data
 	 */
-	function apple( $id, $type ) {
+	static function apple( $id, $type ) {
 		include_once( 'apple.php' );
 		return LWTV_Affiliate_Apple::show_ads( $id, $type );
 	}
@@ -267,6 +267,7 @@ class LWTV_Affilliates {
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Amazon Prime</a><img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
 					break;
 				case 'apple':
+				case 'itunes':
 					$url     = $clean_url . '?mt=4&at=1010lMaT';
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">iTunes</a>';
 					break;
@@ -274,8 +275,12 @@ class LWTV_Affilliates {
 				case 'cbs':
 					$links[] = self::cbs( $id, 'text' );
 					break;
-				case 'vimeo':
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Vimeo</a>';
+				case 'abc':
+				case 'nbc':
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">' . strtoupper( $hostname ) . '</a>';
+					break;
+				case 'cwtv':
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">The CW</a>';
 					break;
 				case 'youtube':
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">YouTube</a>';

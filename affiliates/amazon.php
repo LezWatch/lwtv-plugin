@@ -25,7 +25,7 @@ class LWTV_Affiliate_Amazon {
 	/**
 	 * Determine what ad to show
 	 */
-	function show_ads( $post_id, $type ) {
+	static function show_ads( $post_id, $type ) {
 
 		// Return the proper output
 		switch ( $type ) {
@@ -41,7 +41,7 @@ class LWTV_Affiliate_Amazon {
 	/**
 	 * Check if there are some amazon videos we can direct link to...
 	 */
-	public function check_amazon ( $post_id, $use_fallback = false ) {
+	public static function check_amazon ( $post_id, $use_fallback = false ) {
 
 		$setKeywords  = '';
 		$use_bounty   = false;
@@ -182,7 +182,7 @@ class LWTV_Affiliate_Amazon {
 	/**
 	 * Generate a random bounty
 	 */
-	function bounty( $post_id ) {
+	static function bounty( $post_id ) {
 
 		// First let's check if the show is on a network we know....
 		$networks = array( 
