@@ -161,22 +161,20 @@ class LWTV_Shows_Calculate {
 			// No tropes: 100
 			$score = 100;
 		} else {
+
 			// Calculate how many good tropes a show has
 			$havegood = $havemaybe = $havebad = $haveploy = 0;
 			foreach ( $good_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
 			}
-
 			// Calculate Maybe Good Tropes
 			foreach ( $maybe_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havemaybe++;
 			}
-
 			// Calculate Bad Tropes
 			foreach ( $bad_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havebad++;
 			}
-
 			// Calculate Ploy Tropes
 			foreach ( $ploy_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $haveploy++;
@@ -185,7 +183,7 @@ class LWTV_Shows_Calculate {
 			if ( $havegood == $count_tropes ) { 
 				// If tropes are ONLY good, we give a 95
 				$score = 95;
-			} elseif ( $haveploy == 0 && ( ( $havegood + $havemaybe ) == $count_tropes ) ) {
+			} elseif ( ( $havegood + $havemaybe ) == $count_tropes ) {
 				// If the tropes are only good and maybegood
 				$score = 85;
 			} elseif ( ( $havebad + $haveploy ) == $count_tropes ) {
