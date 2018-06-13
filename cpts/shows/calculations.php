@@ -154,14 +154,15 @@ class LWTV_Shows_Calculate {
 		// Maybe tropes are only good IF there isn't Queer-for-Ratings
 		$good_tropes  = array( 'happy-ending', 'everyones-queer' );
 		$maybe_tropes = array( 'big-queer-wedding', 'coming-out', 'subtext' );
-		$bad_tropes   = array( 'queer-for-ratings', 'queerbaiting', 'in-prison', 'queer-laughs' );
+		$bad_tropes   = array( 'queerbashing', 'in-prison', 'big-bad-queers' );
+		$ploy_tropes  = array( 'queer-for-ratings', 'queerbaiting', 'queer-laughs', 'happy-then-not', 'erasure' );
 		
 		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
 			// No tropes: 100
 			$score = 100;
 		} else {
 			// Calculate how many good tropes a show has
-			$havegood = $havemaybe = $havebad = 0;
+			$havegood = $havemaybe = $havebad = $haveploy = 0;
 			foreach ( $good_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havegood++;
 			}
@@ -176,23 +177,31 @@ class LWTV_Shows_Calculate {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $havebad++;
 			}
 
+			// Calculate Ploy Tropes
+			foreach ( $ploy_tropes as $trope ) {
+				if ( has_term( $trope, 'lez_tropes', $post_id ) ) $haveploy++;
+			}
+
 			if ( $havegood == $count_tropes ) { 
 				// If tropes are ONLY good, we give a 95
 				$score = 95;
-			} elseif ( $havebad == 0 && ( ( $havegood + $havemaybe ) == $count_tropes ) ) {
+			} elseif ( $haveploy == 0 && ( ( $havegood + $havemaybe ) == $count_tropes ) ) {
 				// If the tropes are only good and maybegood
 				$score = 85;
-			} elseif ( $havebad == $count_tropes ) {
-				// If the tropes are all bad, then you get 30 - thanks
-				$score = 30;
+			} elseif ( ( $havebad + $haveploy ) == $count_tropes ) {
+				// If the tropes are all bad or ploys, then you get 25
+				$score = 25;
+			} elseif ( ( $havegood + $havemaybe - $havebad - $haveploy ) < 0 ) {
+				// If they have more bad/ploys than good, it's a wash
+				$score = 40;
 			} else {
 				// Otherise we just have a show that's pretty average so let's max them out at 75
-				$score = ( ( ( $havegood + $havemaybe ) / $count_tropes ) * 100 );
-				$score += 50;
+				$score = ( ( ( $havegood + $havemaybe - $havebad ) / $count_tropes ) * 100 );
+				if ( $haveploy == 0 ) $score += 50;
 				if ( $score > 75 ) $score = 75;
 			}
 
-			// Dead Queers: remove one-third of the score (Max 49.5)
+			// Dead Queers: remove one-third of the score
 			if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) { 
 				$score = ( $score * .66 );
 			}
