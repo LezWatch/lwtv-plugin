@@ -279,6 +279,9 @@ class LWTV_Affilliates {
 				case 'nbc':
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">' . strtoupper( $hostname ) . '</a>';
 					break;
+				case 'bbcamerica':
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">BBC America</a>';
+					break;
 				case 'cwtv':
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">The CW</a>';
 					break;
