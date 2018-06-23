@@ -208,12 +208,6 @@ class LWTV_Stats_Arrays {
 	 * Calculate stats for characters_details_shows
 	 *
 	 * This means 'characters based on nations' and 'characters based on channels'
-	 * 
-	 * @access public
-	 * @static
-	 * @param mixed $count
-	 * @param mixed $format
-	 * @return void
 	 */
 	static function characters_details_shows( $count, $format, $data, $subject ) {
 		// Set defaults
@@ -256,6 +250,7 @@ class LWTV_Stats_Arrays {
 		// Parse the taxonomy
 		foreach ( $taxonomy as $the_tax ) {
 			$characters = $shows = $dead = 0;
+			$char_data  = array();
 
 			$slug = ( !isset( $the_tax->slug ) )? $the_tax['slug'] : $the_tax->slug;
 			$name = ( !isset( $the_tax->name ) )? $the_tax['name'] : $the_tax->name;
@@ -279,10 +274,11 @@ class LWTV_Stats_Arrays {
 							} 
 							$char_data[$char_data_meta] += $char_data_count;
 						}
-					} elseif ( $data_meta !== 'all' && $format == 'stackedbar'  ) {
+					} elseif ( $data_meta !== 'all' && $format == 'stackedbar' ) {
 						$char_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
-						$char_data       = array_shift( $char_data_array );
-						
+						foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
+							$char_data[$char_data_meta] += $char_data_count;
+						}
 					} elseif ( $data_meta == 'all' && $data_term !== 'all' ) {
 						foreach ( $valid_subtaxes as $meta ) {
 							$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
