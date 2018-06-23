@@ -95,8 +95,7 @@ class LWTV_Stats {
 			$array    = LWTV_Stats_Arrays::characters_details_shows( $count, $format, $data, $subject );
 			// Stupid counting shit ...
 			$precount = $count;
-			$count    = LWTV_Stats_Arrays::characters_details_shows( $count, $format, $data, $subject );
-			if ( $format == 'percentage' ) $count = $precount;
+			$count    = LWTV_Stats_Arrays::characters_details_shows( $precount, 'count', $data, $subject );
 		}
 
 		// And dead stats? IN-fucking-sane
