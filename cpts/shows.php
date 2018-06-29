@@ -315,7 +315,7 @@ SQL;
 			
 			// Purge 'em all
 			foreach ( $purgeurls as $url ) {
-				$this->varnish_purge->purgeUrl( $url ) ;
+				$this->varnish_purge->purge_url( $url ) ;
 			}
 		}
 
