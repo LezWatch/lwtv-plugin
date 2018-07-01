@@ -203,30 +203,43 @@ class LWTV_Stats_Arrays {
 		return $array;
 	}
 
-
 	/**
-	 * Calculate stats for characters_details_shows
-	 *
-	 * This means 'characters based on nations' and 'characters based on channels'
+	 * Calculate taxonomy_breakdowns statistics
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $count   - integer; number of posts.
+	 * @param mixed $format  - string; format of stats (i.e. lists, piecharts, etc).
+	 * @param mixed $data    - string; [main taxonomy]_[term of main]_[metadata to parse].
+	 * @param mixed $subject - string; post type (shows, characters).
+	 * @return void
 	 */
-	static function characters_details_shows( $count, $format, $data, $subject ) {
-		// Set defaults
-		$array = $char_data  = array();
+	public static function taxonomy_breakdowns( $count, $format, $data, $subject ) {
+		// Set defaults.
+		$array     = array();
+		//$big_data  = array();
 
-		// Create a massive array of all the character terms we care about...
-		$valid_subtaxes = array( 'gender', 'sexuality', 'romantic' );
+		// Arrays of the secondary taxonomies we care about.
+		$main_subtaxes  = array( 'gender', 'sexuality', 'romantic' );
+		$extra_subtaxes = array( 'cliches', 'tropes' );
+		$valid_subtaxes = array_merge( $main_subtaxes, $extra_subtaxes );
 
-		// [main_term_meta]
-		// [main taxonomy]_[term of main]_[metadata to parse]
-		// ex: [country_all_gender]
-		//     [station_abc_sexuality]
-		//     [country_usa_all]
+		/*
+		 * This is confusing, I know.
+		 * [main_term_meta]
+		 * [main taxonomy]_[term of main]_[metadata to parse]
+		 * ex: [country_all_gender]
+		 *     [station_abc_sexuality]
+		 *     [country_usa_all]
+		 */
 		$pieces    = explode( '_', $data);
 		$data_main = $pieces[0];
 		$data_term = ( isset( $pieces[1] ) )? $pieces[1] : 'all';
 		$data_meta = ( isset( $pieces[2] ) && in_array( $pieces[2], array_keys( $valid_subtaxes ) ) )? $pieces[2] : 'all';
 
-		// Get the taxonomy data:
+		// Get the taxonomy data.
+		// This is the nation or station (term) we're going to process.
+		// If no specific term provided, we'll process the whole taxonomy.
 		if ( $data_term !== 'all' ) {
 			$tax_term = get_term_by( 'slug', $data_term, 'lez_' . $data_main );
 			$taxonomy = array( $data_term => array(
@@ -237,53 +250,102 @@ class LWTV_Stats_Arrays {
 			$taxonomy = get_terms( 'lez_' . $data_main );
 		}
 
-		// Fill the char_data if we're showing it all
-		if ( $data_meta == 'all' && $data_term !== 'all' ) {
-			foreach ( $valid_subtaxes as $subtax ) {
-				$terms = get_terms( 'lez_' . $subtax, array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
-				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-					foreach ( $terms as $term ) { $char_data[$term->slug] = 0; }
-				}
-			}
-		}
-
-		// Parse the taxonomy
+		// Parse the taxonomy.
+		// Either we get the information for ALL stations/nations, or just one.
 		foreach ( $taxonomy as $the_tax ) {
 			$characters = $shows = $dead = 0;
-			$char_data  = array();
+			$big_data  = array();
 
+			// This is the name of the nation/station.
 			$slug = ( !isset( $the_tax->slug ) )? $the_tax['slug'] : $the_tax->slug;
+			// This is the display name (used by stacked barcharts).
 			$name = ( !isset( $the_tax->name ) )? $the_tax['name'] : $the_tax->name;
 
-			// Get the posts
+			// Get the posts.
 			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
 
-			// Process
+			// Process the posts.
 			if ( $queery->have_posts() ) {
+
+				// Defaults.
+				$shows      = 0;
+				$dead       = 0;
+				$characters = 0;
+				$dead_shows = 0;
+
 				foreach( $queery->posts as $show ) {
+					// This data is universal for every thing we process.
 					$shows++;
 					$dead       += get_post_meta( $show->ID, 'lezshows_dead_count', true );
 					$characters += get_post_meta( $show->ID, 'lezshows_char_count', true );
+					if ( has_term( 'dead-queers', 'lez_tropes', $show->ID ) ) {
+						$dead_shows++;
+					}
 
 					// Get the data...
 					if ( $data_meta !== 'all' && $format !== 'stackedbar' ) {
-						$char_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
-						foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
-							if ( !isset( $char_data[$char_data_meta] ) ) {
-								$char_data[$char_data_meta] = 0;
-							} 
-							$char_data[$char_data_meta] += $char_data_count;
+						// This is for when we show a specific taxonomy for a specific nation/station.
+						// Example: Sexuality for Argentina.
+						if ( in_array( $data_meta, $extra_subtaxes ) ) {
+							// Get all the terms for this show.
+							$big_data_array = get_the_terms( $show->ID, 'lez_' . $data_meta );
+							if ( ! empty( $big_data_array ) && ! is_wp_error( $big_data_array ) ) {
+								foreach ( $big_data_array as $big_data_item ) {
+									if ( in_array( $data_meta, $extra_subtaxes ) ) {
+										if ( ! isset ( $big_data[ $big_data_item->name ] ) ) {
+											$big_data[ $big_data_item->name ] = 0;
+										}
+										$big_data[ $big_data_item->name ]++;
+									} else {
+										if ( ! isset ( $big_data[ $big_data_item->slug ] ) ) {
+											$big_data[ $big_data_item->slug ] = 0;
+										}
+										$big_data[ $big_data_item->slug ]++;
+									}
+								}
+							}
+						} else {
+							// Otherwise, we can grab the meta-data from each show.
+							$big_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
+
+							foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
+								if ( ! isset ( $big_data[$big_data_meta] ) ) {
+									$big_data[$big_data_meta] = 0;
+								}
+								$big_data[$big_data_meta] += $big_data_count;
+							}
 						}
 					} elseif ( $data_meta !== 'all' && $format == 'stackedbar' ) {
-						$char_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
-						foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
-							$char_data[$char_data_meta] += $char_data_count;
+						if ( in_array( $data_meta, $extra_subtaxes ) ) {
+							// Get all the terms for this show.
+							$big_data_array = get_the_terms( $show->ID, 'lez_' . $data_meta );
+							if ( ! empty( $big_data_array ) && ! is_wp_error( $big_data_array ) ) {
+								foreach ( $big_data_array as $big_data_item ) {
+									if ( ! isset ( $big_data[$big_data_item->slug] ) ) {
+										$big_data[$big_data_item->slug] = 0;
+									}
+									$big_data[ $big_data_item->slug ]++;
+								}
+							}
+						} else {
+							// We can use the post meta.
+							$big_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $data_meta );
+							foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
+								if ( ! isset ( $big_data[$big_data_meta] ) ) {
+									$big_data[$big_data_meta] = 0;
+								}
+								$big_data[$big_data_meta] += $big_data_count;
+							}
 						}
 					} elseif ( $data_meta == 'all' && $data_term !== 'all' ) {
-						foreach ( $valid_subtaxes as $meta ) {
-							$char_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
-							foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
-								$char_data[$char_data_meta] += $char_data_count;
+						// If the data_meta is "all" then we are on the OVERVIEW tab for ONE nation/station.
+						foreach ( $main_subtaxes as $meta ) {
+							$big_data_array  = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
+							foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
+								if ( ! isset ( $big_data[$big_data_meta] ) ) {
+									$big_data[$big_data_meta] = 0;
+								}
+								$big_data[$big_data_meta] += $big_data_count;
 							}
 						}
 					}
@@ -295,7 +357,7 @@ class LWTV_Stats_Arrays {
 			switch( $format ) {
 				case 'barchart':
 					if ( $data_term !== 'all' && $data_meta !== 'all' ) {
-						foreach ( $char_data as $char_name => $char_count ) {
+						foreach ( $big_data as $char_name => $char_count ) {
 							$array[] = array (
 								'name'  => $char_name,
 								'count' => $char_count,
@@ -304,7 +366,8 @@ class LWTV_Stats_Arrays {
 					} elseif ( $data_term !== 'all' && $data_meta == 'all' ) {
 						$array['shows'] = array( 'name'  => 'Shows', 'count' => $shows );
 						$array['chars'] = array( 'name' => 'Characters', 'count' => $characters );
-						foreach ( $char_data as $ctax_name => $ctax_count ) {
+						$array['death'] = array( 'name' => 'Dead Characters', 'count' => $dead );
+						foreach ( $big_data as $ctax_name => $ctax_count ) {
 							if ( $ctax_count !== 0 ) {
 								$array[$ctax_name] = array( 'name' => ucfirst( $ctax_name ), 'count' => $ctax_count );
 							}
@@ -314,10 +377,11 @@ class LWTV_Stats_Arrays {
 					}
 					break;
 				case 'percentage':
-				case 'piechart':;
+				case 'piechart':
+				case 'list':
 					if ( $data_term !== 'all' ) {
 						if ( $data_meta !== 'all' ) {
-							foreach ( $char_data as $char_name => $char_count ) {
+							foreach ( $big_data as $char_name => $char_count ) {
 								$array[] = array (
 									'name'  => $char_name,
 									'count' => $char_count,
@@ -340,7 +404,7 @@ class LWTV_Stats_Arrays {
 						'name'       => $name,
 						'count'      => $shows,
 						'characters' => $characters,
-						'dataset'    => $char_data,
+						'dataset'    => $big_data,
 					);
 			}
 		}
@@ -557,19 +621,79 @@ class LWTV_Stats_Arrays {
 		return $array;
 	}
 
+
+	/**
+	 * Complex death taxonomies.
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $type - string.
+	 * @return array.
+	 */
+	public static function dead_complex_taxonomy( $type ) {
+		// Defaults.
+		$valid_types = array( 'stations', 'country' );
+		$array       = array();
+
+		// Bail early.
+		if ( ! in_array( $type, $valid_types ) ) return;
+
+		// Parse the taxonomy.
+		$taxonomy = get_terms( 'lez_' . $type );
+
+		// For each station/nation, we need to count the data.
+		foreach ( $taxonomy as $the_tax ) {
+			// This is the name of the nation/station.
+			$slug = ( !isset( $the_tax->slug ) )? $the_tax['slug'] : $the_tax->slug;
+			$name = ( !isset( $the_tax->name ) )? $the_tax['name'] : $the_tax->name;
+
+			// Get the posts.
+			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
+
+			// Process the posts.
+			if ( $queery->have_posts() ) {
+				// Defaults.
+				$shows      = 0;
+				$characters = 0;
+				$dead_shows = 0;
+				$dead_chars = 0;
+
+				foreach( $queery->posts as $show ) {
+					// This data is universal for every thing we process.
+					$shows++;
+					$dead_chars += get_post_meta( $show->ID, 'lezshows_dead_count', true );
+					$characters += get_post_meta( $show->ID, 'lezshows_char_count', true );
+					if ( has_term( 'dead-queers', 'lez_tropes', $show->ID ) ) {
+						$dead_shows++;
+					}
+				}
+
+				$array[] = array( 
+					'count'      => $dead_chars,
+					'name'       => $name, 
+					'url'        => get_term_link( $the_tax ),
+					'characters' => $characters,
+					'shows'      => $shows,
+				);
+			}
+		}
+
+		return $array;
+	}
+
 	/*
 	 * Statistics Scores
 	 *
 	 * @return array
 	 */
 	static function scores( $post_type ) {
-		$the_queery   = LWTV_Loops::post_type_query( $post_type );
-		$scores_array = array();
+		$the_queery = LWTV_Loops::post_type_query( $post_type );
+		$array      = array();
 		if ( $the_queery->have_posts() ) {
 			while ( $the_queery->have_posts() ) {
 				$the_queery->the_post();
 				$post = get_post();
-				$scores_array[ $post->ID ] = array(
+				$array[ $post->ID ] = array(
 					'id'    => $post->ID,
 					'count' => get_post_meta( $post->ID, 'lezshows_the_score', true ),
 					'url'   => get_the_permalink( $post->ID ),
@@ -578,7 +702,7 @@ class LWTV_Stats_Arrays {
 			wp_reset_query();
 		}
 		
-		return $scores_array;
+		return $array;
 	}
 
 	/**

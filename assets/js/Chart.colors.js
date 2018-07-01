@@ -20,6 +20,7 @@ window.chartColors = {
 	nundefined: 'rgba(201, 203, 207, 0.6)', // 'grey'
 	queer: 'rgba(0, 169, 80, 0.6)', // 'green'
 	demisexual: 'rgba(153, 102, 255, 0.6)', // 'purple'
+	fluid: 'rgba(255, 102, 0, 0.6)', // orange2
 
 	// Stacks
 	shows: 'rgba(153, 102, 255, 0.6)', // 'purple'
