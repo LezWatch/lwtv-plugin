@@ -1,6 +1,6 @@
 <?php
 /*
-Description: Various shortcodes used on LezWatchTV
+Description: Various shortcodes used on LezWatch.TV
 Version: 1.1
 Author: Mika Epstein
 */

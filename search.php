@@ -1,6 +1,6 @@
 <?php
 /*
- * Extra Search Functions for LezWatchTV.com
+ * Extra Search Functions for LezWatch.TV.com
  *
  * @since 1.2
  */
