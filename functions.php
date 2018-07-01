@@ -25,6 +25,28 @@ class LWTV_Functions {
 		add_filter( 'http_request_args', array( $this, 'disable_wp_update' ), 10, 2 );
 		add_filter( 'attachment_fields_to_edit', array( $this, 'add_attachment_attribution' ), 10000, 2);
 		add_action( 'edit_attachment', array( $this, 'save_attachment_attribution' ) );
+		add_action( 'pre_current_active_plugins', array( $this, 'hide_lwtv_plugin' ) );
+	}
+
+
+	/**
+	 * Hide the LWTV Plugin.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function hide_lwtv_plugin() {
+		global $wp_list_table;
+
+		$hide_plugins = array(
+			plugin_basename( __FILE__ ),
+		);
+		$curr_plugins = $wp_list_table->items;
+		foreach ( $curr_plugins as $plugin => $data ) {
+			if (in_array( $plugin, $hide_plugins ) ) {
+				unset( $wp_list_table->items[$plugin] );
+			}
+		}
 	}
 
 	/**
@@ -38,7 +60,7 @@ class LWTV_Functions {
 	public function disable_wp_update( $return, $url ) {
 		if ( 0 === strpos( $url, 'https://api.wordpress.org/plugins/update-check/' ) ) {
 			$my_plugin = plugin_basename( __FILE__ );
-			$plugins = json_decode( $return['body']['plugins'], true );
+			$plugins   = json_decode( $return['body']['plugins'], true );
 			unset( $plugins['plugins'][$my_plugin] );
 			unset( $plugins['active'][array_search( $my_plugin, $plugins['active'] )] );
 			$return['body']['plugins'] = json_encode( $plugins );
