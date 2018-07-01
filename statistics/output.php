@@ -22,12 +22,11 @@ class LWTV_Stats_Output {
 	 */
 	static function lists( $subject, $data, $array, $count ) {
 		?>
-		<table class="table table-sm table-striped table-hover">
+		<table id="<?php echo $subject; ?>Table" class="tablesorter table table-striped table-hover">
 			<thead>
 				<tr>
 					<th scope="col">&nbsp;</th>
 					<th scope="col">Count</th>
-					<th scope="col">Percent</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -38,7 +37,6 @@ class LWTV_Stats_Output {
 						echo '<tr>';
 							echo '<th scope="row"><a href="'.$item['url'].'">' . $name . '</a></th>';
 							echo '<td>' . $item['count'] . '</td>';
-							echo '<td>' . round( ( ( $item['count'] / $count ) * 100 ) , 1 ) .'%</td>';
 						echo '</tr>';
 					}
 				}
@@ -63,24 +61,52 @@ class LWTV_Stats_Output {
 	 */
 	static function percentages( $subject, $data, $array, $count ) {
 
-		$pieces = explode( '_', $data);
-		if( in_array( 'country', $pieces ) ) {
+		$pieces = preg_split( '(_|-)', $data );
+		if ( in_array( 'country', $pieces ) ) {
 			$count = 0;
 			foreach ( $array as $key => $item ) {
 				$count += $item['count'];
 			}
+		} elseif ( in_array( 'dead', $pieces ) && ! in_array( 'shows', $pieces ) ) {
+			$to_count = get_term_by( 'slug', 'dead', 'lez_cliches' );
+			$count    = $to_count->count;
+
+			if ( 'nations' === $pieces[1] || 'stations' === $pieces[1] ) {
+				$second_title    = 'Percent <br />of ' . ucfirst( $pieces[1] ) . '\'s Characters';
+			}
 		}
 
-		// Reorder by item count
-		usort( $array, function( $a, $b ) { return $a['count'] - $b['count']; } );
+		if ( ! in_array( 'dead', $pieces ) ) {
+			// Reorder by item count
+			usort( $array, function( $a, $b ) { return $a['count'] - $b['count']; } );
+		}
 
 		?>
-		<table class="table table-striped table-hover">
+		<table id="<?php echo $subject; ?>Table" class="tablesorter table table-striped table-hover">
 			<thead>
 				<tr>
 					<th scope="col">&nbsp;</th>
-					<th scope="col">Count</th>
-					<th scope="col">Percent</th>
+					<th scope="col">
+						Count
+						<?php
+							if ( isset( $second_title ) ) {
+								echo '<br />of Dead Characters';
+							}
+						?>
+					</th>
+					<th scope="col">
+						Percent
+						<?php
+							if ( isset( $second_title ) ) {
+								echo '<br />of Dead Characters';
+							}
+						?>
+					</th>
+					<?php
+						if ( isset( $second_title ) ) {
+							echo '<th scope="col">' . $second_title . '</th>';
+						}
+					?>
 				</tr>
 			</thead>
 			<tbody>
@@ -90,7 +116,12 @@ class LWTV_Stats_Output {
 						echo '<tr>';
 							echo '<th scope="row"><a href="'.$item['url'].'">' . ucfirst( $item['name'] ) . '</a></th>';
 							echo '<td>' . $item['count'] . '</td>';
-							echo '<td>' . round( ( ( $item['count'] / $count ) * 100 ) , 1 ) .'%</td>';
+							echo '<td>' . round( ( ( $item['count'] / $count ) * 100 ), 1 ) .'%</td>';
+							if ( isset( $second_title ) ) {
+								// how many characters per station/nation?
+								$second_count    = $item['characters'];
+								echo '<td>' . round( ( ( $item['count'] / $second_count ) * 100 ), 1 ) .'%</td>';
+							}
 						echo '</tr>';
 					}
 				}
@@ -116,21 +147,23 @@ class LWTV_Stats_Output {
 	static function averages( $subject, $data, $array, $count, $type = 'average' ) {
 
 		$valid_types = array( 'high', 'low', 'average' );
-		if ( !in_array( $type, $valid_types ) ) $type = 'average';
+		if ( ! in_array( $type, $valid_types ) ) $type = 'average';
 
 		switch ( $type ) {
 			case 'average':
-				$N   = count( $array );
+				$N   = $count;
 				$sum = 0;
-				foreach ( $array as $item ) { $sum = $sum + (int)$item['count']; }
-				$average = round ($sum / $N);
+				foreach ( $array as $item ) {
+					$sum = $sum + (int)$item['count']; 
+				}
+				$average = round( $sum / $N );
 				$return  = $average;
 				break;
 			case 'high':
 				$high = 0;
 				foreach( $array as $key => $value ) {
-					if( (int)$value['count'] > $high ) {
-						$high = (int)$value['count'];
+					if( (float)$value['count'] > $high ) {
+						$high = (float)$value['count'];
 						if ( $subject = 'shows' ) {
 							$high .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}
@@ -139,15 +172,16 @@ class LWTV_Stats_Output {
 				$return = $high;
 				break;
 			case 'low':
-				$low = $number = 0;
+				$low = 20;
 				foreach( $array as $key => $value ) {
-					if( (int)$value['count'] == 0 ) {
+					if( $low > (float)$value['count'] ) {
+						$low = (float)$value['count'];
 						if ( $subject = 'shows' ) {
-							$number++;
+							$low .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}
 					}
 				}
-				$return = $low . ' (<a href="/shows/?fwp_shows_scores=0%2C0">' . $number . ' shows total</a>)';
+				$return = $low;
 				break;
 		}
 		echo $return;
@@ -325,6 +359,7 @@ class LWTV_Stats_Output {
 			case 'gender':
 			case 'sexuality':
 			case 'romantic':
+			case 'tropes':
 				$datasets = array();
 				$terms    = get_terms( 'lez_' . $data_subtax, array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
 				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
@@ -337,6 +372,20 @@ class LWTV_Stats_Output {
 		<div id="container" style="width: 100%;">
 			<canvas id="barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?>" width="700" height="<?php echo $height; ?>"></canvas>
 		</div>
+
+		<?php
+			// Build out the colors ...
+			$colors_array = array();
+			$colors_tolra = array( '781c81', '61187e', '531b7f', '4a2384', '442e8a', '413b93', '3f499d', '3f58a8', '4066b2', '4273bb', '447fc0', '488ac2', '4c94bf', '519cb8', '57a3ae', '5ea9a2', '65ae95', '6db388', '76b67d', '7fb972', '88bb69', '92bd60', '9cbe59', 'a7be53', 'b1be4e', 'babc49', 'c3ba45', 'ccb742', 'd3b33f', 'daad3c', 'dfa539', 'e39c37', 'e59134', 'e78432', 'e7752f', 'e6652d', 'e4542a', 'e14326', 'dd3123', 'd92120' );
+			shuffle( $colors_tolra );
+			$color_count  = 0;
+			foreach ( $datasets as $label ) {
+				$name = ( $label == 'undefined' )? 'nundefined' : str_replace( ["-", "–","-"], "", $label );
+				$colors_array[$name] = '#' . $colors_tolra[$color_count];
+				$color_count++;
+			}
+		?>
+
 
 		<script>
 		// Defaults
@@ -360,14 +409,19 @@ class LWTV_Stats_Output {
 				?>
 				{
 					borderWidth: 1,
-					backgroundColor: window.chartColors.<?php echo $color; ?>,
 					label: '<?php echo ucfirst( $label ); ?>',
 					stack: 'Stack',
 					data : [<?php
 						foreach ( $array as $name => $item ) {
-							echo $item[ 'dataset' ][ $label ] . ',';
+							if ( isset( $item[ 'dataset' ][ $label ] ) ) {
+								echo $item[ 'dataset' ][ $label ] . ',';
+							} else {
+								echo '0,';
+							}
 						}
 					?>],
+					//backgroundColor: window.chartColors.<?php echo $color; ?>,
+					backgroundColor: <?php echo '"' . $colors_array[$color] . '"'; ?>,
 				},
 				<?php
 			}

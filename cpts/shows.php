@@ -297,6 +297,8 @@ SQL;
 	 */
 	public function update_meta( $post_id ) {
 
+		$screen = get_current_screen();
+
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_shows', array( $this, 'update_meta' ) );
 
@@ -304,7 +306,7 @@ SQL;
 		LWTV_Shows_Calculate::do_the_math( $post_id );
 
 		// Flush Varnish
-		if ( class_exists( 'VarnishPurger' ) ) {
+		if ( class_exists( 'VarnishPurger' ) && 'add' !== $screen->action ) {
 			// Generate list of URLs based on the show ID:
 			$purgeurls = $this->varnish_purge->generate_urls( $post_id );
 			
@@ -315,7 +317,7 @@ SQL;
 			
 			// Purge 'em all
 			foreach ( $purgeurls as $url ) {
-				$this->varnish_purge->purgeUrl( $url ) ;
+				$this->varnish_purge->purge_url( $url ) ;
 			}
 		}
 

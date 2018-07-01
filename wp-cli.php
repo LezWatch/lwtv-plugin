@@ -76,7 +76,7 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 				break;
 		}
 
-		WP_CLI::success( 'Calculations run for ' . get_the_title( $post_id ) . $score );
+		WP_CLI::success( 'Calculations run for ' . get_the_title( $post_id ) . ' - ' . $score );
 	}
 
 	/**

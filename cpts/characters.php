@@ -462,7 +462,7 @@ SQL;
 	}
 
 	/*
-	 * Extra Meta Variables for Yoast and Characters
+	 * Extra Meta Variables for Yoast and Actors
 	 *
 	 * List of actors who played a character, for use on character pages
 	 */

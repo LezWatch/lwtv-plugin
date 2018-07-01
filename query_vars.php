@@ -39,6 +39,8 @@ class LWTV_Query_Vars {
 		// The custom queries that DO NOT have special pages
 		$this->naked_query_args = array( 'format' );
 
+		// Some Yoasty things
+		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 	}
 
 	/**
@@ -50,7 +52,7 @@ class LWTV_Query_Vars {
 	 * @return void
 	 * @since 1.0
 	 */
-	function init() {
+	public function init() {
 		// Plugin requires permalink usage - Only setup handling if permalinks enabled
 		if ( get_option('permalink_structure') != '' ) {
 
@@ -93,7 +95,7 @@ class LWTV_Query_Vars {
 	 *
 	 * @return $vars
 	 */
-	function query_vars( $vars ){
+	public function query_vars( $vars ){
 		foreach ( $this->lez_query_args as $argument ) {
 			$vars[] = $argument;
 		}
@@ -105,7 +107,7 @@ class LWTV_Query_Vars {
 	 *
 	 * @return $templates
 	 */
-	function page_template( $templates = "" ){
+	public function page_template( $templates = "" ){
 		global $wp_query, $post;
 
 		if ( array_key_exists( $post->post_name, $this->lez_query_args ) )
@@ -118,6 +120,36 @@ class LWTV_Query_Vars {
 		}
 
 		return $templates;
+	}
+
+	/*
+	 * Extra Replacement Functions for Yoast SEO
+	 */
+	public function yoast_seo_register_extra_replacements() {
+		wpseo_register_var_replacement( '%%statistics%%', array( $this, 'yoast_retrieve_stats_replacement' ), 'basic', 'The type of stats page we\'re on.' );
+		wpseo_register_var_replacement( '%%thisyear%%', array( $this, 'yoast_retrieve_year_replacement' ), 'basic', 'The year.' );
+	}
+
+	/*
+	 * Extra Meta Variables for Yoast and Stats pages
+	 *
+	 * The type of stats page we're on
+	 */
+	public function yoast_retrieve_stats_replacement( ) {
+		$statistics = get_query_var( 'statistics', 'none' );
+		$return = ( 'none' !== $statistics )? 'About ' . ucfirst( $statistics ) : '';
+		return $return;
+	}
+
+	/*
+	 * Extra Meta Variables for Yoast and Year pages
+	 *
+	 * The type of stats page we're on
+	 */
+	public function yoast_retrieve_year_replacement( ) {
+		$this_year = get_query_var( 'thisyear', 'none' );
+		$return = ( 'none' !== $this_year )? ucfirst( $this_year ) : date( 'Y' );
+		return $return;
 	}
 
 }
