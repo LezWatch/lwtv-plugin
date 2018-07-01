@@ -22,17 +22,22 @@ class LWTV_Stats_Arrays {
 	static function taxonomy( $post_type, $taxonomy, $terms = '', $operator = 'IN' ) {
 		$array = array();
 
-		// If no term provided, use get_terms for the taxonomy
+		// If no term provided, use get_terms for the taxonomy.
 		$taxonomies = ( $terms == '' )? get_terms( $taxonomy ) : array($terms);
 
 		foreach ( $taxonomies as $term ) {
-			$term_obj  = ( $terms !== '' )? get_term_by( 'slug', $term, $taxonomy, 'ARRAY_A' ) : '';
-			$term_link = get_term_link( $term, $taxonomy );
-			$term_slug = ( $terms == '' )? $term->slug : $terms;
-			$term_name = ( $terms == '' )? $term->name : $term_obj['name'];
+			$term_obj          = ( $terms !== '' )? get_term_by( 'slug', $term, $taxonomy, 'ARRAY_A' ) : '';
+			$term_link         = get_term_link( $term, $taxonomy );
+			$term_slug         = ( $terms == '' )? $term->slug : $terms;
+			$term_name         = ( $terms == '' )? $term->name : $term_obj['name'];
 			$count_terms_query = LWTV_Loops::tax_query( $post_type, $taxonomy, 'slug', $term_slug, $operator );
-			$term_count = $count_terms_query->post_count;
-			$array[$term_slug] = array( 'count' => $term_count, 'name' => $term_name, 'url' => $term_link );
+			$term_count        = $count_terms_query->post_count;
+
+			$array[$term_slug] = array( 
+				'count' => $term_count, 
+				'name'  => $term_name, 
+				'url'   => $term_link,
+			);
 		}
 		return $array;
 	}
@@ -48,17 +53,22 @@ class LWTV_Stats_Arrays {
 	 * @return array
 	 */
 	static function dead_taxonomy( $post_type, $taxonomy ) {
-		$array = array();
+
+		$array      = array();
 		$taxonomies = get_terms( $taxonomy );
 
 		foreach ( $taxonomies as $term ) {
-			$query = LWTV_Loops::tax_two_query(
+			$queery = LWTV_Loops::tax_two_query(
 				$post_type,
 				$taxonomy, 'slug', $term->slug,
 				'lez_cliches', 'slug', 'dead'
 			);
 
-			$array[$term->slug] = array( 'count' => $query->post_count, 'name'  => $term->name, 'url' => get_term_link( $term ) );
+			$array[$term->slug] = array( 
+				'count' => $queery->post_count, 
+				'name'  => $term->name, 
+				'url'   => get_term_link( $term ),
+			);
 		}
 		return $array;
 	}
@@ -74,28 +84,49 @@ class LWTV_Stats_Arrays {
 	 * @return array
 	 */
 	static function dead_role() {
-		$array = array();
+		$array        = array();
 		$all_the_dead = LWTV_Loops::tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead');
-		$by_role = array( 'regular' => 0, 'guest' => 0, 'recurring' => 0 );
-		$alldead = 0;
+		$by_role      = array(
+			'regular'   => 0,
+			'guest'     => 0,
+			'recurring' => 0,
+		);
 
 		if ( $all_the_dead->have_posts() ) {
 
 			foreach ( $all_the_dead->posts as $dead ) {
 				$all_shows = get_post_meta( $dead->ID, 'lezchars_show_group', true );
 				foreach ( $all_shows as $each_show ) {
-					if ( $each_show['type'] == 'regular' )   $by_role['regular']++;
-					if ( $each_show['type'] == 'guest' )     $by_role['guest']++;
-					if ( $each_show['type'] == 'recurring' ) $by_role['recurring']++;
+					if ( $each_show['type'] == 'regular' ) {
+						$by_role['regular']++;
+					}
+					if ( $each_show['type'] == 'guest' ) {
+						$by_role['guest']++;
+					}
+					if ( $each_show['type'] == 'recurring' ) {
+						$by_role['recurring']++;
+					}
 				}
 			}
 			wp_reset_query();
 		}
 
 		$array = array (
-			'regular' => array( 'count' => $by_role['regular'], 'name'  => 'Regular', 'url' => home_url( '/role/regular/' ) ),
-			'guest'   => array( 'count' => $by_role['guest'], 'name'  => 'Guest', 'url' => home_url( '/role/guest/' ) ),
-			'recurring' => array( 'count' => $by_role['recurring'], 'name'  => 'Recurring', 'url' => home_url( '/role/recurring/' ) ),
+			'regular'   => array( 
+				'count' => $by_role['regular'], 
+				'name'  => 'Regular', 
+				'url'   => home_url( '/role/regular/' ),
+			),
+			'guest'     => array( 
+				'count' => $by_role['guest'],
+				'name'  => 'Guest',
+				'url'   => home_url( '/role/guest/' )
+			),
+			'recurring' => array( 
+				'count' => $by_role['recurring'], 
+				'name'  => 'Recurring',
+				'url' => home_url( '/role/recurring/' ),
+			),
 		);
 
 		return $array;
@@ -122,7 +153,7 @@ class LWTV_Stats_Arrays {
 			$array[$value] = array(
 				'count' => $query->post_count,
 				'name'  => ucfirst($value),
-				'url' => home_url( '/cliche/'.$value ),
+				'url'   => home_url( '/cliche/'.$value ),
 			);
 		}
 		return $array;
@@ -145,7 +176,11 @@ class LWTV_Stats_Arrays {
 		$array = array();
 		foreach ( $meta_array as $value ) {
 			$meta_query = LWTV_Loops::post_meta_query( $post_type, $key, $value, $compare );
-			$array[$value] = array( 'count' => $meta_query->post_count, 'name' => ucfirst($value), 'url' => home_url( '/'. $data .'/'. lcfirst($value) .'/' ) ) ;
+			$array[$value] = array( 
+				'count' => $meta_query->post_count,
+				'name'  => ucfirst($value),
+				'url'   => home_url( '/'. $data .'/'. lcfirst($value) .'/' ),
+			) ;
 		}
 		return $array;
 	}
@@ -166,19 +201,32 @@ class LWTV_Stats_Arrays {
 	static function yes_no( $post_type, $data, $count ) {
 
 		$array = array(
-			'no'  => array( 'count' => '0', 'name' => 'No', 'url' => '' ),
-			'yes' => array( 'count' => '0', 'name' => 'Yes', 'url' => '' ),
+			'no'  => array( 
+				'count' => '0',
+				'name'  => 'No',
+				'url'   => '',
+			),
+			'yes' => array( 
+				'count' => '0',
+				'name'  => 'Yes',
+				'url'   => '',
+			),
 		);
 
 		// Define the options
 		switch ( $data ) {
 			case 'weloveit':
-				$meta_array = array( 'on' );
+				$meta_array = array( 
+					'on',
+				);
 				$key        = 'lezshows_worthit_show_we_love';
 				$compare    = '=';
 				break;
 			case 'current':
-				$meta_array = array( 'current', 'notcurrent' );
+				$meta_array = array( 
+					'current', 
+					'notcurrent',
+				);
 				$key        = 'lezshows_airdates';
 				$compare    = 'REGEXP';
 				break;
@@ -217,11 +265,17 @@ class LWTV_Stats_Arrays {
 	public static function taxonomy_breakdowns( $count, $format, $data, $subject ) {
 		// Set defaults.
 		$array     = array();
-		//$big_data  = array();
 
 		// Arrays of the secondary taxonomies we care about.
-		$main_subtaxes  = array( 'gender', 'sexuality', 'romantic' );
-		$extra_subtaxes = array( 'cliches', 'tropes' );
+		$main_subtaxes  = array( 
+			'gender', 
+			'sexuality',
+			'romantic',
+		);
+		$extra_subtaxes = array( 
+			'cliches',
+			'tropes',
+		);
 		$valid_subtaxes = array_merge( $main_subtaxes, $extra_subtaxes );
 
 		/*
@@ -612,9 +666,21 @@ class LWTV_Stats_Arrays {
 
 		if ( $format == 'simple' ) {
 			$array = array (
-				"all"  => array( 'name' => 'All queers are dead', 'count' => count( $fullshow_death_array ), 'url' => '' ),
-				"some" => array( 'name' => 'Some queers are dead', 'count' => count( $someshow_death_array ), 'url' => '' ),
-				"none" => array( 'name' => 'None queers are dead', 'count' => $alive_shows_query->post_count, 'url' => '' ),
+				'all'  => array( 
+					'name'  => 'All queers are dead', 
+					'count' => count( $fullshow_death_array ), 
+					'url'   => '',
+				),
+				'some' => array( 
+					'name'  => 'Some queers are dead',
+					'count' => count( $someshow_death_array ),
+					'url'   => '',
+				),
+				'none' => array( 
+					'name'  => 'None queers are dead', 
+					'count' => $alive_shows_query->post_count, 
+					'url'   => ''
+				),
 			);
 		}
 

@@ -41,19 +41,28 @@ class LWTV_Stats_JSON {
 		// Basic Stats
 		register_rest_route( 'lwtv/v1', '/stats/', array(
 			'methods' => 'GET',
-			'callback' => array( $this, 'stats_rest_api_callback' ),
+			'callback' => array( 
+				$this,
+				'stats_rest_api_callback',
+			),
 		) );
 
 		// Stat Types
 		register_rest_route( 'lwtv/v1', '/stats/(?P<type>[a-zA-Z.\-]+)', array(
 			'methods' => 'GET',
-			'callback' => array( $this, 'stats_rest_api_callback' ),
+			'callback' => array( 
+				$this,
+				'stats_rest_api_callback',
+			),
 		) );
 
 		// Stat Types and Format
 		register_rest_route( 'lwtv/v1', '/stats/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z]+)', array(
 			'methods' => 'GET',
-			'callback' => array( $this, 'stats_rest_api_callback' ),
+			'callback' => array( 
+				$this, 
+				'stats_rest_api_callback',
+			),
 		) );
 
 		// Stat Types and Format AND PER PAGE
@@ -66,14 +75,16 @@ class LWTV_Stats_JSON {
 
 	/**
 	 * Rest API Callback for Statistics
+	 *
+	 * @access public
+	 * @param mixed $data - string.
+	 * @return array
 	 */
 	public function stats_rest_api_callback( $data ) {
-		$params = $data->get_params();
-
+		$params    = $data->get_params();
 		$stat_type = ( isset( $params['type'] ) && $params['type'] !== '' )? sanitize_title_for_query( $params['type'] ) : 'none';
 		$format    = ( isset( $params['format'] ) && $params['format'] !== '' )? sanitize_title_for_query( $params['format'] ) : 'simple';
-		$page  = ( isset( $params['page'] ) && $params['page'] !== '' )? intval( $params['page'] ) : '1';
-
+		$page      = ( isset( $params['page'] ) && $params['page'] !== '' )? intval( $params['page'] ) : '1';
 		$response  = $this->statistics( $stat_type, $format, $page );
 
 		return $response;
@@ -102,7 +113,9 @@ class LWTV_Stats_JSON {
 
 		switch ( $stat_type ) {
 			case 'first-year':
-				$stats_array = array ( 'first' => FIRST_LWTV_YEAR );
+				$stats_array = array ( 
+					'first' => FIRST_LWTV_YEAR,
+				);
 				break;
 			case 'shows':
 				$stats_array = self::get_shows( $format, $page );
@@ -492,7 +505,6 @@ class LWTV_Stats_JSON {
 							}
 						}
 					}
-
 
 					// Build our return array
 					// Show Count

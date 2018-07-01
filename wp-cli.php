@@ -1,6 +1,6 @@
 <?php
 /*
- * WP CLI Commands for LezWatchTV
+ * WP CLI Commands for LezWatch.TV
  *
  * @since 2.0
  */

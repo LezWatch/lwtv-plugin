@@ -1,10 +1,10 @@
 ## LezWatch Commercials Plugin
 
-Custom plugin for LezWatch TV
+Custom plugin for LezWatch.TV
 
 ## Description
 
-The LezWatch TV plugin contains custom code for use with the site. Instead of having everything hardcoded into the theme, or shoved in a shared MU Plugin, it was moved to it's own plugin. This allows it to be updated outside of the theme and deploy new features as needed.
+The LezWatch.TV plugin contains custom code for use with the site. Instead of having everything hardcoded into the theme, or shoved in a shared MU Plugin, it was moved to it's own plugin. This allows it to be updated outside of the theme and deploy new features as needed.
 
 The code was written by Tracy Levesque and Mika Epstein, with assitance from [Yikes Inc.](YikesInc.com)
 
@@ -107,7 +107,7 @@ Stored in `/rest-api/` - These files generate the REST API output.
     - Newest: `/newest.php` - Generate the newest shows or characters (or deaths)
     - This Year: `/this-year.php` - Gives you an idea how this year is going...
     - Who Are You: `/who-are-you.php` - Runs all code that discusses actors
-* LezWatchTV Plugin (formerly Bury Your Queers) - `/bury-your-queers.php`
+* LezWatch.TV Plugin (formerly Bury Your Queers) - `/bury-your-queers.php`
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"
     - When Died - "X died on date Y"
@@ -133,7 +133,7 @@ Adds in a custom OpenGraph image for taxonomies, as they don't accept SVGs for s
 
 ### Shortcodes
 
-Various shortcodes used on LezWatchTV
+Various shortcodes used on LezWatch.TV
 
 * Display The first year we had queers: `[firstyear]`
 * Display This Month recap: `[thismonth]` or `[thismonth date="2017-01"]`

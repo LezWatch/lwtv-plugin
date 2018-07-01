@@ -1,12 +1,12 @@
 <?php
 /**
- * LezWatch TV Custom Queries
+ * LezWatch.TV Custom Queries
  *
  * Custom Query Variables that let us have special funky town pages.
  *
- * Version:	 1.0
+ * Version: 1.0
  *
- * @package LezWatch TV Theme
+ * @package LezWatch.TV Theme
  *
  */
 
@@ -87,7 +87,7 @@ class LWTV_Query_Vars {
 	 * @since 1.0
 	 */
 	public function admin_notice_permalinks() {
-		echo '<div class="error"><p><strong>LezWatch TV Query Vars</strong> require you to use custom permalinks.</p></div>';
+		echo '<div class="error"><p><strong>LezWatch.TV Query Vars</strong> require you to use custom permalinks.</p></div>';
 	}
 
 	/**
@@ -137,7 +137,7 @@ class LWTV_Query_Vars {
 	 */
 	public function yoast_retrieve_stats_replacement( ) {
 		$statistics = get_query_var( 'statistics', 'none' );
-		$return = ( 'none' !== $statistics )? 'About ' . ucfirst( $statistics ) : '';
+		$return     = ( 'none' !== $statistics )? 'on ' . ucfirst( $statistics ) : '';
 		return $return;
 	}
 
@@ -148,7 +148,7 @@ class LWTV_Query_Vars {
 	 */
 	public function yoast_retrieve_year_replacement( ) {
 		$this_year = get_query_var( 'thisyear', 'none' );
-		$return = ( 'none' !== $this_year )? ucfirst( $this_year ) : date( 'Y' );
+		$return    = ( 'none' !== $this_year )? ucfirst( $this_year ) : date( 'Y' );
 		return $return;
 	}
 
