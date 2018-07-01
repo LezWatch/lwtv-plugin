@@ -137,7 +137,7 @@ class LWTV_Query_Vars {
 	 */
 	public function yoast_retrieve_stats_replacement( ) {
 		$statistics = get_query_var( 'statistics', 'none' );
-		$return = ( 'none' !== $statistics )? ucfirst( $statistics ) : '';
+		$return = ( 'none' !== $statistics )? 'About ' . ucfirst( $statistics ) : '';
 		return $return;
 	}
 
@@ -148,7 +148,7 @@ class LWTV_Query_Vars {
 	 */
 	public function yoast_retrieve_year_replacement( ) {
 		$this_year = get_query_var( 'thisyear', 'none' );
-		$return = ( 'none' !== $this_year )? ucfirst( $this_year ) : '';
+		$return = ( 'none' !== $this_year )? ucfirst( $this_year ) : date( 'Y' );
 		return $return;
 	}
 
