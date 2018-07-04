@@ -57,7 +57,7 @@ class LWTV_Tools {
 	public function add_settings_page() {
 
 		// Add Tools pages
-		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ), plugins_url( 'assets/images/rainbow.svg', dirname( __FILE__ ) ) , 2 );
+		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ), LWTV_Functions::get_icon_svg(), 2 );
 		add_submenu_page( 'lwtv_tools', 'Tools', 'Tools', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ) );
 
 		// Admin notices
