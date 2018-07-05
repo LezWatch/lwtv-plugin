@@ -76,7 +76,6 @@ class LWTV_CMB2 {
 					$post_title .= ' - DRAFT';
 				}
 				$post_options[ $post->ID ] = $post_title;
-
 			}
 		}
 
@@ -263,4 +262,5 @@ class LWTV_CMB2 {
 	}
 
 }
+
 new LWTV_CMB2();
