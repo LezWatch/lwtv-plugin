@@ -549,7 +549,6 @@ SQL;
 		</style>";
 	}
 
-
 	/**
 	 * list_characters function.
 	 *
@@ -576,10 +575,9 @@ SQL;
 				// If the character is in this show, AND a published character
 				// we will pass the following data to the character template
 				// to determine what to display
-
 				if ( '' !== $shows_array && ! empty( $shows_array ) && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $shows_array as $char_show ) {
-						if ( $char_show['show'] === $show_id ) {
+						if ( (int) $char_show['show'] === $show_id ) {
 							$characters[ $char_id ] = array(
 								'id'        => $char_id,
 								'title'     => get_the_title( $char_id ),

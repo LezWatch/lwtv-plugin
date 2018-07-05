@@ -248,7 +248,7 @@ class LWTV_Affilliates {
 	 * This is used by shows to figure out where people can watch things
 	 * There's some juggling for certain sites
 	 */
-	public function affiliate_link( $id ) {
+	public static function affiliate_link( $id ) {
 
 		$affiliate_url = get_post_meta( $id, 'lezshows_affiliate', true );
 
