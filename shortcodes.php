@@ -27,7 +27,7 @@ class LWTV_Shortcodes {
 	/*
 	 * Display The first year we had queers
 	 *
-	 * Usage: 
+	 * Usage:
 	 *		[firstyear]
 	 *
 	 * @since 1.1
@@ -39,7 +39,7 @@ class LWTV_Shortcodes {
 	/*
 	 * Display This Month recap
 	 *
-	 * Usage: 
+	 * Usage:
 	 *		[thismonth]
 	 *		[thismonth date="2017-01"]
 	 *
@@ -52,51 +52,51 @@ class LWTV_Shortcodes {
 		$attributes  = shortcode_atts( array(
 			'date' => $default,
 		), $atts );
-		
+
 		// A little sanity checking
 		// If it's not a valid date, we defaiult to the time of the post
-		if ( !preg_match( '/^[0-9]{4}-[0-9]{2}$/', $attributes['date'] ) ) {
+		if ( ! preg_match( '/^[0-9]{4}-[0-9]{2}$/', $attributes['date'] ) ) {
 			$attributes['date'] = $default;
 		}
 		$datetime = DateTime::createFromFormat( 'Y-m', $attributes['date'] );
 		$errors   = DateTime::getLastErrors();
-		if ( !empty( $errors[ 'warning_count' ] ) ) {
+		if ( ! empty( $errors['warning_count'] ) ) {
 			$datetime = DateTime::createFromFormat( 'Y-m', $default );
 		}
 
 		// Regular post queerys
-		$valid_post_types = array( 
+		$valid_post_types = array(
 			//'posts'      => 'post',
 			'shows'      => 'post_type_shows',
 			'characters' => 'post_type_characters',
 			//'actors'     => 'post_type_actors',
 		);
 
-		foreach( $valid_post_types as $name => $type ) {
+		foreach ( $valid_post_types as $name => $type ) {
 			$post_args = array(
 				'post_type'      => $type,
-				'posts_per_page' => '-1', 
-				'orderby'        => 'date', 
+				'posts_per_page' => '-1',
+				'orderby'        => 'date',
 				'order'          => 'DESC',
-				'date_query' => array( 
-					array( 
-						'year' => $datetime->format( 'Y' ), 
-						'month' => $datetime->format( 'm' ) 
+				'date_query'     => array(
+					array(
+						'year'  => $datetime->format( 'Y' ),
+						'month' => $datetime->format( 'm' ),
 					),
 				),
 			);
-			$queery = new WP_Query( $post_args );
-			
-			$count_array[$name] = $queery->post_count;
+			$queery    = new WP_Query( $post_args );
+
+			$count_array[ $name ] = $queery->post_count;
 			wp_reset_postdata();
 		}
 
 		// Death count
-		$death_query         = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-		$death_list_array    = LWTV_BYQ_JSON::list_of_dead_characters( $death_query );
-		$death_query_count   = 0;
+		$death_query       = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+		$death_list_array  = LWTV_BYQ_JSON::list_of_dead_characters( $death_query );
+		$death_query_count = 0;
 		foreach ( $death_list_array as $the_dead ) {
-			if ( $datetime->format( 'm' ) == date( 'm' , $the_dead['died'] ) ) {
+			if ( $datetime->format( 'm' ) === date( 'm', $the_dead['died'] ) ) {
 				$death_query_count++;
 			}
 		}
@@ -104,11 +104,10 @@ class LWTV_Shortcodes {
 
 		$output = '<ul>';
 		foreach ( $count_array as $topic => $count ) {
-			
-			$subject = ( $topic == 'dead' )? 'characters' : $topic;
-			$type    = ( $count == 0 )? 'no ' . $subject : sprintf( _n( '%s ' . rtrim( $subject, 's' ), '%s ' . $subject , $count ), $count );
-			$added   = ( $topic == 'dead' )? 'died' : 'added';
-			
+			$subject = ( 'dead' === $topic ) ? 'characters' : $topic;
+			// translators: %s is the subject
+			$type    = ( 0 === $count ) ? 'no ' . $subject : sprintf( _n( '%s ' . rtrim( $subject, 's' ), '%s ' . $subject, $count ), $count );
+			$added   = ( 'dead' === $topic ) ? 'died' : 'added';
 			$output .= '<li>' . $type . ' ' . $added . '</li>';
 		}
 		$output .= '</ul>';
@@ -119,7 +118,7 @@ class LWTV_Shortcodes {
 
 	/**
 	 * Screeners.
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $atts
 	 * @return void
@@ -136,13 +135,13 @@ class LWTV_Shortcodes {
 		), $atts );
 
 		$queer = (float) $attributes['queer'];
-		$queer = ( $queer < 0 )? 0 : $queer;
-		$queer = ( $queer > 5 )? 5 : $queer;
+		$queer = ( $queer < 0 ) ? 0 : $queer;
+		$queer = ( $queer > 5 ) ? 5 : $queer;
 
-		$worth = ( in_array( $attributes['worth'], array( 'yes', 'no', 'meh' ) ) )? $attributes['worth'] : 'meh';
+		$worth = ( in_array( $attributes['worth'], array( 'yes', 'no', 'meh' ), true ) ) ? $attributes['worth'] : 'meh';
 		switch ( $worth ) {
 			case 'yes':
-				$worth_icon = 'thumbs-up';
+				$worth_icon  = 'thumbs-up';
 				$worth_color = 'success';
 				break;
 			case 'no':
@@ -158,10 +157,10 @@ class LWTV_Shortcodes {
 
 		// Get proper triger warning data
 		$warning = '';
-		$trigger = ( in_array( $attributes['trigger'], array( 'high', 'medium', 'low' ) ) )? $attributes['trigger'] : 'none';
+		$trigger = ( in_array( $attributes['trigger'], array( 'high', 'medium', 'low' ), true ) ) ? $attributes['trigger'] : 'none';
 
-		if ( $trigger != 'none' ) {
-			$warn_image    = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
+		if ( 'none' !== $trigger ) {
+			$warn_image = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 			switch ( $trigger ) {
 				case 'high':
 					$warn_color = 'danger';
@@ -178,10 +177,10 @@ class LWTV_Shortcodes {
 
 		// Get proper Star
 		$stars = '';
-		$star  = ( in_array( $attributes['star'], array( 'gold', 'silver', 'bronze', 'anti' ) ) )? $attributes['star'] : 'none';
+		$star  = ( in_array( $attributes['star'], array( 'gold', 'silver', 'bronze', 'anti' ), true ) ) ? $attributes['star'] : 'none';
 
-		if ( $star != 'none' ) {
-			$stars      = '<span data-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-info"><span role="img" class="screener screener-star ' . $star . '">' . lwtv_yikes_symbolicons( 'star.svg', 'fa-star' ) . '</span></button></span>';
+		if ( 'none' !== $star ) {
+			$stars = '<span data-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-info"><span role="img" class="screener screener-star ' . $star . '">' . lwtv_yikes_symbolicons( 'star.svg', 'fa-star' ) . '</span></button></span>';
 		}
 
 		$output = '<div class="bd-callout screener-shortcode"><h5 id="' . esc_attr( $attributes['title'] ) . '">Screener Review on <em>' . esc_html( $attributes['title'] ) . '</em></h5>

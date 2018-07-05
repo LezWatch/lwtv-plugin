@@ -4,7 +4,9 @@
  * Description: Custom arrays and WP_Query calls that are repeated
  */
 
-if ( ! defined('WPINC' ) ) die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * class LWTV_Loops
@@ -25,40 +27,43 @@ class LWTV_Loops {
 
 	/**
 	 * Determine if an actor is queer
-	 * 
+	 *
 	 * @access public
 	 * @static
-	 * @param mixed $the_ID
+	 * @param mixed $the_id
 	 * @return void
 	 */
-	public static function is_actor_queer( $the_ID ) {
-		
-		if ( !isset( $the_ID ) || get_post_type( $the_ID ) !== 'post_type_actors' ) return 'bork';
-		
+	public static function is_actor_queer( $the_id ) {
+
+		if ( ! isset( $the_id ) || 'post_type_actors' !== get_post_type( $the_id ) ) {
+			return 'bork';
+		}
+
 		// Defaults
-		$gender   = $sexuality = 'yes';
-		$is_queer = 'no';
-		
+		$gender    = 'yes';
+		$sexuality = 'yes';
+		$is_queer  = 'no';
+
 		// If the actor is cis, they may not be queer...
 		// Also 'undefined' isn't queer since we just don't know...
-		$straight_genders =  array( 'cis-man', 'cis-woman', 'cisgender', 'undefined' );
-		$gender_terms     = get_the_terms( $the_ID, 'lez_actor_gender', true );
-		if ( !$gender_terms || is_wp_error( $gender_terms ) || has_term( $straight_genders, 'lez_actor_gender', $the_ID ) ) {
+		$straight_genders = array( 'cis-man', 'cis-woman', 'cisgender', 'undefined' );
+		$gender_terms     = get_the_terms( $the_id, 'lez_actor_gender', true );
+		if ( ! $gender_terms || is_wp_error( $gender_terms ) || has_term( $straight_genders, 'lez_actor_gender', $the_id ) ) {
 			$gender = 'no';
 		}
-		
+
 		// If the actor is heterosexual they may not be queer...
-		$straight_sexuality =  array( 'heterosexual', 'unknown' );
-		$sexuality_terms    = get_the_terms( $the_ID, 'lez_actor_sexuality', true );
-		if ( !$sexuality_terms || is_wp_error( $sexuality_terms ) || has_term( $straight_sexuality, 'lez_actor_sexuality', $the_ID ) ) {
+		$straight_sexuality = array( 'heterosexual', 'unknown' );
+		$sexuality_terms    = get_the_terms( $the_id, 'lez_actor_sexuality', true );
+		if ( ! $sexuality_terms || is_wp_error( $sexuality_terms ) || has_term( $straight_sexuality, 'lez_actor_sexuality', $the_id ) ) {
 			$sexuality = 'no';
 		}
-		
+
 		// If either the gender or sexuality is queer, we have a queerio!
-		if ( $sexuality == 'yes' || $gender == 'yes' ) {
+		if ( 'yes' === $sexuality || 'yes' === $gender ) {
 			$is_queer = 'yes';
 		}
-		
+
 		return $is_queer;
 	}
 
@@ -73,19 +78,21 @@ class LWTV_Loops {
 	 * @return array The WP_Query Array
 	 */
 	public static function tax_query( $post_type, $taxonomy, $field, $term, $operator = 'IN' ) {
-		$count = wp_count_posts( $post_type )->publish;
-		$queery = new WP_Query ( array(
+		$count  = wp_count_posts( $post_type )->publish;
+		$queery = new WP_Query( array(
 			'post_type'              => $post_type,
 			'posts_per_page'         => $count,
 			'no_found_rows'          => true,
 			'update_post_meta_cache' => false,
 			'post_status'            => array( 'publish' ),
-			'tax_query'              => array( array(
-				'taxonomy' => $taxonomy,
-				'field'    => $field,
-				'terms'    => $term,
-				'operator' => $operator,
-			),),
+			'tax_query'              => array(
+				array(
+					'taxonomy' => $taxonomy,
+					'field'    => $field,
+					'terms'    => $term,
+					'operator' => $operator,
+				),
+			),
 		) );
 		wp_reset_query();
 		return $queery;
@@ -106,9 +113,9 @@ class LWTV_Loops {
 	 *
 	 * @return array The WP_Query Array
 	 */
-	public static function tax_two_query( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1 = 'IN', $operator2 = 'IN' , $relation = 'AND' ) {
+	public static function tax_two_query( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1 = 'IN', $operator2 = 'IN', $relation = 'AND' ) {
 		$count = wp_count_posts( $post_type )->publish;
-		$query = new WP_Query ( array(
+		$query = new WP_Query( array(
 			'post_type'              => $post_type,
 			'posts_per_page'         => $count,
 			'no_found_rows'          => true,
@@ -148,7 +155,7 @@ class LWTV_Loops {
 	 */
 	public static function post_meta_query( $post_type, $key, $value, $compare = '=' ) {
 		$count = wp_count_posts( $post_type )->publish;
-		if ( $value != '' ) {
+		if ( '' !== $value ) {
 			$query = new WP_Query( array(
 				'post_type'              => $post_type,
 				'post_status'            => array( 'publish' ),
@@ -157,11 +164,13 @@ class LWTV_Loops {
 				'posts_per_page'         => $count,
 				'no_found_rows'          => true,
 				'update_post_term_cache' => false,
-				'meta_query'             => array( array(
-					'key'     => $key,
-					'value'   => $value,
-					'compare' => $compare,
-				),),
+				'meta_query'             => array(
+					array(
+						'key'     => $key,
+						'value'   => $value,
+						'compare' => $compare,
+					),
+				),
 			) );
 		} else {
 			$query = new WP_Query( array(
@@ -172,11 +181,13 @@ class LWTV_Loops {
 				'posts_per_page'         => $count,
 				'no_found_rows'          => true,
 				'update_post_term_cache' => false,
-				'meta_query'             => array( array(
-					'key'     => $key,
-					'compare' => $compare,
-				),),
-			) );
+				'meta_query'             => array(
+					array(
+						'key'     => $key,
+						'compare' => $compare,
+					),
+				),
+			));
 		}
 
 		wp_reset_query();
@@ -205,9 +216,9 @@ class LWTV_Loops {
 				'key'     => $key,
 				'value'   => $value,
 				'compare' => $compare,
-			)
+			),
 		);
-		$query = new WP_Meta_Query( $query_args );
+		$query      = new WP_Meta_Query( $query_args );
 
 		$sql = $query->get_sql(
 			'post',
@@ -229,28 +240,28 @@ class LWTV_Loops {
 	 * @return array The WP_Query Array
 	 */
 
-	public static function post_type_query( $post_type , $page = 0 ) {
-		if ( $page == 0 ){
+	public static function post_type_query( $post_type, $page = 0 ) {
+		if ( 0 === $page ) {
 			$count  = wp_count_posts( $post_type )->publish;
 			$offset = 0;
 		} else {
 			$count  = 100;
 			$offset = ( 100 * $page ) - 100;
 		}
-		$query = new WP_Query ( array(
-				'post_type'              => $post_type,
-				'posts_per_page'         => $count,
-				'offset'                 => $offset,
-				'orderby'                => 'title',
-				'order'                  => 'ASC',
-				'no_found_rows'          => true,
-				'update_post_term_cache' => false,
-				'update_post_meta_cache' => false,
-				'post_status'            => array( 'publish' ),
-			)
+		$qarray = array(
+			'post_type'              => $post_type,
+			'posts_per_page'         => $count,
+			'offset'                 => $offset,
+			'orderby'                => 'title',
+			'order'                  => 'ASC',
+			'no_found_rows'          => true,
+			'update_post_term_cache' => false,
+			'update_post_meta_cache' => false,
+			'post_status'            => array( 'publish' ),
 		);
+		$queery = new WP_Query( $qarray );
 		wp_reset_query();
-		return $query;
+		return $queery;
 	}
 
 	/*
@@ -274,18 +285,18 @@ class LWTV_Loops {
 	public static function post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, $field, $terms, $compare = '=', $operator = 'IN' ) {
 		$count = wp_count_posts( $post_type )->publish;
 		$query = new WP_Query( array(
-			'post_type'       => $post_type,
-			'posts_per_page'  => $count,
-			'no_found_rows'   => true,
-			'post_status'     => array( 'publish' ),
-			'meta_query'      => array(
+			'post_type'      => $post_type,
+			'posts_per_page' => $count,
+			'no_found_rows'  => true,
+			'post_status'    => array( 'publish' ),
+			'meta_query'     => array(
 				array(
 					'key'     => $key,
 					'value'   => $value,
 					'compare' => $compare,
 				),
 			),
-			'tax_query' => array(
+			'tax_query'      => array(
 				array(
 					'taxonomy' => $taxonomy,
 					'field'    => $field,
@@ -310,17 +321,18 @@ class LWTV_Loops {
 	 */
 	public static function related_posts_by_tag( $post_type, $slug ) {
 		$term = term_exists( $slug, 'post_tag' );
-		if ( $term == 0 || $term == null ) return;
+		if ( 0 === $term || null === $term ) {
+			return;
+		}
 
 		$query = new WP_Query( array(
-			'post_type'       => $post_type,
-			'no_found_rows'   => true,
-			'post_status'     => array( 'publish' ),
-			'tag'             => $slug,
-			'orderby'         => 'date',
-			'order'           => 'DESC',
-		) );
-
+			'post_type'     => $post_type,
+			'no_found_rows' => true,
+			'post_status'   => array( 'publish' ),
+			'tag'           => $slug,
+			'orderby'       => 'date',
+			'order'         => 'DESC',
+		));
 		wp_reset_query();
 		return $query;
 	}

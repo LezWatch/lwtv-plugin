@@ -4,7 +4,9 @@
  * Description: Calculate various data points for actors
  */
 
-if ( ! defined('WPINC' ) ) die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * class LWTV_Actors_Calculate
@@ -19,33 +21,36 @@ class LWTV_Actors_Calculate {
 	 *
 	 * @param int $post_id The post ID.
 	 */
-	public static function count_queers( $post_id , $type = 'count' ) {
+	public static function count_queers( $post_id, $type = 'count' ) {
+
+		$type_array = array( 'count', 'none', 'dead' );
 
 		// If this isn't a show post, return nothing
-		if ( get_post_type( $post_id ) !== 'post_type_actors' ) return;
-
-		// If there's no valid type, return nothing
-		$type_array = array ( 'count', 'none', 'dead' );
-		if ( !in_array( esc_attr( $type ), $type_array ) ) return;
+		if ( 'post_type_actors' !== get_post_type( $post_id ) || ! in_array( esc_attr( $type ), $type_array, true ) ) {
+			return;
+		}
 
 		// Loop to get the list of characters
 		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
-		$queercount = $deadcount = 0;
+		$queercount     = 0;
+		$deadcount      = 0;
 
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
-		if ($charactersloop->have_posts() ) {
+		if ( $charactersloop->have_posts() ) {
 			while ( $charactersloop->have_posts() ) {
 
 				$charactersloop->the_post();
 				$char_id      = get_the_ID();
-				$actors_array = get_post_meta( $char_id, 'lezchars_actor', true);
-				$is_dead      = has_term( 'dead', 'lez_cliches', $char_id);
+				$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
+				$is_dead      = has_term( 'dead', 'lez_cliches', $char_id );
 
-				if ( $actors_array !== '' && get_post_status ( $char_id ) == 'publish' ) {
-					foreach( $actors_array as $char_actor ) {
-						if ( $char_actor == $post_id ) {
+				if ( '' !== $actors_array && 'publish' === get_post_status( $char_id ) ) {
+					foreach ( $actors_array as $char_actor ) {
+						if ( $char_actor === $post_id ) {
 							$queercount++;
-							if ( $is_dead == true ) $deadcount++;
+							if ( $is_dead ) {
+								$deadcount++;
+							}
 						}
 					}
 				}
@@ -54,8 +59,16 @@ class LWTV_Actors_Calculate {
 		}
 
 		// Return Queers!
-		if ( $type == 'count' )     return $queercount;
-		if ( $type == 'dead' )      return $deadcount;
+		switch ( $type ) {
+			case 'count':
+				$output = $queercount;
+				break;
+			case 'dead':
+				$output = $deadcount;
+				break;
+		}
+
+		return $output;
 	}
 
 	/**
@@ -72,13 +85,13 @@ class LWTV_Actors_Calculate {
 	 */
 	public static function do_the_math( $post_id ) {
 
-		if ( get_post_type( $post_id ) == 'post_type_actors' ) {
+		if ( 'post_type_actors' === get_post_type( $post_id ) ) {
 			// Calculate Actor Data:
 			update_post_meta( $post_id, 'lezactors_char_count', self::count_queers( $post_id, 'count' ) );
 			update_post_meta( $post_id, 'lezactors_dead_count', self::count_queers( $post_id, 'dead' ) );
-	
+
 			// Is Queer?
-			$is_queer     = ( LWTV_Loops::is_actor_queer( $post_id ) == 'yes' )? true : false;
+			$is_queer = ( 'yes' === LWTV_Loops::is_actor_queer( $post_id ) ) ? true : false;
 			update_post_meta( $post_id, 'lezactors_queer', $is_queer );
 		} else {
 			delete_post_meta( $post_id, 'lezactors_char_count' );
@@ -86,6 +99,6 @@ class LWTV_Actors_Calculate {
 			delete_post_meta( $post_id, 'lezactors_queer' );
 		}
 	}
-	
+
 }
 new LWTV_Actors_Calculate();

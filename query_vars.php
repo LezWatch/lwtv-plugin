@@ -11,15 +11,15 @@
  */
 
 // if this file is called directly abort
-if ( ! defined('WPINC' ) ) {
+if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
 class LWTV_Query_Vars {
 
 	// Constant for the query arguments we allow
-	public $lez_query_args     = array();
-	public $lez_plural_types   = array();
+	public $lez_query_args   = array();
+	public $lez_plural_types = array();
 
 	/**
 	 * Construct
@@ -27,13 +27,13 @@ class LWTV_Query_Vars {
 	 *
 	 * @since 1.0
 	 */
-	function __construct() {
+	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
 
 		// The custom queries that have special pages
 		$this->lez_query_args = array(
-			'statistics'  => 'statistics',
-			'this-year'   => 'thisyear',
+			'statistics' => 'statistics',
+			'this-year'  => 'thisyear',
 		);
 
 		// The custom queries that DO NOT have special pages
@@ -54,25 +54,25 @@ class LWTV_Query_Vars {
 	 */
 	public function init() {
 		// Plugin requires permalink usage - Only setup handling if permalinks enabled
-		if ( get_option('permalink_structure') != '' ) {
+		if ( '' !==  get_option( 'permalink_structure' ) ) {
 
 			// tell WP not to override query vars
-			add_action ('query_vars', array($this, 'query_vars'));
+			add_action( 'query_vars', array( $this, 'query_vars' ) );
 
 			// add filter for pages
 			add_filter( 'page_template', array( $this, 'page_template' ) );
 
 			// Query Vars for custom pages
 			// Based on $this->lez_query_args
-			foreach( $this->lez_query_args as $slug => $query ) {
+			foreach ( $this->lez_query_args as $slug => $query ) {
 				add_rewrite_rule(
-					'^'.$slug.'/([^/]+)/?$',
-					'index.php?pagename='.$slug.'&'.$query.'=$matches[1]',
+					'^' . $slug . '/([^/]+)/?$',
+					'index.php?pagename=' . $slug . '&' . $query . '=$matches[1]',
 					'top'
 				);
 				add_rewrite_rule(
-					'^'.$slug.'/([^/]+)/page/([0-9]+)?/?$',
-					'index.php?pagename='.$slug.'&'.$query.'=$matches[1]&paged=$matches[2]',
+					'^' . $slug . '/([^/]+)/page/([0-9]+)?/?$',
+					'index.php?pagename=' . $slug . '&' . $query . '=$matches[1]&paged=$matches[2]',
 					'top'
 				);
 			}
@@ -95,7 +95,7 @@ class LWTV_Query_Vars {
 	 *
 	 * @return $vars
 	 */
-	public function query_vars( $vars ){
+	public function query_vars( $vars ) {
 		foreach ( $this->lez_query_args as $argument ) {
 			$vars[] = $argument;
 		}
@@ -107,14 +107,15 @@ class LWTV_Query_Vars {
 	 *
 	 * @return $templates
 	 */
-	public function page_template( $templates = "" ){
+	public function page_template( $templates = '' ) {
 		global $wp_query, $post;
 
-		if ( array_key_exists( $post->post_name, $this->lez_query_args ) )
-			$the_template = $this->lez_query_args[$post->post_name].'.php';
+		if ( array_key_exists( $post->post_name, $this->lez_query_args ) ) {
+			$the_template = $this->lez_query_args[ $post->post_name ] . '.php';
+		}
 
 		foreach ( $this->lez_query_args as $argument ) {
-			if( isset( $wp_query->query[$argument] ) ) {
+			if ( isset( $wp_query->query[ $argument ] ) ) {
 				$templates = get_stylesheet_directory() . '/page-templates/' . $the_template;
 			}
 		}
@@ -135,9 +136,9 @@ class LWTV_Query_Vars {
 	 *
 	 * The type of stats page we're on
 	 */
-	public function yoast_retrieve_stats_replacement( ) {
+	public function yoast_retrieve_stats_replacement() {
 		$statistics = get_query_var( 'statistics', 'none' );
-		$return     = ( 'none' !== $statistics )? 'on ' . ucfirst( $statistics ) : '';
+		$return     = ( 'none' !== $statistics ) ? 'on ' . ucfirst( $statistics ) : '';
 		return $return;
 	}
 
@@ -146,9 +147,9 @@ class LWTV_Query_Vars {
 	 *
 	 * The type of stats page we're on
 	 */
-	public function yoast_retrieve_year_replacement( ) {
+	public function yoast_retrieve_year_replacement() {
 		$this_year = get_query_var( 'thisyear', 'none' );
-		$return    = ( 'none' !== $this_year )? ucfirst( $this_year ) : date( 'Y' );
+		$return    = ( 'none' !== $this_year ) ? ucfirst( $this_year ) : date( 'Y' );
 		$return    = '(' . $return . ')';
 		return $return;
 	}

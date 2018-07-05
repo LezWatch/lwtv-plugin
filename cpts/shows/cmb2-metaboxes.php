@@ -17,10 +17,16 @@ class LWTV_Shows_CMB2 {
 	public $affiliates_array;
 
 	public function __construct() {
-		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes') );
+		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 
 		// Array of Valid Ratings
-		$this->ratings_array    = array( '1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5' );
+		$this->ratings_array = array(
+			'1' => '1',
+			'2' => '2',
+			'3' => '3',
+			'4' => '4',
+			'5' => '5',
+		);
 	}
 
 	/*
@@ -49,8 +55,8 @@ class LWTV_Shows_CMB2 {
 			'select_all_button' => false,
 			'remove_default'    => 'true',
 			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_tropes' ),
-			'attributes' => array(
-				'placeholder' => 'Common tropes ...'
+			'attributes'        => array(
+				'placeholder' => 'Common tropes ...',
 			),
 		) );
 		// Field: Worth It?
@@ -67,19 +73,19 @@ class LWTV_Shows_CMB2 {
 		) );
 		// Field: Worth It Details
 		$field_worthdetails = $cmb_mustsee->add_field( array(
-			'name'        => 'Worth It Details',
-			'id'          => $prefix . 'worthit_details',
-			'type'        => 'textarea_small',
-			'attributes'  => array(
+			'name'       => 'Worth It Details',
+			'id'         => $prefix . 'worthit_details',
+			'type'       => 'textarea_small',
+			'attributes' => array(
 				'placeholder' => 'Why is this show worth (or not) watching?',
 			),
 		) );
 		// Field: Worth It - We Love This Shit
 		$field_worthshowwelove = $cmb_mustsee->add_field( array(
-			'name' => 'Show We Love',
-			'desc' => 'Above all else, this is a show everyone loves. Only use if you are a billion percent sure and have cleared it on Trello (or over drinks).',
-			'id'   => $prefix . 'worthit_show_we_love',
-			'type' => 'checkbox',
+			'name'    => 'Show We Love',
+			'desc'    => 'Above all else, this is a show everyone loves. Only use if you are a billion percent sure and have cleared it on Trello (or over drinks).',
+			'id'      => $prefix . 'worthit_show_we_love',
+			'type'    => 'checkbox',
 			'default' => false,
 		) );
 		// Field: Worth It - Affiliate Links
@@ -92,7 +98,7 @@ class LWTV_Shows_CMB2 {
 		) );
 
 		// Must See Grid
-		if( !is_admin() ){
+		if ( !is_admin() ) {
 			return;
 		} else {
 			$grid_mustsee = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_mustsee );
@@ -110,7 +116,7 @@ class LWTV_Shows_CMB2 {
 			'show_in_rest' => true,
 			'show_names'   => true, // Show field names on the left
 		) );
-		$field_ships = $cmb_showdetails->add_field( array(
+		$field_ships     = $cmb_showdetails->add_field( array(
 			'name'       => '#Ships',
 			'id'         => $prefix . 'ships',
 			'type'       => 'text',
@@ -147,7 +153,7 @@ class LWTV_Shows_CMB2 {
 			),
 		) );
 		// Basic Show Details Grid
-		if( !is_admin() ){
+		if ( ! is_admin() ) {
 			return;
 		} else {
 			$grid_showdetails = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_showdetails );
@@ -157,14 +163,14 @@ class LWTV_Shows_CMB2 {
 
 		// Metabox: Ratings
 		$cmb_ratings = new_cmb2_box( array(
-			'id'            => 'ratings_metabox',
-			'title'         => 'Relativistic Ratings',
-			'desc'          => 'Ratings are subjective 1 to 5, with 1 being low and 5 being The L Word.',
-			'object_types'  => array( 'post_type_shows' ),
-			'context'       => 'normal',
-			'priority'      => 'high',
-			'show_names'    => true, // Show field names on the left
-			'show_in_rest'  => true,
+			'id'           => 'ratings_metabox',
+			'title'        => 'Relativistic Ratings',
+			'desc'         => 'Ratings are subjective 1 to 5, with 1 being low and 5 being The L Word.',
+			'object_types' => array( 'post_type_shows' ),
+			'context'      => 'normal',
+			'priority'     => 'high',
+			'show_names'   => true, // Show field names on the left
+			'show_in_rest' => true,
 		) );
 		// Field: Realness Rating
 		$field_rating_real = $cmb_ratings->add_field( array(
@@ -233,28 +239,28 @@ class LWTV_Shows_CMB2 {
 			),
 		) );
 		// Ratings Grid
-		if( !is_admin() ){
+		if ( ! is_admin() ) {
 			return;
 		} else {
 			$grid_ratings = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_ratings );
-			$row1 = $grid_ratings->addRow();
-			$row1->addColumns( array( $field_rating_real, $field_detail_real ) );
-			$row2 = $grid_ratings->addRow();
+			$row1         = $grid_ratings->addRow();
+			$row2         = $grid_ratings->addRow();
+			$row3         = $grid_ratings->addRow();
 			$row2->addColumns( array( $field_rating_quality, $field_detail_quality ) );
-			$row3 = $grid_ratings->addRow();
+			$row1->addColumns( array( $field_rating_real, $field_detail_real ) );
 			$row3->addColumns( array( $field_rating_screen, $field_detail_screen ) );
 		}
 
 		// Metabox: Additional Data
 		$cmb_notes = new_cmb2_box( array(
-			'id'            => 'notes_metabox',
-			'title'         => 'Additional Data',
-			'object_types'  => array( 'post_type_shows' ), // Post type
-			'context'       => 'side',
-			'priority'      => 'default',
-			'show_names'    => true, // Show field names on the left
-			'show_in_rest'  => true,
-			'cmb_styles'    => false,
+			'id'           => 'notes_metabox',
+			'title'        => 'Additional Data',
+			'object_types' => array( 'post_type_shows' ), // Post type
+			'context'      => 'side',
+			'priority'     => 'default',
+			'show_names'   => true, // Show field names on the left
+			'show_in_rest' => true,
+			'cmb_styles'   => false,
 		) );
 		// Field: Air Dates
 		$field_airdates = $cmb_notes->add_field( array(
@@ -276,12 +282,12 @@ class LWTV_Shows_CMB2 {
 		) );
 		// Field: Number of Seasons
 		$field_seasons = $cmb_notes->add_field( array(
-			'name'     => 'Seasons',
-			'desc'     => 'Number of seasons aired',
-			'id'       => $prefix . 'seasons',
-			'type' => 'text',
-			'attributes' => array(
-				'type' => 'number',
+			'name'            => 'Seasons',
+			'desc'            => 'Number of seasons aired',
+			'id'              => $prefix . 'seasons',
+			'type'            => 'text',
+			'attributes'      => array(
+				'type'    => 'number',
 				'pattern' => '\d*',
 			),
 			'sanitization_cb' => 'absint',
@@ -318,7 +324,7 @@ class LWTV_Shows_CMB2 {
 			'remove_default'    => 'true',
 			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_genres' ),
 			'attributes'        => array(
-				'placeholder' => 'What is this show about ...'
+				'placeholder' => 'What is this show about ...',
 			),
 		) );
 		// Field: Show Intersectionality
@@ -332,7 +338,7 @@ class LWTV_Shows_CMB2 {
 			'remove_default'    => 'true',
 			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_intersections' ),
 			'attributes'        => array(
-				'placeholder' => 'What does this show get RIGHT?'
+				'placeholder' => 'What does this show get RIGHT?',
 			),
 		) );
 		// Field: Show Stars
@@ -356,13 +362,13 @@ class LWTV_Shows_CMB2 {
 			'show_option_none' => 'None',
 		) );
 		// Additional Data Grid
-		if( !is_admin() ){
+		if ( ! is_admin() ) {
 			return;
 		} else {
 			$grid_additional = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_notes );
-			$row1 = $grid_additional->addRow();
+			$row1            = $grid_additional->addRow();
+			$row2            = $grid_additional->addRow();
 			$row1->addColumns( array( $field_seasons, $field_format ) );
-			$row2 = $grid_additional->addRow();
 			$row2->addColumns( array( $field_stars, $field_trigger ) );
 		}
 

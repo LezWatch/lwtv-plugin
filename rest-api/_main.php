@@ -5,9 +5,9 @@
  */
 
 // Include the base files
-include_once( 'alexa-skills.php' );
-include_once( 'bury-your-queers.php' );
-include_once( 'imdb.php' );
-include_once( 'of-the-day.php' );
-include_once( 'stats.php' );
-include_once( 'what-happened.php' );
+require_once 'alexa-skills.php';
+require_once 'bury-your-queers.php';
+require_once 'imdb.php';
+require_once 'of-the-day.php';
+require_once 'stats.php';
+require_once 'what-happened.php';

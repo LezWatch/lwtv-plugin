@@ -20,9 +20,9 @@ class LWTV_FacetWP_Addons {
 	public function __construct() {
 
 		// Include extra Plugins
-		include_once( dirname( __FILE__ ) . '/facetwp/cmb2.php' );
-		include_once( dirname( __FILE__ ) . '/facetwp/lwtv.php' );
-		include_once( dirname( __FILE__ ) . '/facetwp/facetwp-wp-cli.php' );
+		require_once dirname( __FILE__ ) . '/facetwp/cmb2.php';
+		require_once dirname( __FILE__ ) . '/facetwp/lwtv.php';
+		require_once dirname( __FILE__ ) . '/facetwp/facetwp-wp-cli.php';
 
 		// Filter paged output
 		add_filter( 'facetwp_pager_html', array( $this, 'facetwp_pager_html' ), 10, 2 );
@@ -34,7 +34,11 @@ class LWTV_FacetWP_Addons {
 		add_shortcode( 'facetwp-reset', array( $this, 'reset_shortcode' ) );
 	}
 
-	function wp_enqueue_scripts() {
+	/**
+	 * Enqueue Scripts
+	 * @return void
+	 */
+	public function wp_enqueue_scripts() {
 		wp_enqueue_script( 'facetwp-pagination', plugins_url( 'facetwp/facet.js', __FILE__ ), array(), '1.1', true );
 	}
 
@@ -43,9 +47,8 @@ class LWTV_FacetWP_Addons {
 	 * Credit: https://gist.github.com/mgibbs189/69176ef41fa4e26d1419
 	 */
 	public function facetwp_pager_html( $output, $params ) {
-
-		$output = '';
-		$page = (int) $params['page'];
+		$output      = '';
+		$page        = (int) $params['page'];
 		$total_pages = (int) $params['total_pages'];
 
 		// Only show pagination when > 1 page
@@ -60,7 +63,7 @@ class LWTV_FacetWP_Addons {
 			}
 			for ( $i = 2; $i > 0; $i-- ) {
 				if ( 0 < ( $page - $i ) ) {
-					$output .= '<a class="facetwp-page" data-page="' . ($page - $i) . '">' . ($page - $i) . '</a>';
+					$output .= '<a class="facetwp-page" data-page="' . ( $page - $i ) . '">' . ( $page - $i ) . '</a>';
 				}
 			}
 
@@ -69,7 +72,7 @@ class LWTV_FacetWP_Addons {
 
 			for ( $i = 1; $i <= 2; $i++ ) {
 				if ( $total_pages >= ( $page + $i ) ) {
-					$output .= '<a class="facetwp-page" data-page="' . ($page + $i) . '">' . ($page + $i) . '</a>';
+					$output .= '<a class="facetwp-page" data-page="' . ( $page + $i ) . '">' . ( $page + $i ) . '</a>';
 				}
 			}
 			if ( $total_pages > ( $page + 2 ) ) {
@@ -97,4 +100,5 @@ class LWTV_FacetWP_Addons {
 	}
 
 }
+
 new LWTV_FacetWP_Addons();

@@ -19,18 +19,18 @@ class LWTV_CMB2_Addons {
 	 * Constructor
 	 */
 	public function __construct() {
-		
+
 		/* LWTV weird stuff */
-		include_once( dirname( __FILE__ ) . '/cmb2/lwtv.php' );
-		
+		require_once dirname( __FILE__ ) . '/cmb2/lwtv.php';
+
 		/* CMB2 Grid */
-		include_once( dirname( __FILE__ ) . '/cmb2/CMB2-grid/Cmb2GridPluginLoad.php' );
+		require_once dirname( __FILE__ ) . '/cmb2/CMB2-grid/Cmb2GridPluginLoad.php';
 
 		/* Select2 */
-		include_once( dirname( __FILE__ ) . '/cmb2/cmb-field-select2/cmb-field-select2.php' );
+		require_once dirname( __FILE__ ) . '/cmb2/cmb-field-select2/cmb-field-select2.php';
 
 		/* Date Year Range */
-		include_once( dirname( __FILE__ ) . '/cmb2/year-range.php' );
+		require_once dirname( __FILE__ ) . '/cmb2/year-range.php';
 	}
 
 	/**
@@ -47,15 +47,15 @@ class LWTV_CMB2_Addons {
 	 * @return array CMB2 options array
 	 */
 	public static function select2_get_options_array_tax( $taxonomies, $query_args = '' ) {
-		$defaults = array(
-			'hide_empty' => false
+		$defaults    = array(
+			'hide_empty' => false,
 		);
-		$args = wp_parse_args( $query_args, $defaults );
-		$terms = get_terms( $taxonomies, $args );
+		$args        = wp_parse_args( $query_args, $defaults );
+		$terms       = get_terms( $taxonomies, $args );
 		$terms_array = array();
 		if ( ! empty( $terms ) ) {
 			foreach ( $terms as $term ) {
-				$terms_array[$term->term_id] = $term->name;
+				$terms_array[ $term->term_id ] = $term->name;
 			}
 		}
 		return $terms_array;
@@ -73,22 +73,23 @@ class LWTV_CMB2_Addons {
 
 		if ( is_array( $get_post_meta ) ) {
 			// If we already have the post meta, then we should set the terms
-			$get_post_meta   = array_map( 'intval', $get_post_meta );
-			$get_post_meta   = array_unique( $get_post_meta );
+			$get_post_meta = array_map( 'intval', $get_post_meta );
+			$get_post_meta = array_unique( $get_post_meta );
 			$set_the_terms = array();
 
-			foreach( $get_post_meta as $term_id ) {
-				$term = get_term_by( 'id' , $term_id, $taxonomy );
+			foreach ( $get_post_meta as $term_id ) {
+				$term = get_term_by( 'id', $term_id, $taxonomy );
 				array_push( $set_the_terms, $term->slug );
 			}
 
 			wp_set_object_terms( $post_id, $set_the_terms, $taxonomy );
-		} elseif ( $get_the_terms && !is_wp_error( $get_the_terms ) ) {
-			foreach( $get_the_terms as $term ) {
-				wp_remove_object_terms( $post_id, $term->term_id, $taxonomy);
+		} elseif ( $get_the_terms && ! is_wp_error( $get_the_terms ) ) {
+			foreach ( $get_the_terms as $term ) {
+				wp_remove_object_terms( $post_id, $term->term_id, $taxonomy );
 			}
 		}
 	}
 
 }
+
 new LWTV_CMB2_Addons();

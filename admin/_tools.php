@@ -6,20 +6,16 @@
  */
 
 // if this file is called directly abort
-if ( ! defined('WPINC' ) ) {
+if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
 class LWTV_Tools {
 
 	/**
-	 * Plugin instance.
-	 *
-	 * @see get_instance()
-	 * @type object
+	 * Page ID
 	 */
-	protected static $instance = NULL;
-	protected $page_id         = NULL;
+	protected $page_id = null;
 
 	/*
 	 * Construct
@@ -38,15 +34,7 @@ class LWTV_Tools {
 	 */
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
-		add_action( 'admin_post_lwtv_tools_fix_actors', array ( $this, 'fix_actors_no_chars' ) );
-	}
-
-	/*
-	 * Get Instance
-	 */
-	public static function get_instance() {
-		NULL === self::$instance and self::$instance = new self;
-		return self::$instance;
+		add_action( 'admin_post_lwtv_tools_fix_actors', array( $this, 'fix_actors_no_chars' ) );
 	}
 
 	/*
@@ -61,17 +49,19 @@ class LWTV_Tools {
 		add_submenu_page( 'lwtv_tools', 'Tools', 'Tools', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ) );
 
 		// Admin notices
-		add_action( 'load-$page_id', array ( $this, 'admin_notices' ) );
+		add_action( 'load-$page_id', array( $this, 'admin_notices' ) );
 	}
 
 	/*
 	 * Admin Notices
 	 */
 	public function admin_notices() {
-		if ( ! isset ( $_GET['message'] ) ) return;
+		if ( ! isset( $_GET['message'] ) ) { // WPCS: CSRF ok.
+			return;
+		}
 
-		switch ( $_GET['message'] ) {
-			case 'success': 
+		switch ( $_GET['message'] ) { // WPCS: CSRF ok.
+			case 'success':
 				$content = 'Automatic fix complete.';
 				break;
 			case 'warning':
@@ -82,8 +72,8 @@ class LWTV_Tools {
 				break;
 		}
 
-		if ( isset( $content ) ) { 
-			$message = '<div class="notice notice-' . esc_attr( $_GET['message'] ) . ' is-dismissable"><p>' . $content . '</p></div>';
+		if ( isset( $content ) ) {
+			$message = '<div class="notice notice-' . esc_attr( $_GET['message'] ) . ' is-dismissable"><p>' . $content . '</p></div>'; // WPCS: CSRF ok.
 			add_action( 'admin_notices', $message );
 		}
 	}
@@ -91,23 +81,23 @@ class LWTV_Tools {
 	/*
 	 * Settings Page Content
 	 */
-	function settings_page() {
+	public function settings_page() {
 
-		$active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'intro';
+		$active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'intro'; // WPCS: CSRF ok.
 
 		?>
 		<div class="wrap">
-			
+
 			<h1>Tools</h1>
 
 			<h2 class="nav-tab-wrapper">
-				<a href="?page=lwtv_tools" class="nav-tab <?php echo $active_tab == 'intro' ? 'nav-tab-active' : ''; ?>">Introduction</a>
-				<a  href="?page=lwtv_tools&tab=queer_checker" class="nav-tab <?php echo $active_tab == 'queer_checker' ? 'nav-tab-active' : ''; ?>">Queer Checker</a>
-				<a  href="?page=lwtv_tools&tab=actor_checker" class="nav-tab <?php echo $active_tab == 'actor_checker' ? 'nav-tab-active' : ''; ?>">Actor Checker</a>
+				<a href="?page=lwtv_tools" class="nav-tab <?php echo ( 'intro' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Introduction</a>
+				<a  href="?page=lwtv_tools&tab=queer_checker" class="nav-tab <?php echo ( 'queer_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Queer Checker</a>
+				<a  href="?page=lwtv_tools&tab=actor_checker" class="nav-tab <?php ( 'actor_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Actor Checker</a>
 			</h2>
 
 			<?php
-			switch( $active_tab ) {
+			switch ( $active_tab ) {
 				case 'queer_checker':
 					self::tab_queer_checker();
 					break;
@@ -126,7 +116,7 @@ class LWTV_Tools {
 	/**
 	 * Static Introduction to what the hell is going on...
 	 */
-	static function tab_introduction() {
+	public static function tab_introduction() {
 		?>
 
 		<p>Sometimes we need extra tools to do things here...</p>
@@ -150,11 +140,11 @@ class LWTV_Tools {
 	/**
 	 * Output the results of queer checking...
 	 */
-	static function tab_queer_checker() {
+	public static function tab_queer_checker() {
 
 		$items = LWTV_Debug::find_queerchars();
 
-		if ( empty( $items ) || !is_array( $items ) ) {
+		if ( empty( $items ) || ! is_array( $items ) ) {
 			echo '<p><strong>Congratulations!!!</strong> Every character\'s queerness matches their actors!</p>';
 		} else {
 
@@ -168,17 +158,17 @@ class LWTV_Tools {
 
 				<tbody>
 					<?php
-						$number    = 1;
-						foreach( $items as $item ) {
-							$class = ( $number % 2 == 0 )? '' : 'class="alternate"';
-							echo '
-							<tr ' . $class . '>
-								<td><a href="' . $item['url'] . '" target="_new">' . get_the_title( $item['id'] ) . '</a></td>
-								<td>' . $item['problem'] . '</td>
-							</tr>
-							';
-							$number++;
-						}
+					$number = 1;
+					foreach ( $items as $item ) {
+						$class = ( 0 === $number % 2 ) ? '' : 'class="alternate"';
+						echo '
+						<tr ' . esc_attr( $class ) . '>
+							<td><a href="' . esc_url( $item['url'] ) . '" target="_new">' . get_the_title( (int) $item['id'] ) . '</a></td>
+							<td>' . esc_html( $item['problem'] ) . '</td>
+						</tr>
+						';
+						$number++;
+					}
 					?>
 				</tbody>
 			</table>
@@ -189,22 +179,22 @@ class LWTV_Tools {
 	/**
 	 * Output the results of queer checking...
 	 */
-	static function tab_actor_checker() {
+	public static function tab_actor_checker() {
 
-		$redirect = urlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
-		$redirect = urlencode( $_SERVER['REQUEST_URI'] );
-
+		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
+		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
 		$items    = LWTV_Debug::find_actors_no_chars();
 
-		if ( empty( $items ) || !is_array( $items ) ) {
+		if ( empty( $items ) || ! is_array( $items ) ) {
 			echo '<p><strong>Congratulations!!!</strong> Every actor has at least one character listed!</p>';
 		} else {
 
 			echo '<p>' . count( $items ) . ' actor(s) need your attention. You can just visit the actor and save the post to fix this in most cases.</p>';
+			// @codingStandardsIgnoreStart
 			?>
 			<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="POST">
 				<input type="hidden" name="action" value="lwtv_tools_fix_actors">
-				<?php wp_nonce_field( 'lwtv_tools_fix_actors', 'lwtv_tools_fix_actors_nonce', FALSE ); ?>
+				<?php wp_nonce_field( 'lwtv_tools_fix_actors', 'lwtv_tools_fix_actors_nonce', false ); ?>
 				<input type="hidden" name="_wp_http_referer" value="<?php echo $redirect; ?>">
 				<?php submit_button( 'Fix Actors' ); ?>
 			</form>
@@ -217,21 +207,22 @@ class LWTV_Tools {
 
 				<tbody>
 					<?php
-						$number    = 1;
-						foreach( $items as $item ) {
-							$class = ( $number % 2 == 0 )? '' : 'class="alternate"';
-							echo '
-							<tr ' . $class . '>
-								<td><a href="' . $item['url'] . '" target="_new">' . get_the_title( $item['id'] ) . '</a></td>
-								<td>' . $item['problem'] . '</td>
-							</tr>
-							';
-							$number++;
-						}
+					$number = 1;
+					foreach ( $items as $item ) {
+						$class = ( 0 === $number % 2 ) ? '' : 'class="alternate"';
+						echo '
+						<tr ' . esc_attr( $class ) . '>
+							<td><a href="' . esc_url( $item['url'] ) . '" target="_new">' . get_the_title( (int) $item['id'] ) . '</a></td>
+							<td>' . wp_kses_post( $item['problem'] ) . '</td>
+						</tr>
+						';
+						$number++;
+					}
 					?>
 				</tbody>
 			</table>
 			<?php
+			// @codingStandardsIgnoreEnd
 		}
 	}
 
@@ -240,12 +231,13 @@ class LWTV_Tools {
 	 */
 	public function fix_actors_no_chars() {
 
-		if ( ! wp_verify_nonce( $_POST[ 'lwtv_tools_fix_actors_nonce' ], 'lwtv_tools_fix_actors' ) )
-			die( 'Invalid nonce.' . var_export( $_POST, true ) );
+		if ( ! wp_verify_nonce( $_POST['lwtv_tools_fix_actors_nonce'], 'lwtv_tools_fix_actors' ) ) {
+			die( 'Invalid nonce.' );
+		}
 
 		$items = LWTV_Debug::fix_actors_no_chars();
 
-		if ( !isset( $items ) || $items == '0' || is_null( $items ) ) {
+		if ( ! isset( $items ) || 0 === $items || is_null( $items ) ) {
 			$message = 'warning';
 		} elseif ( is_numeric( $items ) ) {
 			$message = 'success';
@@ -253,8 +245,9 @@ class LWTV_Tools {
 			$message = 'error';
 		}
 
-		if ( ! isset ( $_POST['_wp_http_referer'] ) )
+		if ( ! isset( $_POST['_wp_http_referer'] ) ) {
 			die( 'Missing target.' );
+		}
 
 		$url = add_query_arg( 'message', $message, urldecode( $_POST['_wp_http_referer'] ) );
 
@@ -266,4 +259,4 @@ class LWTV_Tools {
 
 new LWTV_Tools();
 
-include_once( 'screeners.php' );
+require_once 'screeners.php';
