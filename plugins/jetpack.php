@@ -23,7 +23,13 @@ class LWTV_Jetpack {
 					// Create list of tags with hashtags in front of them
 					$hash_tags = '';
 					foreach ( $post_tags as $tag ) {
-						$hash_tags .= ' #' . $tag->name;
+						// Limit this to shows only.
+						$this_post = get_page_by_path( $tag->name, OBJECT, 'post_type_shows' );
+						if ( $post === $this_post ) {
+							// Change tag from this-name to thisname
+							$tag_name   = str_replace( '-', '', $tag );
+							$hash_tags .= ' #' . $tag->name;
+						}
 					}
 
 					// Create our custom message
