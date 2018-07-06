@@ -3,7 +3,9 @@
  * Name: CMB2 Metaboxes
  */
 
-if ( ! defined('WPINC' ) ) die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * class LWTV_Shows_CMB2
@@ -98,7 +100,7 @@ class LWTV_Shows_CMB2 {
 		) );
 
 		// Must See Grid
-		if ( !is_admin() ) {
+		if ( ! is_admin() ) {
 			return;
 		} else {
 			$grid_mustsee = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_mustsee );

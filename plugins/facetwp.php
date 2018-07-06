@@ -101,4 +101,6 @@ class LWTV_FacetWP_Addons {
 
 }
 
-new LWTV_FacetWP_Addons();
+if ( class_exists( 'FacetWP' ) ) {
+	new LWTV_FacetWP_Addons();
+}

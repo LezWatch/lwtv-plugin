@@ -147,16 +147,11 @@ new LWTV_Functions();
 
 /*
  * Include Plugins.
- * The following files are used by other features.
+ * The following files are used by specific plugins
  */
-
-// Call CMB2 - it doesn't error if it's not there.
 require_once 'plugins/cmb2.php';
-
-// If Facet WP is active, call customizations.
-if ( class_exists( 'FacetWP' ) ) {
-	require_once 'plugins/facetwp.php';
-}
+require_once 'plugins/jetpack.php';
+require_once 'plugins/facetwp.php';
 
 /*
  * Include Custom wp-admin pages.
