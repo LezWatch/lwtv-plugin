@@ -287,7 +287,7 @@ class LWTV_Stats_Arrays {
 		$pieces    = explode( '_', $data );
 		$data_main = $pieces[0];
 		$data_term = ( isset( $pieces[1] ) ) ? $pieces[1] : 'all';
-		$data_meta = ( isset( $pieces[2] ) && in_array( $pieces[2], array_keys( $valid_subtaxes ) ) ) ? $pieces[2] : 'all';
+		$data_meta = ( isset( $pieces[2] ) && in_array( $pieces[2], array_keys( $valid_subtaxes ) ) ) ? $pieces[2] : 'all'; // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 		// Get the taxonomy data.
 		// This is the nation or station (term) we're going to process.
 		// If no specific term provided, we'll process the whole taxonomy.
@@ -334,12 +334,12 @@ class LWTV_Stats_Arrays {
 					if ( 'all' !== $data_meta && 'stackedbar' !== $format ) {
 						// This is for when we show a specific taxonomy for a specific nation/station.
 						// Example: Sexuality for Argentina.
-						if ( in_array( $data_meta, $extra_subtaxes ) ) {
+						if ( in_array( $data_meta, $extra_subtaxes ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 							// Get all the terms for this show.
 							$big_data_array = get_the_terms( $show->ID, 'lez_' . $data_meta );
 							if ( ! empty( $big_data_array ) && ! is_wp_error( $big_data_array ) ) {
 								foreach ( $big_data_array as $big_data_item ) {
-									if ( in_array( $data_meta, $extra_subtaxes ) ) {
+									if ( in_array( $data_meta, $extra_subtaxes ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 										if ( ! isset( $big_data[ $big_data_item->name ] ) ) {
 											$big_data[ $big_data_item->name ] = 0;
 										}
@@ -363,7 +363,7 @@ class LWTV_Stats_Arrays {
 							}
 						}
 					} elseif ( 'all' !== $data_meta && 'stackedbar' === $format ) {
-						if ( in_array( $data_meta, $extra_subtaxes ) ) {
+						if ( in_array( $data_meta, $extra_subtaxes ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 							// Get all the terms for this show.
 							$big_data_array = get_the_terms( $show->ID, 'lez_' . $data_meta );
 							if ( ! empty( $big_data_array ) && ! is_wp_error( $big_data_array ) ) {
@@ -825,7 +825,8 @@ class LWTV_Stats_Arrays {
 					$key = count( $data );
 				}
 
-				if ( ! array_key_exists( $key, $array, true ) && is_numeric( $key ) ) {
+				// Check key
+				if ( ! array_key_exists( $key, $array ) && is_numeric( $key ) ) {
 					$array[ $key ] = array(
 						'name'  => $key . ' ' . $name,
 						'count' => '1',

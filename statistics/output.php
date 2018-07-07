@@ -60,20 +60,21 @@ class LWTV_Stats_Output {
 	 * @return Content
 	 */
 	public static function percentages( $subject, $data, $array, $count ) {
-
 		$pieces = preg_split( '(_|-)', $data );
 		if ( in_array( 'country', $pieces, true ) ) {
 			$count = 0;
 			foreach ( $array as $key => $item ) {
 				$count += $item['count'];
 			}
-		} elseif ( in_array( 'dead', $pieces, true ) && ! in_array( 'shows', $pieces ) ) {
+		} elseif ( in_array( 'dead', $pieces, true ) && ! in_array( 'shows', $pieces ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 			$to_count = get_term_by( 'slug', 'dead', 'lez_cliches' );
 			$count    = $to_count->count;
 
 			if ( 'nations' === $pieces[1] || 'stations' === $pieces[1] ) {
 				$second_title = 'Percent <br />of ' . ucfirst( $pieces[1] ) . '\'s Characters';
 			}
+		} elseif ( 'per-char' === $data ) {
+			$count = wp_count_posts( 'post_type_characters' )->publish;
 		}
 
 		if ( ! in_array( 'dead', $pieces, true ) ) {
