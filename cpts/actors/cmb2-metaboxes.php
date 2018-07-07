@@ -3,7 +3,9 @@
  * Name: CMB2 Metaboxes
  */
 
-if ( ! defined('WPINC' ) ) die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * class LWTV_Actors_CMB2
@@ -17,8 +19,8 @@ class LWTV_Actors_CMB2 {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes') );
-		add_action( 'admin_menu', array( $this,'remove_metaboxes' ) );
+		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
+		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
 	}
 
 	/*
@@ -48,7 +50,7 @@ class LWTV_Actors_CMB2 {
 			'type'             => 'taxonomy_select',
 			'default'          => 'cis-woman',
 			'show_option_none' => false,
-			'remove_default'   => 'true'
+			'remove_default'   => 'true',
 		) );
 		// Field: Actor Sexual Orientation
 		$field_sexuality = $cmb_actorside->add_field( array(
@@ -59,7 +61,7 @@ class LWTV_Actors_CMB2 {
 			'type'             => 'taxonomy_select',
 			'default'          => 'heterosexual',
 			'show_option_none' => false,
-			'remove_default'   => 'true'
+			'remove_default'   => 'true',
 		) );
 		// Field: Year of Birth
 		$field_birth = $cmb_actorside->add_field( array(
@@ -122,11 +124,11 @@ class LWTV_Actors_CMB2 {
 			),
 		) );
 		// Actor Sidebar Grid
-		if( !is_admin() ){
+		if ( ! is_admin() ) {
 			return;
 		} else {
 			$grid_actorside = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_actorside );
-			$row1 = $grid_actorside->addRow();
+			$row1           = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
 		}
 	}
@@ -134,10 +136,11 @@ class LWTV_Actors_CMB2 {
 	/*
 	 * Remove Metaboxes we use elsewhere
 	 */
-	function remove_metaboxes() {
+	public function remove_metaboxes() {
 		remove_meta_box( 'authordiv', 'post_type_actors', 'normal' );
-		remove_meta_box( 'postexcerpt' , 'post_type_actors' , 'normal' );
+		remove_meta_box( 'postexcerpt', 'post_type_actors', 'normal' );
 	}
 
 }
+
 new LWTV_Actors_CMB2();

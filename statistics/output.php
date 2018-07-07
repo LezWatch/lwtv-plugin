@@ -20,9 +20,9 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	static function lists( $subject, $data, $array, $count ) {
+	public static function lists( $subject, $data, $array, $count ) {
 		?>
-		<table id="<?php echo $subject; ?>Table" class="tablesorter table table-striped table-hover">
+		<table id="<?php echo esc_html( $subject ); ?>Table" class="tablesorter table table-striped table-hover">
 			<thead>
 				<tr>
 					<th scope="col">&nbsp;</th>
@@ -30,13 +30,13 @@ class LWTV_Stats_Output {
 				</tr>
 			</thead>
 			<tbody>
-				<?
+				<?php
 				foreach ( $array as $item ) {
-					$name = ( $item['name'] == 'Dead Lesbians (Dead Queers)' )? 'Dead' : $item['name'];
-					if ( $item['count'] !== 0 ) {
+					$name = ( 'Dead Lesbians (Dead Queers)' === $item['name'] ) ? 'Dead' : $item['name'];
+					if ( 0 !== $item['count'] ) {
 						echo '<tr>';
-							echo '<th scope="row"><a href="'.$item['url'].'">' . $name . '</a></th>';
-							echo '<td>' . $item['count'] . '</td>';
+							echo '<th scope="row"><a href="' . esc_url( $item['url'] ) . '">' . esc_html( $name ) . '</a></th>';
+							echo '<td>' . (int) $item['count'] . '</td>';
 						echo '</tr>';
 					}
 				}
@@ -59,69 +59,70 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	static function percentages( $subject, $data, $array, $count ) {
+	public static function percentages( $subject, $data, $array, $count ) {
 
 		$pieces = preg_split( '(_|-)', $data );
-		if ( in_array( 'country', $pieces ) ) {
+		if ( in_array( 'country', $pieces, true ) ) {
 			$count = 0;
 			foreach ( $array as $key => $item ) {
 				$count += $item['count'];
 			}
-		} elseif ( in_array( 'dead', $pieces ) && ! in_array( 'shows', $pieces ) ) {
+		} elseif ( in_array( 'dead', $pieces, true ) && ! in_array( 'shows', $pieces ) ) {
 			$to_count = get_term_by( 'slug', 'dead', 'lez_cliches' );
 			$count    = $to_count->count;
 
 			if ( 'nations' === $pieces[1] || 'stations' === $pieces[1] ) {
-				$second_title    = 'Percent <br />of ' . ucfirst( $pieces[1] ) . '\'s Characters';
+				$second_title = 'Percent <br />of ' . ucfirst( $pieces[1] ) . '\'s Characters';
 			}
 		}
 
-		if ( ! in_array( 'dead', $pieces ) ) {
+		if ( ! in_array( 'dead', $pieces, true ) ) {
 			// Reorder by item count
-			usort( $array, function( $a, $b ) { return $a['count'] - $b['count']; } );
+			usort( $array, function( $a, $b ) {
+				return $a['count'] - $b['count'];
+			} );
 		}
-
 		?>
-		<table id="<?php echo $subject; ?>Table" class="tablesorter table table-striped table-hover">
+		<table id="<?php echo esc_attr( $subject ); ?>Table" class="tablesorter table table-striped table-hover">
 			<thead>
 				<tr>
 					<th scope="col">&nbsp;</th>
 					<th scope="col">
 						Count
 						<?php
-							if ( isset( $second_title ) ) {
-								echo '<br />of Dead Characters';
-							}
+						if ( isset( $second_title ) ) {
+							echo '<br />of Dead Characters';
+						}
 						?>
 					</th>
 					<th scope="col">
 						Percent
 						<?php
-							if ( isset( $second_title ) ) {
-								echo '<br />of Dead Characters';
-							}
+						if ( isset( $second_title ) ) {
+							echo '<br />of Dead Characters';
+						}
 						?>
 					</th>
 					<?php
-						if ( isset( $second_title ) ) {
-							echo '<th scope="col">' . $second_title . '</th>';
-						}
+					if ( isset( $second_title ) ) {
+						echo '<th scope="col">' . wp_kses_post( $second_title ) . '</th>';
+					}
 					?>
 				</tr>
 			</thead>
 			<tbody>
-				<?
+				<?php
 				foreach ( $array as $item ) {
-					if ( $item['count'] !== 0 ) {
+					if ( 0 !== $item['count'] ) {
 						echo '<tr>';
-							echo '<th scope="row"><a href="'.$item['url'].'">' . ucfirst( $item['name'] ) . '</a></th>';
-							echo '<td>' . $item['count'] . '</td>';
-							echo '<td>' . round( ( ( $item['count'] / $count ) * 100 ), 1 ) .'%</td>';
-							if ( isset( $second_title ) ) {
-								// how many characters per station/nation?
-								$second_count    = $item['characters'];
-								echo '<td>' . round( ( ( $item['count'] / $second_count ) * 100 ), 1 ) .'%</td>';
-							}
+							echo '<th scope="row"><a href="' . esc_url( $item['url'] ) . '">' . wp_kses_post( ucfirst( $item['name'] ) ) . '</a></th>';
+							echo '<td>' . (int) $item['count'] . '</td>';
+							echo '<td>' . (float) round( ( ( $item['count'] / $count ) * 100 ), 1 ) . '%</td>';
+						if ( isset( $second_title ) ) {
+							// how many characters per station/nation?
+							$second_count = $item['characters'];
+							echo '<td>' . (float) round( ( ( $item['count'] / $second_count ) * 100 ), 1 ) . '%</td>';
+						}
 						echo '</tr>';
 					}
 				}
@@ -144,27 +145,29 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	static function averages( $subject, $data, $array, $count, $type = 'average' ) {
+	public static function averages( $subject, $data, $array, $count, $type = 'average' ) {
 
 		$valid_types = array( 'high', 'low', 'average' );
-		if ( ! in_array( $type, $valid_types ) ) $type = 'average';
+		if ( ! in_array( $type, $valid_types, true ) ) {
+			$type = 'average';
+		}
 
 		switch ( $type ) {
 			case 'average':
-				$N   = $count;
+				$n   = ( 'dead-years' === $data ) ? ( date( 'Y' ) - FIRST_LWTV_YEAR ) : $count;
 				$sum = 0;
 				foreach ( $array as $item ) {
-					$sum = $sum + (int)$item['count']; 
+					$sum = $sum + $item['count'];
 				}
-				$average = round( $sum / $N );
+				$average = round( $sum / $n );
 				$return  = $average;
 				break;
 			case 'high':
 				$high = 0;
-				foreach( $array as $key => $value ) {
-					if( (float)$value['count'] > $high ) {
-						$high = (float)$value['count'];
-						if ( $subject = 'shows' ) {
+				foreach ( $array as $key => $value ) {
+					if ( $value['count'] > $high ) {
+						$high = $value['count'];
+						if ( 'shows' === $subject ) {
 							$high .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}
 					}
@@ -173,10 +176,10 @@ class LWTV_Stats_Output {
 				break;
 			case 'low':
 				$low = 20;
-				foreach( $array as $key => $value ) {
-					if( $low > (float)$value['count'] ) {
-						$low = (float)$value['count'];
-						if ( $subject = 'shows' ) {
+				foreach ( $array as $key => $value ) {
+					if ( $low > $value['count'] ) {
+						$low = $value['count'];
+						if ( 'shows' === $subject ) {
 							$low .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}
 					}
@@ -184,7 +187,7 @@ class LWTV_Stats_Output {
 				$return = $low;
 				break;
 		}
-		echo $return;
+		echo (float) $return;
 	}
 
 	/**
@@ -193,35 +196,39 @@ class LWTV_Stats_Output {
 	 * @param $y array y-coords
 	 * @returns array() m=>slope, b=>intercept
 	 */
-	static function linear_regression($x, $y) {
+	public static function linear_regression( $x, $y ) {
 
 		// calculate number points
-		$n = count($x);
+		$n = count( $x );
 
 		// ensure both arrays of points are the same size
-		if ($n != count($y)) {
-			trigger_error("linear_regression(): Number of elements in coordinate arrays do not match.", E_USER_ERROR);
+		if ( count( $y ) !== $n ) {
+			trigger_error( 'linear_regression(): Number of elements in coordinate arrays do not match.', E_USER_ERROR );
 		}
 
 		// calculate sums
-		$x_sum = array_sum($x);
-		$y_sum = array_sum($y);
+		$x_sum = array_sum( $x );
+		$y_sum = array_sum( $y );
 
 		$xx_sum = 0;
 		$xy_sum = 0;
 
-		for($i = 0; $i < $n; $i++) {
-			$xy_sum+=($x[$i]*$y[$i]);
-			$xx_sum+=($x[$i]*$x[$i]);
+		for ( $i = 0; $i < $n; $i++ ) {
+			$xy_sum += ( $x[ $i ] * $y [ $i ] );
+			$xx_sum += ( $x[ $i ] * $x[ $i ] );
 		}
 
 		// calculate slope
-		$slope = (($n * $xy_sum) - ($x_sum * $y_sum)) / (($n * $xx_sum) - ($x_sum * $x_sum));
+		$slope = ( ( $n * $xy_sum ) - ( $x_sum * $y_sum ) ) / ( ( $n * $xx_sum ) - ( $x_sum * $x_sum ) );
 
 		// calculate intercept
-		$intercept = ($y_sum - ($slope * $x_sum)) / $n;
+		$intercept = ( $y_sum - ( $slope * $x_sum ) ) / $n;
 
-		return array("slope"=>$slope, "intercept"=>$intercept);
+		$return = array(
+			'slope'     => $slope,
+			'intercept' => $intercept,
+		);
+		return $return;
 	}
 
 	/*
@@ -238,23 +245,23 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	static function barcharts( $subject, $data, $array ) {
+	public static function barcharts( $subject, $data, $array ) {
 
 		// Remove the zeros
 		foreach ( $array as $key => $value ) {
-			if ( $value['count'] == 0 ) {
-				unset( $array[$key] );
+			if ( 0 === $value['count'] ) {
+				unset( $array[ $key ] );
 			}
 		}
-		
-		$count    = sizeof( $array );
-		$stepSize = '5';
-		$height   = max( ( $count * 20 ), 30 ) + 20;
-		$rand     = substr( md5( microtime() ),rand( 0,26 ), 5 );
-		$bar_id   = ucfirst( $subject ) . $rand;
+
+		$count     = count( $array );
+		$step_size = '5';
+		$height    = max( ( $count * 20 ), 30 ) + 20;
+		$rand      = substr( md5( microtime() ), wp_rand( 0, 26 ), 5 );
+		$bar_id    = ucfirst( $subject ) . $rand;
 		?>
 		<div id="container" style="width: 100%;">
-			<canvas id="bar<?php echo $bar_id; ?>" width="700" height="<?php echo $height; ?>"></canvas>
+			<canvas id="bar<?php echo esc_attr( $bar_id ); ?>" width="700" height="<?php echo (int) $height; ?>"></canvas>
 		</div>
 
 		<script>
@@ -263,22 +270,27 @@ class LWTV_Stats_Output {
 		Chart.defaults.global.legend.display = false;
 
 		// Bar Chart
-		var bar<?php echo $bar_id; ?>Data = {
-			labels : [<?php
+		var bar<?php echo esc_attr( $bar_id ); ?>Data = {
+			labels : [
+				<?php
 				foreach ( $array as $item ) {
-					if ( $item['count'] !== 0 ) {
+					if ( 0 !== $item['count'] ) {
 						switch ( $item['name'] ) {
 							case '0':
 								$name = '0';
+								break;
 							case 'Dead Lesbians (Dead Queers)':
 								$name = 'Dead';
+								break;
 							default:
 								$name = wp_specialchars_decode( $item['name'] );
+								break;
 						}
-						echo '"'. $name . ' ('.$item['count'].')", ';
+						echo '"' . wp_kses_post( $name ) . ' (' . (int) $item['count'] . ')", ';
 					}
 				}
-			?>],
+				?>
+			],
 			datasets : [
 				{
 					backgroundColor: "rgba(255,99,132,0.2)",
@@ -286,19 +298,21 @@ class LWTV_Stats_Output {
 					borderWidth: 1,
 					hoverBackgroundColor: "rgba(255,99,132,0.4)",
 					hoverBorderColor: "rgba(255,99,132,1)",
-					data : [<?php
+					data : [
+						<?php
 						foreach ( $array as $item ) {
-							echo '"'.$item['count'].'", ';
+							echo '"' . (int) $item['count'] . '", ';
 						}
-					?>],
+						?>
+					],
 				}
 			]
 
 		};
-		var ctx = document.getElementById("bar<?php echo $bar_id; ?>").getContext("2d");
-		var bar<?php echo $bar_id; ?> = new Chart(ctx, {
+		var ctx = document.getElementById("bar<?php echo esc_attr( $bar_id ); ?>").getContext("2d");
+		var bar<?php echo esc_attr( $bar_id ); ?> = new Chart(ctx, {
 			type: 'horizontalBar',
-			data: bar<?php echo $bar_id; ?>Data,
+			data: bar<?php echo esc_attr( $bar_id ); ?>Data,
 			options: {
 				tooltips: {
 					callbacks: {
@@ -313,7 +327,7 @@ class LWTV_Stats_Output {
 					xAxes: [{
 						ticks: {
 							beginAtZero: true,
-							stepSize: <?php echo $stepSize; ?>,
+							stepSize: <?php echo (int) $step_size; ?>,
 						}
 					}]
 				},
@@ -325,7 +339,7 @@ class LWTV_Stats_Output {
 	}
 
 	/*
-	 * Statistics Display Barcharts
+	 * Statistics Stacked Barcharts
 	 *
 	 * Output the list of data usually from functions like self::meta_array
 	 * It loops through the arrays and outputs data as needed
@@ -338,21 +352,21 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	static function stacked_barcharts( $subject, $data, $array ) {
+	public static function stacked_barcharts( $subject, $data, $array ) {
 
-		$count    = sizeof( $array );
-		$stepSize = '5';
-		$height   = max( ( $count * 20 ), 30 ) + 20;
+		$count     = count( $array );
+		$step_size = '5';
+		$height    = max( ( $count * 20 ), 30 ) + 20;
 
 		// [main-term-subtax]
 		// [main taxonomy]-[term of main]-[subtaxonomy to parse]
 		// ex: [country-all-gender]
 		//     [station-abc-sexuality]
 		//     [country-usa-all]
-		$pieces  = explode( '_', $data);
+		$pieces      = explode( '_', $data );
 		$data_main   = $pieces[0];
-		$data_term   = ( isset( $pieces[1] ) )? $pieces[1] : 'all';
-		$data_subtax = ( isset( $pieces[2] ) )? $pieces[2] : 'all';
+		$data_term   = ( isset( $pieces[1] ) ) ? $pieces[1] : 'all';
+		$data_subtax = ( isset( $pieces[2] ) ) ? $pieces[2] : 'all';
 
 		// Define our settings
 		switch ( $data_subtax ) {
@@ -361,31 +375,37 @@ class LWTV_Stats_Output {
 			case 'romantic':
 			case 'tropes':
 				$datasets = array();
-				$terms    = get_terms( 'lez_' . $data_subtax, array( 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => 0 ) );
+				$termarry = array(
+					'orderby'    => 'count',
+					'order'      => 'DESC',
+					'hide_empty' => 0,
+				);
+				$terms    = get_terms( 'lez_' . $data_subtax, $termarry );
 				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-					foreach ( $terms as $term ) $datasets[] = $term->slug;
+					foreach ( $terms as $term ) {
+						$datasets[] = $term->slug;
+					}
 				}
-				$counter  = 'characters';
+				$counter = 'characters';
 				break;
 		}
 		?>
 		<div id="container" style="width: 100%;">
-			<canvas id="barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?>" width="700" height="<?php echo $height; ?>"></canvas>
+			<canvas id="barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?>" width="700" height="<?php echo (int) $height; ?>"></canvas>
 		</div>
 
 		<?php
-			// Build out the colors ...
-			$colors_array = array();
-			$colors_tolra = array( '781c81', '61187e', '531b7f', '4a2384', '442e8a', '413b93', '3f499d', '3f58a8', '4066b2', '4273bb', '447fc0', '488ac2', '4c94bf', '519cb8', '57a3ae', '5ea9a2', '65ae95', '6db388', '76b67d', '7fb972', '88bb69', '92bd60', '9cbe59', 'a7be53', 'b1be4e', 'babc49', 'c3ba45', 'ccb742', 'd3b33f', 'daad3c', 'dfa539', 'e39c37', 'e59134', 'e78432', 'e7752f', 'e6652d', 'e4542a', 'e14326', 'dd3123', 'd92120' );
+		// Build out the colors ...
+		$colors_array = array();
+		$colors_tolra = array( '781c81', '61187e', '531b7f', '4a2384', '442e8a', '413b93', '3f499d', '3f58a8', '4066b2', '4273bb', '447fc0', '488ac2', '4c94bf', '519cb8', '57a3ae', '5ea9a2', '65ae95', '6db388', '76b67d', '7fb972', '88bb69', '92bd60', '9cbe59', 'a7be53', 'b1be4e', 'babc49', 'c3ba45', 'ccb742', 'd3b33f', 'daad3c', 'dfa539', 'e39c37', 'e59134', 'e78432', 'e7752f', 'e6652d', 'e4542a', 'e14326', 'dd3123', 'd92120' );
 			shuffle( $colors_tolra );
-			$color_count  = 0;
-			foreach ( $datasets as $label ) {
-				$name = ( $label == 'undefined' )? 'nundefined' : str_replace( ["-", "–","-"], "", $label );
-				$colors_array[$name] = '#' . $colors_tolra[$color_count];
-				$color_count++;
-			}
+		$color_count = 0;
+		foreach ( $datasets as $label ) {
+			$name                  = ( 'undefined' === $label ) ? 'nundefined' : str_replace( [ '-', '-', '-' ], '', $label );
+			$colors_array[ $name ] = '#' . $colors_tolra[ $color_count ];
+			$color_count++;
+		}
 		?>
-
 
 		<script>
 		// Defaults
@@ -393,45 +413,52 @@ class LWTV_Stats_Output {
 		Chart.defaults.global.legend.display = false;
 
 		// Bar Chart
-		var barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?>Data = {
+		var barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?>Data = {
 			labels : [
 			<?php
-				foreach ( $array as $item ) {
-					$name = esc_html( $item['name'] );
-					echo '"'. $name .' ('.$item[$counter].')", ';
-				}
+			foreach ( $array as $item ) {
+				$name = $item['name'];
+				echo '"' . wp_kses_post( $name ) . ' (' . (int) $item[ $counter ] . ')", ';
+			}
 			?>
 			],
 			datasets: [
 			<?php
 			foreach ( $datasets as $label ) {
-				$color = ( $label == 'undefined' )? 'nundefined' : str_replace( ["-", "–","-"], "", $label );
+				$color = ( 'undefined' === $label ) ? 'nundefined' : str_replace( [ '-', '-', '-' ], '', $label );
 				?>
 				{
 					borderWidth: 1,
-					label: '<?php echo ucfirst( $label ); ?>',
+					label: '<?php echo wp_kses_post( ucfirst( $label ) ); ?>',
 					stack: 'Stack',
-					data : [<?php
-						foreach ( $array as $name => $item ) {
-							if ( isset( $item[ 'dataset' ][ $label ] ) ) {
-								echo $item[ 'dataset' ][ $label ] . ',';
-							} else {
-								echo '0,';
-							}
+					data : [
+					<?php
+					foreach ( $array as $name => $item ) {
+						if ( isset( $item['dataset'][ $label ] ) ) {
+							echo wp_kses_post( $item['dataset'][ $label ] ) . ',';
+						} else {
+							echo '0,';
 						}
-					?>],
-					//backgroundColor: window.chartColors.<?php echo $color; ?>,
-					backgroundColor: <?php echo '"' . $colors_array[$color] . '"'; ?>,
+					}
+					?>
+					],
+					backgroundColor:
+					<?php
+					// @codingStandardsIgnoreStart
+					echo '"' . $colors_array[ $color ] . '"';
+					// @codingStandardsIgnoreEnd
+					?>
+					,
 				},
 				<?php
 			}
 			?>
 			]
 		};
-		var ctx = document.getElementById("barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?>").getContext("2d");
-		var barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?> = new Chart(ctx, {
+		var ctx = document.getElementById("barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?>").getContext("2d");
+		var barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?> = new Chart(ctx, {
 			type: 'horizontalBar',
-			data: barStacked<?php echo ucfirst( $subject ) . ucfirst( $data_main ); ?>Data,
+			data: barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?>Data,
 			options: {
 				scales: {
 					xAxes: [{ stacked: true }],
@@ -462,44 +489,68 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	static function piecharts( $subject, $data, $array ) {
+	public static function piecharts( $subject, $data, $array ) {
 		// Strip extra word(s) to make the chart key readable
-		$fixname = '';
-		if ( $data == 'sexuality' || $data == 'dead-sex' ) $fixname = 'sexual';
-		if ( $data == 'gender' || $data == 'dead-gender' ) $fixname = 'gender';
-		if ( $data == 'dead-shows' ) $fixname = 'queers are dead';
+		switch ( $data ) {
+			case 'sexuality':
+			case 'dead-sex':
+				$fixname = 'sexual';
+				break;
+			case 'gender':
+			case 'dead-gender':
+				$fixname = 'gender';
+				break;
+			case 'dead-shows':
+				$fixname = 'queers are dead';
+				break;
+			default:
+				$fixname = '';
+				break;
+		}
 
 		// Strip hypens becuase ChartJS doesn't like it.
-		$data = str_replace('-','',$data);
+		$data = str_replace( '-', '', $data );
 
 		// Reorder by item count
-		usort( $array, function( $a, $b ) { return $a['count'] - $b['count']; } );
-		
+		usort( $array, function( $a, $b ) {
+			return $a['count'] - $b['count'];
+		} );
+
 		?>
-		<canvas id="pie<?php echo ucfirst( $data ); ?>" width="500px" height="500px"></canvas>
+		<canvas id="pie<?php echo esc_attr( ucfirst( $data ) ); ?>" width="500px" height="500px"></canvas>
 
 		<script>
 			// Piechart for stats
-			var pie<?php echo ucfirst( $data ); ?>Dataset = [<?php foreach ( $array as $item ) { if ( $item['count'] !== 0 ) { echo '"' . $item['count'] . '", '; } } ?>];
-			var pie<?php echo ucfirst( $data ); ?>data = {
-				labels : [<?php
+			var pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset = [
+				<?php
+				foreach ( $array as $item ) {
+					if ( 0 !== $item['count'] ) {
+						echo '"' . (int) $item['count'] . '", ';
+					}
+				}
+				?>
+				];
+			var pie<?php echo esc_attr( ucfirst( $data ) ); ?>data = {
+				labels : [
+					<?php
 					foreach ( $array as $item ) {
-						if ( $item['count'] !== 0 ) {
-							$name = ucfirst ( str_replace( $fixname, '', $item['name'] ) );
-							echo '"' . $name .' (' . $item['count'] . ')", ';
+						if ( 0 !== $item['count'] ) {
+							$name = ucfirst( str_replace( $fixname, '', $item['name'] ) );
+							echo '"' . wp_kses_post( $name ) . ' (' . (int) $item['count'] . ')", ';
 						}
 					}
-				?>],
+					?>
+				],
 				datasets : [{
-					data : pie<?php echo ucfirst( $data ); ?>Dataset,
-					backgroundColor: palette('tol-rainbow', pie<?php echo ucfirst( $data ); ?>Dataset.length).map(function(hex) { return '#' + hex; }),
+					data : pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset,
+					backgroundColor: palette('tol-rainbow', pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset.length).map(function(hex) { return '#' + hex; }),
 				}]
 			};
 
-			var ctx = document.getElementById("pie<?php echo ucfirst( $data ); ?>").getContext("2d");
-			var pie<?php echo ucfirst( $data ); ?> = new Chart(ctx,{
+			var ctx = document.getElementById("pie<?php echo esc_attr( ucfirst( $data ) ); ?>").getContext("2d");
+			var pie<?php echo esc_attr( ucfirst( $data ) ); ?> = new Chart(ctx,{
 				type:'doughnut',
-				data: pie<?php echo ucfirst( $data ); ?>data,
+				data: pie<?php echo esc_attr( ucfirst( $data ) ); ?>data,
 				options: {
 					tooltips: {
 						callbacks: {
@@ -528,14 +579,14 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	static function trendline( $subject, $data, $array ) {
+	public static function trendline( $subject, $data, $array ) {
 
 		$array = array_reverse( $array );
 
 		// Calculate Trend
 		$names = array();
 		$count = array();
-		foreach( $array as $item ) {
+		foreach ( $array as $item ) {
 			$names[] = $item['name'];
 			$count[] = $item['count'];
 		}
@@ -543,39 +594,41 @@ class LWTV_Stats_Output {
 		$trendarray = self::linear_regression( $names, $count );
 
 		// Strip hypens becuase ChartJS doesn't like it.
-		$cleandata = str_replace('-','',$data);
+		$cleandata = str_replace( '-', '', $data );
 		?>
 
 		<div id="container" style="width: 100%;">
-			<canvas id="trend<?php echo ucfirst( $cleandata ); ?>" width="700" height="550"></canvas>
+			<canvas id="trend<?php echo esc_attr( ucfirst( $cleandata ) ); ?>" width="700" height="550"></canvas>
 		</div>
 
 		<script>
-		var ctx = document.getElementById("trend<?php echo ucfirst( $cleandata ); ?>").getContext("2d");
-		var trend<?php echo ucfirst( $cleandata ); ?> = new Chart(ctx, {
+		var ctx = document.getElementById("trend<?php echo esc_attr( ucfirst( $cleandata ) ); ?>").getContext("2d");
+		var trend<?php echo esc_attr( ucfirst( $cleandata ) ); ?> = new Chart(ctx, {
 			type: 'bar',
 			data: {
 				labels : [
 					<?php
 					foreach ( $array as $item ) {
-						echo '"'. esc_html( $item['name'] ) .' ('.$item['count'].')", ';
+						echo '"' . wp_kses_post( $item['name'] ) . ' (' . (int) $item['count'] . ')", ';
 					}
 					?>
 				],
-				datasets : [ 
+				datasets : [
 					{
 						type: 'line',
-						label: 'Number of <?php echo ucfirst( $subject ); ?>',
+						label: 'Number of <?php echo wp_kses_post( ucfirst( $subject ) ); ?>',
 						backgroundColor: "rgba(255,99,132,0.2)",
 						borderColor: "rgba(255,99,132,1)",
 						borderWidth: 2,
 						hoverBackgroundColor: "rgba(255,99,132,0.4)",
 						hoverBorderColor: "rgba(255,99,132,1)",
-						data : [<?php
+						data : [
+							<?php
 							foreach ( $array as $item ) {
-								echo '"'.$item['count'].'", ';
+								echo '"' . (int) $item['count'] . '", ';
 							}
-						?>],
+							?>
+						],
 					},
 					{
 						type: 'line',
@@ -585,11 +638,11 @@ class LWTV_Stats_Output {
 						borderWidth: 2,
 						fill: false,
 						data: [
-							<?php 
+							<?php
 							foreach ( $array as $item ) {
 								$number = ( $trendarray['slope'] * $item['name'] ) + $trendarray['intercept'];
-								$number = ( $number <= 0 )? 0 : $number;
-								echo '"'.$number.'", ';
+								$number = ( $number <= 0 ) ? 0 : $number;
+								echo '"' . (int) $number . '", ';
 							}
 							?>
 						],
@@ -598,8 +651,7 @@ class LWTV_Stats_Output {
 			}
 		});
 		</script>
-
-	<?php
+		<?php
 	}
 }
 

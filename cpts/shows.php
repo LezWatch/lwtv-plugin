@@ -14,10 +14,10 @@ class LWTV_CPT_Shows {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init', array( $this, 'admin_init') );
-		add_action( 'init', array( $this, 'init') );
-		add_action( 'init', array( $this, 'create_post_type'), 0 );
-		add_action( 'init', array( $this, 'create_taxonomies'), 0 );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', array( $this, 'create_post_type' ), 0 );
+		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 	}
@@ -27,21 +27,17 @@ class LWTV_CPT_Shows {
 	 */
 	public function init() {
 		// Things that only run for this post type
-		$post_id   = ( isset( $_GET['post'] ) )? intval( $_GET['post'] ) : 0 ;
-		if ( $post_id !== 0 && is_admin() ) {
-			$post_type = ( isset( $_GET['post_type'] ) )? sanitize_text_field( $_GET['post_type'] ) : 0 ;
+		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0; // WPCS: CSRF ok.
+		if ( 0 !== $post_id && is_admin() ) {
+			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0; // WPCS: CSRF ok.
 			switch ( $post_type ) {
 				case 'post_type_shows':
-
 					// Don't run do the math on every page load now
 					//LWTV_Shows_Calculate::do_the_math( $post_id );
-					
 					// Filter buttons not needed on the teeny MCE
-					add_filter( 'teeny_mce_buttons', array($this, 'teeny_mce_buttons' ) );
-					
+					add_filter( 'teeny_mce_buttons', array( $this, 'teeny_mce_buttons' ) );
 					// Filter text editor quicktags (commented out until it runs on CMB2 only)
 					//add_filter( 'quicktags_settings', array( $this, 'quicktags_settings' ) );
-
 					// Force saving data to convert select2 saved data to a taxonomy
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
@@ -55,8 +51,10 @@ class LWTV_CPT_Shows {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		if ( class_exists( 'VarnishPurger' ) ) $this->varnish_purge = new VarnishPurger();
-		add_action( 'admin_head', array($this, 'admin_css') );
+		if ( class_exists( 'VarnishPurger' ) ) {
+			$this->varnish_purge = new VarnishPurger();
+		}
+		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_filter( 'manage_post_type_shows_posts_columns', array( $this, 'manage_posts_columns' ) );
 		add_action( 'manage_post_type_shows_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
 		add_filter( 'manage_edit-post_type_shows_sortable_columns', array( $this, 'manage_edit_sortable_columns' ) );
@@ -73,8 +71,8 @@ class LWTV_CPT_Shows {
 	 * Remove some Text Editor buttons
 	 */
 	public function quicktags_settings( $buttons ) {
-		$remove = array( 'del', 'ins', 'img', 'code', 'block' );
-		$buttons['buttons'] = implode( ',', array_diff ( explode( ',', $buttons['buttons'] ) , $remove ) );
+		$remove             = array( 'del', 'ins', 'img', 'code', 'block' );
+		$buttons['buttons'] = implode( ',', array_diff( explode( ',', $buttons['buttons'] ), $remove ) );
 		return $buttons;
 	}
 
@@ -116,7 +114,7 @@ class LWTV_CPT_Shows {
 			'items_list_navigation' => 'TV Show list navigation',
 			'items_list'            => 'TV Show list',
 		);
-		$args = array(
+		$args   = array(
 			'label'               => 'post_type_shows',
 			'labels'              => $labels,
 			'description'         => 'TV Shows',
@@ -142,7 +140,7 @@ class LWTV_CPT_Shows {
 
 		// Define show taxonomies
 		// SLUG => PRETTY NAME
-		$all_taxonomies = array (
+		$all_taxonomies = array(
 			'lez_stations'      => 'TV station',
 			'lez_tropes'        => 'trope',
 			'lez_formats'       => 'format',
@@ -214,23 +212,29 @@ class LWTV_CPT_Shows {
 	public function manage_posts_custom_column( $column, $post_id ) {
 		if ( get_post_meta( $post_id, 'lezshows_airdates', true ) ) {
 			$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
-			$airdate  = $airdates['start'] .' - '. $airdates['finish'];
-			if ( $airdates['start'] == $airdates['finish'] ) { $airdate = $airdates['finish']; }
+			$airdate  = $airdates['start'] . ' - ' . $airdates['finish'];
+			if ( $airdates['start'] === $airdates['finish'] ) {
+				$airdate = $airdates['finish'];
+			}
 		} else {
-			$airdate = "N/A";
+			$airdate = 'N/A';
 		}
 
 		switch ( $column ) {
 			case 'shows-airdate':
-				echo $airdate;
+				$output = $airdate;
 				break;
 			case 'shows-worthit':
-				echo ucfirst( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) );
+				$output = ucfirst( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) );
 				break;
 			case 'shows-queercount':
-				echo get_post_meta( $post_id, 'lezshows_char_count', true );
+				$output = get_post_meta( $post_id, 'lezshows_char_count', true );
 				break;
+			default:
+				$output = '';
 		}
+
+		echo wp_kses_post( $output );
 	}
 
 	/*
@@ -250,10 +254,12 @@ class LWTV_CPT_Shows {
 	 * Worth It, Char Count
 	 */
 	public function columns_sortability_simple( $query ) {
-		if( ! is_admin() ) return;
+		if ( ! is_admin() ) {
+			return;
+		}
 
-		if ( $query->is_main_query() && ( $orderby = $query->get( 'orderby' ) ) ) {
-		switch( $orderby ) {
+		if ( $query->is_main_query() && isset( $orderby ) && $orderby === $query->get( 'orderby' ) ) {
+			switch ( $orderby ) {
 				case 'worth':
 					$query->set( 'meta_key', 'lezshows_worthit_rating' );
 					$query->set( 'orderby', 'meta_value' );
@@ -261,6 +267,7 @@ class LWTV_CPT_Shows {
 				case 'queers':
 					$query->set( 'meta_key', 'lezshows_char_count' );
 					$query->set( 'orderby', 'meta_value_num' );
+					break;
 			}
 		}
 	}
@@ -271,7 +278,7 @@ class LWTV_CPT_Shows {
 	public function columns_sortability_format( $clauses, $wp_query ) {
 		global $wpdb;
 
-		if ( isset( $wp_query->query['orderby'] ) && 'format' == $wp_query->query['orderby'] ) {
+		if ( isset( $wp_query->query['orderby'] ) && 'format' === $wp_query->query['orderby'] ) {
 
 			$clauses['join'] .= <<<SQL
 LEFT OUTER JOIN {$wpdb->term_relationships} ON {$wpdb->posts}.ID={$wpdb->term_relationships}.object_id
@@ -280,9 +287,9 @@ LEFT OUTER JOIN {$wpdb->terms} USING (term_id)
 SQL;
 
 			$clauses['where']   .= " AND (taxonomy = 'lez_formats' OR taxonomy IS NULL)";
-			$clauses['groupby']  = "object_id";
+			$clauses['groupby']  = 'object_id';
 			$clauses['orderby']  = "GROUP_CONCAT({$wpdb->terms}.name ORDER BY name ASC) ";
-			$clauses['orderby'] .= ( 'ASC' == strtoupper( $wp_query->get('order') ) ) ? 'ASC' : 'DESC';
+			$clauses['orderby'] .= ( 'ASC' === strtoupper( $wp_query->get( 'order' ) ) ) ? 'ASC' : 'DESC';
 		}
 
 		return $clauses;
@@ -309,15 +316,15 @@ SQL;
 		if ( class_exists( 'VarnishPurger' ) && 'add' !== $screen->action ) {
 			// Generate list of URLs based on the show ID:
 			$purgeurls = $this->varnish_purge->generate_urls( $post_id );
-			
+
 			// Add on the JSON API
-			array_push( $purgeurls, 
+			array_push( $purgeurls,
 				get_site_url() . '/wp-json/lwtv/?vhp-regex'
 			);
-			
+
 			// Purge 'em all
 			foreach ( $purgeurls as $url ) {
-				$this->varnish_purge->purge_url( $url ) ;
+				$this->varnish_purge->purge_url( $url );
 			}
 		}
 
@@ -333,11 +340,11 @@ SQL;
 	 * @param int $post_id The post ID.
 	 */
 	public function update_meta_from_chars( $post_id ) {
-		$character_show_IDs = get_post_meta( $post_id, 'lezchars_show_group', true );
+		$character_show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
 
-		if ( $character_show_IDs !== '' ) {
-			foreach ( $character_show_IDs as $each_show ) {
-				do_action( 'do_update_show_meta' , $each_show['show'] );
+		if ( '' !== $character_show_ids ) {
+			foreach ( $character_show_ids as $each_show ) {
+				do_action( 'do_update_show_meta', $each_show['show'] );
 			}
 		}
 	}
@@ -345,7 +352,7 @@ SQL;
 	/*
 	 * Add CPT to AMP
 	 */
-	function amp_init() {
+	public function amp_init() {
 		add_post_type_support( 'post_type_shows', AMP_QUERY_VAR );
 	}
 
@@ -356,11 +363,12 @@ SQL;
 		foreach ( array( 'post_type_shows' ) as $post_type ) {
 			$num_posts = wp_count_posts( $post_type );
 			if ( $num_posts && $num_posts->publish ) {
-				if ( 'post_type_shows' == $post_type ) {
+				if ( 'post_type_shows' === $post_type ) {
+					// translators: %s is the number of TV shows we have (total)
 					$text = _n( '%s TV Show', '%s TV Shows', $num_posts->publish );
 				}
 				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
-				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', $post_type, $text );
+				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
 			}
 		}
 	}
@@ -381,7 +389,7 @@ SQL;
 	 * Post Page Meta Box
 	 * For listing critical information
 	 */
-	function post_page_metabox() {
+	public function post_page_metabox() {
 		global $post;
 
 		switch ( $post->post_type ) {
@@ -389,18 +397,21 @@ SQL;
 				$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
 				$deadqueers  = get_post_meta( $post->ID, 'lezshows_dead_count', true );
 				$score       = get_post_meta( $post->ID, 'lezshows_the_score', true );
-				$loved       = ( get_post_meta( $post->ID, 'lezshows_worthit_show_we_love', true ) == 'on' )? 'Yes' : 'No';
-				
+				$loved       = ( 'on' === get_post_meta( $post->ID, 'lezshows_worthit_show_we_love', true ) ) ? 'Yes' : 'No';
+				$short_score = round( $score, 2 );
+
 				echo '<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="loved">Loved: <b>' . $loved . '</b></span>
+					<span id="loved">Loved: <b>' . esc_html( $loved ) . '</b></span>
 				</div>
 				<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="characters">Characters: <b>' . $countqueers . '</b> total';
-						if ( $deadqueers ) { echo '/ <b>' . $deadqueers . '</b> dead'; }
+					<span id="characters">Characters: <b>' . (int) $countqueers . '</b> total';
+				if ( $deadqueers ) {
+					echo '/ <b>' . (int) $deadqueers . '</b> dead';
+				}
 				echo '</span>
 				</div>
 				<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="score">Score: <b>' .  round( $score, 2 ) . '</b></span>
+					<span id="score">Score: <b>' . floatval( $short_score ) . '</b></span>
 				</div>';
 
 				break;
@@ -409,16 +420,16 @@ SQL;
 
 	/**
 	 * Hide taxonomies from quick edit
-	 * 
+	 *
 	 * @access public
 	 * @param mixed $show_in_quick_edit
 	 * @param mixed $taxonomy_name
 	 * @param mixed $post_type
 	 * @return void
 	 */
-	function hide_tags_from_quick_edit( $show_in_quick_edit, $taxonomy_name, $post_type ) {
-		$taxonomies = array ( 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers', 'lez_intersections' );
-		if ( in_array( $taxonomy_name, $taxonomies ) ) {
+	public function hide_tags_from_quick_edit( $show_in_quick_edit, $taxonomy_name, $post_type ) {
+		$taxonomies = array( 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers', 'lez_intersections' );
+		if ( in_array( $taxonomy_name, $taxonomies, true ) ) {
 			return false;
 		} else {
 			return $show_in_quick_edit;
@@ -428,8 +439,8 @@ SQL;
 }
 
 // Include Sub Files
-include_once( 'shows/calculations.php' );
-include_once( 'shows/cmb2-metaboxes.php' );
-include_once( 'shows/related-posts.php' );
+require_once 'shows/calculations.php';
+require_once 'shows/cmb2-metaboxes.php';
+require_once 'shows/related-posts.php';
 
 new LWTV_CPT_Shows();

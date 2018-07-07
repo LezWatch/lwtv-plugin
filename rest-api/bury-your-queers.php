@@ -3,13 +3,15 @@
 Description: REST-API: Bury Your Queers
 
 The code that runs the Bury Your Queers API service
-  - Last Death - "It has been X days since the last WLW Death"
-  - On This Day - "On this day, X died"
+- Last Death - "It has been X days since the last WLW Death"
+- On This Day - "On this day, X died"
 
 Version: 1.2.1
 */
 
-if ( ! defined('WPINC' ) ) die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * class LWTV_BYQ_JSON
@@ -22,7 +24,7 @@ class LWTV_BYQ_JSON {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'rest_api_init', array( $this, 'rest_api_init') );
+		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
 	}
 
 	/**
@@ -36,27 +38,27 @@ class LWTV_BYQ_JSON {
 	public function rest_api_init() {
 
 		register_rest_route( 'lwtv/v1', '/last-death', array(
-			'methods' => 'GET',
+			'methods'  => 'GET',
 			'callback' => array( $this, 'last_death_rest_api_callback' ),
 		) );
 
 		register_rest_route( 'lwtv/v1', '/on-this-day/', array(
-			'methods' => 'GET',
+			'methods'  => 'GET',
 			'callback' => array( $this, 'on_this_day_rest_api_callback' ),
 		) );
 
 		register_rest_route( 'lwtv/v1', '/on-this-day/(?P<date>[\d]{2}-[\d]{2})', array(
-			'methods' => 'GET',
+			'methods'  => 'GET',
 			'callback' => array( $this, 'on_this_day_rest_api_callback' ),
 		) );
 
 		register_rest_route( 'lwtv/v1', '/when-died/', array(
-			'methods' => 'GET',
+			'methods'  => 'GET',
 			'callback' => array( $this, 'when_died_rest_api_callback' ),
 		) );
 
 		register_rest_route( 'lwtv/v1', '/when-died/(?P<name>[a-zA-Z0-9-]+)', array(
-			'methods' => 'GET',
+			'methods'  => 'GET',
 			'callback' => array( $this, 'when_died_rest_api_callback' ),
 		) );
 
@@ -75,8 +77,8 @@ class LWTV_BYQ_JSON {
 	 *v1
 	 */
 	public function on_this_day_rest_api_callback( $data ) {
-		$params = $data->get_params();
-		$this_day = ( isset( $params['date'] ) && $params['date'] !== '' )? $params['date'] : 'today';
+		$params   = $data->get_params();
+		$this_day = ( isset( $params['date'] ) && '' !== $params['date'] ) ? $params['date'] : 'today';
 		$response = $this->on_this_day( $this_day, 'json' );
 		return $response;
 	}
@@ -86,7 +88,7 @@ class LWTV_BYQ_JSON {
 	 */
 	public function when_died_rest_api_callback( $data ) {
 		$params   = $data->get_params();
-		$name     = ( isset( $params['name'] ) && $params['name'] !== '' )? $params['name'] : 'no-name';
+		$name     = ( isset( $params['name'] ) && '' !== $params['name'] ) ? $params['name'] : 'no-name';
 		$response = $this->when_died( $name );
 		return $response;
 	}
@@ -103,16 +105,18 @@ class LWTV_BYQ_JSON {
 
 		if ( $dead_chars_loop->have_posts() ) {
 			// Loop through characters to build our list
-			foreach( $dead_chars_loop->posts as $dead_char ) {
+			foreach ( $dead_chars_loop->posts as $dead_char ) {
 				// Date(s) character died
-				$died_date = get_post_meta( $dead_char->ID, 'lezchars_death_year', true);
+				$died_date       = get_post_meta( $dead_char->ID, 'lezchars_death_year', true );
 				$died_date_array = array();
 
-				if ( !is_array( $died_date ) ) $died_date = array( $died_date );
+				if ( ! is_array( $died_date ) ) {
+					$died_date = array( $died_date );
+				}
 
 				// For each death date, create an item in an array with the unix timestamp
 				foreach ( $died_date as $date ) {
-					$date_parse = date_parse_from_format( 'Y-m-d' , $date);
+					$date_parse        = date_parse_from_format( 'Y-m-d', $date );
 					$died_date_array[] = mktime( $date_parse['hour'], $date_parse['minute'], $date_parse['second'], $date_parse['month'], $date_parse['day'], $date_parse['year'] );
 				}
 
@@ -123,7 +127,7 @@ class LWTV_BYQ_JSON {
 				$post_slug = get_post_field( 'post_name', get_post( $dead_char ) );
 
 				// Add this character to the array
-				$death_list_array[$post_slug] = array(
+				$death_list_array[ $post_slug ] = array(
 					'id'   => $dead_char->ID,
 					'slug' => $post_slug,
 					'name' => get_the_title( $dead_char ),
@@ -134,14 +138,18 @@ class LWTV_BYQ_JSON {
 			}
 
 			// Reorder all the dead to sort by DoD
-			uasort($death_list_array, function($a, $b) {
-				
+			uasort($death_list_array, function( $a, $b ) {
+
 				// Spaceship doesn't work -- Needs PHP 7.1+
 				// return $a['died'] <=> $b['died'];
-				
+
 				$return = '0';
-				if ( $a['died'] < $b['died'] ) $return = '-1';
-				if ( $a['died'] > $b['died'] ) $return = '1';
+				if ( $a['died'] < $b['died'] ) {
+					$return = '-1';
+				}
+				if ( $a['died'] > $b['died'] ) {
+					$return = '1';
+				}
 				return $return;
 			});
 		}
@@ -164,7 +172,7 @@ class LWTV_BYQ_JSON {
 		$last_death = array_shift( $last_death );
 
 		// Calculate the difference between then and now
-		$diff = abs( time() - $last_death['died'] );
+		$diff                = abs( time() - $last_death['died'] );
 		$last_death['since'] = $diff;
 
 		$return = $last_death;
@@ -180,30 +188,32 @@ class LWTV_BYQ_JSON {
 	public static function on_this_day( $this_day = 'today', $type = 'json' ) {
 
 		// Default to today
-		if ( $this_day == 'today' ) { 
+		if ( 'today' === $this_day ) {
 			// Create the date with regards to timezones
 			$tz        = 'America/New_York';
 			$timestamp = time();
 			$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
-			$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
-			$date      = $dt->format( 'm-d' );
+			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
+			$date = $dt->format( 'm-d' );
 		}
 
 		// Default to JSON (i.e. what the plugin uses)
-		$valid_types = array ( 'json', 'tweet' );
-		if ( !in_array( $type, $valid_types ) ) { $type = 'json'; }
+		$valid_types = array( 'json', 'tweet' );
+		if ( ! in_array( $type, $valid_types, true ) ) {
+			$type = 'json';
+		}
 
 		// Get all our dead queers
 		$dead_chars_loop  = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		$died_today_array = array();
-		
+
 		switch ( $type ) {
 			case 'tweet':
-				$the_dead_array = array();;
+				$the_dead_array = array();
 				foreach ( $death_list_array as $the_dead ) {
-					if ( $this_day == date('m-d', $the_dead['died'] ) ) {
+					if ( date( 'm-d', $the_dead['died'] ) === $this_day ) {
 						$data = $the_dead['name'] . ' (' . date( 'Y', $the_dead['died'] ) . ') -- ' . $the_dead['url'];
 						array_push( $the_dead_array, $data );
 					}
@@ -213,14 +223,15 @@ class LWTV_BYQ_JSON {
 				} else {
 					$the_dead_string = implode( '\n', $the_dead_array );
 					$count_the_dead  = count( $the_dead_array );
-					$characters      = sprintf( _n( '%s character', '%s characters', $count_the_dead ), $count_the_dead );
-					$content         = 'On ' . $this_day . ', the following ' . $characters . ' died: \n' . $the_dead_string;
+					// translators: %s is the number of characters
+					$characters = sprintf( _n( '%s character', '%s characters', $count_the_dead ), $count_the_dead );
+					$content    = 'On ' . $this_day . ', the following ' . $characters . ' died: \n' . $the_dead_string;
 				}
 				$died_today_array['content'] = $content;
 				break;
 			case 'json':
 				foreach ( $death_list_array as $the_dead ) {
-					if ( $this_day == date('m-d', $the_dead['died'] ) ) {
+					if ( date( 'm-d', $the_dead['died'] ) === $this_day ) {
 						$died_today_array[ $the_dead['slug'] ] = array(
 							'id'   => $the_dead['id'],
 							'name' => $the_dead['name'],
@@ -230,7 +241,7 @@ class LWTV_BYQ_JSON {
 					}
 				}
 				if ( empty( $died_today_array ) ) {
-					$died_today_array[ 'none' ] = array(
+					$died_today_array['none'] = array(
 						'id'   => 0,
 						'name' => 'No One',
 						'url'  => site_url( '/cliche/dead/' ),
@@ -255,22 +266,24 @@ class LWTV_BYQ_JSON {
 	 */
 	public static function search_by_title_only( $search, &$wp_query ) {
 		global $wpdb;
-		if ( empty( $search ) )
+		if ( empty( $search ) ) {
 			return $search; // skip processing - no search term in query
+		}
 
-		$q = $wp_query->query_vars;
-		$n = ! empty( $q['exact'] ) ? '' : '%';
-		$search = '';
+		$q         = $wp_query->query_vars;
+		$n         = ! empty( $q['exact'] ) ? '' : '%';
+		$search    = '';
 		$searchand = '';
 		foreach ( (array) $q['search_terms'] as $term ) {
-			$term = esc_sql( like_escape( $term ) );
-			$search .= "{$searchand}($wpdb->posts.post_title LIKE '{$n}{$term}{$n}')";
+			$term      = esc_sql( wpdb::esc_like( $term ) );
+			$search   .= "{$searchand}($wpdb->posts.post_title LIKE '{$n}{$term}{$n}')";
 			$searchand = ' AND ';
 		}
 		if ( ! empty( $search ) ) {
 			$search = " AND ({$search}) ";
-			if ( ! is_user_logged_in() )
+			if ( ! is_user_logged_in() ) {
 				$search .= " AND ($wpdb->posts.post_password = '') ";
+			}
 		}
 		return $search;
 	}
@@ -285,30 +298,34 @@ class LWTV_BYQ_JSON {
 	public static function when_died( $name = 'no-name' ) {
 
 		// Remove <!--fwp-loop--> from output
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
+			return false;
+		}, 10, 2 );
 
 		// Force to search ONLY by title
 		add_filter( 'posts_search', function( $search, &$wp_query ) {
 			global $wpdb;
-			if ( empty( $search ) )
+			if ( empty( $search ) ) {
 				return $search; // skip processing - no search term in query
+			}
 
-			$q = $wp_query->query_vars;
-			$n = ! empty( $q['exact'] ) ? '' : '%';
-			$search =
+			$q         = $wp_query->query_vars;
+			$n         = ! empty( $q['exact'] ) ? '' : '%';
+			$search    = '';
 			$searchand = '';
 			foreach ( (array) $q['search_terms'] as $term ) {
-				$term = esc_sql( like_escape( $term ) );
-				$search .= "{$searchand}($wpdb->posts.post_title LIKE '{$n}{$term}{$n}')";
+				$term      = esc_sql( wpdb::esc_like( $term ) );
+				$search   .= "{$searchand}($wpdb->posts.post_title LIKE '{$n}{$term}{$n}')";
 				$searchand = ' AND ';
 			}
 			if ( ! empty( $search ) ) {
 				$search = " AND ({$search}) ";
-				if ( ! is_user_logged_in() )
+				if ( ! is_user_logged_in() ) {
 					$search .= " AND ($wpdb->posts.post_password = '') ";
+				}
 			}
 			return $search;
-		} , 500, 2 );
+		}, 500, 2 );
 
 		$noname = array(
 			'id'    => 0,
@@ -318,10 +335,10 @@ class LWTV_BYQ_JSON {
 			'died'  => 'None',
 		);
 
-		$name = str_replace( '-', ' ', $name);
+		$name = str_replace( '-', ' ', $name );
 
-		if ( $name == 'no-name' ) {
-			$when_died_array[ 'none' ] = $noname;
+		if ( 'no-name' === $name ) {
+			$when_died_array['none'] = $noname;
 		} else {
 			$args = array(
 				's'              => $name,
@@ -339,18 +356,20 @@ class LWTV_BYQ_JSON {
 					$the_character->the_post();
 
 					$died = 'alive';
-					if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true) ) {
-						$died = get_post_meta( get_the_ID(), 'lezchars_death_year', true);
-						if ( !is_array ( $died ) ) $died = array( $died );
-						$died = implode(", ", $died );
+					if ( get_post_meta( get_the_ID(), 'lezchars_death_year', true ) ) {
+						$died = get_post_meta( get_the_ID(), 'lezchars_death_year', true );
+						if ( ! is_array( $died ) ) {
+							$died = array( $died );
+						}
+						$died = implode( ', ', $died );
 					}
 
 					$shows_all = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
-					$shows = '';
+					$shows     = '';
 					foreach ( $shows_all as $show ) {
-						$shows .= get_the_title( $show['show'] ) .', ';
+						$shows .= get_the_title( $show['show'] ) . ', ';
 					}
-					$shows = rtrim( $shows , ', ');
+					$shows = rtrim( $shows, ', ' );
 
 					$when_died_array[ get_post_field( 'post_name' ) ] = array(
 						'id'    => get_the_id(),
@@ -363,12 +382,12 @@ class LWTV_BYQ_JSON {
 				}
 				wp_reset_postdata();
 			} else {
-				$when_died_array[ 'none' ] = $noname;
+				$when_died_array['none'] = $noname;
 			}
 		}
 
 		// If there was an exact match, use that one
-		if( array_key_exists( $name, $when_died_array ) ) {
+		if ( array_key_exists( $name, $when_died_array ) ) {
 			$when_died_array = $when_died_array[ $name ];
 		}
 
@@ -378,4 +397,5 @@ class LWTV_BYQ_JSON {
 	}
 
 }
+
 new LWTV_BYQ_JSON();

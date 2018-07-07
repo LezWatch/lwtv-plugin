@@ -38,15 +38,15 @@ class LWTV_Stats {
 
 		if ( is_page( array( 'statistics' ) ) ) {
 			$statistics = get_query_var( 'statistics', 'none' );
-			$stat_view  = ( isset( $_GET['view'] ) )? esc_attr( $_GET['view'] ) : '';
+			$stat_view  = ( isset( $_GET['view'] ) ) ? esc_attr( $_GET['view'] ) : ''; // WPSC: CSRF ok.
 
-			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js' , array( 'jquery' ), '2.7.2', false );
+			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js', array( 'jquery' ), '2.7.2', false );
 			//wp_enqueue_script( 'chartjs-colors', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.colors.js' , array( 'chartjs' ), '1.0.0', false );
 			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', '1.0.0', false );
-			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js' , array( 'jquery' ), '2.30.5', false );
+			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.30.5', false );
 			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css/theme.bootstrap_4.css' );
 
-			switch( $statistics ) {
+			switch ( $statistics ) {
 				case 'nations':
 				case 'stations':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#' . $statistics . 'Table").tablesorter({ theme : "bootstrap", }); });' );
@@ -57,7 +57,7 @@ class LWTV_Stats {
 					break;
 			}
 
-			switch( $stat_view ) {
+			switch ( $stat_view ) {
 				case 'gender':
 				case 'sexuality':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#charactersTable").tablesorter({ theme : "bootstrap", }); });' );
@@ -77,19 +77,21 @@ class LWTV_Stats {
 	 *
 	 * @return array
 	 */
-	static function generate( $subject, $data, $format ) {
+	public static function generate( $subject, $data, $format ) {
 		// Bail early if we're not an approved subject matter.
-		if ( !in_array( $subject, array( 'characters', 'shows', 'actors' ) ) ) return;
+		if ( ! in_array( $subject, array( 'characters', 'shows', 'actors' ), true ) ) {
+			return;
+		}
 
 		// Build Variables.
 		$array     = array();
-		$post_type = 'post_type_'.$subject;
+		$post_type = 'post_type_' . $subject;
 		$count     = wp_count_posts( $post_type )->publish;
-		$taxonomy  = 'lez_'.$data;
+		$taxonomy  = 'lez_' . $data;
 
 		// Calculate the array based on data.
 		// This includes everything EXCEPT Death and some weeeeeird stuff.
-		switch( $data ) {
+		switch ( $data ) {
 			case 'cliches':
 			case 'sexuality':
 			case 'gender':
@@ -110,16 +112,16 @@ class LWTV_Stats {
 				$array = LWTV_Stats_Arrays::complex_taxonomy( $count, $data, $subject );
 				break;
 			case 'role':
-				$roles = array( 
-					'regular', 
-					'recurring', 
+				$roles = array(
+					'regular',
+					'recurring',
 					'guest',
 				);
 				$array = LWTV_Stats_Arrays::meta( $post_type, $role_array, 'lezchars_show_group', $data, 'LIKE' );
 				break;
 			case 'thumbs':
-				$thumbs = array( 
-					'Yes', 
+				$thumbs = array(
+					'Yes',
 					'No',
 					'Meh',
 				);
@@ -148,7 +150,7 @@ class LWTV_Stats {
 		}
 
 		// Custom call for Nations & Stations.
-		if ( 'country' === substr( $data, 0, 7 ) || 'stations' === substr( $data, 0, 8) ) {
+		if ( 'country' === substr( $data, 0, 7 ) || 'stations' === substr( $data, 0, 8 ) ) {
 			$array    = LWTV_Stats_Arrays::taxonomy_breakdowns( $count, $format, $data, $subject );
 			$precount = $count;
 			$count    = LWTV_Stats_Arrays::taxonomy_breakdowns( $precount, 'count', $data, $subject );
@@ -156,8 +158,8 @@ class LWTV_Stats {
 
 		// And dead stats? IN-fucking-sane.
 		// Everything gets a custom setup.
-		if( strpos( $data, 'dead' ) !== false ) {
-			switch( $data ) {
+		if ( false !== strpos( $data, 'dead' ) ) {
+			switch ( $data ) {
 				case 'dead':
 					$array = LWTV_Stats_Arrays::dead_basic( $subject, 'array' );
 					$count = LWTV_Stats_Arrays::dead_basic( $subject, 'count' );
@@ -187,7 +189,7 @@ class LWTV_Stats {
 		}
 
 		// Acutally output shit.
-		switch( $format ) {
+		switch ( $format ) {
 			case 'barchart':
 				LWTV_Stats_Output::barcharts( $subject, $data, $array );
 				break;
@@ -222,7 +224,7 @@ class LWTV_Stats {
 				$return = $array;
 				break;
 		}
-		
+
 		if ( isset( $return ) ) {
 			return $return;
 		}
@@ -237,7 +239,7 @@ class LWTV_Stats {
 	 *
 	 * @return array
 	 */
-	static function showcount( $type, $tax, $term ) {
+	public static function showcount( $type, $tax, $term ) {
 
 		$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
 		$return = 0;
@@ -246,19 +248,21 @@ class LWTV_Stats {
 		$tz        = 'America/New_York';
 		$timestamp = time();
 		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
-		$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
-		$date      = $dt->format( 'Y' );
+		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
+		$date = $dt->format( 'Y' );
 
 		if ( $queery->have_posts() ) {
-			switch( $type ) {
+			switch ( $type ) {
 				case 'onair':
 					// How many shows are on air.
 					$onair = 0;
-					foreach( $queery->posts as $show ) {
+					foreach ( $queery->posts as $show ) {
 						if ( get_post_meta( $show->ID, 'lezshows_airdates', true ) ) {
 							$airdates = get_post_meta( $show->ID, 'lezshows_airdates', true );
 							$end      = $airdates['finish'];
-							if ( lcfirst( $end ) == 'current' || $end >= $date ) $onair++;
+							if ( 'current' === lcfirst( $end ) || $end >= $date ) {
+								$onair++;
+							}
 						}
 					}
 					$return = $onair;
@@ -266,32 +270,32 @@ class LWTV_Stats {
 				case 'score':
 					// What's the average show score for the shows we're calculating.
 					$score = 0;
-					foreach( $queery->posts as $show ) {
+					foreach ( $queery->posts as $show ) {
 						if ( get_post_meta( $show->ID, 'lezshows_the_score', true ) ) {
 							$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
 							$score     += $this_score;
 						}
 					}
 					$score = ( $score / $queery->post_count );
-					
+
 					$return = round( $score, 2 );
 					break;
 				case 'onairscore':
 					// What's the average show score for shows on air?
 					$score = 0;
 					$onair = 0;
-					foreach( $queery->posts as $show ) {
+					foreach ( $queery->posts as $show ) {
 						if ( get_post_meta( $show->ID, 'lezshows_the_score', true ) ) {
 							$this_score = get_post_meta( $show->ID, 'lezshows_the_score', true );
 							$airdates   = get_post_meta( $show->ID, 'lezshows_airdates', true );
 							$end        = $airdates['finish'];
-							if ( lcfirst( $end ) == 'current' || $end >= $date ) {
+							if ( 'current' === lcfirst( $end ) || $end >= $date ) {
 								$score += $this_score;
 								$onair++;
 							}
 						}
 					}
-					$score  = ( $onair !== 0 )? ( $score / $onair ): $onair;
+					$score  = ( 0 !== $onair ) ? ( $score / $onair ) : $onair;
 					$return = round( $score, 2 );
 					break;
 				default:
@@ -306,5 +310,5 @@ class LWTV_Stats {
 new LWTV_Stats();
 
 // Include sub files
-include_once( 'array.php' );
-include_once( 'output.php' );
+require_once 'array.php';
+require_once 'output.php';

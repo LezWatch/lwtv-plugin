@@ -4,7 +4,9 @@ Description: 'date_year_range' custom field type
 Version: 1.0
 */
 
-if ( ! defined('WPINC' ) ) die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * class LWTV_CMB2_DYR
@@ -43,6 +45,7 @@ class LWTV_CMB2_DYR {
 	 * @param object $type_object The `CMB2_Types` object
 	 */
 	public function jt_cmb2_date_year_range( $field, $value, $object_id, $object_type, $type_object ) {
+		// @codingStandardsIgnoreStart
 		$earliest = $field->options( 'earliest' );
 		$earliest = $earliest ? absint( $earliest ) : 1900;
 
@@ -58,19 +61,22 @@ class LWTV_CMB2_DYR {
 		$finish_show_current = $field->options( 'finish_show_current' );
 		$finish_show_current = $finish_show_current ? true : false;
 
-
+		// Default values
 		$value = wp_parse_args( $value, array(
 			'start'  => '',
 			'finish' => '',
 		) );
+		$desc  = $field->args( 'description' );
 
-		$desc = $field->args( 'description' );
+		// More defaults
 		$field->args['description'] = '';
-		$type_object->type = new CMB2_Type_Select( $type_object );
+		$type_object->type          = new CMB2_Type_Select( $type_object );
 
-		echo '<em>'. $type_object->_text( 'start_label', 'Starting Year' ) . '</em> ';
+		echo '<em>' . $type_object->_text( 'start_label', 'Starting Year' ) . '</em> ';
 
-		$start_options = $this->jt_cmb2_date_year_range_options( $type_object, $earliest, $value['start'], $start_reverse_sort, $start_show_current );
+		$start_options = $this->jt_cmb2_date_year_range_options( $type_object, $earliest, $value['start'],
+
+		$start_reverse_sort, $start_show_current );
 		echo $type_object->select( array(
 			'name'    => $type_object->_name( '[start]' ),
 			'id'      => $type_object->_id( '_start' ),
@@ -79,7 +85,6 @@ class LWTV_CMB2_DYR {
 			'options' => $start_options,
 			'desc'    => '',
 		) );
-
 		echo $type_object->_text( 'separator', ' &mdash; ' );
 
 		$end_options = $this->jt_cmb2_date_year_range_options( $type_object, $earliest, $value['finish'], $finish_reverse_sort, $finish_show_current );
@@ -98,7 +103,7 @@ class LWTV_CMB2_DYR {
 		$type_object->_desc( true, true );
 
 		add_action( is_admin() ? 'admin_footer' : 'wp_footer', array( $this, 'jt_cmb2_date_year_range_js' ) );
-
+		// @codingStandardsIgnoreEnd
 	}
 
 	public function jt_cmb2_date_year_range_js() {
@@ -160,7 +165,8 @@ class LWTV_CMB2_DYR {
 	}
 
 	public function jt_cmb2_date_year_range_options( $type_object, $earliest, $value, $reverse = false, $current = true ) {
-		$options = array();
+		$options   = array();
+		$this_year = ( date( 'Y' ) + 1 );
 
 		$not_set = array(
 			'value' => '',
@@ -171,9 +177,12 @@ class LWTV_CMB2_DYR {
 			$not_set['checked'] = 'checked';
 		}
 
-		for ( $i = $earliest; $i <= ( date( 'Y' ) + 1 ); $i++ ) {
+		for ( $i = $earliest; $i <= $this_year; $i++ ) {
 
-			$a = array( 'value' => $i, 'label' => $i );
+			$a = array(
+				'value' => $i,
+				'label' => $i,
+			);
 			if ( absint( $value ) === $i ) {
 				$a['checked'] = 'checked';
 			}
@@ -215,7 +224,7 @@ class LWTV_CMB2_DYR {
 
 		foreach ( $keys as $key ) {
 			if ( ! empty( $value[ $key ] ) ) {
-				update_post_meta( $object_id, $field_args['id'] . '_'. $key, $value[ $key ] );
+				update_post_meta( $object_id, $field_args['id'] . '_' . $key, $value[ $key ] );
 			}
 		}
 

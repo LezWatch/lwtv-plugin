@@ -10,21 +10,22 @@ class LWTV_Affiliate_Apple {
 	/**
 	 * Determine which ads to show
 	 */
-	static function show_ads( $post_id, $type ) {
+	public static function show_ads( $post_id, $type ) {
 
 		// Return the proper output
 		switch ( $type ) {
-			case "widget":
+			case 'widget':
 			default:
-				return self::output_widget( $post_id );
+				$return = self::output_widget( $post_id );
 				break;
 		}
+		return $return;
 	}
 
 	/**
 	 * Search!
 	 */
-	static function search( $post_id ) {
+	public static function search( $post_id ) {
 
 		$use_fallback = false;
 
@@ -35,13 +36,13 @@ class LWTV_Affiliate_Apple {
 
 		$request = wp_remote_get( $url );
 
-		if ( is_wp_error( $request ) ) { 
+		if ( is_wp_error( $request ) ) {
 			$use_fallback = true;
 		} else {
 			$body = json_decode( wp_remote_retrieve_body( $request ), true );
 
 			// If the result isn't 1, we have an issue....
-			if ( isset( $body ) && $body['resultCount'] !== 1 ) {
+			if ( 1 !== isset( $body ) && $body['resultCount'] ) {
 				$use_fallback = true;
 			} else {
 				// We found a show! Let's show it, eh?
@@ -60,14 +61,14 @@ class LWTV_Affiliate_Apple {
 	/**
 	 * Output Widget
 	 */
-	static function output_widget( $post_id ) {
+	public static function output_widget( $post_id ) {
 
 		$link = 'fallback';
-		if ( get_post_type( $post_id ) == 'post_type_shows' ) {
+		if ( 'post_type_shows' === get_post_type( $post_id ) ) {
 			$link = self::search( $post_id );
 		}
 
-		if ( $link !== 'fallback' || is_null( $link ) ) {
+		if ( 'fallback' !== $link || is_null( $link ) ) {
 			$the_ad = '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=ffffff&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=' . $link . '&wt=discovery&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>';
 		} else {
 			$the_ad = self::random();
@@ -81,10 +82,10 @@ class LWTV_Affiliate_Apple {
 	/**
 	 * Something random...
 	 */
-	static function random() {
+	public static function random() {
 
-		$number = rand();
-		if ( $number % 2 == 0 ) {
+		$number = wp_rand();
+		if ( 0 === $number % 2 ) {
 			$the_ad = self::podcasts();
 		} else {
 			$the_ad = '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=FFFFFF&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=&wt=search&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>';
@@ -96,7 +97,7 @@ class LWTV_Affiliate_Apple {
 	/**
 	 * Pick a podcast....
 	 */
-	static function podcasts() {
+	public static function podcasts() {
 		$podcasts = array(
 			'LezRepresent'    => '1308112009',
 			'Queery'          => '1268343859',
@@ -113,10 +114,10 @@ class LWTV_Affiliate_Apple {
 		);
 
 		// Randomize the Podcast
-		$podcast = $podcasts[array_rand( $podcasts )];
+		$podcast = $podcasts[ array_rand( $podcasts ) ];
 
 		$return = '<iframe src="//banners.itunes.apple.com/banner.html?partnerId=&aId=1010lMaT&bt=catalog&t=smart_color&id=' . $podcast . '&c=us&l=en-US&w=300&h=250&store=podcast" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:300px;height:250px;border:0px"></iframe>';
-		
+
 		return $return;
 
 	}

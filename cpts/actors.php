@@ -14,10 +14,10 @@ class LWTV_CPT_Actors {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init', array( $this, 'admin_init') );
-		add_action( 'init', array( $this, 'init') );
-		add_action( 'init', array( $this, 'create_post_type'), 0 );
-		add_action( 'init', array( $this, 'create_taxonomies'), 0 );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', array( $this, 'create_post_type' ), 0 );
+		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
@@ -27,7 +27,7 @@ class LWTV_CPT_Actors {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		add_action( 'admin_head', array($this, 'admin_css') );
+		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'do_update_actor_meta', array( $this, 'update_meta' ), 10, 2 );
 		add_action( 'save_post_post_type_characters', array( $this, 'update_meta_from_chars' ), 10, 3 );
@@ -43,9 +43,9 @@ class LWTV_CPT_Actors {
 	 */
 	public function init() {
 		// Things that only run for this post type
-		$post_id   = ( isset( $_GET['post'] ) )? intval( $_GET['post'] ) : 0 ;
-		if ( $post_id !== 0 && is_admin() ) {
-			$post_type = ( isset( $_GET['post_type'] ) )? sanitize_text_field( $_GET['post_type'] ) : 0 ;
+		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;  // WPCS: CSRF ok.
+		if ( 0 !== $post_id && is_admin() ) {
+			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;  // WPCS: CSRF ok.
 			switch ( $post_type ) {
 				case 'post_type_actors':
 					LWTV_Actors_Calculate::do_the_math( $post_id );
@@ -58,7 +58,7 @@ class LWTV_CPT_Actors {
 	 * CPT Settings
 	 *
 	 */
-	function create_post_type() {
+	public function create_post_type() {
 		$labels = array(
 			'name'                  => 'Actors',
 			'singular_name'         => 'Actor',
@@ -78,7 +78,7 @@ class LWTV_CPT_Actors {
 			'remove_featured_image' => 'Remove Actor Photo',
 			'use_featured_image'    => 'Use as Actor Photo',
 		);
-		$args = array(
+		$args   = array(
 			'label'               => 'post_type_actors',
 			'description'         => 'Actors',
 			'labels'              => $labels,
@@ -102,7 +102,7 @@ class LWTV_CPT_Actors {
 	 */
 	public function create_taxonomies() {
 
-		$taxonomies = array (
+		$taxonomies = array(
 			'gender'    => 'actor_gender',
 			'sexuality' => 'actor_sexuality',
 		);
@@ -111,7 +111,7 @@ class LWTV_CPT_Actors {
 			// Labels for taxonomy
 			$labels = array(
 				'name'                       => ucwords( $pretty ) . 's',
-				'singular_name'              => ucwords( $pretty ) ,
+				'singular_name'              => ucwords( $pretty ),
 				'search_items'               => 'Search ' . ucwords( $pretty ) . 's',
 				'popular_items'              => 'Popular ' . ucwords( $pretty ) . 's',
 				'all_items'                  => 'All' . ucwords( $pretty ) . 's',
@@ -162,11 +162,12 @@ class LWTV_CPT_Actors {
 		switch ( $column ) {
 			case 'actors-queer':
 				$is_queer = get_post_meta( $post_id, 'lezactors_queer', true );
-				$queer    = ( $is_queer )? 'Y' : 'N';
-				echo $queer;
+				$queer    = ( $is_queer ) ? 'Y' : 'N';
+				echo esc_html( $queer );
 				break;
 			case 'actors-charcount':
-				echo get_post_meta( $post_id, 'lezactors_char_count', true );
+				$charcount = get_post_meta( $post_id, 'lezactors_char_count', true );
+				echo (int) $charcount;
 				break;
 		}
 	}
@@ -175,7 +176,7 @@ class LWTV_CPT_Actors {
 	 * Make Custom Columns Sortable
 	 */
 	public function manage_edit_sortable_columns( $columns ) {
-		$columns['actors-charcount']     = 'characters';  // Allow sort by queers
+		$columns['actors-charcount'] = 'characters';  // Allow sort by queers
 		return $columns;
 	}
 
@@ -185,13 +186,16 @@ class LWTV_CPT_Actors {
 	 * Worth It, Char Count
 	 */
 	public function columns_sortability_simple( $query ) {
-		if( ! is_admin() ) return;
+		if ( ! is_admin() ) {
+			return;
+		}
 
-		if ( $query->is_main_query() && ( $orderby = $query->get( 'orderby' ) ) ) {
-		switch( $orderby ) {
+		if ( $query->is_main_query() && isset( $orderby ) && $orderby === $query->get( 'orderby' ) ) {
+			switch ( $orderby ) {
 				case 'characters':
 					$query->set( 'meta_key', 'lezactors_char_count' );
 					$query->set( 'orderby', 'meta_value_num' );
+					break;
 			}
 		}
 	}
@@ -207,7 +211,7 @@ class LWTV_CPT_Actors {
 
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_actors', array( $this, 'update_meta' ) );
-		
+
 		// Do the math
 		LWTV_Actors_Calculate::do_the_math( $post_id );
 
@@ -223,11 +227,11 @@ class LWTV_CPT_Actors {
 	 * @param int $post_id The post ID.
 	 */
 	public function update_meta_from_chars( $post_id ) {
-		$character_actor_IDs = get_post_meta( $post_id, 'lezchars_actor', true );
+		$character_actor_ids = get_post_meta( $post_id, 'lezchars_actor', true );
 
-		if ( $character_actor_IDs !== '' ) {
-			foreach ( $character_actor_IDs as $actor ) {
-				do_action( 'do_update_actor_meta' , $actor );
+		if ( '' !== $character_actor_ids ) {
+			foreach ( $character_actor_ids as $actor ) {
+				do_action( 'do_update_actor_meta', $actor );
 			}
 		}
 	}
@@ -237,10 +241,11 @@ class LWTV_CPT_Actors {
 	 *
 	 * Information on how many queer characters an actor plays
 	 */
-	public function yoast_retrieve_characters_replacement( ) {
+	public function yoast_retrieve_characters_replacement() {
 		global $post;
 		$char_count = get_post_meta( $post->ID, 'lezactors_char_count', true );
-		$characters = ( $char_count == 0 )? 'no characters' : sprintf( _n( '%s character', '%s characters', $char_count ), $char_count );
+		// translators: %s is the number of characters
+		$characters = ( 0 === $char_count ) ? 'no characters' : sprintf( _n( '%s character', '%s characters', $char_count ), $char_count );
 		return $characters;
 	}
 
@@ -249,10 +254,10 @@ class LWTV_CPT_Actors {
 	 *
 	 * List of actors who played a character, for use on character pages
 	 */
-	public function yoast_retrieve_queer_replacement( ) {
+	public function yoast_retrieve_queer_replacement() {
 		global $post;
 		$is_queer = get_post_meta( $post->ID, 'lezactors_queer', true );
-		$queer    = ( $is_queer )? 'a queer actor' : 'an actor';
+		$queer    = ( $is_queer ) ? 'a queer actor' : 'an actor';
 		return $queer;
 	}
 
@@ -278,11 +283,12 @@ class LWTV_CPT_Actors {
 		foreach ( array( 'post_type_actors' ) as $post_type ) {
 			$num_posts = wp_count_posts( $post_type );
 			if ( $num_posts && $num_posts->publish ) {
-				if ( 'post_type_actors' == $post_type ) {
+				if ( 'post_type_actors' === $post_type ) {
+					// translators: %s is the number of actors
 					$text = _n( '%s Actor', '%s Actors', $num_posts->publish );
 				}
-			$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
-			printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', $post_type, $text );
+				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
+				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
 			}
 		}
 	}
@@ -296,7 +302,7 @@ class LWTV_CPT_Actors {
 				content: '\\f336';
 				margin-left: -1px;
 			}
-			
+
 			.fixed th.column-actors-charcount, .fixed th.column-actors-queer {
 				width: 4em;
 			}
@@ -307,7 +313,7 @@ class LWTV_CPT_Actors {
 	 * Post Page Meta Box
 	 * For listing critical information
 	 */
-	function post_page_metabox() {
+	public function post_page_metabox() {
 		global $post;
 
 		switch ( $post->post_type ) {
@@ -315,11 +321,12 @@ class LWTV_CPT_Actors {
 				$countqueers = get_post_meta( $post->ID, 'lezactors_char_count', true );
 				$deadqueers  = get_post_meta( $post->ID, 'lezactors_dead_count', true );
 				echo '<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="characters">Characters: <b>' . $countqueers . '</b> total';
-						if ( $deadqueers ) { echo '/ <b>' . $deadqueers . '</b> dead'; }
+					<span id="characters">Characters: <b>' . (int) $countqueers . '</b> total';
+				if ( $deadqueers ) {
+					echo '/ <b>' . (int) $deadqueers . '</b> dead';
+				}
 				echo '</span>
 				</div>';
-
 				break;
 		}
 	}
@@ -327,8 +334,8 @@ class LWTV_CPT_Actors {
 }
 
 // Include Sub Files
-include_once( 'actors/calculations.php' );
-include_once( 'actors/cmb2-metaboxes.php' );
+require_once 'actors/calculations.php';
+require_once 'actors/cmb2-metaboxes.php';
 
 
 new LWTV_CPT_Actors();

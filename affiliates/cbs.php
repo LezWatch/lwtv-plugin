@@ -6,14 +6,14 @@
 
 
 class LWTV_Affiliate_CBS {
-	static function show_ads( $post_id, $type ) {
+	public static function show_ads( $post_id, $type ) {
 
 		// Return the proper output
 		switch ( $type ) {
-			case "text":
+			case 'text':
 				$the_ad = self::output_text( $post_id );
 				break;
-			case "widget":
+			case 'widget':
 			default:
 				$the_ad = self::output_widget( $post_id );
 				break;
@@ -25,10 +25,10 @@ class LWTV_Affiliate_CBS {
 	/**
 	 * CBS wants to run specific ad copy, so we're doing this to try theirs...
 	 */
-	static function output_text( $post_id ) {
+	public static function output_text( $post_id ) {
 
 		$slug        = get_post_field( 'post_name', $post_id );
-		$named_array = array( 
+		$named_array = array(
 			'the-good-wife'                 => '456231',
 			'the-good-fight'                => '455992',
 			'star-trek-the-next-generation' => '366250',
@@ -42,11 +42,11 @@ class LWTV_Affiliate_CBS {
 		);
 
 		if ( array_key_exists( $slug, $named_array ) ) {
-			$link = $named_array[$slug];
+			$link = $named_array[ $slug ];
 		} else {
 			$link = '176086';
 		}
-		
+
 		$output = '<a href="https://cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" target="_blank" class="btn btn-primary">CBS All Access</a><img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
 
 		return $output;
@@ -55,10 +55,10 @@ class LWTV_Affiliate_CBS {
 	/**
 	 * Figure out which ad we really want to show....
 	 */
-	static function output_widget( $post_id ) {
+	public static function output_widget( $post_id ) {
 
 		// The possible ads
-		$named_array = array( 
+		$named_array = array(
 			'the-good-wife'                 => '456231',
 			'the-good-fight'                => '455992',
 			'star-trek-the-next-generation' => '366250',
@@ -77,14 +77,14 @@ class LWTV_Affiliate_CBS {
 		$slug = get_post_field( 'post_name', $post_id );
 
 		if ( array_key_exists( $slug, $named_array ) ) {
-			$ad = $named_array[$slug];
+			$ad = $named_array[ $slug ];
 		} else {
-			$ad = $generic_array[array_rand( $generic_array )];
+			$ad = $generic_array[ array_rand( $generic_array ) ];
 		}
 
 		// Build the ad
 		$the_ad = '<center><a href="//cbs-allaccess.7eer.net/c/1242493/' . $ad . '/3065"><img src="//a.impactradius-go.com/display-ad/3065-' . $ad . '" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbs-allaccess.7eer.net/i/1242493/' . $ad . '/3065" style="position:absolute;visibility:hidden;" border="0" /></center>';
-		
+
 		return $the_ad;
 
 	}

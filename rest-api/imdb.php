@@ -7,7 +7,9 @@ Calls IMDb
 Version: 1.0.0
 */
 
-if ( ! defined('WPINC' ) ) die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * class LWTV_IMDb_JSON
@@ -20,7 +22,7 @@ class LWTV_IMDb_JSON {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'rest_api_init', array( $this, 'rest_api_init') );
+		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
 	}
 
 	/**
@@ -45,9 +47,9 @@ class LWTV_IMDb_JSON {
 	 */
 	public function imdb_rest_api_callback( $data ) {
 		$params = $data->get_params();
-		$id     = ( isset( $params['id'] ) && $params['id'] !== '' )? sanitize_title_for_query( $params['id'] ) : false;
+		$id     = ( isset( $params['id'] ) && '' !== $params['id'] ) ? sanitize_title_for_query( $params['id'] ) : false;
 
-		if ( in_array( substr( $id, 0, 2 ), array( 'tt', 'nm' ) ) ) {
+		if ( in_array( substr( $id, 0, 2 ), array( 'tt', 'nm' ), true ) ) {
 			$return = $this->imdb( $id );
 		} else {
 			$return = wp_send_json_error( 'Invalid input.' );
@@ -76,11 +78,11 @@ class LWTV_IMDb_JSON {
 		}
 
 		// WP Queery: We only want one match.
-		$queery = new WP_Query ( array (
-			'post_type'       => $post_type,
-			'facetwp'         => false,
-			'posts_per_page'  => 1,
-			'meta_query'      => array(
+		$queery = new WP_Query( array(
+			'post_type'      => $post_type,
+			'facetwp'        => false,
+			'posts_per_page' => 1,
+			'meta_query'     => array(
 				array(
 					'key'     => $meta_key,
 					'value'   => $id,
@@ -88,7 +90,7 @@ class LWTV_IMDb_JSON {
 				),
 			),
 		) );
-		
+
 		// Do the needful
 		while ( $queery->have_posts() ) {
 			$queery->the_post();
@@ -98,9 +100,9 @@ class LWTV_IMDb_JSON {
 
 		// Base Array:
 		$array = array(
-			'id'     => $post_id,
-			'name'   => get_the_title( $post_id ),
-			'url'    => get_the_permalink( $post_id )
+			'id'   => $post_id,
+			'name' => get_the_title( $post_id ),
+			'url'  => get_the_permalink( $post_id ),
 		);
 
 		// Extra bitsys.
@@ -109,7 +111,7 @@ class LWTV_IMDb_JSON {
 				$array['score'] = get_post_meta( $post_id, 'lezshows_the_score', true );
 				break;
 			case 'nm':
-				$array['queer'] = ( get_post_meta( $post_id, 'lezactors_queer', true ) )? true : false;
+				$array['queer'] = ( get_post_meta( $post_id, 'lezactors_queer', true ) ) ? true : false;
 				break;
 		}
 
@@ -117,4 +119,5 @@ class LWTV_IMDb_JSON {
 	}
 
 }
+
 new LWTV_IMDb_JSON();

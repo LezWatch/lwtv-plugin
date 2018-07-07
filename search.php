@@ -10,12 +10,13 @@
  */
 class LWTV_Search {
 
-	public function __construct(){
+
+	public function __construct() {
 		// Only run if we're NOT in the admin screen!
 		if ( ! is_admin() ) {
-			add_filter( 'posts_join',  array( $this, 'search_join' ) );
-			add_filter( 'posts_where',  array( $this, 'search_where' ) );
-			add_filter( 'posts_distinct',  array( $this, 'search_distinct' ) );
+			add_filter( 'posts_join', array( $this, 'search_join' ) );
+			add_filter( 'posts_where', array( $this, 'search_where' ) );
+			add_filter( 'posts_distinct', array( $this, 'search_distinct' ) );
 		}
 		add_action( 'template_redirect', array( $this, 'search_redirect' ) );
 	}
@@ -106,7 +107,7 @@ class LWTV_Search {
 
 			// Get Post Types
 			$query_post_types = get_query_var( 'post_type' );
-			
+
 			if ( is_null( $query_post_types ) || empty( $query_post_types ) || !array( $query_post_types ) ) {
 				$query_post_types = array( 'post_type_characters', 'post_type_shows', 'post_type_actors' );
 			}

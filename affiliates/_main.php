@@ -9,7 +9,7 @@ class LWTV_Affilliates {
 	/**
 	 * __construct function.
 	 */
-	function __construct() {
+	public function __construct() {
 		add_filter( 'widget_text', 'do_shortcode' );
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'wp_footer', array( $this, 'apple_auto_link_maker' ) );
@@ -38,7 +38,7 @@ class LWTV_Affilliates {
 	 * Usage: [affiliates]
 	 * @since 1.0
 	*/
-	static function shortcode_affiliates( $atts ) {
+	public static function shortcode_affiliates( $atts ) {
 		if ( is_archive() ) {
 			$affiliates = $this->widget_affiliates( 'thin' );
 		} else {
@@ -47,7 +47,7 @@ class LWTV_Affilliates {
 
 		$thisad = array_rand( $affiliates );
 
-		$advert = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads ' . sanitize_html_class( $thisad ) . '"><center>' . $affiliates[$thisad] . '</center></div><!-- END Affiliate Ads -->';
+		$advert = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads ' . sanitize_html_class( $thisad ) . '"><center>' . $affiliates[ $thisad ] . '</center></div><!-- END Affiliate Ads -->';
 
 		return $advert;
 	}
@@ -60,10 +60,10 @@ class LWTV_Affilliates {
 	 * @access public
 	 * @return array
 	 */
-	static function widget_affiliates( $type ) {
-		
+	public static function widget_affiliates( $type ) {
+
 		$affiliates = array(
-			'wide' => array( 
+			'wide' => array(
 				'facetwp'    => '<a href="https://facetwp.com/?ref=91&campaign=LezPress"><img src="' . plugins_url( 'images/facetwp-300x250.png', __FILE__ ) . '"></a>',
 				'dreamhost'  => '<a href="https://dreamhost.com/dreampress/"><img src="' . plugins_url( 'images/dreamhost-300x250.png', __FILE__ ) . '"></a>',
 				'yikes'      => '<a href="https://www.yikesinc.com"><img src="' . plugins_url( 'images/yikes-300x250.png', __FILE__ ) . '"></a>',
@@ -75,20 +75,20 @@ class LWTV_Affilliates {
 				'amazon'     => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=49&l=ur1&category=primeent&banner=1NBTV8WAYWJ1X9PVW582&f=ifr&linkID=e1b38a7992eaf253a93dcf650eac5ca5&t=lezpress-20&tracking_id=lezpress-20" width="300" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
 			),
 			'thin' => array(
-				'amazon1'    => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primeent&banner=0XFKWQVGDFG5VJ2ARBG2&f=ifr&linkID=736cbb4746cfdde557e02035fbef63d5&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
-				'amazon2'    => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=29&l=ur1&category=primeent&banner=1QQ0YMZ637C55CZGYWG2&f=ifr&linkID=9acd7e889a1fad94c7bd669757ba1d65&t=lezpress-20&tracking_id=lezpress-20" width="120" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
-				'amazon3'    => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=29&l=ur1&category=primeent&banner=15P2GYM6FRRM04V3BH82&f=ifr&linkID=26d0f2ae73cd170858d9a5be39dd6c9e&t=lezpress-20&tracking_id=lezpress-20" width="120" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
-				'amazon4'    => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=29&l=ur1&category=primeent&banner=18FYEX4M5XZVHBA6HF82&f=ifr&linkID=0f4f7a8109060b84c928d19e4f649855&t=lezpress-20&tracking_id=lezpress-20" width="120" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
-				'amazon5'    => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=29&l=ur1&category=primeent&banner=09PV71N3XGSGHA4MER02&f=ifr&linkID=d459953344c1e054d052faafedb9289f&t=lezpress-20&tracking_id=lezpress-20" width="120" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
-				'cbs1'       => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/359934/3065/" width="160" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
-				'cbs2'       => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/359964/3065/" width="160" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
-				'cbs3'       => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/359962/3065/" width="160" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
-				'cbs4'       => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/455991/3065/" width="160" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
-				'cbs5'       => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/379709/3065/" width="160" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
+				'amazon1' => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primeent&banner=0XFKWQVGDFG5VJ2ARBG2&f=ifr&linkID=736cbb4746cfdde557e02035fbef63d5&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+				'amazon2' => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=29&l=ur1&category=primeent&banner=1QQ0YMZ637C55CZGYWG2&f=ifr&linkID=9acd7e889a1fad94c7bd669757ba1d65&t=lezpress-20&tracking_id=lezpress-20" width="120" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+				'amazon3' => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=29&l=ur1&category=primeent&banner=15P2GYM6FRRM04V3BH82&f=ifr&linkID=26d0f2ae73cd170858d9a5be39dd6c9e&t=lezpress-20&tracking_id=lezpress-20" width="120" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+				'amazon4' => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=29&l=ur1&category=primeent&banner=18FYEX4M5XZVHBA6HF82&f=ifr&linkID=0f4f7a8109060b84c928d19e4f649855&t=lezpress-20&tracking_id=lezpress-20" width="120" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+				'amazon5' => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=29&l=ur1&category=primeent&banner=09PV71N3XGSGHA4MER02&f=ifr&linkID=d459953344c1e054d052faafedb9289f&t=lezpress-20&tracking_id=lezpress-20" width="120" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+				'cbs1'    => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/359934/3065/" width="160" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
+				'cbs2'    => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/359964/3065/" width="160" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
+				'cbs3'    => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/359962/3065/" width="160" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
+				'cbs4'    => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/455991/3065/" width="160" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
+				'cbs5'    => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/379709/3065/" width="160" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
 			),
 		);
-		
-		return $affiliates[$type];
+
+		return $affiliates[ $type ];
 	}
 
 	/*
@@ -98,8 +98,7 @@ class LWTV_Affilliates {
 	 *
 	 * @since 1.0
 	*/
-
-	static function shortcode_amazon_bounties( $atts ) {
+	public static function shortcode_amazon_bounties( $atts ) {
 		$ads = '<!-- Deprecated -->';
 		return $ads;
 	}
@@ -114,24 +113,26 @@ class LWTV_Affilliates {
 
 	/**
 	 * Edit Amazon URLs to have our tag at the end.
+	 * @param  [string] $text [URL]
+	 * @return [string]       [URL with our tag added]
 	 */
-	static function amazon_publisher_studio( $text ) {
+	public static function amazon_publisher_studio( $text ) {
 		$regex_url = '#<a href="(?:https://(?:www\.){0,1}amazon\.com(?:/.*){0,1}(?:/dp/|/gp/product/))(.*?)(?:/.*|$)"#';
 
-		if( preg_match( $regex_url, $text, $url ) ) {
+		if ( preg_match( $regex_url, $text, $url ) ) {
 			$linkurl = rtrim( $url[0], '"' );
 			$content = preg_replace( $regex_url, $linkurl . '?tag=lezpress-20"', $text );
 		} else {
 			$content = $text;
 		}
-		
+
 		return $content;
 	}
 
 	/**
 	 * Determine what to call for actors
 	 */
-	static function actors( $id, $type ) {
+	public static function actors( $id, $type ) {
 		// Default: Random
 		$return = self::random( $id, $type );
 		return $return;
@@ -139,8 +140,8 @@ class LWTV_Affilliates {
 
 	/**
 	 * Determine what to call for characters
-	 */	
-	static function characters( $id, $type ) {
+	 */
+	public static function characters( $id, $type ) {
 		// Default: Random
 		$return = self::random( $id, $type );
 		return $return;
@@ -150,17 +151,18 @@ class LWTV_Affilliates {
 	 * Determine what to call for shows
 	 * This is much more complex!
 	 */
-	static function shows( $id, $type ) {
+	public static function shows( $id, $type ) {
 
 		// Default: Amazon if the transient expired, else Apple.
-		if ( false === ( $amzTransient = get_transient( 'lezwatchtv_amazon_affiliates' ) ) ) {
+		$amazon_transient = get_transient( 'lezwatchtv_amazon_affiliates' );
+		if ( false === $amazon_transient ) {
 			$return = self::amazon( $id, $type );
-		} else{
+		} else {
 			$return = self::apple( $id, $type );
 		}
 
 		// Show a different show ad depending on things...
-		if ( $type == 'affiliate' ) {
+		if ( 'affiliate' === $type ) {
 			$return = self::affiliate_link( $id );
 		} else {
 			// Figure out if this is a CBS show
@@ -177,7 +179,7 @@ class LWTV_Affilliates {
 	 *
 	 * @return true/false
 	 */
-	static function is_show_cbs( $post_id ) {
+	public static function is_show_cbs( $post_id ) {
 		$on_cbs = false;
 
 		$slug         = get_post_field( 'post_name', $post_id );
@@ -186,13 +188,17 @@ class LWTV_Affilliates {
 
 		// Check if it's a CBS station
 		if ( $stations && ! is_wp_error( $stations ) ) {
-			foreach( $stations as $station ) {
-				if ( in_array( $station->slug, $cbs_stations ) ) $on_cbs = true;
+			foreach ( $stations as $station ) {
+				if ( in_array( $station->slug, $cbs_stations, true ) ) {
+					$on_cbs = true;
+				}
 			}
 		}
 
 		// Check if it's bloody Star Trek
-		if ( strpos( $slug, 'star-trek' ) !== false ) $on_cbs = true;
+		if ( strpos( $slug, 'star-trek' ) !== false ) {
+			$on_cbs = true;
+		}
 
 		return $on_cbs;
 	}
@@ -201,11 +207,11 @@ class LWTV_Affilliates {
 	 * Call something random...
 	 * This is a basic check of a random number
 	 */
-	static function random( $id, $type ) {
-		$number = rand();
-		if ( $number % 3 == 0 ) {
+	public static function random( $id, $type ) {
+		$number = wp_rand();
+		if ( 0 === $number % 3 ) {
 			$return = self::apple( $id, $type );
-		} elseif ( $number % 2 == 0 ) {
+		} elseif ( 0 === $number % 2 ) {
 			$return = self::cbs( $id, $type );
 		} else {
 			$return = self::amazon( $id, $type );
@@ -216,24 +222,24 @@ class LWTV_Affilliates {
 	/**
 	 * Call Amazon Affilate Data
 	 */
-	static function amazon( $id, $type ) {
-		include_once( 'amazon.php' );
+	public static function amazon( $id, $type ) {
+		require_once 'amazon.php';
 		return LWTV_Affiliate_Amazon::show_ads( $id, $type );
 	}
 
 	/**
 	 * Call CBS Affilate Data
 	 */
-	static function cbs( $id, $type ) {
-		include_once( 'cbs.php' );
+	public static function cbs( $id, $type ) {
+		require_once 'cbs.php';
 		return LWTV_Affiliate_CBS::show_ads( $id, $type );
 	}
 
 	/**
 	 * Call Apple Affiliate Data
 	 */
-	static function apple( $id, $type ) {
-		include_once( 'apple.php' );
+	public static function apple( $id, $type ) {
+		require_once 'apple.php';
 		return LWTV_Affiliate_Apple::show_ads( $id, $type );
 	}
 
@@ -242,7 +248,7 @@ class LWTV_Affilliates {
 	 * This is used by shows to figure out where people can watch things
 	 * There's some juggling for certain sites
 	 */
-	function affiliate_link( $id ) {
+	public static function affiliate_link( $id ) {
 
 		$affiliate_url = get_post_meta( $id, 'lezshows_affiliate', true );
 
@@ -250,7 +256,7 @@ class LWTV_Affilliates {
 
 		// Parse each URL to figure out who it is...
 		foreach ( $affiliate_url as $url ) {
-			$parsed_url = parse_url( $url );
+			$parsed_url = wp_parse_url( $url );
 			$hostname   = $parsed_url['host'];
 			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'];
 
@@ -308,4 +314,6 @@ class LWTV_Affilliates {
 }
 
 // If we aren't on an admin page, let's do this
-if ( !is_admin() ) new LWTV_Affilliates();
+if ( ! is_admin() ) {
+	new LWTV_Affilliates();
+}
