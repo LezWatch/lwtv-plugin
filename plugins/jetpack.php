@@ -29,11 +29,14 @@ class LWTV_Jetpack {
 						$hash_tags .= ' #' . $tag_name;
 					}
 				}
-
-				// Create our custom message
-				$custom_message = 'New post! ' . get_the_title() . $hash_tags;
-				update_post_meta( $post->ID, '_wpas_mess', $custom_message );
 			}
+		}
+
+		// Loop back. If there are hashtags, we add them.
+		if ( '' !== $hash_tags ) {
+			// Create our custom message
+			$custom_message = 'New post! ' . get_the_title() . $hash_tags;
+			update_post_meta( $post->ID, '_wpas_mess', $custom_message );
 		}
 	}
 
