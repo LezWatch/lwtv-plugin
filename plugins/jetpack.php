@@ -12,7 +12,8 @@ class LWTV_Jetpack {
 	}
 
 	public function publicize_hashtags() {
-		$post = get_post();
+		$post             = get_post();
+		$previous_message = get_post_meta( $post->ID, '_wpas_mess', true );
 
 		// If the post isn't empty AND it's a post (not a page etc), let's go!
 		if ( ! empty( $post ) && 'post' === get_post_type( $post->ID ) ) {
@@ -34,8 +35,10 @@ class LWTV_Jetpack {
 
 		// Loop back. If there are hashtags, we add them.
 		if ( '' !== $hash_tags ) {
-			// Create our custom message
-			$custom_message = 'New post! ' . get_the_title() . $hash_tags;
+			// Create our custom message. If there's one already set, we will
+			// use that. Else, we use the title.
+			$custom_message  = ( ! empty( $previous_message ) ) ? $previous_message : get_the_title();
+			$custom_message .= $hash_tags;
 			update_post_meta( $post->ID, '_wpas_mess', $custom_message );
 		}
 	}
