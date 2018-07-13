@@ -42,7 +42,7 @@ class LWTV_Affiliate_Apple {
 			$body = json_decode( wp_remote_retrieve_body( $request ), true );
 
 			// If the result isn't 1, we have an issue....
-			if ( 1 !== isset( $body ) && $body['resultCount'] ) {
+			if ( isset( $body ) && 1 !== $body['resultCount'] ) {
 				$use_fallback = true;
 			} else {
 				// We found a show! Let's show it, eh?
@@ -71,7 +71,7 @@ class LWTV_Affiliate_Apple {
 		if ( 'fallback' !== $link || is_null( $link ) ) {
 			$the_ad = '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=ffffff&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=' . $link . '&wt=discovery&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>';
 		} else {
-			$the_ad = self::random();
+			$the_ad = self::random( $post_id );
 		}
 
 		$return = '<center>' . $the_ad . '</center>';
@@ -82,11 +82,14 @@ class LWTV_Affiliate_Apple {
 	/**
 	 * Something random...
 	 */
-	public static function random() {
+	public static function random( $post_id ) {
 
 		$number = wp_rand();
-		if ( 0 === $number % 2 ) {
+		if ( 0 === $number % 3 ) {
 			$the_ad = self::podcasts();
+		} elseif ( 0 === $number % 2 ) {
+			require_once 'amazon.php';
+			$return = LWTV_Affiliate_Amazon::bounty( $post_id );
 		} else {
 			$the_ad = '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=FFFFFF&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=&wt=search&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>';
 		}
