@@ -112,7 +112,7 @@ class LWTV_Related_Posts {
 			if ( $posttags ) {
 				foreach ( $posttags as $tag ) {
 					$maybeshow = get_page_by_path( $tag->name, OBJECT, 'post_type_shows' );
-					if ( $maybeshow->post_name === $tag->slug ) {
+					if ( $maybeshow && $maybeshow->post_name === $tag->slug ) {
 						$shows .= '<li>' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '<a href="/show/' . $tag->slug . '">' . ucwords( $tag->name ) . '</a></li>';
 					}
 				}
