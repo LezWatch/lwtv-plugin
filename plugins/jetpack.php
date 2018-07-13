@@ -26,7 +26,7 @@ class LWTV_Jetpack {
 					$maybeshow = get_page_by_path( $tag->name, OBJECT, 'post_type_shows' );
 					if ( $maybeshow->post_name === $tag->slug ) {
 						// Change tag from this-name to thisname and slap a hashtag on it.
-						$tag_name   = str_replace( '-', '', $tag->slug );
+						$tag_name   = str_replace( ' ', '', $tag->name );
 						$hash_tags .= ' #' . $tag_name;
 					}
 				}
