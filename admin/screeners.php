@@ -148,68 +148,64 @@ class LWTV_Screeners {
 	 */
 	public function tab_videos() {
 
-		// If the file can't be found, bail.
-		if ( ! file_exists( WP_CONTENT_DIR . '/library/assets/aws/aws-autoloader.php' ) ) {
-			return;
-		}
+		// Check for the AWS functions
+		if ( ! function_exists( 'Aws\constantly' ) ) {
+			echo '<p>Cannot reach DreamObjects at this time. Yell at Mika.</p>';
+		} else {
+			// Establish connection with DreamObjects with an S3 client.
+			$client = new Aws\S3\S3Client([
+				'version'     => '2006-03-01',
+				'region'      => 'us-east-1',
+				'endpoint'    => 'https://objects-us-east-1.dream.io',
+				'credentials' => [
+					'key'    => DHO_ACCESS_KEY_ID,
+					'secret' => DHO_SECRET_ACCESS_KEY,
+				],
+			]);
 
-		// Call the AWS SDK
-		require_once WP_CONTENT_DIR . '/library/assets/aws/aws-autoloader.php';
+			$bucket  = 'lezpress-screeners';
+			$objects = $client->listObjectsV2( [ 'Bucket' => $bucket ] );
 
-		// Establish connection with DreamObjects with an S3 client.
-		$client = new Aws\S3\S3Client([
-			'version'     => '2006-03-01',
-			'region'      => 'us-east-1',
-			'endpoint'    => 'https://objects-us-east-1.dream.io',
-			'credentials' => [
-				'key'    => DHO_ACCESS_KEY_ID,
-				'secret' => DHO_SECRET_ACCESS_KEY,
-			],
-		]);
+			?>
+			<p>Videos you can download and watch and damn the man!</p>
+				<ul>
+					<?php
+					foreach ( $objects['Contents'] as $object ) {
 
-		$bucket  = 'lezpress-screeners';
-		$objects = $client->listObjectsV2( [ 'Bucket' => $bucket ] );
+						echo '<li>';
 
-		?>
-		<p>Videos you can download and watch and damn the man!</p>
-			<ul>
-				<?php
-				foreach ( $objects['Contents'] as $object ) {
+						if ( '/' === substr( $object['Key'], -1 ) ) {
+							$name = rtrim( $object['Key'], '/' );
+							echo '<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#' . esc_attr( strtolower( $name ) ) . '">' . esc_attr( $name ) . '</button>';
+							echo '<div id="' . esc_attr( strtolower( $name ) ) . '" class="collapse"><ul>';
 
-					echo '<li>';
+							$subobjects = $client->listObjectsV2([
+								'Bucket'     => $bucket,
+								'Prefix'     => $object['Key'],
+								'StartAfter' => $object['Key'],
+							]);
 
-					if ( '/' === substr( $object['Key'], -1 ) ) {
-						$name = rtrim( $object['Key'], '/' );
-						echo '<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#' . esc_attr( strtolower( $name ) ) . '">' . esc_attr( $name ) . '</button>';
-						echo '<div id="' . esc_attr( strtolower( $name ) ) . '" class="collapse"><ul>';
-
-						$subobjects = $client->listObjectsV2([
-							'Bucket'     => $bucket,
-							'Prefix'     => $object['Key'],
-							'StartAfter' => $object['Key'],
-						]);
-
-						foreach ( $subobjects['Contents'] as $subobject ) {
-							if ( substr( $subobject['Key'], -1 ) !== '/' ) {
-								$plain_url  = $client->getObjectUrl( $bucket, $subobject['Key'] );
-								$cmd        = $client->getCommand('GetObject', [
-									'Bucket' => $bucket,
-									'Key'    => $subobject['Key'],
-								]);
-								$signed_url = $client->createPresignedRequest( $cmd, '+1 hour' );
-								$size       = self::make_readable( $subobject['Size'] );
-								echo '<li>&bull; <a href="' . esc_url( $signed_url->getUri() ) . '" download>' . esc_html( $subobject['Key'] ) . '</a> - ' . esc_html( $size ) . '</li>';
+							foreach ( $subobjects['Contents'] as $subobject ) {
+								if ( substr( $subobject['Key'], -1 ) !== '/' ) {
+									$plain_url  = $client->getObjectUrl( $bucket, $subobject['Key'] );
+									$cmd        = $client->getCommand('GetObject', [
+										'Bucket' => $bucket,
+										'Key'    => $subobject['Key'],
+									]);
+									$signed_url = $client->createPresignedRequest( $cmd, '+1 hour' );
+									$size       = self::make_readable( $subobject['Size'] );
+									echo '<li>&bull; <a href="' . esc_url( $signed_url->getUri() ) . '" download>' . esc_html( $subobject['Key'] ) . '</a> - ' . esc_html( $size ) . '</li>';
+								}
 							}
+							echo '</ul></div>';
 						}
-						echo '</ul></div>';
+
+						echo '</li>';
 					}
-
-					echo '</li>';
-				}
-				?>
-			</ul>
-		<?php
-
+					?>
+				</ul>
+			<?php
+		}
 	}
 
 }

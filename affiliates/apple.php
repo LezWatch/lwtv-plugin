@@ -89,7 +89,7 @@ class LWTV_Affiliate_Apple {
 			$the_ad = self::podcasts();
 		} elseif ( 0 === $number % 2 ) {
 			require_once 'amazon.php';
-			$return = LWTV_Affiliate_Amazon::bounty( $post_id );
+			$the_ad = LWTV_Affiliate_Amazon::bounty( $post_id );
 		} else {
 			$the_ad = '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=FFFFFF&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=&wt=search&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>';
 		}

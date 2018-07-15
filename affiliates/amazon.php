@@ -8,13 +8,15 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-// If the file can't be found, bail.
-if ( ! file_exists( WP_CONTENT_DIR . '/library/assets/ApaiIO/vendor/autoload.php' ) ) {
-	return;
+// If the file can't be found, fall back to an affiliate.
+if ( ! class_exists( 'ApaiIO\ApaiIO' ) ) {
+	if ( is_archive() ) {
+		$the_ad = LWTV_Affilliates::widget_affiliates( 'thin' );
+	} else {
+		$the_ad = LWTV_Affilliates::widget_affiliates( 'wide' );
+	}
+	return $the_ad;
 }
-
-// Call the API
-require_once WP_CONTENT_DIR . '/library/assets/ApaiIO/vendor/autoload.php';
 
 use ApaiIO\Configuration\GenericConfiguration;
 use ApaiIO\Operations\Search;

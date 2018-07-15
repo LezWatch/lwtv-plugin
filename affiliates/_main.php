@@ -297,6 +297,9 @@ class LWTV_Affilliates {
 				case 'tellofilms':
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Tello</a>';
 					break;
+				case 'showtimeanytime':
+					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Showtime</a>';
+					break;
 				default:
 					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">' . ucfirst( $hostname ) . '</a>';
 					break;
