@@ -278,6 +278,15 @@ class LWTV_OTD_JSON {
 					),
 				);
 				break;
+			case '07-14': // Non-Binary Day
+				$return = array(
+					array(
+						'taxonomy' => 'lez_gender',
+						'field'    => 'slug',
+						'terms'    => array( 'non-binary' ),
+					),
+				);
+				break;
 			case '09-23': // Celebrate Bisexuality Day
 				$return = array(
 					array(
