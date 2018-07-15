@@ -46,7 +46,7 @@ class LWTV_Actors_Calculate {
 
 				if ( '' !== $actors_array && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $actors_array as $char_actor ) {
-						if ( $char_actor === $post_id ) {
+						if ( $char_actor == $post_id ) {
 							$queercount++;
 							if ( $is_dead ) {
 								$deadcount++;
