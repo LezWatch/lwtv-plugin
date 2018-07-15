@@ -65,10 +65,9 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 			case 'show':
 				// Rerun show calculations
 				LWTV_Shows_Calculate::do_the_math( $post_id );
-				$chars  = get_post_meta( $post_id, 'lezshows_char_count', true );
-				$dead   = get_post_meta( $post_id, 'lezshows_dead_count', true );
-				$score  = 'Score: ' . get_post_meta( $post_id, 'lezshows_the_score', true );
-				$score .= ' - Chars (' . $chars . ') Dead (' . $dead . ')';
+				$chars = get_post_meta( $post_id, 'lezshows_char_count', true );
+				$dead  = get_post_meta( $post_id, 'lezshows_dead_count', true );
+				$score = 'Score (' . get_post_meta( $post_id, 'lezshows_the_score', true ) . ') Chars (' . $chars . ') Dead (' . $dead . ')';
 				break;
 			case 'actor':
 				// Recount characters and flag queerness
@@ -76,11 +75,11 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 				$queer = ( get_post_meta( $post_id, 'lezactors_queer', true ) ) ? 'Yes' : 'No';
 				$chars = get_post_meta( $post_id, 'lezactors_char_count', true );
 				$deads = get_post_meta( $post_id, 'lezactors_dead_count', true );
-				$score = ': Is Queer (' . $queer . ') Chars (' . $chars . ') Dead (' . $deads . ')';
+				$score = 'Is Queer (' . $queer . ') Chars (' . $chars . ') Dead (' . $deads . ')';
 				break;
 		}
 
-		WP_CLI::success( 'Calculations run for ' . get_the_title( $post_id ) . ' - ' . $score );
+		WP_CLI::success( 'Calculations run for ' . get_the_title( $post_id ) . ': ' . $score );
 	}
 
 	/**
