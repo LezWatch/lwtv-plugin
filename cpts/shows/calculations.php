@@ -123,7 +123,7 @@ class LWTV_Shows_Calculate {
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 				if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $shows_array as $char_show ) {
-						if ( $char_show['show'] === $post_id ) {
+						if ( $char_show['show'] == $post_id ) { // Loose compare needed
 							$queercount++;
 							if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
 								$deadcount++;

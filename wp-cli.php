@@ -65,7 +65,10 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 			case 'show':
 				// Rerun show calculations
 				LWTV_Shows_Calculate::do_the_math( $post_id );
-				$score = 'Score: ' . get_post_meta( $post_id, 'lezshows_the_score', true );
+				$chars  = get_post_meta( $post_id, 'lezshows_char_count', true );
+				$dead   = get_post_meta( $post_id, 'lezshows_dead_count', true );
+				$score  = 'Score: ' . get_post_meta( $post_id, 'lezshows_the_score', true );
+				$score .= ' - Chars (' . $chars . ') Dead (' . $dead . ')';
 				break;
 			case 'actor':
 				// Recount characters and flag queerness
