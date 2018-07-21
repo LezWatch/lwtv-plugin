@@ -58,7 +58,7 @@ class LWTV_Affiliate_Amazon {
 		$amazon_transient = get_transient( 'lezwatchtv_amazon_affiliates' );
 		if ( false === ( $amazon_transient ) ) {
 			$checktime = ( HOUR_IN_SECONDS / 6 );
-			if ( WP_DEBUG ) {
+			if ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) {
 				$checktime = 5;
 			}
 			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', $checktime );

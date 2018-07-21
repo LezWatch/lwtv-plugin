@@ -269,41 +269,50 @@ class LWTV_Affilliates {
 			// Lets get the URLs!
 			switch ( $hostname ) {
 				case 'amazon':
-					$url     = $clean_url . '/ref=as_li_tl?ie=UTF8&tag=lezpress-20';
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Amazon Prime</a><img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
+					$url   = $clean_url . '/ref=as_li_tl?ie=UTF8&tag=lezpress-20';
+					$name  = 'Amazon';
+					$extra = '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
 					break;
 				case 'apple':
 				case 'itunes':
-					$url     = $clean_url . '?mt=4&at=1010lMaT';
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">iTunes</a>';
+					$url  = $clean_url . '?mt=4&at=1010lMaT';
+					$name = 'iTunes';
 					break;
 				case '7eer':
 				case 'cbs':
-					$links[] = self::cbs( $id, 'text' );
+					$cbs_id = self::cbs( $id, 'text' );
+					$url    = 'https://cbs-allaccess.7eer.net/c/1242493/' . $cbs_id . '/3065';
+					$extra  = '<img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $cbs_id . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
+					$name   = 'CBS All Access';
 					break;
 				case 'abc':
 				case 'nbc':
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">' . strtoupper( $hostname ) . '</a>';
+					$name = strtoupper( $hostname );
 					break;
 				case 'bbcamerica':
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">BBC America</a>';
+					$name = 'BBC America';
 					break;
 				case 'cwtv':
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">The CW</a>';
+					$name = 'The CW';
 					break;
 				case 'youtube':
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">YouTube</a>';
+					$name = 'YouTube';
 					break;
 				case 'tellofilms':
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Tello</a>';
+					$name = 'Tello Films';
+					break;
+				case 'cartoonnetwork':
+					$name = 'Cartoon Network';
 					break;
 				case 'showtimeanytime':
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">Showtime</a>';
+					$name = 'Showtime';
 					break;
 				default:
-					$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary">' . ucfirst( $hostname ) . '</a>';
-					break;
+					$name = ucfirst( $hostname );
 			}
+
+			$extra   = ( isset( $extra ) ) ? $extra : '';
+			$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $name . '</a>' . $extra;
 		}
 
 		$link_output = implode( $links, '' );

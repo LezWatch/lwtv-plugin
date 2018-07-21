@@ -110,10 +110,12 @@ class LWTV_Shows_Calculate {
 
 		// Loop to get the list of characters
 		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
-		$queercount     = 0;
-		$deadcount      = 0;
-		$nonecount      = 0;
-		$queerirlcount  = 0;
+		$char_counts    = array(
+			'total' => 0,
+			'dead'  => 0,
+			'none'  => 0,
+			'quirl' => 0,
+		);
 
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
 		if ( $charactersloop->have_posts() ) {
@@ -123,16 +125,16 @@ class LWTV_Shows_Calculate {
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 				if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $shows_array as $char_show ) {
-						if ( $char_show['show'] == $post_id ) { // Loose compare needed
-							$queercount++;
+						if ( $char_show['show'] == $post_id ) { // WPCS: loose comparison ok
+							$char_counts['total']++;
 							if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-								$deadcount++;
+								$char_counts['dead']++;
 							}
 							if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
-								$nonecount++;
+								$char_counts['none']++;
 							}
 							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
-								$queerirlcount++;
+								$char_counts['quirl']++;
 							}
 						}
 					}
@@ -144,16 +146,16 @@ class LWTV_Shows_Calculate {
 		// Return Queers!
 		switch ( $type ) {
 			case 'count':
-				$return = $queercount;
+				$return = $char_counts['total'];
 				break;
 			case 'dead':
-				$return = $deadcount;
+				$return = $char_counts['dead'];
 				break;
 			case 'none':
-				$return = $nonecount;
+				$return = $char_counts['none'];
 				break;
 			case 'queer-irl':
-				$return = $queerirlcount;
+				$return = $char_counts['quirl'];
 				break;
 		}
 
@@ -296,6 +298,13 @@ class LWTV_Shows_Calculate {
 			return;
 		}
 
+		// What role each character has
+		$role_data = array(
+			'regular'   => 0,
+			'recurring' => 0,
+			'guest'     => 0,
+		);
+
 		// Create a massive array of all the terms we care about...
 		$valid_taxes = array(
 			'gender'    => 'lez_gender',
@@ -327,7 +336,11 @@ class LWTV_Shows_Calculate {
 
 				if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $shows_array as $char_show ) {
-						if ( $char_show['show'] === $post_id ) {
+						if ( $char_show['show'] == $post_id ) { // WPCS: loose comparison ok
+							// Bump the array for this role
+							$role_data[ $char_show['type'] ]++;
+
+							// Now we'll sort gender and stuff...
 							foreach ( $valid_taxes as $title => $taxonomy ) {
 								$this_term = get_the_terms( $char_id, $taxonomy, true );
 								if ( $this_term && ! is_wp_error( $this_term ) ) {
@@ -343,6 +356,10 @@ class LWTV_Shows_Calculate {
 			wp_reset_query();
 		}
 
+		// Update the roles
+		update_post_meta( $post_id, 'lezshows_char_roles', $role_data );
+
+		// Update the taxonomies
 		foreach ( $valid_taxes as $title => $taxonomy ) {
 			update_post_meta( $post_id, 'lezshows_char_' . $title, $tax_data[ $title ] );
 		}

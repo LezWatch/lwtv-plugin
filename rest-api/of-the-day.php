@@ -135,50 +135,10 @@ class LWTV_OTD_JSON {
 		$options = get_option( 'lwtv_otd', $default );
 
 		// If there's no ID or the timestamp has past, we need a new ID
-		if ( 'none' === $options[ $type ]['post'] || time() >= $options[ $type ]['time'] ) {
-			add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
-				return false;
-			}, 10, 2 );
-
-			$meta_query_array = '';
-			$tax_query_array  = '';
-			$char_tax_array   = self::character_awareness( $date );
-
-			switch ( $type ) {
-				case 'character':
-					$meta_query_array = array(
-						array(
-							'key'     => '_thumbnail_id',
-							'value'   => '949', // Mystery woman
-							'compare' => '!=',
-						),
-						array(
-							'key'     => 'lezchars_show_group',
-							'value'   => 're',
-							'compare' => 'LIKE',
-						),
-					);
-					$tax_query_array  = $char_tax_array;
-					break;
-			}
-
-			// Grab a random post
-			$args = array(
-				'post_type'      => 'post_type_' . $type . 's',
-				'orderby'        => 'rand',
-				'posts_per_page' => '1',
-				's'              => '-TBD',
-				'tax_query'      => $tax_query_array,
-				'meta_query'     => $meta_query_array,
-			);
-			$post = new WP_Query( $args );
-
-			// Do the needful
-			while ( $post->have_posts() ) {
-				$post->the_post();
-				$id = get_the_ID();
-			}
-			wp_reset_postdata();
+		// Or if we're in dev mode.
+		if ( 'none' === $options[ $type ]['post'] || time() >= $options[ $type ]['time'] || ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) ) {
+			// Get the show ID
+			$id = self::find_char_show( $type );
 
 			// Update the options
 			$options[ $type ]['post'] = $id;
@@ -202,6 +162,7 @@ class LWTV_OTD_JSON {
 			case 'character':
 				$all_shows   = get_post_meta( $post_id, 'lezchars_show_group', true );
 				$shows_value = isset( $all_shows[0] ) ? $all_shows[0] : '';
+
 				// Set Hashtag
 				if ( ! empty( $shows_value ) ) {
 					$num_shows = count( $all_shows );
@@ -222,11 +183,81 @@ class LWTV_OTD_JSON {
 				$return['hashtag'] = $hashtag;
 				break;
 			case 'show':
-				$return['loved'] = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
+				$return['loved']   = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
+				$return['hashtag'] = '#' . preg_replace( '/[^A-Za-z0-9]/', '', get_the_title( $post_id ) );
 				break;
 		}
 
 		return $return;
+
+	}
+
+	/**
+	 * Let's find something valid...
+	 * @param  string $type [character|show]
+	 * @return number $id   [ID of the show or character]
+	 */
+	public static function find_char_show( $type = 'character' ) {
+
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
+			return false;
+		}, 10, 2 );
+
+		$meta_query_array = '';
+		$tax_query_array  = '';
+
+		switch ( $type ) {
+			case 'character':
+				$meta_query_array = array(
+					array(
+						'key'     => '_thumbnail_id',
+						'value'   => '949', // Mystery woman
+						'compare' => '!=',
+					),
+					array(
+						'key'     => 'lezchars_show_group',
+						'value'   => 're',
+						'compare' => 'LIKE',
+					),
+				);
+				$tax_query_array  = self::character_awareness( $date );
+				break;
+		}
+
+		// Grab a random post
+		$valid_post = false;
+
+		while ( ! $valid_post ) {
+			$args = array(
+				'post_type'      => 'post_type_' . $type . 's',
+				'orderby'        => 'rand',
+				'posts_per_page' => '1',
+				's'              => '-TBD',
+				'tax_query'      => $tax_query_array,
+				'meta_query'     => $meta_query_array,
+			);
+			$post = new WP_Query( $args );
+
+			// Do the needful
+			while ( $post->have_posts() ) {
+				$post->the_post();
+				$id = get_the_ID();
+			}
+			wp_reset_postdata();
+
+			if ( 'show' === $type ) {
+				// For shows, we have to make sure they have a regular character
+				$role_data = get_post_meta( $id, 'lezshows_char_roles', true );
+				if ( 0 !== $role_data['regular'] ) {
+					$valid_post = true;
+				}
+			} else {
+				// Otherwise it's a show and we're good
+				$valid_post = true;
+			}
+		}
+
+		return $id;
 
 	}
 
@@ -240,8 +271,16 @@ class LWTV_OTD_JSON {
 	 */
 	public static function character_awareness( $date = '' ) {
 
+		// Defaults
 		$return = '';
-		$date   = ( '' === $date ) ? $date : $date;
+
+		// Create the date with regards to timezones
+		$tz        = 'America/New_York';
+		$timestamp = time();
+		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
+		$today = $dt->format( 'm-d' );
+		$date  = ( '' === $date ) ? $date : $today;
 
 		switch ( $date ) {
 			case '03-31': // Transgender Day of Visibility

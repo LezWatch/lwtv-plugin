@@ -47,9 +47,9 @@ class LWTV_Affiliate_CBS {
 			$link = '176086';
 		}
 
-		$output = '<a href="https://cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" target="_blank" class="btn btn-primary">CBS All Access</a><img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
+		//$output = '<a href="https://cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" target="_blank" class="btn btn-primary">CBS All Access</a><img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
 
-		return $output;
+		return $link;
 	}
 
 	/**
