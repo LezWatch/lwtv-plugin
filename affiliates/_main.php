@@ -283,7 +283,7 @@ class LWTV_Affilliates {
 					$cbs_id = self::cbs( $id, 'text' );
 					$url    = 'https://cbs-allaccess.7eer.net/c/1242493/' . $cbs_id . '/3065';
 					$extra  = '<img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $cbs_id . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
-					$name   = 'CBS';
+					$name   = 'CBS All Access';
 					break;
 				case 'abc':
 				case 'nbc':
@@ -300,6 +300,9 @@ class LWTV_Affilliates {
 					break;
 				case 'tellofilms':
 					$name = 'Tello Films';
+					break;
+				case 'cartoonnetwork':
+					$name = 'Cartoon Network';
 					break;
 				case 'showtimeanytime':
 					$name = 'Showtime';
