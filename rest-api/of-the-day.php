@@ -72,7 +72,7 @@ class LWTV_OTD_JSON {
 
 		// Valid types of 'format'
 		// If there's no known format, we'll assume character
-		$valid_format = array( 'default', 'twitter', 'wordpress' );
+		$valid_format = array( 'default', 'tweet', 'json' );
 		$format       = ( ! in_array( $format, $valid_format, true ) ) ? 'default' : $format;
 
 		// Create the date with regards to timezones
@@ -85,7 +85,7 @@ class LWTV_OTD_JSON {
 		// Create the array
 		switch ( $type ) {
 			case 'death':
-				$of_the_day_array = LWTV_BYQ_JSON::on_this_day( $date, 'tweet' );
+				$of_the_day_array = LWTV_BYQ_JSON::on_this_day( $date, $format );
 				break;
 			case 'birthday':
 				$of_the_day_array = self::birthday( $date, $format );
@@ -271,7 +271,6 @@ class LWTV_OTD_JSON {
 	 */
 	public static function character_awareness( $date = '' ) {
 
-		// Defaults
 		$return = '';
 
 		// Create the date with regards to timezones
@@ -396,7 +395,7 @@ class LWTV_OTD_JSON {
 			}
 
 			switch ( $format ) {
-				case 'twitter':
+				case 'tweet':
 					$birthdays = implode( ', ', $twitter_array );
 					break;
 				default:
@@ -405,7 +404,7 @@ class LWTV_OTD_JSON {
 		} else {
 			// If no one has a birthday, whomp whomp
 			switch ( $format ) {
-				case 'twitter':
+				case 'tweet':
 					$birthdays = false;
 					break;
 				default:
