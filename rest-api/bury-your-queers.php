@@ -199,9 +199,7 @@ class LWTV_BYQ_JSON {
 
 		// Default to JSON (i.e. what the plugin uses)
 		$valid_types = array( 'json', 'tweet' );
-		if ( ! in_array( $type, $valid_types, true ) ) {
-			$type = 'json';
-		}
+		$type        = ( ! in_array( $type, $valid_types, true ) ) ? 'json' : $type;
 
 		// Get all our dead queers
 		$dead_chars_loop  = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
