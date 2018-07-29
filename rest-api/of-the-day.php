@@ -184,6 +184,7 @@ class LWTV_OTD_JSON {
 				break;
 			case 'show':
 				$return['loved']   = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
+				$return['score']   = get_post_meta( $post_id, 'lezshows_the_score', true );
 				$return['hashtag'] = '#' . preg_replace( '/[^A-Za-z0-9]/', '', get_the_title( $post_id ) );
 				break;
 		}
@@ -216,11 +217,25 @@ class LWTV_OTD_JSON {
 					),
 					array(
 						'key'     => 'lezchars_show_group',
-						'value'   => 're',
+						'value'   => 're', // REgulars or REcurring, but not guest.
 						'compare' => 'LIKE',
 					),
 				);
 				$tax_query_array  = self::character_awareness( $date );
+				break;
+			case 'show':
+				$meta_query_array = array(
+					array(
+						'key'     => 'lezshows_the_score',
+						'value'   => '50', // Shows with a score over 50.
+						'compare' => '>=',
+					),
+					array(
+						'key'     => 'lezshows_worthit_rating',
+						'value'   => 'e', // yEs or mEh, but not NO.
+						'compare' => 'LIKE',
+					),
+				);
 				break;
 		}
 
@@ -232,7 +247,7 @@ class LWTV_OTD_JSON {
 				'post_type'      => 'post_type_' . $type . 's',
 				'orderby'        => 'rand',
 				'posts_per_page' => '1',
-				's'              => '-TBD',
+				's'              => '-TBD', // Excluding posts with "TBD" as the content
 				'tax_query'      => $tax_query_array,
 				'meta_query'     => $meta_query_array,
 			);
@@ -245,15 +260,25 @@ class LWTV_OTD_JSON {
 			}
 			wp_reset_postdata();
 
-			if ( 'show' === $type ) {
-				// For shows, we have to make sure they have a regular character
-				$role_data = get_post_meta( $id, 'lezshows_char_roles', true );
-				if ( 0 !== $role_data['regular'] ) {
+			switch ( $type ) {
+				case 'character':
+					// if the character is a cartoon, they MUST be a regular.
+					$is_toon = ( has_term( 'cartoon', 'lez_cliches', $id ) ) ? true : false;
+					$is_regu = ( in_array( 'regular', get_post_meta( $id, 'lezchars_show_group', true ) ) ) ? true : false;
+					if ( ! $is_toon || ( $is_toon && $is_regu ) ) {
+						$valid_post = true;
+					}
+					break;
+				case 'show':
+					// All shows have to have at least one regular character
+					$role_data = get_post_meta( $id, 'lezshows_char_roles', true );
+					if ( 0 !== $role_data['regular'] ) {
+						$valid_post = true;
+					}
+					break;
+				default:
 					$valid_post = true;
-				}
-			} else {
-				// Otherwise it's a show and we're good
-				$valid_post = true;
+					break;
 			}
 		}
 

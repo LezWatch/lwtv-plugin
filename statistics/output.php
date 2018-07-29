@@ -158,7 +158,7 @@ class LWTV_Stats_Output {
 				$n   = ( 'dead-years' === $data ) ? ( date( 'Y' ) - FIRST_LWTV_YEAR ) : $count;
 				$sum = 0;
 				foreach ( $array as $item ) {
-					$sum = $sum + $item['count'];
+					$sum = $sum + (real) $item['count'];
 				}
 				$average = round( $sum / $n );
 				$return  = $average;
@@ -166,8 +166,8 @@ class LWTV_Stats_Output {
 			case 'high':
 				$high = 0;
 				foreach ( $array as $key => $value ) {
-					if ( $value['count'] > $high ) {
-						$high = $value['count'];
+					if ( (real) $value['count'] > (real) $high ) {
+						$high = (real) $value['count'];
 						if ( 'shows' === $subject ) {
 							$high .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}
@@ -178,8 +178,8 @@ class LWTV_Stats_Output {
 			case 'low':
 				$low = 20;
 				foreach ( $array as $key => $value ) {
-					if ( $low > $value['count'] ) {
-						$low = $value['count'];
+					if ( (real) $low > (real) $value['count'] ) {
+						$low = (real) $value['count'];
 						if ( 'shows' === $subject ) {
 							$low .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}
