@@ -11,6 +11,10 @@ class LWTV_Jetpack {
 		add_action( 'publish_post', array( $this, 'custom_message_save' ) );
 	}
 
+	/**
+	 * Add tags to tweets etc as hashtags, if they're also shows
+	 * @return void
+	 */
 	public function publicize_hashtags() {
 		$post             = get_post();
 		$previous_message = get_post_meta( $post->ID, '_wpas_mess', true );
@@ -45,11 +49,13 @@ class LWTV_Jetpack {
 		}
 	}
 
-	// Save that message
+	/**
+	 * Save the custom message
+	 * @return void
+	 */
 	public function custom_message_save() {
-		add_action( 'save_post', array( $this, 'publicize_hashtags' ) );
+		add_action( 'save_post', array( $this, 'publicize_hashtags' ), 21 );
 	}
-
 }
 
 new LWTV_Jetpack();

@@ -35,7 +35,6 @@ class LWTV_Cron {
 	 */
 	public $daily_urls;
 
-
 	/**
 	 * Constructor.
 	 *
@@ -67,6 +66,7 @@ class LWTV_Cron {
 			'wp-json/lwtv/v1/of-the-day/',
 			'wp-json/lwtv/v1/of-the-day/character/',
 			'wp-json/lwtv/v1/of-the-day/show/',
+			'wp-json/lwtv/v1/of-the-day/death/',
 		);
 
 		add_action( 'lwtv_cache_event_hourly', array( $this, 'varnish_cache_hourly' ) );
