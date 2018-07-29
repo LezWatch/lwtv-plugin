@@ -54,7 +54,7 @@ class LWTV_Query_Vars {
 	 */
 	public function init() {
 		// Plugin requires permalink usage - Only setup handling if permalinks enabled
-		if ( '' !==  get_option( 'permalink_structure' ) ) {
+		if ( '' !== get_option( 'permalink_structure' ) ) {
 
 			// tell WP not to override query vars
 			add_action( 'query_vars', array( $this, 'query_vars' ) );

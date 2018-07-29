@@ -258,7 +258,6 @@ class LWTV_OTD_JSON {
 		}
 
 		return $id;
-
 	}
 
 	/**
@@ -418,9 +417,6 @@ class LWTV_OTD_JSON {
 		);
 
 		return $return;
-
 	}
-
-
 }
 new LWTV_OTD_JSON();

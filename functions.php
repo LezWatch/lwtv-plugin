@@ -167,20 +167,20 @@ require_once 'rest-api/_main.php';
 require_once 'statistics/_main.php';
 
 /*
- * Include Misc.
+ * Include Features.
  */
-require_once 'cron.php';
-require_once 'custom-loops.php';
-require_once 'debug.php';
-require_once 'search.php';
-require_once 'shortcodes.php';
-require_once 'sort-stopwords.php';
-require_once 'query_vars.php';
+require_once 'features/cron.php';
+require_once 'features/custom-loops.php';
+require_once 'features/debug.php';
+require_once 'features/search.php';
+require_once 'features/shortcodes.php';
+require_once 'features/sort-stopwords.php';
+require_once 'features/query_vars.php';
 
 /**
  * WP CLI.
  * Only include this if WP-CLI is being used.
  */
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once 'wp-cli.php';
+	require_once 'features/wp-cli.php';
 }

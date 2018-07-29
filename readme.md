@@ -16,14 +16,14 @@ Defines `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwi
 
 ### Admin Panels
 
-Stored in `/admin/`
+Stored in `/admin/` -- Makes admin panels
 
 * `_tools.php` - Automated checks on data
 * `screeners.php` - A list of all screeners
 
 ### Affiliates
 
-Auto Adds in Affiliate Codes
+Stored in `/affiliates/` -- Auto Adds in Affiliate Codes
 
 * `_main.php` - Determines which ad to show and when
 * `amazon.php` - Amazon (utilizes ApaiIO library (from (LezWatch Library)[https://github.com/LezWatch/lezwatch-library]))
@@ -62,67 +62,64 @@ Stored in `/cpts/`:
 
 Actors and Shows have custom code to generate statistics and flush related Varnish pages when Characters are saved.
 
-### Cron
+### Features
 
-In file: `cron.php`
+Stored in `/features/` -- a collection of miscellaneous features.
 
-Custom cron jobs to load high-traffic pages and ensure Varnish is cached.
-
-### Custom Loops
-
-In file: `custom-loops.php`
-
-Custom arrays and WP_Query calls that are repeated in multiple places.
-
-* Determine if actor is queer
-* Taxonomy Array
-* Taxonomy Two Array - used for generating a query of posts that are in two taxonomies
-* Post Meta Array
-* WP Meta Query
-* Post Type Array - Generate an array of all posts in a specific post type.
-* Post Meta AND Taxonomy Query - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
-* Related Posts by Tags.
-
-### Debug
-
-In file: `debug.php`
-
-Debugging Tools for weird content.
+* `cron.php` - Custom cron jobs to load high-traffic pages and ensure Varnish is cached.
+* `custom-loops.php` - Custom arrays and WP_Query calls that are repeated in multiple places.
+    - Determine if actor is queer
+    - Taxonomy Array
+    - Taxonomy Two Array - used for generating a query of posts that are in two taxonomies
+    - Post Meta Array
+    - WP Meta Query
+    - Post Type Array - Generate an array of all posts in a specific post type.
+    - Post Meta AND Taxonomy Query - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
+    - Related Posts by Tags.
+* `debug.php` - Debugging Tools for weird content.
+* `query_vars.php` - Custom Query Variables that let us have the following special pages
+    - statistics
+    - this-year
+* `search.php` - Extra Search Functions:
+    - Join posts and postmeta tables
+    - Modify Search Location to include custom fields
+    - Force search to be distinct and prevent duplicates
+    - Pretty Permalinks for Search
+* `shortcodes.php` - Various shortcodes used on LezWatch.TV
+    - Display The first year we had queers: `[firstyear]`
+    - Display This Month recap: `[thismonth]` or `[thismonth date="2017-01"]`
+    - Display screener information: `[screener title="Some Like It Hot" summary="A quirky black and white romcom" queer="2" worth="yes" trigger="low"]`
+* `sort-stopwords.php` - Filter post order by for shows to NOT include the/an/a when sorting.
+* `wp-cli.php`- WP-CLI
+    - Re-run calculations for specific post content (actors & shows): `wp lwtv calc actor ID`
+    - Find miss matched data: ex. `wp lwtv find queerchars`
 
 ### Plugin Addons
 
 Stored in `/plugins/`
 
-* CMB2: `/cmb2.php` 
-    - calls other files 
+* CMB2: `/cmb2.php`
+    - calls other files
     - generates a CB2 formatted list of terms
 * CMB2 Folder - `/cmb2/`
     - Select2: `/cmb-field-select2/` - CMB2 Field Type: Select2
     - Grid: `/CMB2-grid/` - A grid display system
-    - Custom CSS: `/cmb2.css` 
+    - Custom CSS: `/cmb2.css`
     - Year Range: `/year-range.php` - 'date_year_range' custom field type
     - LWTV: `/lwtv.php` - Favorite shows for author profiles, Symbolicon support
 * FacetWP - `/facet.php`
     - calls other files
     - Only show pagination if there's more than one page
     - Reset Shortcode
-* FacetWP Folder - `/facet/` 
+* FacetWP Folder - `/facet/`
     - CMB2: `/cmb2.php` - FacetWP Integration with CMB2
     - JS: `facet.js` - Pagination Scrolling and Refresh Warning
     - CLI: `facetwp-wp-cli.php` - WP-CLI commands
-    - LWTV: `/lwtv.php` 
+    - LWTV: `/lwtv.php`
         - filter Data before it's saved to rename values (capitalization)
         - split actors and shows into separate entries, and add additional orderby params
-* Yoast's WordPress SEO - `/yoast-seo.php`
-    - Remove stopword removal from shows and characters CPTs
-
-### Query Variables
-
-Custom Query Variables that let us have the following special pages
-
-* role
-* statistics
-* this-year
+* Jetpack - `/jetpack.php`
+    - Hashtags based on tags as shows.
 
 ### Rest API
 
@@ -145,33 +142,6 @@ Stored in `/rest-api/` - These files generate the REST API output.
     - JSON API version of the stats (mostly)
 * What Happened - `/what-happened.php`
     - Outputs data based on what happened in a given year.
-
-### Search
-
-Stored in file: `search.php`
-
-Extra Search Functions:
-
-* Join posts and postmeta tables
-* Modify Search Location to include custom fields
-* Force search to be distinct and prevent duplicates
-* Pretty Permalinks for Search
-
-### Shortcodes
-
-Stored in file: `shortcodes.php`
-
-Various shortcodes used on LezWatch.TV
-
-* Display The first year we had queers: `[firstyear]`
-* Display This Month recap: `[thismonth]` or `[thismonth date="2017-01"]`
-* Display screener information: `[screener title="Some Like It Hot" summary="A quirky black and white romcom" queer="2" worth="yes" trigger="low"]`
-
-### Sort Stop Words
-
-Stored in file: `sort-stopwords.php`
-
-Filter post order by for shows to NOT include the/an/a when sorting.
 
 ### Statistics
 
@@ -207,16 +177,9 @@ The basic defines for all stats pages.
     - Piecharts
     - Trendlines
 
-### WP-CLI
-
-Stored in file: `wp-cli.php`
-
-* Re-run calculations for specific post content (actors & shows): `wp lwtv calc actor ID`
-* Find miss matched data: `wp lwtv find queerchars`
-
 ## Deployment
 
 Pushes are automatically deployed via Codeship to:
 
-* Master: lezwatchtv.com
 * Development: lwtv.dream.press
+* Master: lezwatchtv.com

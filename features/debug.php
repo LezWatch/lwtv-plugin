@@ -12,7 +12,6 @@ if ( ! defined( 'WPINC' ) ) {
 
 class LWTV_Debug {
 
-
 	/**
 	 * Find Queers
 	 *
@@ -146,7 +145,6 @@ class LWTV_Debug {
 
 		return $items;
 	}
-
 }
 
 new LWTV_Debug();
