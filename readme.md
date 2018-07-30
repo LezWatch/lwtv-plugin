@@ -36,7 +36,7 @@ Stored in `/assets/`
 
 _CSS (`css`)_
 
-* `theme.bootstrap_4.css` - Tablesorter CSS for Bootstrap themes
+* `theme.bootstrap_4.min.css` - Tablesorter CSS for Bootstrap themes
 
 _Images (`images`)_
 
@@ -102,8 +102,6 @@ Stored in `/plugins/`
     - calls other files
     - generates a CB2 formatted list of terms
 * CMB2 Folder - `/cmb2/`
-    - Select2: `/cmb-field-select2/` - CMB2 Field Type: Select2
-    - Grid: `/CMB2-grid/` - A grid display system
     - Custom CSS: `/cmb2.css`
     - Year Range: `/year-range.php` - 'date_year_range' custom field type
     - LWTV: `/lwtv.php` - Favorite shows for author profiles, Symbolicon support
@@ -112,9 +110,7 @@ Stored in `/plugins/`
     - Only show pagination if there's more than one page
     - Reset Shortcode
 * FacetWP Folder - `/facet/`
-    - CMB2: `/cmb2.php` - FacetWP Integration with CMB2
     - JS: `facet.js` - Pagination Scrolling and Refresh Warning
-    - CLI: `facetwp-wp-cli.php` - WP-CLI commands
     - LWTV: `/lwtv.php`
         - filter Data before it's saved to rename values (capitalization)
         - split actors and shows into separate entries, and add additional orderby params
@@ -145,7 +141,7 @@ Stored in `/rest-api/` - These files generate the REST API output.
 
 ### Statistics
 
-Stored in `/statistics/` - These files generate the REST API output.
+Stored in `/statistics/` - These files generate everything for stats, from graphs to the rest API stuff.
 
 The basic defines for all stats pages.
 
@@ -176,6 +172,21 @@ The basic defines for all stats pages.
     - Stacked Barcharts
     - Piecharts
     - Trendlines
+
+### Vendor
+
+Autoloading the following libraries:
+
+* [CMB2](https://github.com/WebDevStudios/CMB2)
+* [CMB2 Grid](https://github.com/origgami/CMB2-grid)
+* [CMB2 Field Select2](https://github.com/mustardBees/cmb-field-select2)
+* [FacetWP wp-cli](https://github.com/level-level/facetwp-wp-cli)
+* [FacetWP CMB2](https://github.com/WebDevStudios/facetwp-cmb2)
+
+Including these libraries:
+
+* [ChartJS](https://github.com/chartjs/Chart.js/)
+* [TableSorter (Mottie Fork)](https://github.com/Mottie/tablesorter)
 
 ## Deployment
 

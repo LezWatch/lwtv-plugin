@@ -3,7 +3,7 @@
  * Plugin Name: Core LezWatch.TV Plugin
  * Plugin URI:  https://lezwatchtv.com
  * Description: All the base code for LezWatch.TV - If this isn't active, the site dies. An ugly death.
- * Version: 2.6
+ * Version: 2.7
  * Author: LezWatch.TV
  *
  * @package LWTV_PLUGIN
@@ -14,6 +14,7 @@
  */
 if ( file_exists( WP_CONTENT_DIR . '/library/functions.php' ) ) {
 	require_once WP_CONTENT_DIR . '/library/functions.php';
+	define( 'LWTV_LIBRARY', true );
 }
 
 /*
@@ -111,6 +112,7 @@ class LWTV_Functions {
 
 		return $svg;
 	}
+
 	/**
 	 * Add attribution element to images.
 	 *
