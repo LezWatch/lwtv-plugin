@@ -174,9 +174,19 @@
             "url": "https://github.com/level-level/facetwp-wp-cli.git",
             "reference": "48bede27dc0f8e102f11f0ac637900b0644b5931"
         },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/level-level/facetwp-wp-cli/zipball/48bede27dc0f8e102f11f0ac637900b0644b5931",
+            "reference": "48bede27dc0f8e102f11f0ac637900b0644b5931",
+            "shasum": ""
+        },
         "time": "2016-12-27T10:00:15+00:00",
         "type": "wordpress-muplugin",
-        "installation-source": "source"
+        "installation-source": "source",
+        "support": {
+            "source": "https://github.com/level-level/facetwp-wp-cli/tree/master",
+            "issues": "https://github.com/level-level/facetwp-wp-cli/issues"
+        }
     },
     {
         "name": "mottie/tablesorter",
@@ -187,10 +197,16 @@
             "url": "https://github.com/Mottie/tablesorter.git",
             "reference": "90f7326819c573ee5ab333f4a0672623d7c52e1e"
         },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Mottie/tablesorter/zipball/90f7326819c573ee5ab333f4a0672623d7c52e1e",
+            "reference": "90f7326819c573ee5ab333f4a0672623d7c52e1e",
+            "shasum": ""
+        },
         "require": {
             "components/jquery": ">=1.2.6"
         },
-        "time": "2018-07-10T13:30:02+00:00",
+        "time": "2018-07-10T13:32:19+00:00",
         "type": "component",
         "extra": {
             "component": {
@@ -200,19 +216,18 @@
                 "files": "dist/"
             }
         },
-        "installation-source": "source",
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
         "license": [
             "(MIT OR GPL-2.0)"
         ],
         "authors": [
             {
-                "name": "Christian Bach",
-                "url": "http://tablesorter.com/"
+                "name": "Rob Garrison",
+                "email": "wowmotty@gmail.com"
             },
             {
-                "name": "Rob Garrison",
-                "url": "https://github.com/Mottie",
-                "email": "wowmotty@gmail.com"
+                "name": "Christian Bach"
             }
         ],
         "description": "tablesorter (FORK) is a jQuery plugin for turning a standard HTML table with THEAD and TBODY tags into a sortable table without page refreshes. tablesorter can successfully parse and sort many types of data including linked data in a cell.",
@@ -224,15 +239,7 @@
             "sort",
             "sorting",
             "table"
-        ],
-        "support": {
-            "email": "wowmotty@gmail.com",
-            "issues": "https://github.com/Mottie/tablesorter/issues",
-            "wiki": "https://github.com/Mottie/tablesorter/wiki",
-            "irc": "irc://irc.freenode.org/tablesorter",
-            "source": "https://github.com/Mottie/tablesorter",
-            "docs": "https://mottie.github.io/tablesorter/docs/index.html"
-        }
+        ]
     },
     {
         "name": "nnnick/chartjs",
