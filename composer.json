@@ -18,12 +18,12 @@
         }
     ],
     "require": {
+        "nnnick/chartjs": "^2.7",
         "Mottie/tablesorter": "^2.30",
         "webdevstudios/cmb2": "^2.2",
         "origgami/CMB2-grid": "dev-master",
         "level-level/facetwp-wp-cli": "dev-master",
         "webdevstudios/facetwp-cmb2": "*",
-        "nnnick/chartjs": "^2.7",
         "podkot/cmb-field-select2": "^2.1"
     },
     "autoload": {
