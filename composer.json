@@ -3,7 +3,7 @@
     "description": "LezWatch.TV Plugin",
     "type": "wordpress plugin",
     "keywords": ["wordpress","plugin"],
-    "license": "GPLv2",
+    "license": "GPLv3",
     "authors": [
         {
             "name": "LezWatch.TV",
