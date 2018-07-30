@@ -146,41 +146,17 @@ class LWTV_Functions {
 new LWTV_Functions();
 
 /*
- * Include Plugins.
- * The following files are used by specific plugins
+ * Include Vendor Files
  */
-require_once 'plugins/cmb2.php';
-require_once 'plugins/jetpack.php';
-require_once 'plugins/facetwp.php';
-
-/*
- * Include Custom wp-admin pages.
- */
-require_once 'admin/_tools.php';
+require_once 'vendor/autoload.php';
 
 /*
  * Add-Ons.
  */
+require_once 'admin/_tools.php';
 require_once 'affiliates/_main.php';
 require_once 'cpts/_main.php';
+require_once 'features/_main.php';
+require_once 'plugins/_main.php';
 require_once 'rest-api/_main.php';
 require_once 'statistics/_main.php';
-
-/*
- * Include Features.
- */
-require_once 'features/cron.php';
-require_once 'features/custom-loops.php';
-require_once 'features/debug.php';
-require_once 'features/search.php';
-require_once 'features/shortcodes.php';
-require_once 'features/sort-stopwords.php';
-require_once 'features/query_vars.php';
-
-/**
- * WP CLI.
- * Only include this if WP-CLI is being used.
- */
-if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once 'features/wp-cli.php';
-}

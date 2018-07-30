@@ -1,0 +1,53 @@
+{
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/level-level/facetwp-wp-cli.git"
+        },
+        {
+          "type": "package",
+          "package": {
+            "name": "WebDevStudios/facetwp-cmb2",
+            "version": "1.0.0",
+            "source": {
+              "url": "https://github.com/WebDevStudios/facetwp-cmb2",
+              "type": "git",
+              "reference": "master"
+            }
+          }
+        }
+    ],
+    "require": {
+        "Mottie/tablesorter": "^2.30",
+        "webdevstudios/cmb2": "^2.2",
+        "origgami/CMB2-grid": "dev-master",
+        "level-level/facetwp-wp-cli": "dev-master",
+        "WebDevStudios/facetwp-cmb2": "*",
+        "nnnick/chartjs": "^2.7",
+        "podkot/cmb-field-select2": "^2.1"
+    },
+    "autoload": {
+        "files": [
+            "vendor/webdevstudios/cmb2/init.php",
+            "vendor/origgami/cmb2-grid/Cmb2GridPlugin.php",
+            "vendor/podkot/cmb-field-select2/cmb-field-select2.php",
+            "vendor/level-level/facetwp-wp-cli/facetwp-wp-cli.php",
+            "vendor/webdevstudios/facetwp-cmb2/cmb2.php"
+        ]
+    },
+    "scripts": {
+        "post-update-cmd": [
+            "php -r \"copy('vendor/nnnick/chartjs/dist/Chart.bundle.min.js', 'assets/js/Chart.bundle.min.js');\"",
+            "php -r \"copy('vendor/mottie/tablesorter/dist/js/jquery.tablesorter.js', 'assets/js/jquery.tablesorter.js');\"",
+            "php -r \"copy('vendor/mottie/tablesorter/dist/css/theme.bootstrap_4.min.css', 'assets/css/theme.bootstrap_4.min.css');\""
+        ]
+    },
+    "extra" : {
+        "installer-paths": {
+            "vendor/WebDevStudios/cmb2": ["webdevstudios/cmb2"],
+            "vendor/origgami/cmb2-grid": ["origgami/cmb2-grid"],
+            "vendor/podkot/cmb-field-select2": ["podkot/cmb-field-select2"],
+            "vendor/level-level/facetwp-wp-cli": ["level-level/facetwp-wp-cli"]
+        }
+    }
+}
