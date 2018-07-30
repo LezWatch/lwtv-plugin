@@ -4,18 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "525cea796f8c52895fba6a33fdbf9ad7",
+    "content-hash": "5b803b4aea7b7b2045d34143d11e12c1",
     "packages": [
-        {
-            "name": "WebDevStudios/facetwp-cmb2",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/WebDevStudios/facetwp-cmb2",
-                "reference": "master"
-            },
-            "type": "library"
-        },
         {
             "name": "components/jquery",
             "version": "3.3.1",
@@ -394,6 +384,16 @@
                 "wordpress"
             ],
             "time": "2018-05-29T14:23:29+00:00"
+        },
+        {
+            "name": "webdevstudios/facetwp-cmb2",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/WebDevStudios/facetwp-cmb2",
+                "reference": "master"
+            },
+            "type": "library"
         }
     ],
     "packages-dev": [],

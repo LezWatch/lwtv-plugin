@@ -7,7 +7,7 @@
         {
           "type": "package",
           "package": {
-            "name": "WebDevStudios/facetwp-cmb2",
+            "name": "webdevstudios/facetwp-cmb2",
             "version": "1.0.0",
             "source": {
               "url": "https://github.com/WebDevStudios/facetwp-cmb2",
@@ -22,7 +22,7 @@
         "webdevstudios/cmb2": "^2.2",
         "origgami/CMB2-grid": "dev-master",
         "level-level/facetwp-wp-cli": "dev-master",
-        "WebDevStudios/facetwp-cmb2": "*",
+        "webdevstudios/facetwp-cmb2": "*",
         "nnnick/chartjs": "^2.7",
         "podkot/cmb-field-select2": "^2.1"
     },
@@ -44,7 +44,7 @@
     },
     "extra" : {
         "installer-paths": {
-            "vendor/WebDevStudios/cmb2": ["webdevstudios/cmb2"],
+            "vendor/webdevstudios/cmb2": ["webdevstudios/cmb2"],
             "vendor/origgami/cmb2-grid": ["origgami/cmb2-grid"],
             "vendor/podkot/cmb-field-select2": ["podkot/cmb-field-select2"],
             "vendor/level-level/facetwp-wp-cli": ["level-level/facetwp-wp-cli"]

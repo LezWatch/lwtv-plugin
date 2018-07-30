@@ -1,17 +1,5 @@
 [
     {
-        "name": "WebDevStudios/facetwp-cmb2",
-        "version": "1.0.0",
-        "version_normalized": "1.0.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/WebDevStudios/facetwp-cmb2",
-            "reference": "master"
-        },
-        "type": "library",
-        "installation-source": "source"
-    },
-    {
         "name": "components/jquery",
         "version": "3.3.1",
         "version_normalized": "3.3.1.0",
@@ -405,5 +393,17 @@
             "plugin",
             "wordpress"
         ]
+    },
+    {
+        "name": "webdevstudios/facetwp-cmb2",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/WebDevStudios/facetwp-cmb2",
+            "reference": "master"
+        },
+        "type": "library",
+        "installation-source": "source"
     }
 ]
