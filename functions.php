@@ -148,11 +148,6 @@ class LWTV_Functions {
 new LWTV_Functions();
 
 /*
- * Include Vendor Files
- */
-require_once 'vendor/autoload.php';
-
-/*
  * Add-Ons.
  */
 require_once 'admin/_tools.php';
