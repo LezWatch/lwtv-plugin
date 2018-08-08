@@ -24,7 +24,7 @@ class LWTV_Gutenberg {
 
 		// WP 5.0+ requires Classic Editor
 		// WP 4.9- requires Gutenberg
-		if ( ( version_compare( get_bloginfo( 'version' ), 5.0, '<=' ) && ! is_plugin_active( 'gutenberg/gutenberg.php' ) ) || ! is_plugin_active( 'classic-editor/classic-editor.php' ) ) {
+		if ( ( version_compare( get_bloginfo( 'version' ), 5.0, '<=' ) && ! is_plugin_active( 'gutenberg/gutenberg.php' ) ) || ( version_compare( get_bloginfo( 'version' ), 5.0, '=>' ) && ! is_plugin_active( 'classic-editor/classic-editor.php' ) ) ) {
 			return;
 		}
 
