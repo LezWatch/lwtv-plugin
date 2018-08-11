@@ -19,6 +19,10 @@ class LWTV_All_CPTs {
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'featured_images' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
+
+		// Suppress the editorial calendar for all custom post types.
+		// add_filter( 'edcal_show_calendar_post_type_shows', false );
+
 	}
 
 	/**
@@ -47,9 +51,9 @@ class LWTV_All_CPTs {
 				if ( ! is_null( $current_screen ) && $type === $current_screen->post_type ) {
 					// Get featured image size
 					global $_wp_additional_image_sizes;
-					$genesis_image_size = rtrim( str_replace( 'post_type_', '', $type ), 's' ) . '-img';
-					if ( isset( $_wp_additional_image_sizes[ $genesis_image_size ] ) ) {
-						$content = '<p>Image Size: ' . $_wp_additional_image_sizes[ $genesis_image_size ]['width'] . 'x' . $_wp_additional_image_sizes[ $genesis_image_size ]['height'] . 'px</p>' . $content;
+					$da_image_size = rtrim( str_replace( 'post_type_', '', $type ), 's' ) . '-img';
+					if ( isset( $_wp_additional_image_sizes[ $da_image_size ] ) ) {
+						$content = '<p>Image Size: ' . $_wp_additional_image_sizes[ $da_image_size ]['width'] . 'x' . $_wp_additional_image_sizes[ $da_image_size ]['height'] . 'px</p>' . $content;
 					}
 					$content = str_replace( __( 'featured' ), strtolower( $name ), $content );
 				}
@@ -62,7 +66,7 @@ class LWTV_All_CPTs {
 	 * Front End CSS Customizations
 	 */
 	public function wp_enqueue_scripts() {
-		wp_register_style( 'cpt-shows-styles', plugins_url( 'shows.css', __FILE__ ) );
+		wp_register_style( 'cpt-shows-styles', plugins_url( 'shows.css', __FILE__ ), true, filemtime( plugin_dir_path( __FILE__ ) . 'shows.css' ) );
 
 		if ( is_single() && 'post_type_shows' === get_post_type() ) {
 			wp_enqueue_style( 'cpt-shows-styles' );

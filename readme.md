@@ -94,6 +94,14 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - Re-run calculations for specific post content (actors & shows): `wp lwtv calc actor ID`
     - Find miss matched data: ex. `wp lwtv find queerchars`
 
+### Gutenberg
+
+Stored in `/gutenberg/`
+
+Blocks for Gutenberg. The file `_main.php` acts as an autoloader.
+
+* Screeners (same as the shortcode only cooler)
+
 ### Plugin Addons
 
 Stored in `/plugins/`
