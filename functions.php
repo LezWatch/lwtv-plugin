@@ -154,6 +154,7 @@ require_once 'admin/_tools.php';
 require_once 'affiliates/_main.php';
 require_once 'cpts/_main.php';
 require_once 'features/_main.php';
+require_once 'gutenberg/_main.php';
 require_once 'plugins/_main.php';
 require_once 'rest-api/_main.php';
 require_once 'statistics/_main.php';

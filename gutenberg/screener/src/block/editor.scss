@@ -1,0 +1,72 @@
+/**
+ * #.# Editor Styles
+ *
+ * CSS for just Backend enqueued after style.scss
+ * which makes it higher in priority.
+ */
+
+.wp-block-lwtv-screener {
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid $lwtv-bordergrey;
+    border-left-width: .25rem;
+    border-radius: .25rem;
+    border-left-color: $lwtv-pink;
+
+    h5 {
+        font-family: Oswald,sans-serif;
+        font-weight: 400;
+        line-height: 1.1;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+
+        .editor-plain-text {
+            width: 50%!important;
+            vertical-align: top!important;
+            color: $medgrey;
+            font-style: italic;
+        }
+    }
+
+    .btn-dark, .btn-anti {
+        color: $white;
+        background-color: $darkgrey;
+        border-color: $darkgrey;
+    }
+
+    .btn-none {
+        color: $black;
+        background-color: $lightgrey;
+        border-color: $lightgrey;
+    }
+
+    .btn-info, .btn-meh, .btn-gold, .btn-silver, .btn-bronze, .btn-low {
+        color: $white;
+        background-color: $bs-cyan;
+        border-color: $bs-cyan;
+    }
+
+    .btn-no, .btn-high {
+        color: $white;
+        background-color: $bs-red;
+        border-color: $bs-red;
+    }
+
+    .btn-medium {
+        color: $white;
+        background-color: $bs-yellow;
+        border-color: $bs-yellow;
+    }
+
+    .btn-yes {
+        color: $white;
+        background-color: $bs-green;
+        border-color: $bs-green;
+    }
+
+    .btn form {
+        display: inline;
+        padding-left: .5rem;
+    }
+}

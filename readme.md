@@ -94,6 +94,14 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - Re-run calculations for specific post content (actors & shows): `wp lwtv calc actor ID`
     - Find miss matched data: ex. `wp lwtv find queerchars`
 
+### Gutenberg
+
+Stored in `/gutenberg/`
+
+Blocks for Gutenberg. The file `_main.php` acts as an autoloader.
+
+* Screeners (same as the shortcode, only cooler)
+
 ### Plugin Addons
 
 Stored in `/plugins/`
@@ -179,11 +187,11 @@ The basic defines for all stats pages.
     - Piecharts
     - Trendlines
 
-## Building
+## Development
 
-Most code is just edited in place, but there are libraries we use. In order to make maintenance easier, instead of checking everything all the time, we use composer.
+Update code like you normally would. If you don't want to push it anywhere, make a local branch. Always remember, merge to **development** first. If that works, do a pull request to **master** and when it's done, it'll update properly.
 
-Included Libraries:
+In order to make maintenance easier, instead of checking everything all the time, we use composer for the following included libraries:
 * [ChartJS](https://github.com/chartjs/Chart.js/)
 * [TableSorter (Mottie Fork)](https://github.com/Mottie/tablesorter)
 * [CMB2](https://github.com/WebDevStudios/CMB2)
@@ -192,15 +200,11 @@ Included Libraries:
 * [FacetWP wp-cli](https://github.com/level-level/facetwp-wp-cli)
 * [FacetWP CMB2](https://github.com/WebDevStudios/facetwp-cmb2)
 
-## How To
+To update libraries, run `composer update` and everything will be put in the right place.
 
-Command: `composer update`
+### Deployment
 
-This will update everything and then move it to where it needs to go.
+Pushes to branches are automatically deployed via Codeship as follows:
 
-## Deployment
-
-Pushes are automatically deployed via Codeship to:
-
-* Development: lwtv.dream.press
-* Master: lezwatchtv.com
+* Development: [lwtv.dream.press](https://lwtv.dream.press)
+* Master: [lezwatchtv.com](https://lezwatchtv.com)
