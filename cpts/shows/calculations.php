@@ -175,7 +175,7 @@ class LWTV_Shows_Calculate {
 		$good_tropes  = array( 'happy-ending', 'everyones-queer' );
 		$maybe_tropes = array( 'big-queer-wedding', 'coming-out', 'subtext' );
 		$bad_tropes   = array( 'queerbashing', 'in-prison', 'big-bad-queers' );
-		$ploy_tropes  = array( 'queer-for-ratings', 'queerbaiting', 'queer-laughs', 'happy-then-not', 'erasure' );
+		$ploy_tropes  = array( 'queer-for-ratings', 'queerbaiting', 'queer-laughs', 'happy-then-not', 'erasure', 'subtext' );
 
 		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
 			// No tropes: 100
@@ -212,22 +212,32 @@ class LWTV_Shows_Calculate {
 			}
 
 			if ( $havegood === $count_tropes ) {
-				// If tropes are ONLY good, we give a 95
+				// If tropes are ONLY good
 				$score = 95;
 			} elseif ( ( $havegood + $havemaybe ) === $count_tropes ) {
 				// If the tropes are only good and maybegood
 				$score = 85;
+			} elseif ( ( $havegood + $haveploy ) === $count_tropes ) {
+				// If the tropes are only good and ploys
+				$score = 60;
+			} elseif ( $haveploy === $count_tropes ) {
+				// If the tropes are ONLY ploys
+				$score = 30;
 			} elseif ( ( $havebad + $haveploy ) === $count_tropes ) {
-				// If the tropes are all bad or ploys, then you get 25
+				// If the tropes are all bad AND ploys
 				$score = 25;
 			} elseif ( ( $havegood + $havemaybe - $havebad - $haveploy ) < 0 ) {
 				// If they have more bad/ploys than good, it's a wash
 				$score = 40;
 			} else {
-				// Otherise we just have a show that's pretty average so let's max them out at 75
+				// Otherwise we just have a show that's pretty average so let's max them out at 75
 				$score = ( ( ( $havegood + $havemaybe - $havebad ) / $count_tropes ) * 100 );
 				if ( 0 === $haveploy ) {
+					// No ploys, add 50
 					$score += 50;
+				} else {
+					// SOME ploys, add 1/2 percentage -- 90% = MAX 45 points.
+					$score += ( ( ( $count_tropes - $haveploy ) / $count_tropes ) * 50 );
 				}
 				if ( $score > 75 ) {
 					$score = 75;
