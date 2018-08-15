@@ -174,8 +174,8 @@ class LWTV_Shows_Calculate {
 		// Maybe tropes are only good IF there isn't Queer-for-Ratings
 		$good_tropes  = array( 'happy-ending', 'everyones-queer' );
 		$maybe_tropes = array( 'big-queer-wedding', 'coming-out', 'subtext' );
-		$bad_tropes   = array( 'queerbashing', 'in-prison', 'big-bad-queers' );
-		$ploy_tropes  = array( 'queer-for-ratings', 'queerbaiting', 'queer-laughs', 'happy-then-not', 'erasure', 'subtext' );
+		$bad_tropes   = array( 'queerbashing', 'in-prison', 'queerbaiting', 'big-bad-queers' );
+		$ploy_tropes  = array( 'queer-for-ratings', 'queer-laughs', 'happy-then-not', 'erasure', 'subtext' );
 
 		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
 			// No tropes: 100
