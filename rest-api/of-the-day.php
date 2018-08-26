@@ -144,6 +144,9 @@ class LWTV_OTD_JSON {
 			$options[ $type ]['post'] = $id;
 			$options[ $type ]['time'] = strtotime( 'midnight tomorrow' );
 			update_option( 'lwtv_otd', $options );
+
+			// Set post_meta for the next available use (+4 months from now)
+			update_post_meta( $id, 'lwtv_of_the_day', strtotime( '+4 months' ) );
 		}
 
 		$post_id = $options[ $type ]['post'];
@@ -279,6 +282,14 @@ class LWTV_OTD_JSON {
 				default:
 					$valid_post = true;
 					break;
+			}
+
+			// If the time (now) is less than or equal to the last used AND it's
+			// not empty, then it's not a valid post.
+			// If it's not set at all, then we've never used it.
+			$last_used = get_post_meta( $id, 'lwtv_of_the_day', true );
+			if ( isset( $last_used ) && time() <= $last_used ) {
+				$valid_post = false;
 			}
 		}
 
