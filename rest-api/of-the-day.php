@@ -171,7 +171,7 @@ class LWTV_OTD_JSON {
 					$num_shows = count( $all_shows );
 					$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
 					$show_post = get_post( $shows_value['show'] );
-					$hashtag   = '#' . preg_replace( '/[^A-Za-z0-9]/', '', $show_post->post_title );
+					$hashtag   = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_post->post_name ) ) );
 				}
 				// Set all shows (not used becuase of Sara Lance)
 				if ( '' !== $all_shows && ! empty( $shows_value ) ) {
@@ -188,7 +188,8 @@ class LWTV_OTD_JSON {
 			case 'show':
 				$return['loved']   = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
 				$return['score']   = get_post_meta( $post_id, 'lezshows_the_score', true );
-				$return['hashtag'] = '#' . preg_replace( '/[^A-Za-z0-9]/', '', get_the_title( $post_id ) );
+				$post_data         = get_post( $post_id );
+				$return['hashtag'] = '#' . implode( '', array_map( 'ucfirst', explode( '-', $post_data->post_name ) ) );
 				break;
 		}
 
@@ -421,10 +422,10 @@ class LWTV_OTD_JSON {
 				$wordpress_name = '<a href="' . get_permalink( $actor ) . '">' . get_the_title( $actor ) . ' (' . $age . ')</a>';
 
 				// If they have a Twitter handle, use that ; Else use their name
-				$twitter_name = ( get_post_meta( $actor->ID, 'lezactors_twitter', true ) ) ? '@' . get_post_meta( $actor->ID, 'lezactors_twitter', true ) : get_the_title( $actor );
+				$hashtag_name = '#' . implode( '', array_map( 'ucfirst', explode( '-', $actor->post_name ) ) );
 
 				// Add to array:
-				$twitter_array[ $post_slug ]   = $twitter_name . ' (' . $age . ')';
+				$twitter_array[ $post_slug ]   = $hashtag_name . ' (' . $age . ')';
 				$wordpress_array[ $post_slug ] = $wordpress_name;
 
 			}

@@ -560,10 +560,13 @@ SQL;
 	 */
 	public static function list_characters( $show_id, $output = 'query' ) {
 		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
-
-		$characters = array();
-		$charcount  = 0;
-		$deadcount  = 0;
+		$characters     = array();
+		$char_counts    = array(
+			'total' => 0,
+			'dead'  => 0,
+			'none'  => 0,
+			'quirl' => 0,
+		);
 
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
 		if ( $charactersloop->have_posts() ) {
@@ -586,9 +589,16 @@ SQL;
 								'shows'     => $shows_array,
 								'show_from' => $show_id,
 							);
-							$charcount++;
+
+							$char_counts['total']++;
 							if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-								$deadcount++;
+								$char_counts['dead']++;
+							}
+							if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
+								$char_counts['none']++;
+							}
+							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
+								$char_counts['quirl']++;
 							}
 						}
 					}
@@ -598,17 +608,107 @@ SQL;
 		}
 
 		switch ( $output ) {
-			case 'count':
-				$return = $charcount;
-				break;
 			case 'dead':
-				$return = $deadcount;
+				$return = $char_counts['dead'];
+				break;
+			case 'none':
+				$return = $char_counts['none'];
+				break;
+			case 'queer-irl':
+				$return = $char_counts['quirl'];
 				break;
 			case 'query':
-				$return = $characters;
+				$return = $charactersloop;
+				break;
+			case 'count':
+				$return = $char_counts['total'];
 				break;
 		}
+
 		return $return;
+	}
+
+	/**
+	 * Get Characters For Show
+	 *
+	 * Get all the characters for a show, based on role type.
+	 *
+	 * @access public
+	 * @param mixed $show_id: Extracted from page the function is called on
+	 * @param mixed $role: regular (default), recurring, guest
+	 * @return array of characters
+	 */
+	public static function get_chars_for_show( $show_id, $havecharcount, $role = 'regular' ) {
+
+		// The Shane Clause & The Clone Club Correlary
+		// Calculate the max number of characters to list, based on the
+		// previous count. Default/Minimum is 100 characters.
+		$count = ( isset( $havecharcount ) && $havecharcount >= '100' ) ? $havecharcount : '100';
+
+		// Valid Roles:
+		$valid_roles = array( 'regular', 'recurring', 'guest' );
+
+		// If this isn't a show page, or there are no valid roles, bail.
+		if ( ! isset( $show_id ) || 'post_type_shows' !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
+			return;
+		}
+
+		// Prepare the ARRAY
+		$characters = array();
+
+		$charactersloop = new WP_Query( array(
+			'post_type'              => 'post_type_characters',
+			'post_status'            => array( 'publish' ),
+			'orderby'                => 'title',
+			'order'                  => 'ASC',
+			'posts_per_page'         => $count,
+			'no_found_rows'          => true,
+			'update_post_term_cache' => true,
+			'meta_query'             => array(
+				'relation' => 'AND',
+				array(
+					'key'     => 'lezchars_show_group',
+					'value'   => $role,
+					'compare' => 'LIKE',
+				),
+				array(
+					'key'     => 'lezchars_show_group',
+					'value'   => $show_id,
+					'compare' => 'LIKE',
+				),
+			),
+		) );
+
+		if ( $charactersloop->have_posts() ) {
+			while ( $charactersloop->have_posts() ) {
+				$charactersloop->the_post();
+				$char_id     = get_the_ID();
+				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+				// The Sara Lance Complexity:
+				// If the character is in this show, AND a published character,
+				// AND has this role ON THIS SHOW we will pass the following
+				// data to the character template to determine what to display.
+
+				if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
+					foreach ( $shows_array as $char_show ) {
+						if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) { // WPCS: loose comparison ok.
+							$characters[ $char_id ] = array(
+								'id'        => $char_id,
+								'title'     => get_the_title( $char_id ),
+								'url'       => get_the_permalink( $char_id ),
+								'content'   => get_the_content( $char_id ),
+								'shows'     => $shows_array,
+								'show_from' => $show_id,
+								'role_from' => $role,
+							);
+						}
+					}
+				}
+			}
+			wp_reset_query();
+		}
+		return $characters;
 	}
 
 	/*
