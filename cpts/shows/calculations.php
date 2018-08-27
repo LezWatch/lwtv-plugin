@@ -124,6 +124,8 @@ class LWTV_Shows_Calculate {
 				$char_score = 20;
 			} else {
 				$char_score = ( count( $chars_regular ) * 3 ) + count( $chars_recurring ) + ( count( $chars_guest ) / 2 );
+				$char_score = ( $char_score > 75 ) ? 75 : $char_score;
+				$char_score = ( $char_score < 30 ) ? 30 : $char_score;
 			}
 
 			// Chop a movie in half and a mini by 1/3
@@ -133,16 +135,16 @@ class LWTV_Shows_Calculate {
 				$char_score = ( $char_score / 1.5 );
 			}
 
-			// Calculate Bonuses based on how many characters
-			$bonus = ( $all_chars / 5 );
-			$bonus = ( $bonus > 20 ) ? 20 : $bonus;
-
 			// Bonuses for good cliches
 			$queer_irl  = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'queer-irl' ) );
 			$no_cliches = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'none' ) );
 
+			// Negatives for bad things
+			$the_dead = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'dead' ) );
+			// To Do: Negative points for trans character played by non-trans actor.
+
 			// Add it all together
-			$char_score = $char_score + $bonus + $queer_irl + $no_cliches;
+			$char_score = $char_score + ( $queer_irl * 2 ) + $no_cliches - ( $the_dead * 2 );
 			$char_score = ( $char_score > 100 ) ? 100 : $char_score;
 		}
 
