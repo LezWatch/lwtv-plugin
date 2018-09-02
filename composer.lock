@@ -191,16 +191,16 @@
         },
         {
             "name": "mottie/tablesorter",
-            "version": "v2.30.7",
+            "version": "v2.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Mottie/tablesorter.git",
-                "reference": "90f7326819c573ee5ab333f4a0672623d7c52e1e"
+                "reference": "9d53e3b35b494dc1c2e7d7266cec437fc9f26e39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Mottie/tablesorter/zipball/90f7326819c573ee5ab333f4a0672623d7c52e1e",
-                "reference": "90f7326819c573ee5ab333f4a0672623d7c52e1e",
+                "url": "https://api.github.com/repos/Mottie/tablesorter/zipball/9d53e3b35b494dc1c2e7d7266cec437fc9f26e39",
+                "reference": "9d53e3b35b494dc1c2e7d7266cec437fc9f26e39",
                 "shasum": ""
             },
             "require": {
@@ -238,7 +238,7 @@
                 "sorting",
                 "table"
             ],
-            "time": "2018-07-10T13:32:19+00:00"
+            "time": "2018-08-27T16:34:23+00:00"
         },
         {
             "name": "nnnick/chartjs",

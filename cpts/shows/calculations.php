@@ -119,7 +119,7 @@ class LWTV_Shows_Calculate {
 			if ( count( $chars_regular ) === $all_chars ) {
 				$char_score = 95;
 			} elseif ( count( $chars_recurring ) === $all_chars ) {
-				$char_score = 60;
+				$char_score = 40;
 			} elseif ( count( $chars_guest ) === $all_chars ) {
 				$char_score = 20;
 			} else {
