@@ -231,6 +231,7 @@ registerBlockType( 'lwtv/screener', {
 					<span><button type="button" class="btn btn-dark">Queer:
 						<form onSubmit={ onChangeQueer }>
 							<select value={ queer } onChange={ onChangeQueer }>
+								<option value="0">0</option>
 								<option value="1">1</option>
 								<option value="2">2</option>
 								<option value="3">3</option>
