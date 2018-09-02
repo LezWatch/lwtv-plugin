@@ -21,7 +21,15 @@ class LWTV_All_CPTs {
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 
 		// Suppress the editorial calendar for all custom post types.
-		// add_filter( 'edcal_show_calendar_post_type_shows', false );
+		add_filter( 'edcal_show_calendar_post_type_shows', function() {
+			return false;
+		} );
+		add_filter( 'edcal_show_calendar_post_type_characters', function() {
+			return false;
+		} );
+		add_filter( 'edcal_show_calendar_post_type_actors', function() {
+			return false; }
+		);
 
 	}
 
