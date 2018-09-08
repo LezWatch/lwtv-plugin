@@ -23,6 +23,7 @@ class LWTV_Shows_CMB2 {
 
 		// Array of Valid Ratings
 		$this->ratings_array = array(
+			'0' => '0',
 			'1' => '1',
 			'2' => '2',
 			'3' => '3',
