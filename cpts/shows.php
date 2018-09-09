@@ -32,12 +32,10 @@ class LWTV_CPT_Shows {
 			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0; // WPCS: CSRF ok.
 			switch ( $post_type ) {
 				case 'post_type_shows':
-					// Don't run do the math on every page load now
-					//LWTV_Shows_Calculate::do_the_math( $post_id );
+					// Do the Math when we're editing shows, since the math changes regularly.
+					LWTV_Shows_Calculate::do_the_math( $post_id );
 					// Filter buttons not needed on the teeny MCE
 					add_filter( 'teeny_mce_buttons', array( $this, 'teeny_mce_buttons' ) );
-					// Filter text editor quicktags (commented out until it runs on CMB2 only)
-					//add_filter( 'quicktags_settings', array( $this, 'quicktags_settings' ) );
 					// Force saving data to convert select2 saved data to a taxonomy
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );

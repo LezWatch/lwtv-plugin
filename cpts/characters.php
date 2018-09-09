@@ -566,6 +566,8 @@ SQL;
 			'dead'  => 0,
 			'none'  => 0,
 			'quirl' => 0,
+			'trans' => 0,
+			'txirl' => 0,
 		);
 
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
@@ -591,14 +593,37 @@ SQL;
 							);
 
 							$char_counts['total']++;
+
+							// Dead?
 							if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
 								$char_counts['dead']++;
 							}
+							// No cliches?
 							if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
 								$char_counts['none']++;
 							}
+							// Queer IRL?
 							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
 								$char_counts['quirl']++;
+							}
+							// Is Trans?
+							$valid_trans_char = array( 'trans-man', 'trans-woman' );
+							if ( has_term( $valid_trans_char, 'lez_gender', $char_id ) ) {
+								$char_counts['trans']++;
+							}
+
+							// Now to see if we have trans IRL...
+							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
+							if ( ! is_array( $actors_ids ) ) {
+								$actors_ids = array( get_post_meta( $char_id, 'lezchars_actor', true ) );
+							}
+							foreach ( $actors_ids as $actor ) {
+								$valid_trans_actor = array( 'trans-man', 'trans-woman', 'transgender' );
+								$gender_terms      = get_the_terms( $actor, 'lez_actor_gender', true );
+								if ( $gender_terms && ! is_wp_error( $gender_terms ) && has_term( $valid_trans_actor, 'lez_actor_gender', $actor ) ) {
+									$char_counts['txirl']++;
+									// It's possible to have MORE trans actors than characters.
+								}
 							}
 						}
 					}
@@ -616,6 +641,12 @@ SQL;
 				break;
 			case 'queer-irl':
 				$return = $char_counts['quirl'];
+				break;
+			case 'trans':
+				$return = $char_counts['trans'];
+				break;
+			case 'trans-irl':
+				$return = $char_counts['txirl'];
 				break;
 			case 'query':
 				$return = $charactersloop;

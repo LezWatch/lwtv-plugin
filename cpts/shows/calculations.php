@@ -117,34 +117,51 @@ class LWTV_Shows_Calculate {
 
 			// Base character mesurement
 			if ( count( $chars_regular ) === $all_chars ) {
+				// If everything is a regular:
 				$char_score = 95;
 			} elseif ( count( $chars_recurring ) === $all_chars ) {
+				// If everyone is recurring:
 				$char_score = 40;
 			} elseif ( count( $chars_guest ) === $all_chars ) {
+				// If everyone is a guest:
 				$char_score = 20;
 			} else {
+				// Points: Regular = 3; Recurring = 1; Guests = .5
 				$char_score = ( count( $chars_regular ) * 3 ) + count( $chars_recurring ) + ( count( $chars_guest ) / 2 );
-				$char_score = ( $char_score > 75 ) ? 75 : $char_score;
-				$char_score = ( $char_score < 30 ) ? 30 : $char_score;
+				// Score must be between 21 and 94.
+				$char_score = ( $char_score > 94 ) ? 94 : $char_score;
+				$char_score = ( $char_score < 21 ) ? 21 : $char_score;
 			}
 
-			// Chop a movie in half and a mini by 1/3
-			if ( has_term( 'movie', 'lez_formats', $post_id ) ) {
-				$char_score = ( $char_score / 2 );
-			} elseif ( has_term( 'mini-series', 'lez_formats', $post_id ) ) {
-				$char_score = ( $char_score / 1.5 );
-			}
-
-			// Bonuses for good cliches
-			$queer_irl  = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'queer-irl' ) );
+			// Bonuses for good cliches: queer irl = 2pts; no cliches = 1pt.
+			$queer_irl  = ( max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'queer-irl' ) ) * 2 );
 			$no_cliches = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'none' ) );
 
-			// Negatives for bad things
-			$the_dead = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'dead' ) );
-			// To Do: Negative points for trans character played by non-trans actor.
+			// Negatives for bad things: dead = -3pts; trans played by non-trans = -2pts
+			$the_dead    = ( max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'dead' ) ) * -3 );
+			$trans_chars = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'trans' ) );
+			$trans_irl   = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'trans-irl' ) );
+			$trans_score = 0;
+			if ( $trans_irl < $trans_chars ) {
+				$trans_score = ( ( $trans_chars - $trans_irl ) * -2 );
+			}
 
-			// Add it all together
-			$char_score = $char_score + ( $queer_irl * 2 ) + $no_cliches - ( $the_dead * 2 );
+			// Add it all together (negatives are taken care of above)
+			$char_score = $char_score + $queer_irl + $no_cliches + $the_dead + $trans_score;
+
+			// Adjust scores based on type of series
+			if ( has_term( 'movie', 'lez_formats', $post_id ) ) {
+				// Movies have a low bar, since they have low stakes
+				$char_score = ( $char_score / 2 );
+			} elseif ( has_term( 'mini-series', 'lez_formats', $post_id ) ) {
+				// Mini-Series similarly have a small run
+				$char_score = ( $char_score / 1.5 );
+			} elseif ( has_term( 'web-series', 'lez_formats', $post_id ) ) {
+				// WebSeries tend to be more daring, but again, low stakes.
+				$char_score = ( $char_score / 1.25 );
+			}
+
+			// Finally make sure we're between 0 and 100
 			$char_score = ( $char_score > 100 ) ? 100 : $char_score;
 		}
 
