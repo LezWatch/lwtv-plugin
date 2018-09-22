@@ -104,7 +104,6 @@ class LWTV_Affiliate_Apple {
 		$podcasts = array(
 			'LezRepresent'    => '1308112009',
 			'Queery'          => '1268343859',
-			'HTLPodcast'      => '1254294886',
 			'Buffering'       => '1150241800',
 			'LezHangOut'      => '1296938673',
 			'LesbianTalkShow' => '1078936307',
@@ -114,6 +113,7 @@ class LWTV_Affiliate_Apple {
 			'AngelOnTop'      => '1383009934',
 			'TalesBlackBadge' => '1097564705',
 			'HistoryIsGay'    => '1327642994',
+			'QueerAsFiction'  => '1355999869',
 		);
 
 		// Randomize the Podcast
