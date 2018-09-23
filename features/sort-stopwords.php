@@ -14,25 +14,33 @@ if ( ! is_admin() ) {
 
 	add_filter( 'posts_orderby', function( $orderby, \WP_Query $q ) {
 
-		// If this isn't an archive page, don't change $orderby
-		if ( ! is_archive() ) {
-			return $orderby;
-		}
-
-		// If the post type isn't a show, don't change $orderby
+		// Defaults:
+		$resort         = false;
 		$all_taxonomies = array( 'lez_stations', 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_country', 'lez_stars', 'lez_triggers', 'lez_intersections' );
-		if ( null === $q->get( 'post_type' ) ) {
-			if ( ! in_array( $q->get( 'taxonomy' ), $all_taxonomies, true ) ) {
-				return $orderby;
+		$fwp_sort       = ( isset( $_GET['fwp_sort'] ) ) ? sanitize_text_field( $_GET['fwp_sort'] ) : 'empty'; // WPSC: CSRF ok.
+		$fwp_array      = array( 'title_asc', 'title_desc', 'empty' );
+
+		// Now to detect...
+		// We only want to do this on archive pages
+		if ( is_archive() ) {
+			// If this is a show, we want to sort
+			if ( 'post_type_shows' === $q->get( 'post_type' ) ) {
+				$resort = true;
 			}
-		} elseif ( 'post_type_shows' !== $q->get( 'post_type' ) ) {
-			return $orderby;
+
+			// If this is one of our listed taxonomies, we want to sort
+			if ( in_array( $q->get( 'taxonomy' ), $all_taxonomies, true ) ) {
+				$resort = true;
+			}
+
+			// If this is NOT in our valid arrays, we want to NOT sort.
+			if ( ! in_array( $fwp_sort, $fwp_array, true ) ) {
+				$resort = false;
+			}
 		}
 
-		// If the sort isn't based on title, don't change $orderby
-		$fwp_sort  = ( isset( $_GET['fwp_sort'] ) ) ? sanitize_text_field( $_GET['fwp_sort'] ) : 'empty'; // WPSC: CSRF ok.
-		$fwp_array = array( 'title_asc', 'title_desc', 'empty' );
-		if ( ! in_array( $fwp_sort, $fwp_array, true ) ) {
+		// If resort is false, we return orderby as is.
+		if ( ! $resort ) {
 			return $orderby;
 		}
 

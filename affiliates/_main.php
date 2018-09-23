@@ -67,7 +67,6 @@ class LWTV_Affilliates {
 				'facetwp'    => '<a href="https://facetwp.com/?ref=91&campaign=LezPress"><img src="' . plugins_url( 'images/facetwp-300x250.png', __FILE__ ) . '"></a>',
 				'dreamhost'  => '<a href="https://dreamhost.com/dreampress/"><img src="' . plugins_url( 'images/dreamhost-300x250.png', __FILE__ ) . '"></a>',
 				'yikes'      => '<a href="https://www.yikesinc.com"><img src="' . plugins_url( 'images/yikes-300x250.png', __FILE__ ) . '"></a>',
-				'htlpodcast' => '<iframe src="//banners.itunes.apple.com/banner.html?partnerId=&aId=1010lMaT&bt=catalog&t=catalog_white&id=1254294886&c=us&l=en-US&w=300&h=250&store=podcast" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:300px;height:250px;border:0px"></iframe>',
 				'apple'      => '<iframe src="https://widgets.itunes.apple.com/widget.html?c=us&brc=FFFFFF&blc=FFFFFF&trc=FFFFFF&tlc=FFFFFF&d=&t=&m=tvSeason&e=tvSeason&w=250&h=300&ids=&wt=search&partnerId=&affiliate_id=&at=1010lMaT&ct=" frameborder=0 style="overflow-x:hidden;overflow-y:hidden;width:250px;height: 300px;border:0px"></iframe>',
 				'cbs-goodf'  => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/456232/3065/" width="300" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
 				'cbs-disco'  => '<iframe src="//a.impactradius-go.com/gen-ad-code/1242493/447373/3065/" width="300" height="600" scrolling="no" frameborder="0" marginheight="0" marginwidth="0"></iframe>',
