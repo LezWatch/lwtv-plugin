@@ -124,11 +124,11 @@ class LWTV_OTD_JSON {
 		// Grab the options
 		$default = array(
 			'character' => array(
-				'time' => strtotime( 'midnight tomorrow' ),
+				'time' => strtotime( 'tomorrow 01:00' ),
 				'post' => 'none',
 			),
 			'show'      => array(
-				'time' => strtotime( 'midnight tomorrow' ),
+				'time' => strtotime( 'tomorrow 01:00' ),
 				'post' => 'none',
 			),
 		);
