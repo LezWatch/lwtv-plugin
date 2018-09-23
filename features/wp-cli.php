@@ -11,7 +11,16 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 }
 
 /**
- * LezWatch special commands
+ * LezWatch.TV special commands
+ *
+ * ## EXAMPLES
+ *
+ * Re-run calculations for specific post content.
+ * $ wp lwtv calc [show|actor] [ID]
+ *
+ * Find post content missing certain flags
+ * $ wp lwtv find queerchars
+ *
  */
 class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 
@@ -92,22 +101,40 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 	*/
 	public function find( $args, $assoc_args ) {
 
-		// What are we looking for?
+		// Valid things to find...
+		$valid_finds = array( 'queerchars' );
+		$format      = ( isset( $assoc_args['format'] ) ) ? $assoc_args['format'] : 'table';
+		$try_to_fix  = false;
+
+		// What are we finding?
 		if ( ! empty( $args ) ) {
 			list( $find ) = $args;
 		}
 
-		// Valid things to find...
-		$valid_find = array( 'queerchars' );
-		$format     = ( isset( $assoc_args['format'] ) ) ? $assoc_args['format'] : 'table';
-
-		if ( ! in_array( $find, $valid_find, true ) ) {
-			WP_CLI::error( 'Currently you can only use the "queerchars" param to find characters played by queer actors, missing the appropriate flags.' );
+		// Check for valid arguments and post types
+		if ( empty( $find ) || ! in_array( $find, $valid_finds, true ) ) {
+			WP_CLI::error( 'You must provide a valid type of item to find: ' . implode( ', ', $valid_finds ) );
 		}
 
-		WP_CLI::log( 'Searching all characters for associated actor queerness. This may take a while ....' );
+		// If the fix flag is flown, try to fix.
+		if ( WP_CLI\Utils\get_flag_value( $assoc_args, 'fix' ) ) {
+			$try_to_fix = true;
+		}
 
-		$items = LWTV_Debug::find_queerchars();
+		switch ( $find ) {
+			case 'queerchars':
+				WP_CLI::log( 'Searching all characters for associated actor queerness ...' );
+				$items = LWTV_Debug::find_queerchars();
+				break;
+			case 'nochars':
+				if ( $try_to_fix ) {
+					WP_CLI::log( 'Attempting to fix actors without characters ....' );
+					$items = LWTV_Debug::fix_actors_no_chars();
+				} else {
+					WP_CLI::log( 'Searching all actors to ensure they have a character ....' );
+					$items = LWTV_Debug::find_actors_no_chars();
+				}
+		}
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			// No one needs help

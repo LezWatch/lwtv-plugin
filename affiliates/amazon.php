@@ -194,59 +194,76 @@ class LWTV_Affiliate_Amazon {
 
 		// First let's check if the show is on a network we know....
 		$networks = array(
-			'showtime'    => array(
-				'banner'   => '1TAG79C3PQ0GFXZ39R82',
-				'linkid'   => '7a8637a378a920f5283cfa96508e4976',
-				'category' => 'primevideochannels',
-			),
-			'starz'       => array(
-				'banner'   => '0GJR9JYSTS77TVQ2EH82',
-				'linkid'   => '6944b61eb373fdddc4cea0a94de193d7',
-				'category' => 'primevideochannels',
-			),
-			'hbo'         => array(
+			'showtime'     => array(
+				'expires'  => '2018-12-30',
 				'banner'   => '1E0AR7ZBTK5HEDE0CM82',
-				'linkid'   => '5ae0b3481ac50cc4239cc2040980b290',
+				'linkid'   => '2e2ac20186faf8b19ef4ca931b5337bd',
 				'category' => 'primevideochannels',
 			),
-			'bbc-america' => array(
-				'banner'   => '06V9DZJBZ21E92635K82',
-				'linkid'   => '21313d1cf4a1e7763f97e3ff8159ad93',
+			'hbo'          => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '15WAHRRCWADG8X4F09G2',
+				'linkid'   => '74197ffde2efa3f07ef91a0ce7f2a01a',
 				'category' => 'primevideochannels',
 			),
-			'bbc-four'    => array(
-				'banner'   => '06V9DZJBZ21E92635K82',
-				'linkid'   => '21313d1cf4a1e7763f97e3ff8159ad93',
+			'bbc-america'  => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '1MFVGHXVB06S23PS7Y82',
+				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
 				'category' => 'primevideochannels',
 			),
-			'bbc-three'   => array(
-				'banner'   => '06V9DZJBZ21E92635K82',
-				'linkid'   => '21313d1cf4a1e7763f97e3ff8159ad93',
+			'bbc-four'     => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '1MFVGHXVB06S23PS7Y82',
+				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
 				'category' => 'primevideochannels',
 			),
-			'bbc-two'     => array(
-				'banner'   => '06V9DZJBZ21E92635K82',
-				'linkid'   => '21313d1cf4a1e7763f97e3ff8159ad93',
+			'bbc-three'    => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '1MFVGHXVB06S23PS7Y82',
+				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
 				'category' => 'primevideochannels',
 			),
-			'bbc-one'     => array(
-				'banner'   => '06V9DZJBZ21E92635K82',
-				'linkid'   => '21313d1cf4a1e7763f97e3ff8159ad93',
+			'bbc-two'      => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '1MFVGHXVB06S23PS7Y82',
+				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
 				'category' => 'primevideochannels',
 			),
-			'bbc-wales'   => array(
-				'banner'   => '06V9DZJBZ21E92635K82',
-				'linkid'   => '21313d1cf4a1e7763f97e3ff8159ad93',
+			'bbc-one'      => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '1MFVGHXVB06S23PS7Y82',
+				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
 				'category' => 'primevideochannels',
 			),
-			'itv'         => array(
-				'banner'   => '06V9DZJBZ21E92635K82',
-				'linkid'   => '21313d1cf4a1e7763f97e3ff8159ad93',
+			'bbc-wales'    => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '1MFVGHXVB06S23PS7Y82',
+				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
 				'category' => 'primevideochannels',
 			),
-			'itv-encore'  => array(
-				'banner'   => '06V9DZJBZ21E92635K82',
-				'linkid'   => '21313d1cf4a1e7763f97e3ff8159ad93',
+			'itv'          => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '1MFVGHXVB06S23PS7Y82',
+				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
+				'category' => 'primevideochannels',
+			),
+			'itv-encore'   => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '1MFVGHXVB06S23PS7Y82',
+				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
+				'category' => 'primevideochannels',
+			),
+			'sky-atlantic' => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '1MFVGHXVB06S23PS7Y82',
+				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
+				'category' => 'primevideochannels',
+			),
+			'sky-1'        => array(
+				'expires'  => '2018-12-30',
+				'banner'   => '1MFVGHXVB06S23PS7Y82',
+				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
 				'category' => 'primevideochannels',
 			),
 		);
@@ -256,42 +273,39 @@ class LWTV_Affiliate_Amazon {
 		if ( $stations && ! is_wp_error( $stations ) ) {
 			foreach ( $stations as $station ) {
 				if ( array_key_exists( $station->slug, $networks ) ) {
-					$the_ad = $networks[ $station->slug ];
+					$expires = $networks[ $station->slug ]['expires'];
+					if ( 'ongoing' === $expires || strtotime( $expires ) >= time() ) {
+						$the_ad = $networks[ $station->slug ];
+					}
 				}
 			}
 		}
 
 		// The bounties if nothing else applies
 		$bounties = array(
-			'primeent'   => array(
+			'primeent'  => array(
 				'expires'  => 'ongoing',
-				'banner'   => '167KTXY4JXQWA6K8A502',
-				'linkid'   => '897bd791c62bbe1c38f7403ddadf695e',
+				'banner'   => '1NPA5510D9E368222PR2',
+				'linkid'   => '8a73febb7e83741deca4ec0eb7aa3a1f',
 				'category' => 'primeent',
 			),
-			'primeent-2' => array(
-				'expires'  => 'ongoing',
-				'banner'   => '167KTXY4JXQWA6K8A502',
-				'linkid'   => 'bd40942602aeae4fee219182dbc67a45',
-				'category' => 'primeent',
-			),
-			'primemain'  => array(
-				'expires'  => 'ongoing',
-				'banner'   => '1MDTME9E9G651CJTDA82',
-				'linkid'   => 'd2554a8e2e75fb1dd2efa7a835f4a182',
-				'category' => 'primemain',
-			),
-			'firetv'     => array(
-				'expires'  => 'ongoing',
-				'banner'   => '1HZB17ZSN14HN5F95FG2',
-				'linkid'   => '36cbf51ed866322a693cdccd1a86b56c',
-				'category' => 'firetv',
-			),
-			'dvd-anime'  => array(
+			'anime-dvd' => array(
 				'expires'  => 'ongoing',
 				'banner'   => '0EAD0FBRPQ3YQD8YDM82',
-				'linkid'   => '1b5814d9b0df1553d2cdc3c331696759',
+				'linkid'   => 'a88db93ce5bd7f8a91d7dbf41aa5d75a',
 				'category' => 'dvd',
+			),
+			'primemain' => array(
+				'expires'  => 'ongoing',
+				'banner'   => '028WNSXDMC6H5YDNCB82',
+				'linkid'   => '69b1c93038903293d05110a1c5397f15',
+				'category' => 'primemain',
+			),
+			'firetv'    => array(
+				'expires'  => 'ongoing',
+				'banner'   => '0FXJ4RSQAHG9T84VY2R2',
+				'linkid'   => '7adcc745e35b87b38324232f199497df',
+				'category' => 'amzn_firetv_primepr_0918',
 			),
 		);
 
@@ -299,9 +313,9 @@ class LWTV_Affiliate_Amazon {
 		if ( ! isset( $the_ad ) ) {
 			// Exclude anything expired
 			foreach ( $bounties as $a_bounty => $value ) {
-				$expires = strtotime( $value['expires'] );
+				$expires = $value['expires'];
 
-				if ( 'ongoing' === $value['expires'] || $expires >= time() ) {
+				if ( 'ongoing' === $value['expires'] || strtotime( $expires ) >= time() ) {
 					$bounties[ $a_bounty ] = $value;
 				}
 			}
