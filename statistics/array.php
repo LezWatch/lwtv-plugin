@@ -58,11 +58,7 @@ class LWTV_Stats_Arrays {
 		$taxonomies = get_terms( $taxonomy );
 
 		foreach ( $taxonomies as $term ) {
-			$queery = LWTV_Loops::tax_two_query(
-				$post_type,
-				$taxonomy, 'slug', $term->slug,
-				'lez_cliches', 'slug', 'dead'
-			);
+			$queery = LWTV_Loops::tax_two_query( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
 
 			$array[ $term->slug ] = array(
 				'count' => $queery->post_count,
@@ -594,9 +590,6 @@ class LWTV_Stats_Arrays {
 	 */
 	public static function dead_shows( $format ) {
 
-		// Dead Queers Query
-		$dead_queers_query = LWTV_Loops::tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
-
 		// Shows With Dead Query
 		$dead_shows_query = LWTV_Loops::tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
 
@@ -638,41 +631,16 @@ class LWTV_Stats_Arrays {
 				// Loop of characters who MIGHT be in this show
 				$this_show_characters_query = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
-				$fulldeathcount = '0';
-				$chardeathcount = '0';
+				$fulldeathcount = get_post_meta( $show_id, 'lezshows_dead_count', true );
+				$allcharcount   = get_post_meta( $show_id, 'lezshows_char_count', true );
 
-				// Begin Character query
-				if ( $this_show_characters_query->have_posts() ) {
-					while ( $this_show_characters_query->have_posts() ) {
-						$this_show_characters_query->the_post();
-						$char_id     = get_the_ID();
-						$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
-
-						if ( '' !== $shows_array ) {
-							foreach ( $shows_array as $char_show ) {
-								if ( $char_show['show'] === $show_id ) {
-									// If the character is really in this show, +1
-									$chardeathcount++;
-
-									// If the character is dead, bump the full death count
-									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-										$fulldeathcount++;
-									}
-								}
-							}
-						}
-					}
-					wp_reset_query();
-				}
-				// End Character Loop
-
-				if ( $fulldeathcount === $chardeathcount ) {
+				if ( $fulldeathcount === $allcharcount ) {
 					$fullshow_death_array[ $show_name ] = array(
 						'url'    => get_permalink( $show_id ),
 						'name'   => get_the_title( $show_id ),
 						'status' => get_post_status( $show_id ),
 					);
-				} elseif ( $fulldeathcount <= $chardeathcount ) {
+				} else {
 					$someshow_death_array[ $show_name ] = array(
 						'url'    => get_permalink( $show_id ),
 						'name'   => get_the_title( $show_id ),
@@ -686,18 +654,18 @@ class LWTV_Stats_Arrays {
 		if ( 'simple' === $format ) {
 			$array = array(
 				'all'  => array(
-					'name'  => 'All queers are dead',
+					'name'  => 'All characters are dead',
 					'count' => count( $fullshow_death_array ),
 					'url'   => '',
 				),
 				'some' => array(
-					'name'  => 'Some queers are dead',
+					'name'  => 'Some characters are dead',
 					'count' => count( $someshow_death_array ),
 					'url'   => '',
 				),
 				'none' => array(
-					'name'  => 'None queers are dead',
-					'count' => $alive_shows_query->post_count,
+					'name'  => 'No characters are dead',
+					'count' => count( $noneshow_death_array ),
 					'url'   => '',
 				),
 			);

@@ -306,10 +306,8 @@ class LWTV_Shows_Calculate {
 		// Update post meta for counts
 		// NOTE: This cannot be an array becuase of how it's used for Facet later on.
 		// MIKA! SERIOUSLY! NO!
-		if ( 'post_type_shows' === get_post_type( $post_id ) ) {
-			update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
-			update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
-		}
+		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
+		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
 
 		return $score;
 	}
@@ -406,6 +404,11 @@ class LWTV_Shows_Calculate {
 	 */
 	public static function do_the_math( $post_id ) {
 
+		// If this isn't a show, we bail.
+		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
 		// Get the ratings
 		$score_show_rating = self::show_score( $post_id );
 		$score_chars_total = self::show_character_score( $post_id );
@@ -443,11 +446,7 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Update the meta
-		if ( 'post_type_shows' === get_post_type( $post_id ) ) {
-			update_post_meta( $post_id, 'lezshows_the_score', $calculate );
-		} else {
-			delete_post_meta( $post_id, 'lezshows_the_score' );
-		}
+		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
 	}
 }
 

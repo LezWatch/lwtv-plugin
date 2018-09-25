@@ -24,6 +24,7 @@ class LWTV_Tools {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 	}
 
 	/*
@@ -34,7 +35,15 @@ class LWTV_Tools {
 	 */
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
-		add_action( 'admin_post_lwtv_tools_fix_actors', array( $this, 'fix_actors_no_chars' ) );
+		add_action( 'admin_post_lwtv_tools_fix_actors', array( $this, 'fix_actors_problems' ) );
+	}
+
+	public function admin_enqueue_scripts( $hook ) {
+		// Load only on ?page=mypluginname
+		if ( 'toplevel_page_lwtv_tools' !== $hook ) {
+				return;
+		}
+		wp_enqueue_style( 'lwtv_tools_admin', plugins_url( 'assets/css/lwtv-tools.css', dirname( __FILE__ ) ), array(), '1.0.0' );
 	}
 
 	/*
@@ -68,7 +77,7 @@ class LWTV_Tools {
 				$content = 'Automatic fix was unable to complete properly.';
 				break;
 			case 'error':
-				$content = 'Something has gone gaily wrong.';
+				$content = 'Something has gone gay-ly wrong.';
 				break;
 		}
 
@@ -93,24 +102,52 @@ class LWTV_Tools {
 			<h2 class="nav-tab-wrapper">
 				<a href="?page=lwtv_tools" class="nav-tab <?php echo ( 'intro' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Introduction</a>
 				<a  href="?page=lwtv_tools&tab=queer_checker" class="nav-tab <?php echo ( 'queer_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Queer Checker</a>
-				<a  href="?page=lwtv_tools&tab=actor_checker" class="nav-tab <?php ( 'actor_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Actor Checker</a>
+				<a  href="?page=lwtv_tools&tab=actor_checker" class="nav-tab <?php echo ( 'actor_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Actor Checker</a>
+				<a  href="?page=lwtv_tools&tab=character_checker" class="nav-tab <?php echo ( 'character_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Character Checker</a>
+				<a  href="?page=lwtv_tools&tab=show_checker" class="nav-tab <?php echo ( 'show_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Show Checker</a>
 			</h2>
 
-			<?php
-			switch ( $active_tab ) {
-				case 'queer_checker':
-					self::tab_queer_checker();
-					break;
-				case 'actor_checker':
-					self::tab_actor_checker();
-					break;
-				default:
-					self::tab_introduction();
-			}
-			?>
+			<div id="dashboard" class="lwtvtab">
+				<?php
+				switch ( $active_tab ) {
+					case 'queer_checker':
+						self::tab_queer_checker();
+						break;
+					case 'show_checker':
+						self::tab_show_checker();
+						break;
+					case 'actor_checker':
+						self::tab_actor_checker();
+						break;
+					case 'character_checker':
+						self::tab_character_checker();
+						break;
+					default:
+						self::tab_introduction();
+				}
+				?>
+			</div>
 
 		</div>
 		<?php
+	}
+
+	public static function table_content( $items ) {
+		$number = 1;
+		foreach ( $items as $item ) {
+			$class = ( 0 === $number % 2 ) ? '' : 'alternate';
+			echo '
+			<tr class="' . esc_attr( $class ) . '">
+				<td><strong><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" target="_new">' . get_the_title( (int) $item['id'] ) . '</a></strong>
+
+				<div class="row-actions"><span class="edit"><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" aria-label="Edit ' . get_the_title( (int) $item['id'] ) . '">Edit</a>
+				| </span><span class="view"><a href="' . esc_url( get_permalink( (int) $item['id'] ) ) . '" rel="bookmark" aria-label="View ' . get_the_title( (int) $item['id'] ) . '">View</a></span></div>
+				</td>
+				<td>' . wp_kses_post( $item['problem'] ) . '</td>
+			</tr>
+			';
+			$number++;
+		}
 	}
 
 	/**
@@ -119,21 +156,21 @@ class LWTV_Tools {
 	public static function tab_introduction() {
 		?>
 
-		<p>Sometimes we need extra tools to do things here...</p>
+		<div class="tab-block"><div class="lwtv-tools-container">
+			<h3>LezWatch.TV Tools</h3>
+			<p>Sometimes we need extra tools to do things here. If data gets out of sync or we update things incorrectly, the checkers can help identify those errors before people get snippy.</p>
+			<p>Keep in mind, the checkers have to check a lot of data, so they can be slow.</p>
+		</div></div>
 
-		<p>In addition to the tools in the tabs, remember we have the following resources:</p>
+		<div class="tab-block"><div class="lwtv-tools-container">
+			<h3>External Resources</h3>
 
-		<ul>
-			<li><a href="https://lezwatch.slack.com">Slack</a></li>
-			<li><a href="https://trello.com/b/hpDs7bvy/lezwatchtv">Trello Board</a></li>
-			<li><a href="https://github.com/lezWatch/lwtv-underscores/wiki">Theme Wiki</a></li>
-		</ul>
-
-		<h4>Queer Checker</h4>
-		<p>Make sure all characters who are flagged as Queer IRL have at least one queer actor, and that all actors who are queer have their characters flagged as Queer IRL. <em>WARNING</em>! This page loads slowly. It has a lot of things to check.</p>
-
-		<h4>Actor Checker</h4>
-		<p>Make sure all actors have characters listed. It happens sometimes when things get out of sync.</p>
+			<ul>
+				<li><a href="https://lezwatch.slack.com">Slack</a></li>
+				<li><a href="https://trello.com/b/hpDs7bvy/lezwatchtv">Trello Board</a></li>
+				<li><a href="https://github.com/lezWatch/lwtv-underscores/wiki">Theme Wiki</a></li>
+			</ul>
+		</div></div>
 		<?php
 	}
 
@@ -145,11 +182,23 @@ class LWTV_Tools {
 		$items = LWTV_Debug::find_queerchars();
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
-			echo '<p><strong>Congratulations!!!</strong> Every character\'s queerness matches their actors!</p>';
-		} else {
-
-			echo '<p>' . count( $items ) . ' character(s) need your attention. Please edit the actor or character as indicated.</p>';
 			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>Every character's queerness matches their actors.</p>
+				</div>
+			</div>
+			<?php
+		} else {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
+				<div id="lwtv-tools-alerts">
+					<p>The following character(s) need your attention. Please edit the actor or character as indicated.</p>
+				</div>
+			</div>
+
 			<table class="widefat fixed" cellspacing="0">
 				<thead><tr>
 					<th id="character" class="manage-column column-character" scope="col">Character</th>
@@ -158,17 +207,7 @@ class LWTV_Tools {
 
 				<tbody>
 					<?php
-					$number = 1;
-					foreach ( $items as $item ) {
-						$class = ( 0 === $number % 2 ) ? '' : 'class="alternate"';
-						echo '
-						<tr ' . esc_attr( $class ) . '>
-							<td><a href="' . esc_url( $item['url'] ) . '" target="_new">' . get_the_title( (int) $item['id'] ) . '</a></td>
-							<td>' . esc_html( $item['problem'] ) . '</td>
-						</tr>
-						';
-						$number++;
-					}
+					self::table_content( $items );
 					?>
 				</tbody>
 			</table>
@@ -177,65 +216,67 @@ class LWTV_Tools {
 	}
 
 	/**
-	 * Output the results of queer checking...
+	 * Output the results of actor checking...
 	 */
 	public static function tab_actor_checker() {
 
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = LWTV_Debug::find_actors_no_chars();
+		$items    = LWTV_Debug::find_actors_problems();
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
-			echo '<p><strong>Congratulations!!!</strong> Every actor has at least one character listed!</p>';
-		} else {
-
-			echo '<p>' . count( $items ) . ' actor(s) need your attention. You can just visit the actor and save the post to fix this in most cases.</p>';
-			// @codingStandardsIgnoreStart
 			?>
-			<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="POST">
-				<input type="hidden" name="action" value="lwtv_tools_fix_actors">
-				<?php wp_nonce_field( 'lwtv_tools_fix_actors', 'lwtv_tools_fix_actors_nonce', false ); ?>
-				<input type="hidden" name="_wp_http_referer" value="<?php echo $redirect; ?>">
-				<?php submit_button( 'Fix Actors' ); ?>
-			</form>
-
-			<table class="widefat fixed" cellspacing="0">
-				<thead><tr>
-					<th id="character" class="manage-column column-character" scope="col">Actor</th>
-					<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
-				</tr></thead>
-
-				<tbody>
-					<?php
-					$number = 1;
-					foreach ( $items as $item ) {
-						$class = ( 0 === $number % 2 ) ? '' : 'class="alternate"';
-						echo '
-						<tr ' . esc_attr( $class ) . '>
-							<td><a href="' . esc_url( $item['url'] ) . '" target="_new">' . get_the_title( (int) $item['id'] ) . '</a></td>
-							<td>' . wp_kses_post( $item['problem'] ) . '</td>
-						</tr>
-						';
-						$number++;
-					}
-					?>
-				</tbody>
-			</table>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>Every actor has at least one character.</p>
+				</div>
+			</div>
 			<?php
-			// @codingStandardsIgnoreEnd
+		} else {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
+				<div id="lwtv-tools-alerts">
+					<p>The following actor(s) need your attention. Some can be automatically fixed, other will need to be manually corrected.</p>
+				</div>
+			</div>
+
+			<div class="lwtv-tools-table">
+				<table class="widefat fixed" cellspacing="0">
+					<thead><tr>
+						<th id="character" class="manage-column column-character" scope="col">Actor</th>
+						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+					</tr></thead>
+
+					<tbody>
+						<?php
+						self::table_content( $items );
+						?>
+					</tbody>
+				</table>
+
+				<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="POST">
+					<input type="hidden" name="action" value="lwtv_tools_fix_actors">
+					<?php wp_nonce_field( 'lwtv_tools_fix_actors', 'lwtv_tools_fix_actors_nonce', false ); ?>
+					<input type="hidden" name="_wp_http_referer" value="<?php echo $redirect; ?>">
+					<?php submit_button( 'Fix Actors' ); ?>
+				</form>
+			</div>
+			<?php
 		}
 	}
 
 	/*
 	 * Attempt to fix the actors...
 	 */
-	public function fix_actors_no_chars() {
+	public function fix_actors_problems() {
 
 		if ( ! wp_verify_nonce( $_POST['lwtv_tools_fix_actors_nonce'], 'lwtv_tools_fix_actors' ) ) {
 			die( 'Invalid nonce.' );
 		}
 
-		$items = LWTV_Debug::fix_actors_no_chars();
+		$items = LWTV_Debug::fix_actors_problems();
 
 		if ( ! isset( $items ) || 0 === $items || is_null( $items ) ) {
 			$message = 'warning';
@@ -255,6 +296,95 @@ class LWTV_Tools {
 		exit;
 	}
 
+	/**
+	 * Output the results of Show checking...
+	 */
+	public static function tab_show_checker() {
+
+		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
+		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
+		$items    = LWTV_Debug::find_shows_problems();
+
+		if ( empty( $items ) || ! is_array( $items ) ) {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>All shows look good.</p>
+				</div>
+			</div>
+			<?php
+		} else {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
+				<div id="lwtv-tools-alerts">
+					<p>The following show(s) need your attention. Keep in mind, some shows are listed as not having characters on purpose.</p>
+				</div>
+			</div>
+
+			<div class="lwtv-tools-table">
+				<table class="widefat fixed" cellspacing="0">
+					<thead><tr>
+						<th id="character" class="manage-column column-character" scope="col">Show</th>
+						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+					</tr></thead>
+
+					<tbody>
+						<?php
+						self::table_content( $items );
+						?>
+					</tbody>
+				</table>
+			</div>
+			<?php
+		}
+	}
+
+	/**
+	 * Output the results of character checking...
+	 */
+	public static function tab_character_checker() {
+
+		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
+		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
+		$items    = LWTV_Debug::find_characters_problems();
+
+		if ( empty( $items ) || ! is_array( $items ) ) {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>All characters look good.</p>
+				</div>
+			</div>
+			<?php
+		} else {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
+				<div id="lwtv-tools-alerts">
+					<p>The following character(s) need your attention.</p>
+				</div>
+			</div>
+
+			<div class="lwtv-tools-table">
+				<table class="widefat fixed" cellspacing="0">
+					<thead><tr>
+						<th id="character" class="manage-column column-character" scope="col">Character</th>
+						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+					</tr></thead>
+
+					<tbody>
+						<?php
+						self::table_content( $items );
+						?>
+					</tbody>
+				</table>
+			</div>
+			<?php
+		}
+	}
 }
 
 new LWTV_Tools();

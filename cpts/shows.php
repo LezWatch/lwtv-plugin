@@ -61,7 +61,6 @@ class LWTV_CPT_Shows {
 		add_filter( 'quick_edit_show_taxonomy', array( $this, 'hide_tags_from_quick_edit' ), 10, 3 );
 		add_action( 'do_update_show_meta', array( $this, 'update_meta' ), 10, 2 );
 		add_action( 'save_post_post_type_shows', array( $this, 'update_meta' ), 10, 3 );
-		add_action( 'save_post_post_type_characters', array( $this, 'update_meta_from_chars' ), 10, 3 );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 	}
 
@@ -293,6 +292,22 @@ SQL;
 		return $clauses;
 	}
 
+	public static function flush_varnish( $post_id, $screen ) {
+		// Flush Varnish
+		if ( class_exists( 'VarnishPurger' ) && 'add' !== $screen->action ) {
+			// Generate list of URLs based on the show ID:
+			$purgeurls = $this->varnish_purge->generate_urls( $post_id );
+
+			// Add on the JSON API
+			array_push( $purgeurls, get_site_url() . '/wp-json/lwtv/?vhp-regex' );
+
+			// Purge 'em all
+			foreach ( $purgeurls as $url ) {
+				$this->varnish_purge->purge_url( $url );
+			}
+		}
+	}
+
 	/*
 	 * Save post meta for shows on SHOW update
 	 *
@@ -310,21 +325,8 @@ SQL;
 		// Do the math!! (This updates the score)
 		LWTV_Shows_Calculate::do_the_math( $post_id );
 
-		// Flush Varnish
-		if ( class_exists( 'VarnishPurger' ) && 'add' !== $screen->action ) {
-			// Generate list of URLs based on the show ID:
-			$purgeurls = $this->varnish_purge->generate_urls( $post_id );
-
-			// Add on the JSON API
-			array_push( $purgeurls,
-				get_site_url() . '/wp-json/lwtv/?vhp-regex'
-			);
-
-			// Purge 'em all
-			foreach ( $purgeurls as $url ) {
-				$this->varnish_purge->purge_url( $url );
-			}
-		}
+		// Empty Varnish
+		self::flush_varnish( $post_id, $screen );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'update_meta' ) );
@@ -338,13 +340,22 @@ SQL;
 	 * @param int $post_id The post ID.
 	 */
 	public function update_meta_from_chars( $post_id ) {
-		$character_show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
 
-		if ( '' !== $character_show_ids ) {
-			foreach ( $character_show_ids as $each_show ) {
-				do_action( 'do_update_show_meta', $each_show['show'] );
+		// unhook this function so it doesn't loop infinitely
+		remove_action( 'save_post_post_type_characters', array( $this, 'update_meta_from_chars' ) );
+
+		$screen   = get_current_screen();
+		$show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
+
+		if ( '' !== $show_ids ) {
+			foreach ( $show_ids as $each_show ) {
+				LWTV_Shows_Calculate::do_the_math( $each_show['show'] );
+				self::flush_varnish( $each_show['show'], $screen );
 			}
 		}
+
+		// re-hook this function
+		add_action( 'save_post_post_type_characters', array( $this, 'update_meta_from_chars' ) );
 	}
 
 	/*

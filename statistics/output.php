@@ -284,7 +284,7 @@ class LWTV_Stats_Output {
 								$name = 'Dead';
 								break;
 							default:
-								$name = wp_specialchars_decode( $item['name'] );
+								$name = str_replace( '&amp;', ' and ', $item['name'] );
 								break;
 						}
 						echo '"' . wp_kses_post( $name ) . ' (' . (int) $item['count'] . ')", ';
@@ -496,16 +496,23 @@ class LWTV_Stats_Output {
 			case 'sexuality':
 			case 'dead-sex':
 				$fixname = 'sexual';
+				$count   = LWTV_Stats::generate( 'characters', 'all', 'count' );
+				$center  = $count . ' Characters';
 				break;
 			case 'gender':
 			case 'dead-gender':
 				$fixname = 'gender';
+				$count   = LWTV_Stats::generate( 'characters', 'all', 'count' );
+				$center  = $count . ' Characters';
 				break;
 			case 'dead-shows':
 				$fixname = 'queers are dead';
+				$count   = LWTV_Stats::generate( 'shows', 'all', 'count' );
+				$center  = $count . ' Shows';
 				break;
 			default:
 				$fixname = '';
+				$center  = '';
 				break;
 		}
 
@@ -553,6 +560,11 @@ class LWTV_Stats_Output {
 				type:'doughnut',
 				data: pie<?php echo esc_attr( ucfirst( $data ) ); ?>data,
 				options: {
+					elements: {
+						center: {
+							text: '<?php echo esc_html( $center ); ?>',
+						}
+					},
 					tooltips: {
 						callbacks: {
 							label: function(tooltipItem, data) {
