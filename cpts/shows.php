@@ -326,7 +326,7 @@ SQL;
 		LWTV_Shows_Calculate::do_the_math( $post_id );
 
 		// Empty Varnish
-		self::flush_varnish( $post_id, $screen );
+		//self::flush_varnish( $post_id, $screen );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'update_meta' ) );
