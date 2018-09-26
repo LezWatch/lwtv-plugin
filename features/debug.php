@@ -78,11 +78,9 @@ class LWTV_Debug {
 	}
 
 	/**
-	 * Find Characterless Actors
-	 *
-	 * Find all actors who are listed as having 0 characters
+	 * Find Actors with problems.
 	 */
-	public static function find_actors_no_chars() {
+	public static function find_actors_problems() {
 
 		// Default
 		$items = array();
@@ -93,17 +91,27 @@ class LWTV_Debug {
 		if ( $the_loop->have_posts() ) {
 			while ( $the_loop->have_posts() ) {
 				$the_loop->the_post();
-				$post = get_post();
+				$post     = get_post();
+				$actor_id = $post->ID;
+				$problems = array();
 
-				// Get the characters ...
-				$character_count = get_post_meta( $post->ID, 'lezactors_char_count', true );
-
-				// If there are no characters listed, we have a problem
+				// Check Character Count
+				$character_count = get_post_meta( $actor_id, 'lezactors_char_count', true );
 				if ( ! $character_count || empty( $character_count ) ) {
+					$problems[] = 'No characters listed.';
+				}
+
+				if ( get_post_meta( $actor_id, 'lezactors_death', true ) ) {
+					if ( ! get_post_meta( $actor_id, 'lezactors_birth', true ) ) {
+						$problems[] = 'Death date set without date of birth.';
+					}
+				}
+
+				if ( ! empty( $problems ) ) {
 					$items[] = array(
 						'url'     => get_permalink(),
 						'id'      => get_the_id(),
-						'problem' => 'No characters listed.',
+						'problem' => implode( ' ', $problems ),
 					);
 				}
 			}
@@ -114,11 +122,11 @@ class LWTV_Debug {
 	}
 
 	/**
-	 * Fix Characterless Actors
+	 * Fix Actors
 	 *
-	 * Find all actors who are listed as having 0 characters and fix.
+	 * Right now all it can do is fix actors who are listed as having 0 characters
 	 */
-	public static function fix_actors_no_chars() {
+	public static function fix_actors_problems() {
 
 		// Default
 		$items = 0;
@@ -129,14 +137,16 @@ class LWTV_Debug {
 		if ( $the_loop->have_posts() ) {
 			while ( $the_loop->have_posts() ) {
 				$the_loop->the_post();
-				$post = get_post();
+				$post     = get_post();
+				$actor_id = $post->ID;
+				$problems = array();
 
 				// Get the characters ...
-				$character_count = get_post_meta( $post->ID, 'lezactors_char_count', true );
+				$character_count = get_post_meta( $actor_id, 'lezactors_char_count', true );
 
 				// If there are no characters listed, let's try to fix
 				if ( ! $character_count || empty( $character_count ) ) {
-					LWTV_Actors_Calculate::do_the_math( $post->ID );
+					LWTV_Actors_Calculate::do_the_math( $actor_id );
 					$items++;
 				}
 			}
@@ -145,6 +155,141 @@ class LWTV_Debug {
 
 		return $items;
 	}
+
+	/**
+	 * Find Characters with Problems
+	 */
+	public static function find_characters_problems() {
+		// Default
+		$items = array();
+
+		// Get all the shows
+		$the_loop = LWTV_Loops::post_type_query( 'post_type_characters' );
+
+		if ( $the_loop->have_posts() ) {
+			while ( $the_loop->have_posts() ) {
+				$the_loop->the_post();
+				$post     = get_post();
+				$char_id  = $post->ID;
+				$problems = array();
+
+				$cliche = get_the_terms( $char_id, 'lez_cliches' );
+				if ( ! $cliche || is_wp_error( $cliche ) ) {
+					$problems[] = 'No clichés.';
+				}
+
+				$shows = get_post_meta( $char_id, 'lezchars_show_group', true );
+				if ( ! $shows ) {
+					$problems[] = 'No shows listed.';
+				}
+
+				$actors = get_post_meta( $char_id, 'lezchars_actor', true );
+				if ( ! $actors ) {
+					$problems[] = 'No actors listed.';
+				}
+
+				// If we have problems, list them:
+				if ( ! empty( $problems ) ) {
+					$items[] = array(
+						'url'     => get_permalink(),
+						'id'      => get_the_id(),
+						'problem' => implode( ' ', $problems ),
+					);
+				}
+			}
+			wp_reset_query();
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Find Shows with Problems
+	 */
+	public static function find_shows_problems() {
+		// Default
+		$items = array();
+
+		// Get all the shows
+		$the_loop = LWTV_Loops::post_type_query( 'post_type_shows' );
+
+		if ( $the_loop->have_posts() ) {
+			while ( $the_loop->have_posts() ) {
+				$the_loop->the_post();
+				$post     = get_post();
+				$show_id  = $post->ID;
+				$problems = array();
+
+				// Get what we check for:
+				$character_count = get_post_meta( $show_id, 'lezshows_char_count', true );
+				if ( ! $character_count || empty( $character_count ) ) {
+					$problems[] = 'No characters listed.';
+				}
+
+				if ( ! get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) {
+					$problems[] = 'No worthit thumb.';
+				}
+
+				if ( ! get_post_meta( $show_id, 'lezshows_worthit_details', true ) ) {
+					$problems[] = 'No worthit details.';
+				}
+
+				if ( ! get_post_meta( $show_id, 'lezshows_realness_rating', true ) ) {
+					$problems[] = 'No realness rating.';
+				}
+
+				if ( ! get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) {
+					$problems[] = 'No quality rating.';
+				}
+
+				if ( ! get_post_meta( $show_id, 'lezshows_screentime_rating', true ) ) {
+					$problems[] = 'No screentime rating.';
+				}
+
+				$stations = get_the_terms( $show_id, 'lez_stations' );
+				if ( ! $stations || is_wp_error( $stations ) ) {
+					$problems[] = 'No stations.';
+				}
+
+				$nations = get_the_terms( $show_id, 'lez_country' );
+				if ( ! $nations || is_wp_error( $nations ) ) {
+					$problems[] = 'No country.';
+				}
+
+				$formats = get_the_terms( $show_id, 'lez_formats' );
+				if ( ! $formats || is_wp_error( $formats ) ) {
+					$problems[] = 'No format.';
+				}
+
+				if ( ! get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
+					$problems[] = 'No airdates.';
+				}
+
+				$genres = get_the_terms( $show_id, 'lez_genres' );
+				if ( ! $genres || is_wp_error( $genres ) ) {
+					$problems[] = 'No genres.';
+				}
+
+				$tropes = get_the_terms( $show_id, 'lez_tropes' );
+				if ( ! $tropes || is_wp_error( $tropes ) ) {
+					$problems[] = 'No tropes.';
+				}
+
+				// If we have problems, list them:
+				if ( ! empty( $problems ) ) {
+					$items[] = array(
+						'url'     => get_permalink(),
+						'id'      => get_the_id(),
+						'problem' => implode( ' ', $problems ),
+					);
+				}
+			}
+			wp_reset_query();
+		}
+
+		return $items;
+	}
+
 }
 
 new LWTV_Debug();

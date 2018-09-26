@@ -47,8 +47,6 @@ class LWTV_Affiliate_CBS {
 			$link = '176086';
 		}
 
-		//$output = '<a href="https://cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" target="_blank" class="btn btn-primary">CBS All Access</a><img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $link . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
-
 		return $link;
 	}
 
@@ -57,10 +55,10 @@ class LWTV_Affiliate_CBS {
 	 */
 	public static function output_widget( $post_id ) {
 
-		// The possible ads
+		// The possible ads: 300 x 250
 		$named_array = array(
 			'the-good-wife'                 => '456231',
-			'the-good-fight'                => '455992',
+			'the-good-fight'                => '485771',
 			'star-trek-the-next-generation' => '366250',
 			'star-trek-deep-space-nine'     => '366250',
 			'star-trek-discovery'           => '440479',
@@ -70,6 +68,7 @@ class LWTV_Affiliate_CBS {
 			'ncis-new-orleans'              => '379721',
 			'the-young-and-the-restless'    => '359948',
 			'blue-bloods'                   => '379693',
+			'the-big-bang-theory'           => '359935',
 		);
 
 		$generic_array = array( '359935', '359965', '359958', '359954', '359944', '359942', '379693', '440474' );

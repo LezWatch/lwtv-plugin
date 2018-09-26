@@ -1,0 +1,38 @@
+.lwtvtab .tab-block {
+  display: block;
+  margin: 30px 0;
+}
+
+.lwtv-tools-table {
+  max-width: 1280px;
+  margin: 20px 0 1px;
+}
+
+.lwtv-tools-table .alternate, .striped>tbody>:nth-child(odd), ul.striped>:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.lwtv-tools-container {
+  max-width: 1280px;
+  margin: 20px 0 1px;
+  padding: 20px 20px 0;
+  border: 1px solid #e5e5e5;
+  background-color: #fdfdfd;
+  box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.lwtv-tools-container h3 {
+  margin: -20px -20px 0;
+  padding: 1em;
+  border-bottom: 1px solid #ccc;
+  background-color: #fdfdfd;
+  font-size: 1.4em;
+}
+
+.lwtv-tools-container .dashicons-yes {
+  color: #77b227;
+}
+
+.lwtv-tools-container .dashicons-warning {
+color: #dc3232;
+}

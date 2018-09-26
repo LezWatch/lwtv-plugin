@@ -284,27 +284,29 @@ class LWTV_Loops {
 
 	public static function post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, $field, $terms, $compare = '=', $operator = 'IN' ) {
 		$count = wp_count_posts( $post_type )->publish;
-		$query = new WP_Query( array(
-			'post_type'      => $post_type,
-			'posts_per_page' => $count,
-			'no_found_rows'  => true,
-			'post_status'    => array( 'publish' ),
-			'meta_query'     => array(
-				array(
-					'key'     => $key,
-					'value'   => $value,
-					'compare' => $compare,
+		$query = new WP_Query(
+			array(
+				'post_type'      => $post_type,
+				'posts_per_page' => $count,
+				'no_found_rows'  => true,
+				'post_status'    => array( 'publish' ),
+				'meta_query'     => array(
+					array(
+						'key'     => $key,
+						'value'   => $value,
+						'compare' => $compare,
+					),
 				),
-			),
-			'tax_query'      => array(
-				array(
-					'taxonomy' => $taxonomy,
-					'field'    => $field,
-					'terms'    => $terms,
-					'operator' => $operator,
+				'tax_query'      => array(
+					array(
+						'taxonomy' => $taxonomy,
+						'field'    => $field,
+						'terms'    => $terms,
+						'operator' => $operator,
+					),
 				),
-			),
-		) );
+			)
+		);
 
 		wp_reset_query();
 		return $query;
@@ -325,14 +327,16 @@ class LWTV_Loops {
 			return;
 		}
 
-		$query = new WP_Query( array(
-			'post_type'     => $post_type,
-			'no_found_rows' => true,
-			'post_status'   => array( 'publish' ),
-			'tag'           => $slug,
-			'orderby'       => 'date',
-			'order'         => 'DESC',
-		));
+		$query = new WP_Query(
+			array(
+				'post_type'     => $post_type,
+				'no_found_rows' => true,
+				'post_status'   => array( 'publish' ),
+				'tag'           => $slug,
+				'orderby'       => 'date',
+				'order'         => 'DESC',
+			)
+		);
 		wp_reset_query();
 		return $query;
 	}

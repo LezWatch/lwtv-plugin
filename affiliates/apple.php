@@ -114,6 +114,7 @@ class LWTV_Affiliate_Apple {
 			'TalesBlackBadge' => '1097564705',
 			'HistoryIsGay'    => '1327642994',
 			'QueerAsFiction'  => '1355999869',
+			'GalPalsWatch'    => '1412048173',
 		);
 
 		// Randomize the Podcast

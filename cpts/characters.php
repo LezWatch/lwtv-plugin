@@ -671,9 +671,13 @@ SQL;
 	 */
 	public static function get_chars_for_show( $show_id, $havecharcount, $role = 'regular' ) {
 
-		// The Shane Clause & The Clone Club Correlary
-		// Calculate the max number of characters to list, based on the
-		// previous count. Default/Minimum is 100 characters.
+		/* The Shane Clause & The Clone Club Correlary
+		 *
+		 * Calculate the max number of characters to list, based on the
+		 * previous count. Default/Minimum is 100 characters.
+		 * Amusing note: Without this, Sarah Manning took the place of
+		 * every single other character played by Tatiana Maslany.
+		 */
 		$count = ( isset( $havecharcount ) && $havecharcount >= '100' ) ? $havecharcount : '100';
 
 		// Valid Roles:
@@ -687,28 +691,30 @@ SQL;
 		// Prepare the ARRAY
 		$characters = array();
 
-		$charactersloop = new WP_Query( array(
-			'post_type'              => 'post_type_characters',
-			'post_status'            => array( 'publish' ),
-			'orderby'                => 'title',
-			'order'                  => 'ASC',
-			'posts_per_page'         => $count,
-			'no_found_rows'          => true,
-			'update_post_term_cache' => true,
-			'meta_query'             => array(
-				'relation' => 'AND',
-				array(
-					'key'     => 'lezchars_show_group',
-					'value'   => $role,
-					'compare' => 'LIKE',
+		$charactersloop = new WP_Query(
+			array(
+				'post_type'              => 'post_type_characters',
+				'post_status'            => array( 'publish' ),
+				'orderby'                => 'title',
+				'order'                  => 'ASC',
+				'posts_per_page'         => $count,
+				'no_found_rows'          => true,
+				'update_post_term_cache' => true,
+				'meta_query'             => array(
+					'relation' => 'AND',
+					array(
+						'key'     => 'lezchars_show_group',
+						'value'   => $role,
+						'compare' => 'LIKE',
+					),
+					array(
+						'key'     => 'lezchars_show_group',
+						'value'   => $show_id,
+						'compare' => 'LIKE',
+					),
 				),
-				array(
-					'key'     => 'lezchars_show_group',
-					'value'   => $show_id,
-					'compare' => 'LIKE',
-				),
-			),
-		) );
+			)
+		);
 
 		if ( $charactersloop->have_posts() ) {
 			while ( $charactersloop->have_posts() ) {
@@ -757,18 +763,33 @@ SQL;
 		// get the most recent death and save it as a new meta
 		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
 		$newest_death    = '0000-00-00';
-
 		if ( '' !== $character_death ) {
 			foreach ( $character_death as $death ) {
 				if ( $death > $newest_death ) {
 					$newest_death = $death;
 				}
 			}
-
 			if ( '0000-00-00' !== $newest_death ) {
 				update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
 			}
 		}
+
+		// Update show data
+		$show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
+		if ( '' !== $show_ids ) {
+			foreach ( $show_ids as $each_show ) {
+				$request = wp_remote_get( get_permalink( $each_show['show'] ) );
+			}
+		}
+
+		// Update actor data
+		$actor_ids = lwtv_yikes_chardata( get_the_ID(), 'actors' );
+		if ( '' !== $actor_ids ) {
+			foreach ( $actor_ids as $each_actor ) {
+				$request = wp_remote_get( get_permalink( $each_actor ) );
+			}
+		}
+
 		// re-hook this function
 		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
 	}

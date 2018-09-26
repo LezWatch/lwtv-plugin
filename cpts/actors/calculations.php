@@ -58,7 +58,7 @@ class LWTV_Actors_Calculate {
 			wp_reset_query();
 		}
 
-		// Return Queers!
+		// Let us return Queers!
 		switch ( $type ) {
 			case 'count':
 				$output = $queercount;
