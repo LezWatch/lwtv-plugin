@@ -323,7 +323,8 @@ SQL;
 		remove_action( 'save_post_post_type_shows', array( $this, 'update_meta' ) );
 
 		// Do the math!! (This updates the score)
-		LWTV_Shows_Calculate::do_the_math( $post_id );
+		//LWTV_Shows_Calculate::do_the_math( $post_id );
+		$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
 
 		// Empty Varnish
 		//self::flush_varnish( $post_id, $screen );

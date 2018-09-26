@@ -786,12 +786,12 @@ SQL;
 		$actor_ids = lwtv_yikes_chardata( get_the_ID(), 'actors' );
 		if ( '' !== $actor_ids ) {
 			foreach ( $actor_ids as $each_actor ) {
-				$request = wp_remote_get( get_permalink( $each_actor ) );
+				$request = wp_remote_get( get_permalink( $each_actor ) . '/?nocache' );
 			}
 		}
 
 		// re-hook this function
-		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
+		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) . '/?nocache' );
 	}
 
 }
