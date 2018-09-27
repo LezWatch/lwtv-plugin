@@ -32,13 +32,16 @@ class LWTV_Shows_Calculate {
 		$screentime = min( (int) get_post_meta( $post_id, 'lezshows_screentime_rating', true ), 5 );
 		$score      = ( $realness + $quality + $screentime ) * 2;
 
-		// Add in Thumb Score Rating: 10, 5, -10
+		// Add in Thumb Score Rating: 10, 5, 0, -10
 		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
 			case 'Yes':
 				$score += 10;
 				break;
 			case 'Meh':
 				$score += 5;
+				break;
+			case 'TBD':
+				$score += 0;
 				break;
 			case 'No':
 				$score -= 10;
