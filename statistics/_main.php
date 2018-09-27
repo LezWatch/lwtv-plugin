@@ -124,6 +124,7 @@ class LWTV_Stats {
 					'Yes',
 					'No',
 					'Meh',
+					'TBD',
 				);
 				$array  = LWTV_Stats_Arrays::meta( $post_type, $thumbs, 'lezshows_worthit_rating', $data );
 				break;

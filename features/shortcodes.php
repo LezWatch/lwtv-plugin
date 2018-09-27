@@ -138,7 +138,7 @@ class LWTV_Shortcodes {
 		$queer = ( $queer < 0 ) ? 0 : $queer;
 		$queer = ( $queer > 5 ) ? 5 : $queer;
 
-		$worth = ( in_array( $attributes['worth'], array( 'yes', 'no', 'meh' ), true ) ) ? $attributes['worth'] : 'meh';
+		$worth = ( in_array( $attributes['worth'], array( 'yes', 'no', 'meh', 'tbd' ), true ) ) ? $attributes['worth'] : 'meh';
 		switch ( $worth ) {
 			case 'yes':
 				$worth_icon  = 'thumbs-up';
@@ -147,6 +147,10 @@ class LWTV_Shortcodes {
 			case 'no':
 				$worth_icon  = 'thumbs-down';
 				$worth_color = 'danger';
+				break;
+			case 'tbd':
+				$worth_icon  = 'clock-retro';
+				$worth_color = 'info';
 				break;
 			case 'meh':
 				$worth_icon  = 'meh';
