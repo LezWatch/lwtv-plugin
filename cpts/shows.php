@@ -292,22 +292,6 @@ SQL;
 		return $clauses;
 	}
 
-	public static function flush_varnish( $post_id, $screen ) {
-		// Flush Varnish
-		if ( class_exists( 'VarnishPurger' ) && 'add' !== $screen->action ) {
-			// Generate list of URLs based on the show ID:
-			$purgeurls = $this->varnish_purge->generate_urls( $post_id );
-
-			// Add on the JSON API
-			array_push( $purgeurls, get_site_url() . '/wp-json/lwtv/?vhp-regex' );
-
-			// Purge 'em all
-			foreach ( $purgeurls as $url ) {
-				$this->varnish_purge->purge_url( $url );
-			}
-		}
-	}
-
 	/*
 	 * Save post meta for shows on SHOW update
 	 *
@@ -323,10 +307,8 @@ SQL;
 		remove_action( 'save_post_post_type_shows', array( $this, 'update_meta' ) );
 
 		// Do the math!! (This updates the score)
-		LWTV_Shows_Calculate::do_the_math( $post_id );
-
-		// Empty Varnish
-		self::flush_varnish( $post_id, $screen );
+		//LWTV_Shows_Calculate::do_the_math( $post_id );
+		$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'update_meta' ) );

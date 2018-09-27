@@ -1,25 +1,39 @@
 This project was bootstrapped with [Create Guten Block](https://github.com/ahmadawais/create-guten-block).
 
-Below you will find some information on how to run scripts.
+## About
 
->You can find the most recent version of this guide [here](https://github.com/ahmadawais/create-guten-block).
+This is the LezWatch.TV version of spoiler warnings.
 
-## 👉  `npm start`
-- Use to compile and run the block in development mode.
-- Watches for any changes and reports back any errors in your code.
+## Development Notes
 
-## 👉  `npm run build`
-- Use to build production code for your block inside `dist` folder.
-- Runs once and reports back the gzip file sizes of the produced code.
+The source code is located in `/src/` - that's where most (if not all) of your work will happen.
 
-## 👉  `npm run eject`
-- Use to eject your plugin out of `create-guten-block`.
-- Provides all the configurations so you can customize the project as you want.
-- It's a one-way street, `eject` and you have to maintain everything yourself.
-- You don't normally have to `eject` a project because by ejecting you lose the connection with `create-guten-block` and from there onwards you have to update and maintain all the dependencies on your own.
+* `blocks.js` - A list of all the separate JS files included
+* `/block/block.js` - The code
 
----
+When built, the new code will deploy to the `/dist/` folder.
 
-###### Feel free to tweet and say 👋 at me [@MrAhmadAwais](https://twitter.com/mrahmadawais/)
+The overall code is called from the `/gutenberg/_main.php` file.
 
-[![npm](https://img.shields.io/npm/v/create-guten-block.svg?style=flat-square)](https://www.npmjs.com/package/create-guten-block) [![npm](https://img.shields.io/npm/dt/create-guten-block.svg?style=flat-square&label=downloads)](https://www.npmjs.com/package/create-guten-block)  [![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](https://github.com/ahmadawais/create-guten-block) [![Tweet for help](https://img.shields.io/twitter/follow/mrahmadawais.svg?style=social&label=Tweet%20@MrAhmadAwais)](https://twitter.com/mrahmadawais/) [![GitHub stars](https://img.shields.io/github/stars/ahmadawais/create-guten-block.svg?style=social&label=Stars)](https://github.com/ahmadawais/create-guten-block/stargazers) [![GitHub followers](https://img.shields.io/github/followers/ahmadawais.svg?style=social&label=Follow)](https://github.com/ahmadawais?tab=followers)
+### Notes
+
+Gutenberg is _very_ sensitive to changes, which can invalidate a block and cause it to no longer output properly. Unless you've written in deprecation clauses, be careful when editing.
+
+1. Do _not_ rename any functions
+2. Do _not_ change the output
+
+Basically, leave it alone as much as possible.
+
+## Installation and Building
+
+1. `npm install`
+    - Install the components you'll need
+2. `npm start`
+    - Use to compile and run the block in development mode.
+    - Watches for any changes and reports back any errors in your code.
+    - This will create usable, but not compressed, code.
+3. `npm run build`
+    - Use to build production code for your block inside `dist` folder.
+    - Runs once and reports back the gzip file sizes of the produced code.
+
+You can find the most recent version of the official CGB guide [here](https://github.com/ahmadawais/create-guten-block).

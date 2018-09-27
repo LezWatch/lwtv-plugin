@@ -40,6 +40,11 @@ class LWTV_CPT_Characters {
 	 * Admin Init
 	 */
 	public function admin_init() {
+
+		if ( class_exists( 'VarnishPurger' ) ) {
+			$this->varnish_purge = new VarnishPurger();
+		}
+
 		add_action( 'admin_head', array( $this, 'admin_css' ) );
 
 		add_filter( 'manage_post_type_characters_posts_columns', array( $this, 'manage_posts_columns' ) );
@@ -757,6 +762,9 @@ SQL;
 	 */
 	public function update_meta( $post_id ) {
 
+		$screen    = get_current_screen();
+		$purgeurls = array();
+
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
 
@@ -778,7 +786,10 @@ SQL;
 		$show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
 		if ( '' !== $show_ids ) {
 			foreach ( $show_ids as $each_show ) {
-				$request = wp_remote_get( get_permalink( $each_show['show'] ) );
+				if ( 'publish' === get_post_status( $each_show['show'] ) ) {
+					$request     = wp_remote_get( get_permalink( $each_show['show'] ) . '/?nocache' );
+					$purgeurls[] = get_permalink( $each_show['show'] );
+				}
 			}
 		}
 
@@ -786,12 +797,27 @@ SQL;
 		$actor_ids = lwtv_yikes_chardata( get_the_ID(), 'actors' );
 		if ( '' !== $actor_ids ) {
 			foreach ( $actor_ids as $each_actor ) {
-				$request = wp_remote_get( get_permalink( $each_actor ) );
+				if ( 'publish' === get_post_status( $each_actor['show'] ) ) {
+					$request     = wp_remote_get( get_permalink( $each_actor ) . '/?nocache' );
+					$purgeurls[] = get_permalink( $each_actor['show'] );
+				}
+			}
+		}
+
+		// Flush Varnish
+		if ( class_exists( 'VarnishPurger' ) && 'add' !== $screen->action && 'publish' === get_post_status( $post_id ) ) {
+			// Generate list of URLs based on the show ID:
+			$generate_urls = $this->varnish_purge->generate_urls( $post_id );
+			$urls_to_purge = array_merge( $purgeurls, $generate_urls );
+
+			// Purge 'em all
+			foreach ( $urls_to_purge as $url ) {
+				$this->varnish_purge->purge_url( $url );
 			}
 		}
 
 		// re-hook this function
-		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
+		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) . '/?nocache' );
 	}
 
 }

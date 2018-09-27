@@ -16,6 +16,7 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Shows_CMB2 {
 
 	public $ratings_array;
+	public $thumbs_array;
 	public $affiliates_array;
 
 	public function __construct() {
@@ -30,6 +31,15 @@ class LWTV_Shows_CMB2 {
 			'4' => '4',
 			'5' => '5',
 		);
+
+		// Array of thumbscores
+		$this->thumbs_array = array(
+			'Yes' => 'Yes',
+			'Meh' => 'Meh',
+			'No'  => 'No',
+			'TBD' => 'TBD',
+		);
+
 	}
 
 	/*
@@ -68,11 +78,7 @@ class LWTV_Shows_CMB2 {
 			'id'      => $prefix . 'worthit_rating',
 			'desc'    => 'Is the show worth watching?',
 			'type'    => 'radio_inline',
-			'options' => array(
-				'Yes' => 'Yes',
-				'Meh' => 'Meh',
-				'No'  => 'No',
-			),
+			'options' => $this->thumbs_array,
 		) );
 		// Field: Worth It Details
 		$field_worthdetails = $cmb_mustsee->add_field( array(
@@ -93,7 +99,7 @@ class LWTV_Shows_CMB2 {
 		) );
 		// Field: Worth It - Affiliate Links
 		$field_affiliateurl = $cmb_mustsee->add_field( array(
-			'name'       => 'Affiliate Link',
+			'name'       => 'Watch Online Link(s)',
 			'desc'       => 'Paste in a direct link. Amazon, Apple, and CBS links will be auto-converted to affiliate links. <br />Examples: <code>https://www.amazon.com/One-Mississippi-Season-1/dp/B017APUVI8</code>, <code>https://itunes.apple.com/us/tv-season/take-my-wife-season-2/id1347392483</code>, <code>https://www.cbs.com/shows/star-trek-discovery/</code>',
 			'id'         => $prefix . 'affiliate',
 			'type'       => 'text_url',
