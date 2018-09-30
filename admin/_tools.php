@@ -10,6 +10,8 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+require_once 'screeners.php';
+
 class LWTV_Tools {
 
 	/**
@@ -56,6 +58,14 @@ class LWTV_Tools {
 		// Add Tools pages
 		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ), LWTV_Functions::get_icon_svg(), 2 );
 		add_submenu_page( 'lwtv_tools', 'Tools', 'Tools', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ) );
+		if ( class_exists( 'LWTV_Screeners' ) ) {
+			add_submenu_page( 'lwtv_tools', 'Screeners', 'Screeners', 'edit_posts', 'screeners', array( 'LWTV_Screeners', 'settings_page' ) );
+		}
+
+		global $submenu;
+		$submenu['lwtv_tools'][] = array( 'Documentation', 'edit_posts', esc_url( 'https://lezwatch.github.io/' ) );
+		$submenu['lwtv_tools'][] = array( 'Slack', 'edit_posts', esc_url( 'https://lezwatchtv.slack.com/' ) );
+		$submenu['lwtv_tools'][] = array( 'Trello', 'edit_posts', esc_url( 'https://trello.com/b/hpDs7bvy/lezwatchtv' ) );
 
 		// Admin notices
 		add_action( 'load-$page_id', array( $this, 'admin_notices' ) );
@@ -166,9 +176,9 @@ class LWTV_Tools {
 			<h3>External Resources</h3>
 
 			<ul>
+				<li><a href="https://lezwatch.github.io">Documentation</a></li>
 				<li><a href="https://lezwatch.slack.com">Slack</a></li>
 				<li><a href="https://trello.com/b/hpDs7bvy/lezwatchtv">Trello Board</a></li>
-				<li><a href="https://github.com/lezWatch/lwtv-underscores/wiki">Theme Wiki</a></li>
 			</ul>
 		</div></div>
 		<?php
@@ -388,5 +398,3 @@ class LWTV_Tools {
 }
 
 new LWTV_Tools();
-
-require_once 'screeners.php';
