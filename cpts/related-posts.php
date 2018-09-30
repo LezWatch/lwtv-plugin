@@ -17,11 +17,11 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Related_Posts {
 
 	public function __construct() {
-		add_filter( 'the_content', array( $this, 'related_shows' ) );
+		add_filter( 'the_content', array( $this, 'related_content' ) );
 	}
 
 	/**
-	 * related_posts function.
+	 * Output posts related to this show, character, or actor.
 	 *
 	 * @access public
 	 * @param mixed $slug
@@ -97,29 +97,55 @@ class LWTV_Related_Posts {
 	}
 
 	/**
-	 * related_shows function.
+	 * Related Content: Shows, Characters, or Actors related to this post
+	 * Used on Posts only.
 	 *
 	 * @access public
 	 * @param mixed $content
 	 * @return void
 	 */
-	public function related_shows( $content ) {
+	public function related_content( $content ) {
 		if ( is_singular( 'post' ) ) {
 
-			$posttags = get_the_tags( get_the_ID() );
-			$shows    = '';
+			$post_tags   = get_the_tags( get_the_ID() );
+			$related     = array(
+				'show'      => '',
+				'actor'     => '',
+				'character' => '',
+			);
+			$icons       = array(
+				'show'      => lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ),
+				'actor'     => lwtv_yikes_symbolicons( 'team.svg', 'fa-users' ),
+				'character' => lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-users' ),
+			);
+			$related_out = '';
 
-			if ( $posttags ) {
-				foreach ( $posttags as $tag ) {
-					$maybeshow = get_page_by_path( $tag->name, OBJECT, 'post_type_shows' );
-					if ( $maybeshow && $maybeshow->post_name === $tag->slug ) {
-						$shows .= '<li>' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '<a href="/show/' . $tag->slug . '">' . ucwords( $tag->name ) . '</a></li>';
+			// Bail early if no tags or it's not an array.
+			if ( $post_tags ) {
+
+				foreach ( $post_tags as $tag ) {
+					$maybe = array(
+						'show'      => get_page_by_path( $tag->name, OBJECT, 'post_type_shows' ),
+						'actor'     => get_page_by_path( $tag->name, OBJECT, 'post_type_actors' ),
+						'character' => get_page_by_path( $tag->name, OBJECT, 'post_type_characters' ),
+					);
+
+					foreach ( $maybe as $type => $item ) {
+						if ( $item && $item->post_name === $tag->slug ) {
+							$related[ $type ] .= '<li>' . $icons[ $type ] . '<a href="/' . $type . '/' . $tag->slug . '">' . ucwords( $tag->name ) . '</a></li>';
+						}
 					}
 				}
 
-				if ( ! empty( $shows ) ) {
-					$related_shows = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about the shows mentioned in this post:</h4><ul>' . $shows . '</ul></div></section>';
-					$content      .= $related_shows;
+				foreach ( $related as $type => $item ) {
+					if ( ! empty( $related[ $type ] ) ) {
+						$related_out .= $item;
+					}
+				}
+
+				if ( ! empty( $related_out ) ) {
+					$related_content = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about topics mentioned in this post:</h4><ul>' . $related_out . '</ul></div></section>';
+					$content        .= $related_content;
 				}
 			}
 		}

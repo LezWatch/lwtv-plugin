@@ -432,6 +432,5 @@ SQL;
 // Include Sub Files
 require_once 'shows/calculations.php';
 require_once 'shows/cmb2-metaboxes.php';
-require_once 'shows/related-posts.php';
 
 new LWTV_CPT_Shows();
