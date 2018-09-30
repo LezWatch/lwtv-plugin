@@ -13,31 +13,6 @@ if ( ! defined( 'WPINC' ) ) {
 
 class LWTV_Screeners {
 
-	/*
-	 * Construct
-	 *
-	 * Actions to happen immediately
-	 */
-	public function __construct() {
-		add_action( 'init', array( &$this, 'init' ) );
-	}
-
-	/*
-	 * Init
-	 */
-	public function init() {
-		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
-	}
-
-	/*
-	 * Settings
-	 *
-	 * Create our settings page
-	 */
-	public function add_settings_page() {
-		add_submenu_page( 'lwtv_tools', 'Screeners', 'Screeners', 'edit_posts', 'screeners', array( $this, 'settings_page' ) );
-	}
-
 	/**
 	 * make_readable function.
 	 *
@@ -45,7 +20,7 @@ class LWTV_Screeners {
 	 * @param mixed $bytes
 	 * @return void
 	 */
-	public function make_readable( $bytes ) {
+	public static function make_readable( $bytes ) {
 		$i = floor( log( $bytes, 1024 ) );
 		return round( $bytes / pow( 1024, $i ), [ 0, 0, 2, 2, 3 ][ $i ] ) . [ 'B', 'kB', 'MB', 'GB', 'TB' ][ $i ];
 	}
@@ -55,7 +30,7 @@ class LWTV_Screeners {
 	 *
 	 * A list of all the fucking screeners.
 	 */
-	public function settings_page() {
+	public static function settings_page() {
 
 		$active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'intro'; // WPCS: CSRF ok.
 
@@ -146,7 +121,7 @@ class LWTV_Screeners {
 	/**
 	 * All the videos for Tracy
 	 */
-	public function tab_videos() {
+	public static function tab_videos() {
 
 		// Check for the AWS functions
 		if ( ! function_exists( 'Aws\constantly' ) ) {
