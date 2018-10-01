@@ -205,22 +205,24 @@ class LWTV_Tools {
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
-					<p>The following character(s) need your attention. Please edit the actor or character as indicated.</p>
+					<p>The following character(s) need your attention. Please edit the actor or character queerness as indicated.</p>
 				</div>
 			</div>
 
-			<table class="widefat fixed" cellspacing="0">
-				<thead><tr>
-					<th id="character" class="manage-column column-character" scope="col">Character</th>
-					<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
-				</tr></thead>
+			<div class="lwtv-tools-table">
+				<table class="widefat fixed" cellspacing="0">
+					<thead><tr>
+						<th id="character" class="manage-column column-character" scope="col">Character</th>
+						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+					</tr></thead>
 
-				<tbody>
-					<?php
-					self::table_content( $items );
-					?>
-				</tbody>
-			</table>
+					<tbody>
+						<?php
+						self::table_content( $items );
+						?>
+					</tbody>
+				</table>
+			</div>
 			<?php
 		}
 	}
