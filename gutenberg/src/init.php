@@ -22,6 +22,19 @@ class LWTV_Gutenblocks {
 
 		add_action( 'enqueue_block_assets', array( $this, 'block_assets' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'block_editor_assets' ) );
+
+		// Required for Server Side Rendering
+		register_block_type(
+			'lez-library/glossary',
+			array(
+				'attributes'      => array(
+					'taxonomy' => array(
+						'type' => 'string',
+					),
+				),
+				'render_callback' => array( 'LWTV_Shortcodes', 'glossary' ),
+			)
+		);
 	}
 
 	public function block_assets() {

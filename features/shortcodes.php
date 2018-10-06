@@ -1,7 +1,7 @@
 <?php
 /*
 Description: Various shortcodes used on LezWatch.TV
-Version: 1.1
+Version: 1.2.0
 Author: Mika Epstein
 */
 
@@ -22,6 +22,7 @@ class LWTV_Shortcodes {
 		add_shortcode( 'thismonth', array( $this, 'this_month' ) );
 		add_shortcode( 'firstyear', array( $this, 'first_year' ) );
 		add_shortcode( 'screener', array( $this, 'screener' ) );
+		add_shortcode( 'glossary', array( $this, 'glossary' ) );
 	}
 
 	/*
@@ -49,9 +50,12 @@ class LWTV_Shortcodes {
 
 		$default     = get_the_date( 'Y-m' );
 		$count_array = array();
-		$attributes  = shortcode_atts( array(
-			'date' => $default,
-		), $atts );
+		$attributes  = shortcode_atts(
+			array(
+				'date' => $default,
+			),
+			$atts
+		);
 
 		// A little sanity checking
 		// If it's not a valid date, we defaiult to the time of the post
@@ -66,10 +70,8 @@ class LWTV_Shortcodes {
 
 		// Regular post queerys
 		$valid_post_types = array(
-			//'posts'      => 'post',
 			'shows'      => 'post_type_shows',
 			'characters' => 'post_type_characters',
-			//'actors'     => 'post_type_actors',
 		);
 
 		foreach ( $valid_post_types as $name => $type ) {
@@ -125,14 +127,17 @@ class LWTV_Shortcodes {
 	 */
 	public function screener( $atts ) {
 
-		$attributes = shortcode_atts( array(
-			'title'   => 'Coming Soon',
-			'summary' => 'Coming soon ...',
-			'queer'   => '3',
-			'worth'   => 'meh',
-			'trigger' => 'none',
-			'star'    => 'none',
-		), $atts );
+		$attributes = shortcode_atts(
+			array(
+				'title'   => 'Coming Soon',
+				'summary' => 'Coming soon ...',
+				'queer'   => '3',
+				'worth'   => 'meh',
+				'trigger' => 'none',
+				'star'    => 'none',
+			),
+			$atts
+		);
 
 		$queer = (float) $attributes['queer'];
 		$queer = ( $queer < 0 ) ? 0 : $queer;
@@ -193,7 +198,42 @@ class LWTV_Shortcodes {
 		</div>';
 
 		return $output;
+	}
 
+	/*
+	 * Outputs Glossary Terms
+	 *
+	 * Usage: [glossary taxonomy="taxonomy slug"]
+	 *
+	 * Attributes:
+	 *		taxonomy = taxonomy slug
+	 *
+	 * @since 1.0
+	 */
+	public static function glossary( $atts ) {
+		$attr = shortcode_atts(
+			array(
+				'taxonomy' => '',
+			),
+			$atts
+		);
+
+		$the_taxonomy = sanitize_text_field( $attr['taxonomy'] );
+		$the_terms    = get_terms( $the_taxonomy );
+
+		if ( '' === $the_taxonomy || is_array( $atts['taxonomy'] ) || ! $the_terms || is_wp_error( $the_terms ) ) {
+			$return = '<p><em>Invalid Taxonomy (' . esc_attr( $atts['taxonomy'] ) . ') selected.';
+		} else {
+			$return = '<ul class="trope-list list-group">';
+			// loop over each returned trope
+			foreach ( $the_terms as $term ) {
+				$icon    = lwtv_yikes_symbolicons( get_term_meta( $term->term_id, 'lez_termsmeta_icon', true ) . '.svg', 'fa-square' );
+				$return .= '<li class="list-group-item glossary term term-' . $term->slug . '"><a href="' . get_term_link( $term->slug, $the_taxonomy ) . '" rel="glossary term">' . $icon . '</a> <a href="' . get_term_link( $term->slug, $the_taxonomy ) . '" rel="glossary term" class="trope-link">' . $term->name . ' (' . get_term_meta( $term->term_id, 'lez_termsmeta_icon', true ) . ')</a></li>';
+			}
+			$return .= '</ul>';
+		}
+
+		return $return;
 	}
 
 }
