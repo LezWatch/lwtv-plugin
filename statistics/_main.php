@@ -96,11 +96,11 @@ class LWTV_Stats {
 			case 'sexuality':
 			case 'gender':
 			case 'tropes':
-			case 'formats':
 			case 'romantic':
 			case 'actor_gender':
 			case 'actor_sexuality':
 			case 'genres':
+			case 'formats':
 			case 'intersections':
 				// Simple taxonomy data.
 				$array = LWTV_Stats_Arrays::taxonomy( $post_type, $taxonomy );
@@ -150,8 +150,9 @@ class LWTV_Stats {
 				break;
 		}
 
-		// Custom call for Nations & Stations.
-		if ( 'country' === substr( $data, 0, 7 ) || 'stations' === substr( $data, 0, 8 ) ) {
+		// Custom call for Deep Dive Data
+		// - nations, stations, formats
+		if ( 'country' === substr( $data, 0, 7 ) || 'stations' === substr( $data, 0, 8 ) || 'formats' === substr( $data, 0, 7 ) ) {
 			$array    = LWTV_Stats_Arrays::taxonomy_breakdowns( $count, $format, $data, $subject );
 			$precount = $count;
 			$count    = LWTV_Stats_Arrays::taxonomy_breakdowns( $precount, 'count', $data, $subject );

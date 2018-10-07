@@ -178,6 +178,11 @@ class LWTV_Debug {
 					$problems[] = 'No clichés.';
 				}
 
+				$last_death = get_post_meta( $char_id, 'lezchars_last_death', true );
+				if ( has_term( 'dead', 'lez_cliches' ) && ! $last_death ) {
+					$problems[] = 'Dead but missing date.';
+				}
+
 				$shows = get_post_meta( $char_id, 'lezchars_show_group', true );
 				if ( ! $shows ) {
 					$problems[] = 'No shows listed.';
