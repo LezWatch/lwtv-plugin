@@ -270,6 +270,8 @@ class LWTV_Stats_Arrays {
 		$extra_subtaxes = array(
 			'cliches',
 			'tropes',
+			'intersections',
+			'formats',
 		);
 		$valid_subtaxes = array_merge( $main_subtaxes, $extra_subtaxes );
 		/*
