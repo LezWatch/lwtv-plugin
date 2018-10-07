@@ -272,6 +272,8 @@ class LWTV_Stats_Arrays {
 			'tropes',
 			'intersections',
 			'formats',
+			'stations',
+			'country',
 		);
 		$valid_subtaxes = array_merge( $main_subtaxes, $extra_subtaxes );
 		/*
@@ -281,6 +283,7 @@ class LWTV_Stats_Arrays {
 		 * ex: [country_all_gender]
 		 *     [station_abc_sexuality]
 		 *     [country_usa_all]
+		 *     [showform_tv-show_usa] (yes, weirder!)
 		 */
 		$pieces    = explode( '_', $data );
 		$data_main = $pieces[0];
