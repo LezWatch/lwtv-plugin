@@ -329,6 +329,7 @@ class LWTV_OTD_JSON {
 				);
 				break;
 			case '04-26': // Lesbian Visibility Day
+			case '10-08': // International Lesbian Day
 				$return = array(
 					array(
 						'taxonomy' => 'lez_sexuality',
@@ -350,6 +351,11 @@ class LWTV_OTD_JSON {
 						'field'    => 'slug',
 						'terms'    => array( 'pansexual' ),
 					),
+					array(
+						'taxonomy' => 'lez_gender',
+						'field'    => 'slug',
+						'terms'    => array( 'cisgender', 'trans-woman' ),
+					),
 				);
 				break;
 			case '07-14': // Non-Binary Day
@@ -367,6 +373,11 @@ class LWTV_OTD_JSON {
 						'taxonomy' => 'lez_sexuality',
 						'field'    => 'slug',
 						'terms'    => array( 'bisexual' ),
+					),
+					array(
+						'taxonomy' => 'lez_gender',
+						'field'    => 'slug',
+						'terms'    => array( 'cisgender', 'trans-woman' ),
 					),
 				);
 				break;
