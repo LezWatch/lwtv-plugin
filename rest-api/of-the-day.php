@@ -317,6 +317,10 @@ class LWTV_OTD_JSON {
 		$today = $dt->format( 'm-d' );
 		$date  = ( '' === $date ) ? $date : $today;
 
+		// Missing things:
+		// Asexual Awareness Week - it's in October
+		// Bisexual Awareness Week - it's the week the DAY happpens
+
 		switch ( $date ) {
 			case '03-31': // Transgender Day of Visibility
 			case '11-20': // Transgender Day of Rememberance
@@ -329,6 +333,7 @@ class LWTV_OTD_JSON {
 				);
 				break;
 			case '04-26': // Lesbian Visibility Day
+			case '10-08': // International Lesbian Day
 				$return = array(
 					array(
 						'taxonomy' => 'lez_sexuality',
@@ -350,6 +355,11 @@ class LWTV_OTD_JSON {
 						'field'    => 'slug',
 						'terms'    => array( 'pansexual' ),
 					),
+					array(
+						'taxonomy' => 'lez_gender',
+						'field'    => 'slug',
+						'terms'    => array( 'cisgender', 'trans-woman' ),
+					),
 				);
 				break;
 			case '07-14': // Non-Binary Day
@@ -367,6 +377,11 @@ class LWTV_OTD_JSON {
 						'taxonomy' => 'lez_sexuality',
 						'field'    => 'slug',
 						'terms'    => array( 'bisexual' ),
+					),
+					array(
+						'taxonomy' => 'lez_gender',
+						'field'    => 'slug',
+						'terms'    => array( 'cisgender', 'trans-woman' ),
 					),
 				);
 				break;

@@ -1,7 +1,7 @@
 <?php
 /*
 Description: Customizations for CMB2
-Version: 1.0
+Version: 2.0
 */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -19,13 +19,18 @@ class LWTV_CMB2 {
 
 	public $icon_taxonomies; // Taxonomies that have an icon
 	public $symbolicon_path; // Path to symbolicons
+	public $version; // Plugin version
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
+
+		$this->version = '2.0';
+
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'cmb2_admin_init', array( $this, 'favorite_shows_user_profile_metabox' ) );
+		add_action( 'cmb2_admin_init', array( $this, 'staff_metabox' ) );
 
 		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_intersections' );
 
@@ -53,11 +58,14 @@ class LWTV_CMB2 {
 	 * Extra Get post options.
 	 */
 	public static function get_post_options( $query_args ) {
-		$args = wp_parse_args( $query_args, array(
-			'post_type'   => 'post',
-			'numberposts' => wp_count_posts( 'post' )->publish,
-			'post_status' => array( 'publish' ),
-		) );
+		$args = wp_parse_args(
+			$query_args,
+			array(
+				'post_type'   => 'post',
+				'numberposts' => wp_count_posts( 'post' )->publish,
+				'post_status' => array( 'publish' ),
+			)
+		);
 
 		$posts = get_posts( $args );
 
@@ -109,7 +117,7 @@ class LWTV_CMB2 {
 	 * @return void
 	 */
 	public function admin_enqueue_scripts( $hook ) {
-		wp_register_style( 'cmb-styles', plugins_url( 'cmb2.css', __FILE__ ) );
+		wp_register_style( 'cmb-styles', plugins_url( 'cmb2.css', __FILE__ ), array(), $this->version );
 		$post_array = array( 'edit-tags.php', 'post.php', 'post-new.php', 'term.php', 'page-new.php', 'page.php' );
 		if ( in_array( $hook, $post_array, true ) ) {
 			wp_enqueue_style( 'cmb-styles' );
@@ -140,24 +148,28 @@ class LWTV_CMB2 {
 			$icon_array[ $filename ] = $filename;
 		}
 
-		$cmb_term = new_cmb2_box( array(
-			'id'               => $prefix . 'edit',
-			'title'            => 'Category Metabox',
-			'object_types'     => array( 'term' ),
-			'taxonomies'       => $this->icon_taxonomies,
-			'new_term_section' => true,
-		) );
+		$cmb_term = new_cmb2_box(
+			array(
+				'id'               => $prefix . 'edit',
+				'title'            => 'Category Metabox',
+				'object_types'     => array( 'term' ),
+				'taxonomies'       => $this->icon_taxonomies,
+				'new_term_section' => true,
+			)
+		);
 
-		$cmb_term->add_field( array(
-			'name'             => 'Icon',
-			'desc'             => 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href=' . $symbolicon_url . '>Symbolicons List</a>.',
-			'id'               => $prefix . 'icon',
-			'type'             => 'select',
-			'show_option_none' => true,
-			'default'          => 'custom',
-			'options'          => $icon_array,
-			'before_field'     => array( $this, 'before_field_icon' ),
-		) );
+		$cmb_term->add_field(
+			array(
+				'name'             => 'Icon',
+				'desc'             => 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href=' . $symbolicon_url . '>Symbolicons List</a>.',
+				'id'               => $prefix . 'icon',
+				'type'             => 'select',
+				'show_option_none' => true,
+				'default'          => 'custom',
+				'options'          => $icon_array,
+				'before_field'     => array( $this, 'before_field_icon' ),
+			)
+		);
 	}
 
 	// Add before field icon display
@@ -238,27 +250,56 @@ class LWTV_CMB2 {
 		/**
 		 * Metabox for the user profile screen
 		 */
-		$cmb_user = new_cmb2_box( array(
-			'id'               => $prefix . 'edit',
-			'title'            => 'Super Queer Love',
-			'object_types'     => array( 'user' ),
-			'show_names'       => true,
-			'new_user_section' => 'add-new-user',
-		) );
-		$cmb_user->add_field( array(
-			'name'             => 'Favorite Shows',
-			'desc'             => 'pick your favorite shows',
-			'id'               => $prefix . 'favourite_shows',
-			'type'             => 'select',
-			'show_option_none' => true,
-			'repeatable'       => true,
-			'text'             => array(
-				'add_row_text' => 'Add Another Favorite Show',
-			),
-			'default'          => 'custom',
-			'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
-			'on_front'         => true,
-		) );
+		$cmb_user = new_cmb2_box(
+			array(
+				'id'               => $prefix . 'edit',
+				'title'            => 'Super Queer Love',
+				'object_types'     => array( 'user' ),
+				'show_names'       => true,
+				'new_user_section' => 'add-new-user',
+			)
+		);
+		$cmb_user->add_field(
+			array(
+				'name'             => 'Favorite Shows',
+				'desc'             => 'pick your favorite shows',
+				'id'               => $prefix . 'favourite_shows',
+				'type'             => 'select',
+				'show_option_none' => true,
+				'repeatable'       => true,
+				'text'             => array(
+					'add_row_text' => 'Add Another Favorite Show',
+				),
+				'default'          => 'custom',
+				'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
+				'on_front'         => true,
+			)
+		);
+	}
+
+	/**
+	 * Staff Data
+	 * @since 2.0
+	 */
+	public function staff_metabox() {
+		$prefix = 'lez_staff_';
+
+		$cmb_staff = new_cmb2_box(
+			array(
+				'id'           => $prefix . 'metabox',
+				'title'        => 'Internal Information',
+				'object_types' => array( 'post_type_characters', 'post_type_shows', 'post_type_actors' ),
+			)
+		);
+
+		$cmb_staff->add_field(
+			array(
+				'name' => 'Notes',
+				'desc' => 'Additional notes we need to share about this post. NOT FOR PUBLIC CONSUMPTION.',
+				'id'   => $prefix . 'notes',
+				'type' => 'textarea',
+			)
+		);
 	}
 
 }
