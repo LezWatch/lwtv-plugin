@@ -817,7 +817,7 @@ SQL;
 		}
 
 		// re-hook this function
-		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) . '/?nocache' );
+		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
 	}
 
 }
