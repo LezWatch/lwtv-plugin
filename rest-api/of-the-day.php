@@ -317,6 +317,10 @@ class LWTV_OTD_JSON {
 		$today = $dt->format( 'm-d' );
 		$date  = ( '' === $date ) ? $date : $today;
 
+		// Missing things:
+		// Asexual Awareness Week - it's in October
+		// Bisexual Awareness Week - it's the week the DAY happpens
+
 		switch ( $date ) {
 			case '03-31': // Transgender Day of Visibility
 			case '11-20': // Transgender Day of Rememberance
