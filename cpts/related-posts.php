@@ -144,7 +144,7 @@ class LWTV_Related_Posts {
 				}
 
 				if ( ! empty( $related_out ) ) {
-					$related_content = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about topics mentioned in this post:</h4><ul>' . $related_out . '</ul></div></section>';
+					$related_content = '<section class="related-shows"><div><h4 class="related-shows-title">Read more about topics mentioned in this post:</h4><ul class="related-shows-list">' . $related_out . '</ul></div></section>';
 					$content        .= $related_content;
 				}
 			}
