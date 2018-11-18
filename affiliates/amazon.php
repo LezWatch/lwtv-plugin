@@ -8,20 +8,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-// If the file can't be found, fall back to an affiliate.
-if ( ! class_exists( 'ApaiIO\ApaiIO' ) ) {
-	if ( is_archive() ) {
-		$the_ad = LWTV_Affilliates::widget_affiliates( 'thin' );
-	} else {
-		$the_ad = LWTV_Affilliates::widget_affiliates( 'wide' );
-	}
-	return $the_ad;
-}
-
-use ApaiIO\Configuration\GenericConfiguration;
-use ApaiIO\Operations\Search;
-use ApaiIO\ApaiIO;
-
 /**
  * class LWTV_Amazon
  */
@@ -45,145 +31,10 @@ class LWTV_Affiliate_Amazon {
 	}
 
 	/**
-	 * Check if there are some amazon videos we can direct link to...
-	 */
-	public static function check_amazon( $post_id, $use_fallback = false ) {
-
-		$set_keywords = '';
-		$use_bounty   = false;
-		$results      = array();
-		$set_category = 'DVD';
-
-		// If there's no transient, set it for 10 minutes (5 seconds when dev mode).
-		$amazon_transient = get_transient( 'lezwatchtv_amazon_affiliates' );
-		if ( false === ( $amazon_transient ) ) {
-			$checktime = ( HOUR_IN_SECONDS / 6 );
-			if ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) {
-				$checktime = 5;
-			}
-			set_transient( 'lezwatchtv_amazon_affiliates', 'check_amazon', $checktime );
-		} else {
-			// If there's a transient, we need to limit how many calls we make
-			// else Amazon gets narky with us.
-			$use_bounty = true;
-		}
-
-		// If it's a show and there's no fallback flag...
-		if ( is_singular( 'post_type_shows' ) && ! $use_bounty ) {
-			// Add Title for shows
-			$set_keywords .= get_the_title();
-
-			// If the station is Amazon, then we change the category
-			$stations = get_the_terms( $post_id, 'lez_stations' );
-			if ( $stations && ! is_wp_error( $stations ) ) {
-				foreach ( $stations as $station ) {
-					if ( 'amazon-prime' === $station->slug ) {
-						$set_category    = 'UnboxVideo';
-						$set_browse_node = '16262841';
-					}
-				}
-			}
-
-			if ( 'UnboxVideo' !== $set_category ) {
-				// Checks if the show isn't on amazon.
-
-				// If the country isn't USA, we get insanely dumb results
-				$countries = get_the_terms( $post_id, 'lez_country' );
-				if ( $countries && ! is_wp_error( $countries ) ) {
-					foreach ( $countries as $country ) {
-						if ( 'USA' !== $country->name ) {
-							$use_bounty = true;
-						}
-					}
-				}
-			}
-		} elseif ( $use_fallback ) {
-			// can't have both true, after all
-			$use_bounty = false;
-		} else {
-			// If we got here, we need to use the bounty
-			$use_bounty = true;
-		}
-
-		// If there are no keywords AND Fallback is false
-		if ( ! empty( $set_keywords ) && ! $use_bounty ) {
-
-			try {
-				$conf    = new GenericConfiguration();
-				$client  = new \GuzzleHttp\Client();
-				$request = new \ApaiIO\Request\GuzzleRequest( $client );
-
-				$conf
-					->setCountry( 'com' )
-					->setAccessKey( AMAZON_PRODUCT_API_KEY )
-					->setSecretKey( AMAZON_PRODUCT_API_SECRET )
-					->setAssociateTag( 'lezpress-20' )
-					->setResponseTransformer( new \ApaiIO\ResponseTransformer\XmlToArray() )
-					->setRequest( $request );
-			} catch ( \Exception $e ) {
-				$use_bounty = true;
-			}
-			$apai_io = new ApaiIO( $conf );
-			$search  = new Search();
-			$search->setCategory( $set_category );
-			if ( isset( $set_browse_node ) ) {
-				$search->setBrowseNode( $set_browse_node );
-			}
-			$search->setKeywords( $set_keywords );
-
-			$results = $apai_io->runOperation( $search );
-
-			// If we don't get a valid array, we will use the use_bounty
-			if (
-				! is_array( $results ) ||
-				! array_key_exists( 'Item', $results['Items'] ) ||
-				array_key_exists( 'Errors', $results['Items']['Request'] )
-			) {
-				$use_bounty = true;
-			}
-		} else {
-			$use_bounty = true;
-		}
-
-		if ( $use_bounty ) {
-			$return = 'bounty';
-		} elseif ( $use_fallback ) {
-			$return = 'fallback';
-		} else {
-			$return = $results;
-		}
-
-		return $return;
-	}
-
-	/**
 	 * Output widget
 	 */
 	public static function output_widget( $post_id ) {
-
-		$results = self::check_amazon( $post_id );
-		$output  = '<center>';
-
-		switch ( $results ) {
-			case 'bounty':
-				$output .= self::bounty( $post_id );
-				break;
-			case 'fallback':
-				$output .= LWTV_Affilliates::apple( $post_id, 'widget' );
-				break;
-			default:
-				$top_items = array_slice( $results['Items']['Item'], 0, 2 );
-				foreach ( $top_items as $item ) {
-					if ( is_array( $item ) && array_key_exists( 'ASIN', $item ) ) {
-						$output .= '<iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=US&source=ac&ref=tf_til&ad_type=product_link&tracking_id=lezpress-20&marketplace=amazon&region=US&placement=' . $item['ASIN'] . '&asins=' . $item['ASIN'] . '&show_border=true&link_opens_in_new_window=true&price_color=333333&title_color=0066C0&bg_color=FFFFFF"></iframe>&nbsp;';
-					}
-				}
-				$output .= '<p><a href="' . $results['Items']['MoreSearchResultsUrl'] . '" target="_blank">More Results ... </a></p>';
-				break;
-		}
-
-		$output .= '</center>';
-
+		$output = '<center>' . self::bounty( $post_id ) . '</center>';
 		return $output;
 	}
 
@@ -195,15 +46,27 @@ class LWTV_Affiliate_Amazon {
 		// First let's check if the show is on a network we know....
 		$networks = array(
 			'showtime'     => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1E0AR7ZBTK5HEDE0CM82',
-				'linkid'   => '2e2ac20186faf8b19ef4ca931b5337bd',
+				'expires'  => 'ongoing',
+				'banner'   => '1TAG79C3PQ0GFXZ39R82',
+				'linkid'   => '09a6d9595672f638f9f1c23689c40ef5',
+				'category' => 'primevideochannels',
+			),
+			'history'      => array(
+				'expires'  => 'ongoing',
+				'banner'   => '1T7E2FGW5MFJNNJWTAR2',
+				'linkid'   => 'beb013efcdac91c8f30344338a953a97',
 				'category' => 'primevideochannels',
 			),
 			'hbo'          => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '15WAHRRCWADG8X4F09G2',
-				'linkid'   => '74197ffde2efa3f07ef91a0ce7f2a01a',
+				'expires'  => 'ongoing',
+				'banner'   => '1E0AR7ZBTK5HEDE0CM82',
+				'linkid'   => '07178879ba1dd6724b738c8c1069d9de',
+				'category' => 'primevideochannels',
+			),
+			'starz'        => array(
+				'expires'  => 'ongoing',
+				'banner'   => '00G3SH89QT95NWK3CX02',
+				'linkid'   => '1d12f79c1b8dd96406721134df111da6',
 				'category' => 'primevideochannels',
 			),
 			'bbc-america'  => array(
@@ -307,6 +170,12 @@ class LWTV_Affiliate_Amazon {
 				'linkid'   => '7adcc745e35b87b38324232f199497df',
 				'category' => 'amzn_firetv_primepr_0918',
 			),
+			'firetv2'   => array(
+				'expires'  => '2020-10-15',
+				'banner'   => '07Z1A8KKG3NGABM31PG2',
+				'linkid'   => 'bf9112f31ef9ff7bb309e14bad1cc2cd',
+				'category' => 'amzn_firetv_eg_101618',
+			),
 		);
 
 		// If bounty isn't set yet, we need to here
@@ -324,7 +193,7 @@ class LWTV_Affiliate_Amazon {
 		}
 
 		// Build the Ad
-		$return = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=' . $the_ad['category'] . '&banner=' . $the_ad['banner'] . '&f=ifr&lc=pf4&linkID=' . $the_ad['linkid'] . '&t=lezpress-20&tracking_id=lezpress-20" width="300" height="250" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
+		$return = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=' . $the_ad['category'] . '&banner=' . $the_ad['banner'] . '&f=ifr&linkID=' . $the_ad['linkid'] . '&t=lezpress-20&tracking_id=lezpress-20" width="300" height="250" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
 
 		return $return;
 	}
