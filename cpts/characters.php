@@ -786,7 +786,7 @@ SQL;
 		$show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
 		if ( '' !== $show_ids ) {
 			foreach ( $show_ids as $each_show ) {
-				if ( 'publish' === get_post_status( $each_show['show'] ) ) {
+				if ( isset( $each_show['show'] ) && 'publish' === get_post_status( $each_show['show'] ) ) {
 					$request     = wp_remote_get( get_permalink( $each_show['show'] ) . '/?nocache' );
 					$purgeurls[] = get_permalink( $each_show['show'] );
 				}
@@ -797,7 +797,7 @@ SQL;
 		$actor_ids = lwtv_yikes_chardata( get_the_ID(), 'actors' );
 		if ( '' !== $actor_ids ) {
 			foreach ( $actor_ids as $each_actor ) {
-				if ( 'publish' === get_post_status( $each_actor['show'] ) ) {
+				if ( isset( $each_actor['show'] ) && 'publish' === get_post_status( $each_actor['show'] ) ) {
 					$request     = wp_remote_get( get_permalink( $each_actor ) . '/?nocache' );
 					$purgeurls[] = get_permalink( $each_actor['show'] );
 				}
