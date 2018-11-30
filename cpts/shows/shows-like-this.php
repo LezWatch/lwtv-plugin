@@ -18,7 +18,39 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Shows_Like_This {
 
 	public function __construct() {
-		add_filter( 'related_posts_by_taxonomy_pre_related_posts', array( $this, 'override' ), 10, 4 );
+		//add_filter( 'related_posts_by_taxonomy_pre_related_posts', array( $this, 'override' ), 10, 4 );
+		add_filter( 'related_posts_by_taxonomy_shortcode_defaults', array( $this, 'defaults' ) );
+	}
+
+
+	public static function defaults( $defaults ) {
+		$defaults['post_id']          = '';
+		$defaults['taxonomies']       = 'all';
+		$defaults['post_types']       = '';
+		$defaults['posts_per_page']   = 5;
+		$defaults['order']            = 'DESC';
+		$defaults['orderby']          = 'post_date';
+		$defaults['before_shortcode'] = '<div class="rpbt_shortcode">'; // Text or Html
+		$defaults['after_shortcode']  = '</div>';     // Text or Html
+		$defaults['title']            = __( 'Related Posts', 'related-posts-by-taxonomy' );
+		$defaults['before_title']     = '<h3>';       // Text or Html
+		$defaults['after_title']      = '</h3>';      // Text or Html
+		$defaults['exclude_terms']    = '';
+		$defaults['include_terms']    = '';
+		$defaults['related']          = true;
+		$defaults['exclude_posts']    = '';
+		$defaults['format']           = 'links';
+		$defaults['image_size']       = 'thumbnail';  // image size
+		$defaults['columns']          = 3;
+		$defaults['caption']          = 'post_title';
+		$defaults['link_caption']     = false;        // Don't wrap the caption in a link
+		$defaults['limit_posts']      = -1;           // -1 is no limit
+		$defaults['limit_year']       = '';           // number.
+		$defaults['limit_month']      = '';           // number
+		$defaults['public_only']      = true;        // bool. true or false.
+		$defaults['include_self']     = false;        // bool. true or false.
+		$defaults['post_class']       = '';           // classname. Default no class
+		return $defaults;
 	}
 
 	public static function override( $related_posts, $args ) {
@@ -27,7 +59,6 @@ class LWTV_Shows_Like_This {
 			'post_type'      => $args['post_types'],
 			'posts_per_page' => $args['posts_per_page'],
 			'public_only'    => $args['public_only'],
-			'include_self'   => $args['include_self'],
 		);
 
 		// Collect extras
