@@ -2,6 +2,7 @@
 /**
  * Name: Shows Like This
  * Description: Calculate other shows you'd like if you like this
+ * This requires https://wordpress.org/plugins/related-posts-by-taxonomy/
  */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -17,20 +18,22 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Shows_Like_This {
 
 	public function __construct() {
+		add_filter( 'related_posts_by_taxonomy_pre_related_posts', array( $this, 'override' ), 10, 4 );
 	}
 
-	/**
-	 * Output posts related to this show, character, or actor.
-	 *
-	 * @access public
-	 * @param mixed $slug
-	 * @return void
-	 */
-	public static function similar_shows( $show_id ) {
-		$count = wp_count_posts( 'post_type_shows' )->publish;
-		$thumb = ( get_post_meta( $show_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $show_id, 'lezshows_worthit_rating', true ) : 'TBD';
-		$star  = ( get_post_meta( $show_id, 'lezshows_stars', true ) ) ? 'EXISTS' : 'NOT EXISTS';
-		$score = ( get_post_meta( $show_id, 'lezshows_the_score', true ) ) ? get_post_meta( $show_id, 'lezshows_the_score', true ) : 10;
+	public static function override( $related_posts, $args ) {
+		// Use widget or shortcode settings for our own query.
+		$my_query_args = array(
+			'post_type'      => $args['post_types'],
+			'posts_per_page' => $args['posts_per_page'],
+			'public_only'    => $args['public_only'],
+			'include_self'   => $args['include_self'],
+		);
+
+		// Collect extras
+		$thumb = ( get_post_meta( $args['post_id'], 'lezshows_worthit_rating', true ) ) ? get_post_meta( $args['post_id'], 'lezshows_worthit_rating', true ) : 'TBD';
+		$star  = ( get_post_meta( $args['post_id'], 'lezshows_stars', true ) ) ? 'EXISTS' : 'NOT EXISTS';
+		$score = ( get_post_meta( $args['post_id'], 'lezshows_the_score', true ) ) ? get_post_meta( $args['post_id'], 'lezshows_the_score', true ) : 10;
 
 		$meta_array = array(
 			// If it has ANY star
@@ -53,18 +56,11 @@ class LWTV_Shows_Like_This {
 			),
 		);
 
-		$queery = new WP_Query(
-			array(
-				'post_type'              => 'post_type_shows',
-				'posts_per_page'         => $count,
-				'no_found_rows'          => true,
-				'update_post_meta_cache' => false,
-				'post_status'            => array( 'publish' ),
-				'meta_query'             => $meta_array,
-			)
-		);
-		wp_reset_query();
+		$my_query_args['meta_query'] = $meta_array;
 
+		$my_related_posts = get_posts( $my_query_args );
+
+		return $my_related_posts;
 	}
 
 }
