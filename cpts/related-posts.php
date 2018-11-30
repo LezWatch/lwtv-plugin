@@ -137,6 +137,11 @@ class LWTV_Related_Posts {
 					}
 				}
 
+				// Remove the character relation for now.
+				// Need to figure out how to prioritize shows and exclude characters if both
+				// exist.
+				unset( $related['character'] );
+
 				foreach ( $related as $type => $item ) {
 					if ( ! empty( $related[ $type ] ) ) {
 						$related_out .= $item;
