@@ -18,10 +18,10 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Shows_Like_This {
 
 	public function __construct() {
-		//add_filter( 'related_posts_by_taxonomy_pre_related_posts', array( $this, 'override' ), 10, 4 );
+		//add_filter( 'related_posts_by_taxonomy_posts_where', array( $this, 'where' ), 10, 4 );
+		//add_filter( 'related_posts_by_taxonomy_posts_join', array( $this, 'join' ), 10, 4 );
 		add_filter( 'related_posts_by_taxonomy_shortcode_defaults', array( $this, 'defaults' ) );
 	}
-
 
 	public static function defaults( $defaults ) {
 		$defaults['post_id']          = '';
@@ -53,20 +53,14 @@ class LWTV_Shows_Like_This {
 		return $defaults;
 	}
 
-	public static function override( $related_posts, $args ) {
-		// Use widget or shortcode settings for our own query.
-		$my_query_args = array(
-			'post_type'      => $args['post_types'],
-			'posts_per_page' => $args['posts_per_page'],
-			'public_only'    => $args['public_only'],
-		);
+	public static function queery( $post_id, $what = 'where' ) {
 
 		// Collect extras
-		$thumb = ( get_post_meta( $args['post_id'], 'lezshows_worthit_rating', true ) ) ? get_post_meta( $args['post_id'], 'lezshows_worthit_rating', true ) : 'TBD';
-		$star  = ( get_post_meta( $args['post_id'], 'lezshows_stars', true ) ) ? 'EXISTS' : 'NOT EXISTS';
-		$score = ( get_post_meta( $args['post_id'], 'lezshows_the_score', true ) ) ? get_post_meta( $args['post_id'], 'lezshows_the_score', true ) : 10;
+		$thumb = ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $post_id, 'lezshows_worthit_rating', true ) : 'TBD';
+		$star  = ( get_post_meta( $post_id, 'lezshows_stars', true ) ) ? 'EXISTS' : 'NOT EXISTS';
+		$score = ( get_post_meta( $post_id, 'lezshows_the_score', true ) ) ? get_post_meta( $post_id, 'lezshows_the_score', true ) : 10;
 
-		$meta_array = array(
+		$meta_query = array(
 			// If it has ANY star
 			array(
 				'key'     => 'lezshows_stars',
@@ -87,11 +81,48 @@ class LWTV_Shows_Like_This {
 			),
 		);
 
-		$my_query_args['meta_query'] = $meta_array;
+		// Array ( [join] => LEFT JOIN wp_postmeta ON (wp_posts.ID = wp_postmeta.post_id AND wp_postmeta.meta_key = 'lezshows_stars' ) LEFT JOIN wp_postmeta AS mt1 ON ( wp_posts.ID = mt1.post_id ) LEFT JOIN wp_postmeta AS mt2 ON ( wp_posts.ID = mt2.post_id ) [where] => AND ( wp_postmeta.post_id IS NULL AND ( mt1.meta_key = 'lezshows_worthit_rating' AND mt1.meta_value = 'Meh' ) AND ( mt2.meta_key = 'lezshows_the_score' AND CAST(mt2.meta_value AS SIGNED) BETWEEN '31.25' AND '51.25' ) ) )
 
-		$my_related_posts = get_posts( $my_query_args );
+		global $wpdb;
+		$meta_sql = get_meta_sql( $meta_query, 'post', $wpdb->posts, 'ID' );
 
-		return $my_related_posts;
+		switch ( $what ) {
+			case 'join':
+				$return = $meta_sql['join'];
+				break;
+			case 'where':
+				$return = $meta_sql['where'];
+				break;
+			default:
+				$return = $meta_sql['where'];
+				break;
+		}
+
+		return $return;
+	}
+
+	public static function join( $join_sql, $post_id ) {
+
+		// Bail if not a show.
+		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		$meta_sql = self::queery( $post_id, 'join' );
+
+		return $meta_sql;
+	}
+
+	public static function where( $where_sql, $post_id ) {
+
+		// Bail if not a show.
+		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		$meta_sql = self::queery( $post_id, 'where' );
+
+		return $meta_sql;
 	}
 
 }
