@@ -83,11 +83,7 @@ class LWTV_Shows_Like_This {
 				$add_results[] = (object) array(
 					'ID'              => $a_show,
 					'post_author'     => get_post_field( 'post_author', $a_show ),
-					'post_content'    => the_content( $a_show ),
 					'post_title'      => get_the_title( $a_show ),
-					'post_excerpt'    => get_the_excerpt( $a_show ),
-					'post_status'     => get_post_status( $a_show ),
-					'post_name'       => get_post_field( 'post_name', $a_show ),
 					'rpbt_current'    => $post_id,
 					'rpbt_post_class' => '',
 					'rpbt_type'       => 'shortcode',
