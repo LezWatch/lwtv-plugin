@@ -13,7 +13,6 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Gutenberg {
 
 	public $gutenfree = array();
-	protected $gutenberg_onramp;
 
 	public function __construct() {
 		$this->gutenfree = array( 'post_type_characters', 'post_type_actors', 'post_type_shows' );
@@ -21,12 +20,6 @@ class LWTV_Gutenberg {
 	}
 
 	public function gutenberg_removal() {
-
-		// WP 5.0+ requires Classic Editor
-		// WP 4.9- requires Gutenberg
-		if ( ( version_compare( get_bloginfo( 'version' ), 5.0, '<=' ) && ! is_plugin_active( 'gutenberg/gutenberg.php' ) ) || ( version_compare( get_bloginfo( 'version' ), 5.0, '=>' ) && ! is_plugin_active( 'classic-editor/classic-editor.php' ) ) ) {
-			return;
-		}
 
 		// Intercept Post Type
 		$current_screen    = get_current_screen();

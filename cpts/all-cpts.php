@@ -17,7 +17,7 @@ class LWTV_All_CPTs {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init', array( $this, 'featured_images' ) );
+		//add_action( 'admin_init', array( $this, 'featured_images' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 
 		// Suppress the editorial calendar for all custom post types.
