@@ -20,6 +20,7 @@ class LWTV_Shows_Like_This {
 
 	public function __construct() {
 		add_filter( 'related_posts_by_taxonomy_posts_meta_query', array( $this, 'meta_query' ), 10, 4 );
+		add_filter( 'related_posts_by_taxonomy', array( $this, 'alter_results' ), 10, 4 );
 	}
 
 	public static function generate( $show_id ) {
@@ -68,6 +69,37 @@ class LWTV_Shows_Like_This {
 		);
 
 		return $meta_query;
+	}
+
+	public function alter_results( $results, $post_id, $taxonomies, $args ) {
+
+		$handpicked  = ( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) ? get_post_meta( $post_id, 'lezshows_similar_shows', true ) : false;
+		$add_results = array();
+
+		if ( false !== $handpicked ) {
+			foreach ( $handpicked as $a_show ) {
+				// Omitting a LOT of things we don't need here
+				// since we're not going to mess with output.
+				$add_results[] = (object) array(
+					'ID'              => $a_show,
+					'post_author'     => get_post_field( 'post_author', $a_show ),
+					'post_content'    => the_content( $a_show ),
+					'post_title'      => get_the_title( $a_show ),
+					'post_excerpt'    => get_the_excerpt( $a_show ),
+					'post_status'     => get_post_status( $a_show ),
+					'post_name'       => get_post_field( 'post_name', $a_show ),
+					'rpbt_current'    => $post_id,
+					'rpbt_post_class' => '',
+					'rpbt_type'       => 'shortcode',
+				);
+			}
+		}
+
+		// Add our handpicked posts to the top of the list
+		$results = $add_results + $results;
+
+		// Give 'em back!
+		return $results;
 	}
 
 }
