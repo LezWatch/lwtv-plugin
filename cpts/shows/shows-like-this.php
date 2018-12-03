@@ -22,6 +22,20 @@ class LWTV_Shows_Like_This {
 		add_filter( 'related_posts_by_taxonomy_posts_meta_query', array( $this, 'meta_query' ), 10, 4 );
 	}
 
+	public static function generate( $show_id ) {
+		$return = '';
+
+		if ( ! empty( $show_id ) && has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
+			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="2" post_class="similar-shows" taxonomies="lez_formats,lez_tropes,lez_genres,lez_intersections"]' );
+		}
+
+		if ( empty( $return ) ) {
+			$return = false;
+		}
+
+		return $return;
+	}
+
 	public static function meta_query( $meta_query, $post_id, $taxonomies, $args ) {
 
 		// $meta_query is an empty array if the format isn't thumbnails
