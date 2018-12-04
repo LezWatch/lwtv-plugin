@@ -43,7 +43,7 @@ class LWTV_Gutenblocks {
 		wp_enqueue_style(
 			'lwtv-plugin-gutenberg-style', // Handle.
 			plugins_url( $build_css, dirname( __FILE__ ) ),
-			array( 'wp-editor', 'wp-blocks' ),
+			array( 'wp-editor' ),
 			filemtime( self::$directory . '/' . $build_css )
 		);
 	}
@@ -54,7 +54,7 @@ class LWTV_Gutenblocks {
 		wp_enqueue_script(
 			'lwtv-plugin-gutenberg-blocks', // Handle.
 			plugins_url( $build_js, dirname( __FILE__ ) ),
-			array( 'wp-editor', 'wp-blocks', 'wp-i18n', 'wp-element' ),
+			array( 'wp-editor', 'wp-i18n', 'wp-element' ),
 			filemtime( self::$directory . '/' . $build_js ),
 			true
 		);
@@ -64,7 +64,7 @@ class LWTV_Gutenblocks {
 		wp_enqueue_style(
 			'lwtv-plugin-gutenberg-editor', // Handle.
 			plugins_url( $editor_css, dirname( __FILE__ ) ),
-			array( 'wp-editor', 'wp-blocks' ),
+			array( 'wp-editor' ),
 			filemtime( self::$directory . '/' . $editor_css )
 		);
 	}

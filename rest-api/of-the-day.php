@@ -138,7 +138,7 @@ class LWTV_OTD_JSON {
 		// Or if we're in dev mode.
 		if ( 'none' === $options[ $type ]['post'] || time() >= $options[ $type ]['time'] || ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) ) {
 			// Get the show ID
-			$id = self::find_char_show( $type );
+			$id = self::find_char_show( $type, $date );
 
 			// Update the options
 			$options[ $type ]['post'] = $id;
@@ -202,7 +202,7 @@ class LWTV_OTD_JSON {
 	 * @param  string $type [character|show]
 	 * @return number $id   [ID of the show or character]
 	 */
-	public static function find_char_show( $type = 'character' ) {
+	public static function find_char_show( $type = 'character', $date = '' ) {
 
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
 			return false;
@@ -225,7 +225,9 @@ class LWTV_OTD_JSON {
 						'compare' => 'LIKE',
 					),
 				);
-				$tax_query_array  = self::character_awareness( $date );
+				if ( ! empty( $date ) ) {
+					$tax_query_array = self::character_awareness( $date );
+				}
 				break;
 			case 'show':
 				$meta_query_array = array(
@@ -276,7 +278,7 @@ class LWTV_OTD_JSON {
 				case 'show':
 					// All shows have to have at least one regular character
 					$role_data = get_post_meta( $id, 'lezshows_char_roles', true );
-					if ( 0 !== $role_data['regular'] ) {
+					if ( isset( $role_data['regular'] ) && 0 !== $role_data['regular'] ) {
 						$valid_post = true;
 					}
 					break;

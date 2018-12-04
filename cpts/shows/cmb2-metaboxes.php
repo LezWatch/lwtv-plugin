@@ -43,6 +43,20 @@ class LWTV_Shows_CMB2 {
 	}
 
 	/*
+	 * Create a list of all shows
+	 */
+	public function cmb2_get_shows_options() {
+		$return = LWTV_CMB2::get_post_options(
+			array(
+				'post_type'   => 'post_type_shows',
+				'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
+				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+			)
+		);
+		return $return;
+	}
+
+	/*
 	 * CMB2 Metaboxes
 	 */
 	public function cmb2_metaboxes() {
@@ -104,6 +118,17 @@ class LWTV_Shows_CMB2 {
 			'id'         => $prefix . 'affiliate',
 			'type'       => 'text_url',
 			'repeatable' => true,
+		) );
+		// Field: Similar Shows
+		$field_similarshows = $cmb_mustsee->add_field( array(
+			'name'             => 'Similar Shows',
+			'desc'             => 'Shows we think people will also like (optional).',
+			'id'               => $prefix . 'similar_shows',
+			'type'             => 'select',
+			'show_option_none' => true,
+			'default'          => 'custom',
+			'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
+			'repeatable'       => true,
 		) );
 
 		// Must See Grid
