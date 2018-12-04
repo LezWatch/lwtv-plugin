@@ -46,13 +46,16 @@ class LWTV_Shows_CMB2 {
 	 * Create a list of all shows
 	 */
 	public function cmb2_get_shows_options() {
+		$the_id = ( false !== get_the_ID() ) ? get_the_ID() : 0;
 		$return = LWTV_CMB2::get_post_options(
 			array(
 				'post_type'   => 'post_type_shows',
 				'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
 				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-			)
+			),
+			$the_id
 		);
+
 		return $return;
 	}
 

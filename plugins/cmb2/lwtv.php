@@ -57,7 +57,7 @@ class LWTV_CMB2 {
 	/**
 	 * Extra Get post options.
 	 */
-	public static function get_post_options( $query_args ) {
+	public static function get_post_options( $query_args, $the_id ) {
 		$args = wp_parse_args(
 			$query_args,
 			array(
@@ -83,7 +83,9 @@ class LWTV_CMB2 {
 				if ( 'draft' === get_post_status( $post->ID ) ) {
 					$post_title .= ' - DRAFT';
 				}
-				$post_options[ $post->ID ] = $post_title;
+				if ( $post->ID !== $the_id ) {
+					$post_options[ $post->ID ] = $post_title;
+				}
 			}
 		}
 
