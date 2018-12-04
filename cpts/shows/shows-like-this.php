@@ -78,16 +78,7 @@ class LWTV_Shows_Like_This {
 
 		if ( false !== $handpicked ) {
 			foreach ( $handpicked as $a_show ) {
-				// Omitting a LOT of things we don't need here
-				// since we're not going to mess with output.
-				$add_results[] = (object) array(
-					'ID'              => $a_show,
-					'post_author'     => get_post_field( 'post_author', $a_show ),
-					'post_title'      => get_the_title( $a_show ),
-					'rpbt_current'    => $post_id,
-					'rpbt_post_class' => '',
-					'rpbt_type'       => 'shortcode',
-				);
+				$add_results[] = (object) get_post( $a_show, ARRAY_A );
 			}
 		}
 
