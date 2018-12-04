@@ -7,7 +7,6 @@
 require_once 'cron.php';           // Custom Cron jobs.
 require_once 'custom-loops.php';   // Custom Loops
 require_once 'debug.php';          // Debug tools
-//require_once 'gutenberg.php';      // Some Gutenberg things
 require_once 'private-data.php';   // Data Removal Code
 require_once 'search.php';         // Search Features
 require_once 'shortcodes.php';     // Custom Shortcodes
