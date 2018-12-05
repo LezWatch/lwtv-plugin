@@ -57,7 +57,7 @@ class LWTV_CMB2 {
 	/**
 	 * Extra Get post options.
 	 */
-	public static function get_post_options( $query_args, $the_id ) {
+	public static function get_post_options( $query_args, $the_id = 0 ) {
 		$args = wp_parse_args(
 			$query_args,
 			array(
