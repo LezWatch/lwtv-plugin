@@ -8,6 +8,18 @@ const { createBlock, registerBlockType } = wp.blocks;
 const { RichText, PlainText } = wp.editor;
 const { PanelBody, ToggleControl, RangeControl, SelectControl } = wp.components;
 
+// Display queer
+function DisplayQueer( { score } ) {
+
+	return (
+		<Fragment>
+			<span data-toggle="tooltip" aria-label="How good is this show for queers?" title="" data-original-title="How good is this show for queers?">
+				<button type="button" class="btn btn-dark">Queer Score: { `${ score }` }</button>
+			</span>
+		</Fragment>
+	);
+}
+
 // Figure out Worth Display
 function DisplayWorth( { score } ) {
 
@@ -24,12 +36,12 @@ function DisplayWorth( { score } ) {
 			break;
 		case 'no':
 			color = 'danger';
-			svgID = thumbs-down;
+			svgID = 'thumbs-down';
 			icon = 'M14,2H7.3A2,2,0,0,0,5.47,3.19l-3.3,7.42a2.06,2.06,0,0,0-.17.81V13a2,2,0,0,0,2,2h7.63l-1.48,3.89A2.35,2.35,0,0,0,11,21.62a2.06,2.06,0,0,0,2.93-.57L18,15h0V6A4,4,0,0,0,14,2Zm7,0a1,1,0,0,0-1,1V14a1,1,0,0,0,2,0V3A1,1,0,0,0,21,2Z';
 			break;
 		case 'tbd':
 			color = 'info';
-			svgID = clock-icon;
+			svgID = 'clock-icon';
 			icon = 'M12,5a1,1,0,0,0-1,1V8H9a1,1,0,0,0,0,2h4V6A1,1,0,0,0,12,5ZM23,22H1a1,1,0,1,0,0,2H23a1,1,0,0,0,0-2ZM21,9a9,9,0,1,0-18,0L3,20H21Zm-9,7a7,7,0,1,1,7-7A7,7,0,0,1,12,16Z';
 			break;
 		default:
@@ -165,8 +177,8 @@ registerBlockType( 'lwtv/screener', {
 			type: 'string',
 		},
 		queer: {
-			type: 'number',
-			default: 3,
+			type: 'string',
+			default: '3',
 		},
 		worthit: {
 			type: 'string',
@@ -286,7 +298,7 @@ registerBlockType( 'lwtv/screener', {
 	},
 
 	save: props => {
-		const { attributes: { className } } = props;
+		const { attributes: { className }, setAttributes } = props;
 		const { title, summary, queer, worthit, star, trigger } = props.attributes;
 
 		return (
@@ -304,7 +316,7 @@ registerBlockType( 'lwtv/screener', {
 				/>
 
 				<p>
-					<span data-toggle="tooltip" aria-label="How good is this show for queers?" title="" data-original-title="How good is this show for queers?"><button type="button" class="btn btn-dark">Queer Score: { `${ queer }` }</button></span>
+					<DisplayQueer score={ queer } />
 					&nbsp;
 					<DisplayWorth score={ worthit } />
 					&nbsp;
