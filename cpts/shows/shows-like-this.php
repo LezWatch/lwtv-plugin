@@ -43,7 +43,6 @@ class LWTV_Shows_Like_This {
 		// if not empty it's the meta_query for the  _thumbnail_id meta key
 
 		// Collect extras
-		$worth = ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $post_id, 'lezshows_worthit_rating', true ) : 'TBD';
 		$star  = ( get_post_meta( $post_id, 'lezshows_stars', true ) ) ? 'EXISTS' : 'NOT EXISTS';
 		$score = ( get_post_meta( $post_id, 'lezshows_the_score', true ) ) ? get_post_meta( $post_id, 'lezshows_the_score', true ) : 10;
 
@@ -51,13 +50,6 @@ class LWTV_Shows_Like_This {
 		$meta_query[] = array(
 			'key'     => 'lezshows_stars',
 			'compare' => $star,
-		);
-
-		// Worth: Thumb up/down/meh match
-		$meta_query[] = array(
-			'key'     => 'lezshows_worthit_rating',
-			'value'   => $worth,
-			'compare' => '=',
 		);
 
 		// Score: If the score is similar +/- 10
