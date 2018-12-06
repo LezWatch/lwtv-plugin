@@ -138,44 +138,68 @@ class LWTV_CPT_Shows {
 		// Define show taxonomies
 		// SLUG => PRETTY NAME
 		$all_taxonomies = array(
-			'lez_stations'      => 'TV station',
-			'lez_tropes'        => 'trope',
-			'lez_formats'       => 'format',
-			'lez_genres'        => 'genre',
-			'lez_country'       => 'nation',
-			'lez_stars'         => 'star',
-			'lez_triggers'      => 'trigger',
-			'lez_intersections' => 'intersection',
+			'lez_stations'      => array(
+				'name' => 'TV station',
+				'rest' => true,
+			),
+			'lez_tropes'        => array(
+				'name' => 'trope',
+				'rest' => false,
+			),
+			'lez_formats'       => array(
+				'name' => 'format',
+				'rest' => false,
+			),
+			'lez_genres'        => array(
+				'name' => 'genre',
+				'rest' => false,
+			),
+			'lez_country'       => array(
+				'name' => 'nation',
+				'rest' => true,
+			),
+			'lez_stars'         => array(
+				'name' => 'star',
+				'rest' => false,
+			),
+			'lez_triggers'      => array(
+				'name' => 'trigger',
+				'rest' => false,
+			),
+			'lez_intersections' => array(
+				'name' => 'intersection',
+				'rest' => false,
+			),
 		);
 
-		foreach ( $all_taxonomies as $slug => $pretty ) {
-			$slug = str_replace( 'lez_', '', $slug );
+		foreach ( $all_taxonomies as $tax_slug => $tax_details ) {
+			$slug = str_replace( 'lez_', '', $tax_slug );
 
 			// Labels for taxonomy
 			$labels = array(
-				'name'                       => ucwords( $pretty ) . 's',
-				'singular_name'              => ucwords( $pretty ),
-				'search_items'               => 'Search ' . ucwords( $pretty ) . 's',
-				'popular_items'              => 'Popular ' . ucwords( $pretty ) . 's',
-				'all_items'                  => 'All' . ucwords( $pretty ) . 's',
+				'name'                       => ucwords( $tax_details['name'] ) . 's',
+				'singular_name'              => ucwords( $tax_details['name'] ),
+				'search_items'               => 'Search ' . ucwords( $tax_details['name'] ) . 's',
+				'popular_items'              => 'Popular ' . ucwords( $tax_details['name'] ) . 's',
+				'all_items'                  => 'All' . ucwords( $tax_details['name'] ) . 's',
 				'parent_item'                => null,
 				'parent_item_colon'          => null,
-				'edit_item'                  => 'Edit ' . ucwords( $pretty ),
-				'update_item'                => 'Update ' . ucwords( $pretty ),
-				'add_new_item'               => 'Add New ' . ucwords( $pretty ),
-				'new_item_name'              => 'New' . ucwords( $pretty ) . 'Name',
-				'separate_items_with_commas' => 'Separate ' . $pretty . 's with commas',
-				'add_or_remove_items'        => 'Add or remove' . $pretty . 's',
-				'choose_from_most_used'      => 'Choose from the most used ' . $pretty . 's',
-				'not_found'                  => 'No ' . ucwords( $pretty ) . 's found.',
-				'menu_name'                  => ucwords( $pretty ) . 's',
+				'edit_item'                  => 'Edit ' . ucwords( $tax_details['name'] ),
+				'update_item'                => 'Update ' . ucwords( $tax_details['name'] ),
+				'add_new_item'               => 'Add New ' . ucwords( $tax_details['name'] ),
+				'new_item_name'              => 'New' . ucwords( $tax_details['name'] ) . 'Name',
+				'separate_items_with_commas' => 'Separate ' . $tax_details['name'] . 's with commas',
+				'add_or_remove_items'        => 'Add or remove' . $tax_details['name'] . 's',
+				'choose_from_most_used'      => 'Choose from the most used ' . $tax_details['name'] . 's',
+				'not_found'                  => 'No ' . ucwords( $tax_details['name'] ) . 's found.',
+				'menu_name'                  => ucwords( $tax_details['name'] ) . 's',
 			);
 			//parameters for the new taxonomy
 			$arguments = array(
 				'hierarchical'          => false,
 				'labels'                => $labels,
 				'show_ui'               => true,
-				'show_in_rest'          => false,
+				'show_in_rest'          => $tax_details['rest'],
 				'show_admin_column'     => true,
 				'update_count_callback' => '_update_post_term_count',
 				'query_var'             => true,
@@ -300,6 +324,10 @@ SQL;
 	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
 	public function update_meta( $post_id ) {
+
+		if ( 'auto-draft' === get_post_status( $post_id ) ) {
+			return;
+		}
 
 		$screen = get_current_screen();
 
