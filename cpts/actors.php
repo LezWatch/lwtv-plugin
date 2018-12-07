@@ -103,8 +103,8 @@ class LWTV_CPT_Actors {
 	public function create_taxonomies() {
 
 		$taxonomies = array(
-			'gender'    => 'actor_gender',
-			'sexuality' => 'actor_sexuality',
+			'actor gender'    => 'actor_gender',
+			'actor sexuality' => 'actor_sexuality',
 		);
 
 		foreach ( $taxonomies as $pretty => $slug ) {
@@ -130,7 +130,7 @@ class LWTV_CPT_Actors {
 				'hierarchical'          => false,
 				'labels'                => $labels,
 				'show_ui'               => true,
-				'show_in_rest'          => false,
+				'show_in_rest'          => false, // disabled to stop Gutenberg.
 				'show_admin_column'     => true,
 				'update_count_callback' => '_update_post_term_count',
 				'query_var'             => true,
