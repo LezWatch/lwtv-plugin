@@ -26,7 +26,7 @@ class LWTV_Shortcodes {
 		add_shortcode( 'firstyear', array( $this, 'first_year' ) );
 		add_shortcode( 'screener', array( $this, 'screener' ) );
 		add_shortcode( 'glossary', array( $this, 'glossary' ) );
-		add_shortcode( 'author-box', array( $this, 'author-box' ) );
+		add_shortcode( 'author-box', array( $this, 'author_box' ) );
 	}
 
 	/*
