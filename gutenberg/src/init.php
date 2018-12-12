@@ -23,7 +23,26 @@ class LWTV_Gutenblocks {
 		add_action( 'enqueue_block_assets', array( $this, 'block_assets' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'block_editor_assets' ) );
 
-		// Required for Server Side Rendering
+		/**
+		 * Register Block Types -- Required for ServerSideRender:
+		 *  - author-box
+		 */
+		register_block_type(
+			'lwtv/author-box',
+			array(
+				'attributes'      => array(
+					'users' => array(
+						'type' => 'string',
+					),
+				),
+				'render_callback' => array( 'LWTV_Shortcodes', 'author_box' ),
+			)
+		);
+
+		/**
+		 * Register Block Types -- Required for ServerSideRender:
+		 *  - glossary
+		 */
 		register_block_type(
 			'lez-library/glossary',
 			array(

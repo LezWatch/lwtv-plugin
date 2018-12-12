@@ -5,8 +5,11 @@
  * Webpack to compile them.
  */
 
- // Glossary
- import './glossary/block.js';
+// Author Box
+import './author-box/block.js';
+
+// Glossary
+import './glossary/block.js';
 
 // Screener
 import './screener/block.js';

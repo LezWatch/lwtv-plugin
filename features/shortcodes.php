@@ -1,11 +1,13 @@
 <?php
 /*
 Description: Various shortcodes used on LezWatch.TV
-Version: 1.2.0
+Version: 2.0.0
 Author: Mika Epstein
 */
 
 class LWTV_Shortcodes {
+
+	protected static $version;
 
 	/**
 	 * Constructor
@@ -13,6 +15,7 @@ class LWTV_Shortcodes {
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
 		add_filter( 'widget_text', 'do_shortcode' );
+		self::$version = '2.0.0';
 	}
 
 	/**
@@ -23,6 +26,7 @@ class LWTV_Shortcodes {
 		add_shortcode( 'firstyear', array( $this, 'first_year' ) );
 		add_shortcode( 'screener', array( $this, 'screener' ) );
 		add_shortcode( 'glossary', array( $this, 'glossary' ) );
+		add_shortcode( 'author-box', array( $this, 'author-box' ) );
 	}
 
 	/*
@@ -234,6 +238,103 @@ class LWTV_Shortcodes {
 		}
 
 		return $return;
+	}
+
+	/*
+	 * Display Author Box
+	 *
+	 * Usage: [author-box users=username]
+	 *
+	 * @since 1.2
+	*/
+	public static function author_box( $attributes ) {
+
+		wp_enqueue_style( 'author-box-shortcode', content_url( 'library/assets/css/author-box.css' ), array(), self::$version );
+
+		$mystery    = '<div class="col-sm-3"><img src="http://0.gravatar.com/avatar/9c7ddb864b01d8e47ce3414c9bbf3008?s=64&d=mm&f=y&r=g"></div><div class="col-sm"><h4 class="author_name">Mystery Girl</h4><div class="author-bio">Yet another lesbian who slept with Shane. Or Sara Lance.</div></div>';
+		$author_box = '<div class="author-box-shortcode">';
+
+		if ( '' === $attributes['users'] || ! isset( $attributes['users'] ) ) {
+			$valid_user = 0;
+		} else {
+			$users      = explode( ',', sanitize_user( $attributes['users'] ) );
+			$valid_user = 0;
+			foreach ( $users as $user ) {
+				if ( is_numeric( $user ) ) {
+					$get_user = get_user_by( 'id', $user );
+					$user     = $get_user->user_login;
+				}
+
+				$user = username_exists( sanitize_user( $user ) );
+				if ( $user ) {
+					$valid_user++;
+					$gravatar = get_avatar( get_the_author_meta( 'email', $user ) );
+
+					// Get author's display name
+					// If display name is not available then use nickname as display name
+					$display_name = ( get_the_author_meta( 'display_name', $user ) ) ? get_the_author_meta( 'display_name', $user ) : get_the_author_meta( 'nickname', $user );
+					if ( get_the_author_meta( 'jobrole', $user ) ) {
+						$display_name .= ' (' . get_the_author_meta( 'jobrole', $user ) . ')';
+					}
+
+					// Get author's biographical information or description
+					$user_description = ( get_the_author_meta( 'user_description', $user ) ) ? get_the_author_meta( 'user_description', $user ) : '';
+
+					// Get author's website URL
+					$user_twitter = get_the_author_meta( 'twitter', $user );
+
+					// Get link to the author archive page
+					$numposts   = count_many_users_posts( array( $user ), 'post', true );
+					$user_posts = $numposts[ $user ];
+
+					// Get author Fav Shows
+					$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows', $user );
+					if ( '' !== $all_fav_shows ) {
+						$show_title = array();
+						foreach ( $all_fav_shows as $each_show ) {
+							if ( 'publish' !== get_post_status( $each_show ) ) {
+								array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show ) . '</span></em>' );
+							} else {
+								array_push( $show_title, '<em><a href="' . get_permalink( $each_show ) . '">' . get_the_title( $each_show ) . '</a></em>' );
+							}
+						}
+						$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
+						$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
+					}
+
+					// Build the author box
+					$author_details  = '<div class="col-sm-3">' . $gravatar . '</div>';
+					$author_details .= '<div class="col-sm">';
+					$author_details .= '<h4 class="author_name">' . $display_name . '</h4>';
+					$author_details .= '<div class="author-bio">' . nl2br( $user_description ) . '</div>';
+
+					$author_details .= '<div class="author-details">';
+
+					// If the author has posts, show a link
+					$author_details .= ( $user_posts > 0 ) ? '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $user ) ) . '">View all articles by ' . $display_name . '</a></div>' : '';
+
+					// Add Twitter if it's there
+					$author_details .= ( ! empty( $user_twitter ) ) ? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $user_twitter . '" target="_blank" rel="nofollow">@' . $user_twitter . '</a> </div>' : '';
+
+					// Add favourite shows if they're there
+					$author_details .= ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+
+					$author_details .= '</div>';
+					$author_details .= '</div>';
+
+					$author_box .= '<section class="author-box">' . $author_details . '</section>';
+				}
+			}
+		}
+
+		// If there was no valid user
+		if ( 0 === $valid_user ) {
+			$author_box .= '<section class="author-box">' . $mystery . '</section>';
+		}
+
+		$author_box .= '</div>';
+
+		return $author_box;
 	}
 
 }
