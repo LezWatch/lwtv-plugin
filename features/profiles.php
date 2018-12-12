@@ -16,11 +16,42 @@ class LWTV_User_Profiles {
 		add_action( 'personal_options_update', array( $this, 'save_extra_profile_fields' ) );
 		add_action( 'edit_user_profile_update', array( $this, 'save_extra_profile_fields' ) );
 		add_filter( 'user_contactmethods', array( $this, 'user_contactmethods' ) );
+
+		// Rest API
+		register_meta(
+			'user',
+			'jobrole',
+			array(
+				'type'         => 'string',
+				'show_in_rest' => true, // this is the key part
+			)
+		);
+		register_meta(
+			'user',
+			'twitter',
+			array(
+				'type'         => 'string',
+				'show_in_rest' => true, // this is the key part
+			)
+		);
+		add_action( 'rest_api_init', array( $this, 'rest_api_add_user_field' ), 10, 2 );
+	}
+
+	public function rest_api_add_user_field() {
+		register_rest_field(
+			'user',
+			'lez_user_favourite_shows',
+			array(
+				'get_callback'    => function( $user, $field_name, $request ) {
+					return get_user_meta( $user['id'], $field_name, true );
+				},
+				'schema'          => null,
+			)
+		);
 	}
 
 	public function user_contactmethods() {
 		$profile_fields['tumblr'] = 'Tumblr URL';
-		unset( $profile_fields['googleplus'] );
 		return $profile_fields;
 	}
 
