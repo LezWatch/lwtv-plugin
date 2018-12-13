@@ -42,10 +42,10 @@ class LWTV_User_Profiles {
 			'user',
 			'lez_user_favourite_shows',
 			array(
-				'get_callback'    => function( $user, $field_name, $request ) {
+				'get_callback' => function( $user, $field_name, $request ) {
 					return get_user_meta( $user['id'], $field_name, true );
 				},
-				'schema'          => null,
+				'schema'       => null,
 			)
 		);
 	}

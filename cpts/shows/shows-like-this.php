@@ -27,7 +27,7 @@ class LWTV_Shows_Like_This {
 		$return = '';
 
 		if ( ! empty( $show_id ) && has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
-			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies="lez_formats,lez_tropes,lez_genres,lez_intersections"]' );
+			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies="lez_formats,lez_tropes,lez_genres,lez_intersections,lez_showtagged"]' );
 		}
 
 		if ( empty( $return ) ) {
