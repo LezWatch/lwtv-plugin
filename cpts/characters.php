@@ -11,6 +11,7 @@
 class LWTV_CPT_Characters {
 
 	public $character_roles;
+	protected static $all_taxonomies;
 
 	/**
 	 * Constructor
@@ -23,16 +24,20 @@ class LWTV_CPT_Characters {
 			'guest'     => 'Guest Character',
 		);
 
-		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		self::$all_taxonomies = array(
+			'cliché'               => 'cliches',
+			'gender'               => 'gender',
+			'sexual orientation'   => 'sexuality',
+			'romantic orientation' => 'romantic',
+		);
 
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
-
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
-
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 	}
 
@@ -82,20 +87,30 @@ class LWTV_CPT_Characters {
 	 *
 	 */
 	public function create_post_type() {
+
+		$char_taxonomies = array();
+		foreach ( self::$all_taxonomies as $pretty => $slug ) {
+			$char_taxonomies[] = 'lez_' . $slug;
+		}
+
 		$labels = array(
-			'name'               => 'Characters',
-			'singular_name'      => 'Character',
-			'menu_name'          => 'Characters',
-			'parent_item_colon'  => 'Parent Character:',
-			'all_items'          => 'All Characters',
-			'view_item'          => 'View Character',
-			'add_new_item'       => 'Add New Character',
-			'add_new'            => 'Add New',
-			'edit_item'          => 'Edit Character',
-			'update_item'        => 'Update Character',
-			'search_items'       => 'Search Characters',
-			'not_found'          => 'No characters found',
-			'not_found_in_trash' => 'No characters in the Trash',
+			'name'                  => 'Characters',
+			'singular_name'         => 'Character',
+			'menu_name'             => 'Characters',
+			'parent_item_colon'     => 'Parent Character:',
+			'all_items'             => 'All Characters',
+			'view_item'             => 'View Character',
+			'add_new_item'          => 'Add New Character',
+			'add_new'               => 'Add New',
+			'edit_item'             => 'Edit Character',
+			'update_item'           => 'Update Character',
+			'search_items'          => 'Search Characters',
+			'not_found'             => 'No characters found',
+			'not_found_in_trash'    => 'No characters in the Trash',
+			'featured_image'        => 'Character Photo',
+			'set_featured_image'    => 'Set Character Photo',
+			'remove_featured_image' => 'Remove Character Photo',
+			'use_featured_image'    => 'Use as Character Photo',
 		);
 		$args   = array(
 			'label'               => 'post_type_characters',
@@ -109,6 +124,7 @@ class LWTV_CPT_Characters {
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
 			'has_archive'         => 'characters',
 			'rewrite'             => array( 'slug' => 'character' ),
+			'taxonomies'          => $char_taxonomies,
 			'delete_with_user'    => false,
 			'exclude_from_search' => false,
 		);
@@ -121,14 +137,7 @@ class LWTV_CPT_Characters {
 	 */
 	public function create_taxonomies() {
 
-		$taxonomies = array(
-			'cliché'               => 'cliches',
-			'gender'               => 'gender',
-			'sexual orientation'   => 'sexuality',
-			'romantic orientation' => 'romantic',
-		);
-
-		foreach ( $taxonomies as $pretty => $slug ) {
+		foreach ( self::$all_taxonomies as $pretty => $slug ) {
 			// Labels for taxonomy
 			$labels = array(
 				'name'                       => ucwords( $pretty ) . 's',

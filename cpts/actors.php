@@ -10,6 +10,8 @@
  */
 class LWTV_CPT_Actors {
 
+	protected static $all_taxonomies;
+
 	/**
 	 * Constructor
 	 */
@@ -21,6 +23,22 @@ class LWTV_CPT_Actors {
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
+		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
+
+		// Define show taxonomies
+		// SLUG => PRETTY NAME
+		self::$all_taxonomies = array(
+			'actor_gender'    => array(
+				'name'   => 'actor gender',
+				'plural' => 'actor gender',
+				'rest'   => false,
+			),
+			'actor_sexuality' => array(
+				'name'   => 'actor sexuality',
+				'plural' => 'actor sexuality',
+				'rest'   => false,
+			),
+		);
 	}
 
 	/**
@@ -59,6 +77,12 @@ class LWTV_CPT_Actors {
 	 *
 	 */
 	public function create_post_type() {
+
+		$actor_taxonomies = array();
+		foreach ( self::$all_taxonomies as $actor_tax => $actor_array ) {
+			$actor_taxonomies[] = 'lez_' . $actor_tax;
+		}
+
 		$labels = array(
 			'name'                  => 'Actors',
 			'singular_name'         => 'Actor',
@@ -90,6 +114,7 @@ class LWTV_CPT_Actors {
 			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
 			'has_archive'         => 'actors',
 			'rewrite'             => array( 'slug' => 'actor' ),
+			'taxonomies'          => $actor_taxonomies,
 			'delete_with_user'    => false,
 			'exclude_from_search' => false,
 		);
@@ -101,29 +126,28 @@ class LWTV_CPT_Actors {
 	 *
 	 */
 	public function create_taxonomies() {
+		foreach ( self::$all_taxonomies as $tax_slug => $tax_details ) {
 
-		$taxonomies = array(
-			'actor gender'    => 'actor_gender',
-			'actor sexuality' => 'actor_sexuality',
-		);
+			$slug        = $tax_slug;
+			$pretty      = $tax_details['name'];
+			$name_plural = ( isset( $tax_details['plural'] ) ) ? ucwords( $tax_details['plural'] ) : ucwords( $tax_details['name'] ) . 's';
 
-		foreach ( $taxonomies as $pretty => $slug ) {
 			// Labels for taxonomy
 			$labels = array(
-				'name'                       => ucwords( $pretty ) . 's',
+				'name'                       => $name_plural,
 				'singular_name'              => ucwords( $pretty ),
-				'search_items'               => 'Search ' . ucwords( $pretty ) . 's',
-				'popular_items'              => 'Popular ' . ucwords( $pretty ) . 's',
-				'all_items'                  => 'All' . ucwords( $pretty ) . 's',
+				'search_items'               => 'Search ' . $name_plural,
+				'popular_items'              => 'Popular ' . $name_plural,
+				'all_items'                  => 'All' . $name_plural,
 				'edit_item'                  => 'Edit ' . ucwords( $pretty ),
 				'update_item'                => 'Update ' . ucwords( $pretty ),
 				'add_new_item'               => 'Add New ' . ucwords( $pretty ),
 				'new_item_name'              => 'New' . ucwords( $pretty ) . 'Name',
-				'separate_items_with_commas' => 'Separate ' . $pretty . 's with commas',
-				'add_or_remove_items'        => 'Add or remove' . $pretty . 's',
-				'choose_from_most_used'      => 'Choose from the most used ' . $pretty . 's',
-				'not_found'                  => 'No ' . ucwords( $pretty ) . 's found.',
-				'menu_name'                  => ucwords( $pretty ) . 's',
+				'separate_items_with_commas' => 'Separate ' . $name_plural . ' with commas',
+				'add_or_remove_items'        => 'Add or remove' . $name_plural,
+				'choose_from_most_used'      => 'Choose from the most used ' . $name_plural,
+				'not_found'                  => 'No ' . $name_plural . ' found.',
+				'menu_name'                  => $name_plural,
 			);
 			//parameters for the new taxonomy
 			$arguments = array(
@@ -329,6 +353,14 @@ class LWTV_CPT_Actors {
 				</div>';
 				break;
 		}
+	}
+
+	/*
+	 * Remove Metaboxes we use elsewhere
+	 */
+	public function remove_metaboxes() {
+		remove_meta_box( 'authordiv', 'post_type_actors', 'normal' );
+		remove_meta_box( 'postexcerpt', 'post_type_actors', 'normal' );
 	}
 
 }

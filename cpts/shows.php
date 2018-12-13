@@ -10,6 +10,8 @@
  */
 class LWTV_CPT_Shows {
 
+	protected static $all_taxonomies;
+
 	/**
 	 * Constructor
 	 */
@@ -20,6 +22,48 @@ class LWTV_CPT_Shows {
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
+
+		// Define show taxonomies
+		// SLUG => PRETTY NAME
+		self::$all_taxonomies = array(
+			'lez_stations'      => array(
+				'name' => 'TV station',
+				'rest' => true,
+			),
+			'lez_tropes'        => array(
+				'name' => 'trope',
+				'rest' => false,
+			),
+			'lez_formats'       => array(
+				'name' => 'format',
+				'rest' => false,
+			),
+			'lez_genres'        => array(
+				'name' => 'genre',
+				'rest' => false,
+			),
+			'lez_country'       => array(
+				'name' => 'nation',
+				'rest' => true,
+			),
+			'lez_stars'         => array(
+				'name' => 'star',
+				'rest' => false,
+			),
+			'lez_triggers'      => array(
+				'name' => 'trigger',
+				'rest' => false,
+			),
+			'lez_intersections' => array(
+				'name' => 'intersection',
+				'rest' => false,
+			),
+			'lez_showtagged'    => array(
+				'name'   => 'tagged',
+				'plural' => 'tagged',
+				'rest'   => false,
+			),
+		);
 	}
 
 	/**
@@ -86,6 +130,11 @@ class LWTV_CPT_Shows {
 	 */
 	public function create_post_type() {
 
+		$show_taxonomies = array();
+		foreach ( self::$all_taxonomies as $a_show_tax => $a_show_array ) {
+			$show_taxonomies[] = $a_show_tax;
+		}
+
 		$labels = array(
 			'name'                  => 'TV Shows',
 			'singular_name'         => 'TV Show',
@@ -118,6 +167,7 @@ class LWTV_CPT_Shows {
 			'public'              => true,
 			'exclude_from_search' => false,
 			'show_in_rest'        => true,
+			'taxonomies'          => $show_taxonomies,
 			'rest_base'           => 'show',
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-video-alt',
@@ -135,64 +185,29 @@ class LWTV_CPT_Shows {
 	 */
 	public function create_taxonomies() {
 
-		// Define show taxonomies
-		// SLUG => PRETTY NAME
-		$all_taxonomies = array(
-			'lez_stations'      => array(
-				'name' => 'TV station',
-				'rest' => true,
-			),
-			'lez_tropes'        => array(
-				'name' => 'trope',
-				'rest' => false,
-			),
-			'lez_formats'       => array(
-				'name' => 'format',
-				'rest' => false,
-			),
-			'lez_genres'        => array(
-				'name' => 'genre',
-				'rest' => false,
-			),
-			'lez_country'       => array(
-				'name' => 'nation',
-				'rest' => true,
-			),
-			'lez_stars'         => array(
-				'name' => 'star',
-				'rest' => false,
-			),
-			'lez_triggers'      => array(
-				'name' => 'trigger',
-				'rest' => false,
-			),
-			'lez_intersections' => array(
-				'name' => 'intersection',
-				'rest' => false,
-			),
-		);
-
-		foreach ( $all_taxonomies as $tax_slug => $tax_details ) {
+		foreach ( self::$all_taxonomies as $tax_slug => $tax_details ) {
 			$slug = str_replace( 'lez_', '', $tax_slug );
+
+			$name_plural = ( isset( $tax_details['plural'] ) ) ? ucwords( $tax_details['plural'] ) : ucwords( $tax_details['name'] ) . 's';
 
 			// Labels for taxonomy
 			$labels = array(
-				'name'                       => ucwords( $tax_details['name'] ) . 's',
+				'name'                       => $name_plural,
 				'singular_name'              => ucwords( $tax_details['name'] ),
-				'search_items'               => 'Search ' . ucwords( $tax_details['name'] ) . 's',
-				'popular_items'              => 'Popular ' . ucwords( $tax_details['name'] ) . 's',
-				'all_items'                  => 'All' . ucwords( $tax_details['name'] ) . 's',
+				'search_items'               => 'Search ' . $name_plural,
+				'popular_items'              => 'Popular ' . $name_plural,
+				'all_items'                  => 'All' . $name_plural,
 				'parent_item'                => null,
 				'parent_item_colon'          => null,
 				'edit_item'                  => 'Edit ' . ucwords( $tax_details['name'] ),
 				'update_item'                => 'Update ' . ucwords( $tax_details['name'] ),
 				'add_new_item'               => 'Add New ' . ucwords( $tax_details['name'] ),
 				'new_item_name'              => 'New' . ucwords( $tax_details['name'] ) . 'Name',
-				'separate_items_with_commas' => 'Separate ' . $tax_details['name'] . 's with commas',
-				'add_or_remove_items'        => 'Add or remove' . $tax_details['name'] . 's',
-				'choose_from_most_used'      => 'Choose from the most used ' . $tax_details['name'] . 's',
-				'not_found'                  => 'No ' . ucwords( $tax_details['name'] ) . 's found.',
-				'menu_name'                  => ucwords( $tax_details['name'] ) . 's',
+				'separate_items_with_commas' => 'Separate ' . $name_plural . ' with commas',
+				'add_or_remove_items'        => 'Add or remove' . $name_plural,
+				'choose_from_most_used'      => 'Choose from the most used ' . $name_plural,
+				'not_found'                  => 'No ' . $name_plural . ' found.',
+				'menu_name'                  => $name_plural,
 			);
 			//parameters for the new taxonomy
 			$arguments = array(
