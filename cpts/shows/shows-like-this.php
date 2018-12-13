@@ -75,7 +75,10 @@ class LWTV_Shows_Like_This {
 		}
 
 		// Add our handpicked posts to the top of the list
-		$results = $add_results + $results;
+		$combined = $add_results + $results;
+
+		// Make it unique
+		$results = array_unique( $combined );
 
 		// Give 'em back!
 		return $results;
