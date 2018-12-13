@@ -77,6 +77,9 @@ class LWTV_Shows_Like_This {
 		// Add our handpicked posts to the top of the list
 		$combined = $add_results + $results;
 
+/*
+		// This isn't working...
+
 		// Loop through to make sure Law & Order isn't listed x2
 		$show_list = array();
 		foreach ( $combined as $combined_show => $combined_data ) {
@@ -90,6 +93,7 @@ class LWTV_Shows_Like_This {
 				$show_list[] = $combined_data['ID'];
 			}
 		}
+*/
 		$results = $combined;
 
 		// Give 'em back!
