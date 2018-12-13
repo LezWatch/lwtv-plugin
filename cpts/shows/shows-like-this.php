@@ -77,8 +77,20 @@ class LWTV_Shows_Like_This {
 		// Add our handpicked posts to the top of the list
 		$combined = $add_results + $results;
 
-		// Make it unique
-		$results = array_unique( $combined );
+		// Loop through to make sure Law & Order isn't listed x2
+		$show_list = array();
+		foreach ( $combined as $combined_show => $combined_data ) {
+			$combined_data = (array) $combined_data;
+			// Check if the show is already listed.
+			if ( in_array( $combined_data['ID'], $show_list ) ) {
+				// Remove from the combined results
+				unset( $combined[ $combined_show ] );
+			} else {
+				// Add to the list for the next check
+				$show_list[] = $combined_data['ID'];
+			}
+		}
+		$results = $combined;
 
 		// Give 'em back!
 		return $results;
