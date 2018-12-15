@@ -251,88 +251,104 @@ class LWTV_Shortcodes {
 
 		wp_enqueue_style( 'author-box-shortcode', content_url( 'library/assets/css/author-box.css' ), array(), self::$version );
 
-		$mystery    = '<div class="col-sm-3"><img src="http://0.gravatar.com/avatar/9c7ddb864b01d8e47ce3414c9bbf3008?s=64&d=mm&f=y&r=g"></div><div class="col-sm"><h4 class="author_name">Mystery Girl</h4><div class="author-bio">Yet another lesbian who slept with Shane. Or Sara Lance.</div></div>';
-		$author_box = '<div class="author-box-shortcode">';
+		// Default to large
+		$format = ( isset( $attributes['format'] ) ) ? sanitize_text_field( $attributes['format'] ) : 'large';
 
-		if ( '' === $attributes['users'] || ! isset( $attributes['users'] ) ) {
-			$valid_user = 0;
+		// Default content, if there's no valid user
+		$default = array(
+			'avatar'    => 'http://0.gravatar.com/avatar/9c7ddb864b01d8e47ce3414c9bbf3008?s=64&d=mm&f=y&r=g',
+			'name'      => 'Mystery Girl',
+			'bio'       => 'Yet another lesbian who slept with Shane. Or Sara Lance.',
+			'title'     => '',
+			'postcount' => '',
+			'twitter'   => '',
+			'fav_shows' => '',
+		);
+
+		// If it's not a user ID, let's convert.
+		if ( ! is_numeric( $attributes['users'] ) ) {
+			$get_user  = get_user_by( 'login', $attributes['users'] );
+			$author_id = $get_user->ID;
 		} else {
-			$users      = explode( ',', sanitize_user( $attributes['users'] ) );
-			$valid_user = 0;
-			foreach ( $users as $user ) {
-				if ( is_numeric( $user ) ) {
-					$get_user = get_user_by( 'id', $user );
-					$user     = $get_user->user_login;
-				}
+			$author_id = isset( $attributes['users'] ) ? absint( $attributes['users'] ) : 0;
+		}
 
-				$user = username_exists( sanitize_user( $user ) );
-				if ( $user ) {
-					$valid_user++;
-					$gravatar = get_avatar( get_the_author_meta( 'email', $user ) );
+		$user = get_userdata( $author_id );
 
-					// Get author's display name
-					// If display name is not available then use nickname as display name
-					$display_name = ( get_the_author_meta( 'display_name', $user ) ) ? get_the_author_meta( 'display_name', $user ) : get_the_author_meta( 'nickname', $user );
-					if ( get_the_author_meta( 'jobrole', $user ) ) {
-						$display_name .= ' (' . get_the_author_meta( 'jobrole', $user ) . ')';
+		if ( ! $user ) {
+			$content = $default;
+		} else {
+			// Get author Fav Shows
+			$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows', $author_id );
+			if ( '' !== $all_fav_shows ) {
+				$show_title = array();
+				foreach ( $all_fav_shows as $each_show ) {
+					if ( 'publish' !== get_post_status( $each_show ) ) {
+						array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show ) . '</span></em>' );
+					} else {
+						array_push( $show_title, '<em><a href="' . get_permalink( $each_show ) . '">' . get_the_title( $each_show ) . '</a></em>' );
 					}
-
-					// Get author's biographical information or description
-					$user_description = ( get_the_author_meta( 'user_description', $user ) ) ? get_the_author_meta( 'user_description', $user ) : '';
-
-					// Get author's website URL
-					$user_twitter = get_the_author_meta( 'twitter', $user );
-
-					// Get link to the author archive page
-					$numposts   = count_many_users_posts( array( $user ), 'post', true );
-					$user_posts = $numposts[ $user ];
-
-					// Get author Fav Shows
-					$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows', $user );
-					if ( '' !== $all_fav_shows ) {
-						$show_title = array();
-						foreach ( $all_fav_shows as $each_show ) {
-							if ( 'publish' !== get_post_status( $each_show ) ) {
-								array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show ) . '</span></em>' );
-							} else {
-								array_push( $show_title, '<em><a href="' . get_permalink( $each_show ) . '">' . get_the_title( $each_show ) . '</a></em>' );
-							}
-						}
-						$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
-						$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
-					}
-
-					// Build the author box
-					$author_details  = '<div class="col-sm-3">' . $gravatar . '</div>';
-					$author_details .= '<div class="col-sm">';
-					$author_details .= '<h4 class="author_name">' . $display_name . '</h4>';
-					$author_details .= '<div class="author-bio">' . nl2br( $user_description ) . '</div>';
-
-					$author_details .= '<div class="author-details">';
-
-					// If the author has posts, show a link
-					$author_details .= ( $user_posts > 0 ) ? '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $user ) ) . '">View all articles by ' . $display_name . '</a></div>' : '';
-
-					// Add Twitter if it's there
-					$author_details .= ( ! empty( $user_twitter ) ) ? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $user_twitter . '" target="_blank" rel="nofollow">@' . $user_twitter . '</a> </div>' : '';
-
-					// Add favourite shows if they're there
-					$author_details .= ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
-
-					$author_details .= '</div>';
-					$author_details .= '</div>';
-
-					$author_box .= '<section class="author-box">' . $author_details . '</section>';
 				}
+				$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
+				$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
 			}
+			$fav_shows = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+
+			// Number of posts
+			$numposts = count_many_users_posts( $author_id, 'post', true );
+
+			// Generate Content
+			$content = array(
+				'avatar'    => get_avatar( $author_id ),
+				'name'      => $user->display_name,
+				'title'     => ( get_the_author_meta( 'jobrole', $author_id ) ) ? get_the_author_meta( 'jobrole', $author_id ) : '',
+				'bio'       => $user->description,
+				'postcount' => $numposts,
+				'twitter'   => get_the_author_meta( 'twitter', $author_id ),
+				'instagram' => get_the_author_meta( 'instagram', $author_id ),
+				'tumblr'    => get_the_author_meta( 'tumblr', $author_id ),
+				'website'   => get_the_author_meta( 'url', $author_id ),
+				'fav_shows' => $fav_shows,
+			);
 		}
 
-		// If there was no valid user
-		if ( 0 === $valid_user ) {
-			$author_box .= '<section class="author-box">' . $mystery . '</section>';
+		$author_details = '';
+		switch ( $format ) {
+			case 'thumbnail':
+				$author_details = '<div>' . $content['avatar'] . '<br>' . $content['name'] . ' ' . $content['title'] . '</div>';
+				break;
+			case 'compact':
+				// Get all the stupid social...
+				$twitter      = ( ! empty( $content['twitter'] ) ) ? '<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">twitter</a>' : false;
+				$instagram    = ( ! empty( $content['instagram'] ) ) ? '<a href="https://instagram.com/' . $content['instagram'] . '" target="_blank" rel="nofollow">instagram</a>' : false;
+				$tumblr       = ( ! empty( $content['tumblr'] ) ) ? '<a href="' . $content['tumblr'] . '" target="_blank" rel="nofollow">tumblr</a>' : false;
+				$website      = ( ! empty( $content['website'] ) ) ? '<a href="' . $content['website'] . '" target="_blank" rel="nofollow">website</a>' : false;
+				$social_array = array( $twitter, $instagram, $tumblr, $website );
+
+				$social_array = array_filter( $social_array );
+
+				$author_details .= '<div class="col-sm-3">' . $content['avatar'] . '</div>';
+				$author_details .= '<div class="col-sm">';
+				$author_details .= '<h4 class="author_name">' . $content['name'] . '</h4><hr>';
+				$author_details .= '<div><strong>' . $content['title'] . '</strong>';
+				$author_details .= '<br>' . implode( ' | ', $social_array );
+				$author_details .= '</div>';
+				break;
+			case 'large':
+				$content['title'] = '(' . $content['title'] . ')';
+				$author_details  .= '<div class="col-sm-3">' . $content['avatar'] . '</div>';
+				$author_details  .= '<div class="col-sm">';
+				$author_details  .= '<h4 class="author_name">' . $content['name'] . ' ' . $content['title'] . '</h4>';
+				$author_details  .= '<div class="author-bio">' . nl2br( $content['bio'] ) . '</div>';
+				$author_details  .= '<div class="author-details">';
+				$author_details  .= ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $user ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
+				$author_details  .= ( ! empty( $content['twitter'] ) ) ? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">@' . $content['twitter'] . '</a> </div>' : '';
+				$author_details  .= $content['fav_shows'];
+				$author_details  .= '</div>';
+				break;
 		}
 
-		$author_box .= '</div>';
+		$author_box = '<div class="author-box-shortcode"><section class="author-box">' . $author_details . '</section></div>';
 
 		return $author_box;
 	}

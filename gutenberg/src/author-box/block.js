@@ -23,7 +23,11 @@ registerBlockType( 'lwtv/author-box', {
 	attributes: {
 		users: {
 			type: 'string',
-		}
+		},
+		format: {
+			type: 'string',
+			default: 'large',
+		},
 	},
 
 	edit,

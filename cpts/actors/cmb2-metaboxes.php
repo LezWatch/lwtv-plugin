@@ -33,9 +33,9 @@ class LWTV_Actors_CMB2 {
 		// Metabox Group: Quick Dropdowns
 		$cmb_actorside = new_cmb2_box( array(
 			'id'           => 'actors_metabox',
-			'title'        => 'Additional Data',
+			'title'        => 'Actor Details',
 			'object_types' => array( 'post_type_actors' ),
-			'context'      => 'side',
+			'context'      => 'normal',
 			'priority'     => 'default',
 			'show_names'   => true, // Show field names on the left
 			'show_in_rest' => true,
@@ -66,6 +66,7 @@ class LWTV_Actors_CMB2 {
 		// Field: Year of Birth
 		$field_birth = $cmb_actorside->add_field( array(
 			'name'        => 'Date of Birth',
+			'desc'        => 'If known',
 			'id'          => $prefix . 'birth',
 			'type'        => 'text_date',
 			'date_format' => 'Y-m-d',
@@ -73,7 +74,7 @@ class LWTV_Actors_CMB2 {
 		// Field: Year of Death (if applicable)
 		$field_death = $cmb_actorside->add_field( array(
 			'name'        => 'Date of Death',
-			'desc'        => 'If applicable.',
+			'desc'        => 'If applicable',
 			'id'          => $prefix . 'death',
 			'type'        => 'text_date',
 			'date_format' => 'Y-m-d',
@@ -129,7 +130,15 @@ class LWTV_Actors_CMB2 {
 		} else {
 			$grid_actorside = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_actorside );
 			$row1           = $grid_actorside->addRow();
+			$row2           = $grid_actorside->addRow();
+			$row3           = $grid_actorside->addRow();
+			$row4           = $grid_actorside->addRow();
+			$row5           = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
+			$row2->addColumns( array( $field_birth, $field_death ) );
+			$row3->addColumns( array( $field_imdb, $field_wiki ) );
+			$row4->addColumns( array( $field_home ) );
+			$row5->addColumns( array( $field_twitter, $field_instagram ) );
 		}
 	}
 
