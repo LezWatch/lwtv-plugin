@@ -31,17 +31,6 @@ class LWTV_All_CPTs {
 		);
 	}
 
-	/**
-	 * Front End CSS Customizations
-	 */
-	public function wp_enqueue_scripts() {
-		wp_register_style( 'cpt-shows-styles', plugins_url( 'shows.css', __FILE__ ), true, filemtime( plugin_dir_path( __FILE__ ) . 'shows.css' ) );
-
-		if ( is_single() && 'post_type_shows' === get_post_type() ) {
-			wp_enqueue_style( 'cpt-shows-styles' );
-		}
-	}
-
 }
 
 new LWTV_All_CPTs();

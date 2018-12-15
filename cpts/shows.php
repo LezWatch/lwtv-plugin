@@ -417,6 +417,9 @@ SQL;
 				content: '\\f126';
 				margin-left: -1px;
 			}
+			select#lezshows_airdates_start, select#lezshows_airdates_finish {
+				width: 40%;
+			}
 		</style>";
 	}
 
