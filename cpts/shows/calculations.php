@@ -168,7 +168,7 @@ class LWTV_Shows_Calculate {
 			$char_score = ( $char_score > 100 ) ? 100 : $char_score;
 		}
 
-		// Return Queers!
+		// Give back Queers!
 		switch ( $type ) {
 			case 'score':
 				$return = $char_score;

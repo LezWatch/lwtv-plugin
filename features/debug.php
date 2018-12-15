@@ -227,7 +227,7 @@ class LWTV_Debug {
 
 				// Get what we check for:
 				$character_count = get_post_meta( $show_id, 'lezshows_char_count', true );
-				if ( ! $character_count || empty( $character_count ) ) {
+				if ( ( ! $character_count || empty( $character_count ) ) && get_post_meta( $show_id, 'lezshows_screentime_rating', true ) ) {
 					$problems[] = 'No characters listed.';
 				}
 
@@ -239,15 +239,15 @@ class LWTV_Debug {
 					$problems[] = 'No worthit details.';
 				}
 
-				if ( ! get_post_meta( $show_id, 'lezshows_realness_rating', true ) ) {
+				if ( ! is_numeric( get_post_meta( $show_id, 'lezshows_realness_rating', true ) ) ) {
 					$problems[] = 'No realness rating.';
 				}
 
-				if ( ! get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) {
+				if ( ! is_numeric( get_post_meta( $show_id, 'lezshows_quality_rating', true ) ) ) {
 					$problems[] = 'No quality rating.';
 				}
 
-				if ( ! get_post_meta( $show_id, 'lezshows_screentime_rating', true ) ) {
+				if ( ! is_numeric( get_post_meta( $show_id, 'lezshows_screentime_rating', true ) ) ) {
 					$problems[] = 'No screentime rating.';
 				}
 

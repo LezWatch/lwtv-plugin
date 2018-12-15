@@ -81,7 +81,7 @@ class LWTV_Screeners {
 	/**
 	 * The list of networks we have access to
 	 */
-	public function tab_networks() {
+	public static function tab_networks() {
 		$networks = array(
 			'AMC (including BBC America)'      => 'http://press.amcnetworks.com/',
 			'Disney/ABC'                       => 'https://www.disneyabcpress.com',
