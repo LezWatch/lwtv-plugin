@@ -61,7 +61,7 @@ class LWTV_CPT_Shows {
 			'lez_showtagged'    => array(
 				'name'   => 'tagged',
 				'plural' => 'tagged',
-				'rest'   => false,
+				'rest'   => true,
 			),
 		);
 	}

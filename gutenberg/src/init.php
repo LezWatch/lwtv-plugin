@@ -31,9 +31,12 @@ class LWTV_Gutenblocks {
 			'lwtv/author-box',
 			array(
 				'attributes'      => array(
-					'users' => array(
+					'users'  => array(
 						'type' => 'string',
 					),
+					'format' => array(
+						'type' => 'string',
+					)
 				),
 				'render_callback' => array( 'LWTV_Shortcodes', 'author_box' ),
 			)

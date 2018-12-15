@@ -53,7 +53,7 @@ class LWTV_CPT_Actors {
 		add_action( 'manage_post_type_actors_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
 		add_filter( 'manage_edit-post_type_actors_sortable_columns', array( $this, 'manage_edit_sortable_columns' ) );
 		add_action( 'pre_get_posts', array( $this, 'columns_sortability_simple' ) );
-
+		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
 
 	/**
@@ -111,7 +111,7 @@ class LWTV_CPT_Actors {
 			'rest_base'           => 'actor',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-id',
-			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions' ),
 			'has_archive'         => 'actors',
 			'rewrite'             => array( 'slug' => 'actor' ),
 			'taxonomies'          => $actor_taxonomies,
@@ -361,6 +361,16 @@ class LWTV_CPT_Actors {
 	public function remove_metaboxes() {
 		remove_meta_box( 'authordiv', 'post_type_actors', 'normal' );
 		remove_meta_box( 'postexcerpt', 'post_type_actors', 'normal' );
+	}
+
+	/*
+	 * Customize title
+	 */
+	public function custom_enter_title( $input ) {
+		if ( 'post_type_actors' === get_post_type() ) {
+			$input = 'Add actor';
+		}
+		return $input;
 	}
 
 }

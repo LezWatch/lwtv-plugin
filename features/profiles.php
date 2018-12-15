@@ -51,7 +51,8 @@ class LWTV_User_Profiles {
 	}
 
 	public function user_contactmethods() {
-		$profile_fields['tumblr'] = 'Tumblr URL';
+		$profile_fields['tumblr']    = 'Tumblr URL';
+		$profile_fields['instagram'] = 'Instagram username';
 		return $profile_fields;
 	}
 

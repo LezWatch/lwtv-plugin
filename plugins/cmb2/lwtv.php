@@ -288,9 +288,11 @@ class LWTV_CMB2 {
 
 		$cmb_staff = new_cmb2_box(
 			array(
-				'id'           => $prefix . 'metabox',
-				'title'        => 'Internal Information',
+				'id'           => $prefix . 'details',
+				'title'        => 'Internal Notes',
 				'object_types' => array( 'post_type_characters', 'post_type_shows', 'post_type_actors' ),
+				'context'      => 'side',
+				'show_in_rest' => false,
 			)
 		);
 

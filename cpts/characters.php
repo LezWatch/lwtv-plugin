@@ -62,6 +62,7 @@ class LWTV_CPT_Characters {
 
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ), 10, 3 );
+		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
 
 	/**
@@ -121,7 +122,7 @@ class LWTV_CPT_Characters {
 			'rest_base'           => 'character',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-nametag',
-			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions' ),
 			'has_archive'         => 'characters',
 			'rewrite'             => array( 'slug' => 'character' ),
 			'taxonomies'          => $char_taxonomies,
@@ -216,6 +217,49 @@ class LWTV_CPT_Characters {
 			'show_in_rest' => true,
 			'show_names'   => true, // Show field names on the left
 		) );
+		// Field: Character Gender Idenity
+		$field_gender = $cmb_characters->add_field( array(
+			'name'             => 'Gender',
+			'desc'             => 'Gender identity',
+			'id'               => $prefix . 'gender',
+			'taxonomy'         => 'lez_gender',
+			'type'             => 'taxonomy_select',
+			'default'          => 'cisgender',
+			'show_option_none' => false,
+			'remove_default'   => 'true',
+		) );
+		// Field: Character Sexual Orientation
+		$field_sexuality = $cmb_characters->add_field( array(
+			'name'             => 'Sexuality',
+			'desc'             => 'Sexual orientation',
+			'id'               => $prefix . 'sexuality',
+			'taxonomy'         => 'lez_sexuality',
+			'type'             => 'taxonomy_select',
+			'default'          => 'homosexual',
+			'show_option_none' => false,
+			'remove_default'   => 'true',
+		) );
+		// Field: Character Romantic Orientation
+		$field_romantic = $cmb_characters->add_field( array(
+			'name'             => 'Romantic',
+			'desc'             => 'Romantic orientation',
+			'id'               => $prefix . 'romantic',
+			'taxonomy'         => 'lez_romantic',
+			'type'             => 'taxonomy_select',
+			'default'          => 'none',
+			'show_option_none' => true,
+			'remove_default'   => 'true',
+		) );
+		// Character Sidebar Grid
+		if ( ! is_admin() ) {
+			return;
+		} else {
+			$grid_character = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_characters );
+			$row1          = $grid_character->addRow();
+			$row2          = $grid_character->addRow();
+			$row1->addColumns( array( $field_gender, $field_sexuality ) );
+			$row2->addColumns( array( $field_romantic ) );
+		}
 		// Field: Character Clichés
 		$field_cliches = $cmb_characters->add_field( array(
 			'name'              => 'Character Clichés',
@@ -229,6 +273,15 @@ class LWTV_CPT_Characters {
 				'placeholder' => 'Common clichés ...',
 			),
 		) );
+		// Field: Year of Death (if applicable)
+		$field_death = $cmb_characters->add_field( array(
+			'name'        => 'Date of Death',
+			'desc'        => 'If the character is dead, select when they died.',
+			'id'          => $prefix . 'death_year',
+			'type'        => 'text_date',
+			'date_format' => 'Y-m-d',
+			'repeatable'  => true,
+		) );
 		// Field: Actor Name(s)
 		$field_actors = $cmb_characters->add_field( array(
 			'name'             => 'Actor Name',
@@ -240,6 +293,7 @@ class LWTV_CPT_Characters {
 			'options_cb'       => array( $this, 'cmb2_get_actors_options' ),
 			'repeatable'       => true,
 		) );
+
 		// Field Group: Character Show information
 		// Made repeatable since each show might have a separate role. Yikes...
 		$group_shows = $cmb_characters->add_field( array(
@@ -272,70 +326,6 @@ class LWTV_CPT_Characters {
 			'default'          => 'custom',
 			'options'          => $this->character_roles,
 		) );
-
-		// Metabox Group: Quick Dropdowns
-		$cmb_charside = new_cmb2_box( array(
-			'id'           => 'charnotes_metabox',
-			'title'        => 'Additional Data',
-			'object_types' => array( 'post_type_characters' ),
-			'context'      => 'side',
-			'priority'     => 'default',
-			'show_names'   => true, // Show field names on the left
-			'show_in_rest' => true,
-			'cmb_styles'   => false,
-		) );
-		// Field: Character Gender Idenity
-		$field_gender = $cmb_charside->add_field( array(
-			'name'             => 'Gender',
-			'desc'             => 'Gender identity',
-			'id'               => $prefix . 'gender',
-			'taxonomy'         => 'lez_gender',
-			'type'             => 'taxonomy_select',
-			'default'          => 'cisgender',
-			'show_option_none' => false,
-			'remove_default'   => 'true',
-		) );
-		// Field: Character Sexual Orientation
-		$field_sexuality = $cmb_charside->add_field( array(
-			'name'             => 'Sexuality',
-			'desc'             => 'Sexual orientation',
-			'id'               => $prefix . 'sexuality',
-			'taxonomy'         => 'lez_sexuality',
-			'type'             => 'taxonomy_select',
-			'default'          => 'homosexual',
-			'show_option_none' => false,
-			'remove_default'   => 'true',
-		) );
-		// Field: Character Romantic Orientation
-		$field_romantic = $cmb_charside->add_field( array(
-			'name'             => 'Romantic',
-			'desc'             => 'Romantic orientation',
-			'id'               => $prefix . 'romantic',
-			'taxonomy'         => 'lez_romantic',
-			'type'             => 'taxonomy_select',
-			'default'          => 'none',
-			'show_option_none' => true,
-			'remove_default'   => 'true',
-		) );
-		// Field: Year of Death (if applicable)
-		$field_death = $cmb_charside->add_field( array(
-			'name'        => 'Date of Death',
-			'desc'        => 'If the character is dead, select when they died.',
-			'id'          => $prefix . 'death_year',
-			'type'        => 'text_date',
-			'date_format' => 'Y-m-d',
-			'repeatable'  => true,
-		) );
-		// Character Sidebar Grid
-		if ( ! is_admin() ) {
-			return;
-		} else {
-			$grid_charside = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_charside );
-			$row1          = $grid_charside->addRow();
-			$row2          = $grid_charside->addRow();
-			$row1->addColumns( array( $field_gender, $field_sexuality ) );
-			$row2->addColumns( array( $field_romantic ) );
-		}
 
 	}
 
@@ -827,6 +817,16 @@ SQL;
 
 		// re-hook this function
 		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
+	}
+
+	/*
+	 * Customize title
+	 */
+	public function custom_enter_title( $input ) {
+		if ( 'post_type_characters' === get_post_type() ) {
+			$input = 'Add character';
+		}
+		return $input;
 	}
 
 }

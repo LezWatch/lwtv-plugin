@@ -29,7 +29,6 @@ class LWTV_All_CPTs {
 		add_filter( 'edcal_show_calendar_post_type_actors', function() {
 			return false; }
 		);
-
 	}
 
 	/**

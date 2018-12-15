@@ -27,7 +27,7 @@ class LWTV_Shows_Like_This {
 		$return = '';
 
 		if ( ! empty( $show_id ) && has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
-			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies="lez_formats,lez_tropes,lez_genres,lez_intersections,lez_showtagged"]' );
+			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" order="RAND" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies="lez_tropes,lez_genres,lez_intersections,lez_showtagged"]' );
 		}
 
 		if ( empty( $return ) ) {
@@ -69,32 +69,24 @@ class LWTV_Shows_Like_This {
 		$add_results = array();
 
 		if ( false !== $handpicked ) {
+
+			// Add all the show IDs to a list
+			$show_list = array();
+			foreach ( $results as $result_show => $result_data ) {
+				$result_data = (array) $result_data;
+				$show_list[] = $result_data['ID'];
+			}
+
+			// For each show, add it to the list ONLY if the show isn't already listed.
 			foreach ( $handpicked as $a_show ) {
-				$add_results[] = (object) get_post( $a_show, ARRAY_A );
+				if ( ! in_array( $a_show, $show_list ) ) {
+					$add_results[] = (object) get_post( $a_show, ARRAY_A );
+				}
 			}
 		}
 
-		// Add our handpicked posts to the top of the list
-		$combined = $add_results + $results;
-
-/*
-		// This isn't working...
-
-		// Loop through to make sure Law & Order isn't listed x2
-		$show_list = array();
-		foreach ( $combined as $combined_show => $combined_data ) {
-			$combined_data = (array) $combined_data;
-			// Check if the show is already listed.
-			if ( in_array( $combined_data['ID'], $show_list ) ) {
-				// Remove from the combined results
-				unset( $combined[ $combined_show ] );
-			} else {
-				// Add to the list for the next check
-				$show_list[] = $combined_data['ID'];
-			}
-		}
-*/
-		$results = $combined;
+		// Add our handpicked posts to the list
+		$results = $add_results + $results;
 
 		// Give 'em back!
 		return $results;

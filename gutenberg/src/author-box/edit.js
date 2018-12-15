@@ -25,8 +25,7 @@ class AuthorProfileBlock extends Component {
 	render() {
 
 		const { attributes, setAttributes, authors } = this.props;
-
-		const { users } = attributes;
+		const { users, format } = attributes;
 		const obj = this.getAuthorsForSelect();
 		obj.push( { label: '- Select User -', value: 0 } );
 
@@ -43,6 +42,17 @@ class AuthorProfileBlock extends Component {
 						value={ users }
 						options={ obj }
 						onChange={ ( value ) => setAttributes( { users: value } ) }
+					/>
+					<SelectControl
+						label={ 'Format' }
+						type="string"
+						value={ format }
+						options={ [
+							{ label: 'Large', value: 'large' },
+							{ label: 'Compact', value: 'compact' },
+							{ label: 'Thumbnail', value: 'thumbnail' },
+						] }
+						onChange={ ( value ) => setAttributes( { format: value } ) }
 					/>
 				</PanelBody>
 			</InspectorControls>
