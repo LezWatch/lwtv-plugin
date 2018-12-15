@@ -21,10 +21,10 @@ class LWTV_CPT_Shows {
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
-		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
+		// Disabled because it's not Gutenberged yet
+		// add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 
 		// Define show taxonomies
-		// SLUG => PRETTY NAME
 		self::$all_taxonomies = array(
 			'lez_stations'      => array(
 				'name' => 'TV station',

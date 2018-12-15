@@ -300,8 +300,9 @@ class LWTV_Shortcodes {
 			// Generate Content
 			$content = array(
 				'avatar'    => get_avatar( $author_id ),
+				'url'       => get_author_posts_url( $author_id ),
 				'name'      => $user->display_name,
-				'title'     => ( get_the_author_meta( 'jobrole', $author_id ) ) ? get_the_author_meta( 'jobrole', $author_id ) : '',
+				'title'     => get_the_author_meta( 'jobrole', $author_id ),
 				'bio'       => $user->description,
 				'postcount' => $numposts,
 				'twitter'   => get_the_author_meta( 'twitter', $author_id ),
@@ -329,9 +330,9 @@ class LWTV_Shortcodes {
 
 				$author_details .= '<div class="col-sm-3">' . $content['avatar'] . '</div>';
 				$author_details .= '<div class="col-sm">';
-				$author_details .= '<h4 class="author_name">' . $content['name'] . '</h4><hr>';
-				$author_details .= '<div><strong>' . $content['title'] . '</strong>';
-				$author_details .= '<br>' . implode( ' | ', $social_array );
+				$author_details .= '<h5 class="author_name"><a href="' . $content['url'] . '">' . $content['name'] . '</a></h5><hr>';
+				$author_details .= '<strong>' . $content['title'] . '</strong><br />';
+				$author_details .= implode( ' | ', $social_array );
 				$author_details .= '</div>';
 				break;
 			case 'large':
