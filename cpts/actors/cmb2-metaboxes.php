@@ -35,7 +35,7 @@ class LWTV_Actors_CMB2 {
 			'id'           => 'actors_metabox',
 			'title'        => 'Actor Details',
 			'object_types' => array( 'post_type_actors' ),
-			'context'      => 'side',
+			'context'      => 'normal',
 			'priority'     => 'default',
 			'show_names'   => true, // Show field names on the left
 			'show_in_rest' => true,

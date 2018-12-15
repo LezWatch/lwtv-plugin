@@ -106,6 +106,7 @@ class LWTV_CPT_Shows {
 		add_action( 'do_update_show_meta', array( $this, 'update_meta' ), 10, 2 );
 		add_action( 'save_post_post_type_shows', array( $this, 'update_meta' ), 10, 3 );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
+		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
 
 	/**
@@ -468,6 +469,16 @@ SQL;
 		} else {
 			return $show_in_quick_edit;
 		}
+	}
+
+	/*
+	 * Customize title
+	 */
+	public function custom_enter_title( $input ) {
+		if ( 'post_type_shows' === get_post_type() ) {
+			$input = 'Add show';
+		}
+		return $input;
 	}
 
 }

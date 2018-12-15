@@ -97,11 +97,12 @@ class LWTV_User_Profiles {
 		if ( ! current_user_can( 'edit_user', $user_id ) ) {
 			return false;
 		}
+		// phpcs:disable
 		update_user_meta( $user_id, 'jobrole', sanitize_text_field( $_POST['jobrole'] ) );
 		update_user_meta( $user_id, 'gender', sanitize_text_field( $_POST['gender'] ) );
 		update_user_meta( $user_id, 'sexuality', sanitize_text_field( $_POST['sexuality'] ) );
+		// phpcs:enable
 	}
-
 }
 
 new LWTV_User_Profiles();

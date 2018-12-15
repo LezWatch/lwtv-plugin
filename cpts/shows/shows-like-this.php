@@ -15,7 +15,6 @@ if ( ! defined( 'WPINC' ) ) {
  *
  * @since 1.0
  */
-
 class LWTV_Shows_Like_This {
 
 	public function __construct() {
@@ -91,7 +90,6 @@ class LWTV_Shows_Like_This {
 		// Give 'em back!
 		return $results;
 	}
-
 }
 
 new LWTV_Shows_Like_This();
