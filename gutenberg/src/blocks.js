@@ -13,3 +13,6 @@ import './glossary/block.js';
 
 // Screener
 import './screener/block.js';
+
+// Show Grade
+//import './show-grade/block.js';

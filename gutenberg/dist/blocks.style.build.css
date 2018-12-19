@@ -1,1 +1,36 @@
-.wp-block-cgb-block-screener{background:#c0392b;border:0.2rem solid #000;color:#000;margin:0 auto;max-width:740px;padding:2rem}
+/**
+ * #.# Common SCSS
+ *
+ * Can include things like variables and mixins
+ * that are used across the project.
+*/
+/* Theme color palette */
+/* Bootstrap */
+/**
+ * #.# Common SCSS
+ *
+ * Can include things like variables and mixins
+ * that are used across the project.
+*/
+/* Theme color palette */
+/* Bootstrap */
+/**
+ * #.# Common SCSS
+ *
+ * Can include things like variables and mixins
+ * that are used across the project.
+*/
+/* Theme color palette */
+/* Bootstrap */
+/**
+ * #.# Styles
+ *
+ * CSS for both Frontend+Backend.
+ */
+.wp-block-cgb-block-screener {
+  background: #c0392b;
+  border: 0.2rem solid #000;
+  color: #000;
+  margin: 0 auto;
+  max-width: 740px;
+  padding: 2rem; }

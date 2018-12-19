@@ -1,0 +1,40 @@
+/**
+ * #.# Editor Styles
+ *
+ * CSS for just Backend enqueued after style.scss
+ * which makes it higher in priority.
+ */
+
+.wp-block-lwtv-show-grade {
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid $lwtv-bordergrey;
+    border-left-width: .25rem;
+    border-radius: .25rem;
+    border-left-color: $lwtv-pink;
+    display: flex;
+
+    .show-grade-grade {
+      flex-grow: 2;
+    }
+
+    .show-grade-body {
+        flex-grow: 8;
+    }
+
+    h5 {
+        font-family: Oswald,sans-serif;
+        font-weight: 400;
+        line-height: 1.1;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+
+        .editor-plain-text {
+            width: 50%!important;
+            vertical-align: top!important;
+            color: $medgrey;
+            font-style: italic;
+        }
+    }
+}
