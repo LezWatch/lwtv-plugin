@@ -1,7 +1,7 @@
 <?php
 /*
 Description: Various shortcodes used on LezWatch.TV
-Version: 2.0.0
+Version: 2.1.0
 Author: Mika Epstein
 */
 
@@ -256,7 +256,7 @@ class LWTV_Shortcodes {
 
 		// Default content, if there's no valid user
 		$default = array(
-			'avatar'    => 'http://0.gravatar.com/avatar/9c7ddb864b01d8e47ce3414c9bbf3008?s=64&d=mm&f=y&r=g',
+			'avatar'    => '<img src="http://0.gravatar.com/avatar/9c7ddb864b01d8e47ce3414c9bbf3008?s=64&d=mm&f=y&r=g">',
 			'name'      => 'Mystery Girl',
 			'bio'       => 'Yet another lesbian who slept with Shane. Or Sara Lance.',
 			'title'     => '',
@@ -313,7 +313,6 @@ class LWTV_Shortcodes {
 			);
 		}
 
-		$author_details = '';
 		switch ( $format ) {
 			case 'thumbnail':
 				$author_details = '<div>' . $content['avatar'] . '<br>' . $content['name'] . ' ' . $content['title'] . '</div>';
@@ -325,31 +324,27 @@ class LWTV_Shortcodes {
 				$tumblr       = ( ! empty( $content['tumblr'] ) ) ? '<a href="' . $content['tumblr'] . '" target="_blank" rel="nofollow">tumblr</a>' : false;
 				$website      = ( ! empty( $content['website'] ) ) ? '<a href="' . $content['website'] . '" target="_blank" rel="nofollow">website</a>' : false;
 				$social_array = array( $twitter, $instagram, $tumblr, $website );
-
 				$social_array = array_filter( $social_array );
+				$author_title = ( '' !== $content['title'] ) ? '<strong>' . $content['title'] . '</strong><br />' : '';
 
-				$author_details .= '<div class="col-sm-3">' . $content['avatar'] . '</div>';
-				$author_details .= '<div class="col-sm">';
-				$author_details .= '<h5 class="author_name"><a href="' . $content['url'] . '">' . $content['name'] . '</a></h5><hr>';
-				$author_details .= '<strong>' . $content['title'] . '</strong><br />';
-				$author_details .= implode( ' | ', $social_array );
-				$author_details .= '</div>';
+				// Show it
+				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h5 class="author_name"><a href="' . $content['url'] . '">' . $content['name'] . '</a></h5><hr>' . $author_title . implode( ' | ', $social_array ) . '</div>';
 				break;
 			case 'large':
-				$content['title'] = '(' . $content['title'] . ')';
-				$author_details  .= '<div class="col-sm-3">' . $content['avatar'] . '</div>';
-				$author_details  .= '<div class="col-sm">';
-				$author_details  .= '<h4 class="author_name">' . $content['name'] . ' ' . $content['title'] . '</h4>';
-				$author_details  .= '<div class="author-bio">' . nl2br( $content['bio'] ) . '</div>';
-				$author_details  .= '<div class="author-details">';
-				$author_details  .= ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $user ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
-				$author_details  .= ( ! empty( $content['twitter'] ) ) ? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">@' . $content['twitter'] . '</a> </div>' : '';
-				$author_details  .= $content['fav_shows'];
-				$author_details  .= '</div>';
+				// Sort out the title
+				$content['title'] = ( '' !== $content['title'] ) ? '(' . $content['title'] . ')' : '';
+				$view_articles    = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $user ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
+				$view_twitter     = ( ! empty( $content['twitter'] ) ) ? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">@' . $content['twitter'] . '</a> </div>' : '';
+
+				// Build it.
+				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h4 class="author_name">' . $content['name'] . ' ' . $content['title'] . '</h4><div class="author-bio">' . nl2br( $content['bio'] ) . '</div><div class="author-details">' . $view_articles . $view_twitter . $content['fav_shows'] . '</div>';
+				break;
+			default:
+				$author_details = '';
 				break;
 		}
 
-		$author_box = '<div class="author-box-shortcode"><section class="author-box">' . $author_details . '</section></div>';
+		$author_box = '<div class="author-box-shortcode"><section class="author-box">' . $author_details . '</section><br /></div>';
 
 		return $author_box;
 	}

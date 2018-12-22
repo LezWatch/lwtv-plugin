@@ -1,0 +1,29 @@
+/**
+ * #.# Editor Styles
+ *
+ * CSS for just Backend enqueued after style.scss
+ * which makes it higher in priority.
+ */
+
+.wp-block-lwtv-grade {
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid $lwtv-bordergrey;
+    border-left-width: .25rem;
+    border-radius: .25rem;
+    border-left-color: $lwtv-pink;
+}
+
+.show-grade {
+    .grade {
+        color: #0c5460;
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        position: relative;
+        padding: 0.75rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+}

@@ -114,6 +114,38 @@ class LWTV_Shows_CMB2 {
 				'escape_cb'       => 'absint',
 			)
 		);
+		// Field: Stations
+		$field_stations = $cmb_mustsee->add_field(
+			array(
+				'name'              => 'TV Station(s)',
+				'desc'              => 'Select the TV Stations',
+				'id'                => $prefix . 'tvstations',
+				'taxonomy'          => 'lez_stations',
+				'type'              => 'pw_multiselect',
+				'select_all_button' => false,
+				'remove_default'    => 'true',
+				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_stations' ),
+				'attributes'        => array(
+					'placeholder' => 'Netflix, Freeform, CW..',
+				),
+			)
+		);
+		// Field: Nations
+		$field_nations = $cmb_mustsee->add_field(
+			array(
+				'name'              => 'Country of Origin',
+				'desc'              => 'Select the homeland',
+				'id'                => $prefix . 'tvnations',
+				'taxonomy'          => 'lez_country',
+				'type'              => 'pw_multiselect',
+				'select_all_button' => false,
+				'remove_default'    => 'true',
+				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_country' ),
+				'attributes'        => array(
+					'placeholder' => 'USA, Canada, United Kingdom...',
+				),
+			)
+		);
 		// Field: Show Format
 		$field_format = $cmb_mustsee->add_field(
 			array(
@@ -218,10 +250,12 @@ class LWTV_Shows_CMB2 {
 			$row2ms  = $grid_ms->addRow();
 			$row3ms  = $grid_ms->addRow();
 			$row4ms  = $grid_ms->addRow();
+			$row5ms  = $grid_ms->addRow();
 			$row1ms->addColumns( array( $field_airdates, $field_seasons ) );
-			$row2ms->addColumns( array( $field_format, $field_imdb ) );
-			$row3ms->addColumns( array( $field_genre, $field_intersectional ) );
-			$row4ms->addColumns( array( $field_stars, $field_trigger ) );
+			$row2ms->addColumns( array( $field_stations, $field_nations ) );
+			$row3ms->addColumns( array( $field_format, $field_imdb ) );
+			$row4ms->addColumns( array( $field_genre, $field_intersectional ) );
+			$row5ms->addColumns( array( $field_stars, $field_trigger ) );
 		}
 		// Field: Worth It?
 		$field_worththumb = $cmb_mustsee->add_field(

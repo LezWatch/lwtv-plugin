@@ -10,19 +10,12 @@
  */
 class LWTV_CPT_Characters {
 
-	public $character_roles;
 	protected static $all_taxonomies;
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-
-		$this->character_roles = array(
-			'regular'   => 'Regular/Main Character',
-			'recurring' => 'Recurring Character',
-			'guest'     => 'Guest Character',
-		);
 
 		self::$all_taxonomies = array(
 			'cliché'               => 'cliches',
@@ -32,12 +25,9 @@ class LWTV_CPT_Characters {
 		);
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
-		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
-		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
-		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 	}
 
@@ -51,36 +41,9 @@ class LWTV_CPT_Characters {
 		}
 
 		add_action( 'admin_head', array( $this, 'admin_css' ) );
-
-		add_filter( 'manage_post_type_characters_posts_columns', array( $this, 'manage_posts_columns' ) );
-		add_action( 'manage_post_type_characters_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
-		add_filter( 'manage_edit-post_type_characters_sortable_columns', array( $this, 'manage_edit_sortable_columns' ) );
-
-		add_filter( 'posts_clauses', array( $this, 'columns_sortability_sexuality' ), 10, 2 );
-		add_filter( 'posts_clauses', array( $this, 'columns_sortability_gender' ), 10, 2 );
-		add_filter( 'posts_clauses', array( $this, 'columns_sortability_romantic' ), 10, 2 );
-
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ), 10, 3 );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
-	}
-
-	/**
-	 *  Init
-	 */
-	public function init() {
-		// Force saving data to convert select2 saved data to a taxonomy
-		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0; // WPCS: CSRF ok.
-
-		if ( 0 !== $post_id && is_admin() ) {
-			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0; // WPCS: CSRF ok.
-			switch ( $post_type ) {
-				case 'post_type_characters':
-					// Force saving data to convert select2 saved data to a taxonomy
-					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
-					break;
-			}
-		}
 	}
 
 	/*
@@ -174,302 +137,6 @@ class LWTV_CPT_Characters {
 			// Register taxonomy
 			register_taxonomy( $taxonomyname, 'post_type_characters', $arguments );
 		}
-	}
-
-	/*
-	 * Create a list of all shows
-	 */
-	public function cmb2_get_shows_options() {
-		$return = LWTV_CMB2::get_post_options( array(
-			'post_type'   => 'post_type_shows',
-			'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
-			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-		) );
-		return $return;
-	}
-
-	/*
-	 * Create a list of all actors
-	 */
-	public function cmb2_get_actors_options() {
-		$return = LWTV_CMB2::get_post_options( array(
-			'post_type'   => 'post_type_actors',
-			'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
-			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-		) );
-		return $return;
-	}
-
-	/*
-	 * CMB2 Metaboxes
-	 */
-	public function cmb2_metaboxes() {
-		// prefix for all custom fields
-		$prefix = 'lezchars_';
-
-		// MetaBox Group: Character Details
-		$cmb_characters = new_cmb2_box( array(
-			'id'           => 'chars_metabox',
-			'title'        => 'Character Details',
-			'object_types' => array( 'post_type_characters' ),
-			'context'      => 'normal',
-			'priority'     => 'high',
-			'show_in_rest' => true,
-			'show_names'   => true, // Show field names on the left
-		) );
-		// Field: Character Gender Idenity
-		$field_gender = $cmb_characters->add_field( array(
-			'name'             => 'Gender',
-			'desc'             => 'Gender identity',
-			'id'               => $prefix . 'gender',
-			'taxonomy'         => 'lez_gender',
-			'type'             => 'taxonomy_select',
-			'default'          => 'cisgender',
-			'show_option_none' => false,
-			'remove_default'   => 'true',
-		) );
-		// Field: Character Sexual Orientation
-		$field_sexuality = $cmb_characters->add_field( array(
-			'name'             => 'Sexuality',
-			'desc'             => 'Sexual orientation',
-			'id'               => $prefix . 'sexuality',
-			'taxonomy'         => 'lez_sexuality',
-			'type'             => 'taxonomy_select',
-			'default'          => 'homosexual',
-			'show_option_none' => false,
-			'remove_default'   => 'true',
-		) );
-		// Field: Character Romantic Orientation
-		$field_romantic = $cmb_characters->add_field( array(
-			'name'             => 'Romantic',
-			'desc'             => 'Romantic orientation',
-			'id'               => $prefix . 'romantic',
-			'taxonomy'         => 'lez_romantic',
-			'type'             => 'taxonomy_select',
-			'default'          => 'none',
-			'show_option_none' => true,
-			'remove_default'   => 'true',
-		) );
-		// Character Sidebar Grid
-		if ( ! is_admin() ) {
-			return;
-		} else {
-			$grid_character = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_characters );
-			$row1          = $grid_character->addRow();
-			$row2          = $grid_character->addRow();
-			$row1->addColumns( array( $field_gender, $field_sexuality ) );
-			$row2->addColumns( array( $field_romantic ) );
-		}
-		// Field: Character Clichés
-		$field_cliches = $cmb_characters->add_field( array(
-			'name'              => 'Character Clichés',
-			'id'                => $prefix . 'cliches',
-			'taxonomy'          => 'lez_cliches',
-			'type'              => 'pw_multiselect',
-			'select_all_button' => false,
-			'remove_default'    => 'true',
-			'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_cliches' ),
-			'attributes'        => array(
-				'placeholder' => 'Common clichés ...',
-			),
-		) );
-		// Field: Year of Death (if applicable)
-		$field_death = $cmb_characters->add_field( array(
-			'name'        => 'Date of Death',
-			'desc'        => 'If the character is dead, select when they died.',
-			'id'          => $prefix . 'death_year',
-			'type'        => 'text_date',
-			'date_format' => 'Y-m-d',
-			'repeatable'  => true,
-		) );
-		// Field: Actor Name(s)
-		$field_actors = $cmb_characters->add_field( array(
-			'name'             => 'Actor Name',
-			'desc'             => 'Add the actor as a CPT first.',
-			'id'               => $prefix . 'actor',
-			'type'             => 'select',
-			'show_option_none' => true,
-			'default'          => 'custom',
-			'options_cb'       => array( $this, 'cmb2_get_actors_options' ),
-			'repeatable'       => true,
-		) );
-
-		// Field Group: Character Show information
-		// Made repeatable since each show might have a separate role. Yikes...
-		$group_shows = $cmb_characters->add_field( array(
-			'id'         => $prefix . 'show_group',
-			'type'       => 'group',
-			'repeatable' => true,
-			'options'    => array(
-				'group_title'   => 'Show #{#}',
-				'add_button'    => 'Add Another Show',
-				'remove_button' => 'Remove Show',
-				'sortable'      => true,
-			),
-		) );
-		// Field: Show Name
-		$field_shows = $cmb_characters->add_group_field( $group_shows, array(
-			'name'             => 'TV Show',
-			'id'               => 'show',
-			'type'             => 'select',
-			'show_option_none' => true,
-			'default'          => 'custom',
-			'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
-		) );
-		// Field: Character Type
-		$field_chartype = $cmb_characters->add_group_field( $group_shows, array(
-			'name'             => 'Character Type',
-			'desc'             => 'Mains are in credits. Recurring have their own plots. Guests show up once or twice.',
-			'id'               => 'type',
-			'type'             => 'select',
-			'show_option_none' => true,
-			'default'          => 'custom',
-			'options'          => $this->character_roles,
-		) );
-
-	}
-
-	/*
-	 * Remove Metaboxes we use elsewhere
-	 */
-	public function remove_metaboxes() {
-		remove_meta_box( 'authordiv', 'post_type_characters', 'normal' );
-		remove_meta_box( 'postexcerpt', 'post_type_characters', 'normal' );
-	}
-
-	/*
-	 * Create Custom Columns
-	 * Used by quick edit, etc
-	 */
-	public function manage_posts_columns( $columns ) {
-		$columns['cpt-shows']         = 'TV Show(s)';
-		$columns['postmeta-roletype'] = 'Role Type';
-		$columns['postmeta-death']    = 'Died';
-		return $columns;
-	}
-
-	/*
-	 * Add Custom Column Content
-	 */
-	public function manage_posts_custom_column( $column, $post_id ) {
-
-		$character_show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
-		$show_title         = array();
-		$role_array         = array();
-
-		if ( '' !== $character_show_ids ) {
-			foreach ( $character_show_ids as $each_show ) {
-
-				$show = get_the_title( $each_show['show'] );
-				$role = ( isset( $each_show['type'] ) ) ? ucfirst( $each_show['type'] ) : 'ERROR';
-
-				array_push( $show_title, $show );
-				array_push( $role_array, $role );
-			}
-		}
-
-		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
-
-		if ( empty( $character_death ) ) {
-			$character_death = array( 'Alive' );
-		}
-
-		switch ( $column ) {
-			case 'cpt-shows':
-				$output = implode( ', ', $show_title );
-				break;
-			case 'postmeta-roletype':
-				$output = implode( ', ', $role_array );
-				break;
-			case 'postmeta-death':
-				$output = implode( ', ', $character_death );
-				break;
-			default:
-				$output = '';
-		}
-		echo wp_kses_post( $output );
-	}
-
-	/*
-	 * Make Custom Columns Sortable
-	 */
-	public function manage_edit_sortable_columns( $columns ) {
-		unset( $columns['cpt-shows'] );                  // Don't allow sort by shows
-		unset( $columns['postmeta-roletype'] );          // Don't allow sort by role
-		$columns['taxonomy-lez_gender']    = 'gender';   // Allow sort by gender identity
-		$columns['taxonomy-lez_sexuality'] = 'sex';      // Allow sort by gender identity
-		$columns['taxonomy-lez_romantic']  = 'romantic'; // Allow sort by gender identity
-		return $columns;
-	}
-
-	/*
-	 * Create columns sortability for gender
-	 */
-	public function columns_sortability_gender( $clauses, $wp_query ) {
-		global $wpdb;
-
-		if ( isset( $wp_query->query['orderby'] ) && 'gender' === $wp_query->query['orderby'] ) {
-
-			$clauses['join'] .= <<<SQL
-LEFT OUTER JOIN {$wpdb->term_relationships} ON {$wpdb->posts}.ID={$wpdb->term_relationships}.object_id
-LEFT OUTER JOIN {$wpdb->term_taxonomy} USING (term_taxonomy_id)
-LEFT OUTER JOIN {$wpdb->terms} USING (term_id)
-SQL;
-
-			$clauses['where']   .= " AND (taxonomy = 'lez_gender' OR taxonomy IS NULL)";
-			$clauses['groupby']  = 'object_id';
-			$clauses['orderby']  = "GROUP_CONCAT({$wpdb->terms}.name ORDER BY name ASC) ";
-			$clauses['orderby'] .= ( 'ASC' === strtoupper( $wp_query->get( 'order' ) ) ) ? 'ASC' : 'DESC';
-		}
-		return $clauses;
-	}
-
-	/*
-	 * Create columns sortability for sexuality
-	 */
-	public function columns_sortability_sexuality( $clauses, $wp_query ) {
-
-		global $wpdb;
-
-		if ( isset( $wp_query->query['orderby'] ) && 'sex' === $wp_query->query['orderby'] ) {
-
-			$clauses['join'] .= <<<SQL
-LEFT OUTER JOIN {$wpdb->term_relationships} ON {$wpdb->posts}.ID={$wpdb->term_relationships}.object_id
-LEFT OUTER JOIN {$wpdb->term_taxonomy} USING (term_taxonomy_id)
-LEFT OUTER JOIN {$wpdb->terms} USING (term_id)
-SQL;
-
-			$clauses['where']   .= " AND (taxonomy = 'lez_sexuality' OR taxonomy IS NULL)";
-			$clauses['groupby']  = 'object_id';
-			$clauses['orderby']  = "GROUP_CONCAT({$wpdb->terms}.name ORDER BY name ASC) ";
-			$clauses['orderby'] .= ( 'ASC' === strtoupper( $wp_query->get( 'order' ) ) ) ? 'ASC' : 'DESC';
-		}
-
-		return $clauses;
-	}
-
-	/*
-	 * Create columns sortability for romantic
-	 */
-	public function columns_sortability_romantic( $clauses, $wp_query ) {
-
-		global $wpdb;
-
-		if ( isset( $wp_query->query['orderby'] ) && 'sex' === $wp_query->query['orderby'] ) {
-
-			$clauses['join'] .= <<<SQL
-LEFT OUTER JOIN {$wpdb->term_relationships} ON {$wpdb->posts}.ID={$wpdb->term_relationships}.object_id
-LEFT OUTER JOIN {$wpdb->term_taxonomy} USING (term_taxonomy_id)
-LEFT OUTER JOIN {$wpdb->terms} USING (term_id)
-SQL;
-
-			$clauses['where']   .= " AND (taxonomy = 'lez_romantic' OR taxonomy IS NULL)";
-			$clauses['groupby']  = 'object_id';
-			$clauses['orderby']  = "GROUP_CONCAT({$wpdb->terms}.name ORDER BY name ASC) ";
-			$clauses['orderby'] .= ( 'ASC' === strtoupper( $wp_query->get( 'order' ) ) ) ? 'ASC' : 'DESC';
-		}
-
-		return $clauses;
 	}
 
 	/*
@@ -828,7 +495,10 @@ SQL;
 		}
 		return $input;
 	}
-
 }
+
+// Include Sub Files
+require_once 'cmb2-metaboxes.php';
+require_once 'custom-columns.php';
 
 new LWTV_CPT_Characters();

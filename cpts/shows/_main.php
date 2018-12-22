@@ -28,7 +28,7 @@ class LWTV_CPT_Shows {
 		self::$all_taxonomies = array(
 			'lez_stations'      => array(
 				'name' => 'TV station',
-				'rest' => true,
+				'rest' => false,
 			),
 			'lez_tropes'        => array(
 				'name' => 'trope',
@@ -44,7 +44,7 @@ class LWTV_CPT_Shows {
 			),
 			'lez_country'       => array(
 				'name' => 'nation',
-				'rest' => true,
+				'rest' => false,
 			),
 			'lez_stars'         => array(
 				'name' => 'star',
@@ -84,6 +84,8 @@ class LWTV_CPT_Shows {
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
 					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_intersectional', 'lez_intersections' );
+					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvnations', 'lez_country' );
+					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvstations', 'lez_stations' );
 					break;
 			}
 		}
@@ -487,8 +489,8 @@ SQL;
 }
 
 // Include Sub Files
-require_once 'shows/calculations.php';
-require_once 'shows/cmb2-metaboxes.php';
-require_once 'shows/shows-like-this.php';
+require_once 'calculations.php';
+require_once 'cmb2-metaboxes.php';
+require_once 'shows-like-this.php';
 
 new LWTV_CPT_Shows();

@@ -89,6 +89,7 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - Display The first year we had queers: `[firstyear]`
     - Display This Month recap: `[thismonth]` or `[thismonth date="2017-01"]`
     - Display screener information: `[screener title="Some Like It Hot" summary="A quirky black and white romcom" queer="2" worth="yes" trigger="low"]`
+    - Display author information: `[author name="ipstenu"]`
 * `sort-stopwords.php` - Filter post order by for shows to NOT include the/an/a when sorting.
 * `wp-cli.php`- WP-CLI
     - Re-run calculations for specific post content (actors & shows): `wp lwtv calc actor ID`
@@ -100,7 +101,10 @@ Stored in `/gutenberg/`
 
 Blocks for Gutenberg. The file `_main.php` acts as an autoloader.
 
-* Screeners (same as the shortcode, only cooler)
+* Author Boxes: Display author information
+* Glossary: Show a visual glossary of taxonomies with icons
+* Grade: Give something a grade and an explanation
+* Screeners: For reviews of shows that haven't aired yet
 
 ### Plugin Addons
 

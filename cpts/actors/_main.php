@@ -21,7 +21,7 @@ class LWTV_CPT_Actors {
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
-		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
+		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra' ) );
 		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
 
@@ -83,7 +83,7 @@ class LWTV_CPT_Actors {
 			$actor_taxonomies[] = 'lez_' . $actor_tax;
 		}
 
-		$labels = array(
+		$labels   = array(
 			'name'                  => 'Actors',
 			'singular_name'         => 'Actor',
 			'menu_name'             => 'Actors',
@@ -102,12 +102,20 @@ class LWTV_CPT_Actors {
 			'remove_featured_image' => 'Remove Actor Photo',
 			'use_featured_image'    => 'Use as Actor Photo',
 		);
-		$args   = array(
+		$template = array(
+			// For Gutenberg (not added yet)
+			// Should be: Featured Image and taxonomy dropdowns.
+			array( 'core/image', array( 'align' => 'left' ) ),
+			array( 'core/heading', array( 'placeholder' => 'Add Author...' ) ),
+			array( 'core/paragraph', array( 'placeholder' => 'Add Description...' ) ),
+		);
+		$args     = array(
 			'label'               => 'post_type_actors',
 			'description'         => 'Actors',
 			'labels'              => $labels,
 			'public'              => true,
 			'show_in_rest'        => true,
+			//'template'            => $template,
 			'rest_base'           => 'actor',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-id',
@@ -288,7 +296,7 @@ class LWTV_CPT_Actors {
 	/*
 	 * Extra Replacement Functions for Yoast SEO
 	 */
-	public function yoast_seo_register_extra_replacements() {
+	public function yoast_seo_register_extra() {
 		wpseo_register_var_replacement( '%%characters%%', array( $this, 'yoast_retrieve_characters_replacement' ), 'basic', 'Information on how many characters an actor plays.' );
 		wpseo_register_var_replacement( '%%is_queer%%', array( $this, 'yoast_retrieve_queer_replacement' ), 'basic', 'Output if the actor is queer IRL.' );
 	}
@@ -376,8 +384,7 @@ class LWTV_CPT_Actors {
 }
 
 // Include Sub Files
-require_once 'actors/calculations.php';
-require_once 'actors/cmb2-metaboxes.php';
-
+require_once 'calculations.php';
+require_once 'cmb2-metaboxes.php';
 
 new LWTV_CPT_Actors();
