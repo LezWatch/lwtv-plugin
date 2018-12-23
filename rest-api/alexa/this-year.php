@@ -17,7 +17,7 @@ class LWTV_Alexa_This_Year {
 
 	/**
 	 * what_happened function.
-	 * 
+	 *
 	 * @access public
 	 * @param bool $date (default: false)
 	 * @return void
@@ -28,10 +28,10 @@ class LWTV_Alexa_This_Year {
 		$tz        = 'America/New_York';
 		$timestamp = time();
 		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
-		$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 
-		$date  = ( $date == false )? $dt->format( 'Y-m-d' ) : $date;
-		$today = ( $date !== $dt->format( 'Y-m-d' ) )? false : true;
+		$date  = ( false === $date ) ? $dt->format( 'Y-m-d' ) : $date;
+		$today = ( $date !== $dt->format( 'Y-m-d' ) ) ? false : true;
 
 		// Figure out what date we're working with here...
 		if ( preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $date ) ) {
@@ -46,7 +46,7 @@ class LWTV_Alexa_This_Year {
 			$format   = 'year';
 			$datetime = DateTime::createFromFormat( 'Y', $date );
 		}
-		
+
 		// If it's the future, be smarter than Alexa...
 		if ( $datetime->format( 'Y' ) > date( 'Y' ) ) {
 			$datetime->modify( '-1 year' );
@@ -92,7 +92,7 @@ class LWTV_Alexa_This_Year {
 					break;
 			}
 		}
-		
+
 		// This Year On Air information:
 		$on_the_air = ( $count_array['on_air']['current'] == 0 )? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['current'] ), $count_array['on_air']['current'] );
 		$started    = ( $count_array['on_air']['started'] == 0 )? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['started'] ), $count_array['on_air']['started'] );
@@ -100,7 +100,7 @@ class LWTV_Alexa_This_Year {
 
 		// This Year DEATH information
 		$death_this_year_query = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-		$death_this_year       = ( $death_this_year_query->post_count == 0 )? 'no characters died' : sprintf( _n( '%s character died', '%s characters died', $death_this_year_query->post_count ), $death_this_year_query->post_count );
+		$death_this_year       = ( 0 === $death_this_year_query->post_count ) ? 'no characters died' : sprintf( _n( '%s character died', '%s characters died', $death_this_year_query->post_count ), $death_this_year_query->post_count );
 
 		// Conclusion
 		if ( $datetime->format( 'Y' ) > 2013 ) {
@@ -108,11 +108,11 @@ class LWTV_Alexa_This_Year {
 		} else {
 			$output = 'Looking at the history of queer female, non-binary, and trans characters on television, I can tell you some things about ' . $datetime->format( 'Y' ) . ' ... ' . $dead . '.';
 		}
-		
+
 		// We always give a year overview
-		$output .= ' For ' . $datetime->format( 'Y' ) . ' as a whole, there were ' . $on_the_air . ' with queer female, non-binary, or trans characters on the air. '  . $started . ' started and '  . $ended . ' ended.';
-		
-		if ( $format !== year ) {
+		$output .= ' For ' . $datetime->format( 'Y' ) . ' as a whole, there were ' . $on_the_air . ' with queer female, non-binary, or trans characters on the air. ' . $started . ' started and ' . $ended . ' ended.';
+
+		if ( 'year' !== $format ) {
 			$output .= ' Overall ' . $death_this_year . ' that year.';
 		}
 
