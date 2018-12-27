@@ -19,7 +19,9 @@ class LWTV_Admin_News {
 		?>
 
 		<div class="wrap">
-			<h1>News.API</h1>
+			<h1>Recent News</h1>
+
+			<p><a href="https://newsapi.org/">Powered by News API</a></p>
 
 			<p>This service scans every day to see if there's any queer TV related news it should list. It's not perfect, but it's nice to see if we missed anything over the last 6 months.</p>
 
