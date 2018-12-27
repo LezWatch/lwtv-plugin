@@ -11,6 +11,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 require_once 'screeners.php';
+require_once 'news.php';
 
 class LWTV_Tools {
 
@@ -58,6 +59,9 @@ class LWTV_Tools {
 		// Add Tools pages
 		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ), LWTV_Functions::get_icon_svg(), 2 );
 		add_submenu_page( 'lwtv_tools', 'Tools', 'Tools', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ) );
+		if ( defined( 'NEWSAPI' ) ) {
+			add_submenu_page( 'lwtv_tools', 'Recent News', 'Recent News', 'edit_posts', 'news', array( 'LWTV_Admin_News', 'settings_page' ) );
+		}
 		if ( class_exists( 'LWTV_Screeners' ) ) {
 			add_submenu_page( 'lwtv_tools', 'Screeners', 'Screeners', 'edit_posts', 'screeners', array( 'LWTV_Screeners', 'settings_page' ) );
 		}

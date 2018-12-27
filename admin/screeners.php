@@ -10,7 +10,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-
 class LWTV_Screeners {
 
 	/**
