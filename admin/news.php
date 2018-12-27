@@ -31,8 +31,8 @@ class LWTV_Admin_News {
 			if ( empty( $transient ) ) {
 				$today     = date( 'Y-m-d' );
 				$yesterday = date( 'Y-m-d', strtotime( '-1 days' ) );
-				$searchfor = urlencode( '(television OR storyline) AND (lesbian OR lgbt OR queer)' );
-				$the_url   = 'https://newsapi.org/v2/everything?q=' . $searchfor . '&sortBy=publishedAt&sources=entertainment-weekly,buzzfeed,daily-mail,mashable&pageSize=50';
+				$searchfor = urlencode( '(television OR tv OR storyline) AND (lesbian OR lgbt OR queer)' );
+				$the_url   = 'https://newsapi.org/v2/everything?q=' . $searchfor . '&sortBy=publishedAt&pageSize=50';
 				$url_args  = array(
 					'headers' => array(
 						'x-api-key' => NEWSAPI,
@@ -44,9 +44,7 @@ class LWTV_Admin_News {
 			}
 
 			$news_data = json_decode( $newsapi['body'], true );
-
 			?>
-			<h4>There are <em><?php echo (int) $news_data['totalResults']; ?></em> articles that might be important...</h4>
 
 			<div class="lwtv-tools-table">
 				<table class="widefat fixed" cellspacing="0">
