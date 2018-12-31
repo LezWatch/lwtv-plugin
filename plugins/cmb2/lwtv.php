@@ -30,7 +30,6 @@ class LWTV_CMB2 {
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'cmb2_admin_init', array( $this, 'favorite_shows_user_profile_metabox' ) );
-		add_action( 'cmb2_admin_init', array( $this, 'staff_metabox' ) );
 
 		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_intersections' );
 
@@ -275,33 +274,6 @@ class LWTV_CMB2 {
 				'default'          => 'custom',
 				'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
 				'on_front'         => true,
-			)
-		);
-	}
-
-	/**
-	 * Staff Data
-	 * @since 2.0
-	 */
-	public function staff_metabox() {
-		$prefix = 'lez_staff_';
-
-		$cmb_staff = new_cmb2_box(
-			array(
-				'id'           => $prefix . 'details',
-				'title'        => 'Internal Notes',
-				'object_types' => array( 'post_type_characters', 'post_type_shows', 'post_type_actors' ),
-				'context'      => 'side',
-				'show_in_rest' => false,
-			)
-		);
-
-		$cmb_staff->add_field(
-			array(
-				'name' => 'Notes',
-				'desc' => 'Additional notes we need to share about this post. NOT FOR PUBLIC CONSUMPTION.',
-				'id'   => $prefix . 'notes',
-				'type' => 'textarea',
 			)
 		);
 	}

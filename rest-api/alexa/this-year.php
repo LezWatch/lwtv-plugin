@@ -87,16 +87,16 @@ class LWTV_Alexa_This_Year {
 					$intro = 'In ' . $datetime->format( 'F Y' );
 					break;
 				default:
-					$intro  = ( $datetime->format( 'Y' ) == date( 'Y' ) )? 'So far, in ' : 'In ';
+					$intro  = ( $datetime->format( 'Y' ) == date( 'Y' ) ) ? 'So far, in ' : 'In ';
 					$intro .= $datetime->format( 'Y' );
 					break;
 			}
 		}
 
 		// This Year On Air information:
-		$on_the_air = ( $count_array['on_air']['current'] == 0 )? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['current'] ), $count_array['on_air']['current'] );
-		$started    = ( $count_array['on_air']['started'] == 0 )? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['started'] ), $count_array['on_air']['started'] );
-		$ended      = ( $count_array['on_air']['ended'] == 0 )? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['ended'] ), $count_array['on_air']['ended'] );
+		$on_the_air = ( $count_array['on_air']['current'] == 0 ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['current'] ), $count_array['on_air']['current'] );
+		$started    = ( $count_array['on_air']['started'] == 0 ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['started'] ), $count_array['on_air']['started'] );
+		$ended      = ( $count_array['on_air']['ended'] == 0 ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['ended'] ), $count_array['on_air']['ended'] );
 
 		// This Year DEATH information
 		$death_this_year_query = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
