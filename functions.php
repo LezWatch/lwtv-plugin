@@ -42,6 +42,7 @@ class LWTV_Functions {
 		add_filter( 'attachment_fields_to_edit', array( $this, 'add_attachment_attribution' ), 10000, 2 );
 		add_action( 'edit_attachment', array( $this, 'save_attachment_attribution' ) );
 		add_action( 'pre_current_active_plugins', array( $this, 'hide_lwtv_plugin' ) );
+		add_filter( 'avatar_defaults', array( $this, 'default_avatar' ) );
 	}
 
 	/**
@@ -144,6 +145,20 @@ class LWTV_Functions {
 			update_post_meta( $attachment_id, 'lwtv_attribution', $lwtv_attribution );
 		}
 	}
+
+	/**
+	 * Adding new options for default avatar
+	 * @param  array $defaults
+	 * @return array $defaults
+	 */
+	public function default_avatar( $defaults ) {
+		$toaster              = plugins_url( 'assets/images/toaster.png', __FILE__ );
+		$defaults[ $toaster ] = 'Toaster';
+		$unicorn              = plugins_url( 'assets/images/unicorn.png', __FILE__ );
+		$defaults[ $unicorn ] = 'Unicorn';
+		return $defaults;
+	}
+
 }
 new LWTV_Functions();
 
