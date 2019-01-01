@@ -11,6 +11,4 @@
 nbproject
 thumb.db
 Thumbs.db
-
-
-# Project specific files to ignore
+.idea/

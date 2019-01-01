@@ -1,10 +1,10 @@
 {
-    "name": "podkot/cmb-field-select2",
+    "name": "mustardBees/cmb-field-select2",
     "description": "Select2 field type for CMB2",
     "license": "GPL-2.0+",
     "type": "wordpress-plugin",
     "keywords": ["wordpress", "plugin"],
-    "homepage": "https://bitbucket.org/podkot/cmb-field-select2",
+    "homepage": "https://github.com/mustardBees/cmb-field-select2",
     "authors": [
         {
             "name": "Phil Wylie",
