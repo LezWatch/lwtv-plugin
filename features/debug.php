@@ -126,31 +126,43 @@ class LWTV_Debug {
 	 *
 	 * Right now all it can do is fix actors who are listed as having 0 characters
 	 */
-	public static function fix_actors_problems() {
+	public static function fix_actors_problems( $actors = 0 ) {
 
-		// Default
 		$items = 0;
 
-		// Get all the actors
-		$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
+		if ( ! is_array( $actors ) ) {
+			$actors = array();
+			// Get all the actors
+			$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
 
-		if ( $the_loop->have_posts() ) {
-			while ( $the_loop->have_posts() ) {
-				$the_loop->the_post();
-				$post     = get_post();
-				$actor_id = $post->ID;
-				$problems = array();
+			if ( $the_loop->have_posts() ) {
+				while ( $the_loop->have_posts() ) {
+					$the_loop->the_post();
+					$post     = get_post();
+					$actor_id = $post->ID;
+					$problems = array();
 
-				// Get the characters ...
-				$character_count = get_post_meta( $actor_id, 'lezactors_char_count', true );
+					// Get the characters ...
+					$character_count = get_post_meta( $actor_id, 'lezactors_char_count', true );
 
-				// If there are no characters listed, let's try to fix
-				if ( ! $character_count || empty( $character_count ) ) {
-					LWTV_Actors_Calculate::do_the_math( $actor_id );
-					$items++;
+					// If there are no characters listed, let's try to fix
+					if ( ! $character_count || empty( $character_count ) ) {
+						$problems[] = 'character count';
+						$actors[]   = array(
+							'url'     => get_permalink(),
+							'id'      => get_the_id(),
+							'problem' => implode( ' ', $problems ),
+						);
+					}
 				}
+				wp_reset_query();
 			}
-			wp_reset_query();
+		}
+
+		// For everyone in the list...
+		foreach ( $actors as $actor ) {
+			LWTV_Actors_Calculate::do_the_math( $actor['id'] );
+			$items++;
 		}
 
 		return $items;
