@@ -83,7 +83,6 @@ class LWTV_Shows_CMB2 {
 		$field_airdates = $cmb_mustsee->add_field(
 			array(
 				'name'     => 'Air Dates',
-				'desc'     => 'Years the show originally aired',
 				'id'       => $prefix . 'airdates',
 				'type'     => 'date_year_range',
 				'earliest' => '1930',
@@ -102,8 +101,7 @@ class LWTV_Shows_CMB2 {
 		// Field: Number of Seasons
 		$field_seasons = $cmb_mustsee->add_field(
 			array(
-				'name'            => 'Seasons',
-				'desc'            => 'Number of seasons aired',
+				'name'            => 'Seasons Aired',
 				'id'              => $prefix . 'seasons',
 				'type'            => 'text',
 				'attributes'      => array(
@@ -118,7 +116,6 @@ class LWTV_Shows_CMB2 {
 		$field_stations = $cmb_mustsee->add_field(
 			array(
 				'name'              => 'TV Station(s)',
-				'desc'              => 'Select the TV Stations',
 				'id'                => $prefix . 'tvstations',
 				'taxonomy'          => 'lez_stations',
 				'type'              => 'pw_multiselect',
@@ -126,7 +123,7 @@ class LWTV_Shows_CMB2 {
 				'remove_default'    => 'true',
 				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_stations' ),
 				'attributes'        => array(
-					'placeholder' => 'Netflix, Freeform, CW..',
+					'placeholder' => 'Select the TV Stations',
 				),
 			)
 		);
@@ -134,7 +131,6 @@ class LWTV_Shows_CMB2 {
 		$field_nations = $cmb_mustsee->add_field(
 			array(
 				'name'              => 'Country of Origin',
-				'desc'              => 'Select the homeland',
 				'id'                => $prefix . 'tvnations',
 				'taxonomy'          => 'lez_country',
 				'type'              => 'pw_multiselect',
@@ -142,15 +138,14 @@ class LWTV_Shows_CMB2 {
 				'remove_default'    => 'true',
 				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_country' ),
 				'attributes'        => array(
-					'placeholder' => 'USA, Canada, United Kingdom...',
+					'placeholder' => 'Select the homeland',
 				),
 			)
 		);
 		// Field: Show Format
 		$field_format = $cmb_mustsee->add_field(
 			array(
-				'name'             => 'Format',
-				'desc'             => 'Media format.',
+				'name'             => 'Media Format',
 				'id'               => $prefix . 'tvtype',
 				'taxonomy'         => 'lez_formats',
 				'type'             => 'taxonomy_select',
@@ -174,7 +169,6 @@ class LWTV_Shows_CMB2 {
 		$field_genre = $cmb_mustsee->add_field(
 			array(
 				'name'              => 'Genre',
-				'desc'              => 'Subject matter.',
 				'id'                => $prefix . 'tvgenre',
 				'taxonomy'          => 'lez_genres',
 				'type'              => 'pw_multiselect',
@@ -182,7 +176,7 @@ class LWTV_Shows_CMB2 {
 				'remove_default'    => 'true',
 				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_genres' ),
 				'attributes'        => array(
-					'placeholder' => 'What is this show about ...',
+					'placeholder' => 'Subject matter.',
 				),
 			)
 		);
@@ -190,7 +184,6 @@ class LWTV_Shows_CMB2 {
 		$field_intersectional = $cmb_mustsee->add_field(
 			array(
 				'name'              => 'Intersectionality',
-				'desc'              => 'Positive represenation.',
 				'id'                => $prefix . 'intersectional',
 				'taxonomy'          => 'lez_intersections',
 				'type'              => 'pw_multiselect',
@@ -198,7 +191,7 @@ class LWTV_Shows_CMB2 {
 				'remove_default'    => 'true',
 				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_intersections' ),
 				'attributes'        => array(
-					'placeholder' => 'What does this show get RIGHT?',
+					'placeholder' => 'Positive represenation.',
 				),
 			)
 		);

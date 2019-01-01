@@ -25,6 +25,7 @@ class LWTV_CPT_Characters {
 		);
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'init', array( $this, 'init' ), 0 );
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
@@ -44,6 +45,22 @@ class LWTV_CPT_Characters {
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ), 10, 3 );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
+	}
+
+	/**
+	 *  Init
+	 */
+	public function init() {
+		// Things that only run for this post type
+		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;  // phpcs:ignore WordPress.Security.NonceVerification
+		if ( 0 !== $post_id ) {
+			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;  // phpcs:ignore WordPress.Security.NonceVerification
+			switch ( $post_type ) {
+				case 'post_type_characters':
+					self::update_things( $post_id );
+					break;
+			}
+		}
 	}
 
 	/*
@@ -419,23 +436,15 @@ class LWTV_CPT_Characters {
 		return $characters;
 	}
 
-	/*
-	 * Save post meta for characters
-	 *
-	 * @param int $post_id The post ID.
-	 * @param post $post The post object.
-	 * @param bool $update Whether this is an existing post being updated or not.
+	/**
+	 * Things that have to be run when we save
+	 * @param  int $post_id
+	 * @return n/a - this just runs shit
 	 */
-	public function update_meta( $post_id ) {
-
-		$screen    = get_current_screen();
-		$purgeurls = array();
-
-		// unhook this function so it doesn't loop infinitely
-		remove_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
-
+	public function update_things( $post_id ) {
 		// get the most recent death and save it as a new meta
 		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
+		$last_char_death = get_post_meta( $post_id, 'lezchars_last_death', true );
 		$newest_death    = '0000-00-00';
 		if ( '' !== $character_death ) {
 			foreach ( $character_death as $death ) {
@@ -443,7 +452,8 @@ class LWTV_CPT_Characters {
 					$newest_death = $death;
 				}
 			}
-			if ( '0000-00-00' !== $newest_death ) {
+			// If there's a newest death AND it isn't equal last death, save it
+			if ( '0000-00-00' !== $newest_death && $newest_death !== $last_char_death ) {
 				update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
 			}
 		}
@@ -469,16 +479,37 @@ class LWTV_CPT_Characters {
 				}
 			}
 		}
+	}
 
-		// Flush Varnish
-		if ( class_exists( 'VarnishPurger' ) && 'add' !== $screen->action && 'publish' === get_post_status( $post_id ) ) {
-			// Generate list of URLs based on the show ID:
-			$generate_urls = $this->varnish_purge->generate_urls( $post_id );
-			$urls_to_purge = array_merge( $purgeurls, $generate_urls );
+	/*
+	 * Save post meta for characters
+	 *
+	 * @param int $post_id The post ID.
+	 * @param post $post The post object.
+	 * @param bool $update Whether this is an existing post being updated or not.
+	 */
+	public function update_meta( $post_id ) {
 
-			// Purge 'em all
-			foreach ( $urls_to_purge as $url ) {
-				$this->varnish_purge->purge_url( $url );
+		$purgeurls = array();
+
+		// unhook this function so it doesn't loop infinitely
+		remove_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
+
+		// Update Things...
+		self::update_things( $post_id );
+
+		// If it's not an auto-draft, let's flush cache.
+		if ( ! ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) ) {
+			// Flush Varnish
+			if ( class_exists( 'VarnishPurger' ) ) {
+				// Generate list of URLs based on the show ID:
+				$generate_urls = $this->varnish_purge->generate_urls( $post_id );
+				$urls_to_purge = array_merge( $purgeurls, $generate_urls );
+
+				// Purge 'em all
+				foreach ( $urls_to_purge as $url ) {
+					$this->varnish_purge->purge_url( $url );
+				}
 			}
 		}
 

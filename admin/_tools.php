@@ -239,6 +239,7 @@ class LWTV_Tools {
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
 		$items    = LWTV_Debug::find_actors_problems();
+		$json_it  = wp_json_encode( $items );
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -274,6 +275,7 @@ class LWTV_Tools {
 
 				<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="POST">
 					<input type="hidden" name="action" value="lwtv_tools_fix_actors">
+					<input type="hidden" name="broken_actors" value='<?php echo $json_it; ?>'>
 					<?php wp_nonce_field( 'lwtv_tools_fix_actors', 'lwtv_tools_fix_actors_nonce', false ); ?>
 					<input type="hidden" name="_wp_http_referer" value="<?php echo $redirect; ?>">
 					<?php submit_button( 'Fix Actors' ); ?>
@@ -292,7 +294,17 @@ class LWTV_Tools {
 			die( 'Invalid nonce.' );
 		}
 
-		$items = LWTV_Debug::fix_actors_problems();
+		if ( ! isset( $_POST['_wp_http_referer'] ) ) {
+			die( 'Missing target.' );
+		}
+
+		$broken_actors = json_decode( $_POST['broken_actors'], true );
+
+		if ( ! is_array( $broken_actors ) ) {
+			$broken_actors = LWTV_Debug::find_actors_problems();
+		}
+
+		$items = LWTV_Debug::fix_actors_problems( $broken_actors );
 
 		if ( ! isset( $items ) || 0 === $items || is_null( $items ) ) {
 			$message = 'warning';
@@ -302,9 +314,7 @@ class LWTV_Tools {
 			$message = 'error';
 		}
 
-		if ( ! isset( $_POST['_wp_http_referer'] ) ) {
-			die( 'Missing target.' );
-		}
+
 
 		$url = add_query_arg( 'message', $message, urldecode( $_POST['_wp_http_referer'] ) );
 

@@ -71,21 +71,17 @@ class LWTV_CPT_Shows {
 	 */
 	public function init() {
 		// Things that only run for this post type
-		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0; // WPCS: CSRF ok.
-		if ( 0 !== $post_id && is_admin() ) {
-			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0; // WPCS: CSRF ok.
+		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
+		if ( 0 !== $post_id ) {
+			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
 			switch ( $post_type ) {
 				case 'post_type_shows':
-					// Do the Math when we're editing shows, since the math changes regularly.
-					LWTV_Shows_Calculate::do_the_math( $post_id );
-					// Filter buttons not needed on the teeny MCE
-					add_filter( 'teeny_mce_buttons', array( $this, 'teeny_mce_buttons' ) );
-					// Force saving data to convert select2 saved data to a taxonomy
-					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
-					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
-					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_intersectional', 'lez_intersections' );
-					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvnations', 'lez_country' );
-					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvstations', 'lez_stations' );
+					if ( is_admin() ) {
+						// Filter buttons not needed on the teeny MCE
+						add_filter( 'teeny_mce_buttons', array( $this, 'teeny_mce_buttons' ) );
+					}
+					// Update things...
+					self::update_things( $post_id );
 					break;
 			}
 		}
@@ -105,8 +101,7 @@ class LWTV_CPT_Shows {
 		add_action( 'pre_get_posts', array( $this, 'columns_sortability_simple' ) );
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_format' ), 10, 2 );
 		add_filter( 'quick_edit_show_taxonomy', array( $this, 'hide_tags_from_quick_edit' ), 10, 3 );
-		add_action( 'do_update_show_meta', array( $this, 'update_meta' ), 10, 2 );
-		add_action( 'save_post_post_type_shows', array( $this, 'update_meta' ), 10, 3 );
+		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ), 12, 3 );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
@@ -334,30 +329,46 @@ SQL;
 		return $clauses;
 	}
 
+	/**
+	 * Things that have to be run when we save
+	 * @param  int $post_id
+	 * @return n/a - this just runs shit
+	 */
+	public function update_things( $post_id ) {
+		// Save show scores
+		LWTV_Shows_Calculate::do_the_math( $post_id );
+
+		// Sync up data
+		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
+		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
+		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_intersectional', 'lez_intersections' );
+		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvnations', 'lez_country' );
+		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvstations', 'lez_stations' );
+	}
+
 	/*
-	 * Save post meta for shows on SHOW update
+	 * Save post meta for shows on SHOW SAVE.
 	 *
 	 * @param int $post_id The post ID.
 	 * @param post $post The post object.
 	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
-	public function update_meta( $post_id ) {
-
-		if ( 'auto-draft' === get_post_status( $post_id ) ) {
-			return;
-		}
-
-		$screen = get_current_screen();
+	public function save_post_meta( $post_id, $post, $update ) {
 
 		// unhook this function so it doesn't loop infinitely
-		remove_action( 'save_post_post_type_shows', array( $this, 'update_meta' ) );
+		remove_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
 
-		// Do the math!! (This updates the score)
-		//LWTV_Shows_Calculate::do_the_math( $post_id );
-		$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
+		// Update Things...
+		self::update_things( $post_id );
+
+		// If it's not an auto-draft, let's flush cache.
+		if ( ! ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) ) {
+			// Cache Things...
+			$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
+		}
 
 		// re-hook this function
-		add_action( 'save_post_post_type_shows', array( $this, 'update_meta' ) );
+		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
 	}
 
 	/*
@@ -476,8 +487,10 @@ SQL;
 		}
 	}
 
-	/*
-	 * Customize title
+	/**
+	 * Customize Post Title Placeholder
+	 * @param  string $input
+	 * @return string The new title
 	 */
 	public function custom_enter_title( $input ) {
 		if ( 'post_type_shows' === get_post_type() ) {

@@ -61,9 +61,9 @@ class LWTV_CPT_Actors {
 	 */
 	public function init() {
 		// Things that only run for this post type
-		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;  // WPCS: CSRF ok.
-		if ( 0 !== $post_id && is_admin() ) {
-			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;  // WPCS: CSRF ok.
+		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;  // phpcs:ignore WordPress.Security.NonceVerification
+		if ( 0 !== $post_id ) {
+			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;  // phpcs:ignore WordPress.Security.NonceVerification
 			switch ( $post_type ) {
 				case 'post_type_actors':
 					LWTV_Actors_Calculate::do_the_math( $post_id );

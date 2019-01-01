@@ -25,7 +25,9 @@ class LWTV_CMB2_Addons {
 		/* CMB2 Grid */
 		require_once dirname( __FILE__ ) . '/cmb2/cmb2-grid/Cmb2GridPluginLoad.php';
 		/* Select2 */
-		require_once dirname( __FILE__ ) . '/cmb2/cmb-field-select2/cmb-field-select2.php';
+		if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
+			require_once dirname( __FILE__ ) . '/cmb2/cmb-field-select2/cmb-field-select2.php';
+		}
 		/* Date Year Range */
 		require_once dirname( __FILE__ ) . '/cmb2/year-range.php';
 	}
@@ -65,24 +67,36 @@ class LWTV_CMB2_Addons {
 
 		global $wpdb;
 
-		$get_post_meta = get_post_meta( $post_id, $postmeta, true );
-		$get_the_terms = wp_get_post_terms( $post_id, $taxonomy );
+		$get_post_meta_data  = get_post_meta( $post_id, $postmeta, true );
+		$get_post_meta_saved = get_post_meta( $post_id, $postmeta . '_saved', true );
+		$get_the_terms_data  = wp_get_post_terms( $post_id, $taxonomy );
 
-		if ( is_array( $get_post_meta ) ) {
+		if ( is_array( $get_post_meta_data ) ) {
 			// If we already have the post meta, then we should set the terms
-			$get_post_meta = array_map( 'intval', $get_post_meta );
-			$get_post_meta = array_unique( $get_post_meta );
-			$set_the_terms = array();
+			$get_post_meta_data = array_map( 'intval', $get_post_meta_data );
+			$get_post_meta_data = array_unique( $get_post_meta_data );
+			$set_the_terms      = array();
 
-			foreach ( $get_post_meta as $term_id ) {
+			foreach ( $get_post_meta_data as $term_id ) {
 				$term = get_term_by( 'id', $term_id, $taxonomy );
 				array_push( $set_the_terms, $term->slug );
 			}
-
 			wp_set_object_terms( $post_id, $set_the_terms, $taxonomy );
-		} elseif ( $get_the_terms && ! is_wp_error( $get_the_terms ) ) {
-			foreach ( $get_the_terms as $term ) {
-				wp_remove_object_terms( $post_id, $term->term_id, $taxonomy );
+		} elseif ( $get_the_terms_data && ! is_wp_error( $get_the_terms_data ) ) {
+			// If we don't have the post meta, then we want to remove the taxonomies SOMETIMES...
+			if ( 'success' === $get_post_meta_saved ) {
+				// If this has been saved before, then blank means delete
+				foreach ( $get_the_terms_data as $the_term ) {
+					wp_remove_object_terms( $post_id, $the_term->term_id, $taxonomy );
+				}
+			} else {
+				// If this has never been saved before, blank means trust the terms
+				$post_meta_to_add = array();
+				foreach ( $get_the_terms_data as $the_term ) {
+					$post_meta_to_add[] = $the_term->term_id;
+				}
+				update_post_meta( $post_id, $postmeta, $post_meta_to_add );
+				update_post_meta( $post_id, $postmeta . '_saved', 'success' );
 			}
 		}
 	}
