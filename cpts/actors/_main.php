@@ -22,8 +22,7 @@ class LWTV_CPT_Actors {
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra' ) );
-		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
-		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
+		//add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 
 		// Define show taxonomies
 		// SLUG => PRETTY NAME
@@ -31,14 +30,30 @@ class LWTV_CPT_Actors {
 			'actor_gender'    => array(
 				'name'   => 'actor gender',
 				'plural' => 'actor gender',
-				'rest'   => false,
 			),
 			'actor_sexuality' => array(
 				'name'   => 'actor sexuality',
 				'plural' => 'actor sexuality',
-				'rest'   => false,
 			),
 		);
+
+		// phpcs:disable
+		// Hide taxonomies from Gutenberg.
+		// While this isn't the official API for this need, it works.
+		// https://github.com/WordPress/gutenberg/issues/6912#issuecomment-428403380
+		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
+
+			$all_tax_array = array();
+			foreach ( self::$all_taxonomies as $actor_tax => $actor_array ) {
+				$all_tax_array[] = 'lez_' . $actor_tax;
+			}
+
+			if ( in_array( $taxonomy->name, $all_tax_array ) ) {
+				$response->data['visibility']['show_ui'] = false;
+			}
+			return $response;
+		}, 10, 2 );
+		// phpcs:enable
 	}
 
 	/**
@@ -172,7 +187,7 @@ class LWTV_CPT_Actors {
 				'hierarchical'          => false,
 				'labels'                => $labels,
 				'show_ui'               => true,
-				'show_in_rest'          => false, // disabled to stop Gutenberg.
+				'show_in_rest'          => true,
 				'show_admin_column'     => true,
 				'update_count_callback' => '_update_post_term_count',
 				'query_var'             => true,
@@ -371,14 +386,6 @@ class LWTV_CPT_Actors {
 				</div>';
 				break;
 		}
-	}
-
-	/*
-	 * Remove Metaboxes we use elsewhere
-	 */
-	public function remove_metaboxes() {
-		remove_meta_box( 'authordiv', 'post_type_actors', 'normal' );
-		remove_meta_box( 'postexcerpt', 'post_type_actors', 'normal' );
 	}
 
 	/*

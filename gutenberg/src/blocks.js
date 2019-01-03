@@ -8,6 +8,10 @@
 // Author Box
 import './author-box/block.js';
 
+// CPT Post Meta
+// NOT READY YET!!
+//import './cpt-meta/block.js';
+
 // Grade
 import './grade/block.js';
 

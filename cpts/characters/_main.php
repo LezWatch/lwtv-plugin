@@ -30,6 +30,25 @@ class LWTV_CPT_Characters {
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
+
+		// phpcs:disable
+		// Hide taxonomies from Gutenberg.
+		// While this isn't the official API for this need, it works.
+		// https://github.com/WordPress/gutenberg/issues/6912#issuecomment-428403380
+		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
+
+			$all_tax_array = array();
+			foreach ( self::$all_taxonomies as $pretty => $slug ) {
+				$all_tax_array[] = 'lez_' . $slug;
+			}
+
+			if ( in_array( $taxonomy->name, $all_tax_array ) ) {
+				$response->data['visibility']['show_ui'] = false;
+			}
+			return $response;
+		}, 10, 2 );
+		// phpcs:enable
+
 	}
 
 	/**
@@ -159,7 +178,7 @@ class LWTV_CPT_Characters {
 				'hierarchical'          => false,
 				'labels'                => $labels,
 				'show_ui'               => true,
-				'show_in_rest'          => false,
+				'show_in_rest'          => true,
 				'show_admin_column'     => true,
 				'update_count_callback' => '_update_post_term_count',
 				'query_var'             => true,

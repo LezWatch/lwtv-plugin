@@ -28,42 +28,53 @@ class LWTV_CPT_Shows {
 		self::$all_taxonomies = array(
 			'lez_stations'      => array(
 				'name' => 'TV station',
-				'rest' => false,
 			),
 			'lez_tropes'        => array(
 				'name' => 'trope',
-				'rest' => false,
 			),
 			'lez_formats'       => array(
 				'name' => 'format',
-				'rest' => false,
 			),
 			'lez_genres'        => array(
 				'name' => 'genre',
-				'rest' => false,
 			),
 			'lez_country'       => array(
 				'name' => 'nation',
-				'rest' => false,
 			),
 			'lez_stars'         => array(
 				'name' => 'star',
-				'rest' => false,
 			),
 			'lez_triggers'      => array(
 				'name' => 'trigger',
-				'rest' => false,
 			),
 			'lez_intersections' => array(
 				'name' => 'intersection',
-				'rest' => false,
 			),
 			'lez_showtagged'    => array(
 				'name'   => 'tagged',
 				'plural' => 'tagged',
-				'rest'   => true,
+				'hide'   => false,
 			),
 		);
+		// phpcs:disable
+		// Hide taxonomies from Gutenberg.
+		// While this isn't the official API for this need, it works.
+		// https://github.com/WordPress/gutenberg/issues/6912#issuecomment-428403380
+		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
+
+			$all_tax_array = array();
+			foreach ( self::$all_taxonomies as $a_show_tax => $a_show_array ) {
+				if ( ! isset( $a_show_array['hide'] ) || false !== $a_show_array['hide'] ) {
+					$all_tax_array[] = $a_show_tax;
+				}
+			}
+
+			if ( in_array( $taxonomy->name, $all_tax_array ) ) {
+				$response->data['visibility']['show_ui'] = false;
+			}
+			return $response;
+		}, 10, 2 );
+		// phpcs:enable
 	}
 
 	/**
@@ -224,7 +235,7 @@ class LWTV_CPT_Shows {
 				'hierarchical'          => false,
 				'labels'                => $labels,
 				'show_ui'               => true,
-				'show_in_rest'          => $tax_details['rest'],
+				'show_in_rest'          => true,
 				'show_admin_column'     => true,
 				'update_count_callback' => '_update_post_term_count',
 				'query_var'             => true,
