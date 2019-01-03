@@ -133,7 +133,7 @@ class LWTV_CPT_Shows {
 			$show_taxonomies[] = $a_show_tax;
 		}
 
-		$labels = array(
+		$labels   = array(
 			'name'                     => 'TV Shows',
 			'singular_name'            => 'TV Show',
 			'menu_name'                => 'TV Shows',
@@ -162,13 +162,21 @@ class LWTV_CPT_Shows {
 			'item_scheduled'           => 'TV Show scheduled.',
 			'item_updated'             => 'TV Show updated.',
 		);
-		$args   = array(
+		$template = array(
+			array( 'lez-library/featured-image' ),
+			array(
+				'core/paragraph',
+				array( 'placeholder' => 'Everything we need to know about this show ...' ),
+			),
+		);
+		$args     = array(
 			'label'               => 'post_type_shows',
 			'labels'              => $labels,
 			'description'         => 'TV Shows',
 			'public'              => true,
 			'exclude_from_search' => false,
 			'show_in_rest'        => true,
+			//'template'            => $template,
 			'taxonomies'          => $show_taxonomies,
 			'rest_base'           => 'show',
 			'menu_position'       => 5,
@@ -366,7 +374,7 @@ SQL;
 		self::update_things( $post_id );
 
 		// If it's not an auto-draft, let's flush cache.
-		if ( ! ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) ) {
+		if ( 'auto-draft' !== get_post_status( $post_id ) ) {
 			// Cache Things...
 			$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
 		}

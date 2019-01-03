@@ -113,9 +113,11 @@ class LWTV_CPT_Actors {
 			'item_updated'             => 'Actor updated.',
 		);
 		$template = array(
-			// Templating still has some issues. Can't click on featured images for example. WTF?
 			array( 'lez-library/featured-image' ),
-			array( 'core/paragraph', array( 'className' => 'lez-library-right', 'placeholder' => 'Everything we need to know about this actor ...' ) ),
+			array(
+				'core/paragraph',
+				array( 'placeholder' => 'Everything we need to know about this actor ...' ),
+			),
 		);
 		$args     = array(
 			'label'               => 'post_type_actors',

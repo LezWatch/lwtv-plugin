@@ -74,7 +74,7 @@ class LWTV_CPT_Characters {
 			$char_taxonomies[] = 'lez_' . $slug;
 		}
 
-		$labels = array(
+		$labels   = array(
 			'name'                     => 'Characters',
 			'singular_name'            => 'Character',
 			'menu_name'                => 'Characters',
@@ -103,12 +103,20 @@ class LWTV_CPT_Characters {
 			'item_scheduled'           => 'Character scheduled.',
 			'item_updated'             => 'Character updated.',
 		);
-		$args   = array(
+		$template = array(
+			array( 'lez-library/featured-image' ),
+			array(
+				'core/paragraph',
+				array( 'placeholder' => 'Everything we need to know about this character ...' ),
+			),
+		);
+		$args     = array(
 			'label'               => 'post_type_characters',
 			'description'         => 'Characters',
 			'labels'              => $labels,
 			'public'              => true,
 			'show_in_rest'        => true,
+			//'template'            => $template,
 			'rest_base'           => 'character',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-nametag',
@@ -427,7 +435,7 @@ class LWTV_CPT_Characters {
 
 				if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
 					foreach ( $shows_array as $char_show ) {
-						if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) { // WPCS: loose comparison ok.
+						if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
 							$characters[ $char_id ] = array(
 								'id'        => $char_id,
 								'title'     => get_the_title( $char_id ),
