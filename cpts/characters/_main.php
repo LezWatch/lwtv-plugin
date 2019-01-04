@@ -135,7 +135,7 @@ class LWTV_CPT_Characters {
 			'labels'              => $labels,
 			'public'              => true,
 			'show_in_rest'        => true,
-			//'template'            => $template,
+			'template'            => $template,
 			'rest_base'           => 'character',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-nametag',

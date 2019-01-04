@@ -9,7 +9,7 @@
 import './author-box/block.js';
 
 // CPT Post Meta
-// NOT READY YET!!
+// This works, but it's not pretty
 //import './cpt-meta/block.js';
 
 // Grade

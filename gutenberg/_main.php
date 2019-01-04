@@ -9,3 +9,4 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 require_once 'src/init.php';
+require_once 'src/serverside-render.php';

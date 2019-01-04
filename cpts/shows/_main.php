@@ -26,36 +26,21 @@ class LWTV_CPT_Shows {
 
 		// Define show taxonomies
 		self::$all_taxonomies = array(
-			'lez_stations'      => array(
-				'name' => 'TV station',
-			),
-			'lez_tropes'        => array(
-				'name' => 'trope',
-			),
-			'lez_formats'       => array(
-				'name' => 'format',
-			),
-			'lez_genres'        => array(
-				'name' => 'genre',
-			),
-			'lez_country'       => array(
-				'name' => 'nation',
-			),
-			'lez_stars'         => array(
-				'name' => 'star',
-			),
-			'lez_triggers'      => array(
-				'name' => 'trigger',
-			),
-			'lez_intersections' => array(
-				'name' => 'intersection',
-			),
+			'lez_stations'      => array( 'name' => 'TV station' ),
+			'lez_tropes'        => array( 'name' => 'trope' ),
+			'lez_formats'       => array( 'name' => 'format' ),
+			'lez_genres'        => array( 'name' => 'genre' ),
+			'lez_country'       => array( 'name' => 'nation' ),
+			'lez_stars'         => array( 'name' => 'star' ),
+			'lez_triggers'      => array( 'name' => 'trigger' ),
+			'lez_intersections' => array( 'name' => 'intersection' ),
 			'lez_showtagged'    => array(
 				'name'   => 'tagged',
 				'plural' => 'tagged',
 				'hide'   => false,
 			),
 		);
+
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
 		// While this isn't the official API for this need, it works.
@@ -187,7 +172,7 @@ class LWTV_CPT_Shows {
 			'public'              => true,
 			'exclude_from_search' => false,
 			'show_in_rest'        => true,
-			//'template'            => $template,
+			'template'            => $template,
 			'taxonomies'          => $show_taxonomies,
 			'rest_base'           => 'show',
 			'menu_position'       => 5,

@@ -140,7 +140,7 @@ class LWTV_CPT_Actors {
 			'labels'              => $labels,
 			'public'              => true,
 			'show_in_rest'        => true,
-			//'template'            => $template,
+			'template'            => $template,
 			'rest_base'           => 'actor',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-id',
