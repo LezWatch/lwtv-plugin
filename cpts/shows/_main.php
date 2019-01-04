@@ -26,44 +26,40 @@ class LWTV_CPT_Shows {
 
 		// Define show taxonomies
 		self::$all_taxonomies = array(
-			'lez_stations'      => array(
-				'name' => 'TV station',
-				'rest' => false,
-			),
-			'lez_tropes'        => array(
-				'name' => 'trope',
-				'rest' => false,
-			),
-			'lez_formats'       => array(
-				'name' => 'format',
-				'rest' => false,
-			),
-			'lez_genres'        => array(
-				'name' => 'genre',
-				'rest' => false,
-			),
-			'lez_country'       => array(
-				'name' => 'nation',
-				'rest' => false,
-			),
-			'lez_stars'         => array(
-				'name' => 'star',
-				'rest' => false,
-			),
-			'lez_triggers'      => array(
-				'name' => 'trigger',
-				'rest' => false,
-			),
-			'lez_intersections' => array(
-				'name' => 'intersection',
-				'rest' => false,
-			),
+			'lez_stations'      => array( 'name' => 'TV station' ),
+			'lez_tropes'        => array( 'name' => 'trope' ),
+			'lez_formats'       => array( 'name' => 'format' ),
+			'lez_genres'        => array( 'name' => 'genre' ),
+			'lez_country'       => array( 'name' => 'nation' ),
+			'lez_stars'         => array( 'name' => 'star' ),
+			'lez_triggers'      => array( 'name' => 'trigger' ),
+			'lez_intersections' => array( 'name' => 'intersection' ),
 			'lez_showtagged'    => array(
 				'name'   => 'tagged',
 				'plural' => 'tagged',
-				'rest'   => true,
+				'hide'   => false,
 			),
 		);
+
+		// phpcs:disable
+		// Hide taxonomies from Gutenberg.
+		// While this isn't the official API for this need, it works.
+		// https://github.com/WordPress/gutenberg/issues/6912#issuecomment-428403380
+		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
+
+			$all_tax_array = array();
+			foreach ( self::$all_taxonomies as $a_show_tax => $a_show_array ) {
+				if ( ! isset( $a_show_array['hide'] ) || false !== $a_show_array['hide'] ) {
+					$all_tax_array[] = $a_show_tax;
+				}
+			}
+
+			if ( in_array( $taxonomy->name, $all_tax_array ) ) {
+				$response->data['visibility']['show_ui'] = false;
+			}
+			return $response;
+		}, 10, 2 );
+		// phpcs:enable
 	}
 
 	/**
@@ -133,38 +129,50 @@ class LWTV_CPT_Shows {
 			$show_taxonomies[] = $a_show_tax;
 		}
 
-		$labels = array(
-			'name'                  => 'TV Shows',
-			'singular_name'         => 'TV Show',
-			'menu_name'             => 'TV Shows',
-			'name_admin_bar'        => 'TV Show',
-			'add_new_item'          => 'Add New TV Show',
-			'edit_item'             => 'Edit TV Show',
-			'new_item'              => 'New TV Show',
-			'view_item'             => 'View TV Show',
-			'all_items'             => 'All TV Shows',
-			'search_items'          => 'Search TV Shows',
-			'not_found'             => 'No TV Shows found',
-			'not_found_in_trash'    => 'No TV Shows found in Trash',
-			'update_item'           => 'Update TV Show',
-			'featured_image'        => 'TV Show Image',
-			'set_featured_image'    => 'Set TV Show image',
-			'remove_featured_image' => 'Remove TV Show image',
-			'use_featured_image'    => 'Use as TV Show image',
-			'archives'              => 'TV Show archives',
-			'insert_into_item'      => 'Insert into TV Show',
-			'uploaded_to_this_item' => 'Uploaded to this TV Show',
-			'filter_items_list'     => 'Filter TV Show list',
-			'items_list_navigation' => 'TV Show list navigation',
-			'items_list'            => 'TV Show list',
+		$labels   = array(
+			'name'                     => 'TV Shows',
+			'singular_name'            => 'TV Show',
+			'menu_name'                => 'TV Shows',
+			'add_new_item'             => 'Add New TV Show',
+			'edit_item'                => 'Edit TV Show',
+			'new_item'                 => 'New TV Show',
+			'view_item'                => 'View TV Show',
+			'all_items'                => 'All TV Shows',
+			'search_items'             => 'Search TV Shows',
+			'not_found'                => 'No TV Shows found',
+			'not_found_in_trash'       => 'No TV Shows found in Trash',
+			'update_item'              => 'Update TV Show',
+			'featured_image'           => 'TV Show Image',
+			'set_featured_image'       => 'Set TV Show image',
+			'remove_featured_image'    => 'Remove TV Show image',
+			'use_featured_image'       => 'Use as TV Show image',
+			'archives'                 => 'TV Show archives',
+			'insert_into_item'         => 'Insert into TV Show',
+			'uploaded_to_this_item'    => 'Uploaded to this TV Show',
+			'filter_items_list'        => 'Filter TV Show list',
+			'items_list_navigation'    => 'TV Show list navigation',
+			'items_list'               => 'TV Show list',
+			'item_published'           => 'TV Show published.',
+			'item_published_privately' => 'TV Show published privately.',
+			'item_reverted_to_draft'   => 'TV Show reverted to draft.',
+			'item_scheduled'           => 'TV Show scheduled.',
+			'item_updated'             => 'TV Show updated.',
 		);
-		$args   = array(
+		$template = array(
+			array( 'lez-library/featured-image' ),
+			array(
+				'core/paragraph',
+				array( 'placeholder' => 'Everything we need to know about this show ...' ),
+			),
+		);
+		$args     = array(
 			'label'               => 'post_type_shows',
 			'labels'              => $labels,
 			'description'         => 'TV Shows',
 			'public'              => true,
 			'exclude_from_search' => false,
 			'show_in_rest'        => true,
+			'template'            => $template,
 			'taxonomies'          => $show_taxonomies,
 			'rest_base'           => 'show',
 			'menu_position'       => 5,
@@ -212,7 +220,7 @@ class LWTV_CPT_Shows {
 				'hierarchical'          => false,
 				'labels'                => $labels,
 				'show_ui'               => true,
-				'show_in_rest'          => $tax_details['rest'],
+				'show_in_rest'          => true,
 				'show_admin_column'     => true,
 				'update_count_callback' => '_update_post_term_count',
 				'query_var'             => true,
@@ -362,7 +370,7 @@ SQL;
 		self::update_things( $post_id );
 
 		// If it's not an auto-draft, let's flush cache.
-		if ( ! ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) ) {
+		if ( 'auto-draft' !== get_post_status( $post_id ) ) {
 			// Cache Things...
 			$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
 		}

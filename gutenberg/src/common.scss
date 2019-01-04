@@ -39,3 +39,13 @@ $bs-orange:  #fd7e14 !default;
 $bs-yellow:  #ffc107 !default;
 $bs-green:   #28a745 !default;
 $bs-cyan:    #17a2b8 !default;
+
+.post-type-post_type_characters .wp-block-lez-library-featured-image,
+.post-type-post_type_actors .wp-block-lez-library-featured-image {
+	float: left;
+	width: 350px;
+	margin-right: 2rem;
+	button.editor-post-featured-image__toggle {
+		height: 200px;
+	}
+}

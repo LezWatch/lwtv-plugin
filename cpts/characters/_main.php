@@ -30,6 +30,25 @@ class LWTV_CPT_Characters {
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
+
+		// phpcs:disable
+		// Hide taxonomies from Gutenberg.
+		// While this isn't the official API for this need, it works.
+		// https://github.com/WordPress/gutenberg/issues/6912#issuecomment-428403380
+		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
+
+			$all_tax_array = array();
+			foreach ( self::$all_taxonomies as $pretty => $slug ) {
+				$all_tax_array[] = 'lez_' . $slug;
+			}
+
+			if ( in_array( $taxonomy->name, $all_tax_array ) ) {
+				$response->data['visibility']['show_ui'] = false;
+			}
+			return $response;
+		}, 10, 2 );
+		// phpcs:enable
+
 	}
 
 	/**
@@ -74,31 +93,49 @@ class LWTV_CPT_Characters {
 			$char_taxonomies[] = 'lez_' . $slug;
 		}
 
-		$labels = array(
-			'name'                  => 'Characters',
-			'singular_name'         => 'Character',
-			'menu_name'             => 'Characters',
-			'parent_item_colon'     => 'Parent Character:',
-			'all_items'             => 'All Characters',
-			'view_item'             => 'View Character',
-			'add_new_item'          => 'Add New Character',
-			'add_new'               => 'Add New',
-			'edit_item'             => 'Edit Character',
-			'update_item'           => 'Update Character',
-			'search_items'          => 'Search Characters',
-			'not_found'             => 'No characters found',
-			'not_found_in_trash'    => 'No characters in the Trash',
-			'featured_image'        => 'Character Photo',
-			'set_featured_image'    => 'Set Character Photo',
-			'remove_featured_image' => 'Remove Character Photo',
-			'use_featured_image'    => 'Use as Character Photo',
+		$labels   = array(
+			'name'                     => 'Characters',
+			'singular_name'            => 'Character',
+			'menu_name'                => 'Characters',
+			'add_new_item'             => 'Add New Character',
+			'edit_item'                => 'Edit Character',
+			'new_item'                 => 'New Character',
+			'view_item'                => 'View Character',
+			'all_items'                => 'All Characters',
+			'search_items'             => 'Search Characters',
+			'not_found'                => 'No Characters found',
+			'not_found_in_trash'       => 'No Characters found in Trash',
+			'update_item'              => 'Update Character',
+			'featured_image'           => 'Character Image',
+			'set_featured_image'       => 'Set Character image',
+			'remove_featured_image'    => 'Remove Character image',
+			'use_featured_image'       => 'Use as Character image',
+			'archives'                 => 'Character archives',
+			'insert_into_item'         => 'Insert into Character',
+			'uploaded_to_this_item'    => 'Uploaded to this Character',
+			'filter_items_list'        => 'Filter Character list',
+			'items_list_navigation'    => 'Character list navigation',
+			'items_list'               => 'Character list',
+			'item_published'           => 'Character published.',
+			'item_published_privately' => 'Character published privately.',
+			'item_reverted_to_draft'   => 'Character reverted to draft.',
+			'item_scheduled'           => 'Character scheduled.',
+			'item_updated'             => 'Character updated.',
 		);
-		$args   = array(
+		$template = array(
+			array( 'lez-library/featured-image' ),
+			array(
+				'core/paragraph',
+				array( 'placeholder' => 'Everything we need to know about this character ...' ),
+			),
+		);
+		$args     = array(
 			'label'               => 'post_type_characters',
 			'description'         => 'Characters',
 			'labels'              => $labels,
 			'public'              => true,
 			'show_in_rest'        => true,
+			'template'            => $template,
 			'rest_base'           => 'character',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-nametag',
@@ -141,7 +178,7 @@ class LWTV_CPT_Characters {
 				'hierarchical'          => false,
 				'labels'                => $labels,
 				'show_ui'               => true,
-				'show_in_rest'          => false,
+				'show_in_rest'          => true,
 				'show_admin_column'     => true,
 				'update_count_callback' => '_update_post_term_count',
 				'query_var'             => true,
@@ -417,7 +454,7 @@ class LWTV_CPT_Characters {
 
 				if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
 					foreach ( $shows_array as $char_show ) {
-						if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) { // WPCS: loose comparison ok.
+						if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
 							$characters[ $char_id ] = array(
 								'id'        => $char_id,
 								'title'     => get_the_title( $char_id ),

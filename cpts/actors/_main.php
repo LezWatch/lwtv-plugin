@@ -22,8 +22,7 @@ class LWTV_CPT_Actors {
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra' ) );
-		add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
-		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
+		//add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 
 		// Define show taxonomies
 		// SLUG => PRETTY NAME
@@ -31,14 +30,30 @@ class LWTV_CPT_Actors {
 			'actor_gender'    => array(
 				'name'   => 'actor gender',
 				'plural' => 'actor gender',
-				'rest'   => false,
 			),
 			'actor_sexuality' => array(
 				'name'   => 'actor sexuality',
 				'plural' => 'actor sexuality',
-				'rest'   => false,
 			),
 		);
+
+		// phpcs:disable
+		// Hide taxonomies from Gutenberg.
+		// While this isn't the official API for this need, it works.
+		// https://github.com/WordPress/gutenberg/issues/6912#issuecomment-428403380
+		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
+
+			$all_tax_array = array();
+			foreach ( self::$all_taxonomies as $actor_tax => $actor_array ) {
+				$all_tax_array[] = 'lez_' . $actor_tax;
+			}
+
+			if ( in_array( $taxonomy->name, $all_tax_array ) ) {
+				$response->data['visibility']['show_ui'] = false;
+			}
+			return $response;
+		}, 10, 2 );
+		// phpcs:enable
 	}
 
 	/**
@@ -84,30 +99,40 @@ class LWTV_CPT_Actors {
 		}
 
 		$labels   = array(
-			'name'                  => 'Actors',
-			'singular_name'         => 'Actor',
-			'menu_name'             => 'Actors',
-			'parent_item_colon'     => 'Parent Actor:',
-			'all_items'             => 'All Actors',
-			'view_item'             => 'View Actor',
-			'add_new_item'          => 'Add New Actor',
-			'add_new'               => 'Add New',
-			'edit_item'             => 'Edit Actor',
-			'update_item'           => 'Update Actor',
-			'search_items'          => 'Search Actors',
-			'not_found'             => 'No actors found',
-			'not_found_in_trash'    => 'No actors in the Trash',
-			'featured_image'        => 'Actor Photo',
-			'set_featured_image'    => 'Set Actor Photo',
-			'remove_featured_image' => 'Remove Actor Photo',
-			'use_featured_image'    => 'Use as Actor Photo',
+			'name'                     => 'Actors',
+			'singular_name'            => 'Actor',
+			'menu_name'                => 'Actors',
+			'add_new_item'             => 'Add New Actor',
+			'edit_item'                => 'Edit Actor',
+			'new_item'                 => 'New Actor',
+			'view_item'                => 'View Actor',
+			'all_items'                => 'All Actors',
+			'search_items'             => 'Search Actors',
+			'not_found'                => 'No Actors found',
+			'not_found_in_trash'       => 'No Actors found in Trash',
+			'update_item'              => 'Update Actor',
+			'featured_image'           => 'Actor Image',
+			'set_featured_image'       => 'Set Actor image',
+			'remove_featured_image'    => 'Remove Actor image',
+			'use_featured_image'       => 'Use as Actor image',
+			'archives'                 => 'Actor archives',
+			'insert_into_item'         => 'Insert into Actor',
+			'uploaded_to_this_item'    => 'Uploaded to this Actor',
+			'filter_items_list'        => 'Filter Actor list',
+			'items_list_navigation'    => 'Actor list navigation',
+			'items_list'               => 'Actor list',
+			'item_published'           => 'Actor published.',
+			'item_published_privately' => 'Actor published privately.',
+			'item_reverted_to_draft'   => 'Actor reverted to draft.',
+			'item_scheduled'           => 'Actor scheduled.',
+			'item_updated'             => 'Actor updated.',
 		);
 		$template = array(
-			// For Gutenberg (not added yet)
-			// Should be: Featured Image and taxonomy dropdowns.
-			array( 'core/image', array( 'align' => 'left' ) ),
-			array( 'core/heading', array( 'placeholder' => 'Add Author...' ) ),
-			array( 'core/paragraph', array( 'placeholder' => 'Add Description...' ) ),
+			array( 'lez-library/featured-image' ),
+			array(
+				'core/paragraph',
+				array( 'placeholder' => 'Everything we need to know about this actor ...' ),
+			),
 		);
 		$args     = array(
 			'label'               => 'post_type_actors',
@@ -115,7 +140,7 @@ class LWTV_CPT_Actors {
 			'labels'              => $labels,
 			'public'              => true,
 			'show_in_rest'        => true,
-			//'template'            => $template,
+			'template'            => $template,
 			'rest_base'           => 'actor',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-id',
@@ -162,7 +187,7 @@ class LWTV_CPT_Actors {
 				'hierarchical'          => false,
 				'labels'                => $labels,
 				'show_ui'               => true,
-				'show_in_rest'          => false, // disabled to stop Gutenberg.
+				'show_in_rest'          => true,
 				'show_admin_column'     => true,
 				'update_count_callback' => '_update_post_term_count',
 				'query_var'             => true,
@@ -361,14 +386,6 @@ class LWTV_CPT_Actors {
 				</div>';
 				break;
 		}
-	}
-
-	/*
-	 * Remove Metaboxes we use elsewhere
-	 */
-	public function remove_metaboxes() {
-		remove_meta_box( 'authordiv', 'post_type_actors', 'normal' );
-		remove_meta_box( 'postexcerpt', 'post_type_actors', 'normal' );
 	}
 
 	/*

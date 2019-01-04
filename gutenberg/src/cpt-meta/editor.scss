@@ -1,0 +1,19 @@
+div[data-type="lez-library/actor-cpt"] {
+	clear: both;
+	padding-top: 2em;
+}
+
+.wp-block-lez-library-actor-cpt {
+	table {
+		width: 100%;
+		padding: 2em;
+		th {
+			width: 50%;
+		}
+		td {
+			input {
+				width: 100%;
+			}
+		}
+	}
+}
