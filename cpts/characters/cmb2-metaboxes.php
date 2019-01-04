@@ -60,11 +60,11 @@ class LWTV_Characters_CMB2 {
 		// prefix for all custom fields
 		$prefix = 'lezchars_';
 
-		// MetaBox Group: Character Details
-		$cmb_characters = new_cmb2_box(
+		// MetaBox Group: Character Top Grid
+		$cmb_char_grid = new_cmb2_box(
 			array(
-				'id'           => 'chars_metabox',
-				'title'        => 'Character Details',
+				'id'           => 'chars_metabox_grid',
+				'title'        => 'Character Sexuality and Orientation',
 				'object_types' => array( 'post_type_characters' ),
 				'context'      => 'normal',
 				'priority'     => 'high',
@@ -73,7 +73,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Character Gender Idenity
-		$field_gender = $cmb_characters->add_field(
+		$field_gender = $cmb_char_grid->add_field(
 			array(
 				'name'             => 'Gender',
 				'desc'             => 'Gender identity',
@@ -86,7 +86,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Character Sexual Orientation
-		$field_sexuality = $cmb_characters->add_field(
+		$field_sexuality = $cmb_char_grid->add_field(
 			array(
 				'name'             => 'Sexuality',
 				'desc'             => 'Sexual orientation',
@@ -99,7 +99,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Character Romantic Orientation
-		$field_romantic = $cmb_characters->add_field(
+		$field_romantic = $cmb_char_grid->add_field(
 			array(
 				'name'             => 'Romantic',
 				'desc'             => 'Romantic orientation',
@@ -115,12 +115,25 @@ class LWTV_Characters_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_char = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_characters );
+			$grid_char = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_char_grid );
 			$row1      = $grid_char->addRow();
 			$row2      = $grid_char->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
 			$row2->addColumns( array( $field_romantic ) );
 		}
+
+		// MetaBox Group: Character Main Data
+		$cmb_characters = new_cmb2_box(
+			array(
+				'id'           => 'chars_metabox_main',
+				'title'        => 'General Character Details',
+				'object_types' => array( 'post_type_characters' ),
+				'context'      => 'normal',
+				'priority'     => 'high',
+				'show_in_rest' => true,
+				'show_names'   => true, // Show field names on the left
+			)
+		);
 		// Field: Character Clichés
 		$field_cliches = $cmb_characters->add_field(
 			array(
@@ -160,9 +173,7 @@ class LWTV_Characters_CMB2 {
 				'repeatable'       => true,
 			)
 		);
-
 		// Field Group: Character Show information
-		// Made repeatable since each show might have a separate role. Yikes...
 		$group_shows = $cmb_characters->add_field(
 			array(
 				'id'         => $prefix . 'show_group',

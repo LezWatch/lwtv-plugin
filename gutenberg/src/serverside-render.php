@@ -63,12 +63,14 @@ class LWTV_ServerSideRendering {
 			case 'post_type_shows':
 				$boxes  = '<h2>TV Show Details</h2>';
 				$boxes .= cmb2_get_metabox_form( 'show_details_metabox' );
-				$boxes  = '<h3>Plots and Relationship Details</h3>';
-				$boxes .= cmb2_get_metabox_form( 'shows_metabox' );
+				//$boxes .= '<h3>Plots and Relationship Details</h3>';
+				//$boxes .= cmb2_get_metabox_form( 'shows_metabox' );
 				break;
 			case 'post_type_characters':
-				$boxes  = '<h2>Character Details</h2>';
-				$boxes .= cmb2_get_metabox_form( 'chars_metabox' );
+				$boxes  = '<h2>Character Sexuality and Orientation</h2>';
+				$boxes .= cmb2_get_metabox_form( 'chars_metabox_grid' );
+				//$boxes .= '<h3>General Details</h3>';
+				//$boxes .= cmb2_get_metabox_form( 'chars_metabox_main' );
 				break;
 			case 'post_type_actors':
 				$boxes  = '<h2>Actor Details</h2>';
