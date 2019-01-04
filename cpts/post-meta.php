@@ -16,7 +16,6 @@ class LWTV_CPT_Post_Meta {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'init', array( $this, 'create_meta_data' ), 0 );
 
 		self::$all_post_metas = array(
@@ -69,19 +68,6 @@ class LWTV_CPT_Post_Meta {
 		}, 10, 2 );
 		// phpcs:enable
 
-	}
-
-	/**
-	 * Admin Init
-	 */
-	public function admin_init() {
-		add_filter( 'manage_post_type_characters_posts_columns', array( $this, 'manage_posts_columns' ) );
-		add_action( 'manage_post_type_characters_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
-		add_filter( 'manage_edit-post_type_characters_sortable_columns', array( $this, 'manage_edit_sortable_columns' ) );
-
-		add_filter( 'posts_clauses', array( $this, 'columns_sortability_sexuality' ), 10, 2 );
-		add_filter( 'posts_clauses', array( $this, 'columns_sortability_gender' ), 10, 2 );
-		add_filter( 'posts_clauses', array( $this, 'columns_sortability_romantic' ), 10, 2 );
 	}
 
 	/*

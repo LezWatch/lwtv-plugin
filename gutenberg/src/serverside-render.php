@@ -46,25 +46,17 @@ class LWTV_ServerSideRendering {
 		register_block_type(
 			'lez-library/actor-cpt',
 			array(
-				'attributes'      => array(
-					'lezactors_imdb'      => array(
-						'type' => 'string',
-					),
-					'lezactors_wikipedia' => array(
-						'type' => 'url',
-					),
-				),
+				'attributes'      => array( 'metabox_id' => 'actors_metabox' ),
 				'render_callback' => array( $this, 'render_author_cpt' ),
 			)
 		);
 	}
 
 	public function render_author_cpt( $atts ) {
-		if ( is_admin() ) {
-			return cmb2_get_metabox_form( 'actors_metabox' );
-		} else {
+		if ( is_single() ) {
 			return;
 		}
+		return cmb2_get_metabox_form( 'actors_metabox' );
 	}
 }
 
