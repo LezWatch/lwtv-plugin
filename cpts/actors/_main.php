@@ -5,6 +5,11 @@
  * @since 1.0
  */
 
+// Include Sub Files
+require_once 'calculations.php';
+require_once 'cmb2-metaboxes.php';
+require_once 'custom-columns.php';
+
 /**
  * class LWTV_CPT_Actors
  */
@@ -22,7 +27,7 @@ class LWTV_CPT_Actors {
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra' ) );
-		//add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
+		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
 
 		// Define show taxonomies
 		// SLUG => PRETTY NAME
@@ -62,12 +67,6 @@ class LWTV_CPT_Actors {
 	public function admin_init() {
 		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
-		add_action( 'do_update_actor_meta', array( $this, 'update_meta' ), 10, 2 );
-		add_action( 'save_post_post_type_characters', array( $this, 'update_meta_from_chars' ), 10, 3 );
-		add_filter( 'manage_post_type_actors_posts_columns', array( $this, 'manage_posts_columns' ) );
-		add_action( 'manage_post_type_actors_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
-		add_filter( 'manage_edit-post_type_actors_sortable_columns', array( $this, 'manage_edit_sortable_columns' ) );
-		add_action( 'pre_get_posts', array( $this, 'columns_sortability_simple' ) );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
 
@@ -203,94 +202,22 @@ class LWTV_CPT_Actors {
 	}
 
 	/*
-	 * Create Custom Columns
-	 * Used by quick edit, etc
-	 */
-	public function manage_posts_columns( $columns ) {
-		$columns['actors-queer']     = '<span class="dashicons dashicons-smiley"><span class="screen-reader-text">Queer IRL</span></span>';
-		$columns['actors-charcount'] = '<span class="dashicons dashicons-nametag"><span class="screen-reader-text">Characters</span></span>';
-		return $columns;
-	}
-
-	/*
-	 * Add Custom Column Content
-	 */
-	public function manage_posts_custom_column( $column, $post_id ) {
-		switch ( $column ) {
-			case 'actors-queer':
-				$is_queer = get_post_meta( $post_id, 'lezactors_queer', true );
-				$queer    = ( $is_queer ) ? 'Y' : 'N';
-				echo esc_html( $queer );
-				break;
-			case 'actors-charcount':
-				$charcount = get_post_meta( $post_id, 'lezactors_char_count', true );
-				echo (int) $charcount;
-				break;
-		}
-	}
-
-	/*
-	 * Make Custom Columns Sortable
-	 */
-	public function manage_edit_sortable_columns( $columns ) {
-		$columns['actors-charcount'] = 'characters';  // Allow sort by queers
-		return $columns;
-	}
-
-	/*
-	 * Create Simple Columns Sortability
-	 *
-	 * Worth It, Char Count
-	 */
-	public function columns_sortability_simple( $query ) {
-		if ( ! is_admin() ) {
-			return;
-		}
-
-		if ( $query->is_main_query() && isset( $orderby ) && $orderby === $query->get( 'orderby' ) ) {
-			switch ( $orderby ) {
-				case 'characters':
-					$query->set( 'meta_key', 'lezactors_char_count' );
-					$query->set( 'orderby', 'meta_value_num' );
-					break;
-			}
-		}
-	}
-
-	/*
 	 * Save post meta for actors
 	 *
 	 * @param int $post_id The post ID.
 	 * @param post $post The post object.
 	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
-	public function update_meta( $post_id ) {
+	public function save_post_meta( $post_id ) {
 
 		// unhook this function so it doesn't loop infinitely
-		remove_action( 'save_post_post_type_actors', array( $this, 'update_meta' ) );
+		remove_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 
 		// Do the math
 		LWTV_Actors_Calculate::do_the_math( $post_id );
 
 		// re-hook this function
-		add_action( 'save_post_post_type_actors', array( $this, 'update_meta' ) );
-	}
-
-	/*
-	 * Save post meta for shows on CHARACTER update
-	 *
-	 * This will update the metakey 'lezactors_char_count' on save
-	 *
-	 * @param int $post_id The post ID.
-	 */
-	public function update_meta_from_chars( $post_id ) {
-		$character_actor_ids = get_post_meta( $post_id, 'lezchars_actor', true );
-
-		if ( '' !== $character_actor_ids ) {
-			foreach ( $character_actor_ids as $actor ) {
-				do_action( 'do_update_actor_meta', $actor );
-			}
-		}
+		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 	}
 
 	/*
@@ -399,9 +326,5 @@ class LWTV_CPT_Actors {
 	}
 
 }
-
-// Include Sub Files
-require_once 'calculations.php';
-require_once 'cmb2-metaboxes.php';
 
 new LWTV_CPT_Actors();

@@ -44,19 +44,45 @@ class LWTV_ServerSideRendering {
 
 		// Author CPT Stuff
 		register_block_type(
-			'lez-library/actor-cpt',
+			'lez-library/cpt-meta',
 			array(
-				'attributes'      => array( 'metabox_id' => 'actors_metabox' ),
-				'render_callback' => array( $this, 'render_author_cpt' ),
+				'attributes'      => array( 'post_id' => array( 'type' => 'int' ) ),
+				'render_callback' => array( $this, 'render_cpt_meta' ),
 			)
 		);
 	}
 
-	public function render_author_cpt( $atts ) {
-		if ( is_single() ) {
+	public function render_cpt_meta( $atts ) {
+
+		// Don't show on the front end.
+		if ( is_single() && ! isset( $atts['post_id'] ) ) {
 			return;
 		}
-		return cmb2_get_metabox_form( 'actors_metabox' );
+
+		switch ( get_post_type( $atts['post_id'] ) ) {
+			case 'post_type_shows':
+				$boxes  = '<h2>TV Show Details</h2>';
+				$boxes .= cmb2_get_metabox_form( 'show_details_metabox' );
+				//$boxes .= '<h3>Plots and Relationship Details</h3>';
+				//$boxes .= cmb2_get_metabox_form( 'shows_metabox' );
+				break;
+			case 'post_type_characters':
+				$boxes  = '<h2>Character Sexuality and Orientation</h2>';
+				$boxes .= cmb2_get_metabox_form( 'chars_metabox_grid' );
+				//$boxes .= '<h3>General Details</h3>';
+				//$boxes .= cmb2_get_metabox_form( 'chars_metabox_main' );
+				break;
+			case 'post_type_actors':
+				$boxes  = '<h2>Actor Details</h2>';
+				$boxes .= cmb2_get_metabox_form( 'actors_metabox' );
+				break;
+			default:
+				$boxes = 'This feature is only available on Actors, Characters, or Shows pages. Also you shouldn\'t be able to insert it, so how did you get here?';
+		}
+
+		if ( isset( $boxes ) ) {
+			return $boxes;
+		}
 	}
 }
 
