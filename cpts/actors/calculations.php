@@ -46,6 +46,8 @@ class LWTV_Actors_Calculate {
 
 				if ( '' !== $actors_array && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $actors_array as $char_actor ) {
+						// To compensate for maybe character situations, we need this loose
+						// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
 						if ( $char_actor == $post_id ) {
 							$queercount++;
 							if ( $is_dead ) {

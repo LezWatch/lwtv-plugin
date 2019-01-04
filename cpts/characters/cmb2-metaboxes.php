@@ -21,27 +21,8 @@ class LWTV_Characters_CMB2 {
 			'guest'     => 'Guest Character',
 		);
 
-		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
-	}
-
-	/**
-	 *  Init
-	 */
-	public function init() {
-		// Force saving data to convert select2 saved data to a taxonomy
-		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0; // WPCS: CSRF ok.
-
-		if ( 0 !== $post_id && is_admin() ) {
-			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0; // WPCS: CSRF ok.
-			switch ( $post_type ) {
-				case 'post_type_characters':
-					// Force saving data to convert select2 saved data to a taxonomy
-					LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
-					break;
-			}
-		}
 	}
 
 	/*

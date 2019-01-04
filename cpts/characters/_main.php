@@ -5,6 +5,11 @@
  * @since 1.0
  */
 
+// Include Sub Files
+require_once 'calculations.php';
+require_once 'cmb2-metaboxes.php';
+require_once 'custom-columns.php';
+
 /**
  * class LWTV_CPT_Characters
  */
@@ -18,6 +23,7 @@ class LWTV_CPT_Characters {
 	public function __construct() {
 
 		self::$all_taxonomies = array(
+			// Display Name        => slug.
 			'cliché'               => 'cliches',
 			'gender'               => 'gender',
 			'sexual orientation'   => 'sexuality',
@@ -55,14 +61,9 @@ class LWTV_CPT_Characters {
 	 * Admin Init
 	 */
 	public function admin_init() {
-
-		if ( class_exists( 'VarnishPurger' ) ) {
-			$this->varnish_purge = new VarnishPurger();
-		}
-
 		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
-		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ), 10, 3 );
+		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ), 10, 3 );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
 
@@ -71,9 +72,11 @@ class LWTV_CPT_Characters {
 	 */
 	public function init() {
 		// Things that only run for this post type
-		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;  // phpcs:ignore WordPress.Security.NonceVerification
+		// phpcs:ignore WordPress.Security.NonceVerification
+		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;
 		if ( 0 !== $post_id ) {
-			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;  // phpcs:ignore WordPress.Security.NonceVerification
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;
 			switch ( $post_type ) {
 				case 'post_type_characters':
 					self::update_things( $post_id );
@@ -451,9 +454,10 @@ class LWTV_CPT_Characters {
 				// If the character is in this show, AND a published character,
 				// AND has this role ON THIS SHOW we will pass the following
 				// data to the character template to determine what to display.
-
 				if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
 					foreach ( $shows_array as $char_show ) {
+						// Becuase of show IDs having SIMILAR numbers, we need to be a litte more flex
+						// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
 						if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
 							$characters[ $char_id ] = array(
 								'id'        => $char_id,
@@ -475,33 +479,26 @@ class LWTV_CPT_Characters {
 
 	/**
 	 * Things that have to be run when we save
-	 * @param  int $post_id
-	 * @return n/a - this just runs shit
+	 * @param  int   $post_id     The Post ID
+	 * @return array $$purgables  URLs to purge
 	 */
 	public function update_things( $post_id ) {
-		// get the most recent death and save it as a new meta
-		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
-		$last_char_death = get_post_meta( $post_id, 'lezchars_last_death', true );
-		$newest_death    = '0000-00-00';
-		if ( '' !== $character_death ) {
-			foreach ( $character_death as $death ) {
-				if ( $death > $newest_death ) {
-					$newest_death = $death;
-				}
-			}
-			// If there's a newest death AND it isn't equal last death, save it
-			if ( '0000-00-00' !== $newest_death && $newest_death !== $last_char_death ) {
-				update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
-			}
-		}
+
+		$purgables = array();
+
+		// Sync up data
+		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+
+		// Calculate Death
+		LWTV_Characters_Calculate::death( $post_id );
 
 		// Update show data
 		$show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
 		if ( '' !== $show_ids ) {
 			foreach ( $show_ids as $each_show ) {
-				if ( isset( $each_show['show'] ) && 'publish' === get_post_status( $each_show['show'] ) ) {
-					$request     = wp_remote_get( get_permalink( $each_show['show'] ) . '/?nocache' );
-					$purgeurls[] = get_permalink( $each_show['show'] );
+				if ( isset( $each_show['show'] ) ) {
+					LWTV_Shows_Calculate::do_the_math( $each_show['show'] );
+					$purgables[] = $each_show['show'];
 				}
 			}
 		}
@@ -510,12 +507,14 @@ class LWTV_CPT_Characters {
 		$actor_ids = lwtv_yikes_chardata( get_the_ID(), 'actors' );
 		if ( '' !== $actor_ids ) {
 			foreach ( $actor_ids as $each_actor ) {
-				if ( isset( $each_actor['show'] ) && 'publish' === get_post_status( $each_actor['show'] ) ) {
-					$request     = wp_remote_get( get_permalink( $each_actor ) . '/?nocache' );
-					$purgeurls[] = get_permalink( $each_actor['show'] );
+				if ( isset( $each_actor['show'] ) ) {
+					LWTV_Actors_Calculate::do_the_math( $each_actor );
+					$purgables[] = $each_actor;
 				}
 			}
 		}
+
+		return $purgables;
 	}
 
 	/*
@@ -525,33 +524,27 @@ class LWTV_CPT_Characters {
 	 * @param post $post The post object.
 	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
-	public function update_meta( $post_id ) {
+	public function save_post_meta( $post_id ) {
 
 		$purgeurls = array();
 
 		// unhook this function so it doesn't loop infinitely
-		remove_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
+		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
-		// Update Things...
-		self::update_things( $post_id );
+		$purgables = self::update_things( $post_id );
 
-		// If it's not an auto-draft, let's flush cache.
-		if ( ! ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) ) {
-			// Flush Varnish
-			if ( class_exists( 'VarnishPurger' ) ) {
-				// Generate list of URLs based on the show ID:
-				$generate_urls = $this->varnish_purge->generate_urls( $post_id );
-				$urls_to_purge = array_merge( $purgeurls, $generate_urls );
-
-				// Purge 'em all
-				foreach ( $urls_to_purge as $url ) {
-					$this->varnish_purge->purge_url( $url );
+		// If the character is not an auto-draft, maybe flush caches.
+		if ( 'auto-draft' !== get_post_status( $post_id ) && ! empty( $purgables ) ) {
+			foreach ( $purgables as $id ) {
+				// If the related actors/characters are published, cache flush
+				if ( 'publish' === get_post_status( $id ) ) {
+					$request = wp_remote_get( get_permalink( $id ) . '/?nocache' );
 				}
 			}
 		}
 
 		// re-hook this function
-		add_action( 'save_post_post_type_characters', array( $this, 'update_meta' ) );
+		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 	}
 
 	/*
@@ -564,9 +557,5 @@ class LWTV_CPT_Characters {
 		return $input;
 	}
 }
-
-// Include Sub Files
-require_once 'cmb2-metaboxes.php';
-require_once 'custom-columns.php';
 
 new LWTV_CPT_Characters();

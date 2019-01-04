@@ -5,6 +5,11 @@
  * @since 1.0
  */
 
+// Include Sub Files
+require_once 'calculations.php';
+require_once 'cmb2-metaboxes.php';
+require_once 'shows-like-this.php';
+
 /**
  * class LWTV_CPT_Shows
  */
@@ -380,32 +385,6 @@ SQL;
 	}
 
 	/*
-	 * Save post meta for shows on CHARACTER update
-	 *
-	 * This will update the metakey 'lezshows_char_count' on save
-	 *
-	 * @param int $post_id The post ID.
-	 */
-	public function update_meta_from_chars( $post_id ) {
-
-		// unhook this function so it doesn't loop infinitely
-		remove_action( 'save_post_post_type_characters', array( $this, 'update_meta_from_chars' ) );
-
-		$screen   = get_current_screen();
-		$show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
-
-		if ( '' !== $show_ids ) {
-			foreach ( $show_ids as $each_show ) {
-				LWTV_Shows_Calculate::do_the_math( $each_show['show'] );
-				self::flush_varnish( $each_show['show'], $screen );
-			}
-		}
-
-		// re-hook this function
-		add_action( 'save_post_post_type_characters', array( $this, 'update_meta_from_chars' ) );
-	}
-
-	/*
 	 * Add CPT to AMP
 	 */
 	public function amp_init() {
@@ -508,10 +487,5 @@ SQL;
 	}
 
 }
-
-// Include Sub Files
-require_once 'calculations.php';
-require_once 'cmb2-metaboxes.php';
-require_once 'shows-like-this.php';
 
 new LWTV_CPT_Shows();
