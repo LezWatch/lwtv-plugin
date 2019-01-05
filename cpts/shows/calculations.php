@@ -196,7 +196,8 @@ class LWTV_Shows_Calculate {
 	public static function show_tropes_score( $post_id ) {
 
 		$score        = 0;
-		$count_tropes = count( wp_get_post_terms( $post_id, 'lez_tropes' ) );
+		$tropes       = wp_get_post_terms( $post_id, 'lez_tropes', true );
+		$count_tropes = ( $tropes ) ? count( $tropes ) : 0;
 
 		// Good tropes are always good.
 		// Maybe tropes are only good IF there isn't Queer-for-Ratings

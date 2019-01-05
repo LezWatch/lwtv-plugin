@@ -79,7 +79,7 @@ class LWTV_CPT_Characters {
 			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;
 			switch ( $post_type ) {
 				case 'post_type_characters':
-					self::update_things( $post_id );
+					LWTV_Characters_Calculate::death( $post_id );
 					break;
 			}
 		}
@@ -477,14 +477,19 @@ class LWTV_CPT_Characters {
 		return $characters;
 	}
 
-	/**
-	 * Things that have to be run when we save
-	 * @param  int   $post_id     The Post ID
-	 * @return array $$purgables  URLs to purge
+	/*
+	 * Save post meta for characters
+	 *
+	 * @param int $post_id The post ID.
+	 * @param post $post The post object.
+	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
-	public function update_things( $post_id ) {
+	public function save_post_meta( $post_id ) {
 
-		$purgables = array();
+		$purgeurls = array();
+
+		// unhook this function so it doesn't loop infinitely
+		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
 		// Sync up data
 		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
@@ -504,34 +509,16 @@ class LWTV_CPT_Characters {
 		}
 
 		// Update actor data
-		$actor_ids = lwtv_yikes_chardata( get_the_ID(), 'actors' );
-		if ( '' !== $actor_ids ) {
+		$actor_ids = get_post_meta( $post_id, 'lezchars_actor', true );
+		if ( ! is_array( $actor_ids ) ) {
+			$actor_ids = array( get_post_meta( $the_id, 'lezchars_actor', true ) );
+		}
+		if ( ! empty( $actor_ids ) ) {
 			foreach ( $actor_ids as $each_actor ) {
-				if ( isset( $each_actor['show'] ) ) {
-					LWTV_Actors_Calculate::do_the_math( $each_actor );
-					$purgables[] = $each_actor;
-				}
+				LWTV_Actors_Calculate::do_the_math( $each_actor );
+				$purgables[] = $each_actor;
 			}
 		}
-
-		return $purgables;
-	}
-
-	/*
-	 * Save post meta for characters
-	 *
-	 * @param int $post_id The post ID.
-	 * @param post $post The post object.
-	 * @param bool $update Whether this is an existing post being updated or not.
-	 */
-	public function save_post_meta( $post_id ) {
-
-		$purgeurls = array();
-
-		// unhook this function so it doesn't loop infinitely
-		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
-
-		$purgables = self::update_things( $post_id );
 
 		// If the character is not an auto-draft, maybe flush caches.
 		if ( 'auto-draft' !== get_post_status( $post_id ) && ! empty( $purgables ) ) {
