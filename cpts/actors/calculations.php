@@ -86,7 +86,6 @@ class LWTV_Actors_Calculate {
 	 * @return void
 	 */
 	public static function do_the_math( $post_id ) {
-
 		if ( 'post_type_actors' === get_post_type( $post_id ) ) {
 			// Calculate Actor Data:
 			update_post_meta( $post_id, 'lezactors_char_count', self::count_queers( $post_id, 'count' ) );
@@ -95,10 +94,6 @@ class LWTV_Actors_Calculate {
 			// Is Queer?
 			$is_queer = ( 'yes' === LWTV_Loops::is_actor_queer( $post_id ) ) ? true : false;
 			update_post_meta( $post_id, 'lezactors_queer', $is_queer );
-		} else {
-			delete_post_meta( $post_id, 'lezactors_char_count' );
-			delete_post_meta( $post_id, 'lezactors_dead_count' );
-			delete_post_meta( $post_id, 'lezactors_queer' );
 		}
 	}
 

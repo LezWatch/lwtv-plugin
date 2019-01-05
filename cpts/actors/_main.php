@@ -75,9 +75,11 @@ class LWTV_CPT_Actors {
 	 */
 	public function init() {
 		// Things that only run for this post type
-		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;  // phpcs:ignore WordPress.Security.NonceVerification
+		// phpcs:ignore WordPress.Security.NonceVerification
+		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;
 		if ( 0 !== $post_id ) {
-			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;  // phpcs:ignore WordPress.Security.NonceVerification
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;
 			switch ( $post_type ) {
 				case 'post_type_actors':
 					LWTV_Actors_Calculate::do_the_math( $post_id );
@@ -215,6 +217,12 @@ class LWTV_CPT_Actors {
 
 		// Do the math
 		LWTV_Actors_Calculate::do_the_math( $post_id );
+
+		// If it's not an auto-draft, let's flush cache.
+		if ( 'auto-draft' !== get_post_status( $post_id ) ) {
+			// Cache Things...
+			$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
+		}
 
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
