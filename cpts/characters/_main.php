@@ -79,7 +79,7 @@ class LWTV_CPT_Characters {
 			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;
 			switch ( $post_type ) {
 				case 'post_type_characters':
-					LWTV_Characters_Calculate::death( $post_id );
+					self::update_things( $post_id );
 					break;
 			}
 		}
@@ -477,6 +477,19 @@ class LWTV_CPT_Characters {
 		return $characters;
 	}
 
+	/**
+	 * Things that have to be run when we save
+	 * @param  int $post_id
+	 * @return n/a - this just runs shit
+	 */
+	public function update_things( $post_id ) {
+		// Save show scores
+		LWTV_Characters_Calculate::death( $post_id );
+
+		// Sync up data
+		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+	}
+
 	/*
 	 * Save post meta for characters
 	 *
@@ -491,13 +504,10 @@ class LWTV_CPT_Characters {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
-		// Sync up data
-		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		// Update things. We may run this multiple times.
+		self::update_things( $post_id );
 
-		// Calculate Death
-		LWTV_Characters_Calculate::death( $post_id );
-
-		// Update show data
+		// Update show data ONLY on saves.
 		$show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
 		if ( '' !== $show_ids ) {
 			foreach ( $show_ids as $each_show ) {
@@ -508,7 +518,7 @@ class LWTV_CPT_Characters {
 			}
 		}
 
-		// Update actor data
+		// Update actor data ONLY on saves.
 		$actor_ids = get_post_meta( $post_id, 'lezchars_actor', true );
 		if ( ! is_array( $actor_ids ) ) {
 			$actor_ids = array( get_post_meta( $the_id, 'lezchars_actor', true ) );
