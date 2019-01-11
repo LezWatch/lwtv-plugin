@@ -54,7 +54,7 @@ registerBlockType( 'lwtv/grade', {
 								{ label: 'A-', value: 'A-' },
 								{ label: 'B+', value: 'B+' },
 								{ label: 'B', value: 'B' },
-								{ label: 'B-', value: 'B+' },
+								{ label: 'B-', value: 'B-' },
 								{ label: 'C+', value: 'C+' },
 								{ label: 'C', value: 'C' },
 								{ label: 'C-', value: 'C-' },
