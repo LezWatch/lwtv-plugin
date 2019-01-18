@@ -95,7 +95,7 @@ class LWTV_Slack_Integration {
 
 		// Bail if the status is false.
 		// || LWTV_DEV_SITE
-		if ( ! $status || LWTV_DEV_SITE ) {
+		if ( ! $status || LWTV_DEV_SITE || ! defined( LWTV_SLACK_DEATH ) ) {
 			return;
 		}
 
@@ -123,7 +123,6 @@ class LWTV_Slack_Integration {
 		}
 
 		// Build it!
-		$url  = 'https://hooks.slack.com/services/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';
 		$data = array(
 			'payload' => wp_json_encode(
 				array(
@@ -134,7 +133,7 @@ class LWTV_Slack_Integration {
 
 		// Post our data via the slack webhook endpoint using wp_remote_post
 		$posting_to_slack = wp_remote_post(
-			$url,
+			LWTV_SLACK_DEATH,
 			array(
 				'method'      => 'POST',
 				'timeout'     => 30,
