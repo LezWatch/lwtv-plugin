@@ -21,7 +21,7 @@ class LWTV_Slack_Integration {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
-		add_action( 'init', array( $this, 'push_slack_death' ) );
+		//add_action( 'init', array( $this, 'push_slack_death' ) );
 	}
 
 	/**
@@ -94,8 +94,7 @@ class LWTV_Slack_Integration {
 		$status = self::check_death_status();
 
 		// Bail if the status is false.
-		// || LWTV_DEV_SITE
-		if ( ! $status || LWTV_DEV_SITE || ! defined( LWTV_SLACK_DEATH ) ) {
+		if ( ! $status || LWTV_DEV_SITE ) {
 			return;
 		}
 
