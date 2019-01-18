@@ -94,8 +94,7 @@ class LWTV_Slack_Integration {
 		$status = self::check_death_status();
 
 		// Bail if the status is false.
-		// || LWTV_DEV_SITE
-		if ( ! $status || LWTV_DEV_SITE || ! defined( LWTV_SLACK_DEATH ) ) {
+		if ( ! $status || LWTV_DEV_SITE ) {
 			return;
 		}
 
