@@ -26,7 +26,7 @@ class LWTV_Shows_Like_This {
 		$return = '';
 
 		if ( ! empty( $show_id ) && has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
-			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" order="RAND" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies="lez_tropes,lez_genres,lez_intersections,lez_showtagged"]' );
+			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" fields="ids" order="RAND" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies="lez_tropes,lez_genres,lez_intersections,lez_showtagged"]' );
 		}
 
 		if ( empty( $return ) ) {
@@ -38,8 +38,12 @@ class LWTV_Shows_Like_This {
 
 	public static function meta_query( $meta_query, $post_id, $taxonomies, $args ) {
 
-		// $meta_query is an empty array if the format isn't thumbnails
-		// if not empty it's the meta_query for the  _thumbnail_id meta key
+		/*
+		 * The $meta_query variable is an array.
+		 *
+		 * If not empty it could be the meta query for post_thumbnails ( key '_thumbnail_id' )
+		 * or some other meta query (from the shortcode or widget).
+		 */
 
 		// Collect extras
 		$star  = ( get_post_meta( $post_id, 'lezshows_stars', true ) ) ? 'EXISTS' : 'NOT EXISTS';
@@ -67,19 +71,19 @@ class LWTV_Shows_Like_This {
 		$handpicked  = ( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) ? get_post_meta( $post_id, 'lezshows_similar_shows', true ) : false;
 		$add_results = array();
 
-		if ( false !== $handpicked ) {
+		// The shortcode only allows post ids or post objects from the query.
+		if ( ! empty( $results ) && empty( $args['fields'] ) ) {
+			$results = wp_list_pluck( $results, 'ID' );
+		}
 
-			// Add all the show IDs to a list
-			$show_list = array();
-			foreach ( $results as $result_show => $result_data ) {
-				$result_data = (array) $result_data;
-				$show_list[] = $result_data['ID'];
-			}
+		if ( false !== $handpicked ) {
+			// Array with ids.
+			$handpicked = wp_parse_id_list( $handpicked );
 
 			// For each show, add it to the list ONLY if the show isn't already listed.
 			foreach ( $handpicked as $a_show ) {
-				if ( ! in_array( $a_show, $show_list ) ) {
-					$add_results[] = (object) get_post( $a_show, ARRAY_A );
+				if ( ! in_array( $a_show, $results ) ) {
+					$add_results[] = $a_show;
 				}
 			}
 		}
