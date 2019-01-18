@@ -290,6 +290,9 @@ class LWTV_Affilliates {
 				case 'nbc':
 					$name = strtoupper( $hostname );
 					break;
+				case 'abc.go':
+					$name = 'ABC';
+					break;
 				case 'bbcamerica':
 					$name = 'BBC America';
 					break;
