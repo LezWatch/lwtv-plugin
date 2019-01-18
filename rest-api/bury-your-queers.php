@@ -126,14 +126,22 @@ class LWTV_BYQ_JSON {
 				// Get the post slug
 				$post_slug = get_post_field( 'post_name', get_post( $dead_char ) );
 
+				// Get the shows
+				$all_shows = get_post_meta( $dead_char->ID, 'lezchars_show_group', true );
+				$show_ids  = array();
+				foreach ( $all_shows as $show ) {
+					$show_ids[] = $show['show'];
+				}
+
 				// Add this character to the array
 				$death_list_array[ $post_slug ] = array(
-					'id'   => $dead_char->ID,
-					'slug' => $post_slug,
-					'name' => get_the_title( $dead_char ),
-					'url'  => get_the_permalink( $dead_char ),
-					'died' => $died,
-					'date' => $died_date,
+					'id'    => $dead_char->ID,
+					'slug'  => $post_slug,
+					'name'  => get_the_title( $dead_char ),
+					'url'   => get_the_permalink( $dead_char ),
+					'shows' => $show_ids,
+					'died'  => $died,
+					'date'  => $died_date,
 				);
 			}
 

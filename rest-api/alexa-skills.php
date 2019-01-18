@@ -29,7 +29,9 @@ class LWTV_Alexa_Skills {
 	 * Rest API init
 	 *
 	 * Creates callbacks
-	 *   - /lwtv/v1/flash-briefing
+	 *   - /lwtv/v1/alexa-skills/flash-briefing/
+	 *   - /lwtv/v1/alexa-skills/byq/
+	 *   - /lwtv/v1//alexa-skills/news/
 	 */
 	public function rest_api_init() {
 

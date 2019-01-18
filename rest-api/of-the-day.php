@@ -34,18 +34,30 @@ class LWTV_OTD_JSON {
 	 */
 	public static function rest_api_init() {
 
-		register_rest_route( 'lwtv/v1', '/of-the-day/', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'otd_rest_api_callback' ),
-		) );
-		register_rest_route( 'lwtv/v1', '/of-the-day/(?P<type>[a-zA-Z]+)', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'otd_rest_api_callback' ),
-		) );
-		register_rest_route( 'lwtv/v1', '/of-the-day/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z0-9-]+)', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'otd_rest_api_callback' ),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/of-the-day/',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'otd_rest_api_callback' ),
+			)
+		);
+		register_rest_route(
+			'lwtv/v1',
+			'/of-the-day/(?P<type>[a-zA-Z]+)',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'otd_rest_api_callback' ),
+			)
+		);
+		register_rest_route(
+			'lwtv/v1',
+			'/of-the-day/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z0-9-]+)',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'otd_rest_api_callback' ),
+			)
+		);
 	}
 
 	/**
@@ -152,7 +164,7 @@ class LWTV_OTD_JSON {
 		$post_id = $options[ $type ]['post'];
 		$image   = ( has_post_thumbnail( $post_id ) ) ? get_the_post_thumbnail_url( $post_id, 'full' ) : get_site_icon_url();
 
-		// Base Array:
+		// Build the Base Array:
 		$return = array(
 			'id'    => $post_id,
 			'name'  => get_the_title( $post_id ),
@@ -270,6 +282,7 @@ class LWTV_OTD_JSON {
 				case 'character':
 					// if the character is a cartoon, they MUST be a regular.
 					$is_toon = ( has_term( 'cartoon', 'lez_cliches', $id ) ) ? true : false;
+					// phpcs:ignore WordPress.PHP.StrictInArray
 					$is_regu = ( in_array( 'regular', get_post_meta( $id, 'lezchars_show_group', true ) ) ) ? true : false;
 					if ( ! $is_toon || ( $is_toon && $is_regu ) ) {
 						$valid_post = true;
