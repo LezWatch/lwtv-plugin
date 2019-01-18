@@ -71,14 +71,6 @@ class LWTV_Cron {
 		if ( ! wp_next_scheduled( 'lwtv_cache_event_daily' ) ) {
 			wp_schedule_event( time(), 'daily', 'lwtv_cache_event_daily' );
 		}
-
-		/*
-		// Currently we're going to try transients instead...
-		add_action( 'lwtv_posts_missed_schedule', array( $this, 'missed_schedule' ) );
-		if ( ! wp_next_scheduled( 'lwtv_posts_missed_schedule' ) ) {
-			wp_schedule_event( time(), 'every-15-minutes', 'lwtv_posts_missed_schedule' );
-		}
-		*/
 	}
 
 	/**
