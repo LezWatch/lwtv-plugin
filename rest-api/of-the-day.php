@@ -183,7 +183,10 @@ class LWTV_OTD_JSON {
 					$num_shows = count( $all_shows );
 					$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
 					$show_post = get_post( $shows_value['show'] );
-					$hashtag   = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_post->post_name ) ) );
+					$show_name = trim( preg_replace( '~\([^)]+\)~', '', $show_post->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters.
+					$show_name = str_replace( ' & ', ' and ', $show_name );
+					$show_name = sanitize_title( $show_name );
+					$hashtag   = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) );
 				}
 				// Set all shows (not used becuase of Sara Lance)
 				if ( '' !== $all_shows && ! empty( $shows_value ) ) {
@@ -201,7 +204,10 @@ class LWTV_OTD_JSON {
 				$return['loved']   = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
 				$return['score']   = get_post_meta( $post_id, 'lezshows_the_score', true );
 				$post_data         = get_post( $post_id );
-				$return['hashtag'] = '#' . implode( '', array_map( 'ucfirst', explode( '-', $post_data->post_name ) ) );
+				$show_name         = trim( preg_replace( '~\([^)]+\)~', '', $post_data->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters.
+				$show_name         = str_replace( ' & ', ' and ', $show_name );
+				$show_name         = sanitize_title( $show_name );
+				$return['hashtag'] = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) );
 				break;
 		}
 
