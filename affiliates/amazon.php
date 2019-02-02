@@ -17,13 +17,13 @@ class LWTV_Affiliate_Amazon {
 	/**
 	 * Determine what ad to show
 	 */
-	public static function show_ads( $post_id, $type ) {
+	public static function show_ads( $post_id, $type, $format = 'wide' ) {
 
 		// Return the proper output
 		switch ( $type ) {
 			case 'widget':
 			default:
-				$the_ad = self::output_widget( $post_id );
+				$the_ad = self::output_widget( $post_id, $format );
 				break;
 		}
 
@@ -33,167 +33,98 @@ class LWTV_Affiliate_Amazon {
 	/**
 	 * Output widget
 	 */
-	public static function output_widget( $post_id ) {
-		$output = '<center>' . self::bounty( $post_id ) . '</center>';
+	public static function output_widget( $post_id, $format ) {
+		$output = '<center>' . self::bounty( $post_id, $format ) . '</center>';
 		return $output;
 	}
 
 	/**
 	 * Generate a random bounty
 	 */
-	public static function bounty( $post_id ) {
+	public static function bounty( $post_id, $format ) {
 
-		// First let's check if the show is on a network we know....
-		$networks = array(
-			'showtime'     => array(
-				'expires'  => 'ongoing',
-				'banner'   => '1TAG79C3PQ0GFXZ39R82',
-				'linkid'   => '09a6d9595672f638f9f1c23689c40ef5',
-				'category' => 'primevideochannels',
+		$amazon_ads = array(
+			'wide' => array(
+				// 300x250
+				'mrs_maisel'    => array(
+					'banner'   => '01R2KB5YZTMAPA6S78G2',
+					'linkid'   => '0bbbdb2fc387b2ea73aa892e13eba9dd',
+					'category' => 'pivcreative',
+				),
+				'pride'         => array(
+					'banner'   => '1PPVF74KGV3PT8CB9JR2',
+					'linkid'   => 'c696d4f5c174afd46fb8f5bdee9ed9b5',
+					'category' => 'primeent',
+				),
+				'westworld'     => array(
+					'banner'   => '150VYK260KXYESVKAA02',
+					'linkid'   => 'fc4eb97adbbe0e281984a205d79b559a',
+					'category' => 'primevideochannels',
+				),
+				'britbox'       => array(
+					'banner'   => '06V9DZJBZ21E92635K82',
+					'linkid'   => '9d76bd102350dec1360349cd20089b71',
+					'category' => 'primevideochannels',
+				),
+				'gameofthrones' => array(
+					'banner'   => '14CSX9S0TYDSWZT15502',
+					'linkid'   => '94949318c7e79a2fb42cbd909a8318a0',
+					'category' => 'primevideochannels',
+				),
 			),
-			'history'      => array(
-				'expires'  => 'ongoing',
-				'banner'   => '1T7E2FGW5MFJNNJWTAR2',
-				'linkid'   => 'beb013efcdac91c8f30344338a953a97',
-				'category' => 'primevideochannels',
-			),
-			'hbo'          => array(
-				'expires'  => 'ongoing',
-				'banner'   => '1E0AR7ZBTK5HEDE0CM82',
-				'linkid'   => '07178879ba1dd6724b738c8c1069d9de',
-				'category' => 'primevideochannels',
-			),
-			'starz'        => array(
-				'expires'  => 'ongoing',
-				'banner'   => '00G3SH89QT95NWK3CX02',
-				'linkid'   => '1d12f79c1b8dd96406721134df111da6',
-				'category' => 'primevideochannels',
-			),
-			'bbc-america'  => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1MFVGHXVB06S23PS7Y82',
-				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
-				'category' => 'primevideochannels',
-			),
-			'bbc-four'     => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1MFVGHXVB06S23PS7Y82',
-				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
-				'category' => 'primevideochannels',
-			),
-			'bbc-three'    => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1MFVGHXVB06S23PS7Y82',
-				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
-				'category' => 'primevideochannels',
-			),
-			'bbc-two'      => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1MFVGHXVB06S23PS7Y82',
-				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
-				'category' => 'primevideochannels',
-			),
-			'bbc-one'      => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1MFVGHXVB06S23PS7Y82',
-				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
-				'category' => 'primevideochannels',
-			),
-			'bbc-wales'    => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1MFVGHXVB06S23PS7Y82',
-				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
-				'category' => 'primevideochannels',
-			),
-			'itv'          => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1MFVGHXVB06S23PS7Y82',
-				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
-				'category' => 'primevideochannels',
-			),
-			'itv-encore'   => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1MFVGHXVB06S23PS7Y82',
-				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
-				'category' => 'primevideochannels',
-			),
-			'sky-atlantic' => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1MFVGHXVB06S23PS7Y82',
-				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
-				'category' => 'primevideochannels',
-			),
-			'sky-1'        => array(
-				'expires'  => '2018-12-30',
-				'banner'   => '1MFVGHXVB06S23PS7Y82',
-				'linkid'   => 'a99e19307fc515de0e10ed04b7f70c7a',
-				'category' => 'primevideochannels',
+			// 160x600
+			'thin' => array(
+				'mrs_maisel'    => array(
+					'banner'   => '179M3M4HZVSRN11NY602',
+					'linkid'   => 'f3426cf628b26e75a43112ee3c53099d',
+					'category' => 'primeent',
+				),
+				'free_trial'    => array(
+					'banner'   => '161E7D8SBJFWK4M9MNG2',
+					'linkid'   => '20b14469a69f73ba970a4a56ae91f24a',
+					'category' => 'primemain',
+				),
+				'showtime'      => array(
+					'banner'   => '1KDYJTM5G5NPVXW1V2R2',
+					'linkid'   => '93c0604172b79cce3e8341d959d80b78',
+					'category' => 'primevideochannels',
+				),
+				'starz'         => array(
+					'banner'   => '0N482BNAZMAW3F4223G2',
+					'linkid'   => '5d0088e5d0477d7368f2aac6a45d1eef',
+					'category' => 'primevideochannels',
+				),
+				'cbs'           => array(
+					'banner'   => '1RSA96WAH3YGF1HZHCG2',
+					'linkid'   => 'b2a1cc5466874a57f58b9d36baab663c',
+					'category' => 'primevideochannels',
+				),
+				'westworld'     => array(
+					'banner'   => '068G1JD09XF3D3H7QXG2',
+					'linkid'   => '8a9058184c21a6625e8c396eaff6dc1d',
+					'category' => 'primevideochannels',
+				),
+				'britbox'       => array(
+					'banner'   => '062FRX60FAE1CTM89V82',
+					'linkid'   => '26db635a13dc4f3ffef10ed3dbfb6ad4',
+					'category' => 'primevideochannels',
+				),
+				'gameofthrones' => array(
+					'banner'   => '06BB0SBR8G81YR8KW9R2',
+					'linkid'   => '3719c3f34df27cd6ac5e64b4ab55ed4d',
+					'category' => 'primevideochannels',
+				),
 			),
 		);
 
-		// If the network is one of the networks above, let's set that:
-		$stations = get_the_terms( $post_id, 'lez_stations' );
-		if ( $stations && ! is_wp_error( $stations ) ) {
-			foreach ( $stations as $station ) {
-				if ( array_key_exists( $station->slug, $networks ) ) {
-					$expires = $networks[ $station->slug ]['expires'];
-					if ( 'ongoing' === $expires || strtotime( $expires ) >= time() ) {
-						$the_ad = $networks[ $station->slug ];
-					}
-				}
-			}
-		}
+		// Pick a random ad
+		$the_ad = $amazon_ads[ $format ][ array_rand( $amazon_ads[ $format ] ) ];
 
-		// The bounties if nothing else applies
-		$bounties = array(
-			'primeent'  => array(
-				'expires'  => 'ongoing',
-				'banner'   => '1NPA5510D9E368222PR2',
-				'linkid'   => '8a73febb7e83741deca4ec0eb7aa3a1f',
-				'category' => 'primeent',
-			),
-			'anime-dvd' => array(
-				'expires'  => 'ongoing',
-				'banner'   => '0EAD0FBRPQ3YQD8YDM82',
-				'linkid'   => 'a88db93ce5bd7f8a91d7dbf41aa5d75a',
-				'category' => 'dvd',
-			),
-			'primemain' => array(
-				'expires'  => 'ongoing',
-				'banner'   => '028WNSXDMC6H5YDNCB82',
-				'linkid'   => '69b1c93038903293d05110a1c5397f15',
-				'category' => 'primemain',
-			),
-			'firetv'    => array(
-				'expires'  => 'ongoing',
-				'banner'   => '0FXJ4RSQAHG9T84VY2R2',
-				'linkid'   => '7adcc745e35b87b38324232f199497df',
-				'category' => 'amzn_firetv_primepr_0918',
-			),
-			'firetv2'   => array(
-				'expires'  => '2020-10-15',
-				'banner'   => '07Z1A8KKG3NGABM31PG2',
-				'linkid'   => 'bf9112f31ef9ff7bb309e14bad1cc2cd',
-				'category' => 'amzn_firetv_eg_101618',
-			),
-		);
-
-		// If bounty isn't set yet, we need to here
-		if ( ! isset( $the_ad ) ) {
-			// Exclude anything expired
-			foreach ( $bounties as $a_bounty => $value ) {
-				$expires = $value['expires'];
-
-				if ( 'ongoing' === $value['expires'] || strtotime( $expires ) >= time() ) {
-					$bounties[ $a_bounty ] = $value;
-				}
-			}
-			// Pick a random valid bounty
-			$the_ad = $bounties [ array_rand( $bounties ) ];
-		}
+		// Set the size based on the format
+		$size = ( 'wide' === $format ) ? 'width="300" height="250"' : 'width="160" height="600"';
 
 		// Build the Ad
-		$return = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=' . $the_ad['category'] . '&banner=' . $the_ad['banner'] . '&f=ifr&linkID=' . $the_ad['linkid'] . '&t=lezpress-20&tracking_id=lezpress-20" width="300" height="250" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
+		$return = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=' . $the_ad['category'] . '&banner=' . $the_ad['banner'] . '&f=ifr&linkID=' . $the_ad['linkid'] . '&t=lezpress-20&tracking_id=lezpress-20" ' . $size . ' scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
 
 		return $return;
 	}
