@@ -4,12 +4,32 @@
  * Description: Automagical affiliate things
  */
 
+// Require Widgets code
+require_once 'widget.php';
+
 class LWTV_Affilliates {
+
+	// These define the possible layouts and affiliates
+	public static $valid_types;
+	public static $valid_formats;
+	public static $format_sizes;
 
 	/**
 	 * __construct function.
 	 */
 	public function __construct() {
+
+		self::$valid_types   = array( 'random', 'cbs', 'amazon' );
+		self::$valid_formats = array( 'affiliate', 'banner', 'text', 'thin', 'tiny', 'wide' );
+		self::$format_sizes  = array(
+			'affiliate' => '',
+			'banner'    => '728x90',
+			'text'      => '',
+			'thin'      => '160x600',
+			'tiny'      => '320x50',
+			'wide'      => '300x250',
+		);
+
 		add_filter( 'widget_text', 'do_shortcode' );
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'wp_footer', array( $this, 'apple_auto_link_maker' ) );
@@ -21,7 +41,6 @@ class LWTV_Affilliates {
 	 * Init
 	 */
 	public function init() {
-		add_shortcode( 'amazon-bounties', array( $this, 'shortcode_amazon_bounties' ) );
 		add_shortcode( 'affiliates', array( $this, 'shortcode_affiliates' ) );
 	}
 
@@ -40,9 +59,9 @@ class LWTV_Affilliates {
 	*/
 	public static function shortcode_affiliates( $atts ) {
 		if ( is_archive() ) {
-			$affiliates = $this->widget_affiliates( 'thin' );
+			$affiliates = $this->widget( 'random', 'thin' );
 		} else {
-			$affiliates = $this->widget_affiliates( 'wide' );
+			$affiliates = $this->widget( 'random', 'wide' );
 		}
 
 		$advert = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . $affiliates . '</center></div><!-- END Affiliate Ads -->';
@@ -51,48 +70,80 @@ class LWTV_Affilliates {
 	}
 
 	/**
-	 * Static Affiliates
-	 *
-	 * This includes links to Yikes!, DreamHost, HTLPodcast, and things that stay pretty static.
+	 * Build the widget
 	 *
 	 * @access public
 	 * @return array
 	 */
-	public static function widget_affiliates( $format ) {
+	public static function widget( $type, $format ) {
 
+		$format = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
 		$id     = get_the_ID();
-		$local  = array(
-			'facetwp'   => '<a href="https://facetwp.com/?ref=91&campaign=LezPress"><img src="' . plugins_url( 'images/facetwp-300x250.png', __FILE__ ) . '"></a>',
-			'dreamhost' => '<a href="https://dreamhost.com/dreampress/"><img src="' . plugins_url( 'images/dreamhost-300x250.png', __FILE__ ) . '"></a>',
-			'yikes'     => '<a href="https://www.yikesinc.com"><img src="' . plugins_url( 'images/yikes-300x250.png', __FILE__ ) . '"></a>',
-		);
-		$number = wp_rand();
 
-		if ( 0 === $number % 2 ) {
-			$advert = self::cbs( $id, 'widget', $format );
-		} elseif ( 0 === $number % 3 ) {
-			$advert = self::amazon( $id, 'widget', $format );
-		} else {
-			if ( 'wide' === $format ) {
-				$advert = $local[ array_rand( $local ) ];
-			} else {
-				$advert = self::cbs( $id, 'widget', $format );
-			}
+		switch ( $type ) {
+			case 'apple':
+				$advert = self::apple( $id, $format );
+				break;
+			case 'amazon':
+				$advert = self::amazon( $id, $format );
+				break;
+			case 'cbs':
+				$advert = self::cbs( $id, $format );
+				break;
+			case 'local':
+				$advert = self::local( $id, $format );
+				break;
+			default:
+				$advert = self::random( $id, $format );
 		}
 
 		return $advert;
 	}
 
-	/*
-	 * Display Amazon Bounties
-	 *
-	 * THIS IS DEPRECATED!
-	 *
-	 * @since 1.0
-	*/
-	public static function shortcode_amazon_bounties( $atts ) {
-		$ads = '<!-- Deprecated -->';
-		return $ads;
+	/**
+	 * Call something random...
+	 * This is a basic check of a random number
+	 */
+	public static function random( $id, $format ) {
+		$number = wp_rand();
+		if ( 0 === $number % 2 ) {
+			$advert = self::cbs( $id, $format );
+		} else {
+			$advert = self::amazon( $id, $format );
+		}
+		return $advert;
+	}
+
+	/**
+	 * Call Amazon Affilate Data
+	 */
+	public static function amazon( $id, $format = 'wide' ) {
+		require_once 'amazon.php';
+		return LWTV_Affiliate_Amazon::show_ads( $id, $format );
+	}
+
+	/**
+	 * Call Apple Affiliate Data
+	 */
+	public static function apple( $id, $format = 'wide' ) {
+		require_once 'apple.php';
+		return LWTV_Affiliate_Apple::show_ads( $id, $format );
+	}
+
+	/**
+	 * Call CBS Affilate Data
+	 */
+	public static function cbs( $id, $format = 'wide' ) {
+		require_once 'cbs.php';
+		return LWTV_Affiliate_CBS::show_ads( $id, $format );
+	}
+
+	/**
+	 * Call Local Affilate Data
+	 */
+	public static function local( $id, $format = 'wide' ) {
+		require_once 'local.php';
+		return LWTV_Affiliate_Local::show_ads( $id, $format );
 	}
 
 	/**
@@ -125,8 +176,8 @@ class LWTV_Affilliates {
 	 * Determine what to call for actors
 	 * This is just random
 	 */
-	public static function actors( $id, $type ) {
-		$return = self::random( $id, $type );
+	public static function actors( $id, $format ) {
+		$return = self::random( $id, $format );
 		return $return;
 	}
 
@@ -134,8 +185,8 @@ class LWTV_Affilliates {
 	 * Determine what to call for characters
 	 * This is just random
 	 */
-	public static function characters( $id, $type ) {
-		$return = self::random( $id, $type );
+	public static function characters( $id, $format ) {
+		$return = self::random( $id, $format );
 		return $return;
 	}
 
@@ -143,22 +194,22 @@ class LWTV_Affilliates {
 	 * Determine what to call for shows
 	 * This is much more complex!
 	 */
-	public static function shows( $id, $type ) {
+	public static function shows( $id, $format ) {
 
-		// Default ads are Amazon
-		$return = self::amazon( $id, $type );
+		$format = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
 
 		// Show a different show ad depending on things...
-		if ( 'affiliate' === $type ) {
-			$return = self::affiliate_link( $id );
+		if ( 'affiliate' === $format ) {
+			$affiliates = self::affiliate_link( $id );
 		} else {
 			// Figure out if this is a CBS show
-			$on_cbs = self::is_show_cbs( $id );
-			if ( $on_cbs ) {
-				$return = self::cbs( $id, $type );
-			}
+			$on_cbs     = self::is_show_cbs( $id );
+			$affiliates = ( $on_cbs ) ? self::cbs( $id, $format ) : self::random( $id, $format );
 		}
-		return $return;
+
+		$advert = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . $affiliates . '</center></div><!-- END Affiliate Ads -->';
+
+		return $advert;
 	}
 
 	/**
@@ -188,44 +239,6 @@ class LWTV_Affilliates {
 		}
 
 		return $on_cbs;
-	}
-
-	/**
-	 * Call something random...
-	 * This is a basic check of a random number
-	 */
-	public static function random( $id, $type ) {
-		$number = wp_rand();
-		if ( 0 === $number % 2 ) {
-			$return = self::cbs( $id, $type );
-		} else {
-			$return = self::amazon( $id, $type );
-		}
-		return $return;
-	}
-
-	/**
-	 * Call Amazon Affilate Data
-	 */
-	public static function amazon( $id, $type, $format = 'wide' ) {
-		require_once 'amazon.php';
-		return LWTV_Affiliate_Amazon::show_ads( $id, $type, $format );
-	}
-
-	/**
-	 * Call CBS Affilate Data
-	 */
-	public static function cbs( $id, $type, $format = 'wide' ) {
-		require_once 'cbs.php';
-		return LWTV_Affiliate_CBS::show_ads( $id, $type, $format );
-	}
-
-	/**
-	 * Call Apple Affiliate Data
-	 */
-	public static function apple( $id, $type, $format = 'wide' ) {
-		require_once 'apple.php';
-		return LWTV_Affiliate_Apple::show_ads( $id, $type, $format );
 	}
 
 	/**
@@ -313,7 +326,4 @@ class LWTV_Affilliates {
 
 }
 
-// If we aren't on an admin page, let's do this
-if ( ! is_admin() ) {
-	new LWTV_Affilliates();
-}
+new LWTV_Affilliates();
