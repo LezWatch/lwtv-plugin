@@ -17,16 +17,8 @@ class LWTV_Affiliate_Amazon {
 	/**
 	 * Determine what ad to show
 	 */
-	public static function show_ads( $post_id, $type, $format = 'wide' ) {
-
-		// Return the proper output
-		switch ( $type ) {
-			case 'widget':
-			default:
-				$the_ad = self::output_widget( $post_id, $format );
-				break;
-		}
-
+	public static function show_ads( $post_id, $format = 'wide' ) {
+		$the_ad = self::output_widget( $post_id, $format );
 		return $the_ad;
 	}
 
@@ -117,16 +109,25 @@ class LWTV_Affiliate_Amazon {
 			),
 		);
 
-		// Pick a random ad
-		$the_ad = $amazon_ads[ $format ][ array_rand( $amazon_ads[ $format ] ) ];
+		switch ( $format ) {
+			case 'banner':
+				$the_ad = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=48&l=ur1&category=primeent&banner=1JDKYZ80A7KX1C3HKRG2&f=ifr&linkID=ac78fdea1927d668e2619ecf07d8fcba&t=lezpress-20&tracking_id=lezpress-20" width="728" height="90" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
+				break;
+			case 'text':
+				$the_ad = '<a target="_blank" href="https://www.amazon.com/b/?rh=i:instant-video,n:2858778011&ie=UTF8&filterId=OFFER_FILTER=SUBSCRIPTIONS&node=2858778011&ref_=assoc_tag_ph_1465430649312&_encoding=UTF8&camp=1789&creative=9325&linkCode=pf4&tag=lezpress-20&linkId=db98f9805eb2ff043fd508b10b63ab85">Join Prime Video Channels Free Trial</a><img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
+				break;
+			case 'tiny':
+				$the_ad = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=288&l=ur1&category=primeent&banner=1JYFV583HV833YKS3M82&f=ifr&linkID=14b666ac048218f73ea710ff3c3d339c&t=lezpress-20&tracking_id=lezpress-20" width="320" height="50" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
+				break;
+			default:
+				// A random ad will be served
+				$pick_ad = $amazon_ads[ $format ][ array_rand( $amazon_ads[ $format ] ) ];
+				$sizes   = explode( 'x', LWTV_Affilliates::$format_sizes[ $format ] );
+				$size    = 'width="' . $sizes[0] . '" height="' . $sizes[1] . '"';
+				$the_ad  = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=' . $pick_ad['category'] . '&banner=' . $pick_ad['banner'] . '&f=ifr&linkID=' . $pick_ad['linkid'] . '&t=lezpress-20&tracking_id=lezpress-20" ' . $size . ' scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
+		}
 
-		// Set the size based on the format
-		$size = ( 'wide' === $format ) ? 'width="300" height="250"' : 'width="160" height="600"';
-
-		// Build the Ad
-		$return = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=' . $the_ad['category'] . '&banner=' . $the_ad['banner'] . '&f=ifr&linkID=' . $the_ad['linkid'] . '&t=lezpress-20&tracking_id=lezpress-20" ' . $size . ' scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
-
-		return $return;
+		return $the_ad;
 	}
 
 }

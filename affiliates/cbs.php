@@ -6,50 +6,9 @@
 
 
 class LWTV_Affiliate_CBS {
-	public static function show_ads( $post_id, $type, $format = 'wide' ) {
-
-		// Return the proper output
-		switch ( $type ) {
-			case 'text':
-				$the_ad = self::output_text( $post_id );
-				break;
-			case 'widget':
-			default:
-				$the_ad = self::output_widget( $post_id, $format );
-				break;
-		}
-
+	public static function show_ads( $post_id, $format = 'wide' ) {
+		$the_ad = self::output_widget( $post_id, $format );
 		return $the_ad;
-	}
-
-	/**
-	 * CBS wants to run specific ad copy, so we're doing this to try theirs...
-	 */
-	public static function output_text( $post_id ) {
-
-		$slug        = get_post_field( 'post_name', $post_id );
-		$named_array = array(
-			'blue-bloods'                   => '379693',
-			'macgyver'                      => '379705',
-			'madam-secretary'               => '379710',
-			'ncis'                          => '379721',
-			'ncis-new-orleans'              => '379721',
-			'star-trek-the-next-generation' => '366250',
-			'star-trek-deep-space-nine'     => '366250',
-			'star-trek-discovery'           => '440479',
-			'the-big-bang-theory'           => '359935',
-			'the-good-wife'                 => '456231',
-			'the-good-fight'                => '455992',
-			'the-young-and-the-restless'    => '359948',
-		);
-
-		if ( array_key_exists( $slug, $named_array ) ) {
-			$link = $named_array[ $slug ];
-		} else {
-			$link = '176086';
-		}
-
-		return $link;
 	}
 
 	/**
@@ -57,55 +16,87 @@ class LWTV_Affiliate_CBS {
 	 */
 	public static function output_widget( $post_id, $format ) {
 
-		// Wide Ads
 		$named_array = array(
-			// 300x250
-			'wide' => array(
-				'the-good-wife'                 => '456231',
-				'the-good-fight'                => '485771',
-				'star-trek-the-next-generation' => '366250',
-				'star-trek-deep-space-nine'     => '366250',
-				'star-trek-discovery'           => '440479',
-				'macgyver'                      => '379705',
-				'madam-secretary'               => '379710',
-				'ncis'                          => '379721',
-				'ncis-new-orleans'              => '379721',
-				'the-young-and-the-restless'    => '359948',
-				'blue-bloods'                   => '379693',
-				'the-big-bang-theory'           => '359935',
+			'the-good-wife'                 => array(
+				'banner' => '456314',
+				'thin'   => '455991',
+				'tiny'   => '456233',
+				'wide'   => '456231',
 			),
-			// 160x600
-			'thin' => array(
-				'the-good-wife'                 => '455991',
-				'the-good-fight'                => '455991',
-				'star-trek-the-next-generation' => '366255',
-				'star-trek-deep-space-nine'     => '447371',
-				'star-trek-discovery'           => '567408',
-				'macgyver'                      => '379704',
-				'madam-secretary'               => '379709',
-				'ncis'                          => '359962',
-				'ncis-new-orleans'              => '359962',
-				'the-young-and-the-restless'    => '359947',
-				'blue-bloods'                   => '379692',
-				'the-big-bang-theory'           => '359962',
+			'the-good-fight'                => array(
+				'banner' => '553296',
+				'thin'   => '455991',
+				'tiny'   => '456233',
+				'wide'   => '485771',
+			),
+			'star-trek-the-next-generation' => array(
+				'banner' => '366253',
+				'thin'   => '366255',
+				'tiny'   => '440481',
+				'wide'   => '366250',
+			),
+			'star-trek-deep-space-nine'     => array(
+				'banner' => '447375',
+				'thin'   => '447371',
+				'tiny'   => '447374',
+				'wide'   => '366250',
+			),
+			'star-trek-discovery'           => array(
+				'banner' => '440477',
+				'thin'   => '567408',
+				'tiny'   => '440476',
+				'wide'   => '440479',
+			),
+			'macgyver'                      => array(
+				'banner' => '379708',
+				'thin'   => '379704',
+				'tiny'   => '379707',
+				'wide'   => '379705',
+			),
+			'madam-secretary'               => array(
+				'banner' => '379713',
+				'thin'   => '379709',
+				'tiny'   => '379712',
+				'wide'   => '379710',
+			),
+			'the-young-and-the-restless'    => array(
+				'banner' => '359951',
+				'thin'   => '359947',
+				'tiny'   => '359950',
+				'wide'   => '359948',
+			),
+			'blue-bloods'                   => array(
+				'banner' => '379690',
+				'thin'   => '379692',
+				'tiny'   => '379689',
+				'wide'   => '379693',
 			),
 		);
+
 		$generic_array = array(
-			'wide' => array( '455992', '572335', '440479', '567410', '379710', '553291' ),
-			'thin' => array( '553290', '455991', '440473', '440478', '447371', '567408', '366255', '455991', '572333' ),
+			'banner' => array( '359951', '379713', '379690', '553296', '447375', '359957', '366253', '359946', '359941', '440477', '379708', '359938', '456314', '447376' ),
+			'thin'   => array( '359947', '379709', '553290', '455991', '440473', '440478', '447371', '567408', '366255', '455991', '447371', '572333', '379704', '379692', '359962' ),
+			'tiny'   => array( '359950', '379712', '379689', '379707', '359960', '447374', '456233', '440481', '440476', '553293' ),
+			'wide'   => array( '359948', '379710', '359935', '379721', '455992', '572335', '440479', '567410', '379710', '379693', '379705', '456231', '366250', '485771', '553291' ),
 		);
 
-		$slug = get_post_field( 'post_name', $post_id );
-
-		if ( array_key_exists( $slug, $named_array[ $format ] ) ) {
-			$ad = $named_array[ $format ][ $slug ];
+		if ( 'text' === $format ) {
+			$the_ad = '<h3><a href="//cbs-allaccess.7eer.net/c/1242493/304293/3065">Stream your favorite shows on demand -- now commercial free -- on CBS All Access.  Learn more now!</a></h3>
+<img height="0" width="0" src="//cbs-allaccess.7eer.net/i/1242493/304293/3065" style="position:absolute;visibility:hidden;" border="0" />';
 		} else {
-			$ad = $generic_array[ $format ][ array_rand( $generic_array[ $format ] ) ];
+			$slug = get_post_field( 'post_name', $post_id );
+
+			if ( array_key_exists( $slug, $named_array ) ) {
+				$ad = $named_array[ $slug ][ $format ];
+			} else {
+				$ad = $generic_array[ $format ][ array_rand( $generic_array[ $format ] ) ];
+			}
+
+			$sizes = explode( 'x', LWTV_Affilliates::$format_sizes[ $format ] );
+			$size = 'width="' . $sizes[0] . '" height="' . $sizes[1] . '"';
+
+			$the_ad = '<a href="//cbs-allaccess.7eer.net/c/1242493/' . $ad . '/3065"><img src="//a.impactradius-go.com/display-ad/3065-' . $ad . '" border="0" alt="" ' . $size . ' /></a><img height="0" width="0" src="//cbs-allaccess.7eer.net/i/1242493/' . $ad . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
 		}
-
-		$size = ( 'wide' === $format ) ? 'width="300" height="250"' : 'width="160" height="600"';
-
-		$the_ad = '<a href="//cbs-allaccess.7eer.net/c/1242493/' . $ad . '/3065"><img src="//a.impactradius-go.com/display-ad/3065-' . $ad . '" border="0" alt="" ' . $size . ' /></a><img height="0" width="0" src="//cbs-allaccess.7eer.net/i/1242493/' . $ad . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
 
 		return $the_ad;
 
