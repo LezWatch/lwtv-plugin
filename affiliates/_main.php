@@ -20,7 +20,7 @@ class LWTV_Affilliates {
 	public function __construct() {
 
 		self::$valid_types   = array( 'random', 'cbs', 'amazon' );
-		self::$valid_formats = array( 'affiliate', 'banner', 'text', 'thin', 'tiny', 'wide' );
+		self::$valid_formats = array( 'banner', 'text', 'thin', 'tiny', 'wide' );
 		self::$format_sizes  = array(
 			'affiliate' => '',
 			'banner'    => '728x90',
@@ -77,7 +77,7 @@ class LWTV_Affilliates {
 	 */
 	public static function widget( $type, $format ) {
 
-		$format = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
+		$format = esc_attr( $format );
 		$id     = get_the_ID();
 
 		switch ( $type ) {
