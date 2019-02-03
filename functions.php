@@ -3,7 +3,7 @@
  * Plugin Name: Core LezWatch.TV Plugin
  * Plugin URI:  https://lezwatchtv.com
  * Description: All the base code for LezWatch.TV - If this isn't active, the site dies. An ugly death.
- * Version: 3.0
+ * Version: 3.1
  * Author: LezWatch.TV
  *
  * @package LWTV_PLUGIN
