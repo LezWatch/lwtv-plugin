@@ -20,7 +20,7 @@ class LWTV_Affilliates {
 	public function __construct() {
 
 		self::$valid_types   = array( 'random', 'cbs', 'amazon' );
-		self::$valid_formats = array( 'affiliate', 'banner', 'text', 'thin', 'tiny', 'wide' );
+		self::$valid_formats = array( 'banner', 'text', 'thin', 'tiny', 'wide' );
 		self::$format_sizes  = array(
 			'affiliate' => '',
 			'banner'    => '728x90',
@@ -77,7 +77,7 @@ class LWTV_Affilliates {
 	 */
 	public static function widget( $type, $format ) {
 
-		$format = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
+		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 		$id     = get_the_ID();
 
 		switch ( $type ) {
@@ -105,6 +105,7 @@ class LWTV_Affilliates {
 	 * This is a basic check of a random number
 	 */
 	public static function random( $id, $format ) {
+		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 		$number = wp_rand();
 		if ( 0 === $number % 2 ) {
 			$advert = self::cbs( $id, $format );
@@ -117,7 +118,7 @@ class LWTV_Affilliates {
 	/**
 	 * Call Amazon Affilate Data
 	 */
-	public static function amazon( $id, $format = 'wide' ) {
+	public static function amazon( $id, $format ) {
 		require_once 'amazon.php';
 		return LWTV_Affiliate_Amazon::show_ads( $id, $format );
 	}
@@ -125,7 +126,7 @@ class LWTV_Affilliates {
 	/**
 	 * Call Apple Affiliate Data
 	 */
-	public static function apple( $id, $format = 'wide' ) {
+	public static function apple( $id, $format ) {
 		require_once 'apple.php';
 		return LWTV_Affiliate_Apple::show_ads( $id, $format );
 	}
@@ -186,8 +187,9 @@ class LWTV_Affilliates {
 	 * This is just random
 	 */
 	public static function characters( $id, $format ) {
-		$return = self::random( $id, $format );
-		return $return;
+		$affiliates = self::random( $id, $format );
+		$advert     = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . $affiliates . '</center></div><!-- END Affiliate Ads -->';
+		return $advert;
 	}
 
 	/**

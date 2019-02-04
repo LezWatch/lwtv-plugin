@@ -15,7 +15,6 @@ class LWTV_Affiliate_CBS {
 	 * Figure out which ad we really want to show....
 	 */
 	public static function output_widget( $post_id, $format ) {
-
 		$named_array = array(
 			'the-good-wife'                 => array(
 				'banner' => '456314',
@@ -93,7 +92,7 @@ class LWTV_Affiliate_CBS {
 			}
 
 			$sizes = explode( 'x', LWTV_Affilliates::$format_sizes[ $format ] );
-			$size = 'width="' . $sizes[0] . '" height="' . $sizes[1] . '"';
+			$size  = 'width="' . $sizes[0] . '" height="' . $sizes[1] . '"';
 
 			$the_ad = '<a href="//cbs-allaccess.7eer.net/c/1242493/' . $ad . '/3065"><img src="//a.impactradius-go.com/display-ad/3065-' . $ad . '" border="0" alt="" ' . $size . ' /></a><img height="0" width="0" src="//cbs-allaccess.7eer.net/i/1242493/' . $ad . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
 		}
