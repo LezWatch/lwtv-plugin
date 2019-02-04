@@ -198,18 +198,17 @@ class LWTV_Affilliates {
 	 */
 	public static function shows( $id, $format ) {
 
-		$format = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
-
 		// Show a different show ad depending on things...
 		if ( 'affiliate' === $format ) {
 			$affiliates = self::affiliate_link( $id );
 		} else {
+			$format = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
 			// Figure out if this is a CBS show
-			$on_cbs     = self::is_show_cbs( $id );
-			$affiliates = ( $on_cbs ) ? self::cbs( $id, $format ) : self::random( $id, $format );
+			$get_the_ad = ( self::is_show_cbs( $id ) ) ? self::cbs( $id, $format ) : self::random( $id, $format );
+			$affiliates = '<div class="affiliate-ads"><center>' . $affiliates . '</center></div>';
 		}
 
-		$advert = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . $affiliates . '</center></div><!-- END Affiliate Ads -->';
+		$advert = '<!-- BEGIN Affiliate Links -->' . $affiliates . '<!-- END Affiliate Links -->';
 
 		return $advert;
 	}
@@ -269,7 +268,7 @@ class LWTV_Affilliates {
 			// Lets get the URLs!
 			switch ( $hostname ) {
 				case 'amazon':
-					$url   = $clean_url . '/ref=as_li_tl?ie=UTF8&tag=lezpress-20';
+					$url   = $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20';
 					$name  = 'Amazon';
 					$extra = '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
 					break;
@@ -280,7 +279,7 @@ class LWTV_Affilliates {
 					break;
 				case '7eer':
 				case 'cbs':
-					$cbs_id = self::cbs( $id, 'text' );
+					$cbs_id = self::cbs( $id, 'id' );
 					$url    = 'https://cbs-allaccess.7eer.net/c/1242493/' . $cbs_id . '/3065';
 					$extra  = '<img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $cbs_id . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
 					$name   = 'CBS All Access';
