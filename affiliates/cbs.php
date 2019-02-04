@@ -85,7 +85,7 @@ class LWTV_Affiliate_CBS {
 		} else {
 			$slug = get_post_field( 'post_name', $post_id );
 
-			$kind = ( 'id' === $format ) ? 'wide' : $kind;
+			$kind = ( 'id' === $format ) ? 'wide' : $format;
 			if ( array_key_exists( $slug, $named_array ) ) {
 				$ad = $named_array[ $slug ][ $kind ];
 			} else {
