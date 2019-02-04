@@ -205,7 +205,7 @@ class LWTV_Affilliates {
 			$format = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
 			// Figure out if this is a CBS show
 			$get_the_ad = ( self::is_show_cbs( $id ) ) ? self::cbs( $id, $format ) : self::random( $id, $format );
-			$affiliates = '<div class="affiliate-ads"><center>' . $affiliates . '</center></div>';
+			$affiliates = '<div class="affiliate-ads"><center>' . $get_the_ad . '</center></div>';
 		}
 
 		$advert = '<!-- BEGIN Affiliate Links -->' . $affiliates . '<!-- END Affiliate Links -->';
