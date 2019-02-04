@@ -85,16 +85,22 @@ class LWTV_Affiliate_CBS {
 		} else {
 			$slug = get_post_field( 'post_name', $post_id );
 
+			$kind = ( 'id' === $format ) ? 'wide' : $kind;
 			if ( array_key_exists( $slug, $named_array ) ) {
-				$ad = $named_array[ $slug ][ $format ];
+				$ad = $named_array[ $slug ][ $kind ];
 			} else {
-				$ad = $generic_array[ $format ][ array_rand( $generic_array[ $format ] ) ];
+				$ad = $generic_array[ $kind ][ array_rand( $generic_array[ $kind ] ) ];
 			}
 
-			$sizes = explode( 'x', LWTV_Affilliates::$format_sizes[ $format ] );
-			$size  = 'width="' . $sizes[0] . '" height="' . $sizes[1] . '"';
+			if ( 'id' === $format ) {
+				$the_ad = $ad;
+			} else {
+				$sizes = explode( 'x', LWTV_Affilliates::$format_sizes[ $kind ] );
+				$size  = 'width="' . $sizes[0] . '" height="' . $sizes[1] . '"';
 
-			$the_ad = '<a href="//cbs-allaccess.7eer.net/c/1242493/' . $ad . '/3065"><img src="//a.impactradius-go.com/display-ad/3065-' . $ad . '" border="0" alt="" ' . $size . ' /></a><img height="0" width="0" src="//cbs-allaccess.7eer.net/i/1242493/' . $ad . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
+				$the_ad = '<a href="//cbs-allaccess.7eer.net/c/1242493/' . $ad . '/3065"><img src="//a.impactradius-go.com/display-ad/3065-' . $ad . '" border="0" alt="" ' . $size . ' /></a><img height="0" width="0" src="//cbs-allaccess.7eer.net/i/1242493/' . $ad . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
+			}
+
 		}
 
 		return $the_ad;
