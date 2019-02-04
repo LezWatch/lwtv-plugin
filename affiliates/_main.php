@@ -198,18 +198,17 @@ class LWTV_Affilliates {
 	 */
 	public static function shows( $id, $format ) {
 
-		$format = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
-
 		// Show a different show ad depending on things...
 		if ( 'affiliate' === $format ) {
 			$affiliates = self::affiliate_link( $id );
 		} else {
+			$format = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
 			// Figure out if this is a CBS show
-			$on_cbs     = self::is_show_cbs( $id );
-			$affiliates = ( $on_cbs ) ? self::cbs( $id, $format ) : self::random( $id, $format );
+			$get_the_ad = ( self::is_show_cbs( $id ) ) ? self::cbs( $id, $format ) : self::random( $id, $format );
+			$affiliates = '<div class="affiliate-ads"><center>' . $affiliates . '</center></div>';
 		}
 
-		$advert = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . $affiliates . '</center></div><!-- END Affiliate Ads -->';
+		$advert = '<!-- BEGIN Affiliate Links -->' . $affiliates . '<!-- END Affiliate Links -->';
 
 		return $advert;
 	}
