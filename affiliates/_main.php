@@ -268,7 +268,7 @@ class LWTV_Affilliates {
 			// Lets get the URLs!
 			switch ( $hostname ) {
 				case 'amazon':
-					$url   = $clean_url . '/ref=as_li_tl?ie=UTF8&tag=lezpress-20';
+					$url   = $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20';
 					$name  = 'Amazon';
 					$extra = '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
 					break;
