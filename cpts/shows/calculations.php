@@ -427,19 +427,13 @@ class LWTV_Shows_Calculate {
 		$calculate = ( $score_show_rating + $score_chars_alive + $score_chars_score + $score_show_tropes ) / 4;
 
 		// Add Intersectionality Bonus
-		// If you do good with intersectionality you can have more points up to 10
+		// If you do good with intersectionality you can have more points up to 15
 		$count_inters = 0;
 		$intersection = get_the_terms( $post_id, 'lez_intersections' );
-
 		if ( is_array( $intersection ) ) {
 			$count_inters = count( $intersection );
 		}
-
-		if ( ( $count_inters * 3 ) >= 15 ) {
-			$calculate += 15;
-		} else {
-			$calculate += ( $count_inters * 3 );
-		}
+		$calculate += min( ( $count_inters * 3 ), 15 );
 
 		// Keep it between 0 and 100
 		if ( $calculate > 100 ) {
