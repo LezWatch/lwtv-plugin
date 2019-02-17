@@ -74,7 +74,7 @@ class LWTV_Affiliate_Apple {
 			$the_ad = self::random( $post_id );
 		}
 
-		$return = '<center>' . $the_ad . '</center>';
+		$return = $the_ad;
 
 		return $return;
 	}

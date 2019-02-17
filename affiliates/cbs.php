@@ -100,13 +100,9 @@ class LWTV_Affiliate_CBS {
 
 				$the_ad = '<a href="//cbs-allaccess.7eer.net/c/1242493/' . $ad . '/3065"><img src="//a.impactradius-go.com/display-ad/3065-' . $ad . '" border="0" alt="" ' . $size . ' /></a><img height="0" width="0" src="//cbs-allaccess.7eer.net/i/1242493/' . $ad . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
 			}
-
 		}
-
 		return $the_ad;
-
 	}
-
 }
 
 new LWTV_Affiliate_CBS();

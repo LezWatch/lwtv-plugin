@@ -132,7 +132,11 @@ class LWTV_Affilliates {
 	}
 
 	/**
-	 * Call CBS Affilate Data
+	 * [cbs description]
+	 * @param  int    $id       Post ID
+	 * @param  string $format   Type of Add
+	 * @param  array  $stations Array of stations
+	 * @return string           The ad
 	 */
 	public static function cbs( $id, $format = 'wide' ) {
 		require_once 'cbs.php';
@@ -200,11 +204,27 @@ class LWTV_Affilliates {
 
 		// Show a different show ad depending on things...
 		if ( 'affiliate' === $format ) {
+			// Show an affiliate link
 			$affiliates = self::affiliate_link( $id );
 		} else {
-			$format = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
-			// Figure out if this is a CBS show
-			$get_the_ad = ( self::is_show_cbs( $id ) ) ? self::cbs( $id, $format ) : self::random( $id, $format );
+			// Show an advert
+			$format     = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
+			$is_special = self::get_special_stations( $id );
+
+			// If it's a special station, we'll show that, else show random
+			if ( $is_special['cbs'] ) {
+				// CBS pays best.
+				$get_the_ad = self::cbs( $id, $format );
+			} elseif ( $is_special['showtime'] ) {
+				// placeholder for showtime
+				$get_the_ad = self::random( $id, $format );
+			} elseif ( $is_special['abc'] ) {
+				// placeholder for ABC
+				$get_the_ad = self::random( $id, $format );
+			} else {
+				$get_the_ad = self::random( $id, $format );
+			}
+
 			$affiliates = '<div class="affiliate-ads"><center>' . $get_the_ad . '</center></div>';
 		}
 
@@ -214,32 +234,45 @@ class LWTV_Affilliates {
 	}
 
 	/**
-	 * Check if the show is a CBS show...
-	 *
-	 * @return true/false
+	 * Get the stations and kick back a simple true/falsey
+	 * @param  int    $post_id Post ID
+	 * @return array           Array of special status
 	 */
-	public static function is_show_cbs( $post_id ) {
-		$on_cbs = false;
+	public static function get_special_stations( $post_id ) {
+		$slug             = get_post_field( 'post_name', $post_id );
+		$stations         = get_the_terms( $post_id, 'lez_stations' );
+		$is_special       = array(
+			'abc'      => false,
+			'bbc'      => false,
+			'cbs'      => false,
+			'showtime' => false,
+		);
+		$special_stations = array(
+			'abc'      => array( 'abc', 'freeform', 'the-family-channel' ),
+			'bbc'      => array( 'bbc-america', 'bbc-four', 'bbc-one', 'bbc-three', 'bbc-two', 'bbc-wales', 'cbbc' ),
+			'cbs'      => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb' ),
+			'showtime' => array( 'showtime' ),
+		);
 
-		$slug         = get_post_field( 'post_name', $post_id );
-		$stations     = get_the_terms( $post_id, 'lez_stations' );
-		$cbs_stations = array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb' );
-
-		// Check if it's a CBS station
+		// Convert stations into a simple array of slugs
 		if ( $stations && ! is_wp_error( $stations ) ) {
 			foreach ( $stations as $station ) {
-				if ( in_array( $station->slug, $cbs_stations, true ) ) {
-					$on_cbs = true;
+				if ( in_array( $station->slug, $special_stations['cbs'], true ) ) {
+					$is_special['cbs'] = true;
+				} elseif ( in_array( $station->slug, $special_stations['abc'], true ) ) {
+					$is_special['abc'] = true;
+				} elseif ( in_array( $station->slug, $special_stations['bbc'], true ) ) {
+					$is_special['bbc'] = true;
 				}
 			}
 		}
 
-		// Check if it's bloody Star Trek
+		// CBS is always true for Star Trek
 		if ( strpos( $slug, 'star-trek' ) !== false ) {
-			$on_cbs = true;
+			$is_special['cbs'] = true;
 		}
 
-		return $on_cbs;
+		return $is_special;
 	}
 
 	/**
@@ -250,8 +283,7 @@ class LWTV_Affilliates {
 	public static function affiliate_link( $id ) {
 
 		$affiliate_url = get_post_meta( $id, 'lezshows_affiliate', true );
-
-		$links = array();
+		$links         = array();
 
 		// Parse each URL to figure out who it is...
 		foreach ( $affiliate_url as $url ) {
