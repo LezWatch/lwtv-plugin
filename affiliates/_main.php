@@ -81,14 +81,17 @@ class LWTV_Affilliates {
 		$id     = get_the_ID();
 
 		switch ( $type ) {
-			case 'apple':
-				$advert = self::apple( $id, $format );
-				break;
 			case 'amazon':
 				$advert = self::amazon( $id, $format );
 				break;
+			case 'amc':
+				$advert = self::network( $id, $format, 'amc' );
+				break;
+			case 'apple':
+				$advert = self::apple( $id, $format );
+				break;
 			case 'cbs':
-				$advert = self::cbs( $id, $format );
+				$advert = self::network( $id, $format, 'cbs' );
 				break;
 			case 'local':
 				$advert = self::local( $id, $format );
@@ -107,8 +110,10 @@ class LWTV_Affilliates {
 	public static function random( $id, $format ) {
 		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 		$number = wp_rand();
-		if ( 0 === $number % 2 ) {
-			$advert = self::cbs( $id, $format );
+		if ( 0 === $number % 3 ) {
+			$advert = self::network( $id, $format, 'amc' );
+		} elseif ( 0 === $number % 2 ) {
+			$advert = self::network( $id, $format, 'cbs' );
 		} else {
 			$advert = self::amazon( $id, $format );
 		}
@@ -132,16 +137,32 @@ class LWTV_Affilliates {
 	}
 
 	/**
-	 * [cbs description]
+	 * Network Channels
 	 * @param  int    $id       Post ID
-	 * @param  string $format   Type of Add
-	 * @param  array  $stations Array of stations
+	 * @param  string $format   Type of Add (default WIDE)
+	 * @param  array  $network  Network to be called (default CBS)
 	 * @return string           The ad
 	 */
-	public static function cbs( $id, $format = 'wide' ) {
-		require_once 'cbs.php';
-		return LWTV_Affiliate_CBS::show_ads( $id, $format );
+	public static function network( $id, $format = 'wide', $network = 'cbs' ) {
+
+		switch ( $network ) {
+			case 'amc':
+				require_once 'cj.php';
+				$advert = LWTV_Affiliate_CJ::show_ads( $id, 'amc', $format );
+				break;
+			case 'cbs':
+				require_once 'cbs.php';
+				$advert = LWTV_Affiliate_CBS::show_ads( $id, $format );
+				break;
+			case 'starz':
+				require_once 'cj.php';
+				$advert = LWTV_Affiliate_CJ::show_ads( $id, 'starz', $format );
+				break;
+		}
+
+		return $advert;
 	}
+
 
 	/**
 	 * Call Local Affilate Data
@@ -214,13 +235,14 @@ class LWTV_Affilliates {
 			// If it's a special station, we'll show that, else show random
 			if ( $is_special['cbs'] ) {
 				// CBS pays best.
-				$get_the_ad = self::cbs( $id, $format );
+				$get_the_ad = self::network( $id, $format, 'cbs' );
 			} elseif ( $is_special['showtime'] ) {
 				// placeholder for showtime
 				$get_the_ad = self::random( $id, $format );
-			} elseif ( $is_special['abc'] ) {
-				// placeholder for ABC
-				$get_the_ad = self::random( $id, $format );
+			} elseif ( $is_special['amc'] ) {
+				$get_the_ad = self::network( $id, $format, 'amc' );
+			} elseif ( $is_special['starz'] ) {
+				$get_the_ad = self::network( $id, $format, 'starz' );
 			} else {
 				$get_the_ad = self::random( $id, $format );
 			}
@@ -242,32 +264,35 @@ class LWTV_Affilliates {
 		$slug             = get_post_field( 'post_name', $post_id );
 		$stations         = get_the_terms( $post_id, 'lez_stations' );
 		$is_special       = array(
-			'abc'      => false,
+			'amc'      => false,
 			'bbc'      => false,
 			'cbs'      => false,
 			'showtime' => false,
+			'starz'    => false,
 		);
 		$special_stations = array(
-			'abc'      => array( 'abc', 'freeform', 'the-family-channel' ),
+			'amc'      => array( 'amc', 'sundance', 'shudder' ),
 			'bbc'      => array( 'bbc-america', 'bbc-four', 'bbc-one', 'bbc-three', 'bbc-two', 'bbc-wales', 'cbbc' ),
 			'cbs'      => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb' ),
 			'showtime' => array( 'showtime' ),
+			'starz'    => array( 'starz' ),
 		);
 
-		// Convert stations into a simple array of slugs
+		// Convert stations into a simple array of slugs.
+		// We prioritize CBS because they pay the best.
 		if ( $stations && ! is_wp_error( $stations ) ) {
 			foreach ( $stations as $station ) {
 				if ( in_array( $station->slug, $special_stations['cbs'], true ) ) {
 					$is_special['cbs'] = true;
-				} elseif ( in_array( $station->slug, $special_stations['abc'], true ) ) {
-					$is_special['abc'] = true;
-				} elseif ( in_array( $station->slug, $special_stations['bbc'], true ) ) {
-					$is_special['bbc'] = true;
+				} elseif ( in_array( $station->slug, $special_stations['amc'], true ) ) {
+					$is_special['amc'] = true;
+				} elseif ( in_array( $station->slug, $special_stations['starz'], true ) ) {
+					$is_special['starz'] = true;
 				}
 			}
 		}
 
-		// CBS is always true for Star Trek
+		// CBS is always true for Star Trek so let's double check.
 		if ( strpos( $slug, 'star-trek' ) !== false ) {
 			$is_special['cbs'] = true;
 		}
@@ -311,7 +336,7 @@ class LWTV_Affilliates {
 					break;
 				case '7eer':
 				case 'cbs':
-					$cbs_id = self::cbs( $id, 'id' );
+					$cbs_id = self::network( $id, 'id', 'cbs' );
 					$url    = 'https://cbs-allaccess.7eer.net/c/1242493/' . $cbs_id . '/3065';
 					$extra  = '<img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $cbs_id . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
 					$name   = 'CBS All Access';
