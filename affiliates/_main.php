@@ -236,9 +236,6 @@ class LWTV_Affilliates {
 			if ( $is_special['cbs'] ) {
 				// CBS pays best.
 				$get_the_ad = self::network( $id, $format, 'cbs' );
-			} elseif ( $is_special['showtime'] ) {
-				// placeholder for showtime
-				$get_the_ad = self::random( $id, $format );
 			} elseif ( $is_special['amc'] ) {
 				$get_the_ad = self::network( $id, $format, 'amc' );
 			} elseif ( $is_special['starz'] ) {
