@@ -268,7 +268,7 @@ class LWTV_Affilliates {
 			'starz'    => false,
 		);
 		$special_stations = array(
-			'amc'      => array( 'amc', 'sundance', 'shudder', 'bbc-america', 'ifc' ),
+			'amc'      => array( 'amc', 'sundancetv', 'shudder', 'bbc-america', 'ifc' ),
 			'bbc'      => array( 'bbc-four', 'bbc-one', 'bbc-three', 'bbc-two', 'bbc-wales', 'cbbc' ),
 			'cbs'      => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb' ),
 			'showtime' => array( 'showtime' ),
