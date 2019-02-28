@@ -26,7 +26,7 @@ class LWTV_Affiliate_Amazon {
 	 * Output widget
 	 */
 	public static function output_widget( $post_id, $format ) {
-		$output = '<center>' . self::bounty( $post_id, $format ) . '</center>';
+		$output = self::bounty( $post_id, $format );
 		return $output;
 	}
 
@@ -117,7 +117,7 @@ class LWTV_Affiliate_Amazon {
 				$the_ad = '<a target="_blank" href="https://www.amazon.com/b/?rh=i:instant-video,n:2858778011&ie=UTF8&filterId=OFFER_FILTER=SUBSCRIPTIONS&node=2858778011&ref_=assoc_tag_ph_1465430649312&_encoding=UTF8&camp=1789&creative=9325&linkCode=pf4&tag=lezpress-20&linkId=db98f9805eb2ff043fd508b10b63ab85">Join Prime Video Channels Free Trial</a><img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
 				break;
 			case 'tiny':
-				$the_ad = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=288&l=ur1&category=primeent&banner=1JYFV583HV833YKS3M82&f=ifr&linkID=14b666ac048218f73ea710ff3c3d339c&t=lezpress-20&tracking_id=lezpress-20" width="320" height="50" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
+				$the_ad = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=40&l=ur1&category=gift_certificates&banner=17C42ZZAJ4Q6Z4CM3WR2&f=ifr&linkID=498d07f9b64711b033c7381235278268&t=lezpress-20&tracking_id=lezpress-20" width="120" height="60" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
 				break;
 			default:
 				// A random ad will be served
