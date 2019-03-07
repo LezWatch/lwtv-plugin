@@ -115,9 +115,10 @@ class LWTV_BYQ_JSON {
 				}
 
 				// For each death date, create an item in an array with the unix timestamp
+				// We default to 8pm for prime-time reasons.
 				foreach ( $died_date as $date ) {
 					$date_parse        = date_parse_from_format( 'Y-m-d', $date );
-					$died_date_array[] = mktime( $date_parse['hour'], $date_parse['minute'], $date_parse['second'], $date_parse['month'], $date_parse['day'], $date_parse['year'] );
+					$died_date_array[] = mktime( '20', $date_parse['minute'], $date_parse['second'], $date_parse['month'], $date_parse['day'], $date_parse['year'] );
 				}
 
 				// Grab the highest date (aka most recent)
