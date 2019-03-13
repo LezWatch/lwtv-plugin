@@ -530,7 +530,6 @@ class LWTV_CPT_Characters {
 			}
 		}
 
-/*
 		// If the character is not an auto-draft, maybe flush caches.
 		if ( 'auto-draft' !== get_post_status( $post_id ) && ! empty( $purgables ) ) {
 			foreach ( $purgables as $id ) {
@@ -540,7 +539,6 @@ class LWTV_CPT_Characters {
 				}
 			}
 		}
-*/
 
 		// re-hook this function
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
