@@ -270,13 +270,12 @@ class LWTV_CPT_Shows {
 		// Update Things...
 		self::update_things( $post_id );
 
-/*
 		// If it's not an auto-draft, let's flush cache.
 		if ( 'auto-draft' !== get_post_status( $post_id ) ) {
 			// Cache Things...
 			$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
 		}
-*/
+
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
 	}
