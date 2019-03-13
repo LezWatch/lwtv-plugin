@@ -276,11 +276,10 @@ class LWTV_CPT_Shows {
 			// Cache Things...
 			$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
 		}
-
+*/
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
 	}
-*/
 
 	/*
 	 * Add CPT to AMP
