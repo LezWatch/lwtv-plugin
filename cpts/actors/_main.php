@@ -218,12 +218,13 @@ class LWTV_CPT_Actors {
 		// Do the math
 		LWTV_Actors_Calculate::do_the_math( $post_id );
 
+/*
 		// If it's not an auto-draft, let's flush cache.
 		if ( 'auto-draft' !== get_post_status( $post_id ) ) {
 			// Cache Things...
 			$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
 		}
-
+*/
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 	}
