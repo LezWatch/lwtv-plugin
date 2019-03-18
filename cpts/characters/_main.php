@@ -483,8 +483,8 @@ class LWTV_CPT_Characters {
 	 * @return n/a - this just runs shit
 	 */
 	public function update_things( $post_id ) {
-		// Save show scores
-		LWTV_Characters_Calculate::death( $post_id );
+		// Save character data
+		LWTV_Characters_Calculate::do_the_math( $post_id );
 
 		// Sync up data
 		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
@@ -512,7 +512,7 @@ class LWTV_CPT_Characters {
 		if ( '' !== $show_ids ) {
 			foreach ( $show_ids as $each_show ) {
 				if ( isset( $each_show['show'] ) ) {
-					LWTV_Shows_Calculate::do_the_math( $each_show['show'] );
+					//LWTV_Shows_Calculate::do_the_math( $each_show['show'] );
 					$purgables[] = $each_show['show'];
 				}
 			}
@@ -525,7 +525,7 @@ class LWTV_CPT_Characters {
 		}
 		if ( ! empty( $actor_ids ) ) {
 			foreach ( $actor_ids as $each_actor ) {
-				LWTV_Actors_Calculate::do_the_math( $each_actor );
+				//LWTV_Actors_Calculate::do_the_math( $each_actor );
 				$purgables[] = $each_actor;
 			}
 		}

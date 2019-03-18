@@ -17,6 +17,16 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Characters_Calculate {
 
 	/**
+	 * Does the Math
+	 * @param  int $post_id Post ID of character
+	 * @return n/a
+	 */
+	public static function do_the_math( $post_id ) {
+		// Calculate Death
+		self::count_queers( $post_id );
+	}
+
+	/**
 	 * Calculate the most recent death
 	 * @param  int   $post_id
 	 * @return N/A   No return, just update

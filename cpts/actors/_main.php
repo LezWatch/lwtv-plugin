@@ -22,7 +22,6 @@ class LWTV_CPT_Actors {
 	 */
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
-		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
@@ -68,24 +67,6 @@ class LWTV_CPT_Actors {
 		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
-	}
-
-	/**
-	 *  Init
-	 */
-	public function init() {
-		// Things that only run for this post type
-		// phpcs:ignore WordPress.Security.NonceVerification
-		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;
-		if ( 0 !== $post_id ) {
-			// phpcs:ignore WordPress.Security.NonceVerification
-			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;
-			switch ( $post_type ) {
-				case 'post_type_actors':
-					LWTV_Actors_Calculate::do_the_math( $post_id );
-					break;
-			}
-		}
 	}
 
 	/*
