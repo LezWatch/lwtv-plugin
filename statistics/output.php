@@ -77,12 +77,14 @@ class LWTV_Stats_Output {
 			$count = wp_count_posts( 'post_type_characters' )->publish;
 		}
 
+		// @codingStandardsIgnoreStart
 		if ( ! in_array( 'dead', $pieces, true ) ) {
 			// Reorder by item count
 			usort( $array, function( $a, $b ) {
 				return $a['count'] - $b['count'];
 			} );
 		}
+		// @codingStandardsIgnoreEnd
 		?>
 		<table id="<?php echo esc_attr( $subject ); ?>Table" class="tablesorter table table-striped table-hover">
 			<thead>
@@ -158,6 +160,7 @@ class LWTV_Stats_Output {
 				$n   = ( 'dead-years' === $data ) ? ( date( 'Y' ) - FIRST_LWTV_YEAR ) : $count;
 				$sum = 0;
 				foreach ( $array as $item ) {
+					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
 					$sum = $sum + (real) $item['count'];
 				}
 				$average = round( $sum / $n );
@@ -166,7 +169,9 @@ class LWTV_Stats_Output {
 			case 'high':
 				$high = 0;
 				foreach ( $array as $key => $value ) {
+					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
 					if ( (real) $value['count'] > (real) $high ) {
+						// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
 						$high = (real) $value['count'];
 						if ( 'shows' === $subject ) {
 							$high .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
@@ -178,7 +183,9 @@ class LWTV_Stats_Output {
 			case 'low':
 				$low = 20;
 				foreach ( $array as $key => $value ) {
+					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
 					if ( (real) $low > (real) $value['count'] ) {
+						// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
 						$low = (real) $value['count'];
 						if ( 'shows' === $subject ) {
 							$low .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
@@ -519,10 +526,12 @@ class LWTV_Stats_Output {
 		// Strip hypens becuase ChartJS doesn't like it.
 		$data = str_replace( '-', '', $data );
 
+		// @codingStandardsIgnoreStart
 		// Reorder by item count
 		usort( $array, function( $a, $b ) {
 			return $a['count'] - $b['count'];
 		} );
+		// @codingStandardsIgnoreEnd
 
 		?>
 		<canvas id="pie<?php echo esc_attr( ucfirst( $data ) ); ?>" width="500px" height="500px"></canvas>

@@ -23,7 +23,7 @@ class LWTV_Characters_Calculate {
 	 */
 	public static function do_the_math( $post_id ) {
 		// Calculate Death
-		self::count_queers( $post_id );
+		self::death( $post_id );
 	}
 
 	/**

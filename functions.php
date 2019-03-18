@@ -140,8 +140,8 @@ class LWTV_Functions {
 	 * @return void
 	 */
 	public function save_attachment_attribution( $attachment_id ) {
-		if ( isset( $_REQUEST['attachments'][ $attachment_id ]['lwtv_attribution'] ) ) { // WPCS: CSRF ok.
-			$lwtv_attribution = $_REQUEST['attachments'][ $attachment_id ]['lwtv_attribution']; // WPCS: CSRF ok.
+		if ( isset( $_REQUEST['attachments'][ $attachment_id ]['lwtv_attribution'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$lwtv_attribution = $_REQUEST['attachments'][ $attachment_id ]['lwtv_attribution']; // phpcs:ignore WordPress.Security.NonceVerification
 			update_post_meta( $attachment_id, 'lwtv_attribution', $lwtv_attribution );
 		}
 	}
