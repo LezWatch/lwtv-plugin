@@ -38,7 +38,7 @@ class LWTV_Stats {
 
 		if ( is_page( array( 'statistics' ) ) ) {
 			$statistics = get_query_var( 'statistics', 'none' );
-			$stat_view  = ( isset( $_GET['view'] ) ) ? esc_attr( $_GET['view'] ) : ''; // WPSC: CSRF ok.
+			$stat_view  = ( isset( $_GET['view'] ) ) ? esc_attr( $_GET['view'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
 			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js', array( 'jquery' ), '2.7.2', false );
 			wp_enqueue_script( 'chartjs-plugins', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.plugins.js', array( 'chartjs' ), '1.0.0', false );

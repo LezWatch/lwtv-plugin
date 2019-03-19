@@ -15,7 +15,7 @@ class LWTV_Admin_News {
 	 * Settings Page Content
 	 */
 	public static function settings_page() {
-		$active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'intro'; // WPCS: CSRF ok.
+		$active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'intro'; // phpcs:ignore WordPress.Security.NonceVerification
 		?>
 
 		<div class="wrap">

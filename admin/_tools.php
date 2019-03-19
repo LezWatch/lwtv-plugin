@@ -79,11 +79,11 @@ class LWTV_Tools {
 	 * Admin Notices
 	 */
 	public function admin_notices() {
-		if ( ! isset( $_GET['message'] ) ) { // WPCS: CSRF ok.
+		if ( ! isset( $_GET['message'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			return;
 		}
 
-		switch ( $_GET['message'] ) { // WPCS: CSRF ok.
+		switch ( $_GET['message'] ) { // phpcs:ignore WordPress.Security.NonceVerification
 			case 'success':
 				$content = 'Automatic fix complete.';
 				break;
@@ -96,7 +96,7 @@ class LWTV_Tools {
 		}
 
 		if ( isset( $content ) ) {
-			$message = '<div class="notice notice-' . esc_attr( $_GET['message'] ) . ' is-dismissable"><p>' . $content . '</p></div>'; // WPCS: CSRF ok.
+			$message = '<div class="notice notice-' . esc_attr( $_GET['message'] ) . ' is-dismissable"><p>' . $content . '</p></div>'; // phpcs:ignore WordPress.Security.NonceVerification
 			add_action( 'admin_notices', $message );
 		}
 	}
@@ -106,7 +106,7 @@ class LWTV_Tools {
 	 */
 	public function settings_page() {
 
-		$active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'intro'; // WPCS: CSRF ok.
+		$active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'intro'; // phpcs:ignore WordPress.Security.NonceVerification
 
 		?>
 		<div class="wrap">
