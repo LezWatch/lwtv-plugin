@@ -493,7 +493,6 @@ class LWTV_CPT_Characters {
 		if ( '' !== $show_ids ) {
 			foreach ( $show_ids as $each_show ) {
 				if ( isset( $each_show['show'] ) ) {
-					//LWTV_Shows_Calculate::do_the_math( $each_show['show'] );
 					$purgables[] = $each_show['show'];
 				}
 			}
@@ -506,7 +505,6 @@ class LWTV_CPT_Characters {
 		}
 		if ( ! empty( $actor_ids ) ) {
 			foreach ( $actor_ids as $each_actor ) {
-				//LWTV_Actors_Calculate::do_the_math( $each_actor );
 				$purgables[] = $each_actor;
 			}
 		}
