@@ -82,8 +82,6 @@ class LWTV_CPT_Shows {
 						// Filter buttons not needed on the teeny MCE
 						add_filter( 'teeny_mce_buttons', array( $this, 'teeny_mce_buttons' ) );
 					}
-					// Update things...
-					self::update_things( $post_id );
 					break;
 			}
 		}
