@@ -31,7 +31,6 @@ class LWTV_CPT_Characters {
 		);
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
-		add_action( 'init', array( $this, 'init' ), 0 );
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
@@ -65,24 +64,6 @@ class LWTV_CPT_Characters {
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ), 10, 3 );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
-	}
-
-	/**
-	 *  Init
-	 */
-	public function init() {
-		// Things that only run for this post type
-		// phpcs:ignore WordPress.Security.NonceVerification
-		$post_id = ( isset( $_GET['post'] ) ) ? intval( $_GET['post'] ) : 0;
-		if ( 0 !== $post_id ) {
-			// phpcs:ignore WordPress.Security.NonceVerification
-			$post_type = ( isset( $_GET['post_type'] ) ) ? sanitize_text_field( $_GET['post_type'] ) : 0;
-			switch ( $post_type ) {
-				case 'post_type_characters':
-					self::update_things( $post_id );
-					break;
-			}
-		}
 	}
 
 	/*
