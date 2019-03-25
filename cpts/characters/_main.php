@@ -480,7 +480,7 @@ class LWTV_CPT_Characters {
 	 */
 	public function save_post_meta( $post_id ) {
 
-		$purgeurls = array();
+		$purgables = array();
 
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
