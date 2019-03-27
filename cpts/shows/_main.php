@@ -91,9 +91,6 @@ class LWTV_CPT_Shows {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		if ( class_exists( 'VarnishPurger' ) ) {
-			$this->varnish_purge = new VarnishPurger();
-		}
 		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_filter( 'quick_edit_show_taxonomy', array( $this, 'hide_tags_from_quick_edit' ), 10, 3 );
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ), 12, 3 );
