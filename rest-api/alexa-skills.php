@@ -34,7 +34,7 @@ class LWTV_Alexa_Skills {
 	 *   - /lwtv/v1//alexa-skills/news/
 	 */
 	public function rest_api_init() {
-
+		// @codingStandardsIgnoreStart
 		// Skills
 		register_rest_route( 'lwtv/v1', '/alexa-skills/briefing/', array(
 			'methods'  => 'GET',
@@ -52,6 +52,7 @@ class LWTV_Alexa_Skills {
 			'methods'  => [ 'GET', 'POST' ],
 			'callback' => array( $this, 'news_rest_api_callback' ),
 		) );
+		// @codingStandardsIgnoreEnd
 	}
 
 	/**
@@ -68,7 +69,7 @@ class LWTV_Alexa_Skills {
 	 * THIS IS OLD and can be removed once BYQ is retired, but let's not break things...
 	 * This accepts POST data
 	 */
-	public function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
+	public static function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
 		$type   = ( isset( $request['request']['type'] ) ) ? $request['request']['type'] : false;
 		$intent = ( isset( $request['request']['intent']['name'] ) ) ? $request['request']['intent']['name'] : false;
 		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false;

@@ -91,9 +91,6 @@ class LWTV_CPT_Shows {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		if ( class_exists( 'VarnishPurger' ) ) {
-			$this->varnish_purge = new VarnishPurger();
-		}
 		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_filter( 'quick_edit_show_taxonomy', array( $this, 'hide_tags_from_quick_edit' ), 10, 3 );
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ), 12, 3 );
@@ -267,12 +264,6 @@ class LWTV_CPT_Shows {
 
 		// Update Things...
 		self::update_things( $post_id );
-
-		// If it's not an auto-draft, let's flush cache.
-		if ( 'auto-draft' !== get_post_status( $post_id ) ) {
-			// Cache Things...
-			$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
-		}
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );

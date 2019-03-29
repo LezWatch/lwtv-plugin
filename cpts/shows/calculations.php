@@ -364,7 +364,7 @@ class LWTV_Shows_Calculate {
 
 				if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $shows_array as $char_show ) {
-						if ( $char_show['show'] == $post_id ) { // WPCS: loose comparison ok
+						if ( $char_show['show'] == $post_id ) { // phpcs:ignore WordPress.PHP.StrictComparisons
 							// Bump the array for this role
 							$role_data[ $char_show['type'] ]++;
 

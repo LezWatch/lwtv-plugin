@@ -295,7 +295,7 @@ class LWTV_Shortcodes {
 			$fav_shows = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
 
 			// Number of posts
-			$numposts = count_many_users_posts( $author_id, 'post', true );
+			$numposts = count_user_posts( $author_id, 'post', true );
 
 			// Generate Content
 			$content = array(
@@ -333,7 +333,7 @@ class LWTV_Shortcodes {
 			case 'large':
 				// Sort out the title
 				$content['title'] = ( '' !== $content['title'] ) ? '(' . $content['title'] . ')' : '';
-				$view_articles    = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $user ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
+				$view_articles    = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $author_id ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
 				$view_twitter     = ( ! empty( $content['twitter'] ) ) ? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">@' . $content['twitter'] . '</a> </div>' : '';
 
 				// Build it.
