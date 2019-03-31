@@ -64,13 +64,23 @@ class LWTV_Shows_Like_This {
 			);
 		}
 
-		// Score: If the score is similar +/- 10
-		$meta_query[] = array(
-			'key'     => 'lezshows_the_score',
-			'value'   => array( ( $score - 10 ), ( $score + 10 ) ),
-			'type'    => 'numeric',
-			'compare' => 'BETWEEN',
-		);
+		// If they're NOT loved, we use the scores for a value.
+		if ( ! $loved ) {
+			// Score: If the score is similar +/- 10
+			if ( $score >= 90 ) {
+				$score_range = array( 75, 100 );
+			} elseif ( $score <= 10 ) {
+				$score_range = array( 10, 30 );
+			} else {
+				$score_range = array( ( $score - 10 ), ( $score + 10 ) );
+			}
+			$meta_query[] = array(
+				'key'     => 'lezshows_the_score',
+				'value'   => $score_range,
+				'type'    => 'numeric',
+				'compare' => 'BETWEEN',
+			);
+		}
 
 		return $meta_query;
 	}
