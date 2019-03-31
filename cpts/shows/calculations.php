@@ -118,37 +118,22 @@ class LWTV_Shows_Calculate {
 			$chars_recurring = LWTV_CPT_Characters::get_chars_for_show( $post_id, $all_chars, 'recurring' );
 			$chars_guest     = LWTV_CPT_Characters::get_chars_for_show( $post_id, $all_chars, 'guest' );
 
-			// Base character mesurement
-			if ( count( $chars_regular ) === $all_chars ) {
-				// If everything is a regular:
-				$char_score = 95;
-			} elseif ( count( $chars_recurring ) === $all_chars ) {
-				// If everyone is recurring:
-				$char_score = 40;
-			} elseif ( count( $chars_guest ) === $all_chars ) {
-				// If everyone is a guest:
-				$char_score = 20;
-			} else {
-				// Points: Regular = 3; Recurring = 1; Guests = .5
-				$char_score = ( count( $chars_regular ) * 3 ) + count( $chars_recurring ) + ( count( $chars_guest ) / 2 );
-				// Score must be between 21 and 94.
-				$char_score = ( $char_score > 94 ) ? 94 : $char_score;
-				$char_score = ( $char_score < 21 ) ? 21 : $char_score;
-			}
+			// Points: Regular = 5; Recurring = 2; Guests = 1
+			$char_score = ( count( $chars_regular ) * 5 ) + ( count( $chars_recurring ) * 2 ) + count( $chars_guest );
 
-			// Bonuses for good cliches: queer irl = 2pts; no cliches = 1pt.
-			$queer_irl  = ( max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'queer-irl' ) ) * 2 );
-			$no_cliches = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'none' ) );
-
-			// Negatives for bad things: dead = -3pts; trans played by non-trans = -2pts
-			$the_dead    = ( max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'dead' ) ) * -3 );
+			// Bonuses and Demerits
+			// Bonuses:  queer irl = 4pts; no cliches = 2pt; trans played by non-trans = 2pts
+			// Demerits: dead = -3pts; trans played by non-trans = -2pts
+			$queer_irl   = ( max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'queer-irl' ) ) * 10 );
+			$no_cliches  = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'none' ) * 5 );
+			$the_dead    = ( max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'dead' ) ) * -5 );
 			$trans_chars = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'trans' ) );
 			$trans_irl   = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'trans-irl' ) );
 			$trans_score = 0;
 			if ( $trans_irl < $trans_chars ) {
-				$trans_score = ( ( $trans_chars - $trans_irl ) * -2 );
+				$trans_score = ( ( $trans_chars - $trans_irl ) * -5 );
 			} else {
-				$trans_score = $trans_chars * 2;
+				$trans_score = $trans_chars * 10;
 			}
 
 			// Add it all together (negatives are taken care of above)
@@ -209,75 +194,51 @@ class LWTV_Shows_Calculate {
 		$ploy_tropes  = array( 'queer-for-ratings', 'queer-laughs', 'happy-then-not', 'erasure', 'subtext' );
 
 		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
-			// No tropes: 100
-			$score = 100;
+			// No tropes: 80
+			$score = 80;
 		} else {
-
 			// Calculate how many good tropes a show has
-			$havegood  = 0;
-			$havemaybe = 0;
-			$havebad   = 0;
-			$haveploy  = 0;
+			$has_tropes = array(
+				'good'  => 0,
+				'maybe' => 0,
+				'bad'   => 0,
+				'ploy'  => 0,
+			);
 			foreach ( $good_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
-					$havegood++;
+					$has_tropes['good']++;
 				}
 			}
 			// Calculate Maybe Good Tropes
 			foreach ( $maybe_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
-					$havemaybe++;
+					$has_tropes['maybe']++;
 				}
 			}
 			// Calculate Bad Tropes
 			foreach ( $bad_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
-					$havebad++;
+					$has_tropes['bad']++;
 				}
 			}
 			// Calculate Ploy Tropes
 			foreach ( $ploy_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
-					$haveploy++;
+					$has_tropes['ploy']++;
 				}
 			}
 
-			if ( $havegood === $count_tropes ) {
-				// If tropes are ONLY good
-				$score = 95;
-			} elseif ( ( $havegood + $havemaybe ) === $count_tropes ) {
-				// If the tropes are only good and maybegood
-				$score = 85;
-			} elseif ( ( $havegood + $haveploy ) === $count_tropes ) {
-				// If the tropes are only good and ploys
-				$score = 60;
-			} elseif ( $haveploy === $count_tropes ) {
-				// If the tropes are ONLY ploys
-				$score = 30;
-			} elseif ( ( $havebad + $haveploy ) === $count_tropes ) {
-				// If the tropes are all bad AND ploys
-				$score = 25;
-			} elseif ( ( $havegood + $havemaybe - $havebad - $haveploy ) < 0 ) {
-				// If they have more bad/ploys than good, it's a wash
-				$score = 40;
+			$base_score     = ( $has_tropes['good'] + $has_tropes['maybe'] - $has_tropes['ploy'] - $has_tropes['bad'] );
+			$counted_tropes = $has_tropes['good'] + $has_tropes['maybe'] + $has_tropes['ploy'] + $has_tropes['bad'];
+
+			if ( $base_score > 0 ) {
+				$score = ( ( $base_score / $counted_tropes ) * 100 );
+				// Dead Queers: remove one-third of the score
+				if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) {
+					$score = ( $score * .66 );
+				}
 			} else {
-				// Otherwise we just have a show that's pretty average so let's max them out at 75
-				$score = ( ( ( $havegood + $havemaybe - $havebad ) / $count_tropes ) * 100 );
-				if ( 0 === $haveploy ) {
-					// No ploys, add 50
-					$score += 50;
-				} else {
-					// SOME ploys, add 1/2 percentage -- 90% = MAX 45 points.
-					$score += ( ( ( $count_tropes - $haveploy ) / $count_tropes ) * 50 );
-				}
-				if ( $score > 75 ) {
-					$score = 75;
-				}
-			}
-
-			// Dead Queers: remove one-third of the score
-			if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) {
-				$score = ( $score * .66 );
+				$score = 0;
 			}
 		}
 
@@ -366,7 +327,8 @@ class LWTV_Shows_Calculate {
 
 				if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $shows_array as $char_show ) {
-						if ( $char_show['show'] == $post_id ) { // phpcs:ignore WordPress.PHP.StrictComparisons
+						// phpcs:ignore WordPress.PHP.StrictComparisons
+						if ( $char_show['show'] == $post_id ) {
 							// Bump the array for this role
 							$role_data[ $char_show['type'] ]++;
 
