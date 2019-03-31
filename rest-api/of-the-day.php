@@ -222,9 +222,11 @@ class LWTV_OTD_JSON {
 	 */
 	public static function find_char_show( $type = 'character', $date = '' ) {
 
+		// phpcs:disable
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
 			return false;
 		}, 10, 2 );
+		// phpcs:enable
 
 		$meta_query_array = '';
 		$tax_query_array  = '';

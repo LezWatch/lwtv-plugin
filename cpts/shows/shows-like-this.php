@@ -47,6 +47,7 @@ class LWTV_Shows_Like_This {
 
 		// Collect extras
 		$star  = ( get_post_meta( $post_id, 'lezshows_stars', true ) ) ? 'EXISTS' : 'NOT EXISTS';
+		$loved = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? true : false;
 		$score = ( get_post_meta( $post_id, 'lezshows_the_score', true ) ) ? get_post_meta( $post_id, 'lezshows_the_score', true ) : 10;
 
 		// Stars: If there's ANY star, we would like another.
@@ -54,6 +55,14 @@ class LWTV_Shows_Like_This {
 			'key'     => 'lezshows_stars',
 			'compare' => $star,
 		);
+
+		// If the show is loved, we want to include it here.
+		if ( $loved ) {
+			$meta_query[] = array(
+				'key'     => 'lezshows_worthit_show_we_love',
+				'compare' => 'EXISTS',
+			);
+		}
 
 		// Score: If the score is similar +/- 10
 		$meta_query[] = array(

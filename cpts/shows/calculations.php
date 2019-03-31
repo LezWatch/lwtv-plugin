@@ -147,6 +147,8 @@ class LWTV_Shows_Calculate {
 			$trans_score = 0;
 			if ( $trans_irl < $trans_chars ) {
 				$trans_score = ( ( $trans_chars - $trans_irl ) * -2 );
+			} else {
+				$trans_score = $trans_chars * 2;
 			}
 
 			// Add it all together (negatives are taken care of above)
