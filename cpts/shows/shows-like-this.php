@@ -47,6 +47,7 @@ class LWTV_Shows_Like_This {
 
 		// Collect extras
 		$star  = ( get_post_meta( $post_id, 'lezshows_stars', true ) ) ? 'EXISTS' : 'NOT EXISTS';
+		$loved = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? true : false;
 		$score = ( get_post_meta( $post_id, 'lezshows_the_score', true ) ) ? get_post_meta( $post_id, 'lezshows_the_score', true ) : 10;
 
 		// Stars: If there's ANY star, we would like another.
@@ -55,13 +56,31 @@ class LWTV_Shows_Like_This {
 			'compare' => $star,
 		);
 
-		// Score: If the score is similar +/- 10
-		$meta_query[] = array(
-			'key'     => 'lezshows_the_score',
-			'value'   => array( ( $score - 10 ), ( $score + 10 ) ),
-			'type'    => 'numeric',
-			'compare' => 'BETWEEN',
-		);
+		// If the show is loved, we want to include it here.
+		if ( $loved ) {
+			$meta_query[] = array(
+				'key'     => 'lezshows_worthit_show_we_love',
+				'compare' => 'EXISTS',
+			);
+		}
+
+		// If they're NOT loved, we use the scores for a value.
+		if ( ! $loved ) {
+			// Score: If the score is similar +/- 10
+			if ( $score >= 90 ) {
+				$score_range = array( 75, 100 );
+			} elseif ( $score <= 10 ) {
+				$score_range = array( 10, 30 );
+			} else {
+				$score_range = array( ( $score - 10 ), ( $score + 10 ) );
+			}
+			$meta_query[] = array(
+				'key'     => 'lezshows_the_score',
+				'value'   => $score_range,
+				'type'    => 'numeric',
+				'compare' => 'BETWEEN',
+			);
+		}
 
 		return $meta_query;
 	}

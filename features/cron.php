@@ -69,7 +69,7 @@ class LWTV_Cron {
 
 		add_action( 'lwtv_cache_event_daily', array( $this, 'varnish_cache_daily' ) );
 		if ( ! wp_next_scheduled( 'lwtv_cache_event_daily' ) ) {
-			wp_schedule_event( time(), 'daily', 'lwtv_cache_event_daily' );
+			wp_schedule_event( strtotime( '06:01:00' ), 'daily', 'lwtv_cache_event_daily' );
 		}
 	}
 
@@ -105,7 +105,9 @@ class LWTV_Cron {
 SELECT ID FROM {$wpdb->posts} WHERE ( ( post_date > 0 && post_date <= %s ) ) AND post_status = 'future' LIMIT 0,10
 SQL;
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$sql = $wpdb->prepare( $queery, current_time( 'mysql', 0 ) );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$ids = $wpdb->get_col( $sql );
 
 		// There are no posts missed schedule so don't run anything.
