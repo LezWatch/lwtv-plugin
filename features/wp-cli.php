@@ -25,10 +25,12 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
 class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 
 	public function __construct() {
+		// phpcs:disable
 		// Remove <!--fwp-loop--> from output
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
 			return false;
 		}, 10, 2 );
+		// phpcs:enable
 	}
 
 	/**
