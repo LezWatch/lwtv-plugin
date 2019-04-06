@@ -203,42 +203,53 @@ class LWTV_Shows_Calculate {
 				'maybe' => 0,
 				'bad'   => 0,
 				'ploy'  => 0,
+				'any'   => 0,
 			);
 			foreach ( $good_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
 					$has_tropes['good']++;
+					$has_tropes['any']++;
 				}
 			}
 			// Calculate Maybe Good Tropes
 			foreach ( $maybe_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
 					$has_tropes['maybe']++;
+					$has_tropes['any']++;
 				}
 			}
 			// Calculate Bad Tropes
 			foreach ( $bad_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
 					$has_tropes['bad']++;
+					$has_tropes['any']++;
 				}
 			}
 			// Calculate Ploy Tropes
 			foreach ( $ploy_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
 					$has_tropes['ploy']++;
+					$has_tropes['any']++;
 				}
 			}
 
-			$base_score     = ( $has_tropes['good'] + $has_tropes['maybe'] - $has_tropes['ploy'] - $has_tropes['bad'] );
-			$counted_tropes = $has_tropes['good'] + $has_tropes['maybe'] + $has_tropes['ploy'] + $has_tropes['bad'];
-
-			if ( $base_score > 0 ) {
-				$score = ( ( $base_score / $counted_tropes ) * 100 );
-				// Dead Queers: remove one-third of the score
-				if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) {
-					$score = ( $score * .66 );
-				}
+			// Pause for C Shows
+			if ( 0 === $has_tropes['any'] ) {
+				// If a show has NOT good/maybe/bad/ploy tropes, it gets a C
+				$score = 70;
 			} else {
-				$score = 0;
+				$base_score     = ( $has_tropes['good'] + $has_tropes['maybe'] - $has_tropes['ploy'] - $has_tropes['bad'] );
+				$counted_tropes = $has_tropes['good'] + $has_tropes['maybe'] + $has_tropes['ploy'] + $has_tropes['bad'];
+
+				if ( $base_score > 0 ) {
+					$score = ( ( $base_score / $counted_tropes ) * 100 );
+					// Dead Queers: remove one-third of the score
+					if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) {
+						$score = ( $score * .66 );
+					}
+				} else {
+					$score = 0;
+				}
 			}
 		}
 
