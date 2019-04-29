@@ -165,8 +165,9 @@ class LWTV_Screeners {
 								]
 							);
 							$signed_url = $client->createPresignedRequest( $cmd, '+1 hour' );
+							$time_good  = date( 'H:i', time() + 60 * 60 );
 							$size       = self::make_readable( $object['Size'] );
-								echo '<li>&bull; <a href="' . esc_url( $signed_url->getUri() ) . '" download>' . esc_html( $object['Key'] ) . '</a> - ' . esc_html( $size ) . '</li>';
+								echo '<li>&bull; <a href="' . esc_url( $signed_url->getUri() ) . '" download>' . esc_html( $object['Key'] ) . '</a> - ' . esc_html( $size ) . ' (Link valid until ' . esc_html( $time_good ) . ')</li>';
 						}
 
 						echo '</li>';
