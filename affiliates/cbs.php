@@ -16,6 +16,7 @@ class LWTV_Affiliate_CBS {
 	 */
 	public static function output_widget( $post_id, $format ) {
 		$named_array = array(
+			// phpcs:ignore Squiz.PHP.CommentedOutCode
 			/*
 			// Disabled because the ads are gone.
 			'the-good-wife'                 => array(
