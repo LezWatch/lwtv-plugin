@@ -48,6 +48,7 @@ class LWTV_Affilliate_Ads_Widgets extends WP_Widget {
 			echo wp_kses_post( $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'] );
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput
 		echo '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . LWTV_Affilliates::widget( $instance['type'], $instance['format'] ) . '</center></div><!-- END Affiliate Ads -->';
 
 		echo wp_kses_post( $args['after_widget'] );
@@ -64,9 +65,11 @@ class LWTV_Affilliate_Ads_Widgets extends WP_Widget {
 		$new_instance['title'] = wp_strip_all_tags( $new_instance['title'] );
 
 		// Types of ads
+		// phpcs:ignore WordPress.PHP.StrictInArray
 		$new_instance['type'] = ( in_array( $new_instance['type'], LWTV_Affilliates::$valid_types ) ) ? sanitize_html_class( $new_instance['type'] ) : 'random';
 
 		// Ad format
+		// phpcs:ignore WordPress.PHP.StrictInArray
 		$new_instance['format'] = ( in_array( $new_instance['format'], LWTV_Affilliates::$valid_formats ) ) ? sanitize_html_class( $new_instance['format'] ) : 'wide';
 
 		return $new_instance;

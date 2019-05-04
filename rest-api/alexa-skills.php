@@ -100,7 +100,7 @@ class LWTV_Alexa_Skills {
 	 */
 	public function news_rest_api_callback( WP_REST_Request $request ) {
 
-		$type   = ( isset( $request['request']['type'] ) ) ? $request['request']['type'] : false;
+		$type   = ( isset( $request['request']['type'] ) ) ? sanitize_text_field( $request['request']['type'] ) : false;
 		$intent = ( isset( $request['request']['intent']['name'] ) ) ? sanitize_text_field( $request['request']['intent']['name'] ) : false;
 		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false;
 		$actor  = ( isset( $request['request']['intent']['slots']['actor']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['actor']['value'] ) : false;
