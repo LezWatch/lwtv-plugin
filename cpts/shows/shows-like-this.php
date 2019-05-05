@@ -101,6 +101,7 @@ class LWTV_Shows_Like_This {
 
 			// For each show, add it to the list ONLY if the show isn't already listed.
 			foreach ( $handpicked as $a_show ) {
+				//phpcs:ignore WordPress.PHP.StrictInArray
 				if ( ! in_array( $a_show, $results ) ) {
 					$add_results[] = $a_show;
 				}

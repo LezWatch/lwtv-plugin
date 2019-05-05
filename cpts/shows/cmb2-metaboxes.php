@@ -66,6 +66,30 @@ class LWTV_Shows_CMB2 {
 		// prefix for all custom fields
 		$prefix = 'lezshows_';
 
+		// Metabox Group: Summary
+		$cmb_excerpt = new_cmb2_box(
+			array(
+				'id'           => 'show_summary_metabox',
+				'title'        => 'Summary',
+				'object_types' => array( 'post_type_shows' ),
+				'context'      => 'normal',
+				'priority'     => 'high',
+				'show_in_rest' => true,
+				'show_names'   => true, // Show field names on the left
+				'cmb_styles'   => false,
+			)
+		);
+		// Field: Tropes
+		$field_tropes = $cmb_excerpt->add_field(
+			array(
+				'name'      => 'Excerpt',
+				'id'        => 'excerpt',
+				'desc'      => 'Excerpts are short, one to two sentance, summaries of what the show is about. This will be used on the list of all shows, as well as the front page for new shows.',
+				'type'      => 'textarea',
+				'escape_cb' => false,
+			)
+		);
+
 		// Metabox Group: Must See
 		$cmb_mustsee = new_cmb2_box(
 			array(

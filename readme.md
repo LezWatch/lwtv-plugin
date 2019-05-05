@@ -55,10 +55,12 @@ _Javascript (`js`)_
 
 Stored in `/cpts/`:
 
-* Actors: `actors.php` and `/actors/` - Actor Post Type and related Taxonomies
-* Characters: `characters.php` - Character Post Type and related Taxonomies
-* All: `all-cpts.php` - Rebranding featured images for CPTs
-* Shows: `shows.php`, `shows.css`, and `/shows/` - Show Post Type and related Taxonomies
+* `_mail.php` - Main inclusion file, plus hiding calendar for CPTs
+* `post-meta.php` - Registering metaboxes for Custom Post Types
+* `related-posts.php` - Show related shows and characters for blog posts
+* Actors: `/actors/` - Actor Post Type and related Taxonomies
+* Characters: `/characters/` - Character Post Type and related Taxonomies
+* Shows: `/shows/` - Show Post Type and related Taxonomies
 
 Actors and Shows have custom code to generate statistics and flush related Varnish pages when Characters are saved.
 

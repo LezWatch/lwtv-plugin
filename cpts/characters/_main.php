@@ -91,7 +91,7 @@ class LWTV_CPT_Characters {
 			'not_found_in_trash'       => 'No Characters found in Trash',
 			'update_item'              => 'Update Character',
 			'featured_image'           => 'Character Image',
-			'set_featured_image'       => 'Set Character image',
+			'set_featured_image'       => 'Set Character image  (add me first)',
 			'remove_featured_image'    => 'Remove Character image',
 			'use_featured_image'       => 'Use as Character image',
 			'archives'                 => 'Character archives',
@@ -110,7 +110,7 @@ class LWTV_CPT_Characters {
 			array( 'lez-library/featured-image' ),
 			array(
 				'core/paragraph',
-				array( 'placeholder' => 'Everything we need to know about this character ...' ),
+				array( 'placeholder' => 'Everything we need to know about this character ... (add me second)' ),
 			),
 		);
 		$args     = array(
