@@ -501,7 +501,7 @@ class LWTV_CPT_Characters {
 		// Update actor data ONLY on saves.
 		$actor_ids = get_post_meta( $post_id, 'lezchars_actor', true );
 		if ( ! is_array( $actor_ids ) ) {
-			$actor_ids = array( get_post_meta( $the_id, 'lezchars_actor', true ) );
+			$actor_ids = array( get_post_meta( $post_id, 'lezchars_actor', true ) );
 		}
 		if ( ! empty( $actor_ids ) ) {
 			foreach ( $actor_ids as $each_actor ) {

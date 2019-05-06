@@ -1,7 +1,7 @@
 <?php
 /**
  * Name: Related Posts
- * Description: Show related shows/posts
+ * Description: Display related shows/posts
  */
 
 if ( ! defined( 'WPINC' ) ) {

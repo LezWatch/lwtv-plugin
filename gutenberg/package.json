@@ -1,6 +1,6 @@
 {
   "name": "screener-cgb-guten-block",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "start": "cgb-scripts start",
@@ -8,6 +8,6 @@
     "eject": "cgb-scripts eject"
   },
   "dependencies": {
-    "cgb-scripts": "1.15.0"
+    "cgb-scripts": "1.17.0"
   }
 }
