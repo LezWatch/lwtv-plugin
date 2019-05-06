@@ -1,6 +1,6 @@
 <?php
 /*
- * Registering metaboxes for Custom Post Types
+ * Registering post meta for Custom Post Types
  *
  * @since 1.0
  */

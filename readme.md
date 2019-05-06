@@ -12,6 +12,8 @@ The code was written by Tracy Levesque and Mika Epstein, with assistance from [Y
 
 The main file `functions.php` calls all other needed files.
 
+Defines `LWTV_LIBRARY` - If the libary files are found, this is set to true.
+
 Defines `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwise defined). Currently 1961.
 
 ### Admin Panels
@@ -19,16 +21,21 @@ Defines `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwi
 Stored in `/admin/` -- Makes admin panels
 
 * `_tools.php` - Automated checks on data
+* `news.php` - Loads possibly relevant queer news
 * `screeners.php` - A list of all screeners
 
 ### Affiliates
 
 Stored in `/affiliates/` -- Auto Adds in Affiliate Codes
 
+* `/images/` - Images used by local 'ads'
 * `_main.php` - Determines which ad to show and when
 * `amazon.php` - Amazon (utilizes ApaiIO library (from (LezWatch Library)[https://github.com/LezWatch/lezwatch-library]))
 * `apple.php` - Apple iTunes/TV ads
 * `cbs.php` - CBS ads (ImpactRadius)
+* `cj.php` - Commission Junction (AMC and Starz)
+* `local.php` - Local Ads (Yikes, DreamHost, FacetWP)
+* `widget.php` - Widget code to display ads
 
 ### Assets
 
@@ -36,6 +43,7 @@ Stored in `/assets/`
 
 _CSS (`css`)_
 
+* `lwtv-tools.css` - Style for the LWTV admin pages
 * `theme.bootstrap_4.min.css` - Tablesorter CSS for Bootstrap themes
 
 _Images (`images`)_
@@ -55,17 +63,32 @@ _Javascript (`js`)_
 
 Stored in `/cpts/`:
 
-* Actors: `actors.php` and `/actors/` - Actor Post Type and related Taxonomies
-* Characters: `characters.php` - Character Post Type and related Taxonomies
-* All: `all-cpts.php` - Rebranding featured images for CPTs
-* Shows: `shows.php`, `shows.css`, and `/shows/` - Show Post Type and related Taxonomies
+* `_main.php` - Main file that calls everything else. Also disables calendar code for CPTs
+* `post-meta.php` - Registers post-meta so it can be properly used and hidden from Gutenberg
+* `related-posts.php` - Displays related shows and posts (based on tags)
 
-Actors and Shows have custom code to generate statistics and flush related Varnish pages when Characters are saved.
+* Actors: `/actors/` - Actor Post Type and related Taxonomies
+    * `_main.php` - Builds CPT and Taxonomies, adds to Dashboard, triggers saving related post meta (for actors), Yoast Meta Replacement, AMP support
+    * `calculations.php` - Does the math for various data points used to generate show scores, stores count of number of characters for faster retrieval later
+    * `cmb2-metaboxes.php` - CMB2 code to make display nicer
+    * `custom-columns.php` - Define columns for post listing
+* Characters: `/characters/` - Character Post Type and related Taxonomies
+    * `_main.php` - Builds CPT and Taxonomies, adds to Dashboard, triggers saving related post meta, Yoast Meta Replacement, AMP support
+    * `calculations.php` - Does the math for various data points used to generate show scores
+    * `cmb2-metaboxes.php` - CMB2 code to make display nicer
+    * `custom-columns.php` - Define columns for post listing
+* Shows: `/shows/` - Show Post Type and related Taxonomies
+    * `_main.php` - Builds CPT and Taxonomies, adds to Dashboard, triggers saving related post meta, Yoast Meta Replacement, AMP support
+    * `calculations.php` - Show score math
+    * `cmb2-metaboxes.php` - CMB2 code to make display nicer
+    * `custom-columns.php` - Define columns for post listing
+    * `shows-link-this.php` - Calculations for 'shows like this'
 
 ### Features
 
 Stored in `/features/` -- a collection of miscellaneous features.
 
+* `_main.php` - Calls all other files
 * `cron.php` - Custom cron jobs to load high-traffic pages and ensure Varnish is cached.
 * `custom-loops.php` - Custom arrays and WP_Query calls that are repeated in multiple places.
     - Determine if actor is queer
@@ -77,6 +100,8 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - Post Meta AND Taxonomy Query - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
     - Related Posts by Tags.
 * `debug.php` - Debugging Tools for weird content.
+* `private-data.php` - Shows alert that a page is hidden if the post is set private.
+* `profiles.php` - Custom profile code
 * `query_vars.php` - Custom Query Variables that let us have the following special pages
     - statistics
     - this-year
@@ -102,6 +127,7 @@ Stored in `/gutenberg/`
 Blocks for Gutenberg. The file `_main.php` acts as an autoloader.
 
 * Author Boxes: Display author information
+* Custom Post Type Meta Data: _currently disabled_
 * Glossary: Show a visual glossary of taxonomies with icons
 * Grade: Give something a grade and an explanation
 * Screeners: For reviews of shows that haven't aired yet
@@ -139,6 +165,7 @@ The file `_main.php` acts as an autoloader.
 
 Stored in `/rest-api/` - These files generate the REST API output.
 
+* Alexa Skills: `alexa-skills.php` - Builds the basic Alexa API
 * Alexa Skills - `/alexa/`
     - Validation: `/alexa-validate.php` - Validates the requests as coming from Amazon
     - Bury Your Queers: `/byq.php` - Old BYQ code
@@ -150,8 +177,12 @@ Stored in `/rest-api/` - These files generate the REST API output.
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"
     - When Died - "X died on date Y"
+* IMDb - `imdb.php`
+    - API to communicate with IMDb and generate information (used by Alexa)
 * Of The Day - `/of-the-day.php`
     - The code that runs the X Of the Day API service. Every 24 hours, a new character and show of the day are spawned
+* Slack - `slack.php`
+    - Beginning of code to report newly dead characters to Slack (very buggy)
 * Statistics - `/stats.php`
     - JSON API version of the stats (mostly)
 * What Happened - `/what-happened.php`
