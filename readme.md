@@ -227,6 +227,7 @@ The basic defines for all stats pages.
 Update code like you normally would. If you don't want to push it anywhere, make a local branch. Always remember, merge to **development** first. If that works, do a pull request to **master** and when it's done, it'll update properly.
 
 In order to make maintenance easier, instead of checking everything all the time, we use composer for the following included libraries:
+
 * [ChartJS](https://github.com/chartjs/Chart.js/)
 * [TableSorter (Mottie Fork)](https://github.com/Mottie/tablesorter)
 * [CMB2](https://github.com/WebDevStudios/CMB2)
