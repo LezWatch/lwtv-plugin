@@ -67,7 +67,7 @@ class LWTV_Tools {
 		}
 
 		global $submenu;
-		$submenu['lwtv_tools'][] = array( 'Documentation', 'edit_posts', esc_url( 'https://lezwatch.github.io/' ) );
+		$submenu['lwtv_tools'][] = array( 'Documentation', 'edit_posts', esc_url( 'https://docs.lezwatchtv.com/' ) );
 		$submenu['lwtv_tools'][] = array( 'Slack', 'edit_posts', esc_url( 'https://lezwatchtv.slack.com/' ) );
 		$submenu['lwtv_tools'][] = array( 'Trello', 'edit_posts', esc_url( 'https://trello.com/b/hpDs7bvy/lezwatchtv' ) );
 
@@ -180,7 +180,7 @@ class LWTV_Tools {
 			<h3>External Resources</h3>
 
 			<ul>
-				<li><a href="https://lezwatch.github.io">Documentation</a></li>
+				<li><a href="https://docs.lezwatchtv.com">Documentation</a></li>
 				<li><a href="https://lezwatch.slack.com">Slack</a></li>
 				<li><a href="https://trello.com/b/hpDs7bvy/lezwatchtv">Trello Board</a></li>
 			</ul>
