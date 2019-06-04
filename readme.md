@@ -6,13 +6,15 @@ Custom plugin for LezWatch.TV
 
 The LezWatch.TV plugin contains custom code for use with the site. Instead of having everything hardcoded into the theme, or shoved in a shared MU Plugin, it was moved to it's own plugin. This allows it to be updated outside of the theme and deploy new features as needed.
 
-The code was written by Tracy Levesque and Mika Epstein, with assistance from [Yikes Inc.](YikesInc.com)
+The code was written by Tracy Levesque and Mika Epstein, with assistance from [Yikes Inc.](https://YikesInc.com)
+
+Further documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatchtv.com)
 
 ## Features
 
 The main file `functions.php` calls all other needed files.
 
-Defines `LWTV_LIBRARY` - If the libary files are found, this is set to true.
+Defines `LWTV_LIBRARY` - If the library files are found, this is set to true.
 
 Defines `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwise defined). Currently 1961.
 

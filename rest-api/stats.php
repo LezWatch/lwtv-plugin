@@ -474,8 +474,8 @@ class LWTV_Stats_JSON {
 		switch ( $cpt ) {
 			case 'actor':
 				$stats_array = array(
-					'name'       => get_the_title( $id ),
 					'id'         => $id,
+					'name'       => get_the_title( $id ),
 					'characters' => get_post_meta( $id, 'lezactors_char_count', true ),
 					'dead_chars' => get_post_meta( $id, 'lezactors_dead_count', true ),
 					'gender'     => implode( ', ', wp_get_post_terms( $id, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
@@ -489,6 +489,7 @@ class LWTV_Stats_JSON {
 				$died        = ( ! is_array( $died ) ) ? array( $died ) : $died;
 				$stats_array = array(
 					'id'        => $id,
+					'name'      => get_the_title( $id ),
 					'died'      => $died,
 					'actors'    => count( get_post_meta( $id, 'lezchars_actor', true ) ),
 					'shows'     => count( get_post_meta( $id, 'lezchars_show_group', true ) ),
@@ -500,6 +501,7 @@ class LWTV_Stats_JSON {
 			case 'show':
 				$stats_array = array(
 					'id'              => $id,
+					'title'            => get_the_title( $id ),
 					'nations'         => implode( ', ', wp_get_post_terms( $id, 'lez_country', array( 'fields' => 'names' ) ) ),
 					'stations'        => implode( ', ', wp_get_post_terms( $id, 'lez_stations', array( 'fields' => 'names' ) ) ),
 
