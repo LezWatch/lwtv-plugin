@@ -85,9 +85,84 @@ class LWTV_Shows_Like_This {
 		return $meta_query;
 	}
 
+	/**
+	 * Handpicked Reciprocity
+	 *
+	 * "Pick me, chose me, love me!" Meredith wants everyone to love her. If another
+	 * show has picked THIS show as a 'similar show', we want to pick it back.
+	 *
+	 * @param  int   $post_id Post ID of the show we're checking
+	 * @return array          Array of posts that match
+	 */
+	public function reciprocity( $post_id ) {
+		// If this isn't a show pagebail.
+		if ( ! isset( $post_id ) || 'post_type_shows' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		$reciprocity      = array();
+		$reciprocity_loop = new WP_Query(
+			array(
+				'post_type'              => 'post_type_shows',
+				'post_status'            => array( 'publish' ),
+				'orderby'                => 'title',
+				'order'                  => 'ASC',
+				'posts_per_page'         => '100',
+				'no_found_rows'          => true,
+				'update_post_term_cache' => true,
+				'meta_query'             => array(
+					array(
+						'key'     => 'lezshows_similar_shows',
+						'value'   => $post_id,
+						'compare' => 'LIKE',
+					),
+				),
+			)
+		);
+
+		if ( $reciprocity_loop->have_posts() ) {
+			while ( $reciprocity_loop->have_posts() ) {
+				$reciprocity_loop->the_post();
+				$this_show_id = get_the_ID();
+				$shows_array  = get_post_meta( $this_show_id, 'lezshows_similar_shows', true );
+
+				/*
+				 * If the show is published and there's a valid show array and it's not empty
+				 * then we're going to loop through and see if the show ID matches exactly.
+				 * If it does, we're going to save it to an array.
+				 */
+				if ( 'publish' === get_post_status( $this_show_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
+					foreach ( $shows_array as $related_show ) {
+						// Becuase of show IDs having SIMILAR numbers, we need to be a litte more flex
+						// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
+						if ( $related_show == $post_id ) {
+							$reciprocity[] = $this_show_id;
+						}
+					}
+				}
+			}
+			wp_reset_query();
+			$reciprocity = wp_parse_id_list( $reciprocity );
+		}
+
+		return $reciprocity;
+	}
+
+	/**
+	 * Alter Results
+	 *
+	 * Since we added in a CMB2 value for similar shows, we have to check that list here
+	 * and make sure they're included.
+	 *
+	 * @param  array $results    The current results
+	 * @param  int   $post_id    Post ID of the show
+	 * @param  array $taxonomies All taxonomies,
+	 * @param  array $args       Arguments passed through.
+	 * @return array             The corrected results
+	 */
 	public function alter_results( $results, $post_id, $taxonomies, $args ) {
 
-		$handpicked  = ( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) ? get_post_meta( $post_id, 'lezshows_similar_shows', true ) : false;
+		// Set our base array
 		$add_results = array();
 
 		// The shortcode only allows post ids or post objects from the query.
@@ -95,12 +170,14 @@ class LWTV_Shows_Like_This {
 			$results = wp_list_pluck( $results, 'ID' );
 		}
 
-		if ( false !== $handpicked ) {
-			// Array with ids.
-			$handpicked = wp_parse_id_list( $handpicked );
+		// What MIGHT we be adding:
+		$handpicked  = ( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) ? wp_parse_id_list( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) : array();
+		$reciprocity = self::reciprocity( $post_id );
+		$combo_list  = array_merge( $handpicked, $reciprocity );
 
+		if ( ! empty( $combo_list ) ) {
 			// For each show, add it to the list ONLY if the show isn't already listed.
-			foreach ( $handpicked as $a_show ) {
+			foreach ( $combo_list as $a_show ) {
 				//phpcs:ignore WordPress.PHP.StrictInArray
 				if ( ! in_array( $a_show, $results ) ) {
 					$add_results[] = $a_show;
@@ -108,7 +185,7 @@ class LWTV_Shows_Like_This {
 			}
 		}
 
-		// Add our handpicked posts to the list
+		// Add any new posts to the list
 		$results = $add_results + $results;
 
 		// Give 'em back!
