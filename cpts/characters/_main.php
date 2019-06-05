@@ -301,6 +301,13 @@ class LWTV_CPT_Characters {
 								'show_from' => $show_id,
 							);
 
+							// Get a list of actors (we need this twice later)
+							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
+							if ( ! is_array( $actors_ids ) ) {
+								$actors_ids = array( get_post_meta( $char_id, 'lezchars_actor', true ) );
+							}
+
+							// Increase the count of characters
 							$char_counts['total']++;
 
 							// Dead?
@@ -311,9 +318,17 @@ class LWTV_CPT_Characters {
 							if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
 								$char_counts['none']++;
 							}
-							// Queer IRL?
+							// The Tambour Takedown: Checking Queer IRL
+							// This is a little more complicated. We don't want to award
+							// points if a show has primarily cast a cis/het actor as a
+							// queer role. To solve this, we grab the actor listed as
+							// PRIMARY (i.e. the one listed first). If THEY are QIRL,
+							// the show gets the points.
 							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
-								$char_counts['quirl']++;
+								$top_actor = reset( $actors_ids );
+								if ( 'yes' === LWTV_Loops::is_actor_queer( $top_actor ) ) {
+									$char_counts['quirl']++;
+								}
 							}
 							// Is Trans?
 							$valid_trans_char = array( 'trans-man', 'trans-woman' );
@@ -322,14 +337,8 @@ class LWTV_CPT_Characters {
 							}
 
 							// Now to see if we have trans IRL...
-							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
-							if ( ! is_array( $actors_ids ) ) {
-								$actors_ids = array( get_post_meta( $char_id, 'lezchars_actor', true ) );
-							}
 							foreach ( $actors_ids as $actor ) {
-								$valid_trans_actor = array( 'trans-man', 'trans-woman', 'transgender' );
-								$gender_terms      = get_the_terms( $actor, 'lez_actor_gender', true );
-								if ( $gender_terms && ! is_wp_error( $gender_terms ) && has_term( $valid_trans_actor, 'lez_actor_gender', $actor ) ) {
+								if ( 'yes' === LWTV_Loops::is_actor_trans( $actor ) ) {
 									$char_counts['txirl']++;
 									// It's possible to have MORE trans actors than characters.
 								}

@@ -36,7 +36,7 @@ class LWTV_Loops {
 	public static function is_actor_queer( $the_id ) {
 
 		if ( ! isset( $the_id ) || 'post_type_actors' !== get_post_type( $the_id ) ) {
-			return 'bork';
+			return;
 		}
 
 		// Defaults
@@ -44,15 +44,15 @@ class LWTV_Loops {
 		$sexuality = 'yes';
 		$is_queer  = 'no';
 
-		// If the actor is cis, they may not be queer...
-		// Also 'undefined' isn't queer since we just don't know...
+		// If the actor is cis, they may not be queer
+		// Also 'undefined' isn't queer since we just don't know
 		$straight_genders = array( 'cis-man', 'cis-woman', 'cisgender', 'undefined' );
 		$gender_terms     = get_the_terms( $the_id, 'lez_actor_gender', true );
 		if ( ! $gender_terms || is_wp_error( $gender_terms ) || has_term( $straight_genders, 'lez_actor_gender', $the_id ) ) {
 			$gender = 'no';
 		}
 
-		// If the actor is heterosexual they may not be queer...
+		// If the actor is heterosexual they may not be queer
 		$straight_sexuality = array( 'heterosexual', 'unknown' );
 		$sexuality_terms    = get_the_terms( $the_id, 'lez_actor_sexuality', true );
 		if ( ! $sexuality_terms || is_wp_error( $sexuality_terms ) || has_term( $straight_sexuality, 'lez_actor_sexuality', $the_id ) ) {
@@ -65,6 +65,40 @@ class LWTV_Loops {
 		}
 
 		return $is_queer;
+	}
+
+	/**
+	 * Determine if an actor is transgender IRL
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $the_id
+	 * @return void
+	 */
+	public static function is_actor_trans( $the_id ) {
+
+		if ( ! isset( $the_id ) || 'post_type_actors' !== get_post_type( $the_id ) ) {
+			return;
+		}
+
+		// Defaults
+		$is_trans  = 'no';
+		$the_terms = '';
+
+		// The gender terms this actor uses:
+		$gender_terms = get_the_terms( $the_id, 'lez_actor_gender', true );
+
+		// If there are terms, let's add the slugs to a list.
+		if ( ! empty( $gender_terms ) && ! is_wp_error( $gender_terms ) ) {
+			$the_terms = implode( ' ', wp_list_pluck( $gender_terms, 'slug' ) );
+		}
+
+		// If the string has 'trans' anywhere in it, we're trans!
+		if ( false !== strpos( $the_terms, 'trans' ) ) {
+			$is_trans = 'yes';
+		}
+
+		return $is_trans;
 	}
 
 	/*
