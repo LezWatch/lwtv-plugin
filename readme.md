@@ -84,7 +84,7 @@ Stored in `/cpts/`:
     * `calculations.php` - Show score math
     * `cmb2-metaboxes.php` - CMB2 code to make display nicer
     * `custom-columns.php` - Define columns for post listing
-    * `shows-link-this.php` - Calculations for 'shows like this'
+    * `shows-link-this.php` - Calculations for 'shows like this' (uses [Related Posts by Taxonomy](https://wordpress.org/plugins/related-posts-by-taxonomy/))
 
 ### Features
 
