@@ -62,7 +62,7 @@ class LWTV_CMB2 {
 			array(
 				'post_type'   => 'post',
 				'numberposts' => wp_count_posts( 'post' )->publish,
-				'post_status' => array( 'publish' ),
+				'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
 			)
 		);
 
@@ -72,7 +72,7 @@ class LWTV_CMB2 {
 		if ( $posts ) {
 			foreach ( $posts as $post ) {
 				$post_title = $post->post_title;
-				// If we're an actor, we should check for QUEER.
+				// If we're an actor, we should check for queerness
 				if ( 'post_type_actors' === $query_args['post_type'] ) {
 					if ( get_post_meta( $post->ID, 'lezactors_queer', true ) ) {
 						$post_title .= ' (QUEER IRL)';
@@ -81,6 +81,10 @@ class LWTV_CMB2 {
 				// If the post is draft, let's flag it.
 				if ( 'draft' === get_post_status( $post->ID ) ) {
 					$post_title .= ' - DRAFT';
+				}
+				// If the post is private, we should flag that too
+				if ( 'private' === get_post_status( $post->ID ) ) {
+					$post_title .= ' - PRIVATE';
 				}
 				if ( $post->ID !== $the_id ) {
 					$post_options[ $post->ID ] = $post_title;
