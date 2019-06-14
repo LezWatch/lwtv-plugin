@@ -528,14 +528,7 @@ class LWTV_CPT_Characters {
 			}
 
 			// Ping the URLs so they update their data (scores etc)
-			foreach ( $clear_urls as $url ) {
-				$request = wp_remote_get( $url . '/?nocache' );
-			}
-
-			// Then Rocket Cache...
-			if ( function_exists( 'is_wp_rocket_active' ) && is_wp_rocket_active() ) {
-				rocket_clean_files( $clear_urls );
-			}
+			LWTV_Cache::clean_urls( $clear_urls );
 		}
 
 		// re-hook this function
