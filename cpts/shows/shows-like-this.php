@@ -97,7 +97,7 @@ class LWTV_Shows_Like_This {
 	 * @return array          Array of posts that match
 	 */
 	public function reciprocity( $post_id ) {
-		// If this isn't a show pagebail.
+		// If this isn't a show page, bail.
 		if ( ! isset( $post_id ) || 'post_type_shows' !== get_post_type( $post_id ) ) {
 			return;
 		}
@@ -182,7 +182,7 @@ class LWTV_Shows_Like_This {
 			// and if it's published
 			foreach ( $combo_list as $a_show ) {
 				//phpcs:ignore WordPress.PHP.StrictInArray
-				if ( 'published' == get_post_status( $a_show ) && ! in_array( $a_show, $results ) && ! in_array( $a_show, $add_results ) ) {
+				if ( 'publish' === get_post_status( $a_show ) && ! in_array( $a_show, $results ) && ! in_array( $a_show, $add_results ) ) {
 					$add_results[] = $a_show;
 				}
 			}

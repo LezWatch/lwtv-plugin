@@ -11,7 +11,7 @@ class LWTV_Cache {
 	 * Clean URLs
 	 * @return void
 	 */
-	public function clean_urls( $clear_urls ) {
+	public static function clean_urls( $clear_urls ) {
 		foreach ( $clear_urls as $url ) {
 			// Reload the data by calling the page
 			$request = wp_remote_get( $url . '/?nocache' );
