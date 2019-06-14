@@ -521,11 +521,14 @@ class LWTV_CPT_Characters {
 		// If the character is not an auto-draft, maybe flush caches.
 		if ( 'auto-draft' !== get_post_status( $post_id ) && ! empty( $purgables ) ) {
 			foreach ( $purgables as $id ) {
-				// If the related actors/characters are published, cache flush
+				// If the related actors/characters are published, build the URLs
 				if ( 'publish' === get_post_status( $id ) ) {
-					$request = wp_remote_get( get_permalink( $id ) . '/?nocache' );
+					$clear_urls[] = get_permalink( $id );
 				}
 			}
+
+			// Ping the URLs so they update their data (scores etc)
+			LWTV_Cache::clean_urls( $clear_urls );
 		}
 
 		// re-hook this function

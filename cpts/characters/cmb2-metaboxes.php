@@ -47,7 +47,7 @@ class LWTV_Characters_CMB2 {
 			array(
 				'post_type'   => 'post_type_actors',
 				'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
-				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+				'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
 			)
 		);
 		return $return;
