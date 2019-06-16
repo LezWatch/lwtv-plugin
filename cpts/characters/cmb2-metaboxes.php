@@ -60,6 +60,16 @@ class LWTV_Characters_CMB2 {
 		// prefix for all custom fields
 		$prefix = 'lezchars_';
 
+		// @codingStandardsIgnoreStart
+		// Get the post ID
+		$post_id = null;
+		if ( isset( $_GET['post'] ) ) {
+			$post_id = (int) $_GET['post'];
+		} elseif ( isset( $_POST['post_ID'] ) ) {
+			$post_id = (int) $_POST['post_ID'];
+		}
+		// @codingStandardsIgnoreEnd
+
 		// MetaBox Group: Character Top Grid
 		$cmb_char_grid = new_cmb2_box(
 			array(
@@ -144,6 +154,7 @@ class LWTV_Characters_CMB2 {
 				'select_all_button' => false,
 				'remove_default'    => 'true',
 				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_cliches' ),
+				'default'           => LWTV_CMB2::get_select2_defaults( 'lezchars_cliches', 'lez_cliches', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'Common clichés ...',
 				),

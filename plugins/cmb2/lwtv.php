@@ -92,6 +92,7 @@ class LWTV_CMB2 {
 			}
 		}
 
+		// @codingStandardsIgnoreStart
 		// If we're a show, we want to sort and remove stopwords
 		if ( 'post_type_shows' === $query_args['post_type'] ) {
 			uasort( $post_options, function( $a, $b ) {
@@ -100,10 +101,47 @@ class LWTV_CMB2 {
 		} else {
 			asort( $post_options );
 		}
+		// @codingStandardsIgnoreEnd
 
 		return $post_options;
 	}
 
+	/**
+	 * Get default data for some odd CMB2 things using select2
+	 * @param  string  $postmeta the name of the postmeta used by CMB2
+	 * @param  string  $taxonomy the name of the taxonomy we're using
+	 * @param  integer $post_id  post ID
+	 * @param  boolean $none     does it have a 'none'?
+	 * @return array             An array of Term IDs
+	 */
+	public static function get_select2_defaults( $postmeta, $taxonomy, $post_id = 0, $none = false ) {
+
+		if ( 0 === $post_id ) {
+			return;
+		}
+
+		$get_postmeta    = get_post_meta( $post_id, $postmeta, true );
+		$postmeta_to_add = array();
+		if ( ! array( $get_postmeta ) || empty( $get_postmeta ) ) {
+			// If NONE is true, we have some extra
+			if ( $none ) {
+				$get_taxonomy = wp_get_post_terms( $post_id, $taxonomy );
+				if ( ! empty( $get_taxonomy ) && ! is_wp_error( $get_taxonomy ) ) {
+					foreach ( $get_taxonomy as $the_term ) {
+						$postmeta_to_add[] = $the_term->term_id;
+					}
+					update_post_meta( $post_id, $postmeta, $postmeta_to_add );
+				}
+			}
+		}
+		return $postmeta_to_add;
+	}
+
+	/**
+	 * Trim things when we sort
+	 * @param  string $str Show title
+	 * @return string      Edited show title
+	 */
 	public static function showshort( $str ) {
 		list( $first, $rest ) = explode( ' ', $str . ' ', 2 );
 		// the extra space is to prevent "undefined offset" notices on single-word titles.

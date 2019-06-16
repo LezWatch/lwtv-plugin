@@ -29,18 +29,6 @@
               "reference": "master"
             }
           }
-        },
-        {
-          "type": "package",
-          "package": {
-            "name": "mustardbees/cmb-field-select2",
-            "version": "1.0.0",
-            "source": {
-              "url": "https://github.com/mustardBees/cmb-field-select2",
-              "type": "git",
-              "reference": "master"
-            }
-          }
         }
     ],
     "require": {
@@ -58,7 +46,6 @@
         "files": [
             "vendor/webdevstudios/cmb2/init.php",
             "vendor/origgami/cmb2-grid/Cmb2GridPlugin.php",
-            "vendor/mustardBees/cmb-field-select2/cmb-field-select2.php",
             "vendor/level-level/facetwp-wp-cli/facetwp-wp-cli.php",
             "vendor/webdevstudios/facetwp-cmb2/cmb2.php"
         ]
@@ -83,8 +70,7 @@
             "vendor/mottie/tablesorter/dist/css/theme.bootstrap_4.min.css": "assets/css/theme.bootstrap_4.min.css",
             "vendor/level-level/facetwp-wp-cli/": "plugins/facetwp/facetwp-wp-cli/",
             "vendor/webdevstudios/facetwp-cmb2/": "plugins/facetwp/facetwp-cmb2/",
-            "vendor/origgami/cmb2-grid/": "plugins/cmb2/cmb2-grid/",
-            "vendor/mustardBees/cmb-field-select2/": "plugins/cmb2/cmb-field-select2/"
+            "vendor/origgami/cmb2-grid/": "plugins/cmb2/cmb2-grid/"
         }
     }
 }
