@@ -38,6 +38,13 @@ class LWTV_Cache {
 			}
 		}
 
+		// If character was published within the last 15 minutes, flush home page
+		$post_date = get_post_time( 'U', true, $post_id );
+		$delta     = time() - $post_date;
+		if ( $delta < ( 15 * 60 ) ) {
+			$clean_urls[] = home_url();
+		}
+
 		return $clean_urls;
 	}
 
