@@ -17,6 +17,7 @@ require_once 'shows-like-this.php';
 class LWTV_CPT_Shows {
 
 	protected static $all_taxonomies;
+	protected static $select2_taxonomies;
 
 	/**
 	 * Constructor
@@ -27,8 +28,6 @@ class LWTV_CPT_Shows {
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
-		// Disabled because it's not Gutenberged yet
-		// add_action( 'post_submitbox_misc_actions', array( $this, 'post_page_metabox' ) );
 
 		// Define show taxonomies
 		self::$all_taxonomies = array(
@@ -45,6 +44,15 @@ class LWTV_CPT_Shows {
 				'plural' => 'tagged',
 				'hide'   => false,
 			),
+		);
+
+		// These taxonomies use select2.
+		self::$select2_taxonomies = array(
+			'lezshows_tropes'         => 'lez_tropes',
+			'lezshows_tvgenre'        => 'lez_genres',
+			'lezshows_intersectional' => 'lez_intersections',
+			'lezshows_tvnations'      => 'lez_country',
+			'lezshows_tvstations'     => 'lez_stations',
 		);
 
 		// phpcs:disable
@@ -233,23 +241,6 @@ class LWTV_CPT_Shows {
 		}
 	}
 
-	/**
-	 * Things that have to be run when we save
-	 * @param  int $post_id
-	 * @return n/a - this just runs shit
-	 */
-	public function update_things( $post_id ) {
-		// Save show scores
-		LWTV_Shows_Calculate::do_the_math( $post_id );
-
-		// Sync up data
-		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tropes', 'lez_tropes' );
-		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvgenre', 'lez_genres' );
-		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_intersectional', 'lez_intersections' );
-		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvnations', 'lez_country' );
-		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezshows_tvstations', 'lez_stations' );
-	}
-
 	/*
 	 * Save post meta for shows on SHOW SAVE.
 	 *
@@ -259,11 +250,21 @@ class LWTV_CPT_Shows {
 	 */
 	public function save_post_meta( $post_id, $post, $update ) {
 
+		// Don't do this on auto-drafts
+		if ( 'auto-draft' === get_post_status( $post_id ) ) {
+			return;
+		}
+
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
 
-		// Update Things...
-		self::update_things( $post_id );
+		// Save show scores
+		LWTV_Shows_Calculate::do_the_math( $post_id );
+
+		// Sync up data
+		foreach ( self::$select2_taxonomies as $postmeta => $taxonomy ) {
+			LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
+		}
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
@@ -306,39 +307,6 @@ class LWTV_CPT_Shows {
 				width: 40%;
 			}
 		</style>";
-	}
-
-	/*
-	 * Post Page Meta Box
-	 * For listing critical information
-	 */
-	public function post_page_metabox() {
-		global $post;
-
-		switch ( $post->post_type ) {
-			case 'post_type_shows':
-				$countqueers = get_post_meta( $post->ID, 'lezshows_char_count', true );
-				$deadqueers  = get_post_meta( $post->ID, 'lezshows_dead_count', true );
-				$score       = get_post_meta( $post->ID, 'lezshows_the_score', true );
-				$loved       = ( 'on' === get_post_meta( $post->ID, 'lezshows_worthit_show_we_love', true ) ) ? 'Yes' : 'No';
-				$short_score = round( $score, 2 );
-
-				echo '<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="loved">Loved: <b>' . esc_html( $loved ) . '</b></span>
-				</div>
-				<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="characters">Characters: <b>' . (int) $countqueers . '</b> total';
-				if ( $deadqueers ) {
-					echo '/ <b>' . (int) $deadqueers . '</b> dead';
-				}
-				echo '</span>
-				</div>
-				<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="score">Score: <b>' . floatval( $short_score ) . '</b></span>
-				</div>';
-
-				break;
-		}
 	}
 
 	/**

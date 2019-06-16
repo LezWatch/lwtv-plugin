@@ -66,6 +66,16 @@ class LWTV_Shows_CMB2 {
 		// prefix for all custom fields
 		$prefix = 'lezshows_';
 
+		// @codingStandardsIgnoreStart
+		// Get the post ID
+		$post_id = null;
+		if ( isset( $_GET['post'] ) ) {
+			$post_id = (int) $_GET['post'];
+		} elseif ( isset( $_POST['post_ID'] ) ) {
+			$post_id = (int) $_POST['post_ID'];
+		}
+		// @codingStandardsIgnoreEnd
+
 		// Metabox Group: Summary
 		$cmb_excerpt = new_cmb2_box(
 			array(
@@ -79,14 +89,15 @@ class LWTV_Shows_CMB2 {
 				'cmb_styles'   => false,
 			)
 		);
-		// Field: Tropes
-		$field_tropes = $cmb_excerpt->add_field(
+		// Field: Excerpt
+		$field_excerpt = $cmb_excerpt->add_field(
 			array(
 				'name'      => 'Excerpt',
 				'id'        => 'excerpt',
 				'desc'      => 'Excerpts are short, one to two sentance, summaries of what the show is about. This will be used on the list of all shows, as well as the front page for new shows.',
 				'type'      => 'textarea',
 				'escape_cb' => false,
+				'default'   => get_post_field( 'post_excerpt', $post_id ),
 			)
 		);
 
@@ -106,15 +117,19 @@ class LWTV_Shows_CMB2 {
 		// Field: Air Dates
 		$field_airdates = $cmb_mustsee->add_field(
 			array(
-				'name'     => 'Air Dates',
-				'id'       => $prefix . 'airdates',
-				'type'     => 'date_year_range',
-				'earliest' => '1930',
-				'text'     => array(
+				'name'    => 'Air Dates',
+				'id'      => $prefix . 'airdates',
+				'type'    => 'date_year_range',
+				'text'    => array(
 					'start_label'  => '',
 					'finish_label' => '',
 				),
-				'options'  => array(
+				'default' => array(
+					'start'  => date( 'Y' ),
+					'finish' => 'current',
+				),
+				'options' => array(
+					'earliest'            => ( FIRST_LWTV_YEAR - 10 ),
 					'start_reverse_sort'  => true,
 					'finish_reverse_sort' => true,
 					'start_show_current'  => false,
@@ -146,11 +161,13 @@ class LWTV_Shows_CMB2 {
 				'select_all_button' => false,
 				'remove_default'    => 'true',
 				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_stations' ),
+				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_tvstations', 'lez_stations', $post_id, true ),
 				'attributes'        => array(
-					'placeholder' => 'Select the TV Stations',
+					'placeholder' => 'Ex. NBC',
 				),
 			)
 		);
+
 		// Field: Nations
 		$field_nations = $cmb_mustsee->add_field(
 			array(
@@ -161,8 +178,9 @@ class LWTV_Shows_CMB2 {
 				'select_all_button' => false,
 				'remove_default'    => 'true',
 				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_country' ),
+				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_tvnations', 'lez_country', $post_id, true ),
 				'attributes'        => array(
-					'placeholder' => 'Select the homeland',
+					'placeholder' => 'Ex. Canada',
 				),
 			)
 		);
@@ -185,7 +203,7 @@ class LWTV_Shows_CMB2 {
 				'id'         => $prefix . 'imdb',
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => 'Example: tt6087250',
+					'placeholder' => 'Ex: tt6087250',
 				),
 			)
 		);
@@ -199,8 +217,9 @@ class LWTV_Shows_CMB2 {
 				'select_all_button' => false,
 				'remove_default'    => 'true',
 				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_genres' ),
+				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_tvgenre', 'lez_genres', $post_id ),
 				'attributes'        => array(
-					'placeholder' => 'Subject matter.',
+					'placeholder' => 'Ex. Drama',
 				),
 			)
 		);
@@ -214,8 +233,9 @@ class LWTV_Shows_CMB2 {
 				'select_all_button' => false,
 				'remove_default'    => 'true',
 				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_intersections' ),
+				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_intersectional', 'lez_intersections', $post_id ),
 				'attributes'        => array(
-					'placeholder' => 'Positive represenation.',
+					'placeholder' => 'Ex. Disabilities',
 				),
 			)
 		);
@@ -253,8 +273,9 @@ class LWTV_Shows_CMB2 {
 				'select_all_button' => false,
 				'remove_default'    => 'true',
 				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_tropes' ),
+				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_tropes', 'lez_tropes', $post_id ),
 				'attributes'        => array(
-					'placeholder' => 'Common tropes ...',
+					'placeholder' => 'Ex. Bury Your Queers',
 				),
 			)
 		);

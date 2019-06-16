@@ -62,41 +62,47 @@ class LWTV_CMB2_Addons {
 
 	/**
 	 * Funky stuff done to save taxonomy data
+	 *
+	 * If there's post data, we assume whatever we're TRYING to save is correct.
+	 * Otherwise, we're always going to nuke the terms and re-save as the post
+	 * meta.
+	 *
+	 * Also we're going to check for the existance of the NONE taxonomy. If that
+	 * exists, we remove it. If that emptys the array, we'll add it back, but this
+	 * prevents cases like clichés being 'none' and 'athlete'.
 	 */
 	public static function select2_taxonomy_save( $post_id, $postmeta, $taxonomy ) {
 
 		global $wpdb;
 
-		$get_post_meta_data  = get_post_meta( $post_id, $postmeta, true );
-		$get_post_meta_saved = get_post_meta( $post_id, $postmeta . '_saved', true );
-		$get_the_terms_data  = wp_get_post_terms( $post_id, $taxonomy );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$new_post_meta_data = ( isset( $_POST[ $postmeta ] ) ) ? $_POST[ $postmeta ] : '';
+		$none_term          = get_term_by( 'slug', 'none', $taxonomy );
+		if ( false !== $none_term && is_array( $new_post_meta_data ) ) {
+			$the_post_meta_data = array_diff( $new_post_meta_data, array( $none_term->term_id ) );
+		} else {
+			$the_post_meta_data = $new_post_meta_data;
+		}
 
-		if ( is_array( $get_post_meta_data ) ) {
-			// If we already have the post meta, then we should set the terms
-			$get_post_meta_data = array_map( 'intval', $get_post_meta_data );
-			$get_post_meta_data = array_unique( $get_post_meta_data );
-			$set_the_terms      = array();
+		if ( isset( $the_post_meta_data ) && is_array( $the_post_meta_data ) && ! empty( $the_post_meta_data ) ) {
+			// If we have postmeta, then we should set the terms
+			wp_set_object_terms( $post_id, null, $taxonomy );
+			$set_the_terms = array();
 
-			foreach ( $get_post_meta_data as $term_id ) {
-				$term = get_term_by( 'id', $term_id, $taxonomy );
-				array_push( $set_the_terms, $term->slug );
+			$the_post_meta_data = array_map( 'intval', $the_post_meta_data );
+			$the_post_meta_data = array_unique( $the_post_meta_data );
+
+			foreach ( $the_post_meta_data as $term_id ) {
+				$term            = get_term_by( 'id', $term_id, $taxonomy );
+				$set_the_terms[] = $term->slug;
 			}
 			wp_set_object_terms( $post_id, $set_the_terms, $taxonomy );
-		} elseif ( $get_the_terms_data && ! is_wp_error( $get_the_terms_data ) ) {
-			// If we don't have the post meta, then we want to remove the taxonomies SOMETIMES...
-			if ( 'success' === $get_post_meta_saved ) {
-				// If this has been saved before, then blank means delete
-				foreach ( $get_the_terms_data as $the_term ) {
-					wp_remove_object_terms( $post_id, $the_term->term_id, $taxonomy );
-				}
-			} else {
-				// If this has never been saved before, blank means trust the terms
-				$post_meta_to_add = array();
-				foreach ( $get_the_terms_data as $the_term ) {
-					$post_meta_to_add[] = $the_term->term_id;
-				}
-				update_post_meta( $post_id, $postmeta, $post_meta_to_add );
-				update_post_meta( $post_id, $postmeta . '_saved', 'success' );
+		} else {
+			// If there's no postmeta, then set it 'none' if it exists
+			// (this only impacts cliches and tropes at the moment)
+			if ( false !== $none_term ) {
+				wp_set_object_terms( $post_id, $none_term->term_id, $taxonomy );
+				update_post_meta( $post_id, $postmeta, array( $none_term->term_id ) );
 			}
 		}
 	}

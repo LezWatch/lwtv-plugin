@@ -68,7 +68,6 @@ class LWTV_CPT_Characters {
 
 	/*
 	 * CPT Settings
-	 *
 	 */
 	public function create_post_type() {
 
@@ -135,7 +134,6 @@ class LWTV_CPT_Characters {
 
 	/*
 	 * Custom Taxonomies
-	 *
 	 */
 	public function create_taxonomies() {
 
@@ -467,19 +465,6 @@ class LWTV_CPT_Characters {
 		return $characters;
 	}
 
-	/**
-	 * Things that have to be run when we save
-	 * @param  int $post_id
-	 * @return n/a - this just runs shit
-	 */
-	public function update_things( $post_id ) {
-		// Save character data
-		LWTV_Characters_Calculate::do_the_math( $post_id );
-
-		// Sync up data
-		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
-	}
-
 	/*
 	 * Save post meta for characters
 	 *
@@ -489,45 +474,23 @@ class LWTV_CPT_Characters {
 	 */
 	public function save_post_meta( $post_id ) {
 
-		$purgables = array();
+		// Bail if this is an auto-draft
+		if ( 'auto-draft' === get_post_status( $post_id ) ) {
+			return;
+		}
 
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
-		// Update things. We may run this multiple times.
-		self::update_things( $post_id );
+		// Math and Taxonomies
+		LWTV_Characters_Calculate::do_the_math( $post_id );
+		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
 
-		// Update show data ONLY on saves.
-		$show_ids = get_post_meta( $post_id, 'lezchars_show_group', true );
-		if ( '' !== $show_ids ) {
-			foreach ( $show_ids as $each_show ) {
-				if ( isset( $each_show['show'] ) ) {
-					$purgables[] = $each_show['show'];
-				}
-			}
-		}
+		// Get a list of URLs to flush
+		$clear_urls = LWTV_Cache::collect_urls_for_characters( $post_id );
 
-		// Update actor data ONLY on saves.
-		$actor_ids = get_post_meta( $post_id, 'lezchars_actor', true );
-		if ( ! is_array( $actor_ids ) ) {
-			$actor_ids = array( get_post_meta( $post_id, 'lezchars_actor', true ) );
-		}
-		if ( ! empty( $actor_ids ) ) {
-			foreach ( $actor_ids as $each_actor ) {
-				$purgables[] = $each_actor;
-			}
-		}
-
-		// If the character is not an auto-draft, maybe flush caches.
-		if ( 'auto-draft' !== get_post_status( $post_id ) && ! empty( $purgables ) ) {
-			foreach ( $purgables as $id ) {
-				// If the related actors/characters are published, build the URLs
-				if ( 'publish' === get_post_status( $id ) ) {
-					$clear_urls[] = get_permalink( $id );
-				}
-			}
-
-			// Ping the URLs so they update their data (scores etc)
+		// If we've got a list of URLs, then flush.
+		if ( ! empty( $clear_urls ) ) {
 			LWTV_Cache::clean_urls( $clear_urls );
 		}
 
