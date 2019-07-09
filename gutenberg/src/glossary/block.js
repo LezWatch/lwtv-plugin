@@ -3,7 +3,6 @@
  */
 
 //  Import CSS.
-import './style.scss';
 import './editor.scss';
 
 const { registerBlockType } = wp.blocks;

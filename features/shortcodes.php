@@ -15,7 +15,7 @@ class LWTV_Shortcodes {
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
 		add_filter( 'widget_text', 'do_shortcode' );
-		self::$version = '2.0.0';
+		self::$version = '2.1.0';
 	}
 
 	/**

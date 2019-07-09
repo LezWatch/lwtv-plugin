@@ -314,3 +314,4 @@ new LWTV_Stats();
 // Include sub files
 require_once 'array.php';
 require_once 'output.php';
+require_once 'gutenberg-ssr.php';
