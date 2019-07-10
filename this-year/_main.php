@@ -11,6 +11,7 @@ class LWTV_This_Year {
 		$thisyear = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
 		self::dead( $thisyear );
 		self::shows( $thisyear );
+		self::navigation( $thisyear );
 	}
 
 	public function dead( $thisyear ) {
@@ -62,7 +63,7 @@ class LWTV_This_Year {
 				);
 			}
 
-
+			// phpcs:disable
 			// Reorder all the dead to sort by DoD
 			uasort( $death_list_array, function( $a, $b ) {
 				// Spaceship doesn't work
@@ -76,6 +77,7 @@ class LWTV_This_Year {
 				}
 				return $return;
 			});
+			// phpcs:enable
 			?>
 			<ul>
 				<?php
@@ -228,7 +230,7 @@ class LWTV_This_Year {
 	 * @param  [type]  $thisyear
 	 * @return boolean           [description]
 	 */
-	function lwtv_yikes_this_year_navigation( $thisyear ) {
+	public static function navigation( $thisyear ) {
 		$thisyear = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
 		$lastyear = FIRST_LWTV_YEAR;
 		$baseurl  = '/this-year/';
