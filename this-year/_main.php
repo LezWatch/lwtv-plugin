@@ -9,9 +9,11 @@ class LWTV_This_Year {
 
 	public static function display( $thisyear ) {
 		$thisyear = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		echo '<div class="thisyear-container">';
 		self::dead( $thisyear );
 		self::shows( $thisyear );
 		self::navigation( $thisyear );
+		echo '</div>';
 	}
 
 	public function dead( $thisyear ) {
