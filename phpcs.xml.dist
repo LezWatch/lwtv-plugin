@@ -12,4 +12,10 @@
         <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_trigger_error" />
         <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_get_contents" />
     </rule>
+
+    <rule ref="WordPress.Security.EscapeOutput">
+        <properties>
+            <property name="customAutoEscapedFunctions" value="lwtv_yikes_symbolicons" type="array" />
+        </properties>
+    </rule>
 </ruleset>

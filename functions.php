@@ -173,3 +173,4 @@ require_once 'gutenberg/_main.php';
 require_once 'plugins/_main.php';
 require_once 'rest-api/_main.php';
 require_once 'statistics/_main.php';
+require_once 'this-year/_main.php';
