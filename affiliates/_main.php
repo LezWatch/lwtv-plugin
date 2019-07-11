@@ -373,7 +373,7 @@ class LWTV_Affilliates {
 
 		$link_output = implode( $links, '' );
 
-		$icon   = lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' );
+		$icon   = LWTV_Functions::symbolicons( 'tv-hd.svg', 'fa-tv' );
 		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span> ' . $link_output;
 
 		return $output;

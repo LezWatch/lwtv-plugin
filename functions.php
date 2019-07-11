@@ -159,6 +159,41 @@ class LWTV_Functions {
 		return $defaults;
 	}
 
+	/**
+	 * Symbolicons Output
+	 *
+	 * Echos the default outputtable symbolicon, based on the SVG and FA icon passed to it.
+	 *
+	 * @access public
+	 * @param string $svg (default: 'square.svg')
+	 * @param string $fontawesome (default: 'fa-square')
+	 * @return icon
+	 */
+	public static function symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square' ) {
+
+		$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
+		$square = get_template_directory_uri( '/images/square.svg' );
+
+		if ( defined( 'LP_SYMBOLICONS_PATH' ) && file_exists( LP_SYMBOLICONS_PATH . $svg ) ) {
+			$icon = LP_SYMBOLICONS_PATH . $svg;
+		} elseif ( ! wp_style_is( 'fontawesome', 'enqueued' ) ) {
+			$icon = $square;
+		}
+
+		if ( isset( $icon ) ) {
+			// @codingStandardsIgnoreStart
+			$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
+			// @codingStandardsIgnoreEnd
+		}
+
+		// Override for AMP - NO ICONS
+		if ( is_amp_endpoint() ) {
+			$return = '';
+		}
+
+		return $return;
+	}
+
 }
 new LWTV_Functions();
 

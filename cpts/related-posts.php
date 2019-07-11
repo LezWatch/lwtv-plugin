@@ -114,9 +114,9 @@ class LWTV_Related_Posts {
 				'character' => '',
 			);
 			$icons       = array(
-				'show'      => lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ),
-				'actor'     => lwtv_yikes_symbolicons( 'team.svg', 'fa-users' ),
-				'character' => lwtv_yikes_symbolicons( 'contact-card.svg', 'fa-users' ),
+				'show'      => LWTV_Functions::symbolicons( 'tv-hd.svg', 'fa-tv' ),
+				'actor'     => LWTV_Functions::symbolicons( 'team.svg', 'fa-users' ),
+				'character' => LWTV_Functions::symbolicons( 'contact-card.svg', 'fa-users' ),
 			);
 			$related_out = '';
 

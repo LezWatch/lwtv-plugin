@@ -15,7 +15,7 @@
 
     <rule ref="WordPress.Security.EscapeOutput">
         <properties>
-            <property name="customAutoEscapedFunctions" value="lwtv_yikes_symbolicons" type="array" />
+            <property name="customAutoEscapedFunctions" value="LWTV_Functions,symbolicons" type="array" />
         </properties>
     </rule>
 </ruleset>
