@@ -32,11 +32,11 @@
         }
     ],
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.3.0",
         "slowprog/composer-copy-file": "^0.3",
         "nnnick/chartjs": "^2.7",
         "mottie/tablesorter": "^2.31",
-        "cmb2/cmb2": "^2.5",
+        "cmb2/cmb2": "^2.6",
         "origgami/cmb2-grid": "dev-master",
         "level-level/facetwp-wp-cli": "dev-master",
         "webdevstudios/facetwp-cmb2": "*",
