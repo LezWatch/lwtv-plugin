@@ -29,9 +29,6 @@ $nations     = get_terms( 'lez_country', array( 'hide_empty' => 0 ) );
 $count       = wp_count_terms( 'lez_country' );
 $shows_count = LWTV_Stats::generate( 'shows', 'total', 'count' );
 
-// Current URL
-$current_url = add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->request ) );
-
 switch ( $country ) {
 	case 'all':
 		$title_country = 'All Countries (' . $count . ')';
