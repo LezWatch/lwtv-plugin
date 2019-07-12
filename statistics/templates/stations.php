@@ -25,9 +25,6 @@ $all_stations = get_terms( 'lez_stations', array( 'hide_empty' => 0 ) );
 $count        = wp_count_terms( 'lez_stations' );
 $shows_count  = LWTV_Stats::generate( 'shows', 'total', 'count' );
 
-// Current URL
-$current_url = add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->request ) );
-
 // Title
 switch ( $station ) {
 	case 'all':
@@ -69,7 +66,7 @@ switch ( $station ) {
 	<?php
 	foreach ( $valid_views as $the_view => $the_post_type ) {
 		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( 'view', $the_view, $current_url ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( 'view', $the_view, '/statistics/stations/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
