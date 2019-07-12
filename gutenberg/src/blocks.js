@@ -20,3 +20,9 @@ import './glossary/block.js';
 
 // Screener
 import './screener/block.js';
+
+// Statistics
+import './statistics/block.js';
+
+// This Year
+import './this-year/block.js';

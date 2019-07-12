@@ -15,7 +15,7 @@ class LWTV_Shortcodes {
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
 		add_filter( 'widget_text', 'do_shortcode' );
-		self::$version = '2.0.0';
+		self::$version = '2.1.0';
 	}
 
 	/**
@@ -166,14 +166,14 @@ class LWTV_Shortcodes {
 				$worth_color = 'warning';
 				break;
 		}
-		$worth_image = lwtv_yikes_symbolicons( $worth_icon . '.svg', 'fa-' . $worth_icon );
+		$worth_image = LWTV_Functions::symbolicons( $worth_icon . '.svg', 'fa-' . $worth_icon );
 
 		// Get proper triger warning data
 		$warning = '';
 		$trigger = ( in_array( $attributes['trigger'], array( 'high', 'medium', 'low' ), true ) ) ? $attributes['trigger'] : 'none';
 
 		if ( 'none' !== $trigger ) {
-			$warn_image = lwtv_yikes_symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
+			$warn_image = LWTV_Functions::symbolicons( 'warning.svg', 'fa-exclamation-triangle' );
 			switch ( $trigger ) {
 				case 'high':
 					$warn_color = 'danger';
@@ -193,7 +193,7 @@ class LWTV_Shortcodes {
 		$star  = ( in_array( $attributes['star'], array( 'gold', 'silver', 'bronze', 'anti' ), true ) ) ? $attributes['star'] : 'none';
 
 		if ( 'none' !== $star ) {
-			$stars = '<span data-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-info"><span role="img" class="screener screener-star ' . $star . '">' . lwtv_yikes_symbolicons( 'star.svg', 'fa-star' ) . '</span></button></span>';
+			$stars = '<span data-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-info"><span role="img" class="screener screener-star ' . $star . '">' . LWTV_Functions::symbolicons( 'star.svg', 'fa-star' ) . '</span></button></span>';
 		}
 
 		$output = '<div class="bd-callout screener-shortcode"><h5 id="' . esc_attr( $attributes['title'] ) . '">Screener Review on <em>' . esc_html( $attributes['title'] ) . '</em></h5>
@@ -231,7 +231,7 @@ class LWTV_Shortcodes {
 			$return = '<ul class="trope-list list-group">';
 			// loop over each returned trope
 			foreach ( $the_terms as $term ) {
-				$icon    = lwtv_yikes_symbolicons( get_term_meta( $term->term_id, 'lez_termsmeta_icon', true ) . '.svg', 'fa-square' );
+				$icon    = LWTV_Functions::symbolicons( get_term_meta( $term->term_id, 'lez_termsmeta_icon', true ) . '.svg', 'fa-square' );
 				$return .= '<li class="list-group-item glossary term term-' . $term->slug . '"><a href="' . get_term_link( $term->slug, $the_taxonomy ) . '" rel="glossary term">' . $icon . '</a> <a href="' . get_term_link( $term->slug, $the_taxonomy ) . '" rel="glossary term" class="trope-link">' . $term->name . ' (' . get_term_meta( $term->term_id, 'lez_termsmeta_icon', true ) . ')</a></li>';
 			}
 			$return .= '</ul>';
@@ -292,7 +292,7 @@ class LWTV_Shortcodes {
 				$favourites = ( empty( $show_title ) ) ? '' : implode( ', ', $show_title );
 				$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
 			}
-			$fav_shows = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_yikes_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+			$fav_shows = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . LWTV_Functions::symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
 
 			// Number of posts
 			$numposts = count_user_posts( $author_id, 'post', true );
@@ -333,8 +333,8 @@ class LWTV_Shortcodes {
 			case 'large':
 				// Sort out the title
 				$content['title'] = ( '' !== $content['title'] ) ? '(' . $content['title'] . ')' : '';
-				$view_articles    = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_yikes_symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $author_id ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
-				$view_twitter     = ( ! empty( $content['twitter'] ) ) ? '<div class="author-twitter">' . lwtv_yikes_symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">@' . $content['twitter'] . '</a> </div>' : '';
+				$view_articles    = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . LWTV_Functions::symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $author_id ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
+				$view_twitter     = ( ! empty( $content['twitter'] ) ) ? '<div class="author-twitter">' . LWTV_Functions::symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">@' . $content['twitter'] . '</a> </div>' : '';
 
 				// Build it.
 				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h4 class="author_name">' . $content['name'] . ' ' . $content['title'] . '</h4><div class="author-bio">' . nl2br( $content['bio'] ) . '</div><div class="author-details">' . $view_articles . $view_twitter . $content['fav_shows'] . '</div>';

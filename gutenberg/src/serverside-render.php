@@ -42,6 +42,19 @@ class LWTV_ServerSideRendering {
 			)
 		);
 
+		// Statistics
+		register_block_type(
+			'lwtv/statistics',
+			array(
+				'attributes'      => array(
+					'page' => array(
+						'type' => 'string',
+					),
+				),
+				'render_callback' => array( 'LWTV_Stats_SSR', 'statistics' ),
+			)
+		);
+
 		// Author CPT Stuff
 		register_block_type(
 			'lez-library/cpt-meta',
