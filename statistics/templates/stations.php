@@ -5,10 +5,6 @@
  * @package LezWatch.TV
  */
 
-if ( ! defined( ‘ABSPATH’ ) ) {
-	exit; // Exit if accessed directly
-}
-
 // Stations
 $valid_station = ( isset( $_GET['station'] ) ) ? term_exists( $_GET['station'], 'lez_stations' ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 $station       = ( ! isset( $_GET['station'] ) || ! is_array( $valid_station ) ) ? 'all' : sanitize_title( $_GET['station'] ); // phpcs:ignore WordPress.Security.NonceVerification
