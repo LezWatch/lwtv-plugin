@@ -94,7 +94,7 @@ class LWTV_CPT_Actors {
 			'not_found_in_trash'       => 'No Actors found in Trash',
 			'update_item'              => 'Update Actor',
 			'featured_image'           => 'Actor Image',
-			'set_featured_image'       => 'Set Actor image  (add me first)',
+			'set_featured_image'       => 'Set Actor Image First (1020x1200)',
 			'remove_featured_image'    => 'Remove Actor image',
 			'use_featured_image'       => 'Use as Actor image',
 			'archives'                 => 'Actor archives',
@@ -113,7 +113,7 @@ class LWTV_CPT_Actors {
 			array( 'lez-library/featured-image' ),
 			array(
 				'core/paragraph',
-				array( 'placeholder' => 'Everything we need to know about this actor ... (add me second)' ),
+				array( 'placeholder' => 'Everything we need to know about this actor.' ),
 			),
 		);
 		$args     = array(
