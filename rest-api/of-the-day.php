@@ -233,6 +233,15 @@ class LWTV_OTD_JSON {
 
 		switch ( $type ) {
 			case 'character':
+				if ( '' === $date ) {
+					// Create the date with regards to timezones
+					$tz        = 'America/New_York';
+					$timestamp = time();
+					$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+					$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
+					$date = $dt->format( 'm-d' );
+				}
+
 				$meta_query_array = array(
 					array(
 						'key'     => '_thumbnail_id',
@@ -245,9 +254,7 @@ class LWTV_OTD_JSON {
 						'compare' => 'LIKE',
 					),
 				);
-				if ( ! empty( $date ) ) {
-					$tax_query_array = self::character_awareness( $date );
-				}
+				$tax_query_array = self::character_awareness( $date );
 				break;
 			case 'show':
 				$meta_query_array = array(
@@ -258,7 +265,7 @@ class LWTV_OTD_JSON {
 					),
 					array(
 						'key'     => 'lezshows_worthit_rating',
-						'value'   => 'e', // yEs or mEh, but not NO.
+						'value'   => 'e', // yEs or mEh, but not NO or TBD
 						'compare' => 'LIKE',
 					),
 				);
@@ -332,13 +339,14 @@ class LWTV_OTD_JSON {
 
 		$return = '';
 
-		// Create the date with regards to timezones
-		$tz        = 'America/New_York';
-		$timestamp = time();
-		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
-		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
-		$today = $dt->format( 'm-d' );
-		$date  = ( '' === $date ) ? $date : $today;
+		if ( '' === $date ) {
+			// Create the date with regards to timezones
+			$tz        = 'America/New_York';
+			$timestamp = time();
+			$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
+			$date = $dt->format( 'm-d' );
+		}
 
 		// Missing things:
 		// Asexual Awareness Week - it's in October

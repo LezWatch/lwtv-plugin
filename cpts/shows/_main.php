@@ -147,7 +147,7 @@ class LWTV_CPT_Shows {
 			'not_found_in_trash'       => 'No TV Shows found in Trash',
 			'update_item'              => 'Update TV Show',
 			'featured_image'           => 'TV Show Image',
-			'set_featured_image'       => 'Set TV Show image',
+			'set_featured_image'       => 'Set TV Show image (1200x645)',
 			'remove_featured_image'    => 'Remove TV Show image',
 			'use_featured_image'       => 'Use as TV Show image',
 			'archives'                 => 'TV Show archives',
