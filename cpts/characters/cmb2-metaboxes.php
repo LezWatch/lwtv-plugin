@@ -184,6 +184,7 @@ class LWTV_Characters_CMB2 {
 				'repeatable'       => true,
 			)
 		);
+
 		// Field Group: Character Show information
 		$group_shows = $cmb_characters->add_field(
 			array(
@@ -221,6 +222,24 @@ class LWTV_Characters_CMB2 {
 				'show_option_none' => true,
 				'default'          => 'custom',
 				'options'          => $this->character_roles,
+			)
+		);
+		// To create the terms: for((a=1962; a <= 2020 ; a++)); do wp term create lez_appears $a; done
+		// Field: Character Years Appears
+		$field_years_appears = $cmb_characters->add_group_field(
+			$group_shows,
+			array(
+				'name'              => 'Years Appears',
+				'desc'              => 'Add what years the character appears on this show.',
+				'id'                => 'appears',
+				'taxonomy'          => 'lez_appears',
+				'type'              => 'pw_multiselect',
+				'select_all_button' => false,
+				'remove_default'    => 'true',
+				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_appears' ),
+				'attributes'        => array(
+					'placeholder' => 'Years ...',
+				),
 			)
 		);
 

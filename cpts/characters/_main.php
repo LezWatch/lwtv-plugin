@@ -28,6 +28,7 @@ class LWTV_CPT_Characters {
 			'gender'               => 'gender',
 			'sexual orientation'   => 'sexuality',
 			'romantic orientation' => 'romantic',
+			'years appear'         => 'appears',
 		);
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
@@ -485,6 +486,7 @@ class LWTV_CPT_Characters {
 		// Math and Taxonomies
 		LWTV_Characters_Calculate::do_the_math( $post_id );
 		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_appears', 'lez_appears' );
 
 		// Get a list of URLs to flush
 		$clear_urls = LWTV_Cache::collect_urls_for_characters( $post_id );
