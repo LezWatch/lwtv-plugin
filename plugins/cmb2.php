@@ -84,13 +84,7 @@ class LWTV_CMB2_Addons {
 			$the_post_meta_data = $new_post_meta_data;
 		}
 
-		if ( 'lezchars_appears' === $postmeta ) {
-			// If this is appears, it's weird so hang on...
-			// Get $set_the_terms from lezchars_show_group[appears]
-			wp_set_object_terms( $post_id, $set_the_terms, 'lez_appears' );
-
-		}
-		elseif ( isset( $the_post_meta_data ) && is_array( $the_post_meta_data ) && ! empty( $the_post_meta_data ) ) {
+		if ( isset( $the_post_meta_data ) && is_array( $the_post_meta_data ) && ! empty( $the_post_meta_data ) ) {
 			// If we have postmeta, then we should set the terms
 			wp_set_object_terms( $post_id, null, $taxonomy );
 			$set_the_terms = array();

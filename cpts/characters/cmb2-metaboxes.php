@@ -10,6 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Characters_CMB2 {
 
 	public $character_roles;
+	public $years_array;
 
 	/**
 	 * Constructor
@@ -20,6 +21,12 @@ class LWTV_Characters_CMB2 {
 			'recurring' => 'Recurring Character',
 			'guest'     => 'Guest Character',
 		);
+
+		$all_years         = range( FIRST_LWTV_YEAR, date( 'Y' ) );
+		$this->years_array = array();
+		foreach ( $all_years as $a_year ) {
+			$this->years_array[ $a_year ] = $a_year;
+		}
 
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
@@ -216,7 +223,7 @@ class LWTV_Characters_CMB2 {
 			$group_shows,
 			array(
 				'name'             => 'Character Type',
-				'desc'             => 'Mains are in credits. Recurring have their own plots. Guests show up once or twice.',
+				'desc'             => 'Mains are in credits. Recurring have their own plots. Guests show up once or twice. Pick what\'s most appropriate.',
 				'id'               => 'type',
 				'type'             => 'select',
 				'show_option_none' => true,
@@ -224,7 +231,6 @@ class LWTV_Characters_CMB2 {
 				'options'          => $this->character_roles,
 			)
 		);
-		// To create the terms: for((a=1962; a <= 2020 ; a++)); do wp term create lez_appears $a; done
 		// Field: Character Years Appears
 		$field_years_appears = $cmb_characters->add_group_field(
 			$group_shows,
@@ -232,11 +238,13 @@ class LWTV_Characters_CMB2 {
 				'name'              => 'Years Appears',
 				'desc'              => 'Add what years the character appears on this show.',
 				'id'                => 'appears',
-				'taxonomy'          => 'lez_appears',
-				'type'              => 'pw_multiselect',
+				'type'              => 'select',
+				'show_option_none'  => true,
+				'default'           => 'custom',
+				'repeatable'        => true,
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_appears' ),
+				'options'           => $this->years_array,
 				'attributes'        => array(
 					'placeholder' => 'Years ...',
 				),
