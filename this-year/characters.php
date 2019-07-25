@@ -49,23 +49,21 @@ class LWTV_This_Year_Chars {
 					$char_slug = get_post_field( 'post_name', get_post( $char ) );
 					$show_slug = get_post_field( 'post_name', get_post( $each_show['show'] ) );
 
-					if ( isset( $each_show['appears'] ) && in_array( $thisyear, $each_show['appears'] ) ) {
-						// if the show isn't already in the array, we create it
-						if ( ! isset( $show_array[ $show_slug ] ) ) {
-							$show_array[ $show_slug ] = array(
-								'name'  => get_the_title( $each_show['show'] ),
-								'url'   => get_the_permalink( $each_show['show'] ),
-								'chars' => array(),
-							);
-						}
-
-						// Add the character to the show array
-						$show_array[ $show_slug ]['chars'][ $char_slug ] = array(
-							'name'  => get_the_title( $char ),
-							'url'   => get_the_permalink( $char ),
-							'type'  => $each_show['type'],
+					// if the show isn't already in the array, we create it
+					if ( ! isset( $show_array[ $show_slug ] ) ) {
+						$show_array[ $show_slug ] = array(
+							'name'  => get_the_title( $each_show['show'] ),
+							'url'   => get_the_permalink( $each_show['show'] ),
+							'chars' => array(),
 						);
 					}
+
+					// Add the character to the show array
+					$show_array[ $show_slug ]['chars'][ $char_slug ] = array(
+						'name'  => get_the_title( $char ),
+						'url'   => get_the_permalink( $char ),
+						'type'  => $each_show['type'],
+					);
 
 					// if the show isn't published, no links
 					if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
@@ -101,6 +99,7 @@ class LWTV_This_Year_Chars {
 
 			// Sort alphabetical
 			ksort( $list_array );
+			ksort( $show_array );
 
 			?>
 			<div class="container">
@@ -155,6 +154,8 @@ class LWTV_This_Year_Chars {
 					</div>
 				</div>
 			</div>
+
+			<p>Note: The number of shows is usually higher than the number of characters, due to some characters appearing on multiple shows.</p>
 			<?php
 		} else {
 			?>
