@@ -17,8 +17,8 @@ class LWTV_This_Year {
 	 */
 	public static function display( $thisyear ) {
 		$thisyear    = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
-		$valid_views = array( 'characters', 'shows' );
-		$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'characters' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
+		$valid_views = array( 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
+		$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'characters-on-air' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
 
 		?>
 		<div class="thisyear-container">
@@ -35,16 +35,21 @@ class LWTV_This_Year {
 			<p>&nbsp;</p>
 
 			<?php
-
 			switch ( $view ) {
-				case 'characters':
-					LWTV_This_Year_Chars::toc();
+				case 'characters-on-air':
 					LWTV_This_Year_Chars::list( $thisyear );
+					break;
+				case 'dead-characters':
 					LWTV_This_Year_Chars::dead( $thisyear );
 					break;
-				case 'shows':
-					LWTV_This_Year_Shows::toc();
+				case 'shows-on-air':
 					LWTV_This_Year_Shows::list( $thisyear );
+					break;
+				case 'new-shows':
+					LWTV_This_Year_Shows::new( $thisyear );
+					break;
+				case 'canceled-shows':
+					LWTV_This_Year_Shows::canceled( $thisyear );
 					break;
 			}
 

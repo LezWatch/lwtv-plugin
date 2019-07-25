@@ -133,6 +133,7 @@ Blocks for Gutenberg. The file `_main.php` acts as an autoloader.
 * Glossary: Show a visual glossary of taxonomies with icons
 * Grade: Give something a grade and an explanation
 * Screeners: For reviews of shows that haven't aired yet
+* Statistics: _currently disabled_
 
 ### Plugin Addons
 
@@ -160,12 +161,12 @@ The file `_main.php` acts as an autoloader.
     - LWTV: `/lwtv.php`
         - filter Data before it's saved to rename values (capitalization)
         - split actors and shows into separate entries, and add additional orderby params
-* Jetpack - `/jetpack.php`
-    - Hashtags based on tags as shows.
 
 ### Rest API
 
 Stored in `/rest-api/` - These files generate the REST API output.
+
+The file `_main.php` acts as an autoloader.
 
 * Alexa Skills: `alexa-skills.php` - Builds the basic Alexa API
 * Alexa Skills - `/alexa/`
@@ -194,8 +195,6 @@ Stored in `/rest-api/` - These files generate the REST API output.
 
 Stored in `/statistics/` - These files generate everything for stats, from graphs to the rest API stuff.
 
-The basic defines for all stats pages.
-
 * Base Code: `class LWTV_Stats` - `_main.php`
     - Generate: Statistics Base Code
 * Arrays: `class LWTV_Stats_Arrays` - `array.php`
@@ -214,6 +213,8 @@ The basic defines for all stats pages.
     - Actors/Characters
     - Roles on Shows
     - Queerness
+* Gutenberg: `gutenberg-ssr.php`
+    - Server side rendering to show statistics.
 * Output: `class LWTV_Stats_Output` - `output.php`
     - Lists
     - Percentages
@@ -223,22 +224,42 @@ The basic defines for all stats pages.
     - Stacked Barcharts
     - Piecharts
     - Trendlines
+* Templates: `/templates/`
+    - Output templates used by the shortcodes and Gutenberg (as well as when included on the pages themselves). These were originally in the theme, but were moved here to allow for updates.
+
+### This Year
+
+Stored in `/this-year/` - Technically a subset of statistics, This Year shows you just the data for the indicated year.
+
+* `_main.php` - Basic data loading, calls templates etc.
+* `characters.php` - all data on characters per year
+* `shows.php` - all data on shows per year
 
 ## Development
 
-Update code like you normally would. If you don't want to push it anywhere, make a local branch. Always remember, merge to **development** first. If that works, do a pull request to **master** and when it's done, it'll update properly.
+Update code like you normally would. If you don't want to push it anywhere, make a local branch. Always remember, merge to **development** first. If that works, do a pull request from development to **master** to automatically update.
 
-In order to make maintenance easier, instead of checking everything all the time, we use composer for the following included libraries:
+### Libraries
 
+In order to make maintenance easier, instead of checking everything all the time, we use NPM and composer for the following included libraries:
+
+**NPM**
 * [ChartJS](https://github.com/chartjs/Chart.js/)
 * [TableSorter (Mottie Fork)](https://github.com/Mottie/tablesorter)
+
+**Composer**
 * [CMB2](https://github.com/WebDevStudios/CMB2)
 * [CMB2 Grid](https://github.com/origgami/CMB2-grid)
 * [CMB2 Field Select2](https://github.com/mustardBees/cmb-field-select2)
 * [FacetWP wp-cli](https://github.com/level-level/facetwp-wp-cli)
 * [FacetWP CMB2](https://github.com/WebDevStudios/facetwp-cmb2)
 
-To update libraries, run `composer update` and everything will be put in the right place.
+#### Installation and Updating
+
+1. `npm install`
+2. `composer update`
+
+Composer will move everything into the right place, even NPM files.
 
 ### Deployment
 
