@@ -387,14 +387,19 @@ class LWTV_CPT_Characters {
 	 */
 	public static function get_chars_for_show( $show_id, $havecharcount, $role = 'regular' ) {
 
-		/* The Shane Clause & The Clone Club Correlary
+		/**
+		 * The Shane Clause & The Clone Club Correlary
+		 * The Vanishing Xenaphobia
 		 *
 		 * Calculate the max number of characters to list, based on the
-		 * previous count. Default/Minimum is 100 characters.
+		 * previous count. Default/Minimum is 500 characters.
+		 *
 		 * Amusing note: Without this, Sarah Manning took the place of
 		 * every single other character played by Tatiana Maslany.
+		 *
+		 * Wih the number under 500, Xena won't show on your own page.
 		 */
-		$count = ( isset( $havecharcount ) && $havecharcount >= '100' ) ? $havecharcount : '100';
+		$count = ( isset( $havecharcount ) && $havecharcount >= '500' ) ? $havecharcount : '500';
 
 		// Valid Roles:
 		$valid_roles = array( 'regular', 'recurring', 'guest' );
@@ -426,7 +431,7 @@ class LWTV_CPT_Characters {
 					array(
 						'key'     => 'lezchars_show_group',
 						'value'   => $show_id,
-						'compare' => 'LIKE',
+						'compare' => 'REGEXP',
 					),
 				),
 			)

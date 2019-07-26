@@ -22,11 +22,12 @@ class LWTV_Characters_CMB2 {
 			'guest'     => 'Guest Character',
 		);
 
-		$all_years         = range( FIRST_LWTV_YEAR, date( 'Y' ) );
-		$this->years_array = array();
+		$all_years   = range( FIRST_LWTV_YEAR, date( 'Y' ) );
+		$years_array = array();
 		foreach ( $all_years as $a_year ) {
-			$this->years_array[ $a_year ] = $a_year;
+			$years_array[ $a_year ] = $a_year;
 		}
+		$this->years_array = array_reverse( $years_array, true );
 
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
@@ -238,10 +239,7 @@ class LWTV_Characters_CMB2 {
 				'name'              => 'Years Appears',
 				'desc'              => 'Add what years the character appears on this show.',
 				'id'                => 'appears',
-				'type'              => 'select',
-				'show_option_none'  => true,
-				'default'           => 'custom',
-				'repeatable'        => true,
+				'type'              => 'multicheck_inline',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
 				'options'           => $this->years_array,
