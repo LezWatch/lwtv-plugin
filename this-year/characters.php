@@ -39,9 +39,21 @@ class LWTV_This_Year_Chars {
 		// List all queers and the year they died
 		if ( $dead_loop->have_posts() ) {
 			foreach ( $queery as $char ) {
-				// Since SOME characters have multiple shows, we force this to be an array
-				$show_ids   = get_post_meta( $char, 'lezchars_show_group', true );
-				$show_title = array();
+				$show_ids_raw = get_post_meta( $char, 'lezchars_show_group', true );
+				$show_title   = array();
+				$show_ids     = array();
+
+				// If the character is in a show this year, we'll add it.
+				foreach ( $show_ids_raw as $each_show ) {
+					if ( isset( $each_show['appears'] ) && in_array( $thisyear, $each_show['appears'], true ) ) {
+						$show_ids[] = $each_show;
+					}
+				}
+
+				// If we didn't add anything, use everything.
+				if ( empty( $show_ids ) ) {
+					$show_ids = $show_ids_raw;
+				}
 
 				foreach ( $show_ids as $each_show ) {
 
@@ -60,9 +72,9 @@ class LWTV_This_Year_Chars {
 
 					// Add the character to the show array
 					$show_array[ $show_slug ]['chars'][ $char_slug ] = array(
-						'name'  => get_the_title( $char ),
-						'url'   => get_the_permalink( $char ),
-						'type'  => $each_show['type'],
+						'name' => get_the_title( $char ),
+						'url'  => get_the_permalink( $char ),
+						'type' => $each_show['type'],
 					);
 
 					// if the show isn't published, no links
@@ -154,8 +166,6 @@ class LWTV_This_Year_Chars {
 					</div>
 				</div>
 			</div>
-
-			<p>Note: The number of shows is usually higher than the number of characters, due to some characters appearing on multiple shows.</p>
 			<?php
 		} else {
 			?>
@@ -210,9 +220,9 @@ class LWTV_This_Year_Chars {
 
 						// Add the character to the show array
 						$show_array[ $show_slug ]['chars'][ $char_slug ] = array(
-							'name'  => get_the_title( $char ),
-							'url'   => get_the_permalink( $char ),
-							'type'  => $each_show['type'],
+							'name' => get_the_title( $char ),
+							'url'  => get_the_permalink( $char ),
+							'type' => $each_show['type'],
 						);
 
 						// if the show isn't published, no links

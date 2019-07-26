@@ -19,15 +19,15 @@ class LWTV_This_Year {
 		$thisyear    = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
 		$valid_views = array( 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
 		$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'characters-on-air' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
+		$baseurl     = ( date( 'Y' ) !== $thisyear ) ? '/this-year/' . $thisyear . '/' : '/this-year/';
 
 		?>
 		<div class="thisyear-container">
-
 			<ul class="nav nav-tabs">
 				<?php
 				foreach ( $valid_views as $the_view ) {
 					$active = ( $view === $the_view ) ? ' active' : '';
-					echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, '/this-year/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+					echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, $baseurl ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 				}
 				?>
 			</ul>
