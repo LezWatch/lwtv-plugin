@@ -109,9 +109,11 @@ class LWTV_This_Year_Chars {
 		$show_array = $loop_array['show'];
 		?>
 
-		<h2><?php echo (int) $loop_array['count']; ?> Characters On Air</h2>
+		<h2 data-toggle="tooltip" data-placement="top" title="Note: This data is curently incomplete and not fully representative of all characters on air at this time. We are working to improve this daily."><?php echo (int) $loop_array['count']; ?> Characters On Air <span class="text-danger">*</a></h2>
 
 		<p>&nbsp;</p>
+
+		<div class="alert alert-warning" role="alert"><strong>Notice:</strong> The data generated here is currently curently incomplete and not fully representative of all characters on air at this time. We are working to improve accuracy and hope to be finished soon.</div>
 
 		<?php
 		// If the data isn't empty, we go!
