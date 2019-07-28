@@ -5,228 +5,124 @@
  * @package LezWatch.TV
  */
 
+require 'characters.php';
+require 'shows.php';
+
 class LWTV_This_Year {
 
+	/**
+	 * Display the stuff :D
+	 * @param  int    $thisyear the year.
+	 * @return n/a    outputs everything
+	 */
 	public static function display( $thisyear ) {
-		$thisyear = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
-		echo '<div class="thisyear-container">';
-			self::dead( $thisyear );
-			self::shows( $thisyear );
-			self::navigation( $thisyear );
-		echo '</div>';
-	}
-
-	public function dead( $thisyear ) {
 		$thisyear    = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
-		$dead_loop   = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
-		$dead_queery = wp_list_pluck( $dead_loop->posts, 'ID' );
+		$valid_views = array( 'overview', 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
+		$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
+		$baseurl     = ( date( 'Y' ) !== $thisyear ) ? '/this-year/' . $thisyear . '/' : '/this-year/';
+
 		?>
-		<h2><a name="died">Characters Died This Year (<?php echo (int) $dead_loop->post_count; ?>)</a></h2>
-
-		<?php
-		// List all queers and the year they died
-		if ( $dead_loop->have_posts() ) {
-			$death_list_array = array();
-			foreach ( $dead_queery as $dead_char ) {
-				// Since SOME characters have multiple shows, we force this to be an array
-				$show_ids   = get_post_meta( $dead_char, 'lezchars_show_group', true );
-				$show_title = array();
-				foreach ( $show_ids as $each_show ) {
-					// if the show isn't published, no links
-					if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
-						array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em> (' . $each_show['type'] . ' character)' );
-					} else {
-						array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em> (' . $each_show['type'] . ' character)' );
-					}
-				}
-				$show_info = implode( ', ', $show_title );
-				// Only extract the date for this year and convert to unix time
-				// Jesus, I hope no one dies twice in the same year ... SARA
-				$died_date = get_post_meta( $dead_char, 'lezchars_death_year', true );
-				foreach ( $died_date as $date ) {
-					if ( (int) substr( $date, 0, 4 ) === (int) substr( $date, 0, 4 ) ) {
-						$died_year  = substr( $date, 0, 4 );
-						$died_array = date_parse_from_format( 'Y-m-d', $date );
-					} else {
-						$died_year  = substr( $date, -4 );
-						$died_array = date_parse_from_format( 'm/d/Y', $date );
-					}
-					if ( $died_year === $thisyear ) {
-						$died = mktime( $died_array['hour'], $died_array['minute'], $died_array['second'], $died_array['month'], $died_array['day'], $died_array['year'] );
-					}
-				}
-				// Get the post slug
-				$post_slug = get_post_field( 'post_name', get_post( $dead_char ) );
-				$death_list_array[ $post_slug ] = array(
-					'name'  => get_the_title( $dead_char ),
-					'url'   => get_the_permalink( $dead_char ),
-					'shows' => $show_info,
-					'died'  => $died,
-				);
-			}
-
-			// phpcs:disable
-			// Reorder all the dead to sort by DoD
-			uasort( $death_list_array, function( $a, $b ) {
-				// Spaceship doesn't work
-				// $return = $a['died'] <=> $b['died'];
-				$return = '0';
-				if ( $a['died'] < $b['died'] ) {
-					$return = '-1';
-				}
-				if ( $a['died'] > $b['died'] ) {
-					$return = '1';
-				}
-				return $return;
-			});
-			// phpcs:enable
-			?>
-			<ul>
+		<div class="thisyear-container">
+			<ul class="nav nav-tabs">
 				<?php
-				foreach ( $death_list_array as $dead ) {
-					echo '<li><a href="' . esc_url( $dead['url'] ) . '">' . esc_html( $dead['name'] ) . '</a> / ' . wp_kses_post( $dead['shows'] ) . ' / ' . esc_html( date( 'd F', $dead['died'] ) ) . ' </li>';
+				foreach ( $valid_views as $the_view ) {
+					$active = ( $view === $the_view ) ? ' active' : '';
+					echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, $baseurl ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 				}
 				?>
 			</ul>
+
+			<p>&nbsp;</p>
+
 			<?php
-		} else {
+			switch ( $view ) {
+				case 'characters-on-air':
+					LWTV_This_Year_Chars::list( $thisyear );
+					break;
+				case 'dead-characters':
+					LWTV_This_Year_Chars::dead( $thisyear );
+					break;
+				case 'shows-on-air':
+					LWTV_This_Year_Shows::list( $thisyear );
+					break;
+				case 'new-shows':
+					LWTV_This_Year_Shows::new( $thisyear );
+					break;
+				case 'canceled-shows':
+					LWTV_This_Year_Shows::canceled( $thisyear );
+					break;
+				default:
+					self::overview( $thisyear );
+					break;
+			}
+
+			self::navigation( $thisyear );
 			?>
-			<p>No known characters died in <?php echo (int) $thisyear; ?>.</p>
-			<?php
-		}
-		wp_reset_query();
+		</div>
+		<?php
 	}
-	/**
-	 * List of shows for the year.
-	 *
-	 * @access public
-	 * @param mixed $thisyear
-	 * @return void
-	 */
-	public function shows( $thisyear ) {
+
+	public static function overview( $thisyear ) {
 		$thisyear = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
-		// Constants
-		$shows_this_year = array(
-			'current' => 0,
-			'ended'   => 0,
-			'started' => 0,
+		$array    = array(
+			'shows'      => LWTV_This_Year_Shows::get_list( $thisyear, 'now', true ),
+			'characters' => LWTV_This_Year_Chars::get_list( $thisyear, true ),
+			'dead'       => LWTV_This_Year_Chars::get_dead( $thisyear, true ),
+			'started'    => LWTV_This_Year_Shows::get_list( $thisyear, 'started', true ),
+			'canceled'   => LWTV_This_Year_Shows::get_list( $thisyear, 'ended', true ),
 		);
-		$shows_current   = array();
-		$shows_started   = array();
-		$shows_ended     = array();
-		$shows_queery = LWTV_Loops::post_type_query( 'post_type_shows' );
-		if ( $shows_queery->have_posts() ) {
-			while ( $shows_queery->have_posts() ) {
-				$shows_queery->the_post();
-				$show_id   = get_the_ID();
-				$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
-				$show_name = strtolower( $show_name );
-				// Shows Currently Airing
-				if ( get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
-					$airdates  = get_post_meta( $show_id, 'lezshows_airdates', true );
-					$countries = get_the_term_list( $show_id, 'lez_country' );
-					$formats   = get_the_term_list( $show_id, 'lez_formats' );
-					if (
-						( 'current' === $airdates['finish'] && date( 'Y' ) === $thisyear ) // Still Current and it's NOW
-						|| ( $airdates['finish'] >= $thisyear && $airdates['start'] <= $thisyear ) // Airdates between
-					) {
-						// Currently Airing Shows shows for the current year only
-						$shows_current[ $show_name ] = array(
-							'url'     => get_permalink( $show_id ),
-							'name'    => get_the_title( $show_id ),
-							'status'  => get_post_status( $show_id ),
-							'country' => wp_strip_all_tags( $countries ),
-							'format'  => wp_strip_all_tags( $formats ),
-						);
-						$shows_this_year['current']++;
-					}
-					// Shows that ended this year
-					if ( $airdates['finish'] === $thisyear ) {
-						$shows_ended[ $show_name ] = array(
-							'url'     => get_permalink( $show_id ),
-							'name'    => get_the_title( $show_id ),
-							'status'  => get_post_status( $show_id ),
-							'country' => wp_strip_all_tags( $countries ),
-							'format'  => wp_strip_all_tags( $formats ),
-						);
-						$shows_this_year['ended']++;
-					}
-					// Shows that STARTED this year
-					if ( $airdates['start'] === $thisyear ) {
-						$shows_started[ $show_name ] = array(
-							'url'     => get_permalink( $show_id ),
-							'name'    => get_the_title( $show_id ),
-							'status'  => get_post_status( $show_id ),
-							'country' => wp_strip_all_tags( $countries ),
-							'format'  => wp_strip_all_tags( $formats ),
-						);
-						$shows_this_year['started']++;
-					}
-				}
-			}
-		}
 		?>
 
-		<hr>
-
-		<h3><a name="showsonair">Shows Aired This Year (<?php echo (int) $shows_this_year['current']; ?>)</a></h3>
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-success">Characters on Air</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title" data-toggle="tooltip" data-placement="top" title="Note: This data is curently incomplete and not fully representative of all characters on air at this time. We are working to improve this daily."><?php echo (int) $array['characters']; ?> <span class="text-danger">*</a></h5>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-danger">Dead Characters</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) $array['dead']; ?></h5>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-primary">Shows on Air</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) $array['shows']; ?></h5>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-info">New Shows</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) $array['started']; ?></h5>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-warning">Canceled Shows</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) $array['canceled']; ?></h5>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<?php
-		if ( 0 !== $shows_this_year['current'] ) {
-			echo '<ul class="this-year-shows showsonair">';
-			foreach ( $shows_current as $show ) {
-				$show_output = $show['name'];
-				if ( 'publish' === $show['status'] ) {
-					$show_output = '<a href="' . $show['url'] . '">' . $show['name'] . '</a> <small>(' . $show['country'] . ' - ' . $show['format'] . ')</small>';
-				}
-				echo '<li>' . wp_kses_post( $show_output ) . '</li>';
-			}
-			echo '</ul>';
-		} else {
-			echo '<p>No qualifying shows aired in ' . (int) $thisyear . '.</p>';
-		}
-		?>
-
-		<hr>
-
-		<h3><a name="showsstart">Shows That Started This Year (<?php echo (int) $shows_this_year['started']; ?>)</a></h3>
-
-		<?php
-		if ( 0 !== $shows_this_year['started'] ) {
-			echo '<ul class="this-year-shows showsstart">';
-			foreach ( $shows_started as $show ) {
-				$show_output = $show['name'];
-				if ( 'publish' === $show['status'] ) {
-					$show_output = '<a href="' . $show['url'] . '">' . $show['name'] . '</a> <small>(' . $show['country'] . ' - ' . $show['format'] . ')</small>';
-				}
-				echo '<li>' . wp_kses_post( $show_output ) . '</li>';
-			}
-			echo '</ul>';
-		} else {
-			echo '<p>No qualifying shows aired in ' . (int) $thisyear . '.</p>';
-		}
-		?>
-
-		<hr>
-
-		<h3><a name="showsend">Shows That Ended This Year (<?php echo (int) $shows_this_year['ended']; ?>)</a></h3>
-
-		<?php
-		if ( 0 !== $shows_this_year['ended'] ) {
-			echo '<ul class="this-year-shows showsend">';
-			foreach ( $shows_ended as $show ) {
-				$show_output = $show['name'];
-				if ( 'publish' === $show['status'] ) {
-					$show_output = '<a href="' . $show['url'] . '">' . $show['name'] . '</a> <small>(' . $show['country'] . ' - ' . $show['format'] . ')</small>';
-				}
-				echo '<li>' . wp_kses_post( $show_output ) . '</li>';
-			}
-			echo '</ul>';
-		} else {
-			echo '<p>No qualifying shows aired in ' . (int) $thisyear . '.</p>';
-		}
-		wp_reset_query();
 	}
+
 	/**
 	 * Navigation for the year
 	 * @param  [type]  $thisyear
@@ -268,7 +164,6 @@ class LWTV_This_Year {
 		</nav><!-- .navigation -->
 		<?php
 	}
-
 
 }
 

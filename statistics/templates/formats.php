@@ -118,10 +118,11 @@ switch ( $showform ) {
 					<tbody>
 					<?php
 					foreach ( $showforms as $a_form ) {
+						$percent = round( ( ( $a_form->count / $shows_count ) * 100 ), 1 );
 						echo '<tr>
 							<th scope="row"><a href="?view=overview&showform=' . esc_attr( $a_form->slug ) . '">' . esc_html( $a_form->name ) . '</a></th>
 							<td>' . (int) $a_form->count . '</td>
-							<td>' . esc_html( round( ( ( $a_form->count / $shows_count ) * 100 ), 1 ) ) . '%</td>
+							<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 							<td>' . (int) LWTV_Stats::showcount( 'score', 'formats', $a_form->slug ) . '</td>
 						</tr>';
 					}

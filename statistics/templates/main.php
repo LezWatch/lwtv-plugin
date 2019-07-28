@@ -16,37 +16,45 @@ $dead_chars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
 <div class="container">
 	<div class="row">
 		<div class="col">
-			<div class="alert alert-success" role="info"><center>
-				<h3 class="alert-heading">Characters</h3>
-				<h5><?php echo (int) $characters; ?></h5>
-				<p>[<a href="characters">Character Statistics</a>]</p>
-			</center></div>
+			<div class="card text-center">
+				<h3 class="card-header alert-success">Characters</h3>
+				<div class="card-body bg-light">
+					<h5 class="card-title"><?php echo (int) $characters; ?></h5>
+					<a href="characters" class="btn btn-primary btn-sm">Character Statistics</a>
+				</div>
+			</div>
 		</div>
 		<div class="col">
-			<div class="alert alert-info" role="info"><center>
-				<h3 class="alert-heading">Shows</h3>
-				<h5><?php echo (int) $shows; ?></h5>
-				<p>[<a href="shows">Show Statistics</a>]</p>
-			</center></div>
+			<div class="card text-center">
+				<h3 class="card-header alert-info">Shows</h3>
+				<div class="card-body bg-light">
+					<h5 class="card-title"><?php echo (int) $shows; ?></h5>
+					<a href="shows" class="btn btn-primary btn-sm">Show Statistics</a>
+				</div>
+			</div>
 		</div>
 		<div class="col">
-			<div class="alert alert-warning" role="info"><center>
-				<h3 class="alert-heading">Actors</h3>
-				<h5><?php echo (int) $actors; ?></h5>
-				<p>[<a href="actors">Actor Statistics</a>]</p>
-			</center></div>
+			<div class="card text-center">
+				<h3 class="card-header alert-warning">Actors</h3>
+				<div class="card-body bg-light">
+					<h5 class="card-title"><?php echo (int) $actors; ?></h5>
+					<a href="actors" class="btn btn-primary btn-sm">Actor Statistics</a>
+				</div>
+			</div>
 		</div>
 		<div class="col">
-			<div class="alert alert-danger" role="info"><center>
-				<h3 class="alert-heading">Dead Characters</h3>
-				<h5><?php echo (int) $dead_chars; ?></h5>
-				<p>[<a href="death">Death Statistics</a>]</p>
-			</center></div>
+			<div class="card text-center">
+				<h3 class="card-header alert-danger">Dead Characters</h3>
+				<div class="card-body bg-light">
+					<h5 class="card-title"><?php echo (int) $dead_chars; ?></h5>
+					<a href="death" class="btn btn-primary btn-sm">Death Statistics</a>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
 
-<hr>
+<p>&nbsp;</p>
 
 <div class="container">
 	<div class="row">
@@ -72,10 +80,11 @@ $dead_chars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
 						)
 					);
 					foreach ( $nations as $nation ) {
+						$percent = round( ( ( $nation->count / $shows ) * 100 ), 1 );
 						echo '<tr>
 								<th scope="row"><a href="' . esc_url( site_url( 'nations/?country=' . $nation->slug ) ) . '">' . esc_html( $nation->name ) . '</a></th>
 								<td>' . (int) $nation->count . '</td>
-								<td>' . esc_html( round( ( ( $nation->count / $shows ) * 100 ), 1 ) ) . '%</td>
+								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 							</tr>';
 					}
 					?>
@@ -106,10 +115,11 @@ $dead_chars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
 						)
 					);
 					foreach ( $stations as $station ) {
+						$percent = round( ( ( $station->count / $shows ) * 100 ), 1 );
 						echo '<tr>
 								<th scope="row"><a href="' . esc_url( site_url( 'stations/?station=' . $station->slug ) ) . '">' . esc_html( $station->name ) . '</a></th>
 								<td>' . (int) $station->count . '</td>
-								<td>' . esc_html( round( ( ( $station->count / $shows ) * 100 ), 1 ) ) . '%</td>
+								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 							</tr>';
 					}
 					?>

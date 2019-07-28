@@ -9,14 +9,13 @@
 $valid_country = ( isset( $_GET['country'] ) ) ? term_exists( $_GET['country'], 'lez_country' ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 $country       = ( ! isset( $_GET['country'] ) || ! is_array( $valid_country ) ) ? 'all' : sanitize_title( $_GET['country'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
-// Views
+// Views: intersections was removed because there's not enough.
 $valid_views = array(
-	'overview'      => 'shows',
-	'sexuality'     => 'characters',
-	'gender'        => 'characters',
-	'tropes'        => 'shows',
-	'intersections' => 'shows',
-	'formats'       => 'shows',
+	'overview'  => 'shows',
+	'sexuality' => 'characters',
+	'gender'    => 'characters',
+	'tropes'    => 'shows',
+	'formats'   => 'shows',
 );
 $view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
@@ -70,8 +69,15 @@ switch ( $country ) {
 <ul class="nav nav-tabs">
 	<?php
 	foreach ( $valid_views as $the_view => $the_post_type ) {
-		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( 'view', $the_view, '/statistics/nations/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		$active    = ( $view === $the_view ) ? ' active' : '';
+		$query_arg = array(
+			'view' => $the_view,
+		);
+		// If there's a nation, we'll keep it in the URL.
+		if ( 'all' !== $country ) {
+			$query_arg['country'] = $country;
+		}
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( $query_arg, '/statistics/nations/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -84,12 +90,6 @@ switch ( $country ) {
 ?>
 
 <div class="container chart-container">
-
-	<?php
-	if ( 'all' !== $country && 'overview' !== $view ) {
-		echo wp_kses_post( lwtv_yikes_statistics_description( 'nation', $cpts_type, $view ) );
-	}
-	?>
 
 	<div class="row">
 		<div class="<?php echo esc_attr( $col_class ); ?>">
@@ -116,10 +116,11 @@ switch ( $country ) {
 					<tbody>
 					<?php
 					foreach ( $nations as $nation ) {
+						$percent = round( ( ( $nation->count / $shows_count ) * 100 ), 1 );
 						echo '<tr>
 							<th scope="row"><a href="?view=overview&country=' . esc_attr( $nation->slug ) . '">' . esc_html( $nation->name ) . '</a></th>
 							<td>' . (int) $nation->count . '</td>
-							<td>' . esc_html( round( ( ( $nation->count / $shows_count ) * 100 ), 1 ) ) . '%</td>
+							<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 							<td>' . (int) LWTV_Stats::showcount( 'score', 'country', $nation->slug ) . '</td>
 						</tr>';
 					}

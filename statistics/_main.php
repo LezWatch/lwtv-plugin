@@ -40,11 +40,11 @@ class LWTV_Stats {
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = ( isset( $_GET['view'] ) ) ? esc_attr( $_GET['view'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
-			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js', array( 'jquery' ), '2.7.2', false );
+			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js', array( 'jquery' ), '2.8.0', false );
 			wp_enqueue_script( 'chartjs-plugins', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.plugins.js', array( 'chartjs' ), '1.0.0', false );
 			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
-			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.30.7', false );
-			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css/theme.bootstrap_4.min.css', array(), '2.30.7', false );
+			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.31.1', false );
+			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css/theme.bootstrap_4.min.css', array(), '2.31.1', false );
 
 			switch ( $statistics ) {
 				case 'nations':
@@ -60,10 +60,12 @@ class LWTV_Stats {
 			switch ( $stat_view ) {
 				case 'gender':
 				case 'sexuality':
+				case 'cliches':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#charactersTable").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 				case 'tropes':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showsTable").tablesorter({ theme : "bootstrap", }); });' );
+					break;
 			}
 		}
 	}
@@ -152,7 +154,7 @@ class LWTV_Stats {
 
 		// Custom call for Deep Dive Data
 		// - nations, stations, formats
-		if ( 'country' === substr( $data, 0, 7 ) || 'stations' === substr( $data, 0, 8 ) || 'formats' === substr( $data, 0, 7 ) ) {
+		if ( empty( $array ) && ( 'country' === substr( $data, 0, 7 ) || 'stations' === substr( $data, 0, 8 ) || 'formats' === substr( $data, 0, 7 ) ) ) {
 			$array    = LWTV_Stats_Arrays::taxonomy_breakdowns( $count, $format, $data, $subject );
 			$precount = $count;
 			$count    = LWTV_Stats_Arrays::taxonomy_breakdowns( $precount, 'count', $data, $subject );
@@ -160,7 +162,7 @@ class LWTV_Stats {
 
 		// And dead stats? IN-fucking-sane.
 		// Everything gets a custom setup.
-		if ( false !== strpos( $data, 'dead' ) ) {
+		if ( empty( $array ) && false !== strpos( $data, 'dead' ) ) {
 			switch ( $data ) {
 				case 'dead':
 					$array = LWTV_Stats_Arrays::dead_basic( $subject, 'array' );

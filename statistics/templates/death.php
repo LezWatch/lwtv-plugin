@@ -36,21 +36,25 @@ switch ( $view ) {
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<div class="alert alert-danger" role="info"><center>
-						<h3 class="alert-heading">Characters</h3>
-						<h5><?php echo esc_html( $deadchar_percent ); ?>% (<?php echo esc_html( $deadchars ); ?>)</h5>
-					</center></div>
+					<div class="card text-center">
+						<h3 class="card-header alert-info">Characters</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo esc_html( $deadchar_percent ); ?>% (<?php echo esc_html( $deadchars ); ?>)</h5>
+						</div>
+					</div>
 				</div>
 				<div class="col">
-					<div class="alert alert-danger" role="info"><center>
-						<h3 class="alert-heading">Shows</h3>
-						<h5><?php echo esc_html( $deadshow_percent ); ?>% (<?php echo esc_html( $deadshows ); ?>)</h5>
-					</center></div>
+					<div class="card text-center">
+						<h3 class="card-header alert-danger">Shows</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo esc_html( $deadshow_percent ); ?>% (<?php echo esc_html( $deadshows ); ?>)</h5>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<p>On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
+		<p>&nbsp;<br/>On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
 
 		<div class="container">
 			<div class="row">
