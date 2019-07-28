@@ -71,10 +71,6 @@ class LWTV_This_Year {
 			'started'    => LWTV_This_Year_Shows::get_list( $thisyear, 'started', true ),
 			'canceled'   => LWTV_This_Year_Shows::get_list( $thisyear, 'ended', true ),
 		);
-
-		if ( date( 'Y' ) === $thisyear ) {
-			echo '<p>You can review the list of TV shows that aired, began, and ended in each year, as well as all characters who died in each year, going back to ' . (int) FIRST_LWTV_YEAR . '.</p>';
-		}
 		?>
 
 		<div class="container">
@@ -83,7 +79,7 @@ class LWTV_This_Year {
 					<div class="card text-center">
 						<h3 class="card-header alert-success">Characters on Air</h3>
 						<div class="card-body bg-light">
-							<h5 class="card-title"><?php echo (int) $array['characters']; ?></h5>
+							<h5 class="card-title" ><?php echo (int) $array['characters']; ?></h5>
 						</div>
 					</div>
 				</div>
