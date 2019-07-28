@@ -60,10 +60,12 @@ class LWTV_Stats {
 			switch ( $stat_view ) {
 				case 'gender':
 				case 'sexuality':
+				case 'cliches':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#charactersTable").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 				case 'tropes':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showsTable").tablesorter({ theme : "bootstrap", }); });' );
+					break;
 			}
 		}
 	}
@@ -152,7 +154,7 @@ class LWTV_Stats {
 
 		// Custom call for Deep Dive Data
 		// - nations, stations, formats
-		if ( 'country' === substr( $data, 0, 7 ) || 'stations' === substr( $data, 0, 8 ) || 'formats' === substr( $data, 0, 7 ) ) {
+		if ( empty( $array ) && ( 'country' === substr( $data, 0, 7 ) || 'stations' === substr( $data, 0, 8 ) || 'formats' === substr( $data, 0, 7 ) ) ) {
 			$array    = LWTV_Stats_Arrays::taxonomy_breakdowns( $count, $format, $data, $subject );
 			$precount = $count;
 			$count    = LWTV_Stats_Arrays::taxonomy_breakdowns( $precount, 'count', $data, $subject );
@@ -160,7 +162,7 @@ class LWTV_Stats {
 
 		// And dead stats? IN-fucking-sane.
 		// Everything gets a custom setup.
-		if ( false !== strpos( $data, 'dead' ) ) {
+		if ( empty( $array ) && false !== strpos( $data, 'dead' ) ) {
 			switch ( $data ) {
 				case 'dead':
 					$array = LWTV_Stats_Arrays::dead_basic( $subject, 'array' );

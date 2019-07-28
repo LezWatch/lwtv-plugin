@@ -17,8 +17,8 @@ class LWTV_This_Year {
 	 */
 	public static function display( $thisyear ) {
 		$thisyear    = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
-		$valid_views = array( 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
-		$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'characters-on-air' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
+		$valid_views = array( 'overview', 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
+		$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
 		$baseurl     = ( date( 'Y' ) !== $thisyear ) ? '/this-year/' . $thisyear . '/' : '/this-year/';
 
 		?>
@@ -51,11 +51,79 @@ class LWTV_This_Year {
 				case 'canceled-shows':
 					LWTV_This_Year_Shows::canceled( $thisyear );
 					break;
+				default:
+					self::overview( $thisyear );
+					break;
 			}
 
 			self::navigation( $thisyear );
 			?>
 		</div>
+		<?php
+	}
+
+	public static function overview( $thisyear ) {
+		$thisyear = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$array    = array(
+			'shows'      => LWTV_This_Year_Shows::get_list( $thisyear, 'now', true ),
+			'characters' => LWTV_This_Year_Chars::get_list( $thisyear, true ),
+			'dead'       => LWTV_This_Year_Chars::get_dead( $thisyear, true ),
+			'started'    => LWTV_This_Year_Shows::get_list( $thisyear, 'started', true ),
+			'canceled'   => LWTV_This_Year_Shows::get_list( $thisyear, 'ended', true ),
+		);
+
+		if ( date( 'Y' ) === $thisyear ) {
+			echo '<p>You can review the list of TV shows that aired, began, and ended in each year, as well as all characters who died in each year, going back to ' . (int) FIRST_LWTV_YEAR . '.</p>';
+		}
+		?>
+
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-success">Characters on Air</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) $array['characters']; ?></h5>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-danger">Dead Characters</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) $array['dead']; ?></h5>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-primary">Shows on Air</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) $array['shows']; ?></h5>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-info">New Shows</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) $array['started']; ?></h5>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-warning">Canceled Shows</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) $array['canceled']; ?></h5>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<?php
 	}
 
@@ -100,7 +168,6 @@ class LWTV_This_Year {
 		</nav><!-- .navigation -->
 		<?php
 	}
-
 
 }
 

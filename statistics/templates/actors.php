@@ -32,25 +32,33 @@ switch ( $view ) {
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<div class="alert alert-success" role="info"><center>
-						<h3 class="alert-heading">Actors</h3>
-						<h5><?php echo LWTV_Stats::generate( 'actors', 'total', 'count' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></h5>
-					</center></div>
+					<div class="card text-center">
+						<h3 class="card-header alert-success">Actors</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) LWTV_Stats::generate( 'actors', 'total', 'count' ); ?></h5>
+						</div>
+					</div>
 				</div>
 				<div class="col">
-					<div class="alert alert-info" role="info"><center>
-						<h3 class="alert-heading">Sexual Orientations</h3>
-						<h5><?php echo (int) wp_count_terms( 'lez_actor_sexuality' ); ?></h5>
-					</center></div>
+					<div class="card text-center">
+						<h3 class="card-header alert-info">Sexual Orientation</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_actor_sexuality' ); ?></h5>
+						</div>
+					</div>
 				</div>
 				<div class="col">
-					<div class="alert alert-warning" role="info"><center>
-						<h3 class="alert-heading">Gender Identities</h3>
-						<h5><?php echo (int) wp_count_terms( 'lez_actor_gender' ); ?></h5>
-					</center></div>
+					<div class="card text-center">
+						<h3 class="card-header alert-warning">Gender Identities</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_actor_gender' ); ?></h5>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
+
+		<p>&nbsp;</p>
 
 		<div class="container">
 			<div class="row">

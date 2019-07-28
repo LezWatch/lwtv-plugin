@@ -237,7 +237,7 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 
 ## Development
 
-Update code like you normally would. If you don't want to push it anywhere, make a local branch. Always remember, merge to **development** first. If that works, do a pull request from development to **master** to automatically update.
+Update code like you normally would. If you don't want to push it anywhere, make a local branch. Always remember, merge to **development** first and check on the (private) dev server. If that works, do a pull request from development to **master** to automatically update.
 
 ### Libraries
 

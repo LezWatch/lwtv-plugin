@@ -117,14 +117,15 @@ class LWTV_Stats_Output {
 				<?php
 				foreach ( $array as $item ) {
 					if ( 0 !== $item['count'] ) {
+						$first_count = round( ( ( $item['count'] / $count ) * 100 ), 1 );
 						echo '<tr>';
 							echo '<th scope="row"><a href="' . esc_url( $item['url'] ) . '">' . wp_kses_post( ucfirst( $item['name'] ) ) . '</a></th>';
 							echo '<td>' . (int) $item['count'] . '</td>';
-							echo '<td>' . (float) round( ( ( $item['count'] / $count ) * 100 ), 1 ) . '%</td>';
+							echo '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $first_count ) . '%</div></div></td>';
 						if ( isset( $second_title ) ) {
 							// how many characters per station/nation?
-							$second_count = $item['characters'];
-							echo '<td>' . (float) round( ( ( $item['count'] / $second_count ) * 100 ), 1 ) . '%</td>';
+							$second_count = round( ( ( $item['count'] / $item['characters'] ) * 100 ), 1 );
+							echo '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $second_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $second_count ) . '%</div></div></td>';
 						}
 						echo '</tr>';
 					}

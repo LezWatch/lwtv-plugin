@@ -20,24 +20,173 @@ class LWTV_This_Year_Chars {
 	}
 
 	/**
-	 * List the dead
+	 * Output the dead
 	 * @param  [type] $thisyear [description]
 	 * @return [type]           [description]
 	 */
 	public static function dead( $thisyear ) {
 		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
-		$dead_loop  = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
-		$queery     = wp_list_pluck( $dead_loop->posts, 'ID' );
-		$list_array = array();
-		$show_array = array();
+		$char_array = self::get_dead( $thisyear );
+		$list_array = $char_array['list'];
+		$show_array = $char_array['show'];
 		?>
-		<h2><a name="died"><?php echo (int) $dead_loop->post_count; ?> Characters Died</a></h2>
+		<h2><a name="died"><?php echo (int) $char_array['count']; ?> Characters Died</a></h2>
 
 		<p>&nbsp;</p>
 
 		<?php
+		if ( ! empty( $list_array ) ) {
+			?>
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<h3>By Date</h3>
+
+						<table class="table table-md table-hover table-striped">
+							<thead class="thead-dark">
+								<tr>
+									<th style="width: 150px;" scope="col">Date</th>
+									<th scope="col">Character(s)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								foreach ( $list_array as $date => $chars ) {
+									echo '<tr>';
+									echo '<td>' . esc_html( date( 'd F', $date ) ) . ' (' . count( $chars ) . ')</td>';
+									echo '<td><ul>';
+									foreach ( $chars as $char ) {
+										echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a> - ' . wp_kses_post( $char['shows'] ) . '</li>';
+									}
+									echo '</ul></td>';
+									echo '</tr>';
+								}
+								?>
+							</tbody>
+						</table>
+					</div>
+					<div class="col">
+						<h3>By Show</h3>
+						<table class="table table-md table-hover table-striped">
+							<thead class="thead-dark">
+								<tr>
+									<th style="width: 200px;" scope="col">Show</th>
+									<th scope="col">Character(s)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								foreach ( $show_array as $show ) {
+									echo '<tr><td><em><a href="' . esc_url( $show['url'] ) . '">' . esc_html( $show['name'] ) . '</a></em> (' . count( $show['chars'] ) . ')</td><td><ul>';
+									foreach ( $show['chars'] as $char ) {
+										echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a> <small>(' . esc_html( $char['type'] ) . ' character)</small></li>';
+									}
+									echo '</ul></td></tr>';
+								}
+								?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<?php
+		} else {
+			echo '<p>No known characters died in ' . (int) $thisyear . '.</p>';
+		}
+	}
+
+	/**
+	 * List of characters for the year.
+	 *
+	 * @access public
+	 * @param mixed $thisyear
+	 * @return void
+	 */
+	public static function list( $thisyear ) {
+		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$loop_array = self::get_list( $thisyear );
+		$char_array = $loop_array['list'];
+		$show_array = $loop_array['show'];
+		?>
+
+		<h2><?php echo (int) $loop_array['count']; ?> Characters On Air</h2>
+
+		<p>&nbsp;</p>
+
+		<?php
+		// If the data isn't empty, we go!
+		if ( ! empty( $char_array ) && ! empty( $show_array ) ) {
+
+			// List everyone by character
+			?>
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<h3>By Character Name</h3>
+						<table class="table table-md table-hover table-striped">
+							<thead class="thead-light">
+								<tr>
+									<th scope="col">Name</th>
+									<th scope="col">Show(s)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								foreach ( $char_array as $the_char ) {
+									echo '<tr>';
+									echo '<td><a href="' . esc_url( $the_char['url'] ) . '">' . esc_html( $the_char['name'] ) . '</a></td>';
+									echo '<td>' . wp_kses_post( $the_char['shows'] ) . '</td>';
+									echo '</tr>';
+								}
+								?>
+							</tbody>
+						</table>
+					</div>
+					<div class="col">
+						<h3>By Show</h3>
+
+						<table class="table table-md table-hover table-striped">
+							<thead class="thead-light">
+								<tr>
+									<th style="width: 200px;" scope="col">Show</th>
+									<th scope="col">Character(s)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								foreach ( $show_array as $show ) {
+									echo '<tr><td><em><a href="' . esc_url( $show['url'] ) . '">' . esc_html( $show['name'] ) . '</a></em> (' . count( $show['chars'] ) . ')</td><td><ul>';
+									foreach ( $show['chars'] as $char ) {
+										echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a> <small>(' . esc_html( $char['type'] ) . ' character)</small></li>';
+									}
+									echo '</ul></td></tr>';
+								}
+								?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<?php
+		} else {
+			echo '<p>No characters were on air in ' . (int) $thisyear . '.</p>';
+		}
+	}
+
+	/**
+	 * Get a list of the dead
+	 * @param  int     $thisyear The year
+	 * @param  boolean $count    Just a count?
+	 * @return array             All the data you need.
+	 */
+	public static function get_dead( $thisyear, $count = false ) {
+		$thisyear  = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$dead_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
+		$queery    = wp_list_pluck( $dead_loop->posts, 'ID' );
+
 		// List all queers and the year they died
-		if ( $dead_loop->have_posts() ) {
+		if ( $dead_loop->have_posts() && ! $count ) {
 			foreach ( $queery as $char ) {
 				$show_ids_raw = get_post_meta( $char, 'lezchars_show_group', true );
 				$show_title   = array();
@@ -112,93 +261,38 @@ class LWTV_This_Year_Chars {
 			// Sort alphabetical
 			ksort( $list_array );
 			ksort( $show_array );
-
-			?>
-			<div class="container">
-				<div class="row">
-					<div class="col">
-						<h3>By Date</h3>
-
-						<table class="table table-md table-hover table-striped">
-							<thead class="thead-dark">
-								<tr>
-									<th style="width: 150px;" scope="col">Date</th>
-									<th scope="col">Character(s)</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-								foreach ( $list_array as $date => $chars ) {
-									echo '<tr>';
-									echo '<td>' . esc_html( date( 'd F', $date ) ) . ' (' . count( $chars ) . ')</td>';
-									echo '<td><ul>';
-									foreach ( $chars as $char ) {
-										echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a> - ' . wp_kses_post( $char['shows'] ) . '</li>';
-									}
-									echo '</ul></td>';
-									echo '</tr>';
-								}
-								?>
-							</tbody>
-						</table>
-					</div>
-					<div class="col">
-						<h3>By Show</h3>
-						<table class="table table-md table-hover table-striped">
-							<thead class="thead-dark">
-								<tr>
-									<th style="width: 200px;" scope="col">Show</th>
-									<th scope="col">Character(s)</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-								foreach ( $show_array as $show ) {
-									echo '<tr><td><em><a href="' . esc_url( $show['url'] ) . '">' . esc_html( $show['name'] ) . '</a></em> (' . count( $show['chars'] ) . ')</td><td><ul>';
-									foreach ( $show['chars'] as $char ) {
-										echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a> <small>(' . esc_html( $char['type'] ) . ' character)</small></li>';
-									}
-									echo '</ul></td></tr>';
-								}
-								?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-			<?php
-		} else {
-			?>
-			<p>No known characters died in <?php echo (int) $thisyear; ?>.</p>
-			<?php
 		}
+
 		wp_reset_query();
+
+		// if we counted, just kick that back.
+		if ( $count ) {
+			$return_array = count( $queery );
+		} else {
+			$return_array = array(
+				'count' => count( $queery ),
+				'list'  => $list_array,
+				'show'  => $show_array,
+			);
+		}
+
+		return $return_array;
+
 	}
 
 	/**
-	 * List of characters for the year.
-	 *
-	 * @access public
-	 * @param mixed $thisyear
-	 * @return void
+	 * Get a list of the characters for a year
+	 * @param  int     $thisyear The year
+	 * @param  boolean $count    Just a count?
+	 * @return array             All the data you need.
 	 */
-	public static function list( $thisyear ) {
-		$fail_msg   = '<p>No characters were on air in ' . $thisyear . '.</p>';
-		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
-		$loop       = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $thisyear, 'REGEXP' );
-		$queery     = wp_list_pluck( $loop->posts, 'ID' );
-		$char_array = array();
-		$show_array = array();
-		?>
+	public static function get_list( $thisyear, $count = false ) {
+		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$loop          = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $thisyear, 'REGEXP' );
+		$queery        = wp_list_pluck( $loop->posts, 'ID' );
+		$counted_chars = 0;
 
-		<h2><?php echo (int) $loop->post_count; ?> Characters On Air</h2>
-
-		<p>&nbsp;</p>
-
-		<?php
-
-		if ( $loop->have_posts() ) {
-			$has_chars = true;
+		if ( $loop->have_posts() && ! $count ) {
 			foreach ( $queery as $char ) {
 				$show_ids   = get_post_meta( $char, 'lezchars_show_group', true );
 				$show_title = array();
@@ -244,80 +338,28 @@ class LWTV_This_Year_Chars {
 					);
 				}
 			}
-
-			// If the data isn't empty, we go!
-			if ( ! empty( $char_array ) && ! empty( $show_array ) ) {
-
-				// Sort arrays
-				ksort( $char_array );
-				ksort( $show_array );
-
-				// List everyone by character
-				?>
-				<div class="container">
-					<div class="row">
-						<div class="col">
-							<h3>By Character Name</h3>
-							<table class="table table-md table-hover table-striped">
-								<thead class="thead-light">
-									<tr>
-										<th scope="col">Name</th>
-										<th scope="col">Show(s)</th>
-									</tr>
-								</thead>
-								<tbody>
-									<?php
-									foreach ( $char_array as $the_char ) {
-										echo '<tr>';
-										echo '<td><a href="' . esc_url( $the_char['url'] ) . '">' . esc_html( $the_char['name'] ) . '</a></td>';
-										echo '<td>' . wp_kses_post( $the_char['shows'] ) . '</td>';
-										echo '</tr>';
-									}
-									?>
-								</tbody>
-							</table>
-						</div>
-						<div class="col">
-							<h3>By Show</h3>
-
-							<table class="table table-md table-hover table-striped">
-								<thead class="thead-light">
-									<tr>
-										<th style="width: 200px;" scope="col">Show</th>
-										<th scope="col">Character(s)</th>
-									</tr>
-								</thead>
-								<tbody>
-									<?php
-									foreach ( $show_array as $show ) {
-										echo '<tr><td><em><a href="' . esc_url( $show['url'] ) . '">' . esc_html( $show['name'] ) . '</a></em> (' . count( $show['chars'] ) . ')</td><td><ul>';
-										foreach ( $show['chars'] as $char ) {
-											echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a> <small>(' . esc_html( $char['type'] ) . ' character)</small></li>';
-										}
-										echo '</ul></td></tr>';
-									}
-									?>
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-
-				<?php
-			} else {
-				$has_chars = false;
-			}
-		} else {
-			$has_chars = false;
-		}
-
-		// If we got here, we have no characters today. Whomp whomp.
-		if ( ! $has_chars ) {
-			echo wp_kses_post( $fail_msg );
 		}
 
 		wp_reset_query();
+
+		// if we counted, just kick that back.
+		if ( $count ) {
+			$return_array = count( $queery );
+		} else {
+			// Sort arrays
+			ksort( $char_array );
+			ksort( $show_array );
+
+			$return_array = array(
+				'count' => count( $queery ),
+				'list'  => $char_array,
+				'show'  => $show_array,
+			);
+		}
+
+		return $return_array;
 	}
+
 }
 
 new LWTV_This_Year_Chars();

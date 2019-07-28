@@ -32,28 +32,34 @@ switch ( $view ) {
 		?>
 		<div class="container">
 			<div class="row">
-				<div class="col-4">
-					<div class="alert alert-success" role="info"><center>
-						<h3 class="alert-heading">Shows</h3>
-						<h5><?php echo (int) LWTV_Stats::generate( 'shows', 'total', 'count' ); ?></h5>
-					</center></div>
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-success">Shows</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) LWTV_Stats::generate( 'shows', 'total', 'count' ); ?></h5>
+						</div>
+					</div>
 				</div>
-				<div class="col-4">
-					<div class="alert alert-info" role="info"><center>
-						<h3 class="alert-heading">Tropes</h3>
-						<h5><?php echo (int) wp_count_terms( 'lez_tropes' ); ?></h5>
-					</center></div>
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-info">Tropes</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_tropes' ); ?></h5>
+						</div>
+					</div>
 				</div>
-				<div class="col-4">
-					<div class="alert alert-warning" role="info"><center>
-						<h3 class="alert-heading">Genres</h3>
-						<h5><?php echo (int) wp_count_terms( 'lez_genres' ); ?></h5>
-					</center></div>
+				<div class="col">
+					<div class="card text-center">
+						<h3 class="card-header alert-warning">Genres</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_genres' ); ?></h5>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<p>The average show score is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'average' ); ?></strong>. The lowest score is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'low' ); ?></strong> and the highest is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'high' ); ?></strong>.</p>
+		<p>&nbsp;<br/>The average show score is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'average' ); ?></strong>. The lowest score is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'low' ); ?></strong> and the highest is <strong><?php LWTV_Stats::generate( 'shows', 'scores', 'high' ); ?></strong>.</p>
 
 		<div class="container">
 			<div class="row">
@@ -127,15 +133,14 @@ switch ( $view ) {
 	case 'tropes':
 		?>
 		<div class="container chart-container">
-			<div class="row">
-				<div class="col">
-					<?php LWTV_Stats::generate( 'shows', 'tropes', 'barchart' ); ?>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<?php LWTV_Stats::generate( 'shows', 'tropes', 'list' ); ?>
-				</div>
+			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
+				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
+				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
+			</ul>
+			<p>&nbsp;</p>
+			<div class="tab-content" id="v-pills-tabContent">
+				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php LWTV_Stats::generate( 'shows', 'tropes', 'barchart' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php LWTV_Stats::generate( 'shows', 'tropes', 'list' ); ?></div>
 			</div>
 		</div>
 		<?php
@@ -143,15 +148,14 @@ switch ( $view ) {
 	case 'genres':
 		?>
 		<div class="container chart-container">
-			<div class="row">
-				<div class="col">
-					<?php LWTV_Stats::generate( 'shows', 'genres', 'barchart' ); ?>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<?php LWTV_Stats::generate( 'shows', 'genres', 'list' ); ?>
-				</div>
+			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
+				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
+				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
+			</ul>
+			<p>&nbsp;</p>
+			<div class="tab-content" id="v-pills-tabContent">
+				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php LWTV_Stats::generate( 'shows', 'genres', 'barchart' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php LWTV_Stats::generate( 'shows', 'genres', 'list' ); ?></div>
 			</div>
 		</div>
 		<?php
