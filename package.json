@@ -1,0 +1,16 @@
+{
+  "name": "lwtv-plugin",
+  "version": "1.0.0",
+  "description": "LezWatch.TV Plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "LezWatch.TV",
+  "license": "GPL-2.0",
+  "repository": "https://github.com/lezwatch/lwtv-plugin/",
+  "dependencies": {
+    "chart.js": "latest",
+    "tablesorter": "^2.31.1"
+  }
+}

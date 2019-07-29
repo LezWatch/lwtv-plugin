@@ -11,12 +11,12 @@ $station       = ( ! isset( $_GET['station'] ) || ! is_array( $valid_station ) )
 
 // Views
 $valid_views = array(
-	'overview'      => 'shows',
-	'sexuality'     => 'characters',
-	'gender'        => 'characters',
-	'tropes'        => 'shows',
-	'intersections' => 'shows',
-	'formats'       => 'shows',
+	'overview'  => 'shows',
+	'sexuality' => 'characters',
+	'gender'    => 'characters',
+	'tropes'    => 'shows',
+	// for now we're removing this: 'intersections' => 'shows',
+	'formats'   => 'shows',
 );
 $view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
@@ -65,8 +65,15 @@ switch ( $station ) {
 <ul class="nav nav-tabs">
 	<?php
 	foreach ( $valid_views as $the_view => $the_post_type ) {
-		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( 'view', $the_view, '/statistics/stations/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		$active    = ( $view === $the_view ) ? ' active' : '';
+		$query_arg = array(
+			'view' => $the_view,
+		);
+		// If there's a nation, we'll keep it in the URL.
+		if ( 'all' !== $country ) {
+			$query_arg['country'] = $country;
+		}
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( $query_arg, '/statistics/stations/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -79,12 +86,6 @@ switch ( $station ) {
 ?>
 
 <div class="container">
-
-	<?php
-	if ( 'all' !== $station && 'overview' !== $view ) {
-		echo wp_kses_post( lwtv_yikes_statistics_description( 'station', $cpts_type, $view ) );
-	}
-	?>
 	<div class="row">
 		<div class="<?php echo esc_attr( $col_class ); ?>">
 		<?php
@@ -109,10 +110,11 @@ switch ( $station ) {
 					<tbody>
 						<?php
 						foreach ( $all_stations as $the_station ) {
+							$percent = round( ( ( $the_station->count / $shows_count ) * 100 ), 1 );
 							echo '<tr>
 									<th scope="row"><a href="?station=' . esc_attr( $the_station->slug ) . '">' . esc_html( $the_station->name ) . '</a></th>
 									<td>' . (int) $the_station->count . '</td>
-									<td>' . esc_html( round( ( ( $the_station->count / $shows_count ) * 100 ), 1 ) ) . '%</td>
+									<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 									<td>' . (int) LWTV_Stats::showcount( 'score', 'stations', $the_station->slug ) . '</td>
 								</tr>';
 						}

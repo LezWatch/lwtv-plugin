@@ -34,25 +34,33 @@ switch ( $view ) {
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<div class="alert alert-success" role="info"><center>
-						<h3 class="alert-heading">Characters</h3>
-						<h5><?php echo (int) $character_count; ?></h5>
-					</center></div>
+					<div class="card text-center">
+						<h3 class="card-header alert-success">Characters</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) $character_count; ?></h5>
+						</div>
+					</div>
 				</div>
 				<div class="col">
-					<div class="alert alert-info" role="info"><center>
-						<h3 class="alert-heading">Sexual Orientations</h3>
-						<h5><?php echo (int) wp_count_terms( 'lez_sexuality' ); ?></h5>
-					</center></div>
+					<div class="card text-center">
+						<h3 class="card-header alert-info">Sexual Orientations</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_sexuality' ); ?></h5>
+						</div>
+					</div>
 				</div>
 				<div class="col">
-					<div class="alert alert-warning" role="info"><center>
-						<h3 class="alert-heading">Gender Identities</h3>
-						<h5><?php echo (int) wp_count_terms( 'lez_gender' ); ?></h5>
-					</center></div>
+					<div class="card text-center">
+						<h3 class="card-header alert-warning">Gender Identities</h3>
+						<div class="card-body bg-light">
+							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_gender' ); ?></h5>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
+
+		<p>&nbsp;</p>
 
 		<div class="container">
 			<div class="row">
@@ -78,10 +86,11 @@ switch ( $view ) {
 								)
 							);
 							foreach ( $cliches as $cliche ) {
+								$percent = round( ( ( $cliche->count / $character_count ) * 100 ), 1 );
 								echo '<tr>
 										<th scope="row"><a href="' . esc_url( site_url( '/cliche/' . $cliche->slug ) ) . '">' . esc_html( $cliche->name ) . '</a></th>
 										<td>' . (int) $cliche->count . '</td>
-										<td>' . esc_html( round( ( ( $cliche->count / $character_count ) * 100 ), 1 ) ) . '%</td>
+										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 									</tr>';
 							}
 							?>
@@ -112,10 +121,11 @@ switch ( $view ) {
 								)
 							);
 							foreach ( $sexualities as $sexuality ) {
+								$percent = round( ( ( $sexuality->count / $character_count ) * 100 ), 1 );
 								echo '<tr>
 										<th scope="row"><a href="' . esc_url( site_url( '/sexuality/' . $sexuality->slug ) ) . '">' . esc_html( $sexuality->name ) . '</a></th>
 										<td>' . (int) $sexuality->count . '</td>
-										<td>' . esc_html( round( ( ( $sexuality->count / $character_count ) * 100 ), 1 ) ) . '%</td>
+										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 									</tr>';
 							}
 							?>
@@ -123,7 +133,7 @@ switch ( $view ) {
 					</table>
 					<a href="?view=sexuality"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_sexuality' ); ?> Sexual Orientations</button></a>
 
-					<p>&nbsp;</p>
+					<p>&nbsp;<br/>&nbsp;</p>
 
 					<h4>Top Gender Identities</h4>
 					<table class="table table-striped table-hover">
@@ -146,10 +156,11 @@ switch ( $view ) {
 								)
 							);
 							foreach ( $genders as $gender ) {
+								$percent = round( ( ( $gender->count / $character_count ) * 100 ), 1 );
 								echo '<tr>
 										<th scope="row"><a href="' . esc_url( site_url( '/gender/' . $gender->slug ) ) . '">' . esc_html( $gender->name ) . '</a></th>
 										<td>' . (int) $gender->count . '</td>
-										<td>' . esc_html( round( ( ( $gender->count / $character_count ) * 100 ), 1 ) ) . '%</td>
+										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 									</tr>';
 							}
 							?>
@@ -165,15 +176,14 @@ switch ( $view ) {
 	case 'cliches':
 		?>
 		<div class="container chart-container">
-			<div class="row">
-				<div class="col">
-					<?php LWTV_Stats::generate( 'characters', 'cliches', 'barchart' ); ?>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<?php LWTV_Stats::generate( 'characters', 'cliches', 'percentage' ); ?>
-				</div>
+			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
+				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
+				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
+			</ul>
+			<p>&nbsp;</p>
+			<div class="tab-content" id="v-pills-tabContent">
+				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php LWTV_Stats::generate( 'characters', 'cliches', 'barchart' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php LWTV_Stats::generate( 'characters', 'cliches', 'list' ); ?></div>
 			</div>
 		</div>
 		<?php
