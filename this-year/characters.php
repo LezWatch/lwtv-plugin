@@ -188,7 +188,7 @@ class LWTV_This_Year_Chars {
 		$queery    = wp_list_pluck( $dead_loop->posts, 'ID' );
 
 		// List all queers and the year they died
-		if ( $dead_loop->have_posts() && ! $count ) {
+		if ( $dead_loop->have_posts() ) {
 			foreach ( $queery as $char ) {
 				$show_ids_raw = get_post_meta( $char, 'lezchars_show_group', true );
 				$show_title   = array();
@@ -294,45 +294,50 @@ class LWTV_This_Year_Chars {
 		$queery        = wp_list_pluck( $loop->posts, 'ID' );
 		$counted_chars = 0;
 
-		if ( $loop->have_posts() && ! $count ) {
+		if ( $loop->have_posts() ) {
 			foreach ( $queery as $char ) {
 				$show_ids   = get_post_meta( $char, 'lezchars_show_group', true );
 				$show_title = array();
 				foreach ( $show_ids as $each_show ) {
 					// Make sure this show is in the year
 					if ( in_array( $thisyear, $each_show['appears'], true ) ) {
-						// Get some defaults
-						$char_slug = get_post_field( 'post_name', get_post( $char ) );
-						$show_slug = get_post_field( 'post_name', get_post( $each_show['show'] ) );
+						$counted_chars++;
 
-						// if the show isn't already in the array, we create it
-						if ( ! isset( $show_array[ $show_slug ] ) ) {
-							$show_array[ $show_slug ] = array(
-								'name'  => get_the_title( $each_show['show'] ),
-								'url'   => get_the_permalink( $each_show['show'] ),
-								'chars' => array(),
+						// If we're ONLY counting, we can bail now.
+						if ( ! $count ) {
+							// Get some defaults
+							$char_slug = get_post_field( 'post_name', get_post( $char ) );
+							$show_slug = get_post_field( 'post_name', get_post( $each_show['show'] ) );
+
+							// if the show isn't already in the array, we create it
+							if ( ! isset( $show_array[ $show_slug ] ) ) {
+								$show_array[ $show_slug ] = array(
+									'name'  => get_the_title( $each_show['show'] ),
+									'url'   => get_the_permalink( $each_show['show'] ),
+									'chars' => array(),
+								);
+							}
+
+							// Add the character to the show array
+							$show_array[ $show_slug ]['chars'][ $char_slug ] = array(
+								'name' => get_the_title( $char ),
+								'url'  => get_the_permalink( $char ),
+								'type' => $each_show['type'],
 							);
-						}
 
-						// Add the character to the show array
-						$show_array[ $show_slug ]['chars'][ $char_slug ] = array(
-							'name' => get_the_title( $char ),
-							'url'  => get_the_permalink( $char ),
-							'type' => $each_show['type'],
-						);
-
-						// if the show isn't published, no links
-						if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
-							array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em> <small>(' . $each_show['type'] . ' character)</small>' );
-						} else {
-							array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em> <small>(' . $each_show['type'] . ' character)</small>' );
+							// if the show isn't published, no links
+							if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
+								array_push( $show_title, '<em><span class="disabled-show-link">' . get_the_title( $each_show['show'] ) . '</span></em> <small>(' . $each_show['type'] . ' character)</small>' );
+							} else {
+								array_push( $show_title, '<em><a href="' . get_permalink( $each_show['show'] ) . '">' . get_the_title( $each_show['show'] ) . '</a></em> <small>(' . $each_show['type'] . ' character)</small>' );
+							}
 						}
 					}
 					$show_info = implode( ', ', $show_title );
 				}
 
 				// If there are shows listed, let's add it to the character array
-				if ( isset( $show_info ) ) {
+				if ( isset( $show_info ) && '' !== $show_info ) {
 					$char_array[ $char_slug ] = array(
 						'name'  => get_the_title( $char ),
 						'url'   => get_the_permalink( $char ),
@@ -346,14 +351,14 @@ class LWTV_This_Year_Chars {
 
 		// if we counted, just kick that back.
 		if ( $count ) {
-			$return_array = count( $queery );
+			$return_array = $counted_chars;
 		} else {
 			// Sort arrays
 			ksort( $char_array );
 			ksort( $show_array );
 
 			$return_array = array(
-				'count' => count( $queery ),
+				'count' => $counted_chars,
 				'list'  => $char_array,
 				'show'  => $show_array,
 			);

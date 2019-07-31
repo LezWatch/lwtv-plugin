@@ -32,7 +32,7 @@ class LWTV_This_Year_Shows {
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'now' );
 		$shows_current = $show_array['current'];
-		$shows_formats = $show_array['current'];
+		$shows_formats = $show_array['formats'];
 		$shows_country = $show_array['country'];
 		?>
 
