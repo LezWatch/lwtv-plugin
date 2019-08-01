@@ -8,13 +8,13 @@
 // Country
 $sent_country  = get_query_var( 'country', '' );
 $valid_country = term_exists( $sent_country, 'lez_country' );
-$country       = ( '' == $sent_country || ! is_array( $valid_country ) ) ? 'all' : sanitize_title( $sent_country );
+$country       = ( '' === $sent_country || ! is_array( $valid_country ) ) ? 'all' : sanitize_title( $sent_country );
 
-// Views: intersections was removed because there's not enough.
 $valid_views = array(
 	'sexuality' => 'characters',
 	'gender'    => 'characters',
 	'tropes'    => 'shows',
+	// for now we're removing this: 'intersections' => 'shows',
 	'formats'   => 'shows',
 );
 $sent_view   = get_query_var( 'view', 'overview' );
@@ -82,7 +82,7 @@ switch ( $country ) {
 
 	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl ) ) . '">OVERVIEW</a></li>';
 	foreach ( $valid_views as $the_view => $the_post_type ) {
-		$active    = ( $view === $the_view ) ? ' active' : '';
+		$active = ( $view === $the_view ) ? ' active' : '';
 		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>

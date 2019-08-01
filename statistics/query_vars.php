@@ -53,28 +53,12 @@ class LWTV_Stats_Query_Vars {
 				);
 
 				add_rewrite_rule(
-					'^statistics/' . $a_view . '/([^/]+)?$',
+					'^statistics/' . $a_view . '/([^/]+)/?$',
 					'index.php?pagename=statistics&statistics=' . $a_view . '&view=$matches[1]',
 					'top'
 				);
 
 			}
-
-/*
-			foreach ( $views as $a_view ) {
-				add_rewrite_rule(
-					'^statistics/' . $a_view . '/?$',
-					'index.php?pagename=statistics&view=' . $a_view,
-					'top'
-				);
-
-				add_rewrite_rule(
-					'^statistics/([0-9]{4})/' . $a_view . '/?$',
-					'index.php?pagename=statistics&thisyear=$matches[1]&view=' . $a_view,
-					'top'
-				);
-			}
-*/
 		} else {
 			add_action( 'admin_notices', array( $this, 'admin_notice_permalinks' ) );
 		}
@@ -97,9 +81,11 @@ class LWTV_Stats_Query_Vars {
 	public function query_vars( $vars ) {
 		$vars[] = 'statistics';
 		$vars[] = 'view';
+		$vars[] = 'for';
 		$vars[] = 'showform';
 		$vars[] = 'format';
 		$vars[] = 'country';
+		$vars[] = 'station';
 		return $vars;
 	}
 

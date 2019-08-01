@@ -8,7 +8,7 @@
 // showform
 $sent_form      = get_query_var( 'showform', '' );
 $valid_showform = term_exists( $sent_form, 'lez_formats' );
-$showform       = ( '' == $sent_form || ! is_array( $valid_showform ) ) ? 'all' : sanitize_title( $sent_form );
+$showform       = ( '' === $sent_form || ! is_array( $valid_showform ) ) ? 'all' : sanitize_title( $sent_form );
 
 // Views
 $valid_views = array(
@@ -62,6 +62,11 @@ switch ( $showform ) {
 			</div>
 			<div class="form-group">
 				<button type="submit" id="submit" class="btn btn-default">Go</button>
+				<?php
+				if ( 'all' !== $showform ) {
+					echo '<a class="btn btn-default" href="/statistics/nations/" role="button">Reset</a>';
+				}
+				?>
 			</div>
 		</form>
 	</nav>
@@ -69,12 +74,16 @@ switch ( $showform ) {
 
 <ul class="nav nav-tabs">
 	<?php
-	$baseurl = '/statistics/formats/';
-	$endurl  = ( '' !== $showform ) ? '/?showform=' . $showform : '/';
-	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( $baseurl ) . '">OVERVIEW</a></li>';
-	foreach ( $valid_views as $the_view => $the_cpt ) {
+	$baseurl   = '/statistics/formats/';
+	$query_arg = array();
+	if ( 'all' !== $showform ) {
+		$query_arg['$showform'] = $showform;
+	}
+
+	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl ) ) . '">OVERVIEW</a></li>';
+	foreach ( $valid_views as $the_view => $the_post_type ) {
 		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( $baseurl . $the_view . $endurl ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -149,7 +158,7 @@ switch ( $showform ) {
 			$onairscore = LWTV_Stats::showcount( 'onairscore', 'formats', ltrim( $showform, '_' ) );
 
 			if ( '_all' === $view ) {
-				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this format is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>' );
+				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' ' . $showform_obj['name'] . 's are on air. The average score for all ' . $showform_obj['name'] . 's is ' . $showscore . ', and ' . $onairscore . ' for ' . $showform_obj['name'] . 's currently on air (out of a possible 100).</p>' );
 			}
 
 			LWTV_Stats::generate( $cpts_type, 'formats' . $showform . $view, $format );

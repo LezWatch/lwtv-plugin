@@ -6,19 +6,20 @@
  */
 
 // Stations
-$valid_station = ( isset( $_GET['station'] ) ) ? term_exists( $_GET['station'], 'lez_stations' ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-$station       = ( ! isset( $_GET['station'] ) || ! is_array( $valid_station ) ) ? 'all' : sanitize_title( $_GET['station'] ); // phpcs:ignore WordPress.Security.NonceVerification
+$sent_station  = get_query_var( 'station', '' );
+$valid_station = term_exists( $sent_station, 'lez_stations' );
+$station       = ( '' === $sent_station || ! is_array( $valid_station ) ) ? 'all' : sanitize_title( $sent_station );
 
 // Views
 $valid_views = array(
-	'overview'  => 'shows',
 	'sexuality' => 'characters',
 	'gender'    => 'characters',
 	'tropes'    => 'shows',
 	// for now we're removing this: 'intersections' => 'shows',
 	'formats'   => 'shows',
 );
-$view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // phpcs:ignore WordPress.Security.NonceVerification
+$sent_view   = get_query_var( 'view', 'overview' );
+$view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' : $sent_view;
 
 // Count
 $all_stations = get_terms( 'lez_stations', array( 'hide_empty' => 0 ) );
@@ -43,7 +44,6 @@ switch ( $station ) {
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
 		<form method="get" id="go" class="form-inline">
-			<input type="hidden" name="view" value="<?php echo esc_html( $view ); ?>">
 			<div class="form-group">
 				<select name="station" id="station" class="form-control">
 					<option value="all">All Stations</option>
@@ -57,6 +57,11 @@ switch ( $station ) {
 			</div>
 			<div class="form-group">
 				<button type="submit" id="submit" class="btn btn-default">Go</button>
+				<?php
+				if ( 'all' !== $station ) {
+					echo '<a class="btn btn-default" href="/statistics/stations/" role="button">Reset</a>';
+				}
+				?>
 			</div>
 		</form>
 	</nav>
@@ -64,16 +69,16 @@ switch ( $station ) {
 
 <ul class="nav nav-tabs">
 	<?php
+	$baseurl   = '/statistics/stations/';
+	$query_arg = array();
+	if ( 'all' !== $station ) {
+		$query_arg['station'] = $station;
+	}
+
+	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl ) ) . '">OVERVIEW</a></li>';
 	foreach ( $valid_views as $the_view => $the_post_type ) {
-		$active    = ( $view === $the_view ) ? ' active' : '';
-		$query_arg = array(
-			'view' => $the_view,
-		);
-		// If there's a nation, we'll keep it in the URL.
-		if ( 'all' !== $country ) {
-			$query_arg['country'] = $country;
-		}
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( $query_arg, '/statistics/stations/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		$active = ( $view === $the_view ) ? ' active' : '';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -82,7 +87,7 @@ switch ( $station ) {
 
 <?php
 	$col_class = ( 'all' !== $station && 'overview' !== $view ) ? 'col-sm-6' : 'col';
-	$cpts_type = $valid_views[ $view ];
+	$cpts_type = ( 'overview' === $view ) ? 'shows' : $valid_views[ $view ];
 ?>
 
 <div class="container">

@@ -233,6 +233,7 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 * `_main.php` - Basic data loading, calls templates etc.
 * `characters.php` - all data on characters per year
 * `shows.php` - all data on shows per year
+* `query_vars.php` - customize query variables
 
 ## Development
 
