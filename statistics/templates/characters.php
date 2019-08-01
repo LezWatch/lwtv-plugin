@@ -5,9 +5,9 @@
  * @package LezWatch.TV
  */
 
-$valid_views = array( 'overview', 'cliches', 'gender', 'sexuality', 'queer-irl', 'roles' );
-$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
-
+$valid_views     = array( 'cliches', 'gender', 'sexuality', 'queer-irl', 'roles' );
+$sent_view       = get_query_var( 'view', 'overview' );
+$view            = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 $character_count = LWTV_Stats::generate( 'characters', 'total', 'count' );
 ?>
 
@@ -17,9 +17,11 @@ $character_count = LWTV_Stats::generate( 'characters', 'total', 'count' );
 
 <ul class="nav nav-tabs">
 	<?php
+	$baseurl = '/statistics/characters/';
+	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( $baseurl ) . '">OVERVIEW</a></li>';
 	foreach ( $valid_views as $the_view ) {
 		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, '/statistics/characters/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( $baseurl . $the_view ) . '/">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>

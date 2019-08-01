@@ -104,9 +104,6 @@ Stored in `/features/` -- a collection of miscellaneous features.
 * `debug.php` - Debugging Tools for weird content.
 * `private-data.php` - Shows alert that a page is hidden if the post is set private.
 * `profiles.php` - Custom profile code
-* `query_vars.php` - Custom Query Variables that let us have the following special pages
-    - statistics
-    - this-year
 * `search.php` - Extra Search Functions:
     - Join posts and postmeta tables
     - Modify Search Location to include custom fields
@@ -215,6 +212,8 @@ Stored in `/statistics/` - These files generate everything for stats, from graph
     - Queerness
 * Gutenberg: `gutenberg-ssr.php`
     - Server side rendering to show statistics.
+* Query Variables: `query_vars.php`
+    -- Code to customize query variables
 * Output: `class LWTV_Stats_Output` - `output.php`
     - Lists
     - Percentages
@@ -234,6 +233,7 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 * `_main.php` - Basic data loading, calls templates etc.
 * `characters.php` - all data on characters per year
 * `shows.php` - all data on shows per year
+* `query_vars.php` - customize query variables
 
 ## Development
 
@@ -265,5 +265,5 @@ Composer will move everything into the right place, even NPM files.
 
 Pushes to branches are automatically deployed via Codeship as follows:
 
-* Development: [lwtv.dream.press](https://lwtv.dream.press)
+* Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site)
 * Master: [lezwatchtv.com](https://lezwatchtv.com)
