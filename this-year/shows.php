@@ -34,6 +34,10 @@ class LWTV_This_Year_Shows {
 		$shows_current = $show_array['current'];
 		$shows_formats = $show_array['formats'];
 		$shows_country = $show_array['country'];
+
+		if ( count( $shows_current ) > 0 ) {
+			$has_shows = true;
+		}
 		?>
 
 		<h2><a name="showsonair"><?php echo count( $shows_current ); ?> Shows On Air </a></h2>
@@ -71,9 +75,8 @@ class LWTV_This_Year_Shows {
 					</ul>
 				</div>
 				<?php
-			} else {
-				$has_shows = false;
 			}
+
 			if ( ! empty( $shows_formats ) ) {
 				ksort( $shows_formats );
 				?>
@@ -99,9 +102,8 @@ class LWTV_This_Year_Shows {
 					</table>
 				</div>
 				<?php
-			} else {
-				$has_shows = false;
 			}
+
 			if ( ! empty( $shows_country ) ) {
 				ksort( $shows_country );
 				?>
@@ -127,9 +129,8 @@ class LWTV_This_Year_Shows {
 					</table>
 				</div>
 				<?php
-			} else {
-				$has_shows = false;
 			}
+
 			if ( ! $has_shows ) {
 				echo wp_kses_post( $fail_msg );
 			}

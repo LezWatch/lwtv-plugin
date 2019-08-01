@@ -113,7 +113,7 @@ class LWTV_This_Year_Chars {
 
 		<p>&nbsp;</p>
 
-		<div class="alert alert-warning" role="alert"><strong>Notice:</strong> The data generated here is currently curently incomplete and not fully representative of all characters on air at this time. We are working to improve accuracy and hope to be finished soon.</div>
+		<div class="alert alert-warning" role="alert"><strong>Notice:</strong> The data generated here is currently curently incomplete and not fully representative of all characters on air at this time. We are working to improve accuracy and are currently accurate through 1989.</div>
 
 		<?php
 		// If the data isn't empty, we go!
