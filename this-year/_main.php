@@ -131,9 +131,9 @@ class LWTV_This_Year {
 	 * @return boolean           [description]
 	 */
 	public static function navigation( $thisyear, $view ) {
-		$lastyear    = FIRST_LWTV_YEAR;
-		$baseurl     = '/this-year/';
-		$view        = ( 'overview' == $view ) ? '' : $view;
+		$lastyear = FIRST_LWTV_YEAR;
+		$baseurl  = '/this-year/';
+		$view     = ( 'overview' === $view ) ? '' : $view;
 		?>
 
 		<nav aria-label="This Year navigation" role="navigation">

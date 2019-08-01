@@ -183,9 +183,10 @@ class LWTV_This_Year_Chars {
 	 * @return array             All the data you need.
 	 */
 	public static function get_dead( $thisyear, $count = false ) {
-		$thisyear  = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
-		$dead_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
-		$queery    = wp_list_pluck( $dead_loop->posts, 'ID' );
+		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$dead_loop  = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
+		$queery     = wp_list_pluck( $dead_loop->posts, 'ID' );
+		$show_array = array();
 
 		// List all queers and the year they died
 		if ( $dead_loop->have_posts() ) {
@@ -193,7 +194,6 @@ class LWTV_This_Year_Chars {
 				$show_ids_raw = get_post_meta( $char, 'lezchars_show_group', true );
 				$show_title   = array();
 				$show_ids     = array();
-				$show_array   = array();
 
 				// If the character is in a show this year, we'll add it.
 				foreach ( $show_ids_raw as $each_show ) {

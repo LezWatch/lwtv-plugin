@@ -145,7 +145,7 @@ class LWTV_This_Year_Shows {
 	 * @param mixed $thisyear
 	 * @return void
 	 */
-	public function new( $thisyear ) {
+	public static function new( $thisyear ) {
 		$fail_msg      = '<p>No shows were new this year.</p>';
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'started' );
@@ -261,7 +261,7 @@ class LWTV_This_Year_Shows {
 	 * @param mixed $thisyear
 	 * @return void
 	 */
-	public function canceled( $thisyear ) {
+	public static function canceled( $thisyear ) {
 		$fail_msg      = '<p>No shows were canceled this year.</p>';
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'ended' );
