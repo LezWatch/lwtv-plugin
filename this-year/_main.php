@@ -5,6 +5,7 @@
  * @package LezWatch.TV
  */
 
+require 'query_vars.php';
 require 'characters.php';
 require 'shows.php';
 
@@ -17,17 +18,18 @@ class LWTV_This_Year {
 	 */
 	public static function display( $thisyear ) {
 		$thisyear    = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
-		$valid_views = array( 'overview', 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
-		$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
+		$valid_views = array( 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
+		$view        = get_query_var( 'view', 'overview' );
 		$baseurl     = ( date( 'Y' ) !== $thisyear ) ? '/this-year/' . $thisyear . '/' : '/this-year/';
 
 		?>
 		<div class="thisyear-container">
 			<ul class="nav nav-tabs">
 				<?php
+				echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( $baseurl ) . '">OVERVIEW</a></li>';
 				foreach ( $valid_views as $the_view ) {
 					$active = ( $view === $the_view ) ? ' active' : '';
-					echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, $baseurl ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+					echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( $baseurl . $the_view ) . '/">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 				}
 				?>
 			</ul>
@@ -56,7 +58,7 @@ class LWTV_This_Year {
 					break;
 			}
 
-			self::navigation( $thisyear );
+			self::navigation( $thisyear, $view );
 			?>
 		</div>
 		<?php
@@ -128,12 +130,10 @@ class LWTV_This_Year {
 	 * @param  [type]  $thisyear
 	 * @return boolean           [description]
 	 */
-	public static function navigation( $thisyear ) {
-		$thisyear    = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
-		$valid_views = array( 'overview', 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
-		$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? '' : '?view=' . $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
+	public static function navigation( $thisyear, $view ) {
 		$lastyear    = FIRST_LWTV_YEAR;
 		$baseurl     = '/this-year/';
+		$view        = ( 'overview' == $view ) ? '' : $view;
 		?>
 
 		<nav aria-label="This Year navigation" role="navigation">

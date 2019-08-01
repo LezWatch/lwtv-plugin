@@ -6,6 +6,13 @@
  * It's pretty much only called in /page-template/statistics.php
  */
 
+// Include sub files
+require_once 'query_vars.php';
+require_once 'array.php';
+require_once 'output.php';
+require_once 'gutenberg-ssr.php';
+
+
 class LWTV_Stats {
 
 	/**
@@ -38,7 +45,7 @@ class LWTV_Stats {
 
 		if ( is_page( array( 'statistics' ) ) ) {
 			$statistics = get_query_var( 'statistics', 'none' );
-			$stat_view  = ( isset( $_GET['view'] ) ) ? esc_attr( $_GET['view'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+			$stat_view  = get_query_var( 'view', 'main' );
 
 			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js', array( 'jquery' ), '2.8.0', false );
 			wp_enqueue_script( 'chartjs-plugins', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.plugins.js', array( 'chartjs' ), '1.0.0', false );
@@ -312,8 +319,3 @@ class LWTV_Stats {
 }
 
 new LWTV_Stats();
-
-// Include sub files
-require_once 'array.php';
-require_once 'output.php';
-require_once 'gutenberg-ssr.php';

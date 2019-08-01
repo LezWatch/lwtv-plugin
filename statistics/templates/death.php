@@ -14,7 +14,8 @@ $deadchar_percent = round( ( $deadchars / $allchars ) * 100, 2 );
 $deadshow_percent = round( ( $deadshows / $allshows ) * 100, 2 );
 
 $valid_views = array( 'overview', 'characters', 'shows', 'stations', 'nations', 'years' );
-$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
+$sent_view   = get_query_var( 'view', 'overview' );
+$view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 ?>
 
 <ul class="nav nav-tabs">

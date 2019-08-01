@@ -193,10 +193,11 @@ class LWTV_This_Year_Chars {
 				$show_ids_raw = get_post_meta( $char, 'lezchars_show_group', true );
 				$show_title   = array();
 				$show_ids     = array();
+				$show_array   = array();
 
 				// If the character is in a show this year, we'll add it.
 				foreach ( $show_ids_raw as $each_show ) {
-					if ( isset( $each_show['appears'] ) && in_array( $thisyear, $each_show['appears'], true ) ) {
+					if ( array_key_exists( 'appears', $each_show ) && in_array( $thisyear, $each_show['appears'], true ) ) {
 						$show_ids[] = $each_show;
 					}
 				}
@@ -213,7 +214,7 @@ class LWTV_This_Year_Chars {
 					$show_slug = get_post_field( 'post_name', get_post( $each_show['show'] ) );
 
 					// if the show isn't already in the array, we create it
-					if ( ! isset( $show_array[ $show_slug ] ) ) {
+					if ( ! empty( $show_slug ) && ! array_key_exists( $show_slug, $show_array ) ) {
 						$show_array[ $show_slug ] = array(
 							'name'  => get_the_title( $each_show['show'] ),
 							'url'   => get_the_permalink( $each_show['show'] ),
@@ -293,6 +294,7 @@ class LWTV_This_Year_Chars {
 		$loop          = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $thisyear, 'REGEXP' );
 		$queery        = wp_list_pluck( $loop->posts, 'ID' );
 		$counted_chars = 0;
+		$show_array    = array();
 
 		if ( $loop->have_posts() ) {
 			foreach ( $queery as $char ) {
@@ -300,7 +302,7 @@ class LWTV_This_Year_Chars {
 				$show_title = array();
 				foreach ( $show_ids as $each_show ) {
 					// Make sure this show is in the year
-					if ( in_array( $thisyear, $each_show['appears'], true ) ) {
+					if ( array_key_exists( 'appears', $each_show ) && in_array( $thisyear, $each_show['appears'], true ) ) {
 						$counted_chars++;
 
 						// If we're ONLY counting, we can bail now.
@@ -310,7 +312,7 @@ class LWTV_This_Year_Chars {
 							$show_slug = get_post_field( 'post_name', get_post( $each_show['show'] ) );
 
 							// if the show isn't already in the array, we create it
-							if ( ! isset( $show_array[ $show_slug ] ) ) {
+							if ( ! array_key_exists( $show_slug, $show_array ) ) {
 								$show_array[ $show_slug ] = array(
 									'name'  => get_the_title( $each_show['show'] ),
 									'url'   => get_the_permalink( $each_show['show'] ),

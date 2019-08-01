@@ -6,22 +6,24 @@
  */
 
 // Country
-$valid_country = ( isset( $_GET['country'] ) ) ? term_exists( $_GET['country'], 'lez_country' ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-$country       = ( ! isset( $_GET['country'] ) || ! is_array( $valid_country ) ) ? 'all' : sanitize_title( $_GET['country'] ); // phpcs:ignore WordPress.Security.NonceVerification
+$sent_country  = get_query_var( 'country', '' );
+$valid_country = term_exists( $sent_country, 'lez_country' );
+$country       = ( '' == $sent_country || ! is_array( $valid_country ) ) ? 'all' : sanitize_title( $sent_country );
 
 // Views: intersections was removed because there's not enough.
 $valid_views = array(
-	'overview'  => 'shows',
 	'sexuality' => 'characters',
 	'gender'    => 'characters',
 	'tropes'    => 'shows',
 	'formats'   => 'shows',
 );
-$view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // phpcs:ignore WordPress.Security.NonceVerification
+$sent_view   = get_query_var( 'view', 'overview' );
+$view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' : $sent_view;
 
 // Format
 $valid_formats = array( 'bar', 'pie' );
-$format        = ( ! isset( $_GET['format'] ) || ! in_array( $_GET['format'], $valid_formats, true ) ) ? 'bar' : sanitize_title( $_GET['format'] ); // phpcs:ignore WordPress.Security.NonceVerification
+$sent_format   = get_query_var( 'format', 'bar' );
+$format        = ( ! in_array( $sent_format, $valid_formats, true ) ) ? 'bar' : $sent_format;
 
 // Count
 $nations     = get_terms( 'lez_country', array( 'hide_empty' => 0 ) );
@@ -44,10 +46,9 @@ switch ( $country ) {
 <h2><?php echo wp_kses_post( $title_country ); ?></h2>
 
 <section id="toc" class="toc-container card-body">
-	<nav class="breadcrumb">
+	<div class="navbar navbar-expand-lg navbar-light breadcrumb">
 		<form method="get" id="go" class="form-inline">
-			<input type="hidden" name="view" value="<?php echo esc_html( $view ); ?>">
-			<div class="form-group">
+			<div class="navbar-nav form-group mr-auto">
 				<select name="country" id="country" class="form-control">
 					<option value="all">Country (All)</option>
 					<?php
@@ -61,23 +62,28 @@ switch ( $country ) {
 			</div>
 			<div class="form-group">
 				<button type="submit" id="submit" class="btn btn-default">Go</button>
+				<?php
+				if ( 'all' !== $country ) {
+					echo '<a class="btn btn-default" href="/statistics/nations/" role="button">Reset</a>';
+				}
+				?>
 			</div>
 		</form>
-	</nav>
+	</div>
 </section>
 
 <ul class="nav nav-tabs">
 	<?php
+	$baseurl   = '/statistics/nations/';
+	$query_arg = array();
+	if ( 'all' !== $country ) {
+		$query_arg['country'] = $country;
+	}
+
+	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl ) ) . '">OVERVIEW</a></li>';
 	foreach ( $valid_views as $the_view => $the_post_type ) {
 		$active    = ( $view === $the_view ) ? ' active' : '';
-		$query_arg = array(
-			'view' => $the_view,
-		);
-		// If there's a nation, we'll keep it in the URL.
-		if ( 'all' !== $country ) {
-			$query_arg['country'] = $country;
-		}
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( $query_arg, '/statistics/nations/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -86,7 +92,7 @@ switch ( $country ) {
 
 <?php
 	$col_class = ( 'all' !== $country && 'overview' !== $view ) ? 'col-sm-6' : 'col';
-	$cpts_type = $valid_views[ $view ];
+	$cpts_type = ( 'overview' === $view ) ? 'shows' : $valid_views[ $view ];
 ?>
 
 <div class="container chart-container">
@@ -118,7 +124,7 @@ switch ( $country ) {
 					foreach ( $nations as $nation ) {
 						$percent = round( ( ( $nation->count / $shows_count ) * 100 ), 1 );
 						echo '<tr>
-							<th scope="row"><a href="?view=overview&country=' . esc_attr( $nation->slug ) . '">' . esc_html( $nation->name ) . '</a></th>
+							<th scope="row"><a href="?country=' . esc_attr( $nation->slug ) . '">' . esc_html( $nation->name ) . '</a></th>
 							<td>' . (int) $nation->count . '</td>
 							<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 							<td>' . (int) LWTV_Stats::showcount( 'score', 'country', $nation->slug ) . '</td>

@@ -12,7 +12,6 @@ require_once 'profiles.php';       // User Profile Stuff
 require_once 'search.php';         // Search Features
 require_once 'shortcodes.php';     // Custom Shortcodes
 require_once 'sort-stopwords.php'; // Remove stopwords from sorting on archives
-require_once 'query_vars.php';     // Create custom this-year/stats pages.
 
 
 /**

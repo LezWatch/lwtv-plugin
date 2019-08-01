@@ -6,30 +6,29 @@
  */
 
 // showform
-$valid_showform = ( isset( $_GET['showform'] ) ) ? term_exists( $_GET['showform'], 'lez_formats' ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-$showform       = ( ! isset( $_GET['showform'] ) || ! is_array( $valid_showform ) ) ? 'all' : sanitize_title( $_GET['showform'] ); // phpcs:ignore WordPress.Security.NonceVerification
+$sent_form      = get_query_var( 'showform', '' );
+$valid_showform = term_exists( $sent_form, 'lez_formats' );
+$showform       = ( '' == $sent_form || ! is_array( $valid_showform ) ) ? 'all' : sanitize_title( $sent_form );
 
 // Views
 $valid_views = array(
-	'overview'      => 'shows',
 	'sexuality'     => 'characters',
 	'gender'        => 'characters',
 	'tropes'        => 'shows',
 	'intersections' => 'shows',
 );
-$view        = ( ! isset( $_GET['view'] ) || ( ! array_key_exists( $_GET['view'], $valid_views ) ) ) ? 'overview' : sanitize_title( $_GET['view'] ); // phpcs:ignore WordPress.Security.NonceVerification
+$sent_view   = get_query_var( 'view', 'overview' );
+$view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' : $sent_view;
 
 // Format
 $valid_formats = array( 'bar', 'pie' );
-$format        = ( ! isset( $_GET['format'] ) || ! in_array( $_GET['format'], $valid_formats, true ) ) ? 'bar' : sanitize_title( $_GET['format'] ); // phpcs:ignore WordPress.Security.NonceVerification
+$sent_format   = get_query_var( 'format', 'bar' );
+$format        = ( ! in_array( $sent_format, $valid_formats, true ) ) ? 'bar' : $sent_format;
 
 // Count
 $showforms   = get_terms( 'lez_formats', array( 'hide_empty' => 0 ) );
 $count       = wp_count_terms( 'lez_formats' );
 $shows_count = LWTV_Stats::generate( 'shows', 'total', 'count' );
-
-// Current URL
-$current_url = add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->request ) );
 
 switch ( $showform ) {
 	case 'all':
@@ -39,7 +38,7 @@ switch ( $showform ) {
 		$characters     = LWTV_Stats::generate( 'characters', 'formats_' . $showform . '_all', 'count' );
 		$shows          = LWTV_Stats::generate( 'shows', 'formats_' . $showform . '_all', 'count' );
 		$showform_obj   = get_term_by( 'slug', $showform, 'lez_formats', 'ARRAY_A' );
-		$title_showform = '<a href="' . home_url( '/format/' . $showform ) . '">' . $showform_obj['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
+		$title_showform = '<a href="/format/' . $showform . '">' . $showform_obj['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 }
 
 ?>
@@ -49,7 +48,6 @@ switch ( $showform ) {
 <section id="toc" class="toc-container card-body">
 	<nav class="breadcrumb">
 		<form method="get" id="go" class="form-inline">
-			<input type="hidden" name="view" value="<?php echo esc_html( $view ); ?>">
 			<div class="form-group">
 				<select name="showform" id="showform" class="form-control">
 					<option value="all">Show Formats (All)</option>
@@ -71,9 +69,12 @@ switch ( $showform ) {
 
 <ul class="nav nav-tabs">
 	<?php
-	foreach ( $valid_views as $the_view => $the_post_type ) {
+	$baseurl = '/statistics/formats/';
+	$endurl  = ( '' !== $showform ) ? '/?showform=' . $showform : '/';
+	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( $baseurl ) . '">OVERVIEW</a></li>';
+	foreach ( $valid_views as $the_view => $the_cpt ) {
 		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( add_query_arg( 'view', $the_view, $current_url ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( $baseurl . $the_view . $endurl ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -82,16 +83,10 @@ switch ( $showform ) {
 
 <?php
 	$col_class = ( 'all' !== $showform && 'overview' !== $view ) ? 'col-sm-6' : 'col';
-	$cpts_type = $valid_views[ $view ];
+	$cpts_type = ( 'overview' === $view ) ? 'shows' : $valid_views[ $view ];
 ?>
 
 <div class="container chart-container">
-
-	<?php
-	if ( 'all' !== $showform && 'overview' !== $view ) {
-		echo wp_kses_post( lwtv_yikes_statistics_description( 'format', $cpts_type, $view ) );
-	}
-	?>
 
 	<div class="row">
 		<div class="<?php echo esc_attr( $col_class ); ?>">
@@ -120,7 +115,7 @@ switch ( $showform ) {
 					foreach ( $showforms as $a_form ) {
 						$percent = round( ( ( $a_form->count / $shows_count ) * 100 ), 1 );
 						echo '<tr>
-							<th scope="row"><a href="?view=overview&showform=' . esc_attr( $a_form->slug ) . '">' . esc_html( $a_form->name ) . '</a></th>
+							<th scope="row"><a href="?showform=' . esc_attr( $a_form->slug ) . '">' . esc_html( $a_form->name ) . '</a></th>
 							<td>' . (int) $a_form->count . '</td>
 							<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 							<td>' . (int) LWTV_Stats::showcount( 'score', 'formats', $a_form->slug ) . '</td>

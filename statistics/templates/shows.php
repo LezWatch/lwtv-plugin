@@ -6,8 +6,9 @@
  */
 
 
-$valid_views = array( 'overview', 'formats', 'tropes', 'genres', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
-$view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_views, true ) ) ? 'overview' : $_GET['view']; // phpcs:ignore WordPress.Security.NonceVerification
+$valid_views = array( 'formats', 'tropes', 'genres', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
+$sent_view       = get_query_var( 'view', 'overview' );
+$view            = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 
 ?>
 <h2>
@@ -16,9 +17,11 @@ $view        = ( ! isset( $_GET['view'] ) || ! in_array( $_GET['view'], $valid_v
 
 <ul class="nav nav-tabs">
 	<?php
+	$baseurl = '/statistics/shows/';
+	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( $baseurl ) . '">OVERVIEW</a></li>';
 	foreach ( $valid_views as $the_view ) {
 		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( 'view', $the_view, '/statistics/shows/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( $baseurl . $the_view ) . '/">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
