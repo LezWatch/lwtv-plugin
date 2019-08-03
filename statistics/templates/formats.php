@@ -12,6 +12,7 @@ $showform       = ( '' === $sent_form || ! is_array( $valid_showform ) ) ? 'all'
 
 // Views
 $valid_views = array(
+	// taxonomy     => CPT
 	'sexuality'     => 'characters',
 	'gender'        => 'characters',
 	'tropes'        => 'shows',
