@@ -283,7 +283,7 @@ class LWTV_Export_JSON {
 				$all_chars = array( get_post_meta( $page->ID, 'lezchars_actor', true ) );
 			}
 			foreach ( $all_chars as $a_char ) {
-				$the_chars[] = '"' . get_the_title( $a_char ) . '"';
+				$the_chars[] = get_the_title( $a_char );
 			}
 			if ( isset( $the_chars ) ) {
 				if ( count( $the_chars ) > 1 ) {
