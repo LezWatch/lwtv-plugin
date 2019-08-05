@@ -305,7 +305,7 @@ class LWTV_Export_JSON {
 				'uid'  => $page->ID,
 				'id'   => $page->post_name,
 				'name' => $page->post_title,
-				'description' => 'A ' . $description['sexuality'] . ' ' . $description['gender'] . ' character on' . $description['show'] . '. Played by ' . $description['character'] . '.',
+				'description' => 'A ' . $description['sexuality'] . ' ' . $description['gender'] . ' character on ' . $description['show'] . '. Played by ' . $description['character'] . '.',
 			);
 		}
 
