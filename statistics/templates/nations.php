@@ -81,9 +81,12 @@ switch ( $country ) {
 	}
 
 	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl ) ) . '">OVERVIEW</a></li>';
-	foreach ( $valid_views as $the_view => $the_post_type ) {
-		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+
+	if ( 'all' !== $country && 'overview' !== $view ) {
+		foreach ( $valid_views as $the_view => $the_post_type ) {
+			$active = ( $view === $the_view ) ? ' active' : '';
+			echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		}
 	}
 	?>
 </ul>

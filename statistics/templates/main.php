@@ -82,7 +82,7 @@ $dead_chars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
 					foreach ( $nations as $nation ) {
 						$percent = round( ( ( $nation->count / $shows ) * 100 ), 1 );
 						echo '<tr>
-								<th scope="row"><a href="' . esc_url( site_url( 'nations/?country=' . $nation->slug ) ) . '">' . esc_html( $nation->name ) . '</a></th>
+								<th scope="row"><a href="' . esc_url( site_url( 'statistics/nations/?country=' . $nation->slug ) ) . '">' . esc_html( $nation->name ) . '</a></th>
 								<td>' . (int) $nation->count . '</td>
 								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 							</tr>';
@@ -117,7 +117,7 @@ $dead_chars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
 					foreach ( $stations as $station ) {
 						$percent = round( ( ( $station->count / $shows ) * 100 ), 1 );
 						echo '<tr>
-								<th scope="row"><a href="' . esc_url( site_url( 'stations/?station=' . $station->slug ) ) . '">' . esc_html( $station->name ) . '</a></th>
+								<th scope="row"><a href="' . esc_url( site_url( 'statistics/stations/?station=' . $station->slug ) ) . '">' . esc_html( $station->name ) . '</a></th>
 								<td>' . (int) $station->count . '</td>
 								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
 							</tr>';
