@@ -37,30 +37,50 @@ class LWTV_BYQ_JSON {
 	 */
 	public function rest_api_init() {
 
-		register_rest_route( 'lwtv/v1', '/last-death', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'last_death_rest_api_callback' ),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/last-death',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'last_death_rest_api_callback' ),
+			)
+		);
 
-		register_rest_route( 'lwtv/v1', '/on-this-day/', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'on_this_day_rest_api_callback' ),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/on-this-day/',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'on_this_day_rest_api_callback' ),
+			)
+		);
 
-		register_rest_route( 'lwtv/v1', '/on-this-day/(?P<date>[\d]{2}-[\d]{2})', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'on_this_day_rest_api_callback' ),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/on-this-day/(?P<date>[\d]{2}-[\d]{2})',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'on_this_day_rest_api_callback' ),
+			)
+		);
 
-		register_rest_route( 'lwtv/v1', '/when-died/', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'when_died_rest_api_callback' ),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/when-died/',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'when_died_rest_api_callback' ),
+			)
+		);
 
-		register_rest_route( 'lwtv/v1', '/when-died/(?P<name>[a-zA-Z0-9-]+)', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'when_died_rest_api_callback' ),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/when-died/(?P<name>[a-zA-Z0-9-]+)',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'when_died_rest_api_callback' ),
+			)
+		);
 
 	}
 
@@ -146,12 +166,15 @@ class LWTV_BYQ_JSON {
 				);
 			}
 
+			// phpcs:disable
 			// Reorder all the dead to sort by DoD
 			uasort($death_list_array, function( $a, $b ) {
 
-				// Spaceship doesn't work -- Needs PHP 7.1+
-				// return $a['died'] <=> $b['died'];
+				// Spaceship Needs PHP 7.1+
+				return $a['died'] <=> $b['died'];
 
+				// If Spaceship fails...
+				/*
 				$return = '0';
 				if ( $a['died'] < $b['died'] ) {
 					$return = '-1';
@@ -160,7 +183,9 @@ class LWTV_BYQ_JSON {
 					$return = '1';
 				}
 				return $return;
+				*/
 			});
+			// phpcs:enable
 		}
 
 		return $death_list_array;
@@ -304,10 +329,12 @@ class LWTV_BYQ_JSON {
 	 */
 	public static function when_died( $name = 'no-name' ) {
 
+		// phpcs:disable
 		// Remove <!--fwp-loop--> from output
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
 			return false;
 		}, 10, 2 );
+
 
 		// Force to search ONLY by title
 		add_filter( 'posts_search', function( $search, &$wp_query ) {
@@ -333,6 +360,7 @@ class LWTV_BYQ_JSON {
 			}
 			return $search;
 		}, 500, 2 );
+		// phpcs:enable
 
 		$noname = array(
 			'id'    => 0,
