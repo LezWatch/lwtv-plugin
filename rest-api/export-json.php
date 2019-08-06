@@ -8,7 +8,7 @@ https://tools.wmflabs.org/mix-n-match/import.php
 
 URL will be https://lezwatchtv.com/wp-json/lwtv/v1/export/actor/my-name/
 
-Version: 1.0.0
+Version: 1.1.0
 */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -23,9 +23,12 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Export_JSON {
 	/**
 	 * Constructor
+	 *
+	 * @since 1.0
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
+		add_action( 'init', array( $this, 'init' ) );
 	}
 
 	/**
@@ -33,6 +36,8 @@ class LWTV_Export_JSON {
 	 *
 	 * Creates callbacks
 	 *   - /lwtv/v1/of-the-day/
+	 *
+	 * @since 1.0
 	 */
 	public static function rest_api_init() {
 
@@ -64,6 +69,8 @@ class LWTV_Export_JSON {
 
 	/**
 	 * Rest API Callback
+	 *
+	 * @since 1.0
 	 */
 	public static function rest_api_callback( $data ) {
 		$params = $data->get_params();
@@ -88,12 +95,15 @@ class LWTV_Export_JSON {
 		// Create the array
 		switch ( $type ) {
 			case 'actor':
+			case 'actors':
 				$return_array = self::export_actor( $item );
 				break;
 			case 'character':
+			case 'characters':
 				$return_array = self::export_character( $item );
 				break;
 			case 'show':
+			case 'shows':
 				$return_array = self::export_show( $item );
 				break;
 			case 'list':
@@ -144,6 +154,7 @@ class LWTV_Export_JSON {
 	 * @access public
 	 * @param string $item - name or ID of show
 	 * @return array
+	 * @since 1.0
 	 */
 	public static function export_show( $item ) {
 
@@ -190,9 +201,9 @@ class LWTV_Export_JSON {
 			$airdates = get_post_meta( $page->ID, 'lezshows_airdates', true );
 			if ( $airdates ) {
 				$airdates['finish'] = ( 'current' === $airdates['finish'] ) ? 'now' : $airdates['finish'];
-				$dates              = $airdates['start'] . '-' . $airdates['finish'];
+				$dates              = 'from ' . $airdates['start'] . '-' . $airdates['finish'];
 				if ( $airdates['start'] === $airdates['finish'] ) {
-					$dates = $airdates['finish'];
+					$dates = 'in ' . $airdates['finish'];
 				}
 			}
 
@@ -207,7 +218,7 @@ class LWTV_Export_JSON {
 				'uid'  => $page->ID,
 				'id'   => $page->post_name,
 				'name' => $page->post_title,
-				'description' => $description['formats'] . ' airing in ' . $description['nations'] . ' from ' . $description['dates'] . '.',
+				'description' => $description['formats'] . ' airing in ' . $description['nations'] . ' ' . $description['dates'] . '.',
 			);
 		}
 
@@ -225,6 +236,7 @@ class LWTV_Export_JSON {
 	 * @access public
 	 * @param string $item - name or ID of character
 	 * @return array
+	 * @since 1.0
 	 */
 	public static function export_character( $item ) {
 
@@ -265,7 +277,7 @@ class LWTV_Export_JSON {
 			$all_shows = get_post_meta( $page->ID, 'lezchars_show_group', true );
 			if ( '' !== $all_shows ) {
 				foreach ( $all_shows as $a_show ) {
-					$the_shows[] = '"' . get_the_title( $a_show['show'] ) . '"';
+					$the_shows[] = '\'' . get_the_title( $a_show['show'] ) . '\'';
 				}
 
 				if ( isset( $the_shows ) ) {
@@ -323,6 +335,7 @@ class LWTV_Export_JSON {
 	 * @access public
 	 * @param string $item - name or ID of actor
 	 * @return array
+	 * @since 1.0
 	 */
 	public static function export_actor( $item ) {
 
@@ -392,7 +405,60 @@ class LWTV_Export_JSON {
 		}
 
 		return $return;
+	}
 
+	/**
+	 * Adds actions, filters, etc. to WP
+	 *
+	 * @access public
+	 * @return void
+	 * @since 1.1.0
+	 */
+	public function init() {
+		// Plugin requires permalink usage - Only setup handling if permalinks enabled
+		if ( '' !== get_option( 'permalink_structure' ) ) {
+
+			// tell WP not to override query vars
+			add_action( 'query_vars', array( $this, 'query_vars' ) );
+
+			// add filter for pages
+			add_filter( 'single_template', array( $this, 'page_template' ) );
+
+			$views = array( 'actor', 'character', 'list', 'show' );
+
+			foreach ( $views as $a_view ) {
+				add_rewrite_rule(
+					'^' . $a_view . '/([^/]+)(?:/([0-9]+))?/wikidata/?$',
+					'index.php?post_type_' . $a_view . 's&post_type=post_type_' . $a_view . 's&name=$matches[1]&export=wikidata',
+					'top'
+				);
+			}
+		}
+	}
+
+	/**
+	 * Add the query variables so WordPress won't override it
+	 *
+	 * @return $vars
+	 * @since 1.1.0
+	 */
+	public function query_vars( $vars ) {
+		$vars[] = 'export';
+		return $vars;
+	}
+
+	/**
+	 * Adds a custom template to the query queue.
+	 *
+	 * @return $templates
+	 * @since 1.1.0
+	 */
+	public function page_template( $templates = '' ) {
+		global $wp_query;
+		if ( isset( $wp_query->query['export'] ) ) {
+			$templates = dirname( __FILE__ ) . '/templates/export-json.php';
+		}
+		return $templates;
 	}
 
 }

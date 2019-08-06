@@ -7,7 +7,7 @@
 // Include the base files
 require_once 'alexa-skills.php';
 require_once 'bury-your-queers.php';
-require_once 'export.php';
+require_once 'export-json.php';
 require_once 'imdb.php';
 require_once 'of-the-day.php';
 require_once 'slack.php';
