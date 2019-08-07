@@ -177,11 +177,13 @@ The file `_main.php` acts as an autoloader.
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"
     - When Died - "X died on date Y"
-* IMDb - `imdb.php`
+* Export - `/export-json.php`
+    - Customized export. Currently used for WikiData.
+* IMDb - `/imdb.php`
     - API to communicate with IMDb and generate information (used by Alexa)
 * Of The Day - `/of-the-day.php`
     - The code that runs the X Of the Day API service. Every 24 hours, a new character and show of the day are spawned
-* Slack - `slack.php`
+* Slack - `/slack.php`
     - Beginning of code to report newly dead characters to Slack (very buggy)
 * Statistics - `/stats.php`
     - JSON API version of the stats (mostly)
