@@ -8,7 +8,7 @@ https://tools.wmflabs.org/mix-n-match/import.php
 
 URL will be https://lezwatchtv.com/wp-json/lwtv/v1/export/actor/my-name/
 
-Version: 1.1.0
+Version: 1.1.1
 */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -115,7 +115,7 @@ class LWTV_Export_JSON {
 		}
 
 		if ( empty( $return_array ) ) {
-			return new WP_Error( 'no_type', 'Invalid content type ( ' . $type . ' ) given.', array( 'status' => 400 ) );
+			return new WP_Error( 'no_type', 'Invalid content type (' . $type . ') or name (' . $item . ') given.', array( 'status' => 400 ) );
 		}
 
 		// No errors! Return array
@@ -128,13 +128,27 @@ class LWTV_Export_JSON {
 		// Default to empty. This will properly error later.
 		$return = array();
 
-		if ( in_array( $item, array( 'characters', 'shows', 'actors' ) ) ) {
+		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
 			$the_loop = LWTV_Loops::post_type_query( 'post_type_' . $item );
 			if ( $the_loop->have_posts() ) {
 				while ( $the_loop->have_posts() ) {
 					$the_loop->the_post();
 					$post = get_post();
-					$return[] = $post->post_name;
+
+					switch ( $item ) {
+						case 'actor':
+						case 'actors':
+							$return[] = self::export_actor( $post->post_name );
+							break;
+						case 'character':
+						case 'characters':
+							$return[] = self::export_character( $post->post_name );
+							break;
+						case 'show':
+						case 'shows':
+							$return[] = self::export_show( $post->post_name );
+							break;
+					}
 				}
 			}
 		}
@@ -215,9 +229,9 @@ class LWTV_Export_JSON {
 			);
 
 			$return = array(
-				'uid'  => $page->ID,
-				'id'   => $page->post_name,
-				'name' => $page->post_title,
+				'uid'         => $page->ID,
+				'id'          => $page->post_name,
+				'name'        => $page->post_title,
 				'description' => $description['formats'] . ' airing in ' . $description['nations'] . ' ' . $description['dates'] . '.',
 			);
 		}
@@ -314,9 +328,9 @@ class LWTV_Export_JSON {
 			);
 
 			$return = array(
-				'uid'  => $page->ID,
-				'id'   => $page->post_name,
-				'name' => $page->post_title,
+				'uid'         => $page->ID,
+				'id'          => $page->post_name,
+				'name'        => $page->post_title,
 				'description' => 'A ' . $description['sexuality'] . ' ' . $description['gender'] . ' character on ' . $description['show'] . '. Played by ' . $description['character'] . '.',
 			);
 		}
@@ -397,9 +411,9 @@ class LWTV_Export_JSON {
 			);
 
 			$return = array(
-				'uid'  => $page->ID,
-				'id'   => $page->post_name,
-				'name' => $page->post_title,
+				'uid'         => $page->ID,
+				'id'          => $page->post_name,
+				'name'        => $page->post_title,
 				'description' => $description['sexuality'] . ' ' . $description['gender'] . ' actor' . $description['born'] . $description['died'] . '.' . $description['wikipedia'],
 			);
 		}
@@ -422,14 +436,19 @@ class LWTV_Export_JSON {
 			add_action( 'query_vars', array( $this, 'query_vars' ) );
 
 			// add filter for pages
-			add_filter( 'single_template', array( $this, 'page_template' ) );
+			add_action( 'template_redirect', array( $this, 'template_redirect' ) );
 
-			$views = array( 'actor', 'character', 'list', 'show' );
+			$views = array( 'actor', 'character', 'show' );
 
 			foreach ( $views as $a_view ) {
 				add_rewrite_rule(
 					'^' . $a_view . '/([^/]+)(?:/([0-9]+))?/wikidata/?$',
 					'index.php?post_type_' . $a_view . 's&post_type=post_type_' . $a_view . 's&name=$matches[1]&export=wikidata',
+					'top'
+				);
+				add_rewrite_rule(
+					'^wikidata/' . $a_view . '/?$',
+					'index.php?&exportname=' . $a_view . '&export=wikilist',
 					'top'
 				);
 			}
@@ -444,6 +463,7 @@ class LWTV_Export_JSON {
 	 */
 	public function query_vars( $vars ) {
 		$vars[] = 'export';
+		$vars[] = 'exportname';
 		return $vars;
 	}
 
@@ -451,14 +471,16 @@ class LWTV_Export_JSON {
 	 * Adds a custom template to the query queue.
 	 *
 	 * @return $templates
-	 * @since 1.1.0
+	 * @since 1.1.1
 	 */
-	public function page_template( $templates = '' ) {
-		global $wp_query;
-		if ( isset( $wp_query->query['export'] ) ) {
-			$templates = dirname( __FILE__ ) . '/templates/export-json.php';
+	public function template_redirect() {
+		if ( get_query_var( 'export' ) ) {
+			// phpcs:disable
+			add_filter( 'template_include', function() {
+				return dirname( __FILE__ ) . '/templates/export-json.php';
+			});
+			// phpcs:enable
 		}
-		return $templates;
 	}
 
 }
