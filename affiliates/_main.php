@@ -110,13 +110,30 @@ class LWTV_Affilliates {
 	public static function random( $id, $format ) {
 		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 		$number = wp_rand();
-		if ( 0 === $number % 3 ) {
-			$advert = self::network( $id, $format, 'amc' );
-		} elseif ( 0 === $number % 2 ) {
-			$advert = self::network( $id, $format, 'cbs' );
-		} else {
-			$advert = self::amazon( $id, $format );
+
+		switch ( $format ) {
+			case 'banner':
+			case 'thin':
+				$advert = self::network( $id, $format, 'cbs' );
+				break;
+			case 'wide':
+				if ( 0 === $number % 3 ) {
+					$advert = self::network( $id, $format, 'amc' );
+				} elseif ( 0 === $number % 2 ) {
+					$advert = self::network( $id, $format, 'cbs' );
+				} else {
+					$advert = self::amazon( $id, $format );
+				}
+				break;
+			case 'tiny':
+				if ( 0 === $number % 2 ) {
+					$advert = self::network( $id, $format, 'amc' );
+				} else {
+					$advert = self::network( $id, $format, 'cbs' );
+				}
+				break;
 		}
+
 		return $advert;
 	}
 

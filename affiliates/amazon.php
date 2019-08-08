@@ -35,113 +35,23 @@ class LWTV_Affiliate_Amazon {
 	 */
 	public static function bounty( $post_id, $format ) {
 
-		$amazon_ads = array(
-			'wide' => array(
-				// 300x250
-				'mrs_maisel'      => array(
-					'banner'   => '01R2KB5YZTMAPA6S78G2',
-					'linkid'   => 'cd58c3115c653817eb87591873118c47',
-					'category' => 'pivcreative',
-				),
-				'mrs_maisel2'     => array(
-					'banner'   => '1MMY8RN9HZQGJ3BQYWR2',
-					'linkid'   => 'a3b11d68346f2cd5ace5f21f95f03782',
-					'category' => 'pivcreative',
-				),
-				'pride'           => array(
-					'banner'   => '1PPVF74KGV3PT8CB9JR2',
-					'linkid'   => '7d1eb87514ea152591c9d7c044117f78',
-					'category' => 'primeent',
-				),
-				'generic'         => array(
-					'banner'   => '031XMRKZ05JH88GSKT82',
-					'linkid'   => '9d58c4569065088e9524731135eff1de',
-					'category' => 'primeent',
-				),
-				'free_trial'      => array(
-					'banner'   => '028WNSXDMC6H5YDNCB82',
-					'linkid'   => 'e6e3908dd31c51c4e18bcfca54d1e587',
-					'category' => 'primemain',
-				),
-				'game_of_thrones' => array(
-					'banner'   => '0CT4HNQD8KYJQS5WFKR2',
-					'linkid'   => '23fca2d607d068cd43860dd5e396dae2',
-					'category' => 'primevideochannels',
-				),
-				'showtime'        => array(
-					'banner'   => '1TAG79C3PQ0GFXZ39R82',
-					'linkid'   => '8cd0644bdc327150448285bb60413608',
-					'category' => 'primevideochannels',
-				),
-				'cbs_all_access'  => array(
-					'banner'   => '15WAHRRCWADG8X4F09G2',
-					'linkid'   => 'bd76da295acbe38c90c994639e093555',
-					'category' => 'primevideochannels',
-				),
-				'starz'           => array(
-					'banner'   => '0GJR9JYSTS77TVQ2EH82',
-					'linkid'   => 'b85cadafad6e2f6f9b4b4862703ca3c2',
-					'category' => 'primevideochannels',
-				),
-				'hbo'             => array(
-					'banner'   => '1E0AR7ZBTK5HEDE0CM82',
-					'linkid'   => '4d909c2f7f25c8221f70819dbf2b15fe',
-					'category' => 'primevideochannels',
-				),
-				'westworld'       => array(
-					'banner'   => '150VYK260KXYESVKAA02',
-					'linkid'   => '3eb555d0bf6aab543496ee8f8559dea6',
-					'category' => 'primevideochannels',
-				),
-				'britbox'         => array(
-					'banner'   => '06V9DZJBZ21E92635K82',
-					'linkid'   => 'a648bf9d560123577df92189b27666d2',
-					'category' => 'primevideochannels',
-				),
-			),
-			// 160x600
-			'thin' => array(
-				'mrs_maisel'      => array(
-					'banner'   => '179M3M4HZVSRN11NY602',
-					'linkid'   => '98ead27a6588ed4a47e5c73127cf3934',
-					'category' => 'primeent',
-				),
-				'free_trial'      => array(
-					'banner'   => '161E7D8SBJFWK4M9MNG2',
-					'linkid'   => 'e44b5b49165dffff0775bdcc19b8837e',
-					'category' => 'primemain',
-				),
-				'game_of_thrones' => array(
-					'banner'   => '1KRDJGQFJG64G8WX9VG2',
-					'linkid'   => '13a641a9725b9152ebfabbe71a63d600',
-					'category' => 'primevideochannels',
-				),
-				'showtime'        => array(
-					'banner'   => '0ETV0M1DQEFGJ83G8M02',
-					'linkid'   => '3d40187e7e6e92edda113937f7f0351f',
-					'category' => 'primevideochannels',
-				),
-				'cbs_all_access'  => array(
-					'banner'   => '1RSA96WAH3YGF1HZHCG2',
-					'linkid'   => '03f4dc485374936e354fa2e0a0631211',
-					'category' => 'primevideochannels',
-				),
-				'hbo'             => array(
-					'banner'   => '0TZTZKMZNERPRPZYXN82',
-					'linkid'   => '708dd271d014cf55bc7896f3c869f4ce',
-					'category' => 'primevideochannels',
-				),
-				'britbox'         => array(
-					'banner'   => '062FRX60FAE1CTM89V82',
-					'linkid'   => '1706413e37b21dd457a799ddd6c21cfa',
-					'category' => 'primevideochannels',
-				),
-				'westworld'       => array(
-					'banner'   => '068G1JD09XF3D3H7QXG2',
-					'linkid'   => 'b98208f39f5f81f57d6d42710877c5b8',
-					'category' => 'primevideochannels',
-				),
-			),
+		// 300x250
+		$wide_ads = array(
+			'video_channels' => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=amazonvideosubs&banner=1ZM55MXES3N9G71ATN82&f=ifr&lc=pf4&linkID=ef20c0d245d5dd2b2330717533a4620d&t=lezpress-20&tracking_id=lezpress-20" width="300" height="250" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+			'prime_music'    => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=primemusic&banner=0Y451P54C03XJ9ZRPK82&f=ifr&lc=pf4&linkID=d78c4343df9c6b7f7d1f11eca3d2ce2d&t=lezpress-20&tracking_id=lezpress-20" width="300" height="250" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+			'gleason'        => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=primeent&banner=167KTXY4JXQWA6K8A502&f=ifr&lc=pf4&linkID=22cc9ec1a96c2ac2e1b7f98fcfd66b08&t=lezpress-20&tracking_id=lezpress-20" width="300" height="250" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+		);
+
+		// 160x600
+		$thin_ads = array(
+			'mrs_maisel'      => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primeent&banner=179M3M4HZVSRN11NY602&f=ifr&linkID=53e0bfd2c41b215bcced8ea64b0ba29e&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+			'free_trial'      => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primemain&banner=161E7D8SBJFWK4M9MNG2&f=ifr&linkID=e44b5b49165dffff0775bdcc19b8837e&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+			'game_of_thrones' => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primevideochannels&banner=1KRDJGQFJG64G8WX9VG2&f=ifr&linkID=13a641a9725b9152ebfabbe71a63d600&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+			'showtime'        => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primevideochannels&banner=0ETV0M1DQEFGJ83G8M02&f=ifr&linkID=3d40187e7e6e92edda113937f7f0351f&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+			'cbs_all_access'  => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primevideochannels&banner=1RSA96WAH3YGF1HZHCG2&f=ifr&linkID=03f4dc485374936e354fa2e0a0631211&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+			'hbo'             => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primevideochannels&banner=0TZTZKMZNERPRPZYXN82&f=ifr&linkID=708dd271d014cf55bc7896f3c869f4ce&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+			'britbox'         => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primevideochannels&banner=062FRX60FAE1CTM89V82&f=ifr&linkID=1706413e37b21dd457a799ddd6c21cfa&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
+			'westworld'       => '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=primevideochannels&banner=068G1JD09XF3D3H7QXG2&f=ifr&linkID=b98208f39f5f81f57d6d42710877c5b8&t=lezpress-20&tracking_id=lezpress-20" width="160" height="600" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>',
 		);
 
 		switch ( $format ) {
@@ -154,12 +64,12 @@ class LWTV_Affiliate_Amazon {
 			case 'tiny':
 				$the_ad = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=288&l=ur1&category=primeent&banner=1JYFV583HV833YKS3M82&f=ifr&linkID=18ec8f2348142042016ab12347871d9c&t=lezpress-20&tracking_id=lezpress-20" width="320" height="50" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
 				break;
-			default:
-				// A random ad will be served
-				$pick_ad = $amazon_ads[ $format ][ array_rand( $amazon_ads[ $format ] ) ];
-				$sizes   = explode( 'x', LWTV_Affilliates::$format_sizes[ $format ] );
-				$size    = 'width="' . $sizes[0] . '" height="' . $sizes[1] . '"';
-				$the_ad  = '<iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=' . $pick_ad['category'] . '&banner=' . $pick_ad['banner'] . '&f=ifr&linkID=' . $pick_ad['linkid'] . '&t=lezpress-20&tracking_id=lezpress-20" ' . $size . ' scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>';
+			case 'thin':
+				$the_ad = $amazon_ads['thin'][ array_rand( $amazon_ads['thin'] ) ];
+				break;
+			case 'wide':
+				$the_ad = $amazon_ads['wide'][ array_rand( $amazon_ads['wide'] ) ];
+				break;
 		}
 
 		return $the_ad;
