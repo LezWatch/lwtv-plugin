@@ -182,7 +182,7 @@ class LWTV_This_Year_Shows {
 					<?php
 					foreach ( $shows_started as $s_show ) {
 						$show_s_output  = '<a href="' . $s_show['url'] . '">' . $s_show['name'] . '</a> <small>(' . $s_show['country'] . ' - ' . $s_show['format'] . ')</small>';
-						$show_s_tooltip = 'On air ' . $s_show['airdates'] . '.';
+						$show_s_tooltip = 'On air ' . $s_show['airdates']['start'] . '-' . $s_show['airdates']['finish'] . '.';
 						echo '<li data-toggle="tooltip" data-placement="top" title="' . wp_kses_post( $show_s_tooltip ) . '">' . wp_kses_post( $show_s_output ) . '</li>';
 					}
 					?>
@@ -209,7 +209,7 @@ class LWTV_This_Year_Shows {
 								echo '<tr><td>' . esc_html( $format ) . ' (' . count( $f_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
 								foreach ( $f_shows as $f_show ) {
 									$show_f_output  = '<a href="' . esc_url( $f_show['url'] ) . '">' . $f_show['name'] . '</a> <small>(' . $f_show['country'] . ')</small>';
-									$show_f_tooltip = 'On air ' . $f_show['airdates'] . '.';
+									$show_f_tooltip = 'On air ' . $f_show['airdates']['start'] . '-' . $f_show['airdates']['finish'] . '.';
 									echo '<li data-toggle="tooltip" data-placement="top" title="' . wp_kses_post( $show_f_tooltip ) . '">' . wp_kses_post( $show_f_output ) . '</li>';
 								}
 								echo '</ul></td></tr>';
@@ -239,7 +239,7 @@ class LWTV_This_Year_Shows {
 								echo '<tr><td>' . esc_html( $nation ) . ' (' . count( $n_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
 								foreach ( $n_shows as $n_show ) {
 									$show_n_output  = '<a href="' . esc_url( $n_show['url'] ) . '">' . $n_show['name'] . '</a> <small>(' . $n_show['format'] . ')</small>';
-									$show_n_tooltip = 'On air ' . $n_show['airdates'] . '.';
+									$show_n_tooltip = 'On air ' . $n_show['airdates']['start'] . '-' . $n_show['airdates']['finish'] . '.';
 									echo '<li data-toggle="tooltip" data-placement="top" title="' . wp_kses_post( $show_n_tooltip ) . '">' . wp_kses_post( $show_n_output ) . '</li>';
 								}
 								echo '</ul></td></tr>';
@@ -304,7 +304,7 @@ class LWTV_This_Year_Shows {
 					<?php
 					foreach ( $shows_ended as $s_show ) {
 						$show_s_output  = '<a href="' . $s_show['url'] . '">' . $s_show['name'] . '</a> <small>(' . $s_show['country'] . ' - ' . $s_show['format'] . ')</small>';
-						$show_s_tooltip = 'On air ' . $s_show['airdates'] . '.';
+						$show_s_tooltip = 'On air ' . $s_show['airdates']['start'] . '-' . $s_show['airdates']['finish'] . '.';
 						echo '<li data-toggle="tooltip" data-placement="top" title="' . wp_kses_post( $show_s_tooltip ) . '">' . wp_kses_post( $show_s_output ) . '</li>';
 					}
 					?>
@@ -331,7 +331,7 @@ class LWTV_This_Year_Shows {
 								echo '<tr><td>' . esc_html( $format ) . ' (' . count( $f_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
 								foreach ( $f_shows as $f_show ) {
 									$show_f_output  = '<a href="' . $f_show['url'] . '">' . $f_show['name'] . '</a> <small>(' . $f_show['country'] . ')</small>';
-									$show_f_tooltip = 'On air ' . $f_show['airdates'] . '.';
+									$show_f_tooltip = 'On air ' . $f_show['airdates']['start'] . '-' . $f_show['airdates']['finish'] . '.';
 									echo '<li data-toggle="tooltip" data-placement="top" title="' . wp_kses_post( $show_f_tooltip ) . '">' . wp_kses_post( $show_f_output ) . '</li>';
 								}
 								echo '</ul></td></tr>';
@@ -359,7 +359,7 @@ class LWTV_This_Year_Shows {
 								echo '<tr><td>' . esc_html( $nation ) . ' (' . count( $n_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
 								foreach ( $n_shows as $n_show ) {
 									$show_n_output  = '<a href="' . $n_show['url'] . '">' . $n_show['name'] . '</a> <small>(' . $n_show['format'] . ')</small>';
-									$show_n_tooltip = 'On air ' . $n_show['airdates'] . '.';
+									$show_n_tooltip = 'On air ' . $n_show['airdates']['start'] . '-' . $n_show['airdates']['finish'] . '.';
 									echo '<li data-toggle="tooltip" data-placement="top" title="' . wp_kses_post( $show_n_tooltip ) . '">' . wp_kses_post( $show_n_output ) . '</li>';
 								}
 								echo '</ul></td></tr>';
