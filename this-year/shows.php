@@ -181,8 +181,9 @@ class LWTV_This_Year_Shows {
 					<ul class="this-year-shows showsonair">
 					<?php
 					foreach ( $shows_started as $s_show ) {
-						$show_s_output = '<a href="' . $s_show['url'] . '">' . $s_show['name'] . '</a> <small>(' . $s_show['country'] . ' - ' . $s_show['format'] . ')</small>';
-						echo '<li>' . wp_kses_post( $show_s_output ) . '</li>';
+						$show_s_output  = '<a href="' . $s_show['url'] . '">' . $s_show['name'] . '</a> <small>(' . $s_show['country'] . ' - ' . $s_show['format'] . ')</small>';
+						$show_s_tooltip = ( $s_show['airdates']['start'] === $s_show['airdates']['finish'] ) ? $s_show['airdates']['start'] : $s_show['airdates']['start'] . '-' . $s_show['airdates']['finish'];
+						echo '<li data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_s_tooltip ) . '">' . wp_kses_post( $show_s_output ) . '</li>';
 					}
 					?>
 					</ul>
@@ -207,7 +208,9 @@ class LWTV_This_Year_Shows {
 							foreach ( $shows_formats as $format => $f_shows ) {
 								echo '<tr><td>' . esc_html( $format ) . ' (' . count( $f_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
 								foreach ( $f_shows as $f_show ) {
-									echo '<li><a href="' . esc_url( $f_show['url'] ) . '">' . esc_html( $f_show['name'] ) . '</a> <small>(' . esc_html( $f_show['country'] ) . ')</small></li>';
+									$show_f_output  = '<a href="' . esc_url( $f_show['url'] ) . '">' . $f_show['name'] . '</a> <small>(' . $f_show['country'] . ')</small>';
+									$show_f_tooltip = ( $f_show['airdates']['start'] === $f_show['airdates']['finish'] ) ? $f_show['airdates']['start'] : $f_show['airdates']['start'] . '-' . $f_show['airdates']['finish'];
+									echo '<li data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_f_tooltip ) . '">' . wp_kses_post( $show_f_output ) . '</li>';
 								}
 								echo '</ul></td></tr>';
 							}
@@ -235,7 +238,9 @@ class LWTV_This_Year_Shows {
 							foreach ( $shows_country as $nation => $n_shows ) {
 								echo '<tr><td>' . esc_html( $nation ) . ' (' . count( $n_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
 								foreach ( $n_shows as $n_show ) {
-									echo '<li><a href="' . esc_url( $n_show['url'] ) . '">' . esc_html( $n_show['name'] ) . '</a> <small>(' . esc_html( $n_show['format'] ) . ')</small></li>';
+									$show_n_output  = '<a href="' . esc_url( $n_show['url'] ) . '">' . $n_show['name'] . '</a> <small>(' . $n_show['format'] . ')</small>';
+									$show_n_tooltip = ( $n_show['airdates']['start'] === $n_show['airdates']['finish'] ) ? $n_show['airdates']['start'] : $n_show['airdates']['start'] . '-' . $n_show['airdates']['finish'];
+									echo '<li data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_n_tooltip ) . '">' . wp_kses_post( $show_n_output ) . '</li>';
 								}
 								echo '</ul></td></tr>';
 							}
@@ -291,14 +296,16 @@ class LWTV_This_Year_Shows {
 		<div class="tab-content" id="v-pills-tabContent">
 			<?php
 			if ( ! empty( $shows_ended ) ) {
+				$has_shows = true;
 				ksort( $shows_ended );
 				?>
 				<div class="tab-pane fade show active" id="v-pills-byname" role="tabpanel" aria-labelledby="v-pills-byname-tab">
 					<ul class="this-year-shows showsonair">
 					<?php
 					foreach ( $shows_ended as $s_show ) {
-						$show_s_output = '<a href="' . $s_show['url'] . '">' . $s_show['name'] . '</a> <small>(' . $s_show['country'] . ' - ' . $s_show['format'] . ')</small>';
-						echo '<li>' . wp_kses_post( $show_s_output ) . '</li>';
+						$show_s_output  = '<a href="' . $s_show['url'] . '">' . $s_show['name'] . '</a> <small>(' . $s_show['country'] . ' - ' . $s_show['format'] . ')</small>';
+						$show_s_tooltip = ( $s_show['airdates']['start'] === $s_show['airdates']['finish'] ) ? $s_show['airdates']['start'] : $s_show['airdates']['start'] . '-' . $s_show['airdates']['finish'];
+						echo '<li data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_s_tooltip ) . '">' . wp_kses_post( $show_s_output ) . '</li>';
 					}
 					?>
 					</ul>
@@ -323,7 +330,9 @@ class LWTV_This_Year_Shows {
 							foreach ( $shows_formats as $format => $f_shows ) {
 								echo '<tr><td>' . esc_html( $format ) . ' (' . count( $f_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
 								foreach ( $f_shows as $f_show ) {
-									echo '<li><a href="' . esc_url( $f_show['url'] ) . '">' . esc_html( $f_show['name'] ) . '</a> <small>(' . esc_html( $f_show['country'] ) . ')</small></li>';
+									$show_f_output  = '<a href="' . $f_show['url'] . '">' . $f_show['name'] . '</a> <small>(' . $f_show['country'] . ')</small>';
+									$show_f_tooltip = ( $f_show['airdates']['start'] === $f_show['airdates']['finish'] ) ? $f_show['airdates']['start'] : $f_show['airdates']['start'] . '-' . $f_show['airdates']['finish'];
+									echo '<li data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_f_tooltip ) . '">' . wp_kses_post( $show_f_output ) . '</li>';
 								}
 								echo '</ul></td></tr>';
 							}
@@ -332,8 +341,6 @@ class LWTV_This_Year_Shows {
 					</table>
 				</div>
 				<?php
-			} else {
-				$has_shows = false;
 			}
 			if ( ! empty( $shows_country ) ) {
 				ksort( $shows_country );
@@ -351,7 +358,9 @@ class LWTV_This_Year_Shows {
 							foreach ( $shows_country as $nation => $n_shows ) {
 								echo '<tr><td>' . esc_html( $nation ) . ' (' . count( $n_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
 								foreach ( $n_shows as $n_show ) {
-									echo '<li><a href="' . esc_url( $n_show['url'] ) . '">' . esc_html( $n_show['name'] ) . '</a> <small>(' . esc_html( $n_show['format'] ) . ')</small></li>';
+									$show_n_output  = '<a href="' . $n_show['url'] . '">' . $n_show['name'] . '</a> <small>(' . $n_show['format'] . ')</small>';
+									$show_n_tooltip = ( $n_show['airdates']['start'] === $n_show['airdates']['finish'] ) ? $n_show['airdates']['start'] : $n_show['airdates']['start'] . '-' . $n_show['airdates']['finish'];
+									echo '<li data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_n_tooltip ) . '">' . wp_kses_post( $show_n_output ) . '</li>';
 								}
 								echo '</ul></td></tr>';
 							}
@@ -360,9 +369,8 @@ class LWTV_This_Year_Shows {
 					</table>
 				</div>
 				<?php
-			} else {
-				$has_shows = false;
 			}
+
 			if ( ! $has_shows ) {
 				echo wp_kses_post( $fail_msg );
 			}
@@ -425,18 +433,20 @@ class LWTV_This_Year_Shows {
 						// If we're ONLY counting, we don't have to do the rest.
 						if ( ! $count ) {
 							$shows_current[ $show_name ] = array(
-								'url'     => get_permalink( $show_id ),
-								'name'    => get_the_title( $show_id ),
-								'country' => wp_strip_all_tags( $countries ),
-								'format'  => wp_strip_all_tags( $format ),
+								'url'      => get_permalink( $show_id ),
+								'name'     => get_the_title( $show_id ),
+								'country'  => wp_strip_all_tags( $countries ),
+								'format'   => wp_strip_all_tags( $format ),
+								'airdates' => $airdates,
 							);
 
 							// If there are formats, we add the show to the format
 							if ( ! empty( wp_strip_all_tags( $format ) ) ) {
 								$shows_formats[ wp_strip_all_tags( $format ) ][ $show_name ] = array(
-									'url'     => get_permalink( $show_id ),
-									'name'    => get_the_title( $show_id ),
-									'country' => wp_strip_all_tags( $countries ),
+									'url'      => get_permalink( $show_id ),
+									'name'     => get_the_title( $show_id ),
+									'country'  => wp_strip_all_tags( $countries ),
+									'airdates' => $airdates,
 								);
 							}
 
@@ -445,9 +455,10 @@ class LWTV_This_Year_Shows {
 								$these_countries = explode( ', ', wp_strip_all_tags( $countries ) );
 								foreach ( $these_countries as $country ) {
 									$shows_country[ $country ][ $show_name ] = array(
-										'url'    => get_permalink( $show_id ),
-										'name'   => get_the_title( $show_id ),
-										'format' => wp_strip_all_tags( $format ),
+										'url'      => get_permalink( $show_id ),
+										'name'     => get_the_title( $show_id ),
+										'format'   => wp_strip_all_tags( $format ),
+										'airdates' => $airdates,
 									);
 								}
 							}

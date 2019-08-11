@@ -64,7 +64,7 @@ class LWTV_Affilliates {
 			$affiliates = $this->widget( 'random', 'wide' );
 		}
 
-		$advert = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . $affiliates . '</center></div><!-- END Affiliate Ads -->';
+		$advert = '<!-- BEGIN Affiliate Ads --><center>' . $affiliates . '</center><!-- END Affiliate Ads -->';
 
 		return $advert;
 	}
@@ -82,25 +82,25 @@ class LWTV_Affilliates {
 
 		switch ( $type ) {
 			case 'amazon':
-				$advert = self::amazon( $id, $format );
+				$advert = '<!-- Amazon -->' . self::amazon( $id, $format );
 				break;
 			case 'amc':
-				$advert = self::network( $id, $format, 'amc' );
+				$advert = '<!-- AMC -->' . self::network( $id, $format, 'amc' );
 				break;
 			case 'apple':
-				$advert = self::apple( $id, $format );
+				$advert = '<!-- Apple -->' . self::apple( $id, $format );
 				break;
 			case 'cbs':
-				$advert = self::network( $id, $format, 'cbs' );
+				$advert = '<!-- CBS -->' . self::network( $id, $format, 'cbs' );
 				break;
 			case 'local':
-				$advert = self::local( $id, $format );
+				$advert = '<!-- Local -->' . self::local( $id, $format );
 				break;
 			default:
-				$advert = self::random( $id, $format );
+				$advert = '<!-- Random -->' . self::random( $id, $format );
 		}
 
-		return $advert;
+		return '<div class="affiliate-ads">' . $advert . '</div>';
 	}
 
 	/**
@@ -110,13 +110,30 @@ class LWTV_Affilliates {
 	public static function random( $id, $format ) {
 		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 		$number = wp_rand();
-		if ( 0 === $number % 3 ) {
-			$advert = self::network( $id, $format, 'amc' );
-		} elseif ( 0 === $number % 2 ) {
-			$advert = self::network( $id, $format, 'cbs' );
-		} else {
-			$advert = self::amazon( $id, $format );
+
+		switch ( $format ) {
+			case 'banner':
+			case 'thin':
+				$advert = self::network( $id, $format, 'cbs' );
+				break;
+			case 'wide':
+				if ( 0 === $number % 3 ) {
+					$advert = '<!-- AMC -->' . self::network( $id, $format, 'amc' );
+				} elseif ( 0 === $number % 2 ) {
+					$advert = '<!-- CBS -->' . self::network( $id, $format, 'cbs' );
+				} else {
+					$advert = '<!-- Amazon -->' . self::amazon( $id, $format );
+				}
+				break;
+			case 'tiny':
+				if ( 0 === $number % 2 ) {
+					$advert = '<!-- AMC -->' . self::network( $id, $format, 'amc' );
+				} else {
+					$advert = '<!-- CBS -->' . self::network( $id, $format, 'cbs' );
+				}
+				break;
 		}
+
 		return $advert;
 	}
 
