@@ -81,7 +81,7 @@ class LWTV_This_Year {
 					<div class="card text-center">
 						<h3 class="card-header alert-success">Characters on Air</h3>
 						<div class="card-body bg-light">
-							<h5 class="card-title" data-toggle="tooltip" data-placement="top" title="Note: This data is curently incomplete and not fully representative of all characters on air at this time. We are working to improve this daily and are current accurate through 1989."><?php echo (int) $array['characters']; ?> <span class="text-danger">*</a></h5>
+							<h5 class="card-title" data-toggle="tooltip" data-placement="top" title="Note: This data is curently incomplete and not fully representative of all characters on air at this time. We are working to improve this daily and are current accurate through 2000."><?php echo (int) $array['characters']; ?> <span class="text-danger">*</a></h5>
 						</div>
 					</div>
 				</div>
