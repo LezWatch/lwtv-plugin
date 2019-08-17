@@ -21,7 +21,7 @@ class LWTV_Slack_Integration {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'rest_api_init' ) );
-		//add_action( 'init', array( $this, 'push_slack_death' ) );
+		add_action( 'init', array( $this, 'push_slack_death' ) );
 	}
 
 	/**

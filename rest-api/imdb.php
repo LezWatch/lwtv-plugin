@@ -32,14 +32,22 @@ class LWTV_IMDb_JSON {
 	 *   - /lwtv/v1/imdb/
 	 */
 	public function rest_api_init() {
-		register_rest_route( 'lwtv/v1', '/imdb/', array(
-			'methods' => 'GET',
-			'callback' => array( $this, 'imdb_rest_api_callback' ),
-		) );
-		register_rest_route( 'lwtv/v1', '/imdb/(?P<id>[a-zA-Z0-9-]+)', array(
-			'methods' => 'GET',
-			'callback' => array( $this, 'imdb_rest_api_callback' ),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/imdb/',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'imdb_rest_api_callback' ),
+			)
+		);
+		register_rest_route(
+			'lwtv/v1',
+			'/imdb/(?P<id>[a-zA-Z0-9-]+)',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'imdb_rest_api_callback' ),
+			)
+		);
 	}
 
 	/**
@@ -98,7 +106,7 @@ class LWTV_IMDb_JSON {
 		}
 		wp_reset_postdata();
 
-		// Base Array:
+		// Base Array.
 		$array = array(
 			'id'   => $post_id,
 			'name' => get_the_title( $post_id ),

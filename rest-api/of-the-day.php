@@ -254,7 +254,7 @@ class LWTV_OTD_JSON {
 						'compare' => 'LIKE',
 					),
 				);
-				$tax_query_array = self::character_awareness( $date );
+				$tax_query_array  = self::character_awareness( $date );
 				break;
 			case 'show':
 				$meta_query_array = array(
