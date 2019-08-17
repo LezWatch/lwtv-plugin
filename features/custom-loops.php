@@ -64,6 +64,10 @@ class LWTV_Loops {
 			$is_queer = 'yes';
 		}
 
+		if ( 'private' === get_post_status( $the_id ) ) {
+			$is_queer = 'no';
+		}
+
 		return $is_queer;
 	}
 
