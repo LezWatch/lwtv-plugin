@@ -102,6 +102,10 @@ class LWTV_Loops {
 			$is_trans = 'yes';
 		}
 
+		if ( 'private' === get_post_status( $the_id ) ) {
+			$is_trans = 'no';
+		}
+
 		return $is_trans;
 	}
 
