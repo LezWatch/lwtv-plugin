@@ -10,6 +10,6 @@ require_once 'bury-your-queers.php';
 require_once 'export-json.php';
 require_once 'imdb.php';
 require_once 'of-the-day.php';
-require_once 'shows-i-like.php';
+require_once 'shows-like-this.php';
 require_once 'stats.php';
 require_once 'what-happened.php';

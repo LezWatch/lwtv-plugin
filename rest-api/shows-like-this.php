@@ -1,6 +1,6 @@
 <?php
 /*
-Description: REST-API - Shows I Like
+Description: REST-API - Shows Like This
 
 Calls the
 
@@ -12,11 +12,11 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
- * class LWTV_Shows_I_Like_JSON
+ * class LWTV_Shows_Like_This_JSON
  *
  * The basic constructor class that will set up our JSON API.
  */
-class LWTV_Shows_I_Like_JSON {
+class LWTV_Shows_Like_This_JSON {
 
 	/**
 	 * Constructor
@@ -43,7 +43,7 @@ class LWTV_Shows_I_Like_JSON {
 		);
 		register_rest_route(
 			'lwtv/v1',
-			'/similar-shpws/(?P<show>[a-zA-Z]+)',
+			'/similar-shows/(?P<show>[a-zA-Z]+)',
 			array(
 				'methods'  => 'GET',
 				'callback' => array( $this, 'rest_api_callback' ),
@@ -76,10 +76,22 @@ class LWTV_Shows_I_Like_JSON {
 
 				$response = wp_remote_get( home_url() . '/wp-json/related-posts-by-taxonomy/v1/posts/' . $show_id . '?fields=ids&taxonomies=lez_country,lez_stars,lez_genres,lez_intersections,lez_showtagged' );
 				if ( is_array( $response ) ) {
+					$rel_shows = json_decode( wp_remote_retrieve_body( $response ), true );
+					$related   = array();
+
+					foreach ( $rel_shows['posts'] as $each_show ) {
+						$related[] = array(
+							'post_id' => $each_show,
+							'title'   => get_the_title( $each_show ),
+							'url'     => get_permalink( $each_show ),
+						);
+					}
+
 					$return = array(
 						'post_id' => $show_id,
-						'slug'    => $show,
-						'related' => $response['body'],
+						'title'   => get_the_title( $show_id ),
+						'url'     => get_permalink( $show_id ),
+						'related' => $related,
 					);
 				}
 			}
@@ -93,4 +105,4 @@ class LWTV_Shows_I_Like_JSON {
 	}
 }
 
-new LWTV_Shows_I_Like_JSON();
+new LWTV_Shows_Like_This_JSON();

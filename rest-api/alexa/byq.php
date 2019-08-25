@@ -75,7 +75,7 @@ class LWTV_Alexa_BYQ {
 					$death_count = 0;
 			}
 
-			$dead = 'no one died! I\'m surprised too.';
+			$dead = 'no one died!';
 			if ( $death_count > 0 ) {
 				// translators: %s number of characters
 				$dead = sprintf( _n( '%s character', '%s characters', $death_count ), $death_count );
@@ -110,7 +110,7 @@ class LWTV_Alexa_BYQ {
 		$this_day = date( 'm-d', $timestamp );
 		$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
 		$count    = ( 'none' === key( $data ) ) ? 0 : count( $data );
-		$how_many = 'No characters died';
+		$how_many = 'No characters died ';
 		$the_dead = '';
 		if ( $count > 0 ) {
 			$how_many  = $count . ' ' . _n( 'character', 'characters', $count ) . ' died';
