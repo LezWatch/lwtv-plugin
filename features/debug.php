@@ -198,6 +198,18 @@ class LWTV_Debug {
 				$shows = get_post_meta( $char_id, 'lezchars_show_group', true );
 				if ( ! $shows ) {
 					$problems[] = 'No shows listed.';
+				} else {
+					foreach ( $shows as $each_show ) {
+						if ( ! is_array( $each_show['appears'] ) ) {
+							$problems[] = 'No years on air set for ' . get_the_title( $each_show['show'] ) . '.';
+						}
+						if ( ! isset( $each_show['type'] ) || '' === $each_show['type'] ) {
+							$problems[] = 'No role set for' . get_the_title( $each_show['show'] ) . '.';
+						}
+						if ( ! isset( $each_show['show'] ) || '' === $each_show['show'] ) {
+							$problems[] = 'No showname set.';
+						}
+					}
 				}
 
 				$actors = get_post_meta( $char_id, 'lezchars_actor', true );

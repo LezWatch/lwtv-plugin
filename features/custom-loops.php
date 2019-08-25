@@ -64,6 +64,10 @@ class LWTV_Loops {
 			$is_queer = 'yes';
 		}
 
+		if ( 'private' === get_post_status( $the_id ) ) {
+			$is_queer = 'no';
+		}
+
 		return $is_queer;
 	}
 
@@ -96,6 +100,10 @@ class LWTV_Loops {
 		// If the string has 'trans' anywhere in it, we're trans!
 		if ( false !== strpos( $the_terms, 'trans' ) ) {
 			$is_trans = 'yes';
+		}
+
+		if ( 'private' === get_post_status( $the_id ) ) {
+			$is_trans = 'no';
 		}
 
 		return $is_trans;

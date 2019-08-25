@@ -8,7 +8,9 @@ special version.
 Version: 1.0
 */
 
-if ( ! defined('WPINC' ) ) die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * class LWTV_Alexa_Flash_Brief
@@ -26,7 +28,7 @@ class LWTV_Alexa_Flash_Brief {
 		if ( $queery->have_posts() ) {
 			while ( $queery->have_posts() ) {
 				$queery->the_post();
-				$response = array(
+				$response    = array(
 					'uid'            => get_the_permalink(),
 					'updateDate'     => get_post_modified_time( 'Y-m-d\TH:i:s.\0\Z' ),
 					'titleText'      => get_the_title(),

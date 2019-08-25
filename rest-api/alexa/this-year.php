@@ -7,7 +7,9 @@ Gives you an idea how this year is going...
 Version: 1.0
 */
 
-if ( ! defined('WPINC' ) ) die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * class LWTV_Alexa_This_Year
@@ -58,9 +60,10 @@ class LWTV_Alexa_This_Year {
 
 		// Language of Death
 		$dead = 'Miraculously, no characters died';
-			if ( $count_array['dead'] > 0 ) {
-				$dead = sprintf( _n( '%s character died', '%s characters died', $count_array['dead'] ), $count_array['dead'] );
-			}
+		if ( $count_array['dead'] > 0 ) {
+			// Translators: %s is number of dead characters
+			$dead = sprintf( _n( '%s character died', '%s characters died', $count_array['dead'] ), $count_array['dead'] );
+		}
 		// Now to personalize it...
 		if ( $count_array['dead'] > 20 ) {
 			$dead = 'Disturbingly, ' . $dead;
@@ -71,9 +74,14 @@ class LWTV_Alexa_This_Year {
 		}
 
 		// Language of shows, characters, and posts
-		$characters = ( $count_array['characters'] == 0 )? 'no characters' : sprintf( _n( '%s character', '%s characters', $count_array['characters'] ), $count_array['characters'] );
-		$shows      = ( $count_array['shows'] == 0 )? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['shows'] ), $count_array['shows'] );
-		$posts      = ( $count_array['posts'] == 0 )? 'no posts' : sprintf( _n( '%s post', '%s posts', $count_array['posts'] ), $count_array['posts'] );
+		// Translators: %s is number of dead characters
+		$characters = ( 0 === $count_array['characters'] ) ? 'no characters' : sprintf( _n( '%s character', '%s characters', $count_array['characters'] ), $count_array['characters'] );
+
+		// Translators: %s is number of dead characters
+		$shows = ( 0 === $count_array['shows'] ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['shows'] ), $count_array['shows'] );
+
+		// Translators: %s is number of dead characters
+		$posts = ( 0 === $count_array['posts'] ) ? 'no posts' : sprintf( _n( '%s post', '%s posts', $count_array['posts'] ), $count_array['posts'] );
 
 		// Language sucks...
 		if ( $today ) {
@@ -87,20 +95,27 @@ class LWTV_Alexa_This_Year {
 					$intro = 'In ' . $datetime->format( 'F Y' );
 					break;
 				default:
-					$intro  = ( $datetime->format( 'Y' ) == date( 'Y' ) ) ? 'So far, in ' : 'In ';
+					$intro  = ( $datetime->format( 'Y' ) === date( 'Y' ) ) ? 'So far, in ' : 'In ';
 					$intro .= $datetime->format( 'Y' );
 					break;
 			}
 		}
 
 		// This Year On Air information:
-		$on_the_air = ( $count_array['on_air']['current'] == 0 ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['current'] ), $count_array['on_air']['current'] );
-		$started    = ( $count_array['on_air']['started'] == 0 ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['started'] ), $count_array['on_air']['started'] );
-		$ended      = ( $count_array['on_air']['ended'] == 0 ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['ended'] ), $count_array['on_air']['ended'] );
+		// Translators: %s is number of shows
+		$on_the_air = ( 0 === $count_array['on_air']['current'] ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['current'] ), $count_array['on_air']['current'] );
+
+		// Translators: %s is number of shows
+		$started = ( 0 === $count_array['on_air']['started'] ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['started'] ), $count_array['on_air']['started'] );
+
+		// Translators: %s is number of shows
+		$ended = ( 0 === $count_array['on_air']['ended'] ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['ended'] ), $count_array['on_air']['ended'] );
 
 		// This Year DEATH information
 		$death_this_year_query = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-		$death_this_year       = ( 0 === $death_this_year_query->post_count ) ? 'no characters died' : sprintf( _n( '%s character died', '%s characters died', $death_this_year_query->post_count ), $death_this_year_query->post_count );
+
+		// Translators: %s is number of dead characters
+		$death_this_year = ( 0 === $death_this_year_query->post_count ) ? 'no characters died' : sprintf( _n( '%s character died', '%s characters died', $death_this_year_query->post_count ), $death_this_year_query->post_count );
 
 		// Conclusion
 		if ( $datetime->format( 'Y' ) > 2013 ) {

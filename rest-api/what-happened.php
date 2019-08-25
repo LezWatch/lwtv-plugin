@@ -36,22 +36,38 @@ class LWTV_What_Happened_JSON {
 	 *   - /lwtv/v1/what-happened/YYYY
 	 */
 	public function rest_api_init() {
-		register_rest_route( 'lwtv/v1', '/what-happened/', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'what_happened_rest_api_callback' ),
-		) );
-		register_rest_route( 'lwtv/v1', '/what-happened/(?P<date>[\d]{4}-[\d]{2}-[\d]{2})', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'what_happened_rest_api_callback' ),
-		) );
-		register_rest_route( 'lwtv/v1', '/what-happened/(?P<date>[\d]{4}-[\d]{2})', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'what_happened_rest_api_callback' ),
-		) );
-		register_rest_route( 'lwtv/v1', '/what-happened/(?P<date>[\d]{4})', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'what_happened_rest_api_callback' ),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/what-happened/',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'what_happened_rest_api_callback' ),
+			)
+		);
+		register_rest_route(
+			'lwtv/v1',
+			'/what-happened/(?P<date>[\d]{4}-[\d]{2}-[\d]{2})',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'what_happened_rest_api_callback' ),
+			)
+		);
+		register_rest_route(
+			'lwtv/v1',
+			'/what-happened/(?P<date>[\d]{4}-[\d]{2})',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'what_happened_rest_api_callback' ),
+			)
+		);
+		register_rest_route(
+			'lwtv/v1',
+			'/what-happened/(?P<date>[\d]{4})',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'what_happened_rest_api_callback' ),
+			)
+		);
 
 	}
 

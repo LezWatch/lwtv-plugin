@@ -21,13 +21,14 @@ class LWTV_Shows_Like_This {
 		add_filter( 'related_posts_by_taxonomy_posts_meta_query', array( $this, 'meta_query' ), 10, 4 );
 		add_filter( 'related_posts_by_taxonomy', array( $this, 'alter_results' ), 10, 4 );
 		add_filter( 'related_posts_by_taxonomy_cache', '__return_true' );
+		add_filter( 'related_posts_by_taxonomy_wp_rest_api', '__return_true' );
 	}
 
 	public static function generate( $show_id ) {
 		$return = '';
 
 		if ( ! empty( $show_id ) && has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
-			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" fields="ids" order="RAND" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies="lez_tropes,lez_stars,lez_genres,lez_intersections,lez_showtagged"]' );
+			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" fields="ids" order="RAND" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies="lez_country,lez_stars,lez_genres,lez_intersections,lez_showtagged"]' );
 		}
 
 		if ( empty( $return ) ) {
@@ -39,49 +40,49 @@ class LWTV_Shows_Like_This {
 
 	public static function meta_query( $meta_query, $post_id, $taxonomies, $args ) {
 
-		/*
-		 * The $meta_query variable is an array.
-		 *
-		 * If not empty it could be the meta query for post_thumbnails ( key '_thumbnail_id' )
-		 * or some other meta query (from the shortcode or widget).
-		 */
-		$worthit = ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $post_id, 'lezshows_worthit_rating', true ) : false;
-		$loved   = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? true : false;
-		$score   = ( get_post_meta( $post_id, 'lezshows_the_score', true ) ) ? get_post_meta( $post_id, 'lezshows_the_score', true ) : 10;
+		if ( 'post_type_shows' === get_post_type( $post_id ) ) {
+			/*
+			 * The $meta_query variable is an array.
+			 *
+			 * If not empty it could be the meta query for post_thumbnails ( key '_thumbnail_id' )
+			 * or some other meta query (from the shortcode or widget).
+			 */
+			$worthit = ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) ? get_post_meta( $post_id, 'lezshows_worthit_rating', true ) : false;
+			$loved   = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? true : false;
+			$score   = ( get_post_meta( $post_id, 'lezshows_the_score', true ) ) ? get_post_meta( $post_id, 'lezshows_the_score', true ) : 10;
 
-		// We should match up the worth-it value as well as the score.
-		// After all, some low scores have a thumbs up.
-		if ( false !== $worthit ) {
-			$meta_query[] = array(
-				'key'     => 'lezshows_worthit_rating',
-				'compare' => $worthit,
-			);
-		}
-
-		// If the show is loved, we want to include it here.
-		if ( $loved ) {
-			$meta_query[] = array(
-				'key'     => 'lezshows_worthit_show_we_love',
-				'compare' => 'EXISTS',
-			);
-		}
-
-		// If they're NOT loved, we use the scores for a value.
-		if ( ! $loved ) {
-			// Score: If the score is similar +/- 10
-			if ( $score >= 90 ) {
-				$score_range = array( 80, 100 );
-			} elseif ( $score <= 10 ) {
-				$score_range = array( 10, 30 );
-			} else {
-				$score_range = array( ( $score - 10 ), ( $score + 10 ) );
+			// We should match up the worth-it value as well as the score.
+			// After all, some low scores have a thumbs up.
+			if ( false !== $worthit ) {
+				$meta_query[] = array(
+					'key'     => 'lezshows_worthit_rating',
+					'compare' => $worthit,
+				);
 			}
-			$meta_query[] = array(
-				'key'     => 'lezshows_the_score',
-				'value'   => $score_range,
-				'type'    => 'numeric',
-				'compare' => 'BETWEEN',
-			);
+
+			// If the show is loved, we want to include it here.
+			if ( $loved ) {
+				$meta_query[] = array(
+					'key'     => 'lezshows_worthit_show_we_love',
+					'compare' => 'EXISTS',
+				);
+			} else {
+				// If they're NOT loved, we use the scores for a value.
+				// Score: If the score is similar +/- 10
+				if ( $score >= 90 ) {
+					$score_range = array( 80, 100 );
+				} elseif ( $score <= 10 ) {
+					$score_range = array( 10, 30 );
+				} else {
+					$score_range = array( ( $score - 10 ), ( $score + 10 ) );
+				}
+				$meta_query[] = array(
+					'key'     => 'lezshows_the_score',
+					'value'   => $score_range,
+					'type'    => 'numeric',
+					'compare' => 'BETWEEN',
+				);
+			}
 		}
 
 		return $meta_query;
@@ -98,7 +99,7 @@ class LWTV_Shows_Like_This {
 	 */
 	public function reciprocity( $post_id ) {
 		// If this isn't a show page, bail.
-		if ( ! isset( $post_id ) || 'post_type_shows' !== get_post_type( $post_id ) ) {
+		if ( isset( $post_id ) && 'post_type_shows' !== get_post_type( $post_id ) ) {
 			return;
 		}
 
@@ -163,35 +164,35 @@ class LWTV_Shows_Like_This {
 	 * @return array             The corrected results
 	 */
 	public function alter_results( $results, $post_id, $taxonomies, $args ) {
+		if ( 'post_type_shows' === get_post_type( $post_id ) ) {
+			// Set our base array
+			$add_results = array();
 
-		// Set our base array
-		$add_results = array();
+			// The shortcode only allows post ids or post objects from the query.
+			if ( ! empty( $results ) && empty( $args['fields'] ) ) {
+				$results = wp_list_pluck( $results, 'ID' );
+			}
 
-		// The shortcode only allows post ids or post objects from the query.
-		if ( ! empty( $results ) && empty( $args['fields'] ) ) {
-			$results = wp_list_pluck( $results, 'ID' );
-		}
+			// What MIGHT we be adding:
+			$handpicked  = ( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) ? wp_parse_id_list( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) : array();
+			$reciprocity = self::reciprocity( $post_id );
+			$combo_list  = array_merge( $handpicked, $reciprocity );
 
-		// What MIGHT we be adding:
-		$handpicked  = ( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) ? wp_parse_id_list( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) : array();
-		$reciprocity = self::reciprocity( $post_id );
-		$combo_list  = array_merge( $handpicked, $reciprocity );
-
-		if ( ! empty( $combo_list ) ) {
-			// For each show, add it to the list ONLY if the show isn't already listed
-			// and if it's published
-			foreach ( $combo_list as $a_show ) {
-				//phpcs:ignore WordPress.PHP.StrictInArray
-				if ( 'publish' === get_post_status( $a_show ) && ! in_array( $a_show, $results ) && ! in_array( $a_show, $add_results ) ) {
-					$add_results[] = $a_show;
+			if ( ! empty( $combo_list ) ) {
+				// For each show, add it to the list ONLY if the show isn't already listed
+				// and if it's published
+				foreach ( $combo_list as $a_show ) {
+					//phpcs:ignore WordPress.PHP.StrictInArray
+					if ( 'publish' === get_post_status( $a_show ) && ! in_array( $a_show, $results ) && ! in_array( $a_show, $add_results ) ) {
+						$add_results[] = $a_show;
+					}
 				}
 			}
+
+			// Add any new posts to the list
+			$results = $add_results + $results;
 		}
 
-		// Add any new posts to the list
-		$results = $add_results + $results;
-
-		// Give 'em back!
 		return $results;
 	}
 }
