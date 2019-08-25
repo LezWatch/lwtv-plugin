@@ -41,37 +41,53 @@ class LWTV_Stats_JSON {
 	public function rest_api_init() {
 
 		// Basic Stats
-		register_rest_route( 'lwtv/v1', '/stats/', array(
-			'methods'  => 'GET',
-			'callback' => array(
-				$this,
-				'stats_rest_api_callback',
-			),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/stats/',
+			array(
+				'methods'  => 'GET',
+				'callback' => array(
+					$this,
+					'stats_rest_api_callback',
+				),
+			)
+		);
 
 		// Stat Types
-		register_rest_route( 'lwtv/v1', '/stats/(?P<type>[a-zA-Z.\-]+)', array(
-			'methods'  => 'GET',
-			'callback' => array(
-				$this,
-				'stats_rest_api_callback',
-			),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/stats/(?P<type>[a-zA-Z.\-]+)',
+			array(
+				'methods'  => 'GET',
+				'callback' => array(
+					$this,
+					'stats_rest_api_callback',
+				),
+			)
+		);
 
 		// Stat Types and Format
-		register_rest_route( 'lwtv/v1', '/stats/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z]+)', array(
-			'methods'  => 'GET',
-			'callback' => array(
-				$this,
-				'stats_rest_api_callback',
-			),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/stats/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z]+)',
+			array(
+				'methods'  => 'GET',
+				'callback' => array(
+					$this,
+					'stats_rest_api_callback',
+				),
+			)
+		);
 
 		// Stat Types and Format AND PER PAGE
-		register_rest_route( 'lwtv/v1', '/stats/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z]+)/(?P<page>[0-9.\-]+)', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'stats_rest_api_callback' ),
-		) );
+		register_rest_route(
+			'lwtv/v1',
+			'/stats/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z]+)/(?P<page>[0-9.\-]+)',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'stats_rest_api_callback' ),
+			)
+		);
 
 	}
 
@@ -100,9 +116,8 @@ class LWTV_Stats_JSON {
 	public static function statistics( $stat_type = 'characters', $format = 'simple', $page = 1 ) {
 
 		// Remove <!--fwp-loop--> from output
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
-			return false;
-		}, 10, 2 );
+		// phpcs:ignore
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 		// Valid Data
 		$valid_type   = array( 'characters', 'actors', 'shows', 'death', 'first-year', 'stations', 'nations' );
@@ -160,9 +175,8 @@ class LWTV_Stats_JSON {
 	public static function get_actors( $format = 'simple', $page = 1 ) {
 
 		// Remove <!--fwp-loop--> from output
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
-			return false;
-		}, 10, 2 );
+		// phpcs:ignore
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 		// Validate Data
 		$valid_format = array( 'simple', 'complex', 'sexuality', 'gender', 'queer-irl', 'id' );
@@ -230,9 +244,8 @@ class LWTV_Stats_JSON {
 	public static function get_characters( $format = 'simple', $page = 1 ) {
 
 		// Remove <!--fwp-loop--> from output
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
-			return false;
-		}, 10, 2 );
+		// phpcs:ignore
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 		// Validate Data
 		$valid_format = array( 'simple', 'complex', 'sexuality', 'gender', 'romantic', 'cliches' );
@@ -272,18 +285,34 @@ class LWTV_Stats_JSON {
 						$died   = ( ! is_array( $died ) ) ? array( $died ) : $died;
 						$shows  = count( get_post_meta( $post->ID, 'lezchars_show_group', true ) );
 						$actors = count( get_post_meta( $post->ID, 'lezchars_actor', true ) );
+						$gender = implode(
+							', ',
+							wp_get_post_terms(
+								$post->ID,
+								'lez_gender',
+								array(
+									'fields' => 'names',
+								)
+							)
+						);
+						$sexual = implode(
+							', ',
+							wp_get_post_terms(
+								$post->ID,
+								'lez_sexuality',
+								array(
+									'fields' => 'names',
+								)
+							)
+						);
 
 						$stats_array[ get_the_title() ] = array(
 							'id'        => $post->ID,
 							'died'      => $died,
 							'actors'    => $actors,
 							'shows'     => $shows,
-							'gender'    => implode(', ', wp_get_post_terms( $post->ID, 'lez_gender', array(
-								'fields' => 'names',
-							) ) ),
-							'sexuality' => implode(', ', wp_get_post_terms( $post->ID, 'lez_sexuality', array(
-								'fields' => 'names',
-							) ) ),
+							'gender'    => $gender,
+							'sexuality' => $sexual,
 							'url'       => get_the_permalink(),
 						);
 					}
@@ -316,9 +345,8 @@ class LWTV_Stats_JSON {
 	 */
 	public static function get_death( $format = 'simple' ) {
 		// Remove <!--fwp-loop--> from output
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
-			return false;
-		}, 10, 2 );
+		// phpcs:ignore
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 		// Validate Data
 		$valid_format = array( 'simple', 'complex', 'years' );
@@ -331,7 +359,7 @@ class LWTV_Stats_JSON {
 					'shows'     => LWTV_Stats::generate( 'characters', 'dead-shows', 'array' ),
 					'sexuality' => LWTV_Stats::generate( 'characters', 'dead-sex', 'array' ),
 					'gender'    => LWTV_Stats::generate( 'characters', 'dead-gender', 'array' ),
-					// Current broken :(
+					// Currently broken.
 					//'roles'     => LWTV_Stats::generate( 'characters', 'dead-roles', 'array' ),
 				);
 				break;
@@ -370,9 +398,8 @@ class LWTV_Stats_JSON {
 		global $wpdb;
 
 		// Remove <!--fwp-loop--> from output
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
-			return false;
-		}, 10, 2 );
+		// phpcs:ignore
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 		// Validate Data
 		$valid_format = array( 'simple', 'complex', 'nations', 'formats', 'stars', 'triggers', 'loved', 'worth-it', 'tropes', 'genres', 'id' );
@@ -501,7 +528,7 @@ class LWTV_Stats_JSON {
 			case 'show':
 				$stats_array = array(
 					'id'              => $id,
-					'title'            => get_the_title( $id ),
+					'title'           => get_the_title( $id ),
 					'nations'         => implode( ', ', wp_get_post_terms( $id, 'lez_country', array( 'fields' => 'names' ) ) ),
 					'stations'        => implode( ', ', wp_get_post_terms( $id, 'lez_stations', array( 'fields' => 'names' ) ) ),
 
@@ -549,22 +576,27 @@ class LWTV_Stats_JSON {
 				$taxonomy = get_terms( array( 'taxonomy' => 'lez_' . $type ) );
 				break;
 			case 'complex':
-				$offset = ( $page - 1 ) * 20;
-				$taxonomy = get_terms( array(
-					'taxonomy' => 'lez_' . $type,
-					'number'   => 20,
-					'offset' => $offset,
-				) );
+				$offset   = ( $page - 1 ) * 20;
+				$taxonomy = get_terms(
+					array(
+						'taxonomy' => 'lez_' . $type,
+						'number'   => 20,
+						'offset'   => $offset,
+					)
+				);
 				break;
 		}
 
 		// Build out the default arrays for character data:
 		foreach ( $valid_subtaxes as $subtax ) {
-			$terms = get_terms( 'lez_' . $subtax, array(
-				'orderby'    => 'count',
-				'order'      => 'DESC',
-				'hide_empty' => 0,
-			) );
+			$terms = get_terms(
+				'lez_' . $subtax,
+				array(
+					'orderby'    => 'count',
+					'order'      => 'DESC',
+					'hide_empty' => 0,
+				)
+			);
 			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 				foreach ( $terms as $term ) {
 					$char_data[ $term->slug ] = 0;

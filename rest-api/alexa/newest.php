@@ -7,7 +7,9 @@ Generate the newest shows or characters (or deaths)
 Version: 1.0
 */
 
-if ( ! defined( 'WPINC' ) ) die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * class LWTV_Alexa_Newest
@@ -41,7 +43,7 @@ class LWTV_Alexa_Newest {
 			'post_type'      => 'post_type_characters',
 			'posts_per_page' => '1',
 			'orderby'        => 'date',
-			'order'          => 'DESC'
+			'order'          => 'DESC',
 		);
 
 		$queery = new WP_Query( $post_args );

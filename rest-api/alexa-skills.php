@@ -31,17 +31,18 @@ class LWTV_Alexa_Skills {
 	 * Creates callbacks
 	 *   - /lwtv/v1/alexa-skills/flash-briefing/
 	 *   - /lwtv/v1/alexa-skills/byq/
-	 *   - /lwtv/v1//alexa-skills/news/
+	 *   - /lwtv/v1/alexa-skills/news/
+	 *   - /lwtv/v1/alexa-skills/shows-like-this/
 	 */
 	public function rest_api_init() {
 		// @codingStandardsIgnoreStart
-		// Skills
+		// Briefing
 		register_rest_route( 'lwtv/v1', '/alexa-skills/briefing/', array(
 			'methods'  => 'GET',
 			'callback' => array( $this, 'flash_briefing_rest_api_callback' ),
 		) );
 
-		// Skills
+		// Bury Your Queers (legacy)
 		register_rest_route( 'lwtv/v1', '/alexa-skills/byq/', array(
 			'methods'  => [ 'GET', 'POST' ],
 			'callback' => array( $this, 'bury_your_queers_rest_api_callback' ),
@@ -104,6 +105,7 @@ class LWTV_Alexa_Skills {
 		$intent = ( isset( $request['request']['intent']['name'] ) ) ? sanitize_text_field( $request['request']['intent']['name'] ) : false;
 		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false;
 		$actor  = ( isset( $request['request']['intent']['slots']['actor']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['actor']['value'] ) : false;
+		$show   = ( isset( $request['request']['intent']['slots']['show']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['show']['value'] ) : false;
 		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) ) ? sanitize_text_field( $request['request']['session']['application']['applicationId'] ) : false;
 
 		// Call the validation:
@@ -120,7 +122,7 @@ class LWTV_Alexa_Skills {
 			$error->set_status( 400 );
 			return $error;
 		}
-		$response = $this->news_skill( $type, $intent, $date, $actor );
+		$response = $this->news_skill( $type, $intent, $date, $actor, $show );
 
 		return $response;
 	}
@@ -131,14 +133,14 @@ class LWTV_Alexa_Skills {
 	 * @access public
 	 * @return void
 	 */
-	public function news_skill( $type = false, $intent = false, $date = false, $actor = false ) {
+	public function news_skill( $type = false, $intent = false, $date = false, $actor = false, $show = false ) {
 
-		$helptext   = 'You can ask me what happened or for information on queer female, non-binary, or transgender characters or shows on Lez Watch T. V.. Try asking me "What happened this year?" or "What happened in 1989?" or "Who is the character of the day?" or "Who is Laverne Cox?" or "Is Ali Liebert queer?" or even "Who died on March 3rd?" -- I\'ll let you know what I\'ve found.';
+		$helptext   = 'You can ask me for information on queer female, non-binary, or transgender characters or television shows on Lez Watch T. V.. Try asking me "What happened this year?" or "What happened in 1989?" or "Who is the character of the day?" or "Who is Laverne Cox?" or "Is Ali Liebert queer?" or even "Who died on March 3rd?" -- I\'ll let you know what I\'ve found.';
 		$output     = 'I\'m sorry, I don\'t understand that request. Please ask me something else. ' . $helptext;
 		$endsession = true;
 
 		if ( false !== $date && is_numeric( substr( $date, 0, 4 ) ) && substr( $date, 0, 4 ) < FIRST_LWTV_YEAR ) {
-			$output     = 'There were no known queer female, non-binary, or trans characters on T. V. prior to ' . FIRST_LWTV_YEAR . '. Would you like to ask me something else? ' . $helptext;
+			$output     = 'There were no known queer female, non-binary, or transgender characters on T. V. prior to ' . FIRST_LWTV_YEAR . '. Would you like to ask me something else? ' . $helptext;
 			$endsession = false;
 		} elseif ( 'LaunchRequest' === $type ) {
 			$output     = 'Welcome to the Lez Watch T. V. skill. ' . $helptext;
@@ -197,8 +199,16 @@ class LWTV_Alexa_Skills {
 						$output = LWTV_Alexa_Who::is_gay( $actor );
 					}
 					break;
+				case 'SimilarShow':
+					if ( ! $show ) {
+						$output = 'I\'m sorry, I didn\'t quite catch the name of the television show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+					} else {
+						require_once 'alexa/similar-show.php';
+						$output = LWTV_Alexa_Shows::similar_to( $show );
+					}
+					break;
 				case 'AMAZON.HelpIntent':
-					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female, non-binary and trans characters on TV. ' . $helptext;
+					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female, non-binary and transgender characters on international television. ' . $helptext;
 					$endsession = false;
 					break;
 				case 'AMAZON.StopIntent':

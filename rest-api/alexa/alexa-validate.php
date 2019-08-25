@@ -24,45 +24,71 @@ class LWTV_Alexa_Validate {
 
 		// Validate that it even came from Amazon ...
 		if ( ! isset( $chain_url ) ) {
-			return array( 'success' => 0, 'message' => 'This request did not come from Amazon.' );
+			$fail_chain = array(
+				'success' => 0,
+				'message' => 'This request did not come from Amazon.',
+			);
+			return $fail_chain;
 		}
 
 		// Validate proper format of Amazon provided certificate chain url
 		$valid_uri = self::key_chain_uri( $chain_url );
 		if ( 1 !== $valid_uri ) {
-			return array( 'success' => 0, 'message' => $valid_uri );
+			$fail_uri = array(
+				'success' => 0,
+				'message' => $valid_uri,
+			);
+			return $fail_uri;
 		}
 
 		// Validate certificate signature
 		$valid_cert = self::cert_and_sig( $request, $chain_url, $signature );
-		if ( $valid_cert != 1 )
-			return array ( 'success' => 0, 'message' => $valid_cert );
+		if ( 1 !== $valid_cert ) {
+			$fail_cert = array(
+				'success' => 0,
+				'message' => $valid_cert,
+			);
+			return $fail_cert;
+		}
 
 		// Validate time stamp
-		if (time() - strtotime( $timestamp ) > 60)
-			return array ( 'success' => 0, 'message' => 'Timestamp validation failure. Current time: ' . time() . ' vs. Timestamp: ' . strtotime( $timestamp ) );
+		if ( 60 < time() - strtotime( $timestamp ) ) {
+			$fail_time = array(
+				'success' => 0,
+				'message' => 'Timestamp validation failure. Current time: ' . time() . ' vs. Timestamp: ' . strtotime( $timestamp ),
+			);
+			return $fail_time;
+		}
 
-		return array( 'success' => 1, 'message' => 'Success' );
+		$success = array(
+			'success' => 1,
+			'message' => 'Success',
+		);
+		return $success;
 	}
 
 	/*
 		Validate certificate chain URL
 	*/
-	function key_chain_uri( $keychainUri ){
+	public function key_chain_uri( $keychain_uri ) {
 
-		$uriParts = parse_url( $keychainUri );
+		$uri_parts = wp_parse_url( $keychain_uri );
 
-		if (strcasecmp( $uriParts['host'], 's3.amazonaws.com' ) != 0 )
+		if ( 0 !== strcasecmp( $uri_parts['host'], 's3.amazonaws.com' ) ) {
 			return ( 'The host for the Certificate provided in the header is invalid' );
+		}
 
-		if (strpos( $uriParts['path'], '/echo.api/' ) !== 0 )
+		if ( 0 !== strpos( $uri_parts['path'], '/echo.api/' ) ) {
 			return ( 'The URL path for the Certificate provided in the header is invalid' );
+		}
 
-		if (strcasecmp( $uriParts['scheme'], 'https' ) != 0 )
+		if ( 0 !== strcasecmp( $uri_parts['scheme'], 'https' ) ) {
 			return ( 'The URL is using an unsupported scheme. Should be https' );
+		}
 
-		if (array_key_exists( 'port', $uriParts ) && $uriParts['port'] != '443' )
+		if ( 0 !== array_key_exists( 'port', $uri_parts ) && '443' !== $uri_parts['port'] ) {
 			return ( 'The URL is using an unsupported https port' );
+		}
 
 		return 1;
 	}
@@ -70,7 +96,7 @@ class LWTV_Alexa_Validate {
 	/*
 		Validate that the certificate and signature are valid
 	*/
-	function cert_and_sig( $request, $chain_url, $signature ) {
+	public function cert_and_sig( $request, $chain_url, $signature ) {
 
 		$md5pem      = get_temp_dir() . md5( $chain_url ) . '.pem';
 		$echo_domain = 'echo-api.amazon.com';
@@ -78,12 +104,14 @@ class LWTV_Alexa_Validate {
 		// If we haven't received a certificate with this URL before,
 		// store it as a cached copy
 		if ( ! file_exists( $md5pem ) ) {
+			// phpcs:ignore
 			file_put_contents( $md5pem, file_get_contents( $chain_url ) );
 		}
 
 		$pem = file_get_contents( $md5pem );
 
 		// Validate certificate chain and signature
+		// phpcs:ignore
 		$ssl_check = openssl_verify( $request->get_body(), base64_decode( $signature ), $pem, 'sha1' );
 
 		if ( 1 !== $ssl_check ) {

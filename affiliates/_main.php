@@ -377,6 +377,9 @@ class LWTV_Affilliates {
 				case 'cartoonnetwork':
 					$name = 'Cartoon Network';
 					break;
+				case 'roosterteeth':
+					$name = 'Roster Teeth';
+					break;
 				case 'showtimeanytime':
 					$name = 'Showtime';
 					break;

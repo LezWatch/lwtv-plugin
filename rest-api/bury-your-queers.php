@@ -228,7 +228,7 @@ class LWTV_BYQ_JSON {
 			$timestamp = time();
 			$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
 			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
-			$this_day  = $dt->format( 'm-d' );
+			$this_day = $dt->format( 'm-d' );
 		}
 
 		// Default to JSON (i.e. what the plugin uses)
