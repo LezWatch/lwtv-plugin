@@ -350,9 +350,8 @@ class LWTV_Affilliates {
 					break;
 				case '7eer':
 				case 'cbs':
-					$cbs_id = self::network( $id, 'id', 'cbs' );
-					$url    = 'https://cbs-allaccess.7eer.net/c/1242493/' . $cbs_id . '/3065';
-					$extra  = '<img height="0" width="0" src="//cbs-allaccess.7eer.net/c/1242493/' . $cbs_id . '/3065" style="position:absolute;visibility:hidden;" border="0" />';
+					$url    = 'https://CBS-AllAccess.qflm.net/c/1242493/650979/3065';
+					$extra  = '<img height="0" width="0" src="//CBS-AllAccess.qflm.net/i/1242493/650979/3065" style="position:absolute;visibility:hidden;" border="0" />';
 					$name   = 'CBS All Access';
 					break;
 				case 'abc':
