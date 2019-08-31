@@ -82,6 +82,10 @@ class LWTV_CMB2 {
 				if ( 'draft' === get_post_status( $post->ID ) ) {
 					$post_title .= ' - DRAFT';
 				}
+				// If the post is scheduled, let's flag it.
+				if ( 'future' === get_post_status( $post->ID ) ) {
+					$post_title .= ' - SCHEDULED';
+				}
 				// If the post is private, we should flag that too
 				if ( 'private' === get_post_status( $post->ID ) ) {
 					$post_title .= ' - PRIVATE';
