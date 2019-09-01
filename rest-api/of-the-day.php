@@ -350,11 +350,11 @@ class LWTV_OTD_JSON {
 
 		// Missing things:
 		// Asexual Awareness Week - it's in October
-		// Bisexual Awareness Week - it's the week the DAY happpens
+		// Bisexual Awareness Week - it's the week the DAY happens
 
 		switch ( $date ) {
 			case '03-31': // Transgender Day of Visibility
-			case '11-20': // Transgender Day of Rememberance
+			case '11-20': // Transgender Day of Remembrance
 				$return = array(
 					array(
 						'taxonomy' => 'lez_gender',
