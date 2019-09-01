@@ -11,7 +11,6 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 require_once 'screeners.php';
-require_once 'news.php';
 
 class LWTV_Tools {
 
@@ -59,9 +58,6 @@ class LWTV_Tools {
 		// Add Tools pages
 		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ), LWTV_Functions::get_icon_svg(), 2 );
 		add_submenu_page( 'lwtv_tools', 'Tools', 'Tools', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ) );
-		if ( defined( 'NEWSAPI' ) ) {
-			add_submenu_page( 'lwtv_tools', 'Recent News', 'Recent News', 'edit_posts', 'news', array( 'LWTV_Admin_News', 'settings_page' ) );
-		}
 		if ( class_exists( 'LWTV_Screeners' ) ) {
 			add_submenu_page( 'lwtv_tools', 'Screeners', 'Screeners', 'edit_posts', 'screeners', array( 'LWTV_Screeners', 'settings_page' ) );
 		}
@@ -135,6 +131,9 @@ class LWTV_Tools {
 						break;
 					case 'character_checker':
 						self::tab_character_checker();
+						break;
+					case 'build_status':
+						self::tab_build_status();
 						break;
 					default:
 						self::tab_introduction();
@@ -313,8 +312,6 @@ class LWTV_Tools {
 		} else {
 			$message = 'error';
 		}
-
-
 
 		$url = add_query_arg( 'message', $message, urldecode( $_POST['_wp_http_referer'] ) );
 
