@@ -27,7 +27,7 @@ class LWTV_Screeners {
 	/*
 	 * Settings Page Content
 	 *
-	 * A list of all the fucking screeners.
+	 * A list of all the screeners.
 	 */
 	public static function settings_page() {
 

@@ -12,4 +12,5 @@ require_once 'imdb.php';
 require_once 'of-the-day.php';
 require_once 'shows-like-this.php';
 require_once 'stats.php';
+require_once 'this-year.php';
 require_once 'what-happened.php';
