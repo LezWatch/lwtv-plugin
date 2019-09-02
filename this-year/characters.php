@@ -185,6 +185,7 @@ class LWTV_This_Year_Chars {
 		$dead_loop  = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
 		$queery     = wp_list_pluck( $dead_loop->posts, 'ID' );
 		$show_array = array();
+		$list_array = array();
 
 		// List all queers and the year they died
 		if ( $dead_loop->have_posts() ) {
@@ -246,17 +247,20 @@ class LWTV_This_Year_Chars {
 						$died_year  = substr( $date, -4 );
 						$died_array = date_parse_from_format( 'm/d/Y', $date );
 					}
+
 					if ( $died_year === $thisyear ) {
 						$died = mktime( $died_array['hour'], $died_array['minute'], $died_array['second'], $died_array['month'], $died_array['day'], $died_array['year'] );
 					}
 				}
 
-				// Make a list
-				$list_array[ $died ][ $char_slug ] = array(
-					'name'  => get_the_title( $char ),
-					'url'   => get_the_permalink( $char ),
-					'shows' => $show_info,
-				);
+				if ( isset( $died ) ) {
+					// Make a list
+					$list_array[ $died ][ $char_slug ] = array(
+						'name'  => get_the_title( $char ),
+						'url'   => get_the_permalink( $char ),
+						'shows' => $show_info,
+					);
+				}
 			}
 
 			// Sort alphabetical
@@ -293,6 +297,7 @@ class LWTV_This_Year_Chars {
 		$queery        = wp_list_pluck( $loop->posts, 'ID' );
 		$counted_chars = 0;
 		$show_array    = array();
+		$char_array    = array();
 
 		if ( $loop->have_posts() ) {
 			foreach ( $queery as $char ) {
@@ -333,7 +338,9 @@ class LWTV_This_Year_Chars {
 							}
 						}
 					}
-					$show_info = implode( ', ', $show_title );
+					if ( ! $count ) {
+						$show_info = implode( ', ', $show_title );
+					}
 				}
 
 				// If there are shows listed, let's add it to the character array
