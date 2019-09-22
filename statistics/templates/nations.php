@@ -45,6 +45,7 @@ switch ( $country ) {
 
 <h2><?php echo wp_kses_post( $title_country ); ?></h2>
 
+<!--
 <section id="toc" class="toc-container card-body">
 	<div class="navbar navbar-expand-lg navbar-light breadcrumb">
 		<form method="get" id="go" class="form-inline">
@@ -52,25 +53,30 @@ switch ( $country ) {
 				<select name="country" id="country" class="form-control">
 					<option value="all">Country (All)</option>
 					<?php
+/*
 					foreach ( $nations as $nation ) {
 						$selected = ( $country === $nation->slug ) ? 'selected=selected' : '';
 						$shows    = _n( 'Show', 'Shows', $nation->count );
 						echo '<option value="' . esc_attr( $nation->slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $nation->name ) . '</option>';
 					}
+*/
 					?>
 				</select>
 			</div>
 			<div class="form-group">
 				<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
 				<?php
+/*
 				if ( 'all' !== $country ) {
 					echo '<a class="btn btn-default btn-outline-primary" href="/statistics/nations/" role="button">Reset</a>';
 				}
+*/
 				?>
 			</div>
 		</form>
 	</div>
 </section>
+-->
 
 <ul class="nav nav-tabs">
 	<?php
