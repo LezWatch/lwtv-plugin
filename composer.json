@@ -36,10 +36,10 @@
         "slowprog/composer-copy-file": "^0.3",
         "cmb2/cmb2": "^2.6",
         "origgami/cmb2-grid": "dev-master",
-        "level-level/facetwp-wp-cli": "dev-master",
         "webdevstudios/facetwp-cmb2": "*",
         "mustardbees/cmb-field-select2": "*",
-        "foxy/foxy": "^1.0.0"
+        "foxy/foxy": "^1.0.0",
+        "johngrogg/ics-parser": "^2"
     },
     "autoload": {
         "files": [
@@ -67,7 +67,6 @@
             "node_modules/chart.js/dist/Chart.bundle.min.js": "assets/js/Chart.bundle.min.js",
             "node_modules/tablesorter/dist/js/jquery.tablesorter.js":  "assets/js/jquery.tablesorter.js",
             "node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css": "assets/css/theme.bootstrap_4.min.css",
-            "vendor/level-level/facetwp-wp-cli/": "plugins/facetwp/facetwp-wp-cli/",
             "vendor/webdevstudios/facetwp-cmb2/": "plugins/facetwp/facetwp-cmb2/",
             "vendor/origgami/cmb2-grid/": "plugins/cmb2/cmb2-grid/"
         }

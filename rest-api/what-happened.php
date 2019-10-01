@@ -272,4 +272,5 @@ class LWTV_What_Happened_JSON {
 	}
 
 }
+
 new LWTV_What_Happened_JSON();
