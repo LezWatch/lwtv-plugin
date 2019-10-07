@@ -194,6 +194,18 @@ class LWTV_Functions {
 		return $return;
 	}
 
+	/**
+	 * Validate date format/
+	 * @param  [type] $date   [description]
+	 * @param  string $format [description]
+	 * @return [type]         [description]
+	 */
+	public static function validate_date( $date, $format = 'Y-m-d' ) {
+		$d = DateTime::createFromFormat( $format, $date );
+		// The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+		return $d && $d->format( $format ) === $date;
+	}
+
 }
 new LWTV_Functions();
 

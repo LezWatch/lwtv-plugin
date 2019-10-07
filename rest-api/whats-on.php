@@ -70,17 +70,19 @@ class LWTV_Whats_On_JSON {
 	 */
 	public static function whats_on( $when = 'today' ) {
 
-		$when_array = array( 'today', 'now', 'tonight', 'tomorrow' );
+		$when_today = array( 'today', 'now', 'tonight' );
+		$when       = ( in_array( $when, $when_today ) ) ? 'today' : $when;
+		$when_array = array( 'today', 'tomorrow' );
 
-		if ( ! in_array( $when, $when_array ) ) {
+		if ( ! in_array( $when, $when_array ) && ! LWTV_Functions::validate_date( $when ) ) {
 			$whats_on = 'I may be good, but I\'m not that good. Please only ask me about today and tomorrow.';
 		} else {
-			require_once '../features/ics-parser.php';
-			$calendar = LWTV_ICS_Parser::generate( TV_MAZE );
-
-
+			require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
+			$calendar = LWTV_ICS_Parser::generate( TV_MAZE, $when );
+			$whats_on = $calendar;
 		}
 
+		// For some reason this is off by a day?
 		$return = array(
 			'whats_on' => $whats_on,
 		);

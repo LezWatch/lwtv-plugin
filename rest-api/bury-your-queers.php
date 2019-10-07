@@ -168,7 +168,7 @@ class LWTV_BYQ_JSON {
 
 			// phpcs:disable
 			// Reorder all the dead to sort by DoD
-			uasort($death_list_array, function( $a, $b ) {
+			uasort( $death_list_array, function( $a, $b ) {
 
 				// Spaceship Needs PHP 7.1+
 				return $a['died'] <=> $b['died'];
