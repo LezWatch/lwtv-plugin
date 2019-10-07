@@ -75,9 +75,10 @@ class LWTV_Whats_On_JSON {
 		if ( ! in_array( $when, $when_array ) ) {
 			$whats_on = 'I may be good, but I\'m not that good. Please only ask me about today and tomorrow.';
 		} else {
-			$calendar = wp_remote_get( TV_MAZE );
+			require_once '../features/ics-parser.php';
+			$calendar = LWTV_ICS_Parser::generate( TV_MAZE );
 
-			print_r ($calendar);
+
 		}
 
 		$return = array(
