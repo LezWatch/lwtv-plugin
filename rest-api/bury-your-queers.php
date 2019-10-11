@@ -224,9 +224,8 @@ class LWTV_BYQ_JSON {
 		// Default to today
 		if ( 'today' === $this_day ) {
 			// Create the date with regards to timezones
-			$tz        = 'America/New_York';
 			$timestamp = time();
-			$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+			$dt        = new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ); //first argument "must" be a string
 			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 			$this_day = $dt->format( 'm-d' );
 		}

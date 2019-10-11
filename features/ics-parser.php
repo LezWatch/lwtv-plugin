@@ -25,13 +25,21 @@ class LWTV_ICS_Parser {
 
 		switch ( $when ) {
 			case 'today':
-				$interval_date = date( 'Y-m-d', time() );
+				$start_datetime = new DateTime( 'today' );
+				$end_datetime   = new DateTime( 'today + 1day' );
+				break;
+			case 'tomorrow':
+				// Note: Tomorrow is empty. Don't know why.
+				$start_datetime = new DateTime( 'tomorrow' );
+				$end_datetime   = new DateTime( 'tomorrow + 1day' );
 				break;
 		}
 
-		$interval_start = $interval_date . ' 00:00:01';
-		$interval_end   = $interval_date . ' 23:59:00';
-		$events         = $ical->eventsFromInterval( $interval_start, $interval_end );
+		// We have to be off by 5 hours because of UTC and New York.
+		$interval_start = $start_datetime->format( 'Y-m-d' ) . ' 05:00:00';
+		$interval_end   = $end_datetime->format( 'Y-m-d' ) . ' 04:59:00';
+
+		$events         = $ical->eventsFromRange( $interval_start, $interval_end );
 
 		return $events;
 	}

@@ -209,7 +209,7 @@ class LWTV_Alexa_Skills {
 					break;
 				case 'WhatsOn':
 					require_once 'alexa/whats-on.php';
-					$output = LWTV_Alexa_Whats_On::similar_to( $date );
+					$output = LWTV_Alexa_Whats_On::on_a_day( $date );
 					break;
 				case 'AMAZON.HelpIntent':
 					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female, non-binary and transgender characters on international television. ' . $helptext;

@@ -82,10 +82,27 @@ class LWTV_Whats_On_JSON {
 			$whats_on = $calendar;
 		}
 
-		// For some reason this is off by a day?
-		$return = array(
-			'whats_on' => $whats_on,
-		);
+		if ( empty( $whats_on ) ) {
+			$return['none'] = 'Nothing is on TV tonight';
+		} else {
+			foreach ( $whats_on as $episode ) {
+				$lwtv_tz   = new DateTimeZone( 'America/New_York' );
+				$tvmaze_tz = new DateTimeZone( 'UTC' );
+				$showtime  = new DateTime( $episode->dtstart, $tvmaze_tz );
+				$timestamp = $showtime->getTimestamp();
+
+				$offset     = $lwtv_tz->getOffset( $showtime );
+				$interval   = DateInterval::createFromDateString( (string) $offset . 'seconds' );
+				$showtime->add( $interval );
+
+				$return[] = array(
+					'episode' => $episode->summary,
+					'title'   => $episode->description,
+					'airdate' => $showtime->format( 'Y-m-d H:i:s' ) . ' America/New_York',
+					'rawdate' => $timestamp,
+				);
+			}
+		}
 
 		return $return;
 
