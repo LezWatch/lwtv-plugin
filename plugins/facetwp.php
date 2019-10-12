@@ -22,7 +22,6 @@ class LWTV_FacetWP_Addons {
 		// Include extra Plugins
 		require_once dirname( __FILE__ ) . '/facetwp/facetwp-cmb2/cmb2.php';
 		require_once dirname( __FILE__ ) . '/facetwp/lwtv.php';
-		require_once dirname( __FILE__ ) . '/facetwp/facetwp-wp-cli/facetwp-wp-cli.php';
 
 		// Filter paged output
 		add_filter( 'facetwp_pager_html', array( $this, 'facetwp_pager_html' ), 10, 2 );

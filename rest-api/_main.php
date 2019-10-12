@@ -14,3 +14,4 @@ require_once 'shows-like-this.php';
 require_once 'stats.php';
 require_once 'this-year.php';
 require_once 'what-happened.php';
+require_once 'whats-on.php';

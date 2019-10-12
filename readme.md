@@ -183,12 +183,16 @@ The file `_main.php` acts as an autoloader.
     - API to communicate with IMDb and generate information (used by Alexa)
 * Of The Day - `/of-the-day.php`
     - The code that runs the X Of the Day API service. Every 24 hours, a new character and show of the day are spawned
+* Shows Like This - `shows-like-this.php`
+    - Similar shows.
 * Slack - `/slack.php`
-    - Beginning of code to report newly dead characters to Slack (very buggy)
+    - Beginning of code to report newly dead characters to Slack (very buggy, currently disabled)
 * Statistics - `/stats.php`
     - JSON API version of the stats (mostly)
 * What Happened - `/what-happened.php`
     - Outputs data based on what happened in a given year.
+* What's On - `/whats-on.php`
+    - What's on TV tonight (or tomorrow).
 
 ### Statistics
 
