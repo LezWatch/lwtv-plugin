@@ -23,15 +23,16 @@ class LWTV_ICS_Parser {
 		$ical = new ICal();
 		$ical->initUrl( esc_url( $url ) );
 
+		$tz = new DateTimeZone( 'America/New_York' );
+
 		switch ( $when ) {
 			case 'today':
-				$start_datetime = new DateTime( 'today' );
-				$end_datetime   = new DateTime( 'today + 1day' );
+				$start_datetime = new DateTime( 'today', $tz );
+				$end_datetime   = new DateTime( 'today + 1day', $tz );
 				break;
 			case 'tomorrow':
-				// Note: Tomorrow is empty. Don't know why.
-				$start_datetime = new DateTime( 'tomorrow' );
-				$end_datetime   = new DateTime( 'tomorrow + 1day' );
+				$start_datetime = new DateTime( 'tomorrow', $tz );
+				$end_datetime   = new DateTime( 'tomorrow + 1day', $tz );
 				break;
 		}
 
