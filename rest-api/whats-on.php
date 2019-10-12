@@ -83,7 +83,10 @@ class LWTV_Whats_On_JSON {
 		}
 
 		if ( empty( $whats_on ) ) {
-			$return['none'] = 'Nothing is on TV tonight';
+			$datetime = new DateTime( $when );
+			$when_day = $datetime->format( 'l' );
+
+			$return['none'] = 'Nothing is on TV ' . $when_day . '.';
 		} else {
 			foreach ( $whats_on as $episode ) {
 				$lwtv_tz   = new DateTimeZone( 'America/New_York' );

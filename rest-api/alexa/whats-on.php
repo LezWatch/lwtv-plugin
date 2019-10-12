@@ -38,7 +38,7 @@ class LWTV_Alexa_Whats_On {
 				$showcount++;
 			}
 		}
-		$output = $how_many . ' on ' . date( 'F jS', $timestamp ) . '. ' . $episodes . ' All times are US Eastern.';
+		$output = $how_many . ' on ' . date( 'l F jS', $timestamp ) . '. ' . $episodes . ' All times are US Eastern.';
 
 		return $output;
 	}
