@@ -135,7 +135,7 @@ class LWTV_Alexa_Skills {
 	 */
 	public function news_skill( $type = false, $intent = false, $date = false, $actor = false, $show = false ) {
 
-		$helptext   = 'You can ask me for information on queer female, non-binary, or transgender characters or television shows on Lez Watch T. V.. Try asking me "What happened this year?" or "What shows are like E. R." or "Who is the character of the day?" or "Who is Laverne Cox?" or "Is Ali Liebert queer?" or even "Who died on March 3rd?" -- I\'ll let you know what I\'ve found.';
+		$helptext   = 'You can ask me for information on queer female, non-binary, or transgender characters or television shows on LEZ Watch T. V.. Try asking me "What happened this year?" or "What shows are like E. R." or "Who is the character of the day?" or "Who is Laverne Cox?" or "Is Ali Liebert queer?" or even "Who died on March 3rd?" -- I\'ll let you know what I\'ve found.';
 		$output     = 'I\'m sorry, I don\'t understand that request. Please ask me something else. ' . $helptext;
 		$endsession = true;
 
@@ -143,7 +143,7 @@ class LWTV_Alexa_Skills {
 			$output     = 'There were no known queer female, non-binary, or transgender characters on T. V. prior to ' . FIRST_LWTV_YEAR . '. Would you like to ask me something else? ' . $helptext;
 			$endsession = false;
 		} elseif ( 'LaunchRequest' === $type ) {
-			$output     = 'Welcome to the Lez Watch T. V. skill. ' . $helptext;
+			$output     = 'Welcome to the LEZ Watch T. V. skill. ' . $helptext;
 			$endsession = false;
 		} else {
 			switch ( $intent ) {
