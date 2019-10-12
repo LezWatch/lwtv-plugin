@@ -1,6 +1,6 @@
-/vendor
 .DS_Store
 /plugins/**/.git
 *node_modules/
+*node_downloads/
 /npm-debug.log
 composer.lock

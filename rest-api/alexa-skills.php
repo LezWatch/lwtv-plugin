@@ -135,7 +135,7 @@ class LWTV_Alexa_Skills {
 	 */
 	public function news_skill( $type = false, $intent = false, $date = false, $actor = false, $show = false ) {
 
-		$helptext   = 'You can ask me for information on queer female, non-binary, or transgender characters or television shows on Lez Watch T. V.. Try asking me "What happened this year?" or "What happened in 1989?" or "Who is the character of the day?" or "Who is Laverne Cox?" or "Is Ali Liebert queer?" or even "Who died on March 3rd?" -- I\'ll let you know what I\'ve found.';
+		$helptext   = 'You can ask me for information on queer female, non-binary, or transgender characters or television shows on Lez Watch T. V.. Try asking me "What happened this year?" or "What shows are like E. R." or "Who is the character of the day?" or "Who is Laverne Cox?" or "Is Ali Liebert queer?" or even "Who died on March 3rd?" -- I\'ll let you know what I\'ve found.';
 		$output     = 'I\'m sorry, I don\'t understand that request. Please ask me something else. ' . $helptext;
 		$endsession = true;
 
@@ -206,6 +206,10 @@ class LWTV_Alexa_Skills {
 						require_once 'alexa/similar-show.php';
 						$output = LWTV_Alexa_Shows::similar_to( $show );
 					}
+					break;
+				case 'WhatsOn':
+					require_once 'alexa/whats-on.php';
+					$output = LWTV_Alexa_Whats_On::on_a_day( $date );
 					break;
 				case 'AMAZON.HelpIntent':
 					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female, non-binary and transgender characters on international television. ' . $helptext;

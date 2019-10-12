@@ -4,13 +4,15 @@
   "description": "LezWatch.TV Plugin",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "node ./node_scripts/postinstall.js"
   },
   "author": "LezWatch.TV",
   "license": "GPL-2.0",
   "repository": "https://github.com/lezwatch/lwtv-plugin/",
   "dependencies": {
     "chart.js": "latest",
+    "copy": "^0.3.2",
+    "download-git-repo": "^2.0.0",
     "tablesorter": "^2.31.1"
   }
 }
