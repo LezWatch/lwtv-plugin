@@ -95,6 +95,7 @@ class LWTV_Shows_CMB2 {
 
 	public function return_genres_options() {
 		$terms_array = array();
+		$output      = '<option value="">None (that\'s okay!)</option>';
 
 		// @codingStandardsIgnoreStart
 		$genres = $_POST[ 'value' ];
