@@ -82,15 +82,16 @@ class LWTV_Whats_On_JSON {
 			$whats_on = $calendar;
 		}
 
+		$lwtv_tz   = new DateTimeZone( 'America/New_York' );
+		$tvmaze_tz = new DateTimeZone( 'UTC' );
+
 		if ( empty( $whats_on ) ) {
-			$datetime = new DateTime( $when );
+			$datetime = new DateTime( $when, $lwtv_tz );
 			$when_day = $datetime->format( 'l' );
 
 			$return['none'] = 'Nothing is on TV ' . $when_day . '.';
 		} else {
 			foreach ( $whats_on as $episode ) {
-				$lwtv_tz   = new DateTimeZone( 'America/New_York' );
-				$tvmaze_tz = new DateTimeZone( 'UTC' );
 				$showtime  = new DateTime( $episode->dtstart, $tvmaze_tz );
 				$timestamp = $showtime->getTimestamp();
 

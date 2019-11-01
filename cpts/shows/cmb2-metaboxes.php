@@ -60,6 +60,23 @@ class LWTV_Shows_CMB2 {
 	}
 
 	/*
+	 * Create a list of all shows
+	 */
+	public function cmb2_get_genres_options() {
+		$the_id = ( false !== get_the_ID() ) ? get_the_ID() : 0;
+		if ( 0 === $the_id ) {
+			$return = '';
+		} else {
+			$terms  = get_the_terms( $the_id, 'lez_genres' );
+			foreach ( $terms as $term ) {
+				$return[ $term->term_id ] = $term->name;
+			}
+		}
+
+		return $return;
+	}
+
+	/*
 	 * CMB2 Metaboxes
 	 */
 	public function cmb2_metaboxes() {
@@ -94,7 +111,7 @@ class LWTV_Shows_CMB2 {
 			array(
 				'name'      => 'Excerpt',
 				'id'        => 'excerpt',
-				'desc'      => 'Excerpts are short, one to two sentance, summaries of what the show is about. This will be used on the list of all shows, as well as the front page for new shows.',
+				'desc'      => 'Excerpts are short, one to two sentences, summaries of what the show is about. This will be used on the list of all shows, as well as the front page for new shows.',
 				'type'      => 'textarea',
 				'escape_cb' => false,
 				'default'   => get_post_field( 'post_excerpt', $post_id ),
@@ -223,20 +240,18 @@ class LWTV_Shows_CMB2 {
 				),
 			)
 		);
-		// Field: Show Intersectionality
-		$field_intersectional = $cmb_mustsee->add_field(
+
+		// Add in a field for PRIMARY genre, populated by the saved values for lez_genres. Cool.
+		// How the fuck do I do that?
+		// Field: Genre Primary
+		$field_genre_primary = $cmb_mustsee->add_field(
 			array(
-				'name'              => 'Intersectionality',
-				'id'                => $prefix . 'intersectional',
-				'taxonomy'          => 'lez_intersections',
-				'type'              => 'pw_multiselect',
-				'select_all_button' => false,
-				'remove_default'    => 'true',
-				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_intersections' ),
-				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_intersectional', 'lez_intersections', $post_id ),
-				'attributes'        => array(
-					'placeholder' => 'Ex. Disabilities',
-				),
+				'name'             => 'Primary Genre',
+				'id'               => $prefix . 'tvgenre_primary',
+				'type'             => 'select',
+				'show_option_none' => true,
+				'default'          => 'custom',
+				'options_cb'       => array( $this, 'cmb2_get_genres_options' ),
 			)
 		);
 		// Field: Show Stars
@@ -261,6 +276,22 @@ class LWTV_Shows_CMB2 {
 				'type'             => 'taxonomy_select',
 				'remove_default'   => 'true',
 				'show_option_none' => 'None',
+			)
+		);
+		// Field: Show Intersectionality
+		$field_intersectional = $cmb_mustsee->add_field(
+			array(
+				'name'              => 'Intersectionality',
+				'id'                => $prefix . 'intersectional',
+				'taxonomy'          => 'lez_intersections',
+				'type'              => 'pw_multiselect',
+				'select_all_button' => false,
+				'remove_default'    => 'true',
+				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_intersections' ),
+				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_intersectional', 'lez_intersections', $post_id ),
+				'attributes'        => array(
+					'placeholder' => 'Ex. Disabilities',
+				),
 			)
 		);
 		// Field: Tropes
@@ -292,7 +323,7 @@ class LWTV_Shows_CMB2 {
 			$row1ms->addColumns( array( $field_airdates, $field_seasons ) );
 			$row2ms->addColumns( array( $field_stations, $field_nations ) );
 			$row3ms->addColumns( array( $field_format, $field_imdb ) );
-			$row4ms->addColumns( array( $field_genre, $field_intersectional ) );
+			$row4ms->addColumns( array( $field_genre, $field_genre_primary ) );
 			$row5ms->addColumns( array( $field_stars, $field_trigger ) );
 		}
 		// Field: Worth It?

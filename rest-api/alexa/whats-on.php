@@ -27,8 +27,10 @@ class LWTV_Alexa_Whats_On {
 
 		if ( $count > 0 ) {
 			$how_many  = $count . ' ' . _n( 'show', 'shows', $count ) . ' are on TV today';
-			$showcount = 1;
-			$episodes  = '';
+			$showcount  = 1;
+			$episodes   = '';
+			$show_array = array();
+
 			foreach ( $data as $one_show ) {
 				if ( $showcount === $count && 1 !== $count ) {
 					$episodes .= 'And ';
@@ -38,7 +40,7 @@ class LWTV_Alexa_Whats_On {
 				$showcount++;
 			}
 		}
-		$output = $how_many . ' on ' . date( 'l F jS', $timestamp ) . '. ' . $episodes . ' All times are US Eastern.';
+		$output = $how_many . ' ' . date( 'l F jS', $timestamp ) . '. ' . $episodes . ' All times are US Eastern.';
 
 		return $output;
 	}
