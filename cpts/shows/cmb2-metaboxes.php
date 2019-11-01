@@ -290,18 +290,16 @@ class LWTV_Shows_CMB2 {
 				),
 			)
 		);
-
-		// Add in a field for PRIMARY genre, populated by the saved values for lez_genres. Cool.
-		// How the fuck do I do that?
 		// Field: Genre Primary
 		$field_genre_primary = $cmb_mustsee->add_field(
 			array(
 				'name'             => 'Primary Genre',
 				'id'               => $prefix . 'tvgenre_primary',
 				'type'             => 'select',
-				'show_option_none' => true,
 				'default'          => 'custom',
 				'options_cb'       => array( $this, 'cmb2_get_genres_options' ),
+				'remove_default'   => 'true',
+				'show_option_none' => 'None (that\'s okay!)',
 			)
 		);
 		// Field: Show Stars
