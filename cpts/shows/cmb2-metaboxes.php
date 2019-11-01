@@ -21,6 +21,8 @@ class LWTV_Shows_CMB2 {
 
 	public function __construct() {
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
+		add_filter( 'cmb2_enqueue_js', array( $this, 'cmb2_scripts' ) );
+		add_action( 'wp_ajax_get_genres', array( $this, 'return_genres_options' ) );
 
 		// Array of Valid Ratings
 		$this->ratings_array = array(
@@ -42,6 +44,19 @@ class LWTV_Shows_CMB2 {
 
 	}
 
+	/**
+	 * Use CMB2 filter to load our JavaScript
+	 * when CMB loads his/hers.
+	 *
+	 * @param $return
+	 *
+	 * @return mixed
+	 */
+	public function cmb2_scripts( $return ) {
+		wp_enqueue_script( 'ajaxified_dropdown', plugin_dir_url( dirname( dirname( __FILE__ ) ) ) . 'assets/js/cmb2_ajax.js', array( 'jquery' ), '1.0.0', true );
+		return $return;
+	}
+
 	/*
 	 * Create a list of all shows
 	 */
@@ -60,7 +75,8 @@ class LWTV_Shows_CMB2 {
 	}
 
 	/*
-	 * Create a list of all shows
+	 * Create a list of all genres that the show has
+	 * Now how do I make this auto-refresh?!?!
 	 */
 	public function cmb2_get_genres_options() {
 		$the_id = ( false !== get_the_ID() ) ? get_the_ID() : 0;
@@ -74,6 +90,40 @@ class LWTV_Shows_CMB2 {
 		}
 
 		return $return;
+	}
+
+
+	public function return_genres_options() {
+		$terms_array = array();
+
+		// @codingStandardsIgnoreStart
+		$genres = $_POST[ 'value' ];
+		// @codingStandardsIgnoreEnd
+
+		// Force this to be an array
+		if ( ! is_array( $genres ) ) {
+			$genres = array( (int) $genres );
+		}
+
+		// Rebuild our array
+		foreach ( $genres as $a_genre ) {
+			// get term name by ID
+			$term_data = get_term_by( 'id', (int) $a_genre, 'lez_genres' );
+			$terms_array[ $term_data->name ] = $a_genre;
+		}
+
+		// Alphabetize
+		ksort( $terms_array );
+
+		// Output
+		foreach ( $terms_array as $term_name => $term_id ) {
+			$output .= sprintf( "<option value='%s'>%s</option>", $term_id, $term_name );
+		}
+
+		if ( ! empty( $output ) ) {
+			wp_send_json_success( $output );
+		}
+		wp_send_json_error();
 	}
 
 	/*
