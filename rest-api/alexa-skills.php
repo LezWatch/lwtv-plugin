@@ -191,6 +191,15 @@ class LWTV_Alexa_Skills {
 						$output = LWTV_Alexa_Who::who_is( $actor );
 					}
 					break;
+				case 'WhoAreYouShows':
+					// NOT WRITTEN
+					if ( ! $actor ) {
+						$output = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+					} else {
+						require_once 'alexa/who-are-you.php';
+						$output = LWTV_Alexa_Who::shows( $actor );
+					}
+					break;
 				case 'IsQueer':
 					if ( ! $actor ) {
 						$output = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
@@ -211,6 +220,26 @@ class LWTV_Alexa_Skills {
 					require_once 'alexa/whats-on.php';
 					$output = LWTV_Alexa_Whats_On::on_a_day( $date );
 					break;
+				case 'WhatsOnShows':
+					if ( ! $show ) {
+						$output = 'I\'m sorry, I didn\'t quite catch the name of the television show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+					} else {
+						require_once 'alexa/whats-on.php';
+						$output = LWTV_Alexa_Whats_On::show( $show );
+					}
+					break;
+
+				// Generic shows skill:
+				// 1) What shows do you reccomend?
+
+				// Tell me about... SKILL
+				// This will handle shows, actors, characters?
+				// Tell me about the show?
+				// - One Day at a Time [is a show we love]...
+				// tell me about the character?
+				// - Sara Lance is ...
+				// tell me about the actor?
+
 				case 'AMAZON.HelpIntent':
 					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female, non-binary and transgender characters on international television. ' . $helptext;
 					$endsession = false;

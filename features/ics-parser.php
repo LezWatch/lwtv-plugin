@@ -19,7 +19,13 @@ use ICal\ICal;
  */
 class LWTV_ICS_Parser {
 
-	public static function generate( $url, $when ) {
+	/**
+	 * Generate calendar by date
+	 * @param  string $url  URL of calendar
+	 * @param  string $when today or tomorrow
+	 * @return array        All events for today or tomorrow
+	 */
+	public static function generate_by_date( $url, $when ) {
 		$ical = new ICal();
 		$ical->initUrl( esc_url( $url ) );
 
@@ -43,6 +49,20 @@ class LWTV_ICS_Parser {
 		$events         = $ical->eventsFromRange( $interval_start, $interval_end );
 
 		return $events;
+	}
+
+	/**
+	 * Generate calendar by date
+	 * @param  string $url  URL of calendar
+	 * @param  string $name Name of show
+	 * @return array        Next upcoming showing for the show.
+	 */
+	public static function generate_by_show( $url, $name ) {
+
+		// Get all the times a show with the name is on? I guess search and find the display name...
+
+		return $events;
+
 	}
 
 }

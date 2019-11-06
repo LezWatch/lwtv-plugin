@@ -39,17 +39,24 @@ class LWTV_Alexa_Who {
 				$output = 'I found more than one actor matching that name. ';
 			}
 
+			// change to: Ali L is a Cisgender woman and queer. Her birthday is XX, she is YY years old and Tracy is in love with her. READ BIO.
+
 			foreach ( $results as $actor ) {
 				$queer = ( $actor['is_queer'] ) ? 'a queer actor' : 'an actor';
 				// translators: %s is the number of queer character
 				$characters = ( 0 === $actor['characters'] ) ? 'no queer characters' : sprintf( _n( '%s queer character', '%s queer characters', $actor['characters'] ), $actor['characters'] );
 				$output    .= $actor['name'] . ' is ' . $queer . ' who has played ' . $characters . ' on television. ';
 			}
+
+			// followup: What shows has X been on?
 		}
 
 		return $output;
 	}
 
+	public function shows( $actor = false ) {
+		// what shows is an actor on?
+	}
 
 	/**
 	 * is_gay function.
@@ -74,22 +81,10 @@ class LWTV_Alexa_Who {
 			}
 
 			foreach ( $results as $actor ) {
-				$queer = ( $actor['is_queer'] ) ? 'is queer' : 'is not queer';
 
-				switch ( $actor['gender'] ) {
-					case 'Cis Woman':
-					case 'Trans Woman':
-						$pronoun = 'She identifies';
-						break;
-					case 'Cis Man':
-					case 'Trans Man':
-						$pronoun = 'He identifies';
-						break;
-					default:
-						$pronoun = 'They identify';
-				}
+				$output .= $actor['name'] . ' is a ' . strtolower( $actor['gender'] ) . ' and ' . strtolower( $actor['sexuality'] ) . '.';
 
-				$output .= $actor['name'] . ' ' . $queer . '. ' . $pronoun . ' as a ' . strtolower( $actor['sexuality'] ) . ' ' . strtolower( $actor['gender'] ) . '.';
+				// "Would you like to learn more about Ali Liebter? Ask Lez Watch t. v. tell me more about NAME"
 			}
 		} else {
 			$output = 'I can\'t find an actor who has played a character by that name.';

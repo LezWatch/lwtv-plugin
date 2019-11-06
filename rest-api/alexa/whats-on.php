@@ -36,13 +36,19 @@ class LWTV_Alexa_Whats_On {
 					$episodes .= 'And ';
 				}
 				$eptime    = $one_show['rawdate'];
-				$episodes .= $one_show['episode'] . ' at ' . date( 'g:i A', $eptime + 5 * 3600 ) . '. ';
+				// TO DO: Strip episode numbers
+				// Time is somehow off?
+				$episodes .= $one_show['episode'] . ' at ' . date( 'g:i A', $eptime + ( 19 * 3600 ) ) . '. ';
 				$showcount++;
 			}
 		}
 		$output = $how_many . ' ' . date( 'l F jS', $timestamp ) . '. ' . $episodes . ' All times are US Eastern.';
 
 		return $output;
+	}
+
+	public function show( $show ) {
+		// when is the show on next? Needs to finish the whats-on file?
 	}
 
 }
