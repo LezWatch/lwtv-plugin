@@ -59,17 +59,17 @@
     },
     {
         "name": "nesbot/carbon",
-        "version": "2.25.1",
-        "version_normalized": "2.25.1.0",
+        "version": "2.26.0",
+        "version_normalized": "2.26.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/briannesbitt/Carbon.git",
-            "reference": "d59c6cea9c4a3547bb6c0dfec451319abdaa4fb1"
+            "reference": "e01ecc0b71168febb52ae1fdc1cfcc95428e604e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/d59c6cea9c4a3547bb6c0dfec451319abdaa4fb1",
-            "reference": "d59c6cea9c4a3547bb6c0dfec451319abdaa4fb1",
+            "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/e01ecc0b71168febb52ae1fdc1cfcc95428e604e",
+            "reference": "e01ecc0b71168febb52ae1fdc1cfcc95428e604e",
             "shasum": ""
         },
         "require": {
@@ -85,7 +85,7 @@
             "phpunit/phpunit": "^7.5 || ^8.0",
             "squizlabs/php_codesniffer": "^3.4"
         },
-        "time": "2019-10-05T15:52:23+00:00",
+        "time": "2019-10-21T21:32:25+00:00",
         "bin": [
             "bin/carbon"
         ],
@@ -189,17 +189,17 @@
     },
     {
         "name": "symfony/translation",
-        "version": "v4.3.5",
-        "version_normalized": "4.3.5.0",
+        "version": "v4.3.6",
+        "version_normalized": "4.3.6.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/translation.git",
-            "reference": "fe6193b066c457c144333c06aaa869a2d42a167f"
+            "reference": "a3aa590ce944afb3434d7a55f81b00927144d5ec"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/translation/zipball/fe6193b066c457c144333c06aaa869a2d42a167f",
-            "reference": "fe6193b066c457c144333c06aaa869a2d42a167f",
+            "url": "https://api.github.com/repos/symfony/translation/zipball/a3aa590ce944afb3434d7a55f81b00927144d5ec",
+            "reference": "a3aa590ce944afb3434d7a55f81b00927144d5ec",
             "shasum": ""
         },
         "require": {
@@ -232,7 +232,7 @@
             "symfony/config": "",
             "symfony/yaml": ""
         },
-        "time": "2019-09-27T14:37:39+00:00",
+        "time": "2019-10-30T12:53:54+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {

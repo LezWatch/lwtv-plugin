@@ -1,7 +1,7 @@
 {
     "name": "lezwatch/lwtv-plugin",
     "description": "LezWatch.TV Plugin",
-    "type": "wordpress plugin",
+    "type": "wordpress-plugin",
     "keywords": ["wordpress","plugin"],
     "license": "GPLv3",
     "authors": [
