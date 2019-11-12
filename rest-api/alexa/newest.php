@@ -29,6 +29,7 @@ class LWTV_Alexa_Newest {
 
 		$output = 'The latest character added to Lez Watch T. V. was ' . $character . '. The latest show added was ' . $show . '. And the latest character who died was ' . $death . '.';
 
+		// TO DO
 		// add in latest 3 posts
 		// Tell people how to read those posts?
 		// That would be a separate invocation?

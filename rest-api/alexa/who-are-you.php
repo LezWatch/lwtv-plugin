@@ -39,6 +39,7 @@ class LWTV_Alexa_Who {
 				$output = 'I found more than one actor matching that name. ';
 			}
 
+			// TO DO
 			// change to: Ali L is a Cisgender woman and queer. Her birthday is XX, she is YY years old and Tracy is in love with her. READ BIO.
 
 			foreach ( $results as $actor ) {
@@ -55,6 +56,7 @@ class LWTV_Alexa_Who {
 	}
 
 	public function shows( $actor = false ) {
+		// TO DO
 		// what shows is an actor on?
 	}
 
