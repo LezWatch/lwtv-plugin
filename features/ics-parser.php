@@ -4,7 +4,7 @@ Description: ICS Parser
 
 https://github.com/u01jmg3/ics-parser
 
-Version: 1.0
+Version: 1.1
 */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -20,10 +20,10 @@ use ICal\ICal;
 class LWTV_ICS_Parser {
 
 	/**
-	 * Generate calendar by date
+	 * Generate what's on for a specific date
 	 * @param  string $url  URL of calendar
-	 * @param  string $when today or tomorrow
-	 * @return array        All events for today or tomorrow
+	 * @param  string $when string of a day [today, tomorrow]
+	 * @return array        array of all the shows on that day
 	 */
 	public static function generate_by_date( $url, $when ) {
 		$ical = new ICal();
@@ -40,29 +40,23 @@ class LWTV_ICS_Parser {
 				$start_datetime = new DateTime( 'tomorrow', $tz );
 				$end_datetime   = new DateTime( 'tomorrow + 1day', $tz );
 				break;
+			case 'full':
+				$start_datetime = new DateTime( 'today', $tz );
+				$end_datetime   = new DateTime( 'today + 30days', $tz );
+				break;
+			default:
+				$custom_date    = $when;
+				$start_datetime = new DateTime( $custom_date, $tz );
+				$end_datetime   = new DateTime( $custom_date . ' + 1day', $tz );
+				break;
 		}
 
 		// We have to be off by 5 hours because of UTC and New York.
 		$interval_start = $start_datetime->format( 'Y-m-d' ) . ' 05:00:00';
 		$interval_end   = $end_datetime->format( 'Y-m-d' ) . ' 04:59:00';
-
 		$events         = $ical->eventsFromRange( $interval_start, $interval_end );
 
 		return $events;
-	}
-
-	/**
-	 * Generate calendar by date
-	 * @param  string $url  URL of calendar
-	 * @param  string $name Name of show
-	 * @return array        Next upcoming showing for the show.
-	 */
-	public static function generate_by_show( $url, $name ) {
-
-		// Get all the times a show with the name is on? I guess search and find the display name...
-
-		return $events;
-
 	}
 
 }

@@ -185,7 +185,8 @@ class LWTV_Alexa_Skills {
 					break;
 				case 'WhoAreYou':
 					if ( ! $actor ) {
-						$output = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$output     = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
 					} else {
 						require_once 'alexa/who-are-you.php';
 						$output = LWTV_Alexa_Who::who_is( $actor );
@@ -193,16 +194,18 @@ class LWTV_Alexa_Skills {
 					break;
 				case 'WhoAreYouShows':
 					// NOT WRITTEN
-					if ( ! $actor ) {
-						$output = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+					if ( ! $show ) {
+						$output     = 'I\'m sorry, I didn\'t quite catch the name of the show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
 					} else {
 						require_once 'alexa/who-are-you.php';
-						$output = LWTV_Alexa_Who::shows( $actor );
+						$output = LWTV_Alexa_Who::shows( $show );
 					}
 					break;
 				case 'IsQueer':
 					if ( ! $actor ) {
-						$output = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$output     = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
 					} else {
 						require_once 'alexa/who-are-you.php';
 						$output = LWTV_Alexa_Who::is_gay( $actor );
@@ -210,7 +213,8 @@ class LWTV_Alexa_Skills {
 					break;
 				case 'SimilarShow':
 					if ( ! $show ) {
-						$output = 'I\'m sorry, I didn\'t quite catch the name of the television show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$output     = 'I\'m sorry, I didn\'t quite catch the name of the television show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
 					} else {
 						require_once 'alexa/similar-show.php';
 						$output = LWTV_Alexa_Shows::similar_to( $show );
@@ -222,7 +226,8 @@ class LWTV_Alexa_Skills {
 					break;
 				case 'WhatsOnShows':
 					if ( ! $show ) {
-						$output = 'I\'m sorry, I didn\'t quite catch the name of the television show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$output     = 'I\'m sorry, I didn\'t quite catch the name of the television show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
 					} else {
 						require_once 'alexa/whats-on.php';
 						$output = LWTV_Alexa_Whats_On::show( $show );

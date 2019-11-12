@@ -262,8 +262,9 @@ In order to make maintenance easier, instead of checking everything all the time
 
 #### Installation and Updating
 
-1. `npm install`
-2. `composer update`
+1. `npm update`
+2. `npm install`
+3. `composer update`
 
 Composer will move everything into the right place, even NPM files.
 

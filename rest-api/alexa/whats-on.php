@@ -23,10 +23,10 @@ class LWTV_Alexa_Whats_On {
 		// Get the list of what's on:
 		$data = LWTV_Whats_On_JSON::whats_on( $date );
 
-		$count    = ( 'none' === key( $data ) ) ? 0 : count( $data );
+		$count = ( 'none' === key( $data ) ) ? 0 : count( $data );
 
 		if ( $count > 0 ) {
-			$how_many  = $count . ' ' . _n( 'show', 'shows', $count ) . ' are on TV today';
+			$how_many   = $count . ' ' . _n( 'show', 'shows', $count ) . ' are on TV today';
 			$showcount  = 1;
 			$episodes   = '';
 			$show_array = array();
@@ -35,14 +35,13 @@ class LWTV_Alexa_Whats_On {
 				if ( $showcount === $count && 1 !== $count ) {
 					$episodes .= 'And ';
 				}
-				$eptime    = $one_show['rawdate'];
-				// TO DO: Strip episode numbers
+				$eptime = $one_show['rawdate'];
 				// Time is somehow off?
-				$episodes .= $one_show['episode'] . ' at ' . date( 'g:i A', $eptime + ( 19 * 3600 ) ) . '. ';
+				$episodes .= $one_show['show'] . ' at ' . gmdate( 'g:i A', $eptime + ( 19 * 3600 ) ) . '. ';
 				$showcount++;
 			}
 		}
-		$output = $how_many . ' ' . date( 'l F jS', $timestamp ) . '. ' . $episodes . ' All times are US Eastern.';
+		$output = $how_many . ' ' . gmdate( 'l F jS', $timestamp ) . '. ' . $episodes . ' All times are US Eastern.';
 
 		return $output;
 	}
