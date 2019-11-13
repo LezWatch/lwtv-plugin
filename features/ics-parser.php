@@ -25,15 +25,18 @@ class LWTV_ICS_Parser {
 	 * @param  string $when string of a day [today, tomorrow]
 	 * @return array        array of all the shows on that day
 	 */
-	public static function generate_by_date( $url, $when ) {
+	public static function generate_by_date( $url, $when, $date = false ) {
 		$ical = new ICal();
 		$ical->initUrl( esc_url( $url ) );
 
 		$tz = new DateTimeZone( 'America/New_York' );
+		$dt = new DateTime( 'today', $tz );
+
+		// Default is today:
+		$start_datetime = $dt;
 
 		switch ( $when ) {
 			case 'today':
-				$start_datetime = new DateTime( 'today', $tz );
 				$end_datetime   = new DateTime( 'today + 1day', $tz );
 				break;
 			case 'tomorrow':
@@ -41,11 +44,30 @@ class LWTV_ICS_Parser {
 				$end_datetime   = new DateTime( 'tomorrow + 1day', $tz );
 				break;
 			case 'full':
-				$start_datetime = new DateTime( 'today', $tz );
+				$start_datetime = $dt;
 				$end_datetime   = new DateTime( 'today + 30days', $tz );
 				break;
-			default:
-				$custom_date    = $when;
+			case 'week':
+				
+				// If the week has no date, it's this week
+				if ( ! $date ) {
+					if ( 'Sun' === $dt->format( 'D' ) ) {
+						$start_datetime   = new DateTime( 'today', $tz );
+					} else {
+						$start_datetime = new DateTime( 'last Sunday', $tz );
+					}
+					if ( 'Sat' === $dt->format( 'D' ) ) {
+						$end_datetime   = new DateTime( 'today', $tz );
+					} else {
+						$end_datetime = new DateTime( 'Saturday', $tz );
+					}
+				} else {
+					// ????
+				}
+				break;
+			case 'date':
+				// We've passed a custom DAY
+				$custom_date    = $date;
 				$start_datetime = new DateTime( $custom_date, $tz );
 				$end_datetime   = new DateTime( $custom_date . ' + 1day', $tz );
 				break;
@@ -57,6 +79,12 @@ class LWTV_ICS_Parser {
 		$events         = $ical->eventsFromRange( $interval_start, $interval_end );
 
 		return $events;
+	}
+
+	// This
+	public static function generate_block() {
+
+		return $return;
 	}
 
 }

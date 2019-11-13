@@ -42,20 +42,7 @@ class LWTV_ServerSideRendering {
 			)
 		);
 
-		// Statistics
-		register_block_type(
-			'lwtv/statistics',
-			array(
-				'attributes'      => array(
-					'page' => array(
-						'type' => 'string',
-					),
-				),
-				'render_callback' => array( 'LWTV_Stats_SSR', 'statistics' ),
-			)
-		);
-
-		// Author CPT Stuff
+		// CPT Stuff: This is a proto-attempt to include CMB2 in the post.
 		register_block_type(
 			'lez-library/cpt-meta',
 			array(
@@ -63,8 +50,23 @@ class LWTV_ServerSideRendering {
 				'render_callback' => array( $this, 'render_cpt_meta' ),
 			)
 		);
+
+		// Calendar
+		register_block_type(
+			'lwtv/calendar',
+			array(
+				'attributes'      => array(),
+				'render_callback' => array( 'LWTV_ICS_Parser', 'generate_block' ),
+			)
+		);
+
 	}
 
+	/**
+	 * Render Custom Post Meta
+	 * @param  [type] $atts [description]
+	 * @return [type]       [description]
+	 */
 	public function render_cpt_meta( $atts ) {
 
 		// Don't show on the front end.

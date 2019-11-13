@@ -31,7 +31,7 @@ class LWTV_Whats_On_JSON {
 	 *
 	 * Creates callbacks
 	 *   - /lwtv/v1/whats-on/
-	 *   - /lwtv/v1/whats-on/today
+	 *   - /lwtv/v1/whats-on/[today|tomorrow]
 	 *   - /lwtv/v1/whats-on/show
 	 */
 	public function rest_api_init() {
@@ -66,6 +66,22 @@ class LWTV_Whats_On_JSON {
 			array(
 				'methods'  => 'GET',
 				'callback' => array( $this, 'rest_api_callback_show' ),
+			)
+		);
+		register_rest_route(
+			'lwtv/v1',
+			'/whats-on/week/',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'rest_api_callback_week' ),
+			)
+		);
+		register_rest_route(
+			'lwtv/v1',
+			'/whats-on/week/(?P<date>[\d]{4}-[\d]{2}-[\d]{2})',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'rest_api_callback_week' ),
 			)
 		);
 	}
@@ -104,6 +120,27 @@ class LWTV_Whats_On_JSON {
 	}
 
 	/**
+	 * Rest API Callback: What's on WEEK?
+	 */
+	public static function rest_api_callback_week( $data ) {
+		$params = $data->get_params();
+
+		if ( isset( $params['when'] ) && '' !== $params['when'] && preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $params['when'] ) ) {
+			$tz        = 'America/New_York';
+			$timestamp = time();
+			$dt        = new DateTime( 'now', new DateTimeZone( $tz ) );
+			$dt->setTimestamp( $timestamp );
+			$datetime = $dt->createFromFormat( 'Y-m-d', $params['when'] );
+			$response = $this->whats_on_week( $datetime );
+		} else {
+			// If there's no valid date, we assume today
+			$response = $this->whats_on_week();
+		}
+
+		return $response;
+	}
+
+	/**
 	 * Rest API Callback: WHEN is a show on?
 	 */
 	public static function rest_api_callback_show( $data ) {
@@ -136,10 +173,9 @@ class LWTV_Whats_On_JSON {
 		}
 
 		if ( empty( $whats_on ) ) {
-			$datetime = new DateTime( $when, $lwtv_tz );
-			$when_day = $datetime->format( 'l' );
-
-			$return['none'] = 'Nothing is on TV ' . $when_day . '.';
+			$datetime       = new DateTime( $when, $lwtv_tz );
+			$when_day       = $datetime->format( 'l' );
+			$return['none'] = 'Nothing is on TV this ' . $when_day . '.';
 		} else {
 			$return = self::parse_calendar( $whats_on );
 		}
@@ -155,7 +191,38 @@ class LWTV_Whats_On_JSON {
 	public static function whats_on_date( $when ) {
 		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
 		$lwtv_tz  = new DateTimeZone( 'America/New_York' );
-		$calendar = LWTV_ICS_Parser::generate_by_date( TV_MAZE, $when );
+		$calendar = LWTV_ICS_Parser::generate_by_date( TV_MAZE, 'date', $when );
+		$whats_on = $calendar;
+
+		if ( empty( $whats_on ) ) {
+			$datetime = new DateTime( $when, $lwtv_tz );
+			$when_day = $datetime->format( 'l' );
+
+			$return['none'] = 'Nothing is on TV ' . $when_day . '.';
+		} else {
+			$return = self::parse_calendar( $whats_on );
+		}
+
+		return $return;
+	}
+
+	/*
+	 * What's On Week
+	 *
+	 * This is good for whole weeks (eg 2019-11-11)
+	 */
+	public static function whats_on_week( $when = 'today' ) {
+		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
+		$lwtv_tz  = new DateTimeZone( 'America/New_York' );
+
+		return "TEST";
+
+		if ( 'today' === $when ) {
+			$calendar = LWTV_ICS_Parser::generate_by_date( TV_MAZE, 'week' );
+		} else {
+			$calendar = LWTV_ICS_Parser::generate_by_date( TV_MAZE, 'week', $when );
+		}
+
 		$whats_on = $calendar;
 
 		if ( empty( $whats_on ) ) {
@@ -203,12 +270,19 @@ class LWTV_Whats_On_JSON {
 					// See if anything on the array is the show we want.
 					foreach ( $whats_on as $key => $val ) {
 						if ( $val['show'] === $show_name ) {
-							// There is/are X upcoming airing(s) of SHOWNAME in the next 30 days. The first is DAY at TIME.
 							// Translators: $val['count'] is the number of episodes.
-							$episodes = _n( 'is %s upcoming airing', 'are %s upcoming airings', $val['count'] );
-							// THIS DATE ISN"T WORKING
-							$datetime = $dt->createFromFormat( 'Y-m-d', $val['rawdate'] );
-							$return   = 'There ' . $episodes . ' of ' . $show_name . ' in the next 30 days. The first will air on ' . $datetime;
+							$episodes = sprintf( _n( 'is %s upcoming airing', 'are %s upcoming airings', $val['count'] ), $val['count'] );
+
+							// Convert the date
+							$datetime = $dt->createFromFormat( 'U', $val['rawdate'] );
+
+							// Translators: $val['count'] is the number of episodes.
+							$will_air = _n( 'It', 'The first', $val['count'] );
+
+							$return = array(
+								'pretty' => 'There ' . $episodes . ' of "' . $show_name . '" in the next 30 days. ' . $will_air . ' will air on ' . $datetime->format( 'M d' ) . ' at ' . $val['airtime'] . ' US Eastern.',
+								'simple' => $datetime->format( 'M d' ) . ' at ' . $val['airtime'] . ' US Eastern.',
+							);
 						}
 					}
 				}
@@ -230,37 +304,41 @@ class LWTV_Whats_On_JSON {
 		$tvmaze_tz = new DateTimeZone( 'UTC' );
 		$on_array  = array();
 
-		foreach ( $whats_on as $episode ) {
-			$showtime  = new DateTime( $episode->dtstart, $tvmaze_tz );
-			$timestamp = $showtime->getTimestamp();
-			$offset    = $lwtv_tz->getOffset( $showtime );
-			$interval  = DateInterval::createFromDateString( (string) $offset . 'seconds' );
-			$showtime->add( $interval );
+		if ( empty( $whats_on ) || ! is_array( $whats_on ) ) {
+			$return = 'Error: The calendar is empty.';
+		} else {
+			foreach ( $whats_on as $episode ) {
+				$showtime  = new DateTime( $episode->dtstart, $tvmaze_tz );
+				$timestamp = $showtime->getTimestamp();
+				$offset    = $lwtv_tz->getOffset( $showtime );
+				$interval  = DateInterval::createFromDateString( (string) $offset . 'seconds' );
+				$showtime->add( $interval );
 
-			// Reformat the show name and episode name
-			$show_name      = substr( $episode->summary, 0, strpos( $episode->summary, ':' ) );
-			$episode_number = trim( substr( $episode->summary, strpos( $episode->summary, ':' ) + 1 ) );
+				// Reformat the show name and episode name
+				$show_name      = substr( $episode->summary, 0, strpos( $episode->summary, ':' ) );
+				$episode_number = trim( substr( $episode->summary, strpos( $episode->summary, ':' ) + 1 ) );
 
-			if ( array_key_exists( $show_name, $on_array ) ) {
-				if ( ! is_array( $on_array[ $show_name ]['title'] ) ) {
-					$on_array[ $show_name ]['title'] = array( $on_array[ $show_name ]['title'] );
+				if ( array_key_exists( $show_name, $on_array ) ) {
+					if ( ! is_array( $on_array[ $show_name ]['title'] ) ) {
+						$on_array[ $show_name ]['title'] = array( $on_array[ $show_name ]['title'] );
+					}
+					$on_array[ $show_name ]['count']++;
+					$on_array[ $show_name ]['show']  = $show_name;
+					$on_array[ $show_name ]['title'] = $on_array[ $show_name ]['count'] . ' episodes';
+				} else {
+					$on_array[ $show_name ] = array(
+						'show'    => $show_name,
+						'title'   => $episode->description . ' (' . $episode_number . ')',
+						'airtime' => $showtime->format( 'H:i' ),
+						'rawdate' => $timestamp,
+						'count'   => 1,
+					);
 				}
-				$on_array[ $show_name ]['count']++;
-				$on_array[ $show_name ]['show']  = $show_name;
-				$on_array[ $show_name ]['title'] = $on_array[ $show_name ]['count'] . ' episodes';
-			} else {
-				$on_array[ $show_name ] = array(
-					'show'    => $show_name,
-					'title'   => $episode->description . ' (' . $episode_number . ')',
-					'airtime' => $showtime->format( 'H:i' ),
-					'rawdate' => $timestamp,
-					'count'   => 1,
-				);
 			}
-		}
 
-		foreach ( $on_array as $is_on ) {
-			$return[] = $is_on;
+			foreach ( $on_array as $is_on ) {
+				$return[] = $is_on;
+			}
 		}
 
 		return $return;
