@@ -81,3 +81,11 @@
 	-webkit-font-smoothing: antialiased;
 	color: #d1548e;
 }
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	padding: 5px!important;
+}
+
+body.post-type-post_type_shows .cmb2-text-url {
+	width: 90%;
+}

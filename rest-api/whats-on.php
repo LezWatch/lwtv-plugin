@@ -98,6 +98,9 @@ class LWTV_Whats_On_JSON {
 			case 'week':
 				$response = $this->whats_on_week( $date );
 				break;
+			default:
+				$response = array( '404' => 'No valid calendar found.' );
+				break;
 		}
 
 		return $response;
@@ -112,21 +115,17 @@ class LWTV_Whats_On_JSON {
 
 		$when_today = array( 'today', 'now', 'tonight' );
 		$when       = ( in_array( $when, $when_today, true ) ) ? 'today' : $when;
-		$when_array = array( 'today', 'tomorrow' );
+		$when       = ( ! in_array( $when, array( 'today', 'tomorrow' ), true ) ) ? 'today' : $when;
 		$lwtv_tz    = new DateTimeZone( 'America/New_York' );
 
-		if ( ! in_array( $when, $when_array, true ) && ! LWTV_Functions::validate_date( $when ) ) {
-			$whats_on = 'I may be good, but I\'m not that good. Please only ask me about today and tomorrow.';
-		} else {
-			require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
-			$calendar = LWTV_ICS_Parser::generate_by_date( TV_MAZE, $when );
-			$whats_on = $calendar;
-		}
+		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
+		$calendar = LWTV_ICS_Parser::generate_by_date( TV_MAZE, $when );
+		$whats_on = $calendar;
 
 		if ( empty( $whats_on ) ) {
 			$datetime       = new DateTime( $when, $lwtv_tz );
 			$when_day       = $datetime->format( 'l' );
-			$return['none'] = 'Nothing is on TV this ' . $when_day . '.';
+			$return['none'] = 'Nothing queer is on TV on ' . $when_day . '.';
 		} else {
 			$return = self::parse_calendar( $whats_on );
 		}

@@ -1,7 +1,7 @@
 <?php
 /*
 Description: Customizations for CMB2
-Version: 2.0.1
+Version: 2.0.2
 */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -26,7 +26,7 @@ class LWTV_CMB2 {
 	 */
 	public function __construct() {
 
-		$this->version = '2.0.1';
+		$this->version = '2.0.2';
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'cmb2_admin_init', array( $this, 'favorite_shows_user_profile_metabox' ) );
