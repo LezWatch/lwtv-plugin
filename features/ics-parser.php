@@ -23,6 +23,7 @@ class LWTV_ICS_Parser {
 	 * Generate what's on for a specific date
 	 * @param  string $url  URL of calendar
 	 * @param  string $when string of a day [today, tomorrow]
+	 * @param  string $date date event happens [Y-m-d]
 	 * @return array        array of all the shows on that day
 	 */
 	public static function generate_by_date( $url, $when, $date = false ) {
@@ -36,40 +37,46 @@ class LWTV_ICS_Parser {
 		$start_datetime = $dt;
 
 		switch ( $when ) {
+			case 'date':
+				$start_datetime = DateTime::createFromFormat( 'Y-m-d', $date );
+				$start_datetime->setTimeZone( $tz );
+				$end_datetime   = DateTime::createFromFormat( 'Y-m-d', $date );
+				$end_datetime->setTimeZone( $tz );
+				$end_datetime->modify( '+1 day' );
+				break;
+			case 'full':
+				$end_datetime = new DateTime( 'today + 30days', $tz );
+				break;
 			case 'today':
-				$end_datetime   = new DateTime( 'today + 1day', $tz );
+				$end_datetime = new DateTime( 'today + 1day', $tz );
 				break;
 			case 'tomorrow':
 				$start_datetime = new DateTime( 'tomorrow', $tz );
 				$end_datetime   = new DateTime( 'tomorrow + 1day', $tz );
 				break;
-			case 'full':
-				$start_datetime = $dt;
-				$end_datetime   = new DateTime( 'today + 30days', $tz );
-				break;
 			case 'week':
-				
 				// If the week has no date, it's this week
 				if ( ! $date ) {
-					if ( 'Sun' === $dt->format( 'D' ) ) {
-						$start_datetime   = new DateTime( 'today', $tz );
-					} else {
+					$start_datetime = new DateTime( 'today', $tz );
+					if ( 'Sun' !== $dt->format( 'D' ) ) {
 						$start_datetime = new DateTime( 'last Sunday', $tz );
 					}
-					if ( 'Sat' === $dt->format( 'D' ) ) {
-						$end_datetime   = new DateTime( 'today', $tz );
-					} else {
-						$end_datetime = new DateTime( 'Saturday', $tz );
-					}
+
+					$end_datetime = new DateTime( 'today', $tz );
+					$end_datetime->modify( '+1 week' );
 				} else {
-					// ????
+					$start_dt = DateTime::createFromFormat( 'Y-m-d', $date );
+					$start_dt->setTimeZone( $tz );
+					$start_datetime = $start_dt;
+					if ( 'Sun' !== $start_dt->format( 'D' ) ) {
+						$start_datetime->modify( 'Sunday' );
+					}
+
+					$end_dt = DateTime::createFromFormat( 'Y-m-d', $date );
+					$end_dt->setTimeZone( $tz );
+					$end_datetime = $end_dt;
+					$end_datetime->modify( '+1 week' );
 				}
-				break;
-			case 'date':
-				// We've passed a custom DAY
-				$custom_date    = $date;
-				$start_datetime = new DateTime( $custom_date, $tz );
-				$end_datetime   = new DateTime( $custom_date . ' + 1day', $tz );
 				break;
 		}
 
@@ -79,12 +86,6 @@ class LWTV_ICS_Parser {
 		$events         = $ical->eventsFromRange( $interval_start, $interval_end );
 
 		return $events;
-	}
-
-	// This
-	public static function generate_block() {
-
-		return $return;
 	}
 
 }

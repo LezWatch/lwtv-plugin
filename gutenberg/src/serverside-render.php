@@ -33,11 +33,7 @@ class LWTV_ServerSideRendering {
 		register_block_type(
 			'lez-library/glossary',
 			array(
-				'attributes'      => array(
-					'taxonomy' => array(
-						'type' => 'string',
-					),
-				),
+				'attributes'      => array( 'taxonomy' => array( 'type' => 'string' ) ),
 				'render_callback' => array( 'LWTV_Shortcodes', 'glossary' ),
 			)
 		);
@@ -51,14 +47,18 @@ class LWTV_ServerSideRendering {
 			)
 		);
 
-		// Calendar
-		register_block_type(
-			'lwtv/calendar',
-			array(
-				'attributes'      => array(),
-				'render_callback' => array( 'LWTV_ICS_Parser', 'generate_block' ),
-			)
-		);
+	}
+
+	/**
+	 * Render the ICS
+	 * @param  [type] $atts [description]
+	 * @return [type]       [description]
+	 */
+	public function render_ics_calendar( $atts ) {
+
+		$calendar = LWTV_Whats_On_JSON::whats_on_week( $atts['date'] );
+
+		return $calendar;
 
 	}
 

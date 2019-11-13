@@ -31,8 +31,8 @@ class LWTV_Whats_On_JSON {
 	 *
 	 * Creates callbacks
 	 *   - /lwtv/v1/whats-on/
-	 *   - /lwtv/v1/whats-on/[today|tomorrow]
-	 *   - /lwtv/v1/whats-on/show
+	 *   - /lwtv/v1/whats-on/[today|tomorrow|week|month|year]
+	 *   - /lwtv/v1/whats-on/show/YYYY-MM-DD
 	 */
 	public function rest_api_init() {
 		register_rest_route(
@@ -40,7 +40,7 @@ class LWTV_Whats_On_JSON {
 			'/whats-on/',
 			array(
 				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback_dayname' ),
+				'callback' => array( $this, 'rest_api_callback' ),
 			)
 		);
 		register_rest_route(
@@ -48,106 +48,57 @@ class LWTV_Whats_On_JSON {
 			'/whats-on/(?P<when>[a-zA-Z0-9-]+)',
 			array(
 				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback_dayname' ),
-			)
-		);
-
-		register_rest_route(
-			'lwtv/v1',
-			'/whats-on/(?P<date>[\d]{4}-[\d]{2}-[\d]{2})',
-			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback_date' ),
+				'callback' => array( $this, 'rest_api_callback' ),
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
-			'/whats-on/show/(?P<name>[a-zA-Z0-9-]+)',
+			'/whats-on/(?P<when>[a-zA-Z0-9-]+)/(?P<name>[a-zA-Z0-9-]+)',
 			array(
 				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback_show' ),
-			)
-		);
-		register_rest_route(
-			'lwtv/v1',
-			'/whats-on/week/',
-			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback_week' ),
-			)
-		);
-		register_rest_route(
-			'lwtv/v1',
-			'/whats-on/week/(?P<date>[\d]{4}-[\d]{2}-[\d]{2})',
-			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback_week' ),
+				'callback' => array( $this, 'rest_api_callback' ),
 			)
 		);
 	}
 
 	/**
-	 * Rest API Callback: What's on NOW?
+	 * Rest API Callback
 	 */
-	public static function rest_api_callback_dayname( $data ) {
+	public static function rest_api_callback( $data ) {
 		$params = $data->get_params();
 		$when   = ( isset( $params['when'] ) && '' !== $params['when'] ) ? sanitize_title_for_query( $params['when'] ) : 'today';
+		$show   = ( isset( $params['name'] ) && '' !== $params['name'] ) ? sanitize_title_for_query( $params['name'] ) : false;
+		$date   = false;
 
-		$response = self::whats_on_dayname( $when );
-
-		return $response;
-	}
-
-	/**
-	 * Rest API Callback: What's on DATE?
-	 */
-	public static function rest_api_callback_date( $data ) {
-		$params = $data->get_params();
-
-		if ( isset( $params['when'] ) && '' !== $params['when'] && preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $params['when'] ) ) {
-			$tz        = 'America/New_York';
-			$timestamp = time();
-			$dt        = new DateTime( 'now', new DateTimeZone( $tz ) );
-			$dt->setTimestamp( $timestamp );
-			$datetime = $dt->createFromFormat( 'Y-m-d', $params['when'] );
-			$response = $this->whats_on_date( $datetime );
-		} else {
-			// If there's no valid date, we assume today
-			$response = $this->whats_on_dayname( 'today' );
+		// Check if there's a valid date
+		if ( preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $params['name'] ) ) {
+			$date = $params['name'];
 		}
 
-		return $response;
-	}
-
-	/**
-	 * Rest API Callback: What's on WEEK?
-	 */
-	public static function rest_api_callback_week( $data ) {
-		$params = $data->get_params();
-
-		if ( isset( $params['when'] ) && '' !== $params['when'] && preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $params['when'] ) ) {
-			$tz        = 'America/New_York';
-			$timestamp = time();
-			$dt        = new DateTime( 'now', new DateTimeZone( $tz ) );
-			$dt->setTimestamp( $timestamp );
-			$datetime = $dt->createFromFormat( 'Y-m-d', $params['when'] );
-			$response = $this->whats_on_week( $datetime );
-		} else {
-			// If there's no valid date, we assume today
-			$response = $this->whats_on_week();
+		// Sometimes when comes in as a date, and if so, it's a date call.
+		if ( preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $when ) ) {
+			$date = $params['when'];
+			$when = 'date';
 		}
 
-		return $response;
-	}
-
-	/**
-	 * Rest API Callback: WHEN is a show on?
-	 */
-	public static function rest_api_callback_show( $data ) {
-		$params = $data->get_params();
-		$show   = ( isset( $params['name'] ) && '' !== $params['name'] ) ? sanitize_title_for_query( $params['name'] ) : 'unknown';
-
-		$response = $this->whats_on_show( $show );
+		// Figure out what we're running...
+		switch ( $when ) {
+			case 'date':
+				$response = $this->whats_on_date( $date );
+				break;
+			case 'show':
+				$response = $this->whats_on_show( $show );
+				break;
+			case 'today':
+			case 'tomorrow':
+			case 'tonight':
+			case 'now':
+				$response = self::whats_on_dayname( $when );
+				break;
+			case 'week':
+				$response = $this->whats_on_week( $date );
+				break;
+		}
 
 		return $response;
 	}
@@ -188,10 +139,11 @@ class LWTV_Whats_On_JSON {
 	 *
 	 * This is good for dates (eg 2019-11-11)
 	 */
-	public static function whats_on_date( $when ) {
+	public static function whats_on_date( $date ) {
+
 		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
 		$lwtv_tz  = new DateTimeZone( 'America/New_York' );
-		$calendar = LWTV_ICS_Parser::generate_by_date( TV_MAZE, 'date', $when );
+		$calendar = LWTV_ICS_Parser::generate_by_date( TV_MAZE, 'date', $date );
 		$whats_on = $calendar;
 
 		if ( empty( $whats_on ) ) {
@@ -211,13 +163,11 @@ class LWTV_Whats_On_JSON {
 	 *
 	 * This is good for whole weeks (eg 2019-11-11)
 	 */
-	public static function whats_on_week( $when = 'today' ) {
+	public static function whats_on_week( $when = 'now' ) {
 		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
-		$lwtv_tz  = new DateTimeZone( 'America/New_York' );
+		$lwtv_tz = new DateTimeZone( 'America/New_York' );
 
-		return "TEST";
-
-		if ( 'today' === $when ) {
+		if ( 'now' === $when ) {
 			$calendar = LWTV_ICS_Parser::generate_by_date( TV_MAZE, 'week' );
 		} else {
 			$calendar = LWTV_ICS_Parser::generate_by_date( TV_MAZE, 'week', $when );
@@ -229,7 +179,7 @@ class LWTV_Whats_On_JSON {
 			$datetime = new DateTime( $when, $lwtv_tz );
 			$when_day = $datetime->format( 'l' );
 
-			$return['none'] = 'Nothing is on TV ' . $when_day . '.';
+			$return['none'] = 'Nothing is on TV that week. We\'re pretty shocked too!';
 		} else {
 			$return = self::parse_calendar( $whats_on );
 		}
