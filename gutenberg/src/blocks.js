@@ -21,8 +21,11 @@ import './glossary/block.js';
 // Screener
 import './screener/block.js';
 
-// Statistics
-import './statistics/block.js';
+// Statistics - Not used
+//import './statistics/block.js';
 
-// This Year
-import './this-year/block.js';
+// This Year - Not used
+//import './this-year/block.js';
+
+// TV Shows Calendar
+import './tvshow-calendar/block.js';

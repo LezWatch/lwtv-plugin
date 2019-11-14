@@ -74,7 +74,7 @@ class LWTV_Shows_Like_This_JSON {
 			if ( $show_obj ) {
 				$show_id = $show_obj->ID;
 
-				$response = wp_remote_get( home_url() . '/wp-json/related-posts-by-taxonomy/v1/posts/' . $show_id . '?fields=ids&taxonomies=lez_country,lez_stars,lez_genres,lez_intersections,lez_showtagged' );
+				$response = wp_remote_get( home_url() . '/wp-json/related-posts-by-taxonomy/v1/posts/' . $show_id . '?fields=ids&taxonomies=lez_genres,lez_intersections,lez_showtagged' );
 				if ( is_array( $response ) ) {
 					$rel_shows = json_decode( wp_remote_retrieve_body( $response ), true );
 					$related   = array();

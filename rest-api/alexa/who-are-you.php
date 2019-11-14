@@ -30,7 +30,7 @@ class LWTV_Alexa_Who {
 		}
 
 		// Get the actor array:
-		$results = self::search_this( $name );
+		$results = self::search_actors( $name );
 
 		if ( ! isset( $results ) || ! $results ) {
 			$output = 'I can\'t find an actor who has played a queer character by that name.';
@@ -39,17 +39,48 @@ class LWTV_Alexa_Who {
 				$output = 'I found more than one actor matching that name. ';
 			}
 
+			// TO DO
+			// change to: Ali L is a Cisgender woman and queer. Her birthday is XX, she is YY years old and Tracy is in love with her. READ BIO.
+
 			foreach ( $results as $actor ) {
-				$queer = ( $actor['is_queer'] ) ? 'a queer actor' : 'an actor';
+
+				if ( false !== $actor['start'] ) {
+					$age_stuff = 'was born ' . $actor['start'];
+					if ( false !== $actor['end'] ) {
+						$age_stuff .= ' and';
+					}
+				}
+
+				if ( false !== $actor['end'] ) {
+					$age_stuff .= ' died ' . $actor['end'];
+
+					if ( false !== $actor['age'] ) {
+						$age_stuff .= ' at ' . $actor['age'] . ' years of age.';
+					}
+				} else {
+					if ( false !== $actor['age'] ) {
+						$age_stuff .= ' is ' . $actor['age'] . ' years old.';
+					}
+				}
+
 				// translators: %s is the number of queer character
 				$characters = ( 0 === $actor['characters'] ) ? 'no queer characters' : sprintf( _n( '%s queer character', '%s queer characters', $actor['characters'] ), $actor['characters'] );
-				$output    .= $actor['name'] . ' is ' . $queer . ' who has played ' . $characters . ' on television. ';
+
+				$output    .= $actor['name'] . ' is a ' . $actor['gender'] . ' ' . $actor['sexuality'] . ' who has played ' . $characters . ' on television. ' . $actor['name'] . ' ' . $age_stuff . '.';
+
+				// TO DO: Add the bio here.
 			}
+
+			// followup: What shows has X been on?
 		}
 
 		return $output;
 	}
 
+	public function shows( $actor = false ) {
+		// TO DO
+		// what shows is an actor on?
+	}
 
 	/**
 	 * is_gay function.
@@ -66,7 +97,7 @@ class LWTV_Alexa_Who {
 		}
 
 		// Get the actor array:
-		$results = self::search_this( $name );
+		$results = self::search_actors( $name );
 
 		if ( isset( $results ) ) {
 			if ( count( $results ) > 1 ) {
@@ -74,22 +105,10 @@ class LWTV_Alexa_Who {
 			}
 
 			foreach ( $results as $actor ) {
-				$queer = ( $actor['is_queer'] ) ? 'is queer' : 'is not queer';
 
-				switch ( $actor['gender'] ) {
-					case 'Cis Woman':
-					case 'Trans Woman':
-						$pronoun = 'She identifies';
-						break;
-					case 'Cis Man':
-					case 'Trans Man':
-						$pronoun = 'He identifies';
-						break;
-					default:
-						$pronoun = 'They identify';
-				}
+				$output .= $actor['name'] . ' is a ' . strtolower( $actor['gender'] ) . ' and ' . strtolower( $actor['sexuality'] ) . '.';
 
-				$output .= $actor['name'] . ' ' . $queer . '. ' . $pronoun . ' as a ' . strtolower( $actor['sexuality'] ) . ' ' . strtolower( $actor['gender'] ) . '.';
+				// "Would you like to learn more about Ali Liebter? Ask Lez Watch t. v. tell me more about NAME"
 			}
 		} else {
 			$output = 'I can\'t find an actor who has played a character by that name.';
@@ -99,13 +118,13 @@ class LWTV_Alexa_Who {
 	}
 
 	/**
-	 * search_this function.
+	 * search_actors function.
 	 *
 	 * @access public
 	 * @param mixed $name (default: = false)
 	 * @return void
 	 */
-	public function search_this( $name = false ) {
+	public function search_actors( $name = false ) {
 
 		if ( ! $name ) {
 			return false;
@@ -165,10 +184,11 @@ class LWTV_Alexa_Who {
 					$actor_arr[ get_post_field( 'post_name' ) ] = array(
 						'name'       => get_the_title(),
 						'characters' => get_post_meta( get_the_ID(), 'lezactors_char_count', true ),
-						'dead'       => get_post_meta( get_the_ID(), 'lezactors_dead_count', true ),
-						'is_queer'   => get_post_meta( get_the_ID(), 'lezactors_queer', true ),
+						'biography'  => apply_filters( 'the_content', get_the_content() ),
 						'gender'     => implode( ', ', $gender ),
 						'sexuality'  => implode( ', ', $sexuality ),
+						'born'       => $start,
+						'died'       => $end,
 						'age'        => $age,
 					);
 				}
