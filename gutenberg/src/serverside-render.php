@@ -18,12 +18,8 @@ class LWTV_ServerSideRendering {
 			'lwtv/author-box',
 			array(
 				'attributes'      => array(
-					'users'  => array(
-						'type' => 'string',
-					),
-					'format' => array(
-						'type' => 'string',
-					),
+					'users'  => array( 'type' => 'string' ),
+					'format' => array( 'type' => 'string' ),
 				),
 				'render_callback' => array( 'LWTV_Shortcodes', 'author_box' ),
 			)
@@ -35,6 +31,14 @@ class LWTV_ServerSideRendering {
 			array(
 				'attributes'      => array( 'taxonomy' => array( 'type' => 'string' ) ),
 				'render_callback' => array( 'LWTV_Shortcodes', 'glossary' ),
+			)
+		);
+
+		// TV Show Calendar
+		register_block_type(
+			'lwtv/tvshow-calendar',
+			array(
+				'render_callback' => array( $this, 'render_tvshow_calendar' ),
 			)
 		);
 
@@ -50,15 +54,54 @@ class LWTV_ServerSideRendering {
 	}
 
 	/**
-	 * Render the ICS
-	 * @param  [type] $atts [description]
-	 * @return [type]       [description]
+	 * Render the calendar
+	 * TO DO: Make this navigatable...
 	 */
-	public function render_ics_calendar( $atts ) {
+	public function render_tvshow_calendar() {
 
-		$calendar = LWTV_Whats_On_JSON::whats_on_week( $atts['date'] );
+		// Build out start and end dates.
+		$tz = new DateTimeZone( 'America/New_York' );
 
-		return $calendar;
+		$start_datetime = new DateTime( 'today', $tz );
+		if ( 'Sun' !== $start_datetime->format( 'D' ) ) {
+			$start_datetime = new DateTime( 'last Sunday', $tz );
+		}
+
+		$end_datetime = new DateTime( 'today', $tz );
+		$end_datetime->modify( '+1 week' );
+
+		// Begin the return
+		$return = '<h2 class="lwtv-calendar-week">Week of ' . $start_datetime->format( 'F d, Y' ) . ' - ' . $end_datetime->format( 'F d, Y' ) . ' </h2>';
+
+		// Array
+		$calendar = LWTV_Whats_On_JSON::generate_tvshow_calendar( gmdate( 'Y-m-d' ) );
+
+		if ( isset( $calendar['none'] ) ) {
+			$return .= '<p>There are no shows on the air.</p>';
+		} else {
+			$return .= '<ul class="lwtv-calendar-list">';
+
+			foreach ( $calendar as $day => $shows ) {
+				$return .= '<li><h3 class="lwtv-calendar-date">' . $day . '</h3><ul>';
+				foreach ( $shows as $show ) {
+
+					// Show name
+					$return .= '<li><h4>' . $show['show_name'] . '</h4>';
+
+					// Show Time
+					$return .= '<div><span class="time">' . $show['airtime'] . ' US/Eastern</span></div>';
+
+					// Episode Title(s)
+					$return .= '<div class="lwtv-calendar-episode-title">' . $show['title'] . '</div>';
+
+					$return .= '</li>';
+				}
+				$return .= '</ul></li>';
+			}
+			$return .= '</ul>';
+		}
+
+		return $return;
 
 	}
 

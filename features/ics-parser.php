@@ -60,21 +60,24 @@ class LWTV_ICS_Parser {
 					$start_datetime = new DateTime( 'today', $tz );
 					if ( 'Sun' !== $dt->format( 'D' ) ) {
 						$start_datetime = new DateTime( 'last Sunday', $tz );
+						$end_datetime = new DateTime( 'last Sunday', $tz );
 					}
 
-					$end_datetime = new DateTime( 'today', $tz );
 					$end_datetime->modify( '+1 week' );
 				} else {
 					$start_dt = DateTime::createFromFormat( 'Y-m-d', $date );
 					$start_dt->setTimeZone( $tz );
 					$start_datetime = $start_dt;
-					if ( 'Sun' !== $start_dt->format( 'D' ) ) {
-						$start_datetime->modify( 'Sunday' );
-					}
 
 					$end_dt = DateTime::createFromFormat( 'Y-m-d', $date );
 					$end_dt->setTimeZone( $tz );
 					$end_datetime = $end_dt;
+
+					if ( 'Sun' !== $start_dt->format( 'D' ) ) {
+						$start_datetime->modify( 'Sunday' );
+						$end_datetime->modify( 'Sunday' );
+					}
+
 					$end_datetime->modify( '+1 week' );
 				}
 				break;
@@ -83,6 +86,7 @@ class LWTV_ICS_Parser {
 		// We have to be off by 5 hours because of UTC and New York.
 		$interval_start = $start_datetime->format( 'Y-m-d' ) . ' 05:00:00';
 		$interval_end   = $end_datetime->format( 'Y-m-d' ) . ' 04:59:00';
+
 		$events         = $ical->eventsFromRange( $interval_start, $interval_end );
 
 		return $events;

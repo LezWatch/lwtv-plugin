@@ -2,14 +2,14 @@
  * BLOCK: Author Box
  */
 
- //  Import CSS.
- import './style.scss';
- import './editor.scss';
+//  Import CSS.
+import './style.scss';
+import './editor.scss';
 
- const { registerBlockType } = wp.blocks;
- const { createElement, Fragment } = wp.element;
- const { InspectorControls } = wp.editor;
- const { ServerSideRender, TextControl, PanelBody, SelectControl } = wp.components;
+const { registerBlockType } = wp.blocks;
+const { createElement, Fragment } = wp.element;
+const { InspectorControls } = wp.blockEditor;
+const { ServerSideRender, TextControl, PanelBody, SelectControl } = wp.components;
 
 // Edit as it's own file
 import edit from './edit';

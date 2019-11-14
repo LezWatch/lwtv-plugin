@@ -71,7 +71,7 @@ class LWTV_Whats_On_JSON {
 		$date   = false;
 
 		// Check if there's a valid date
-		if ( preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $params['name'] ) ) {
+		if ( isset( $params['name'] ) && preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $params['name'] ) ) {
 			$date = $params['name'];
 		}
 
@@ -228,9 +228,12 @@ class LWTV_Whats_On_JSON {
 							// Translators: $val['count'] is the number of episodes.
 							$will_air = _n( 'It', 'The first', $val['count'] );
 
+							// Episode titles
+
 							$return = array(
-								'pretty' => 'There ' . $episodes . ' of "' . $show_name . '" in the next 30 days. ' . $will_air . ' will air on ' . $datetime->format( 'M d' ) . ' at ' . $val['airtime'] . ' US Eastern.',
-								'simple' => $datetime->format( 'M d' ) . ' at ' . $val['airtime'] . ' US Eastern.',
+								'pretty'   => 'There ' . $episodes . ' of "' . $show_name . '" in the next 30 days. ' . $will_air . ' will air on ' . $datetime->format( 'M d' ) . ' at ' . $val['airtime'] . ' US Eastern.',
+								'episodes' => $val['episodes'],
+								'simple'   => $datetime->format( 'M d' ) . ' at ' . $val['airtime'] . ' US Eastern.',
 							);
 						}
 					}
@@ -239,6 +242,48 @@ class LWTV_Whats_On_JSON {
 		}
 
 		return $return;
+	}
+
+	/**
+	 * [generate_tvshow_calendar description]
+	 * @param  [type] $date [description]
+	 * @return [type]       [description]
+	 */
+	public static function generate_tvshow_calendar( $date ) {
+
+		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
+		$lwtv_tz   = new DateTimeZone( 'America/New_York' );
+		$tvmaze_tz = new DateTimeZone( 'UTC' );
+
+		$by_day_array   = array();
+		$episodes_array = LWTV_ICS_Parser::generate_by_date( TV_MAZE, 'week', $date );
+
+		if ( empty( $episodes_array ) ) {
+			$return['none'] = 'Nothing is on TV that week. We\'re pretty shocked too!';
+		} else {
+			foreach ( $episodes_array as $episode ) {
+
+				$showtime  = new DateTime( $episode->dtstart, $tvmaze_tz );
+				$timestamp = $showtime->getTimestamp();
+				$offset    = $lwtv_tz->getOffset( $showtime );
+				$interval  = DateInterval::createFromDateString( (string) $offset . 'seconds' );
+				$showtime->add( $interval );
+
+				// Reformat the show name and episode name
+				$show_name      = substr( $episode->summary, 0, strpos( $episode->summary, ':' ) );
+				$episode_number = trim( substr( $episode->summary, strpos( $episode->summary, ':' ) + 1 ) );
+				$airdate        = $showtime->format( 'l F d, Y' );
+
+				$by_day_array[ $airdate ][] = array(
+					'show_name' => $show_name,
+					'title'     => $episode->description . ' (' . $episode_number . ')',
+					'airtime'   => $showtime->format( 'g:i A' ),
+					'rawdate'   => $timestamp,
+				);
+			}
+		}
+
+		return $by_day_array;
 
 	}
 
@@ -271,16 +316,38 @@ class LWTV_Whats_On_JSON {
 					if ( ! is_array( $on_array[ $show_name ]['title'] ) ) {
 						$on_array[ $show_name ]['title'] = array( $on_array[ $show_name ]['title'] );
 					}
+
+					// Build out the episodes because we need these.
+					if ( 1 === $on_array[ $show_name ]['episodes'] ) {
+						$on_array[ $show_name ]['episodes'] = array(
+							array(
+								'title'   => $on_array[ $show_name ]['title'], // episode title
+								'rawdate' => $on_array[ $show_name ]['rawdate'], // timestamp of airdate
+							),
+							array(
+								'title'   => $episode->description . ' (' . $episode_number . ')', // episode title
+								'rawdate' => $timestamp, // timestamp of airdate
+							),
+						);
+					} else {
+						$on_array[ $show_name ]['episodes'][] = array(
+							'title'   => $episode->description . ' (' . $episode_number . ')', // episode title
+							'rawdate' => $timestamp, // timestamp of airdate
+						);
+					}
+
 					$on_array[ $show_name ]['count']++;
 					$on_array[ $show_name ]['show']  = $show_name;
 					$on_array[ $show_name ]['title'] = $on_array[ $show_name ]['count'] . ' episodes';
 				} else {
 					$on_array[ $show_name ] = array(
-						'show'    => $show_name,
-						'title'   => $episode->description . ' (' . $episode_number . ')',
-						'airtime' => $showtime->format( 'H:i' ),
-						'rawdate' => $timestamp,
-						'count'   => 1,
+						'show'     => $show_name,
+						'title'    => $episode->description . ' (' . $episode_number . ')',
+						'airdate'  => $showtime->format( 'F d, Y' ),
+						'airtime'  => $showtime->format( 'H:i' ),
+						'rawdate'  => $timestamp,
+						'episodes' => 1,
+						'count'    => 1,
 					);
 				}
 			}

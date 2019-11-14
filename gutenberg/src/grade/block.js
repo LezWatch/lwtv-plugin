@@ -5,7 +5,7 @@ import './editor.scss';
 const { __ } = wp.i18n;
 const { Fragment, Component } = wp.element;
 const { createBlock, registerBlockType } = wp.blocks;
-const { RichText, PlainText, InspectorControls } = wp.editor;
+const { RichText, PlainText, InspectorControls } = wp.blockEditor;
 const { PanelBody, ToggleControl, SelectControl } = wp.components;
 
 registerBlockType( 'lwtv/grade', {

@@ -46,9 +46,17 @@ class LWTV_Alexa_Whats_On {
 		return $output;
 	}
 
+	/**
+	 * What's on show
+	 * @param  string $show Slug of the TV show
+	 * @return string       Pretty language about what's on
+	 */
 	public function show( $show ) {
-		// TO DO
-		// when is the show on next? Needs to finish the whats-on file?
+		$data   = LWTV_Whats_On_JSON::whats_on_show( $show );
+		$output = $data['pretty'];
+
+		return $output;
+
 	}
 
 }
