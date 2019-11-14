@@ -74,8 +74,9 @@ class LWTV_Alexa_Shows {
 		}
 
 		// Remove <!--fwp-loop--> from output
-		// phpcs:ignore
+		// @codingStandardsIgnoreStart
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+		// @codingStandardsIgnoreEnd
 
 		$args = array(
 			's'              => $name,
@@ -110,6 +111,53 @@ class LWTV_Alexa_Shows {
 		}
 
 		return $show_arr;
+	}
+
+	public static function recommended() {
+
+		// Number of shows
+		$count = wp_count_posts( 'post_type_shows' )->publish;
+
+		// @codingStandardsIgnoreStart
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+		// @codingStandardsIgnoreEnd
+
+		$love_args  = array(
+			'post_type'      => 'post_type_shows',
+			'post_status'    => 'publish',
+			'posts_per_page' => 40,
+			'meta_query'     => array(
+				array(
+					'key'     => 'lezshows_worthit_show_we_love',
+					'value'   => 'on',
+					'compare' => '=',
+				),
+			),
+		);
+		$love_list  = get_posts( $love_args );
+		$love_array = array();
+
+		if ( $love_list->have_posts() ) {
+			$output = 'Out of the ' . $count . ' shows in our database, we recommend the following: ';
+			while ( $love_list->have_posts() ) {
+				$love_list->the_post();
+				$love_array[] = get_the_title();
+			}
+			wp_reset_postdata();
+
+			if ( isset( $love_array ) ) {
+				$random_love = array_rand( $love_array );
+				if ( count( $love_array ) > 1 ) {
+					$last_element = array_pop( $love_array );
+					array_push( $love_array, 'and ' . $last_element );
+				}
+				$love_string = implode( ', ', $love_array );
+				$output     .= $love_string;
+			}
+			$output .= 'Want to know more? You can ask me "Tell me about the show ' . $random_love . '".';
+		} else {
+			$output = 'Something must be wrong. Our show robot cannot recommend any shows at this time. Try asking me "What shows are like Batwoman" while we get this fixed.';
+		}
 	}
 
 }

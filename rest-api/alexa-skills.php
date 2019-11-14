@@ -101,12 +101,13 @@ class LWTV_Alexa_Skills {
 	 */
 	public function news_rest_api_callback( WP_REST_Request $request ) {
 
-		$type   = ( isset( $request['request']['type'] ) ) ? sanitize_text_field( $request['request']['type'] ) : false;
-		$intent = ( isset( $request['request']['intent']['name'] ) ) ? sanitize_text_field( $request['request']['intent']['name'] ) : false;
-		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false;
-		$actor  = ( isset( $request['request']['intent']['slots']['actor']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['actor']['value'] ) : false;
-		$show   = ( isset( $request['request']['intent']['slots']['show']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['show']['value'] ) : false;
-		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) ) ? sanitize_text_field( $request['request']['session']['application']['applicationId'] ) : false;
+		$type      = ( isset( $request['request']['type'] ) ) ? sanitize_text_field( $request['request']['type'] ) : false;
+		$intent    = ( isset( $request['request']['intent']['name'] ) ) ? sanitize_text_field( $request['request']['intent']['name'] ) : false;
+		$date      = ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false;
+		$actor     = ( isset( $request['request']['intent']['slots']['actor']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['actor']['value'] ) : false;
+		$character = ( isset( $request['request']['intent']['slots']['character']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['character']['value'] ) : false;
+		$show      = ( isset( $request['request']['intent']['slots']['show']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['show']['value'] ) : false;
+		$req_id    = ( isset( $request['request']['session']['application']['applicationId'] ) ) ? sanitize_text_field( $request['request']['session']['application']['applicationId'] ) : false;
 
 		// Call the validation:
 		require_once 'alexa/alexa-validate.php';
@@ -189,17 +190,27 @@ class LWTV_Alexa_Skills {
 						$endsession = false;
 					} else {
 						require_once 'alexa/who-are-you.php';
-						$output = LWTV_Alexa_Who::who_is( $actor );
+						$output = LWTV_Alexa_Who::actor( $actor );
 					}
 					break;
-				case 'WhoAreYouShows':
-					// NOT WRITTEN
+				case 'WhoAreYouShow':
+					// NOT WRITTEN: Tells you about a specific show.
 					if ( ! $show ) {
 						$output     = 'I\'m sorry, I didn\'t quite catch the name of the show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
 						$endsession = false;
 					} else {
 						require_once 'alexa/who-are-you.php';
-						$output = LWTV_Alexa_Who::shows( $show );
+						$output = LWTV_Alexa_Who::show( $show );
+					}
+					break;
+				case 'WhoAreYouChar':
+					// NOT WRITTEN: Tells you about a specific character
+					if ( ! $character ) {
+						$output     = 'I\'m sorry, I didn\'t quite catch the name of the character you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
+					} else {
+						require_once 'alexa/who-are-you.php';
+						$output = LWTV_Alexa_Who::character( $character );
 					}
 					break;
 				case 'IsQueer':
@@ -216,7 +227,7 @@ class LWTV_Alexa_Skills {
 						$output     = 'I\'m sorry, I didn\'t quite catch the name of the television show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
 						$endsession = false;
 					} else {
-						require_once 'alexa/similar-show.php';
+						require_once 'alexa/shows.php';
 						$output = LWTV_Alexa_Shows::similar_to( $show );
 					}
 					break;
@@ -233,19 +244,10 @@ class LWTV_Alexa_Skills {
 						$output = LWTV_Alexa_Whats_On::show( $show );
 					}
 					break;
-
-				// TO DO
-				// Generic shows skill:
-				// 1) What shows do you reccomend?
-
-				// Tell me about... SKILL
-				// This will handle shows, actors, characters?
-				// Tell me about the show?
-				// - One Day at a Time [is a show we love]...
-				// tell me about the character?
-				// - Sara Lance is ...
-				// tell me about the actor?
-
+				case 'RecommendShows':
+					require_once 'alexa/shows.php';
+					$output = LWTV_Alexa_Shows::recommend();
+					break;
 				case 'AMAZON.HelpIntent':
 					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female, non-binary and transgender characters on international television. ' . $helptext;
 					$endsession = false;

@@ -193,6 +193,12 @@ class LWTV_Whats_On_JSON {
 
 		$return = 'Our show robots were unable to find a television show with that name.';
 
+		// If we passed a show ID, try to flip it to a post-slug
+		// Pretty much so we can be lazy in other places.
+		if ( is_numeric( $show ) ) {
+			$show = get_permalink( $show );
+		}
+
 		if ( 'unknown' !== $show ) {
 			$show_obj = get_page_by_path( $show, OBJECT, 'post_type_shows' );
 			if ( $show_obj ) {
@@ -222,18 +228,14 @@ class LWTV_Whats_On_JSON {
 							// Translators: $val['count'] is the number of episodes.
 							$episodes = sprintf( _n( 'is %s upcoming airing', 'are %s upcoming airings', $val['count'] ), $val['count'] );
 
-							// Convert the date
-							$datetime = $dt->createFromFormat( 'U', $val['rawdate'] );
-
 							// Translators: $val['count'] is the number of episodes.
 							$will_air = _n( 'It', 'The first', $val['count'] );
 
 							// Episode titles
 
 							$return = array(
-								'pretty'   => 'There ' . $episodes . ' of "' . $show_name . '" in the next 30 days. ' . $will_air . ' will air on ' . $datetime->format( 'M d' ) . ' at ' . $val['airtime'] . ' US Eastern.',
-								'episodes' => $val['episodes'],
-								'simple'   => $datetime->format( 'M d' ) . ' at ' . $val['airtime'] . ' US Eastern.',
+								'pretty' => 'There ' . $episodes . ' of "' . $show_name . '" in the next 30 days. ' . $will_air . ' will air on ' . $val['airdate'] . ' at ' . $val['airtime'] . ' US/Eastern.',
+								'nextep' => $val['nextep'],
 							);
 						}
 					}
@@ -278,7 +280,6 @@ class LWTV_Whats_On_JSON {
 					'show_name' => $show_name,
 					'title'     => $episode->description . ' (' . $episode_number . ')',
 					'airtime'   => $showtime->format( 'g:i A' ),
-					'rawdate'   => $timestamp,
 				);
 			}
 		}
@@ -317,37 +318,17 @@ class LWTV_Whats_On_JSON {
 						$on_array[ $show_name ]['title'] = array( $on_array[ $show_name ]['title'] );
 					}
 
-					// Build out the episodes because we need these.
-					if ( 1 === $on_array[ $show_name ]['episodes'] ) {
-						$on_array[ $show_name ]['episodes'] = array(
-							array(
-								'title'   => $on_array[ $show_name ]['title'], // episode title
-								'rawdate' => $on_array[ $show_name ]['rawdate'], // timestamp of airdate
-							),
-							array(
-								'title'   => $episode->description . ' (' . $episode_number . ')', // episode title
-								'rawdate' => $timestamp, // timestamp of airdate
-							),
-						);
-					} else {
-						$on_array[ $show_name ]['episodes'][] = array(
-							'title'   => $episode->description . ' (' . $episode_number . ')', // episode title
-							'rawdate' => $timestamp, // timestamp of airdate
-						);
-					}
-
 					$on_array[ $show_name ]['count']++;
 					$on_array[ $show_name ]['show']  = $show_name;
 					$on_array[ $show_name ]['title'] = $on_array[ $show_name ]['count'] . ' episodes';
 				} else {
 					$on_array[ $show_name ] = array(
-						'show'     => $show_name,
-						'title'    => $episode->description . ' (' . $episode_number . ')',
-						'airdate'  => $showtime->format( 'F d, Y' ),
-						'airtime'  => $showtime->format( 'H:i' ),
-						'rawdate'  => $timestamp,
-						'episodes' => 1,
-						'count'    => 1,
+						'show'    => $show_name,
+						'title'   => $episode->description . ' (' . $episode_number . ')',
+						'airdate' => $showtime->format( 'F d, Y' ),
+						'airtime' => $showtime->format( 'g:i A' ),
+						'nextep'  => '"' . $episode->description . '" (' . $episode_number . ') on ' . $showtime->format( 'l F d, Y' ) . ' at ' . $showtime->format( 'g:i A' ) . ' US/Eastern.',
+						'count'   => 1,
 					);
 				}
 			}
