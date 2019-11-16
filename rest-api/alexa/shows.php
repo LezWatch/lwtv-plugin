@@ -1,6 +1,6 @@
 <?php
 /*
-Description: REST-API - Alexa Skills - Similar Shows
+Description: REST-API - Alexa Skills - Shows
 
 This is how we figure out what shows are like other shows
 

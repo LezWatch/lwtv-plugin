@@ -23,86 +23,55 @@ class LWTV_Alexa_Newest {
 	 * @return string
 	 */
 	public function whats_new() {
-		$character = self::characters();
-		$show      = self::shows();
-		$death     = self::death();
+		$character = self::latest( 'character' );
+		$show      = self::latest( 'show' );
+		$death     = self::latest( 'death' );
+		$post      = self::latest( 'post' );
 
-		$output = 'The latest character added to Lez Watch T. V. was ' . $character . '. The latest show added was ' . $show . '. And the latest character who died was ' . $death . '.';
+		$output = 'The latest character added to Lez Watch T. V. was ' . $character['name'] . '. The latest show added was ' . $show['name'] . '. And the latest character who died was ' . $death . '. Our latest post was ' . $post['name'] . '.';
 
-		// TO DO
-		// add in latest 3 posts
-		// Tell people how to read those posts?
-		// That would be a separate invocation?
+		$output .= 'For more information on the shows or characters, you can ask me "Tell me about the show ' . $show['name'] . '." or "Tell me about the character ' . $character['name'] . '".';
 
 		return $output;
 	}
 
 	/**
-	 * Newest Character.
-	 *
-	 * @access public
-	 * @return string
+	 * The latest whatever we're going to use.
+	 * @param  string $posttype [actor|character\show\post]
+	 * @return string           Name of the latest
 	 */
-	public function characters() {
-		$post_args = array(
-			'post_type'      => 'post_type_characters',
-			'posts_per_page' => '1',
-			'orderby'        => 'date',
-			'order'          => 'DESC',
-		);
+	public function latest( $posttype ) {
 
-		$queery = new WP_Query( $post_args );
+		if ( 'death' === $posttype ) {
+			$data   = LWTV_BYQ_JSON::last_death();
+			$name   = $data['name'];
+			$output = $name . ' on ' . date( 'F j, Y', $data['died'] );
+		} else {
+			$get_post_type = ( 'post' === $posttype ) ? 'post' : 'post_type_' . $posttype;
 
-		while ( $queery->have_posts() ) {
-			$queery->the_post();
-			$id           = get_the_ID();
-			$data['name'] = get_the_title( $id );
-			$data['date'] = get_the_date( 'l F j, Y', $id );
+			$post_args = array(
+				'post_type'      => $get_post_type,
+				'posts_per_page' => '1',
+				'orderby'        => 'date',
+				'order'          => 'DESC',
+			);
+
+			$queery = new WP_Query( $post_args );
+
+			while ( $queery->have_posts() ) {
+				$queery->the_post();
+				$id           = get_the_ID();
+				$data['name'] = get_the_title( $id );
+				$data['date'] = get_the_date( 'l F j, Y', $id );
+			}
+			wp_reset_postdata();
+
+			$output = array(
+				'name' => $data['name'],
+				'date' => $data['date'],
+			);
 		}
-		wp_reset_postdata();
-		$output = $data['name'] . ' on ' . $data['date'];
 
-		return $output;
-	}
-
-	/**
-	 * Newest Show.
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function shows() {
-		$post_args = array(
-			'post_type'      => 'post_type_shows',
-			'posts_per_page' => '1',
-			'orderby'        => 'date',
-			'order'          => 'DESC',
-		);
-
-		$queery = new WP_Query( $post_args );
-
-		while ( $queery->have_posts() ) {
-			$queery->the_post();
-			$id           = get_the_ID();
-			$data['name'] = get_the_title( $id );
-			$data['date'] = get_the_date( 'l F j, Y', $id );
-		}
-		wp_reset_postdata();
-		$output = $data['name'] . ' on ' . $data['date'];
-
-		return $output;
-	}
-
-	/**
-	 * Newest Death.
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function death() {
-		$data   = LWTV_BYQ_JSON::last_death();
-		$name   = $data['name'];
-		$output = $name . ' on ' . date( 'F j, Y', $data['died'] );
 		return $output;
 	}
 

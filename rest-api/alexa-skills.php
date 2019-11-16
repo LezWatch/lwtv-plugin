@@ -185,32 +185,18 @@ class LWTV_Alexa_Skills {
 					$output = LWTV_Alexa_This_Year::what_happened( $date );
 					break;
 				case 'WhoAreYou':
-					if ( ! $actor ) {
-						$output     = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
-						$endsession = false;
-					} else {
+					if ( isset( $actor ) ) {
 						require_once 'alexa/who-are-you.php';
 						$output = LWTV_Alexa_Who::actor( $actor );
-					}
-					break;
-				case 'WhoAreYouShow':
-					// NOT WRITTEN: Tells you about a specific show.
-					if ( ! $show ) {
-						$output     = 'I\'m sorry, I didn\'t quite catch the name of the show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
-						$endsession = false;
-					} else {
+					} elseif ( isset( $show ) ) {
 						require_once 'alexa/who-are-you.php';
 						$output = LWTV_Alexa_Who::show( $show );
-					}
-					break;
-				case 'WhoAreYouChar':
-					// NOT WRITTEN: Tells you about a specific character
-					if ( ! $character ) {
-						$output     = 'I\'m sorry, I didn\'t quite catch the name of the character you\'re asking about. Can you please ask me again? I\'ll listen harder.';
-						$endsession = false;
-					} else {
+					} elseif ( isset( $character ) ) {
 						require_once 'alexa/who-are-you.php';
 						$output = LWTV_Alexa_Who::character( $character );
+					} else {
+						$output     = 'I\'m sorry, I didn\'t quite catch what you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
 					}
 					break;
 				case 'IsQueer':

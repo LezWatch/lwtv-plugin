@@ -66,8 +66,9 @@ class LWTV_Alexa_Who {
 				// The output
 				$output .= $actor['name'] . ' is a ' . $actor['gender'] . ' ' . $actor['sexuality'] . ' who has played ' . $characters . ' on television. ' . $actor['name'] . ' ' . $age_stuff . '.';
 
-				// TO DO: Waiting on Tracy to finish bios.
-				// $output .= $actor['content'];
+				if ( '' !== $actor['content'] && strlen( $actor['content'] ) < 5 ) {
+					$output .= $actor['content'];
+				}
 
 				// TO DO: What shows?
 				// Need to list out what shows the person is on:
@@ -89,6 +90,23 @@ class LWTV_Alexa_Who {
 
 		// Get the show array:
 		$results = self::search_this( 'shows', $name );
+
+		if ( ! isset( $results ) || ! $results ) {
+			$output = 'I can\'t find a TV show by that name. Sometimes I have trouble with international TV shows, as IMdB may use the English name.';
+		} else {
+			if ( count( $results ) > 1 ) {
+				$output = 'I found more than one TV show by that name. ';
+			}
+
+			foreach ( $results as $show ) {
+
+				// TO DO: Actually write this out.
+				// The output
+				$output .= $show['name'] . ' airs/aired in [nations] from [year to year] on [networks]. It has/had a total of X queer characters. BIO CONTENT.';
+			}
+
+		}
+
 	}
 
 	/**
@@ -117,8 +135,7 @@ class LWTV_Alexa_Who {
 
 				$output .= $actor['name'] . ' is a ' . strtolower( $actor['gender'] ) . ' and identifies as ' . strtolower( $actor['sexuality'] ) . '.';
 
-				// TO DO: Uncomment. Waiting on Tracy to finish all the actors.
-				//$output .= 'Would you like to learn more about them? Ask me "Tell me about the actor ' . $actor['name'] . '".';
+				$output .= 'Would you like to learn more about them? Ask me "Tell me about the actor ' . $actor['name'] . '".';
 			}
 		} else {
 			$output = 'I can\'t find an actor who has played a character by that name.';
@@ -211,7 +228,26 @@ class LWTV_Alexa_Who {
 							// Custom output for characters? Alive or dead? Played by?
 							break;
 						case 'shows':
-							// Custom output for show... Number of characters?
+
+							$nation_terms = get_the_terms( get_the_ID(), 'lezshows_tvnations', true );
+							if ( $nation_terms && ! is_wp_error( $nation_terms ) ) {
+								foreach ( $nation_terms as $nation_term ) {
+									$nation[] = $nation_term->name;
+								}
+							}
+
+							$station_terms = get_the_terms( get_the_ID(), 'lezshows_tvstations', true );
+							if ( $station_terms && ! is_wp_error( $station_terms ) ) {
+								foreach ( $station_terms as $station_term ) {
+									$station[] = $station_term->name;
+								}
+							}
+
+							$characters = ( get_post_meta( get_the_ID(), 'lezshows_char_count', true ) ) ? get_the_ID(), 'lezshows_char_count', true ) : 0;
+
+							$this_array[ get_post_field( 'post_name' ) ]['characters'] = $characters
+							$this_array[ get_post_field( 'post_name' ) ]['nations']    = implode( ', ', $nation );
+							$this_array[ get_post_field( 'post_name' ) ]['$stations']  = implode( ', ', $station );
 							break;
 					}
 				}
