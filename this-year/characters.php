@@ -77,7 +77,8 @@ class LWTV_This_Year_Chars {
 							<tbody>
 								<?php
 								foreach ( $show_array as $show ) {
-									echo '<tr><td><em><a href="' . esc_url( $show['url'] ) . '">' . esc_html( $show['name'] ) . '</a></em> (' . count( $show['chars'] ) . ')</td><td><ul>';
+									echo '<tr><td><em><a href="' . esc_url( $show['url'] ) . '">' . esc_html( $show['name'] ) . '</a></em> (' . count( $show['chars'] ) . ')';
+									echo '<br /><small>(' . wp_kses_post( $show['country'] ) . ' - ' . wp_kses_post( $show['format'] ) . ')</small></td><td><ul>';
 									foreach ( $show['chars'] as $char ) {
 										echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a> <small>(' . esc_html( $char['type'] ) . ' character)</small></li>';
 									}
@@ -155,7 +156,8 @@ class LWTV_This_Year_Chars {
 							<tbody>
 								<?php
 								foreach ( $show_array as $show ) {
-									echo '<tr><td><em><a href="' . esc_url( $show['url'] ) . '">' . esc_html( $show['name'] ) . '</a></em> (' . count( $show['chars'] ) . ')</td><td><ul>';
+									echo '<tr><td><em><a href="' . esc_url( $show['url'] ) . '">' . esc_html( $show['name'] ) . '</a></em> (' . count( $show['chars'] ) . ')';
+									echo '<br /><small>(' . wp_kses_post( $show['country'] ) . ' - ' . wp_kses_post( $show['format'] ) . ')</small></td><td><ul>';
 									foreach ( $show['chars'] as $char ) {
 										echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a> <small>(' . esc_html( $char['type'] ) . ' character)</small></li>';
 									}
@@ -215,9 +217,11 @@ class LWTV_This_Year_Chars {
 					// if the show isn't already in the array, we create it
 					if ( ! empty( $show_slug ) && ! array_key_exists( $show_slug, $show_array ) ) {
 						$show_array[ $show_slug ] = array(
-							'name'  => get_the_title( $each_show['show'] ),
-							'url'   => get_the_permalink( $each_show['show'] ),
-							'chars' => array(),
+							'name'    => get_the_title( $each_show['show'] ),
+							'url'     => get_the_permalink( $each_show['show'] ),
+							'country' => get_the_term_list( $each_show['show'], 'lez_country', '', ', ', '' ),
+							'format'  => get_the_term_list( $each_show['show'], 'lez_formats' ),
+							'chars'   => array(),
 						);
 					}
 
@@ -317,9 +321,11 @@ class LWTV_This_Year_Chars {
 							// if the show isn't already in the array, we create it
 							if ( ! array_key_exists( $show_slug, $show_array ) ) {
 								$show_array[ $show_slug ] = array(
-									'name'  => get_the_title( $each_show['show'] ),
-									'url'   => get_the_permalink( $each_show['show'] ),
-									'chars' => array(),
+									'name'    => get_the_title( $each_show['show'] ),
+									'url'     => get_the_permalink( $each_show['show'] ),
+									'country' => get_the_term_list( $each_show['show'], 'lez_country', '', ', ', '' ),
+									'format'  => get_the_term_list( $each_show['show'], 'lez_formats' ),
+									'chars'   => array(),
 								);
 							}
 
