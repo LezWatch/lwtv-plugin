@@ -29,6 +29,7 @@ class LWTV_Shows_Like_This {
 
 		if ( ! empty( $show_id ) && has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
 
+			// Get the terms, we're going to include them
 			$terms = get_the_terms( $show_id, 'lez_genres' );
 			foreach ( $terms as $term ) {
 				$terms_array[] = $term->term_id;
@@ -47,6 +48,15 @@ class LWTV_Shows_Like_This {
 				}
 				$exclude = implode( ', ', $terms_array );
 				$include = $primary;
+			}
+
+			// Get the tags and add them to include if they exist
+			$tagged = get_the_terms( $show_id, 'lez_showtagged' );
+			foreach ( $tagged as $tag ) {
+				$tags_array[] = $tag->term_id;
+			}
+			if ( ! empty( $tags_array ) ) {
+				$include .= implode( ', ', $tags_array );
 			}
 
 			// Include the terms list
