@@ -60,7 +60,7 @@ class LWTV_Alexa_Who {
 					}
 				}
 
-				// translators: %s is the number of queer character
+				// translators: %s is the number of queer characters
 				$characters = ( 0 === $actor['characters'] ) ? 'no queer characters' : sprintf( _n( '%s queer character', '%s queer characters', $actor['characters'] ), $actor['characters'] );
 
 				// The output
@@ -100,9 +100,18 @@ class LWTV_Alexa_Who {
 
 			foreach ( $results as $show ) {
 
+				if ( 'current' === $show['airdates']['end'] ) {
+					$airs = 'has been on the air since ' . $show['airdates']['start'];
+				} else {
+					$airs = 'aired from ' . $show['airdates']['start'] . ' to ' . $show['airdates']['end'];
+				}
+
+				// translators: %s is the number of queer characters
+				$characters = ( 0 === $show['characters'] ) ? 'zero named queer characters' : sprintf( _n( '%s queer character', '%s queer characters', $show['characters'] ), $show['characters'] );
+
 				// TO DO: Actually write this out.
 				// The output
-				$output .= $show['name'] . ' airs/aired in [nations] from [year to year] on [networks]. It has/had a total of X queer characters. BIO CONTENT.';
+				$output .= 'What can I tell you about ' . $show['name'] . '? ' . $show['content'] . ' ' . $airs . ' on ' . $show['stations'] . ' in ' . $show['nations'] . '. A total of ' . $characters . ' have been on the show.';
 			}
 
 		}
@@ -185,9 +194,10 @@ class LWTV_Alexa_Who {
 
 				if ( strtolower( get_the_title() ) === strtolower( $name ) || strtolower( $short_name ) === strtolower( $name ) ) {
 
-					$this_array[ get_post_field( 'post_name' ) ] = array(
-						'name'    => get_the_title(),
-						'content' => apply_filters( 'the_content', get_the_content() ),
+					$post_name = get_post_field( 'post_name' );
+
+					$this_array[ $post_name ] = array(
+						'name'    => get_the_title()
 					);
 
 					switch ( $posttype ) {
@@ -217,17 +227,27 @@ class LWTV_Alexa_Who {
 							}
 
 							// Custom add on for Actors
-							$this_array[ get_post_field( 'post_name' ) ]['characters'] = get_post_meta( get_the_ID(), 'lezactors_char_count', true );
-							$this_array[ get_post_field( 'post_name' ) ]['gender']     = implode( ', ', $gender );
-							$this_array[ get_post_field( 'post_name' ) ]['sexuality']  = implode( ', ', $sexuality );
-							$this_array[ get_post_field( 'post_name' ) ]['born']       = $start;
-							$this_array[ get_post_field( 'post_name' ) ]['died']       = $end;
-							$this_array[ get_post_field( 'post_name' ) ]['age']        = $age;
+							$this_array[ $post_name ]['content']    = apply_filters( 'the_content', get_the_content() );
+							$this_array[ $post_name ]['characters'] = get_post_meta( get_the_ID(), 'lezactors_char_count', true );
+							$this_array[ $post_name ]['gender']     = implode( ', ', $gender );
+							$this_array[ $post_name ]['sexuality']  = implode( ', ', $sexuality );
+							$this_array[ $post_name ]['born']       = $start;
+							$this_array[ $post_name ]['died']       = $end;
+							$this_array[ $post_name ]['age']        = $age;
 							break;
 						case 'characters':
 							// Custom output for characters? Alive or dead? Played by?
 							break;
 						case 'shows':
+
+							if ( get_post_meta( get_the_ID(), 'lezshows_airdates', true ) ) {
+								$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
+
+								// If the start is 'current' make it this year (though it really never should be.)
+								if ( 'current' === $airdates['start'] ) {
+									$airdates['start'] = date( 'Y' );
+								}
+							}
 
 							$nation_terms = get_the_terms( get_the_ID(), 'lezshows_tvnations', true );
 							if ( $nation_terms && ! is_wp_error( $nation_terms ) ) {
@@ -235,6 +255,8 @@ class LWTV_Alexa_Who {
 									$nation[] = $nation_term->name;
 								}
 							}
+							$last_nation = array_pop( $nation );
+							array_push( $nation, 'and ' . $last_nation);
 
 							$station_terms = get_the_terms( get_the_ID(), 'lezshows_tvstations', true );
 							if ( $station_terms && ! is_wp_error( $station_terms ) ) {
@@ -242,12 +264,16 @@ class LWTV_Alexa_Who {
 									$station[] = $station_term->name;
 								}
 							}
+							$last_station = array_pop( $station );
+							array_push( $station, 'and ' . $last_station);
 
 							$characters = ( get_post_meta( get_the_ID(), 'lezshows_char_count', true ) ) ? get_the_ID(), 'lezshows_char_count', true ) : 0;
 
-							$this_array[ get_post_field( 'post_name' ) ]['characters'] = $characters
-							$this_array[ get_post_field( 'post_name' ) ]['nations']    = implode( ', ', $nation );
-							$this_array[ get_post_field( 'post_name' ) ]['$stations']  = implode( ', ', $station );
+							$this_array[ $post_name ]['characters'] = $characters;
+							$this_array[ $post_name ]['$airdates']  = $airdates;
+							$this_array[ $post_name ]['nations']    = implode( ', ', $nation );
+							$this_array[ $post_name ]['stations']   = implode( ', ', $station );
+							$this_array[ $post_name ]['content']    = wp_strip_all_tags( get_the_excerpt(), true );
 							break;
 					}
 				}
