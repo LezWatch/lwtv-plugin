@@ -134,7 +134,7 @@ class LWTV_Shows_Like_This {
 				 */
 				if ( 'publish' === get_post_status( $this_show_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
 					foreach ( $shows_array as $related_show ) {
-						// Becuase of show IDs having SIMILAR numbers, we need to be a litte more flex
+						// Because of show IDs having SIMILAR numbers, we need to be a little more flex
 						// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
 						if ( $related_show == $post_id ) {
 							$reciprocity[] = $this_show_id;
@@ -162,6 +162,7 @@ class LWTV_Shows_Like_This {
 	 * @return array             The corrected results
 	 */
 	public function alter_results( $results, $post_id, $taxonomies, $args ) {
+
 		if ( 'post_type_shows' === get_post_type( $post_id ) ) {
 			// Set our base array
 			$add_results = array();
@@ -176,22 +177,28 @@ class LWTV_Shows_Like_This {
 			$reciprocity = self::reciprocity( $post_id );
 			$combo_list  = array_merge( $handpicked, $reciprocity );
 
+			// If we have a combo list, we need to figure out how many shows to add
 			if ( ! empty( $combo_list ) ) {
-				// For each show, add it to the list ONLY if the show isn't already listed
-				// and if it's published
 				foreach ( $combo_list as $a_show ) {
-					//phpcs:ignore WordPress.PHP.StrictInArray
-					if ( 'publish' === get_post_status( $a_show ) && ! in_array( $a_show, $results ) && ! in_array( $a_show, $add_results ) ) {
+
+					// Only go forward if the show is published
+					// (you CAN add drafts, but they won't show up -- this helps us to pre-load)
+					if ( 'publish' === get_post_status( $a_show ) ) {
 						$add_results[] = $a_show;
 					}
 				}
 			}
 
-			// Add any new posts to the list
-			$results = $add_results + $results;
+			// Make it unique
+			$add_results = array_unique( $add_results );
+
+			// Merge arrays, make them unique, and keep it to 6.
+			$new_results = array_slice( array_unique( array_merge( $add_results, $results ) ), 0, 6 );
 		}
 
-		return $results;
+		$return = ( isset( $new_results ) ) ? $new_results : $results;
+
+		return $return;
 	}
 }
 
