@@ -109,8 +109,7 @@ class LWTV_Alexa_Who {
 				// translators: %s is the number of queer characters
 				$characters = ( 0 === $show['characters'] ) ? 'zero named queer characters' : sprintf( _n( '%s queer character', '%s queer characters', $show['characters'] ), $show['characters'] );
 
-				// TO DO: Actually write this out.
-				// The output
+				// Output. It's basic.
 				$output .= 'What can I tell you about ' . $show['name'] . '? ' . $show['content'] . ' ' . $airs . ' on ' . $show['stations'] . ' in ' . $show['nations'] . '. A total of ' . $characters . ' have been on the show.';
 			}
 
