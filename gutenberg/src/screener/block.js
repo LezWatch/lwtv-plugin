@@ -5,7 +5,7 @@ import './editor.scss';
 const { __ } = wp.i18n;
 const { Fragment } = wp.element;
 const { createBlock, registerBlockType } = wp.blocks;
-const { RichText, PlainText } = wp.editor;
+const { RichText, PlainText } = wp.blockEditor;
 const { PanelBody, ToggleControl, RangeControl, SelectControl } = wp.components;
 
 // Display queer

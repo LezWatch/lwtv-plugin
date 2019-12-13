@@ -5,7 +5,7 @@
 const { Component, Fragment } = wp.element;
 const { __ } = wp.i18n;
 const { SelectControl, PanelBody, ServerSideRender } = wp.components;
-const { InspectorControls } = wp.editor;
+const { InspectorControls } = wp.blockEditor;
 const { withSelect } = wp.data;
 
 class AuthorProfileBlock extends Component {

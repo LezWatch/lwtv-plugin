@@ -4,7 +4,7 @@ Description: ICS Parser
 
 https://github.com/u01jmg3/ics-parser
 
-Version: 1.0
+Version: 1.1
 */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -19,20 +19,67 @@ use ICal\ICal;
  */
 class LWTV_ICS_Parser {
 
-	public static function generate( $url, $when ) {
+	/**
+	 * Generate what's on for a specific date
+	 * @param  string $url  URL of calendar
+	 * @param  string $when string of a day [today, tomorrow]
+	 * @param  string $date date event happens [Y-m-d]
+	 * @return array        array of all the shows on that day
+	 */
+	public static function generate_by_date( $url, $when, $date = false ) {
 		$ical = new ICal();
 		$ical->initUrl( esc_url( $url ) );
 
 		$tz = new DateTimeZone( 'America/New_York' );
+		$dt = new DateTime( 'today', $tz );
+
+		// Default is today:
+		$start_datetime = $dt;
 
 		switch ( $when ) {
+			case 'date':
+				$start_datetime = DateTime::createFromFormat( 'Y-m-d', $date );
+				$start_datetime->setTimeZone( $tz );
+				$end_datetime   = DateTime::createFromFormat( 'Y-m-d', $date );
+				$end_datetime->setTimeZone( $tz );
+				$end_datetime->modify( '+1 day' );
+				break;
+			case 'full':
+				$end_datetime = new DateTime( 'today + 30days', $tz );
+				break;
 			case 'today':
-				$start_datetime = new DateTime( 'today', $tz );
-				$end_datetime   = new DateTime( 'today + 1day', $tz );
+				$end_datetime = new DateTime( 'today + 1day', $tz );
 				break;
 			case 'tomorrow':
 				$start_datetime = new DateTime( 'tomorrow', $tz );
 				$end_datetime   = new DateTime( 'tomorrow + 1day', $tz );
+				break;
+			case 'week':
+				// If the week has no date, it's this week
+				if ( ! $date ) {
+					$start_datetime = new DateTime( 'today', $tz );
+					if ( 'Sun' !== $dt->format( 'D' ) ) {
+						$start_datetime = new DateTime( 'last Sunday', $tz );
+						$end_datetime = new DateTime( 'last Sunday', $tz );
+					}
+
+					$end_datetime->modify( '+1 week' );
+				} else {
+					$start_dt = DateTime::createFromFormat( 'Y-m-d', $date );
+					$start_dt->setTimeZone( $tz );
+					$start_datetime = $start_dt;
+
+					$end_dt = DateTime::createFromFormat( 'Y-m-d', $date );
+					$end_dt->setTimeZone( $tz );
+					$end_datetime = $end_dt;
+
+					if ( 'Sun' !== $start_dt->format( 'D' ) ) {
+						$start_datetime->modify( 'Sunday' );
+						$end_datetime->modify( 'Sunday' );
+					}
+
+					$end_datetime->modify( '+1 week' );
+				}
 				break;
 		}
 

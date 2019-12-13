@@ -101,12 +101,13 @@ class LWTV_Alexa_Skills {
 	 */
 	public function news_rest_api_callback( WP_REST_Request $request ) {
 
-		$type   = ( isset( $request['request']['type'] ) ) ? sanitize_text_field( $request['request']['type'] ) : false;
-		$intent = ( isset( $request['request']['intent']['name'] ) ) ? sanitize_text_field( $request['request']['intent']['name'] ) : false;
-		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false;
-		$actor  = ( isset( $request['request']['intent']['slots']['actor']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['actor']['value'] ) : false;
-		$show   = ( isset( $request['request']['intent']['slots']['show']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['show']['value'] ) : false;
-		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) ) ? sanitize_text_field( $request['request']['session']['application']['applicationId'] ) : false;
+		$type      = ( isset( $request['request']['type'] ) ) ? sanitize_text_field( $request['request']['type'] ) : false;
+		$intent    = ( isset( $request['request']['intent']['name'] ) ) ? sanitize_text_field( $request['request']['intent']['name'] ) : false;
+		$date      = ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false;
+		$actor     = ( isset( $request['request']['intent']['slots']['actor']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['actor']['value'] ) : false;
+		$character = ( isset( $request['request']['intent']['slots']['character']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['character']['value'] ) : false;
+		$show      = ( isset( $request['request']['intent']['slots']['show']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['show']['value'] ) : false;
+		$req_id    = ( isset( $request['request']['session']['application']['applicationId'] ) ) ? sanitize_text_field( $request['request']['session']['application']['applicationId'] ) : false;
 
 		// Call the validation:
 		require_once 'alexa/alexa-validate.php';
@@ -184,16 +185,24 @@ class LWTV_Alexa_Skills {
 					$output = LWTV_Alexa_This_Year::what_happened( $date );
 					break;
 				case 'WhoAreYou':
-					if ( ! $actor ) {
-						$output = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
-					} else {
+					if ( isset( $actor ) ) {
 						require_once 'alexa/who-are-you.php';
-						$output = LWTV_Alexa_Who::who_is( $actor );
+						$output = LWTV_Alexa_Who::actor( $actor );
+					} elseif ( isset( $show ) ) {
+						require_once 'alexa/who-are-you.php';
+						$output = LWTV_Alexa_Who::show( $show );
+					} elseif ( isset( $character ) ) {
+						require_once 'alexa/who-are-you.php';
+						$output = LWTV_Alexa_Who::character( $character );
+					} else {
+						$output     = 'I\'m sorry, I didn\'t quite catch what you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
 					}
 					break;
 				case 'IsQueer':
 					if ( ! $actor ) {
-						$output = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$output     = 'I\'m sorry, I didn\'t quite catch the name of the actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
 					} else {
 						require_once 'alexa/who-are-you.php';
 						$output = LWTV_Alexa_Who::is_gay( $actor );
@@ -201,15 +210,29 @@ class LWTV_Alexa_Skills {
 					break;
 				case 'SimilarShow':
 					if ( ! $show ) {
-						$output = 'I\'m sorry, I didn\'t quite catch the name of the television show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$output     = 'I\'m sorry, I didn\'t quite catch the name of the television show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
 					} else {
-						require_once 'alexa/similar-show.php';
+						require_once 'alexa/shows.php';
 						$output = LWTV_Alexa_Shows::similar_to( $show );
 					}
 					break;
 				case 'WhatsOn':
 					require_once 'alexa/whats-on.php';
 					$output = LWTV_Alexa_Whats_On::on_a_day( $date );
+					break;
+				case 'WhatsOnShows':
+					if ( ! $show ) {
+						$output     = 'I\'m sorry, I didn\'t quite catch the name of the television show you\'re asking about. Can you please ask me again? I\'ll listen harder.';
+						$endsession = false;
+					} else {
+						require_once 'alexa/whats-on.php';
+						$output = LWTV_Alexa_Whats_On::show( $show );
+					}
+					break;
+				case 'RecommendShows':
+					require_once 'alexa/shows.php';
+					$output = LWTV_Alexa_Shows::recommend();
 					break;
 				case 'AMAZON.HelpIntent':
 					$output     = 'This is the News skill by Lez Watch T. V. News, home of the world\'s greatest database of queer female, non-binary and transgender characters on international television. ' . $helptext;

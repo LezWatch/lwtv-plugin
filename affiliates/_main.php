@@ -163,18 +163,18 @@ class LWTV_Affilliates {
 	public static function network( $id, $format = 'wide', $network = 'cbs' ) {
 
 		switch ( $network ) {
-			case 'amc':
-				require_once 'cj.php';
-				$advert = LWTV_Affiliate_CJ::show_ads( $id, 'amc', $format );
-				break;
+			#case 'amc':
+			#	require_once 'cj.php';
+			#	$advert = LWTV_Affiliate_CJ::show_ads( $id, 'amc', $format );
+			#	break;
 			case 'cbs':
 				require_once 'cbs.php';
 				$advert = LWTV_Affiliate_CBS::show_ads( $id, $format );
 				break;
-			case 'starz':
-				require_once 'cj.php';
-				$advert = LWTV_Affiliate_CJ::show_ads( $id, 'starz', $format );
-				break;
+			#case 'starz':
+			#	require_once 'cj.php';
+			#	$advert = LWTV_Affiliate_CJ::show_ads( $id, 'starz', $format );
+			#	break;
 		}
 
 		return $advert;
@@ -380,6 +380,7 @@ class LWTV_Affilliates {
 					$name = 'Roster Teeth';
 					break;
 				case 'showtimeanytime':
+				case 'sho':
 					$name = 'Showtime';
 					break;
 				default:

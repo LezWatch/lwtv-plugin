@@ -102,6 +102,7 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - Post Meta AND Taxonomy Query - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
     - Related Posts by Tags.
 * `debug.php` - Debugging Tools for weird content.
+* `ics-parser.php` - Connection to the ICS Parser for calendar data.
 * `private-data.php` - Shows alert that a page is hidden if the post is set private.
 * `profiles.php` - Custom profile code
 * `search.php` - Extra Search Functions:
@@ -131,6 +132,12 @@ Blocks for Gutenberg. The file `_main.php` acts as an autoloader.
 * Grade: Give something a grade and an explanation
 * Screeners: For reviews of shows that haven't aired yet
 * Statistics: _currently disabled_
+
+### Node Scripts
+
+Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`)
+
+* `postinstall.js` - script run at the end of NPM to move files to the correct location.
 
 ### Plugin Addons
 
@@ -169,9 +176,11 @@ The file `_main.php` acts as an autoloader.
 * Alexa Skills - `/alexa/`
     - Validation: `/alexa-validate.php` - Validates the requests as coming from Amazon
     - Bury Your Queers: `/byq.php` - Old BYQ code
-     - Flash Briefing: `/flash-brief.php` - Since the flash brief has trouble with media in post content, we've made our own special version.
+    - Flash Briefing: `/flash-brief.php` - Since the flash brief has trouble with media in post content, we've made our own special version.
     - Newest: `/newest.php` - Generate the newest shows or characters (or deaths)
+    - Shows: `/shows.php` - Skills for interactions with shows (similar shows, recommended shows, etc.)
     - This Year: `/this-year.php` - Gives you an idea how this year is going...
+    - What's On: `/whats-on.php` - Generates what's on TV stuff.
     - Who Are You: `/who-are-you.php` - Runs all code that discusses actors
 * LezWatch.TV Plugin (formerly Bury Your Queers) - `/bury-your-queers.php`
     - Last Death - "It has been X days since the last WLW Death"
@@ -183,7 +192,7 @@ The file `_main.php` acts as an autoloader.
     - API to communicate with IMDb and generate information (used by Alexa)
 * Of The Day - `/of-the-day.php`
     - The code that runs the X Of the Day API service. Every 24 hours, a new character and show of the day are spawned
-* Shows Like This - `shows-like-this.php`
+* Shows - `shows.php`
     - Similar shows.
 * Slack - `/slack.php`
     - Beginning of code to report newly dead characters to Slack (very buggy, currently disabled)
@@ -262,8 +271,9 @@ In order to make maintenance easier, instead of checking everything all the time
 
 #### Installation and Updating
 
-1. `npm install`
-2. `composer update`
+1. `npm update`
+2. `npm install`
+3. `composer update`
 
 Composer will move everything into the right place, even NPM files.
 

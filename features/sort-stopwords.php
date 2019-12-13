@@ -21,7 +21,7 @@ if ( ! is_admin() ) {
 		$fwp_array      = array( 'title_asc', 'title_desc', 'empty' );
 
 		// Now to detect...
-		// We only want to do this on archive pages
+		// We only want this on archive pages
 		if ( is_archive() ) {
 			// If this is a show, we want to sort
 			if ( 'post_type_shows' === $q->get( 'post_type' ) ) {
