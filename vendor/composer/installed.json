@@ -1,17 +1,17 @@
 [
     {
         "name": "johngrogg/ics-parser",
-        "version": "v2.1.15",
-        "version_normalized": "2.1.15.0",
+        "version": "v2.1.16",
+        "version_normalized": "2.1.16.0",
         "source": {
             "type": "git",
             "url": "https://github.com/u01jmg3/ics-parser.git",
-            "reference": "7c6b7056b2ebc4023666c13c60fa1af4f744afe2"
+            "reference": "b40bf3c05903372d6c42837df29a02d6205f8156"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/u01jmg3/ics-parser/zipball/7c6b7056b2ebc4023666c13c60fa1af4f744afe2",
-            "reference": "7c6b7056b2ebc4023666c13c60fa1af4f744afe2",
+            "url": "https://api.github.com/repos/u01jmg3/ics-parser/zipball/b40bf3c05903372d6c42837df29a02d6205f8156",
+            "reference": "b40bf3c05903372d6c42837df29a02d6205f8156",
             "shasum": ""
         },
         "require": {
@@ -23,7 +23,7 @@
             "phpunit/phpunit": "^4",
             "squizlabs/php_codesniffer": "~2.9.1"
         },
-        "time": "2019-09-10T09:48:10+00:00",
+        "time": "2019-12-03T19:10:54+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
