@@ -95,22 +95,32 @@ class LWTV_ServerSideRendering {
 		if ( isset( $calendar['none'] ) ) {
 			$return .= '<p>There are no shows on the air.</p>';
 		} else {
-			$return .= '<ul class="lwtv-calendar-list">';
+			$return .= '<ul class="lwtv-calendar-list list-group">';
 
 			foreach ( $calendar as $day => $shows ) {
-				$hilight = ( $day === $today->format( 'l F d, Y' ) ) ? ' highlight' : '';
+				$hilight = ( $day === $today->format( 'l F d, Y' ) ) ? ' list-group-item-info' : '';
 
-				$return .= '<li><h3 class="lwtv-calendar-date' . $hilight . '">' . $day . '</h3><ul>';
+				$return .= '<li class="list-group-item' . $hilight . '"><h3 class="lwtv-calendar-date">' . $day . '</h3><ul class="list-group">';
 				foreach ( $shows as $show ) {
 
 					// Show name
-					$return .= '<li class="lwtv-calendar-episode"><h4>' . $show['show_name'] . '</h4>';
+					$return .= '<li class="list-group-item' . $hilight . '"><h4>' . $show['show_name'] . '</h4>';
 
 					// Show Time
 					$return .= '<div><span class="time">' . $show['airtime'] . ' US/Eastern</span></div>';
 
 					// Episode Title(s)
-					$return .= '<div class="lwtv-calendar-episode-title">' . $show['title'] . '</div>';
+					$return .= '<div class="lwtv-calendar-episode-title">';
+					if ( is_array( $show['title'] ) ) {
+						$return .= '<ul>';
+						foreach ( $show['title'] as $one_show ) {
+							$return .= '<li>' . $one_show . '</li>';
+						}
+						$return .= '</ul>';
+					} else {
+						$return .= $show['title'];
+					}
+					$return .= '</div>';
 
 					$return .= '</li>';
 				}
@@ -118,14 +128,18 @@ class LWTV_ServerSideRendering {
 			}
 			$return .= '</ul>';
 
+			// NAVIGATION:
+
 			// Since we set this to Saturday, we have to add a day for the links.
 			$end_datetime->modify( '+1 day ' );
 
 			// echo previous and next links:
 			$prev_week = add_query_arg( 'tvdate', $prev_datetime->format( 'Y-m-d' ), get_permalink() );
+			$prev_icon = LWTV_Functions::symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' );
 			$next_week = add_query_arg( 'tvdate', $end_datetime->format( 'Y-m-d' ), get_permalink() );
+			$next_icon = LWTV_Functions::symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' );
 
-			$return .= '<ul><li><a href="' . $prev_week . '">Last Week</a></li><li><a href="' . $next_week . '">Next Week</a></li></ul>';
+			$return .= '<nav aria-label="This Year navigation" role="navigation"><ul class="pagination justify-content-center"><li class="page-item first mr-auto"><a href="' . $prev_week . '" class="page-link">' . $prev_icon . ' Last Week</a></li><li class="page-item last ml-auto"><a href="' . $next_week . '" class="page-link">' . $next_icon . ' Next Week</a></li></ul></nav>';
 		}
 
 		return $return;
