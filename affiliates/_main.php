@@ -84,9 +84,6 @@ class LWTV_Affilliates {
 			case 'amazon':
 				$advert = '<!-- Amazon -->' . self::amazon( $id, $format );
 				break;
-			case 'amc':
-				$advert = '<!-- AMC -->' . self::network( $id, $format, 'amc' );
-				break;
 			case 'apple':
 				$advert = '<!-- Apple -->' . self::apple( $id, $format );
 				break;
@@ -117,20 +114,14 @@ class LWTV_Affilliates {
 				$advert = self::network( $id, $format, 'cbs' );
 				break;
 			case 'wide':
-				if ( 0 === $number % 3 ) {
-					$advert = '<!-- AMC -->' . self::network( $id, $format, 'amc' );
-				} elseif ( 0 === $number % 2 ) {
+				if ( 0 === $number % 2 ) {
 					$advert = '<!-- CBS -->' . self::network( $id, $format, 'cbs' );
 				} else {
 					$advert = '<!-- Amazon -->' . self::amazon( $id, $format );
 				}
 				break;
 			case 'tiny':
-				if ( 0 === $number % 2 ) {
-					$advert = '<!-- AMC -->' . self::network( $id, $format, 'amc' );
-				} else {
-					$advert = '<!-- CBS -->' . self::network( $id, $format, 'cbs' );
-				}
+				$advert = '<!-- CBS -->' . self::network( $id, $format, 'cbs' );
 				break;
 		}
 
@@ -163,18 +154,10 @@ class LWTV_Affilliates {
 	public static function network( $id, $format = 'wide', $network = 'cbs' ) {
 
 		switch ( $network ) {
-			#case 'amc':
-			#	require_once 'cj.php';
-			#	$advert = LWTV_Affiliate_CJ::show_ads( $id, 'amc', $format );
-			#	break;
 			case 'cbs':
 				require_once 'cbs.php';
 				$advert = LWTV_Affiliate_CBS::show_ads( $id, $format );
 				break;
-			#case 'starz':
-			#	require_once 'cj.php';
-			#	$advert = LWTV_Affiliate_CJ::show_ads( $id, 'starz', $format );
-			#	break;
 		}
 
 		return $advert;
@@ -253,10 +236,6 @@ class LWTV_Affilliates {
 			if ( $is_special['cbs'] ) {
 				// CBS pays best.
 				$get_the_ad = self::network( $id, $format, 'cbs' );
-			} elseif ( $is_special['amc'] ) {
-				$get_the_ad = self::network( $id, $format, 'amc' );
-			} elseif ( $is_special['starz'] ) {
-				$get_the_ad = self::network( $id, $format, 'starz' );
 			} else {
 				$get_the_ad = self::random( $id, $format );
 			}
@@ -298,10 +277,6 @@ class LWTV_Affilliates {
 			foreach ( $stations as $station ) {
 				if ( in_array( $station->slug, $special_stations['cbs'], true ) ) {
 					$is_special['cbs'] = true;
-				} elseif ( in_array( $station->slug, $special_stations['amc'], true ) ) {
-					$is_special['amc'] = true;
-				} elseif ( in_array( $station->slug, $special_stations['starz'], true ) ) {
-					$is_special['starz'] = true;
 				}
 			}
 		}
