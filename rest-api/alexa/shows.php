@@ -24,7 +24,7 @@ class LWTV_Alexa_Shows {
 	 */
 	public function similar_to( $name = false ) {
 
-		$failure = 'I\'m sorry, I don\'t recognize that show. Please try again, asking me about a specific telelvision show.';
+		$failure = 'I\'m sorry, I don\'t recognize that show. Please try again, asking me about a specific television show.';
 		if ( ! $name ) {
 			return $failure;
 		}
@@ -122,7 +122,7 @@ class LWTV_Alexa_Shows {
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 		// @codingStandardsIgnoreEnd
 
-		$love_args  = array(
+		$args  = array(
 			'post_type'      => 'post_type_shows',
 			'post_status'    => 'publish',
 			'posts_per_page' => 40,
@@ -134,7 +134,7 @@ class LWTV_Alexa_Shows {
 				),
 			),
 		);
-		$love_list  = get_posts( $love_args );
+		$love_list  = new WP_Query( $args );
 		$love_array = array();
 
 		if ( $love_list->have_posts() ) {
@@ -144,20 +144,25 @@ class LWTV_Alexa_Shows {
 				$love_array[] = get_the_title();
 			}
 			wp_reset_postdata();
+		}
 
-			if ( isset( $love_array ) ) {
-				$random_love = array_rand( $love_array );
-				if ( count( $love_array ) > 1 ) {
-					$last_element = array_pop( $love_array );
-					array_push( $love_array, 'and ' . $last_element );
-				}
-				$love_string = implode( ', ', $love_array );
-				$output     .= $love_string;
+		if ( isset( $love_array ) ) {
+			$random_love = $love_array[ array_rand( $love_array ) ];
+			if ( count( $love_array ) > 1 ) {
+				$last_element = array_pop( $love_array );
+				array_push( $love_array, 'and ' . $last_element );
 			}
-			$output .= 'Want to know more? You can ask me "Tell me about the show ' . $random_love . '".';
+			$love_string = implode( ', ', $love_array );
+			$output     .= $love_string;
+
+			if ( isset( $random_love ) ) {
+				$output .= '. Want to know more? You can ask me: "Tell me about the show "' . $random_love . '"".';
+			}
 		} else {
 			$output = 'Something must be wrong. Our show robot cannot recommend any shows at this time. Try asking me "What shows are like Batwoman" while we get this fixed.';
 		}
+
+		return $output;
 	}
 
 }

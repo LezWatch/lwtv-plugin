@@ -29,33 +29,36 @@ class LWTV_Shows_Like_This {
 
 		if ( ! empty( $show_id ) && has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
 
-			// Get the terms, we're going to include them
-			$terms = get_the_terms( $show_id, 'lez_genres' );
-			foreach ( $terms as $term ) {
-				$terms_array[] = $term->term_id;
-			}
-			$include = implode( ', ', $terms_array );
-			$exclude = '';
-
-			// Get the primary
-			$primary = ( get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) ) ? get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) : false;
-
-			// If we have a primary, then we default to JUST that.
-			if ( false !== $primary ) {
-				$primary_key = array_search( $primary, $terms_array );
-				if ( false !== $primary_key ) {
-					unset( $terms_array[ $primary_key ] );
-				}
-				$include = $primary;
-			}
-
-			// Get the tags and add them to include if they exist
+			// Get the tags and add them to include if they exist. Default if so.
 			$tagged = get_the_terms( $show_id, 'lez_showtagged' );
-			foreach ( $tagged as $tag ) {
-				$tags_array[] = $tag->term_id;
-			}
-			if ( ! isset( $tags_array ) || ! empty( $tags_array ) ) {
-				$include .= implode( ', ', $tags_array );
+			if ( ! empty( $tagged ) ) {
+				foreach ( $tagged as $tag ) {
+					$tags_array[] = $tag->term_id;
+				}
+				if ( ! isset( $tags_array ) || ! empty( $tags_array ) ) {
+					$include = implode( ', ', $tags_array );
+				}
+			} else {
+				// Not tagged? Terms!
+				// Get the terms, we're going to include them
+				$terms = get_the_terms( $show_id, 'lez_genres' );
+				foreach ( $terms as $term ) {
+					$terms_array[] = $term->term_id;
+				}
+				$include = implode( ', ', $terms_array );
+				$exclude = '';
+
+				// Get the primary
+				$primary = ( get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) ) ? get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) : false;
+
+				// If we have a primary, then we default to JUST that.
+				if ( false !== $primary ) {
+					$primary_key = array_search( $primary, $terms_array );
+					if ( false !== $primary_key ) {
+						unset( $terms_array[ $primary_key ] );
+					}
+					$include = $primary;
+				}
 			}
 
 			// Include the terms list
