@@ -5,7 +5,7 @@ Description: REST-API: What's On?
 The code that runs the What's On TV API service
 - What's On: Outputs what's on TV today
 
-Version: 2.0
+Version: 2.1
 */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -304,10 +304,6 @@ class LWTV_Whats_On_JSON {
 				}
 			}
 		}
-
-		echo '<pre>';
-		//print_r( $by_day_array );
-		echo '</pre>';
 
 		return $by_day_array;
 

@@ -66,18 +66,20 @@ class LWTV_ICS_Parser {
 		$ical = new ICal();
 		$ical->initUrl( esc_url( $url ) );
 
+		// Timezone
 		$tz = new DateTimeZone( 'America/New_York' );
-		$dt = new DateTime( 'today', $tz );
 
 		// Default is today:
-		$start_datetime = $dt;
+		$start_datetime = new DateTime( 'today', $tz );
 
 		switch ( $when ) {
 			case 'date':
-				$start_datetime = DateTime::createFromFormat( 'Y-m-d', $date );
-				$start_datetime->setTimeZone( $tz );
-				$end_datetime = DateTime::createFromFormat( 'Y-m-d', $date );
-				$end_datetime->setTimeZone( $tz );
+				if ( 'today' === $date ) {
+					$date = $start_datetime->format( 'Y-m-d' );
+				}
+
+				$start_datetime = DateTime::createFromFormat( 'Y-m-d', $date, $tz );
+				$end_datetime   = DateTime::createFromFormat( 'Y-m-d', $date, $tz );
 				$end_datetime->modify( '+1 day' );
 				break;
 			case 'full':
@@ -101,13 +103,11 @@ class LWTV_ICS_Parser {
 
 					$end_datetime->modify( '+1 week' );
 				} else {
-					$start_dt = DateTime::createFromFormat( 'Y-m-d', $date );
-					$start_dt->setTimeZone( $tz );
+					$date           = $start_datetime->format( 'Y-m-d' );
+					$start_dt       = DateTime::createFromFormat( 'Y-m-d', $date, $tz );
 					$start_datetime = $start_dt;
-
-					$end_dt = DateTime::createFromFormat( 'Y-m-d', $date );
-					$end_dt->setTimeZone( $tz );
-					$end_datetime = $end_dt;
+					$end_dt         = DateTime::createFromFormat( 'Y-m-d', $date, $tz );
+					$end_datetime   = $end_dt;
 
 					if ( 'Sun' !== $start_dt->format( 'D' ) ) {
 						$start_datetime->modify( 'Sunday' );
