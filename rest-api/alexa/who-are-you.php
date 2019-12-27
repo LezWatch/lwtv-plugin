@@ -114,7 +114,7 @@ class LWTV_Alexa_Who {
 				$characters = ( 0 === $show['characters'] ) ? $no_chars : $some_chars;
 
 				// Output. It's basic because if we have too much, it barfs PHP.
-				$output .= 'What can I tell you about ' . $show['name'] . '? ' . $show['content'] . ' ' . $show['name'] . ' ' . $airs . $where . $characters;
+				$output .= 'What can I tell you about ' . $show['name'] . '? ' . $show['content'] . ' ' . $show['name'] . ' ' . $airs . $where . $characters . ' ';
 			}
 		}
 
@@ -177,14 +177,26 @@ class LWTV_Alexa_Who {
 
 		$this_array = array();
 
-		$args       = array(
-			'title'          => $name,
-			'post_type'      => 'post_type_' . $posttype,
-			'post_status'    => 'publish',
-			'posts_per_page' => 5,
-			'orderby'        => 'title',
-			'order'          => 'ASC',
-		);
+		$possible_ids = $wpdb->get_col( "select ID from $wpdb->posts where post_title LIKE '%" . $name . "%' " );
+
+		if ( $possible_ids ) {
+			$args       = array(
+				'post__in'       => $possible_ids,
+				'post_type'      => 'post_type_' . $posttype,
+				'post_status'    => 'publish',
+				'posts_per_page' => 15,
+			);
+		} else {
+			$args       = array(
+				'title'          => $name,
+				'post_type'      => 'post_type_' . $posttype,
+				'post_status'    => 'publish',
+				'posts_per_page' => 15,
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+			);
+		}
+
 		$the_this   = new WP_Query( $args );
 
 		if ( $the_this->have_posts() ) {
@@ -260,8 +272,12 @@ class LWTV_Alexa_Who {
 						}
 						if ( is_array( $nation ) && ! empty( $nation ) ) {
 							$last_nation = array_pop( $nation );
-							array_push( $nation, 'and ' . $last_nation );
-							$nation = implode( ', ', $nation );
+							if ( count( $nation ) > 1 ) {
+								array_push( $nation, 'and ' . $last_nation );
+								$nation = implode( ', ', $nation );
+							} else {
+								$nation = $last_nation;
+							}
 						}
 
 						$station = array();
@@ -273,8 +289,12 @@ class LWTV_Alexa_Who {
 						}
 						if ( is_array( $station ) && ! empty( $station ) ) {
 							$last_station = array_pop( $station );
-							array_push( $station, 'and ' . $last_station );
-							$station = implode( ', ', $station );
+							if ( count( $station ) > 1 ) {
+								array_push( $station, 'and ' . $last_station );
+								$station = implode( ', ', $station );
+							} else {
+								$station = $last_nation;
+							}
 						}
 
 						$characters = ( get_post_meta( get_the_ID(), 'lezshows_char_count', true ) ) ? get_post_meta( get_the_ID(), 'lezshows_char_count', true ) : 0;
@@ -282,6 +302,7 @@ class LWTV_Alexa_Who {
 						$this_array[ $post_name ]['characters'] = $characters;
 						$this_array[ $post_name ]['airdates']   = $airdates;
 						$this_array[ $post_name ]['stations']   = $station;
+						$this_array[ $post_name ]['nations']    = $nation;
 						$this_array[ $post_name ]['content']    = wp_strip_all_tags( get_the_excerpt(), true );
 						break;
 				}
