@@ -69,22 +69,27 @@ Stored in `/cpts/`:
 * `post-meta.php` - Registers post-meta so it can be properly used and hidden from Gutenberg
 * `related-posts.php` - Displays related shows and posts (based on tags)
 
-* Actors: `/actors/` - Actor Post Type and related Taxonomies
-    * `_main.php` - Builds CPT and Taxonomies, adds to Dashboard, triggers saving related post meta (for actors), Yoast Meta Replacement, AMP support
-    * `calculations.php` - Does the math for various data points used to generate show scores, stores count of number of characters for faster retrieval later
-    * `cmb2-metaboxes.php` - CMB2 code to make display nicer
-    * `custom-columns.php` - Define columns for post listing
-* Characters: `/characters/` - Character Post Type and related Taxonomies
-    * `_main.php` - Builds CPT and Taxonomies, adds to Dashboard, triggers saving related post meta, Yoast Meta Replacement, AMP support
-    * `calculations.php` - Does the math for various data points used to generate show scores
-    * `cmb2-metaboxes.php` - CMB2 code to make display nicer
-    * `custom-columns.php` - Define columns for post listing
-* Shows: `/shows/` - Show Post Type and related Taxonomies
-    * `_main.php` - Builds CPT and Taxonomies, adds to Dashboard, triggers saving related post meta, Yoast Meta Replacement, AMP support
-    * `calculations.php` - Show score math
-    * `cmb2-metaboxes.php` - CMB2 code to make display nicer
-    * `custom-columns.php` - Define columns for post listing
-    * `shows-link-this.php` - Calculations for 'shows like this' (uses [Related Posts by Taxonomy](https://wordpress.org/plugins/related-posts-by-taxonomy/))
+_Actors (`actors`)_
+
+* `_main.php` - Builds CPT and Taxonomies, adds to Dashboard, triggers saving related post meta (for actors), Yoast Meta Replacement, AMP support
+* `calculations.php` - Does the math for various data points used to generate show scores, stores count of number of characters for faster retrieval later
+* `cmb2-metaboxes.php` - CMB2 code to make display nicer
+* `custom-columns.php` - Define columns for post listing
+
+_Characters (`/characters/`)_
+
+* `_main.php` - Builds CPT and Taxonomies, adds to Dashboard, triggers saving related post meta, Yoast Meta Replacement, AMP support
+* `calculations.php` - Does the math for various data points used to generate show scores
+* `cmb2-metaboxes.php` - CMB2 code to make display nicer
+* `custom-columns.php` - Define columns for post listing
+
+_Shows (`/shows/`)_
+
+* `_main.php` - Builds CPT and Taxonomies, adds to Dashboard, triggers saving related post meta, Yoast Meta Replacement, AMP support
+* `calculations.php` - Show score math
+* `cmb2-metaboxes.php` - CMB2 code to make display nicer
+* `custom-columns.php` - Define columns for post listing
+* `shows-link-this.php` - Calculations for 'shows like this' (uses [Related Posts by Taxonomy](https://wordpress.org/plugins/related-posts-by-taxonomy/))
 
 ### Features
 
@@ -170,21 +175,8 @@ The file `_main.php` acts as an autoloader.
 
 Stored in `/rest-api/` - These files generate the REST API output.
 
-The file `_main.php` acts as an autoloader.
-
-* Alexa Skills: `alexa-skills.php` - Builds the basic Alexa API
-* Alexa Skills - `/alexa/`
-    - Common: `_common.php` - Code used by multiple Alexa skills
-    - Validation: `_validate.php` - Validates the requests as coming from Amazon
-    - Bury Your Queers: `byq.php` - Old BYQ code
-    - Flash Briefing: `flash-brief.php` - Since the flash brief has trouble with media in post content, we've made our own special version.
-    - Newest: `newest.php` - Generate the newest shows or characters (or deaths)
-    - Shows: `shows.php` - Skills for interactions with shows (similar shows, recommended shows, etc.)
-    - This Year: `this-year.php` - Gives you an idea how this year is going...
-    - What's On: `whats-on.php` - Generates what's on TV stuff.
-    - Who Are You: `who-are-you.php` - Runs all code that discusses actors, characters, and shows.
-* Templates - `/templates/`
-    - Export JSON: `export-json.php` - uses var query data to determine what to show.
+* Main: `_main.php` - autoloader
+* Alexa Skills: `alexa-skills.php` - Builds the basic Alexa API (see also Alexa Folder)
 * LezWatch.TV Plugin (formerly Bury Your Queers) - `bury-your-queers.php`
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"
@@ -205,6 +197,23 @@ The file `_main.php` acts as an autoloader.
     - Outputs data based on what happened in a given year.
 * What's On - `whats-on.php`
     - What's on TV tonight (or tomorrow).
+
+_Alexa Skills (`/alexa/`)_
+
+* Common: `_common.php` - Code used by multiple Alexa skills
+* Validation: `_validate.php` - Validates the requests as coming from Amazon
+* Bury Your Queers: `byq.php` - Old BYQ code
+* Flash Briefing: `flash-brief.php` - Since the flash brief has trouble with media in post content, we've made our own special version.
+* Newest: `newest.php` - Generate the newest shows or characters (or deaths)
+* Shows: `shows.php` - Skills for interactions with shows (similar shows, recommended shows, etc.)
+* This Year: `this-year.php` - Gives you an idea how this year is going...
+* What's On: `whats-on.php` - Generates what's on TV stuff.
+* Who Are You: `who-are-you.php` - Runs all code that discusses actors, characters, and shows.
+
+_Templates (`/templates/`)_
+
+* Export JSON: `export-json.php` - uses var query data to determine what to show.
+
 
 ### Statistics
 
@@ -241,8 +250,10 @@ Stored in `/statistics/` - These files generate everything for stats, from graph
     - Stacked Barcharts
     - Piecharts
     - Trendlines
-* Templates: `/templates/`
-    - Output templates used by the shortcodes and Gutenberg (as well as when included on the pages themselves). These were originally in the theme, but were moved here to allow for updates.
+
+_Templates (`/templates/`)_
+
+Output templates used by the shortcodes and Gutenberg (as well as when included on the pages themselves). These were originally in the theme, but were moved here to allow for updates.
 
 ### This Year
 
@@ -269,7 +280,6 @@ In order to make maintenance easier, instead of checking everything all the time
 * [CMB2](https://github.com/WebDevStudios/CMB2)
 * [CMB2 Grid](https://github.com/origgami/CMB2-grid)
 * [CMB2 Field Select2](https://github.com/mustardBees/cmb-field-select2)
-* [FacetWP wp-cli](https://github.com/level-level/facetwp-wp-cli)
 * [FacetWP CMB2](https://github.com/WebDevStudios/facetwp-cmb2)
 
 #### Installation and Updating
