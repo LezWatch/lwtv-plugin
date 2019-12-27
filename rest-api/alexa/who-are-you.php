@@ -164,6 +164,7 @@ class LWTV_Alexa_Who {
 	 * @return void
 	 */
 	public function search_this( $posttype, $name = false ) {
+		global $wpdb;
 
 		// If there's no name or it's not a valid post type, bail.
 		if ( ! $name || ! in_array( $posttype, array( 'actors', 'characters', 'shows' ), true ) ) {
@@ -175,6 +176,7 @@ class LWTV_Alexa_Who {
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 		$this_array = array();
+
 		$args       = array(
 			'title'          => $name,
 			'post_type'      => 'post_type_' . $posttype,
@@ -191,103 +193,97 @@ class LWTV_Alexa_Who {
 
 				$the_this->the_post();
 
-				// Check display name...
-				// If it matches, we'll go
-				$title_array = explode( ' ', get_the_title() );
-				$short_name  = current( $title_array ) . end( $title_array );
+				$post_name = get_post_field( 'post_name' );
+				$this_array[ $post_name ] = array( 'name' => get_the_title() );
 
-				if ( strtolower( get_the_title() ) === strtolower( $name ) || strtolower( $short_name ) === strtolower( $name ) ) {
+				switch ( $posttype ) {
+					case 'actors':
+						// Age calculations
+						if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
+							$died = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
+							$end  = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
+						} else {
+							$died = false;
+							$end  = new DateTime();
+						}
 
-					$post_name = get_post_field( 'post_name' );
-					$this_array[ $post_name ] = array( 'name' => get_the_title() );
+						$start  = ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) ? new DateTime( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) : false;
+						if ( isset( $start ) ) {
+							$age_is = $start->diff( $end );
+						}
+						$age = $age_is->format( '%Y years old' );
 
-					switch ( $posttype ) {
-						case 'actors':
-							// Age calculations
-							if ( get_post_meta( get_the_ID(), 'lezactors_death', true ) ) {
-								$died = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
-								$end  = new DateTime( get_post_meta( get_the_ID(), 'lezactors_death', true ) );
-							} else {
-								$died = false;
-								$end  = new DateTime();
+						// Gender and sexuality
+						$gender       = array();
+						$sexuality    = array();
+						$gender_terms = get_the_terms( get_the_ID(), 'lez_actor_gender', true );
+						if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
+							foreach ( $gender_terms as $gender_term ) {
+								$gender[] = $gender_term->name;
 							}
-
-							$start  = ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) ? new DateTime( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) : false;
-							if ( isset( $start ) ) {
-								$age_is = $start->diff( $end );
+						}
+						$sexuality_terms = get_the_terms( get_the_ID(), 'lez_actor_sexuality', true );
+						if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
+							foreach ( $sexuality_terms as $sexuality_term ) {
+								$sexuality[] = $sexuality_term->name;
 							}
-							$age = $age_is->format( '%Y years old' );
+						}
 
-							// Gender and sexuality
-							$gender       = array();
-							$sexuality    = array();
-							$gender_terms = get_the_terms( get_the_ID(), 'lez_actor_gender', true );
-							if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
-								foreach ( $gender_terms as $gender_term ) {
-									$gender[] = $gender_term->name;
-								}
-							}
-							$sexuality_terms = get_the_terms( get_the_ID(), 'lez_actor_sexuality', true );
-							if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-								foreach ( $sexuality_terms as $sexuality_term ) {
-									$sexuality[] = $sexuality_term->name;
-								}
-							}
+						// Create data for actors
+						$this_array[ $post_name ]['content']    = apply_filters( 'the_content', get_the_content() );
+						$this_array[ $post_name ]['characters'] = get_post_meta( get_the_ID(), 'lezactors_char_count', true );
+						$this_array[ $post_name ]['gender']     = implode( ', ', $gender );
+						$this_array[ $post_name ]['sexuality']  = implode( ', ', $sexuality );
+						$this_array[ $post_name ]['born']       = $start;
+						$this_array[ $post_name ]['died']       = $died;
+						$this_array[ $post_name ]['age']        = $age;
+						break;
+					case 'characters':
+						// Custom output for characters? Alive or dead? Played by?
+						break;
+					case 'shows':
+						if ( get_post_meta( get_the_ID(), 'lezshows_airdates', true ) ) {
+							$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
 
-							// Create data for actors
-							$this_array[ $post_name ]['content']    = apply_filters( 'the_content', get_the_content() );
-							$this_array[ $post_name ]['characters'] = get_post_meta( get_the_ID(), 'lezactors_char_count', true );
-							$this_array[ $post_name ]['gender']     = implode( ', ', $gender );
-							$this_array[ $post_name ]['sexuality']  = implode( ', ', $sexuality );
-							$this_array[ $post_name ]['born']       = $start;
-							$this_array[ $post_name ]['died']       = $died;
-							$this_array[ $post_name ]['age']        = $age;
-							break;
-						case 'characters':
-							// Custom output for characters? Alive or dead? Played by?
-							break;
-						case 'shows':
-							if ( get_post_meta( get_the_ID(), 'lezshows_airdates', true ) ) {
-								$airdates = get_post_meta( get_the_ID(), 'lezshows_airdates', true );
-
-								// If the start is 'current' make it this year (though it really never should be.)
-								if ( 'current' === $airdates['start'] ) {
-									$airdates['start'] = date( 'Y' );
-								}
+							// If the start is 'current' make it this year (though it really never should be.)
+							if ( 'current' === $airdates['start'] ) {
+								$airdates['start'] = date( 'Y' );
 							}
+						}
 
-							$nation_terms = get_the_terms( get_the_ID(), 'lez_country', true );
-							if ( $nation_terms && ! is_wp_error( $nation_terms ) ) {
-								foreach ( $nation_terms as $nation_term ) {
-									$nation[] = $nation_term->name;
-								}
+						$nation = array();
+						$nation_terms = get_the_terms( get_the_ID(), 'lez_country', true );
+						if ( $nation_terms && ! is_wp_error( $nation_terms ) ) {
+							foreach ( $nation_terms as $nation_term ) {
+								$nation[] = $nation_term->name;
 							}
-							if ( is_array( $nation ) ) {
-								$last_nation = array_pop( $nation );
-								array_push( $nation, 'and ' . $last_nation );
-								$nation = implode( ', ', $nation );
-							}
+						}
+						if ( is_array( $nation ) && ! empty( $nation ) ) {
+							$last_nation = array_pop( $nation );
+							array_push( $nation, 'and ' . $last_nation );
+							$nation = implode( ', ', $nation );
+						}
 
-							$station_terms = get_the_terms( get_the_ID(), 'lez_stations', true );
-							if ( $station_terms && ! is_wp_error( $station_terms ) ) {
-								foreach ( $station_terms as $station_term ) {
-									$station[] = $station_term->name;
-								}
+						$station = array();
+						$station_terms = get_the_terms( get_the_ID(), 'lez_stations', true );
+						if ( $station_terms && ! is_wp_error( $station_terms ) ) {
+							foreach ( $station_terms as $station_term ) {
+								$station[] = $station_term->name;
 							}
-							if ( is_array( $station ) ) {
-								$last_station = array_pop( $station );
-								array_push( $station, 'and ' . $last_station );
-								$station = implode( ', ', $station );
-							}
+						}
+						if ( is_array( $station ) && ! empty( $station ) ) {
+							$last_station = array_pop( $station );
+							array_push( $station, 'and ' . $last_station );
+							$station = implode( ', ', $station );
+						}
 
-							$characters = ( get_post_meta( get_the_ID(), 'lezshows_char_count', true ) ) ? get_post_meta( get_the_ID(), 'lezshows_char_count', true ) : 0;
+						$characters = ( get_post_meta( get_the_ID(), 'lezshows_char_count', true ) ) ? get_post_meta( get_the_ID(), 'lezshows_char_count', true ) : 0;
 
-							$this_array[ $post_name ]['characters'] = $characters;
-							$this_array[ $post_name ]['airdates']   = $airdates;
-							$this_array[ $post_name ]['stations']   = $station;
-							$this_array[ $post_name ]['content']    = wp_strip_all_tags( get_the_excerpt(), true );
-							break;
-					}
+						$this_array[ $post_name ]['characters'] = $characters;
+						$this_array[ $post_name ]['airdates']   = $airdates;
+						$this_array[ $post_name ]['stations']   = $station;
+						$this_array[ $post_name ]['content']    = wp_strip_all_tags( get_the_excerpt(), true );
+						break;
 				}
 			}
 			wp_reset_postdata();
