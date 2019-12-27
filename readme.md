@@ -23,7 +23,6 @@ Defines `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwi
 Stored in `/admin/` -- Makes admin panels
 
 * `_tools.php` - Automated checks on data
-* `news.php` - Loads possibly relevant queer news
 * `screeners.php` - A list of all screeners
 
 ### Affiliates
@@ -58,6 +57,7 @@ _Javascript (`js`)_
 
 * `Chart.bundle.min.js` - Stat charts from [ChartJS](https://chartjs.org)
 * `Chart.colors.js` - Colors for charts (currently unused)
+* `cmb2_ajax.js` - Ajaxified code for CMB2 and post edits
 * `jquery.tablesorter.js` - Allow for table sorting
 * `palette.js` - Colors for charts
 
@@ -132,6 +132,7 @@ Blocks for Gutenberg. The file `_main.php` acts as an autoloader.
 * Grade: Give something a grade and an explanation
 * Screeners: For reviews of shows that haven't aired yet
 * Statistics: _currently disabled_
+* TV Show Calendar: Lists all the shows on air
 
 ### Node Scripts
 
@@ -150,7 +151,7 @@ The file `_main.php` acts as an autoloader.
     - generates a CB2 formatted list of terms
 * CMB2 Folder - `/cmb2/`
     - Select2: `/cmb-field-select2/` - CMB2 Field Type: Select2
-    - Grid: `/CMB2-grid/` - A grid display system
+    - Grid: `/cmb2-grid/` - A grid display system
     - Custom CSS: `/cmb2.css`
     - LWTV: `/lwtv.php` - Favorite shows for author profiles, Symbolicon support
     - Year Range: `/year-range.php` - 'date_year_range' custom field type
@@ -158,9 +159,8 @@ The file `_main.php` acts as an autoloader.
     - calls other files
     - Only show pagination if there's more than one page
     - Reset Shortcode
-* FacetWP Folder - `/facet/`
-    - CMB2: `/facetwp-cmb2/cmb2.php` - FacetWP Integration with CMB2
-    - CLI: `/facetwp-wp-cli/facetwp-wp-cli.php` - WP-CLI commands
+* FacetWP Folder - `/facetwp/`
+    - CMB2: `/facetwp-cmb2/` - FacetWP Integration with CMB2
     - JS: `facet.js` - Pagination Scrolling and Refresh Warning
     - LWTV: `/lwtv.php`
         - filter Data before it's saved to rename values (capitalization)
@@ -174,33 +174,36 @@ The file `_main.php` acts as an autoloader.
 
 * Alexa Skills: `alexa-skills.php` - Builds the basic Alexa API
 * Alexa Skills - `/alexa/`
-    - Validation: `/alexa-validate.php` - Validates the requests as coming from Amazon
-    - Bury Your Queers: `/byq.php` - Old BYQ code
-    - Flash Briefing: `/flash-brief.php` - Since the flash brief has trouble with media in post content, we've made our own special version.
-    - Newest: `/newest.php` - Generate the newest shows or characters (or deaths)
-    - Shows: `/shows.php` - Skills for interactions with shows (similar shows, recommended shows, etc.)
-    - This Year: `/this-year.php` - Gives you an idea how this year is going...
-    - What's On: `/whats-on.php` - Generates what's on TV stuff.
-    - Who Are You: `/who-are-you.php` - Runs all code that discusses actors, characters, and shows.
-* LezWatch.TV Plugin (formerly Bury Your Queers) - `/bury-your-queers.php`
+    - Common: `_common.php` - Code used by multiple Alexa skills
+    - Validation: `_validate.php` - Validates the requests as coming from Amazon
+    - Bury Your Queers: `byq.php` - Old BYQ code
+    - Flash Briefing: `flash-brief.php` - Since the flash brief has trouble with media in post content, we've made our own special version.
+    - Newest: `newest.php` - Generate the newest shows or characters (or deaths)
+    - Shows: `shows.php` - Skills for interactions with shows (similar shows, recommended shows, etc.)
+    - This Year: `this-year.php` - Gives you an idea how this year is going...
+    - What's On: `whats-on.php` - Generates what's on TV stuff.
+    - Who Are You: `who-are-you.php` - Runs all code that discusses actors, characters, and shows.
+* Templates - `/templates/`
+    - Export JSON: `export-json.php` - uses var query data to determine what to show.
+* LezWatch.TV Plugin (formerly Bury Your Queers) - `bury-your-queers.php`
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"
     - When Died - "X died on date Y"
-* Export - `/export-json.php`
+* Export - `export-json.php`
     - Customized export. Currently used for WikiData.
-* IMDb - `/imdb.php`
+* IMDb - `imdb.php`
     - API to communicate with IMDb and generate information (used by Alexa)
-* Of The Day - `/of-the-day.php`
+* Of The Day - `of-the-day.php`
     - The code that runs the X Of the Day API service. Every 24 hours, a new character and show of the day are spawned
-* Shows - `shows.php`
+* Shows - `shows-like-this.php`
     - Similar shows.
-* Slack - `/slack.php`
+* Slack - `slack.php`
     - Beginning of code to report newly dead characters to Slack (very buggy, currently disabled)
-* Statistics - `/stats.php`
+* Statistics - `stats.php`
     - JSON API version of the stats (mostly)
-* What Happened - `/what-happened.php`
+* What Happened - `what-happened.php`
     - Outputs data based on what happened in a given year.
-* What's On - `/whats-on.php`
+* What's On - `whats-on.php`
     - What's on TV tonight (or tomorrow).
 
 ### Statistics
