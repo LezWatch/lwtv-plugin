@@ -276,13 +276,38 @@ class LWTV_Whats_On_JSON {
 				$episode_number = trim( substr( $episode->summary, strpos( $episode->summary, ':' ) + 1 ) );
 				$airdate        = $showtime->format( 'l F d, Y' );
 
-				$by_day_array[ $airdate ][] = array(
-					'show_name' => $show_name,
-					'title'     => $episode->description . ' (' . $episode_number . ')',
-					'airtime'   => $showtime->format( 'g:i A' ),
-				);
+				// Only list a show once, trying to compensate for Binge.
+				if ( isset( $by_day_array[ $airdate ] ) && array_key_exists( $show_name, $by_day_array[ $airdate ] ) ) {
+					if ( $by_day_array[ $airdate ][ $show_name ]['airtime'] === $showtime->format( 'g:i A' ) ) {
+
+						if ( is_array( $by_day_array[ $airdate ][ $show_name ]['title'] ) ) {
+							$by_day_array[ $airdate ][ $show_name ]['title'][] = $episode->description . ' (' . $episode_number . ')';
+						} else {
+							$first = $by_day_array[ $airdate ][ $show_name ]['title'];
+							$newer = $episode->description . ' (' . $episode_number . ')';
+
+							$by_day_array[ $airdate ][ $show_name ]['title'] = array ( $first, $newer );
+						}
+					} else {
+						$by_day_array[ $airdate ][ $show_name . '.' . rand() ] = array(
+							'show_name' => $show_name,
+							'title'     => $episode->description . ' (' . $episode_number . ')',
+							'airtime'   => $showtime->format( 'g:i A' ),
+						);
+					}
+				} else {
+					$by_day_array[ $airdate ][ $show_name ] = array(
+						'show_name' => $show_name,
+						'title'     => $episode->description . ' (' . $episode_number . ')',
+						'airtime'   => $showtime->format( 'g:i A' ),
+					);
+				}
 			}
 		}
+
+		echo '<pre>';
+		//print_r( $by_day_array );
+		echo '</pre>';
 
 		return $by_day_array;
 

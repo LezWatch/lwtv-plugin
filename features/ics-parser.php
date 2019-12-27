@@ -4,7 +4,7 @@ Description: ICS Parser
 
 https://github.com/u01jmg3/ics-parser
 
-Version: 1.1
+Version: 1.2
 */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -18,6 +18,42 @@ use ICal\ICal;
  *
  */
 class LWTV_ICS_Parser {
+
+	/**
+	 * Construct
+	 * Runs the Code
+	 */
+	public function __construct() {
+		add_action( 'init', array( $this, 'init' ) );
+	}
+
+	/**
+	 * Main Plugin setup
+	 *
+	 * Adds actions, filters, etc. to WP
+	 *
+	 * @access public
+	 * @return void
+	 * @since 1.2
+	 */
+	public function init() {
+		// Plugin requires permalink usage - Only setup handling if permalinks are enabled
+		if ( '' !== get_option( 'permalink_structure' ) ) {
+			// tell WP not to override query vars
+			add_filter( 'query_vars', array( $this, 'query_vars' ) );
+		}
+	}
+
+	/**
+	 * Add the query variables so WordPress won't override it
+	 *
+	 * @return $vars
+	 * @since 1.2
+	 */
+	public function query_vars( $vars ) {
+		$vars[] = 'tvdate';
+		return $vars;
+	}
 
 	/**
 	 * Generate what's on for a specific date

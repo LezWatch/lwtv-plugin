@@ -119,7 +119,7 @@ class LWTV_Alexa_This_Year {
 
 		// Conclusion
 		if ( $datetime->format( 'Y' ) > 2013 ) {
-			$output = $intro . ', Lez Watch T. V. made ' . $posts . ', added ' . $characters . ', and added ' . $shows . '. ' . $dead . '.';
+			$output = $intro . ', LezWatch T. V. made ' . $posts . ', added ' . $characters . ', and added ' . $shows . '. ' . $dead . '.';
 		} else {
 			$output = 'Looking at the history of queer female, non-binary, and trans characters on television, I can tell you some things about ' . $datetime->format( 'Y' ) . ' ... ' . $dead . '.';
 		}

@@ -28,7 +28,7 @@ class LWTV_Alexa_Newest {
 		$death     = self::latest( 'death' );
 		$post      = self::latest( 'post' );
 
-		$output = 'The latest character added to Lez Watch T. V. was ' . $character['name'] . '. The latest show added was ' . $show['name'] . '. And the latest character who died was ' . $death . '. Our latest post was ' . $post['name'] . '.';
+		$output = 'The latest character added to LezWatch T. V. was ' . $character['name'] . '. The latest show added was ' . $show['name'] . '. And the latest character who died was ' . $death . '. Our latest post was ' . $post['name'] . '.';
 
 		$output .= 'For more information on the shows or characters, you can ask me "Tell me about the show ' . $show['name'] . '." or "Tell me about the character ' . $character['name'] . '".';
 
