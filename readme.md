@@ -175,8 +175,26 @@ The file `_main.php` acts as an autoloader.
 
 Stored in `/rest-api/` - These files generate the REST API output.
 
+<<<<<<< HEAD
 * Main: `_main.php` - autoloader
 * Alexa Skills: `alexa-skills.php` - Builds the basic Alexa API (see also Alexa Folder)
+=======
+The file `_main.php` acts as an autoloader.
+
+* Alexa Skills: `alexa-skills.php` - Builds the basic Alexa API
+* Alexa Skills - `/alexa/`
+    - Common: `_common.php` - Code used by multiple Alexa skills
+    - Validation: `_validate.php` - Validates the requests as coming from Amazon
+    - Bury Your Queers: `byq.php` - Old BYQ code
+    - Flash Briefing: `flash-brief.php` - Since the flash brief has trouble with media in post content, we've made our own special version.
+    - Newest: `newest.php` - Generate the newest shows or characters (or deaths)
+    - Shows: `shows.php` - Skills for interactions with shows (similar shows, recommended shows, etc.)
+    - This Year: `this-year.php` - Gives you an idea how this year is going...
+    - What's On: `whats-on.php` - Generates what's on TV stuff.
+    - Who Are You: `who-are-you.php` - Runs all code that discusses actors, characters, and shows.
+* Templates - `/templates/`
+    - Export JSON: `export-json.php` - uses var query data to determine what to show.
+>>>>>>> Updating Readme
 * LezWatch.TV Plugin (formerly Bury Your Queers) - `bury-your-queers.php`
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"
