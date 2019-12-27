@@ -1,15 +1,16 @@
 <?php
 /*
-Description: REST-API - Alexa Skills - Shows
-
-This is how we figure out what shows are like other shows
-
-Version: 1.0
+Name: REST-API - Alexa Skills - Shows
+Description: Calculates related shows (similar_to), recommended shows.
+Tags: Alexa
 */
 
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
+
+// Include common code
+require_once '_common.php';
 
 /**
  * class LWTV_Alexa_Shows
@@ -17,10 +18,11 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Alexa_Shows {
 
 	/**
-	 * Who is NAME? Let's find out...
+	 * Similar Shows To ...
+	 * Figure out what shows are like other shows (i.e. the showbot)
 	 *
 	 * @access public
-	 * @return string
+	 * @return string List of similar shows.
 	 */
 	public function similar_to( $name = false ) {
 
@@ -33,7 +35,7 @@ class LWTV_Alexa_Shows {
 		$results = self::search_this( $name );
 		$output  = '';
 
-		if ( ! isset( $results ) || ! $results ) {
+		if ( ! isset( $results ) || empty( $results ) ) {
 			$output = 'I can\'t find an television show by that name. That may mean I have no recorded characters for that show.';
 		} else {
 			if ( count( $results ) > 1 ) {
@@ -41,7 +43,9 @@ class LWTV_Alexa_Shows {
 			}
 
 			foreach ( $results as $show ) {
-				$similar = LWTV_Shows_Like_This_JSON::similar_show( $show );
+				$show_slug = get_post_field( 'post_name', $show );
+				$show_name = get_the_title( $show );
+				$similar   = LWTV_Shows_Like_This_JSON::similar_show( $show_slug );
 				foreach ( $similar['related'] as $a_show ) {
 					$related_array[] = $a_show['title'];
 				}
@@ -53,7 +57,7 @@ class LWTV_Alexa_Shows {
 					$related_string = implode( ', ', $related_array );
 				}
 
-				$output .= 'If you like ' . $show . ' then you may also like these shows. ' . $related_string . '. ';
+				$output .= 'If you like ' . $show_name . ' then you may also like these shows. ' . $related_string . '. ';
 			}
 		}
 
@@ -61,58 +65,11 @@ class LWTV_Alexa_Shows {
 	}
 
 	/**
-	 * search_this function.
+	 * Recommended Shows
+	 * This lists all the shows we love.
 	 *
-	 * @access public
-	 * @param mixed $name (default: = false)
-	 * @return void
+	 * @return string Shows we recommend
 	 */
-	public function search_this( $name = false ) {
-
-		if ( ! $name ) {
-			return false;
-		}
-
-		// Remove <!--fwp-loop--> from output
-		// @codingStandardsIgnoreStart
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
-		// @codingStandardsIgnoreEnd
-
-		$args = array(
-			's'              => $name,
-			'post_type'      => 'post_type_shows',
-			'post_status'    => 'publish',
-			'posts_per_page' => 5,
-		);
-
-		$the_show = new WP_Query( $args );
-		$show_arr = array();
-
-		if ( $the_show->have_posts() ) {
-
-			while ( $the_show->have_posts() ) {
-
-				$the_show->the_post();
-
-				// Check display name...
-				// If it matches, we'll go
-				$title_array = explode( ' ', get_the_title() );
-				$short_name  = current( $title_array ) . end( $title_array );
-
-				if ( strtolower( get_the_title() ) === strtolower( $name ) || strtolower( $short_name ) === strtolower( $name ) ) {
-					$show_arr[] = $the_show->post_name();
-				}
-			}
-			wp_reset_postdata();
-		}
-
-		if ( ! isset( $show_arr ) ) {
-			return false;
-		}
-
-		return $show_arr;
-	}
-
 	public static function recommended() {
 
 		// Number of shows
@@ -126,6 +83,7 @@ class LWTV_Alexa_Shows {
 			'post_type'      => 'post_type_shows',
 			'post_status'    => 'publish',
 			'posts_per_page' => 40,
+			'orderby'        => 'rand',
 			'meta_query'     => array(
 				array(
 					'key'     => 'lezshows_worthit_show_we_love',
@@ -163,6 +121,40 @@ class LWTV_Alexa_Shows {
 		}
 
 		return $output;
+	}
+
+	/**
+	 * search_this function.
+	 *
+	 * @access public
+	 * @param mixed $name (default: = false)
+	 * @return void
+	 */
+	public function search_this( $name = false ) {
+
+		if ( ! $name ) {
+			return false;
+		}
+
+		$queery_args  = LWTV_Alexa_Common::search_posts( 'shows', $name );
+		$the_shows    = new WP_Query( $queery_args );
+		$return_array = array();
+
+		if ( $the_shows->have_posts() ) {
+			while ( $the_shows->have_posts() ) {
+				$the_shows->the_post();
+				$return_array[] = get_the_ID();
+			}
+			wp_reset_postdata();
+		}
+
+		error_log( print_r( $return_array, true ) );
+
+		if ( ! isset( $return_array ) || empty( $return_array ) ) {
+			return false;
+		}
+
+		return $return_array;
 	}
 
 }

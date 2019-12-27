@@ -181,7 +181,7 @@ The file `_main.php` acts as an autoloader.
     - Shows: `/shows.php` - Skills for interactions with shows (similar shows, recommended shows, etc.)
     - This Year: `/this-year.php` - Gives you an idea how this year is going...
     - What's On: `/whats-on.php` - Generates what's on TV stuff.
-    - Who Are You: `/who-are-you.php` - Runs all code that discusses actors
+    - Who Are You: `/who-are-you.php` - Runs all code that discusses actors, characters, and shows.
 * LezWatch.TV Plugin (formerly Bury Your Queers) - `/bury-your-queers.php`
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"

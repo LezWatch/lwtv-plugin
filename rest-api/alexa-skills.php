@@ -1,10 +1,7 @@
 <?php
 /*
-Description: REST-API - Alexa Skills
-
-For Amazon Alexa Skills
-
-Version: 1.2
+Name: REST-API - Alexa Skills
+Description: Base code for Amazon Alexa Skills
 */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -42,16 +39,16 @@ class LWTV_Alexa_Skills {
 			'callback' => array( $this, 'flash_briefing_rest_api_callback' ),
 		) );
 
-		// Bury Your Queers (legacy)
-		register_rest_route( 'lwtv/v1', '/alexa-skills/byq/', array(
-			'methods'  => [ 'GET', 'POST' ],
-			'callback' => array( $this, 'bury_your_queers_rest_api_callback' ),
-		) );
-
 		// News Skill (rebranded BYQ)
 		register_rest_route( 'lwtv/v2', '/alexa-skills/news/', array(
 			'methods'  => [ 'GET', 'POST' ],
 			'callback' => array( $this, 'news_rest_api_callback' ),
+		) );
+
+		// DEPRECATED: Bury Your Queers
+		register_rest_route( 'lwtv/v1', '/alexa-skills/byq/', array(
+			'methods'  => [ 'GET', 'POST' ],
+			'callback' => array( 'LWTV_Alexa_Common', 'bury_your_queers_rest_api_callback' ),
 		) );
 		// @codingStandardsIgnoreEnd
 	}
@@ -66,45 +63,15 @@ class LWTV_Alexa_Skills {
 	}
 
 	/**
-	 * Rest API Callback for Bury Your Queers
-	 * THIS IS OLD and can be removed once BYQ is retired, but let's not break things...
-	 * This accepts POST data
-	 */
-	public static function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
-		$type   = ( isset( $request['request']['type'] ) ) ? $request['request']['type'] : false;
-		$intent = ( isset( $request['request']['intent']['name'] ) ) ? $request['request']['intent']['name'] : false;
-		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false;
-		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) ) ? $request['request']['session']['application']['applicationId'] : false;
-
-		// Call the validation:
-		require_once 'alexa/alexa-validate.php';
-		$validate_alexa = LWTV_Alexa_Validate::the_request( $request );
-
-		if ( 1 !== $validate_alexa['success'] ) {
-			$response = array(
-				'message' => $validate_alexa['message'],
-				'data'    => array(
-					'status' => 400,
-				),
-			);
-			$error    = new WP_REST_Response( $response );
-			$error->set_status( 400 );
-			return $error;
-		}
-		$response = $this->bury_your_queers( $type, $intent, $date );
-		return $response;
-	}
-
-	/**
 	 * Rest API Callback for News - aka the general app
 	 * This accepts POST data
 	 */
 	public function news_rest_api_callback( WP_REST_Request $request ) {
 
-		$type      = ( isset( $request['request']['type'] ) ) ? sanitize_text_field( $request['request']['type'] ) : false;
-		$intent    = ( isset( $request['request']['intent']['name'] ) ) ? sanitize_text_field( $request['request']['intent']['name'] ) : false;
+		$type   = ( isset( $request['request']['type'] ) ) ? sanitize_text_field( $request['request']['type'] ) : false;
+		$intent = ( isset( $request['request']['intent']['name'] ) ) ? sanitize_text_field( $request['request']['intent']['name'] ) : false;
 
-		$req_id    = ( isset( $request['request']['session']['application']['applicationId'] ) ) ? sanitize_text_field( $request['request']['session']['application']['applicationId'] ) : false;
+		$req_id = ( isset( $request['request']['session']['application']['applicationId'] ) ) ? sanitize_text_field( $request['request']['session']['application']['applicationId'] ) : false;
 
 		// Values
 		$value = array(
@@ -115,16 +82,16 @@ class LWTV_Alexa_Skills {
 		);
 
 		// Call the validation:
-		require_once 'alexa/alexa-validate.php';
-		$validate_alexa = LWTV_Alexa_Validate::the_request( $request );
-		if ( 1 !== $validate_alexa['success'] ) {
+		require_once 'alexa/_validate.php';
+		$validate = LWTV_Alexa_Validate::the_request( $request );
+		if ( 1 !== $validate['success'] ) {
 			$response = array(
-				'message' => $validate_alexa['message'],
+				'message' => $validate['message'],
 				'data'    => array(
 					'status' => 400,
 				),
 			);
-			$error    = new WP_REST_Response( $response );
+			$error = new WP_REST_Response( $response );
 			$error->set_status( 400 );
 			return $error;
 		}
@@ -280,98 +247,5 @@ class LWTV_Alexa_Skills {
 		);
 		return $response;
 	}
-
-	/**
-	 * Generate Bury Your Queers
-	 * THIS IS OLD and can be removed once BYQ is retired, but let's not break things...
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function bury_your_queers( $type = false, $intent = false, $date = false ) {
-
-		$notice     = 'This skill is being retired. Please install "LezWatch TV News" for future development and additional features. ';
-		$whodied    = '';
-		$endsession = true;
-		$timestamp  = ( false === strtotime( $date ) ) ? false : strtotime( $date );
-		$helptext   = 'You can find out who died on specific dates by asking me questions like "who died" or "who died today" or "who died on March 3rd" or even "How many died in 2017." If no one died then, I\'ll let you know.';
-		if ( 'LaunchRequest' === $type ) {
-			$whodied    = 'Welcome to the LezWatch T. V. Bury Your Queers skill. ' . $helptext;
-			$endsession = false;
-		} else {
-			switch ( $intent ) {
-				case 'AMAZON.HelpIntent':
-					$whodied    = 'This is the Bury Your Queers skill by LezWatch T. V., home of the world\'s greatest database of queer female, non-binary, and trans characters on TV. ' . $helptext;
-					$endsession = false;
-					break;
-				case 'AMAZON.StopIntent':
-				case 'AMAZON.CancelIntent':
-					$endsession = false;
-					break;
-				case 'HowMany':
-					if ( false === $date || false === $timestamp ) {
-						$data    = LWTV_Stats_JSON::statistics( 'death', 'simple' );
-						$whodied = 'A total of ' . $data['characters']['dead'] . ' queer female, non-binary, and trans characters have died on TV.';
-					} elseif ( ! preg_match( '/^[0-9]{4}$/', $date ) ) {
-						$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but years right now. ' . $helptext;
-						$endsession = false;
-					} else {
-						$data     = LWTV_Stats_JSON::statistics( 'death', 'years' );
-						$count    = $data[ $date ]['count'];
-						$how_many = 'No queer female, non-binary, or trans characters died on TV in ' . $date . '.';
-						if ( $count > 0 ) {
-							$how_many = $count . ' queer female, non-binary, or trans ' . _n( 'character', 'characters', $count ) . ' died on TV in ' . $date . '.';
-						}
-						$whodied = $how_many;
-					}
-					break;
-				case 'WhoDied':
-					if ( false === $date || false === $timestamp ) {
-						$data    = LWTV_BYQ_JSON::last_death();
-						$name    = $data['name'];
-						$whodied = 'The last queer female, non-binary, or trans character to die was ' . $name . ' on ' . date( 'F j, Y', $data['died'] ) . '.';
-					} elseif ( preg_match( '/^[0-9]{4}-(0[1-9]|1[0-2])$/', $date ) ) {
-						$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but days right now. ' . $helptext;
-						$endsession = false;
-					} else {
-						$this_day = date( 'm-d', $timestamp );
-						$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
-						$count    = ( 'none' === key( $data ) ) ? 0 : count( $data );
-						$how_many = 'No queer female, non-binary, or trans characters died';
-						$the_dead = '';
-						if ( $count > 0 ) {
-							$how_many  = $count . ' queer female, non-binary, or trans ' . _n( 'character', 'characters', $count ) . ' died';
-							$deadcount = 1;
-							foreach ( $data as $dead_character ) {
-								if ( $deadcount === $count && 1 !== $count ) {
-									$the_dead .= 'And ';
-								}
-								$the_dead .= $dead_character['name'] . ' in ' . $dead_character['died'] . '. ';
-								$deadcount++;
-							}
-						}
-						$whodied = $how_many . ' on ' . date( 'F jS', $timestamp ) . '. ' . $the_dead;
-					}
-					break;
-				default:
-					// We have a weird request...
-					$whodied    = 'I\'m sorry, I don\'t understand that request. Please ask me something else.';
-					$endsession = false;
-					break;
-			}
-		}
-		$response = array(
-			'version'  => '1.0',
-			'response' => array(
-				'outputSpeech'     => array(
-					'type' => 'PlainText',
-					'text' => $notice . $whodied,
-				),
-				'shouldEndSession' => $endsession,
-			),
-		);
-		return $response;
-	}
-
 }
 new LWTV_Alexa_Skills();
