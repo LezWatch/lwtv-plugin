@@ -176,7 +176,7 @@ The file `_main.php` acts as an autoloader.
 Stored in `/rest-api/` - These files generate the REST API output.
 
 * Main: `_main.php` - autoloader
-* Alexa Skills: `alexa-skills.php` - Builds the basic Alexa API (see also Alexa Folder)
+* Alexa Skills: `alexa-skills.php` - Builds the basic Alexa API (see also Alexa Skills section below)
 * LezWatch.TV Plugin (formerly Bury Your Queers) - `bury-your-queers.php`
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"

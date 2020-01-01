@@ -59,7 +59,6 @@ class LWTV_ServerSideRendering {
 	public function render_tvshow_calendar() {
 
 		$date_query = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today';
-
 		// Build out start and end dates.
 		$tz = new DateTimeZone( 'America/New_York' );
 

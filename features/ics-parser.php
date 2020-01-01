@@ -74,7 +74,7 @@ class LWTV_ICS_Parser {
 
 		switch ( $when ) {
 			case 'date':
-				if ( 'today' === $date ) {
+				if ( ! $date || 'today' === $date || ! self::validate_date( $date ) ) {
 					$date = $start_datetime->format( 'Y-m-d' );
 				}
 
@@ -94,16 +94,14 @@ class LWTV_ICS_Parser {
 				break;
 			case 'week':
 				// If the week has no date, it's this week
-				if ( ! $date ) {
+				if ( ! $date || 'today' === $date || ! self::validate_date( $date ) ) {
 					$start_datetime = new DateTime( 'today', $tz );
-					if ( 'Sun' !== $dt->format( 'D' ) ) {
+					if ( 'Sun' !== $start_datetime->format( 'D' ) ) {
 						$start_datetime = new DateTime( 'last Sunday', $tz );
 						$end_datetime   = new DateTime( 'last Sunday', $tz );
 					}
-
 					$end_datetime->modify( '+1 week' );
 				} else {
-					$date           = $start_datetime->format( 'Y-m-d' );
 					$start_dt       = DateTime::createFromFormat( 'Y-m-d', $date, $tz );
 					$start_datetime = $start_dt;
 					$end_dt         = DateTime::createFromFormat( 'Y-m-d', $date, $tz );
@@ -125,6 +123,17 @@ class LWTV_ICS_Parser {
 		$events         = $ical->eventsFromRange( $interval_start, $interval_end );
 
 		return $events;
+	}
+
+	/**
+	 * validate date format
+	 * @param  string  $date   The date we're checking
+	 * @param  string  $format Format of the date (default Y-m-d)
+	 * @return boolean         True/false
+	 */
+	public static function validate_date( $date, $format = 'Y-m-d' ) {
+		$d = DateTime::createFromFormat( $format, $date );
+		return $d && $d->format( $format ) === $date;
 	}
 
 }

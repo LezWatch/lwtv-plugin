@@ -76,16 +76,18 @@ class LWTV_Shows_CMB2 {
 
 	/*
 	 * Create a list of all genres that the show has
-	 * Now how do I make this auto-refresh?!?!
 	 */
 	public function cmb2_get_genres_options() {
 		$the_id = ( false !== get_the_ID() ) ? get_the_ID() : 0;
 		if ( 0 === $the_id ) {
 			$return = '';
 		} else {
-			$terms  = get_the_terms( $the_id, 'lez_genres' );
-			foreach ( $terms as $term ) {
-				$return[ $term->term_id ] = $term->name;
+			$terms = get_the_terms( $the_id, 'lez_genres' );
+
+			if ( $terms && ! is_wp_error( $terms ) ) {
+				foreach ( $terms as $term ) {
+					$return[ $term->term_id ] = $term->name;
+				}
 			}
 		}
 
