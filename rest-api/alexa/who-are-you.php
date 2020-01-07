@@ -336,7 +336,7 @@ class LWTV_Alexa_Who {
 
 			// If the start is 'current' make it this year (though it really never should be.)
 			if ( 'current' === $airdates['start'] ) {
-				$airdates['start'] = date( 'Y' );
+				$airdates['start'] = gmdate( 'Y' );
 			}
 		}
 

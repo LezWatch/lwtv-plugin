@@ -102,7 +102,7 @@ class LWTV_Shortcodes {
 		$death_list_array  = LWTV_BYQ_JSON::list_of_dead_characters( $death_query );
 		$death_query_count = 0;
 		foreach ( $death_list_array as $the_dead ) {
-			if ( $datetime->format( 'm' ) === date( 'm', $the_dead['died'] ) ) {
+			if ( $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {
 				$death_query_count++;
 			}
 		}

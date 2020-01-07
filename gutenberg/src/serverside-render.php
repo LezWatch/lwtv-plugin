@@ -94,38 +94,39 @@ class LWTV_ServerSideRendering {
 		if ( isset( $calendar['none'] ) ) {
 			$return .= '<p>There are no shows on the air.</p>';
 		} else {
-			$return .= '<ul class="lwtv-calendar-list list-group">';
+			$return .= '<p>All times are US/Eastern.</p>';
+			$return .= '<table class="table lwtvc table-hover">';
 
 			foreach ( $calendar as $day => $shows ) {
-				$hilight = ( $day === $today->format( 'l F d, Y' ) ) ? ' list-group-item-info' : '';
+				$hilight = ( $day === $today->format( 'l F d, Y' ) ) ? ' table-info' : '';
+				$showday = new DateTime( $day, $tz );
 
-				$return .= '<li class="list-group-item' . $hilight . '"><h3 class="lwtv-calendar-date">' . $day . '</h3><ul class="list-group">';
-				foreach ( $shows as $show ) {
-
-					// Show name
-					$return .= '<li class="list-group-item' . $hilight . '"><h4>' . $show['show_name'] . '</h4>';
-
-					// Show Time
-					$return .= '<div><span class="time">' . $show['airtime'] . ' US/Eastern</span></div>';
-
-					// Episode Title(s)
-					$return .= '<div class="lwtv-calendar-episode-title">';
-					if ( is_array( $show['title'] ) ) {
-						$return .= '<ul>';
-						foreach ( $show['title'] as $one_show ) {
-							$return .= '<li>' . $one_show . '</li>';
-						}
-						$return .= '</ul>';
-					} else {
-						$return .= $show['title'];
-					}
-					$return .= '</div>';
-
-					$return .= '</li>';
+				$today_date = $showday->format( 'F d, Y' );
+				if ( $day === $today->format( 'l F d, Y' ) ) {
+					$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
 				}
-				$return .= '</ul></li>';
+
+				$return .= '<thead class="thead-light"><tr class="lwtvc-heading' . $hilight . '" data-date="' . $showday->format( 'Y-m-d' ) . '"><th colspan="3"><span class="ep-calendar-heading-date">' . $today_date . '</span><span class="ep-calendar-heading-weekday">' . $showday->format( 'l' ) . '</span></th></tr></thead><tbody>';
+
+				foreach ( $shows as $show ) {
+					// Episode Title(s)
+					$show_content = '<div class="ep-calendar-title">';
+					if ( is_array( $show['title'] ) ) {
+						$show_content .= '<em>' . $show['show_name'] . '</em>';
+						$show_content .= '<ul>';
+						foreach ( $show['title'] as $one_show ) {
+							$show_content .= '<li>' . $one_show . '</li>';
+						}
+						$show_content .= '</ul>';
+					} else {
+						$show_content .= '<em>' . $show['show_name'] . '</em> - ' . $show['title'];
+					}
+					$show_content .= '</div>';
+
+					$return .= '<tr class="ep-calendar-item' . $hilight . '"><td class="ep-calendar-item-time">' . $show['airtime'] . '</td><td class="ep-calendar-marker"><span class="ep-calendar-dot"></span></td><td class="ep-calendar-item-title">' . $show_content . '</td></tr>';
+				}
 			}
-			$return .= '</ul>';
+			$return .= '</tbody></table>';
 
 			// NAVIGATION:
 
@@ -138,7 +139,7 @@ class LWTV_ServerSideRendering {
 			$next_week = add_query_arg( 'tvdate', $end_datetime->format( 'Y-m-d' ), get_permalink() );
 			$next_icon = LWTV_Functions::symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' );
 
-			$return .= '<nav aria-label="This Year navigation" role="navigation"><ul class="pagination justify-content-center"><li class="page-item first mr-auto"><a href="' . $prev_week . '" class="page-link">' . $prev_icon . ' Last Week</a></li><li class="page-item last ml-auto"><a href="' . $next_week . '" class="page-link">' . $next_icon . ' Next Week</a></li></ul></nav>';
+			$return .= '<nav aria-label="This Year navigation" role="navigation"><ul class="pagination justify-content-center"><li class="page-item first mr-auto"><a href="' . $prev_week . '" class="page-link">' . $prev_icon . ' Last Week</a></li><li class="page-item active"><a href="/calendar/" class="page-link">This Week</a></li><li class="page-item last ml-auto"><a href="' . $next_week . '" class="page-link">' . $next_icon . ' Next Week</a></li></ul></nav>';
 		}
 
 		return $return;

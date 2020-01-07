@@ -50,9 +50,9 @@ class LWTV_Alexa_This_Year {
 		}
 
 		// If it's the future, be smarter than Alexa...
-		if ( $datetime->format( 'Y' ) > date( 'Y' ) ) {
+		if ( $datetime->format( 'Y' ) > gmdate( 'Y' ) ) {
 			$datetime->modify( '-1 year' );
-			$date = date( 'Y' );
+			$date = gmdate( 'Y' );
 		}
 
 		// Get the data
@@ -95,7 +95,7 @@ class LWTV_Alexa_This_Year {
 					$intro = 'In ' . $datetime->format( 'F Y' );
 					break;
 				default:
-					$intro  = ( $datetime->format( 'Y' ) === date( 'Y' ) ) ? 'So far, in ' : 'In ';
+					$intro  = ( $datetime->format( 'Y' ) === gmdate( 'Y' ) ) ? 'So far, in ' : 'In ';
 					$intro .= $datetime->format( 'Y' );
 					break;
 			}

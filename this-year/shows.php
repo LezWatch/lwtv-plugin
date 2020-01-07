@@ -29,7 +29,7 @@ class LWTV_This_Year_Shows {
 	 */
 	public static function list( $thisyear ) {
 		$fail_msg      = '<p>No shows were on air this year.</p>';
-		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'now' );
 		$shows_current = $show_array['current'];
 		$shows_formats = $show_array['formats'];
@@ -150,7 +150,7 @@ class LWTV_This_Year_Shows {
 	 */
 	public static function new( $thisyear ) {
 		$fail_msg      = '<p>No shows were new this year.</p>';
-		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'started' );
 		$shows_started = $show_array['current'];
 		$shows_formats = $show_array['formats'];
@@ -270,7 +270,7 @@ class LWTV_This_Year_Shows {
 	 */
 	public static function canceled( $thisyear ) {
 		$fail_msg      = '<p>No shows were canceled this year.</p>';
-		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'ended' );
 		$shows_ended   = $show_array['current'];
 		$shows_formats = $show_array['formats'];
@@ -384,7 +384,7 @@ class LWTV_This_Year_Shows {
 	 * @return array massive array of everything.
 	 */
 	public static function get_list( $thisyear, $type = 'now', $count = false ) {
-		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$valid_types   = array( 'now', 'started', 'ended' );
 		$type          = ( ! in_array( $type, $valid_types, true ) ) ? 'now' : $type;
 		$shows_current = array();
@@ -408,7 +408,7 @@ class LWTV_This_Year_Shows {
 					switch ( $type ) {
 						case 'now':
 							if (
-								( 'current' === $airdates['finish'] && date( 'Y' ) === $thisyear ) // Still Current and it's NOW
+								( 'current' === $airdates['finish'] && gmdate( 'Y' ) === $thisyear ) // Still Current and it's NOW
 								|| ( $airdates['finish'] >= $thisyear && $airdates['start'] <= $thisyear ) // Airdates between
 							) {
 								$yes_count = true;

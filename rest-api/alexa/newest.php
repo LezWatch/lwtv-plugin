@@ -45,7 +45,7 @@ class LWTV_Alexa_Newest {
 		if ( 'death' === $posttype ) {
 			$data   = LWTV_BYQ_JSON::last_death();
 			$name   = $data['name'];
-			$output = $name . ' on ' . date( 'F j, Y', $data['died'] );
+			$output = $name . ' on ' . gmdate( 'F j, Y', $data['died'] );
 		} else {
 			$get_post_type = ( 'post' === $posttype ) ? 'post' : 'post_type_' . $posttype;
 

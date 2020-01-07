@@ -195,7 +195,7 @@ class LWTV_Shows_CMB2 {
 					'finish_label' => '',
 				),
 				'default' => array(
-					'start'  => date( 'Y' ),
+					'start'  => gmdate( 'Y' ),
 					'finish' => 'current',
 				),
 				'options' => array(

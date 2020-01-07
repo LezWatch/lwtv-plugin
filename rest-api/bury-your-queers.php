@@ -244,8 +244,8 @@ class LWTV_BYQ_JSON {
 			case 'tweet':
 				$the_dead_array = array();
 				foreach ( $death_list_array as $the_dead ) {
-					if ( date( 'm-d', $the_dead['died'] ) === $this_day ) {
-						$data = $the_dead['name'] . ' (' . date( 'Y', $the_dead['died'] ) . ') -- ' . $the_dead['url'];
+					if ( gmdate( 'm-d', $the_dead['died'] ) === $this_day ) {
+						$data = $the_dead['name'] . ' (' . gmdate( 'Y', $the_dead['died'] ) . ') -- ' . $the_dead['url'];
 						array_push( $the_dead_array, $data );
 					}
 				}
@@ -262,12 +262,12 @@ class LWTV_BYQ_JSON {
 				break;
 			case 'json':
 				foreach ( $death_list_array as $the_dead ) {
-					if ( date( 'm-d', $the_dead['died'] ) === $this_day ) {
+					if ( gmdate( 'm-d', $the_dead['died'] ) === $this_day ) {
 						$died_today_array[ $the_dead['slug'] ] = array(
 							'id'   => $the_dead['id'],
 							'name' => $the_dead['name'],
 							'url'  => $the_dead['url'],
-							'died' => date( 'Y', $the_dead['died'] ),
+							'died' => gmdate( 'Y', $the_dead['died'] ),
 						);
 					}
 				}

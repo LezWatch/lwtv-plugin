@@ -81,7 +81,7 @@ class LWTV_This_Year_JSON {
 	public function rest_api_callback( $data ) {
 		$params = $data->get_params();
 		$type   = ( isset( $params['type'] ) && '' !== $params['type'] ) ? sanitize_title_for_query( $params['type'] ) : 'year';
-		$year   = ( isset( $params['year'] ) && '' !== $params['year'] && ( $params['year'] >= FIRST_LWTV_YEAR && $params['year'] <= date( 'Y' ) ) ) ? (int) $params['year'] : date( 'Y' );
+		$year   = ( isset( $params['year'] ) && '' !== $params['year'] && ( $params['year'] >= FIRST_LWTV_YEAR && $params['year'] <= gmdate( 'Y' ) ) ) ? (int) $params['year'] : gmdate( 'Y' );
 
 		switch ( $type ) {
 			case 'year':
@@ -111,7 +111,7 @@ class LWTV_This_Year_JSON {
 		// phpcs:ignore
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
-		$year  = ( isset( $year ) ) ? (int) $year : date( 'Y' );
+		$year  = ( isset( $year ) ) ? (int) $year : gmdate( 'Y' );
 		$array = array();
 
 		switch ( $type ) {
@@ -150,11 +150,11 @@ class LWTV_This_Year_JSON {
 
 		$array      = array();
 		$end_year   = ( $year >= FIRST_LWTV_YEAR ) ? $year : FIRST_LWTV_YEAR;
-		$end_year   = ( $year <= date( 'Y' ) ) ? $year : date( 'Y' );
+		$end_year   = ( $year <= gmdate( 'Y' ) ) ? $year : gmdate( 'Y' );
 		$start_year = $end_year - 10;
 
 		while ( $start_year <= $end_year ) {
-			if ( ( $start_year >= FIRST_LWTV_YEAR && $start_year <= date( 'Y' ) ) ) {
+			if ( ( $start_year >= FIRST_LWTV_YEAR && $start_year <= gmdate( 'Y' ) ) ) {
 				$array[ $start_year ] = array(
 					'characters' => LWTV_This_Year_Chars::get_list( (string) $start_year, true ),
 					'dead'       => LWTV_This_Year_Chars::get_dead( (string) $start_year, true ),

@@ -158,7 +158,7 @@ class LWTV_Stats_Output {
 
 		switch ( $type ) {
 			case 'average':
-				$n   = ( 'dead-years' === $data ) ? ( date( 'Y' ) - FIRST_LWTV_YEAR ) : $count;
+				$n   = ( 'dead-years' === $data ) ? ( gmdate( 'Y' ) - FIRST_LWTV_YEAR ) : $count;
 				$sum = 0;
 				foreach ( $array as $item ) {
 					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound

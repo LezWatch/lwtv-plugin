@@ -166,7 +166,7 @@ class LWTV_CMB2_DYR {
 
 	public function jt_cmb2_date_year_range_options( $type_object, $earliest, $value, $reverse = false, $current = true ) {
 		$options   = array();
-		$this_year = ( date( 'Y' ) + 1 );
+		$this_year = ( gmdate( 'Y' ) + 1 );
 
 		$not_set = array(
 			'value' => '',

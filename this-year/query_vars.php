@@ -121,7 +121,7 @@ class LWTV_This_Year_Query_Vars {
 	 */
 	public function yoast_retrieve_year_replacement() {
 		$this_year = get_query_var( 'thisyear', 'none' );
-		$return    = ( 'none' !== $this_year ) ? ucfirst( $this_year ) : date( 'Y' );
+		$return    = ( 'none' !== $this_year ) ? ucfirst( $this_year ) : gmdate( 'Y' );
 		$return    = '(' . $return . ')';
 		return $return;
 	}

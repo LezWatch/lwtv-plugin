@@ -21,7 +21,7 @@ class LWTV_Alexa_BYQ {
 	 *
 	 * @access public
 	 * @param string $type (default: 'simple')
-	 * @param string $date (default: date('Y'))
+	 * @param string $date (default: gmdate('Y'))
 	 * @return string
 	 */
 	public function how_many( $type = 'simple' ) {
@@ -47,7 +47,7 @@ class LWTV_Alexa_BYQ {
 			}
 
 			// If it's the future, be smarter than Alexa...
-			if ( $datetime->format( 'Y' ) > date( 'Y' ) ) {
+			if ( $datetime->format( 'Y' ) > gmdate( 'Y' ) ) {
 				$datetime->modify( '-1 year' );
 			}
 
@@ -62,7 +62,7 @@ class LWTV_Alexa_BYQ {
 					$death_list_array = LWTV_BYQ_JSON::list_of_dead_characters( $death_query );
 					$death_count      = 0;
 					foreach ( $death_list_array as $the_dead ) {
-						if ( $datetime->format( 'm' ) === date( 'm', $the_dead['died'] ) ) {
+						if ( $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {
 							$death_count++;
 						}
 					}
@@ -90,7 +90,7 @@ class LWTV_Alexa_BYQ {
 					$intro = 'In ' . $datetime->format( 'F Y' );
 					break;
 				default:
-					$intro  = ( $datetime->format( 'Y' ) === date( 'Y' ) ) ? 'So far in ' : 'In ';
+					$intro  = ( $datetime->format( 'Y' ) === gmdate( 'Y' ) ) ? 'So far in ' : 'In ';
 					$intro .= $datetime->format( 'Y' );
 					break;
 			}
@@ -107,7 +107,7 @@ class LWTV_Alexa_BYQ {
 		$timestamp = ( strtotime( $date ) === false ) ? time() : strtotime( $date );
 
 		// Figure out who died on a day...
-		$this_day = date( 'm-d', $timestamp );
+		$this_day = gmdate( 'm-d', $timestamp );
 		$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
 		$count    = ( 'none' === key( $data ) ) ? 0 : count( $data );
 		$how_many = 'No characters died ';
@@ -123,7 +123,7 @@ class LWTV_Alexa_BYQ {
 				$deadcount++;
 			}
 		}
-		$output = $how_many . ' on ' . date( 'F jS', $timestamp ) . '. ' . $the_dead;
+		$output = $how_many . ' on ' . gmdate( 'F jS', $timestamp ) . '. ' . $the_dead;
 
 		return $output;
 	}
