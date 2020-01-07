@@ -273,7 +273,7 @@ class LWTV_Whats_On_JSON {
 
 				// Reformat the show name and episode name
 				$episode_number = trim( substr( strrchr( $episode->summary, ':' ), 1 ) );
-				$show_name      = substr( str_replace( $episode_number, '', $episode->summary ), 0, -1 );
+				$show_name      = substr( trim( str_replace( $episode_number, '', $episode->summary ) ), 0, -1 );
 				$airdate        = $showtime->format( 'l F d, Y' );
 
 				// Only list a show once, trying to compensate for Binge.
