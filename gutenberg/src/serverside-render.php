@@ -59,8 +59,10 @@ class LWTV_ServerSideRendering {
 	public function render_tvshow_calendar() {
 
 		$date_query = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today';
+		$tz_query   = isset( $_GET['tvzone'] ) ? sanitize_text_field( $_GET['tvzone'] ) : 'America/New_York';
+
 		// Build out start and end dates.
-		$tz = new DateTimeZone( 'America/New_York' );
+		$tz = new DateTimeZone( $tz_query );
 
 		// This is for figuring out today
 		$today = new DateTime( 'today', $tz );
@@ -94,15 +96,15 @@ class LWTV_ServerSideRendering {
 		if ( isset( $calendar['none'] ) ) {
 			$return .= '<p>There are no shows on the air.</p>';
 		} else {
-			$return .= '<p>All times are US/Eastern.</p>';
+			$return .= '<p>All times are ' . $tz_query . '.</p>';
 			$return .= '<table class="table lwtvc table-hover">';
 
 			foreach ( $calendar as $day => $shows ) {
-				$hilight = ( $day === $today->format( 'l F d, Y' ) ) ? ' table-info' : '';
+				$hilight = ( $day === $today->format( 'Y-m-d' ) ) ? ' table-info' : '';
 				$showday = new DateTime( $day, $tz );
 
 				$today_date = $showday->format( 'F d, Y' );
-				if ( $day === $today->format( 'l F d, Y' ) ) {
+				if ( $day === $today->format( 'Y-m-d' ) ) {
 					$today_date .= '&nbsp;&nbsp;<button type="button" class="btn btn-info btn-sm" disabled><a name="today">Today</a></button>';
 				}
 
@@ -123,7 +125,11 @@ class LWTV_ServerSideRendering {
 					}
 					$show_content .= '</div>';
 
-					$return .= '<tr class="ep-calendar-item' . $hilight . '"><td class="ep-calendar-item-time">' . $show['airtime'] . '</td><td class="ep-calendar-marker"><span class="ep-calendar-dot"></span></td><td class="ep-calendar-item-title">' . $show_content . '</td></tr>';
+					// Set the showtime from the timestamp
+					$show_time = new DateTime( '@' . $show['timestamp'], $tz );
+
+					// Return it all!
+					$return .= '<tr class="ep-calendar-item' . $hilight . '"><td class="ep-calendar-item-time">' . $show_time->format( 'g:i A' ) . '</td><td class="ep-calendar-marker"><span class="ep-calendar-dot"></span></td><td class="ep-calendar-item-title">' . $show_content . '</td></tr>';
 				}
 			}
 			$return .= '</tbody></table>';
