@@ -145,12 +145,12 @@ class LWTV_Alexa_Common {
 					if ( false === $date || false === $timestamp ) {
 						$data    = LWTV_BYQ_JSON::last_death();
 						$name    = $data['name'];
-						$whodied = 'The last queer female, non-binary, or trans character to die was ' . $name . ' on ' . date( 'F j, Y', $data['died'] ) . '.';
+						$whodied = 'The last queer female, non-binary, or trans character to die was ' . $name . ' on ' . gmdate( 'F j, Y', $data['died'] ) . '.';
 					} elseif ( preg_match( '/^[0-9]{4}-(0[1-9]|1[0-2])$/', $date ) ) {
 						$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but days right now. ' . $helptext;
 						$endsession = false;
 					} else {
-						$this_day = date( 'm-d', $timestamp );
+						$this_day = gmdate( 'm-d', $timestamp );
 						$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
 						$count    = ( 'none' === key( $data ) ) ? 0 : count( $data );
 						$how_many = 'No queer female, non-binary, or trans characters died';
@@ -166,7 +166,7 @@ class LWTV_Alexa_Common {
 								$deadcount++;
 							}
 						}
-						$whodied = $how_many . ' on ' . date( 'F jS', $timestamp ) . '. ' . $the_dead;
+						$whodied = $how_many . ' on ' . gmdate( 'F jS', $timestamp ) . '. ' . $the_dead;
 					}
 					break;
 				default:

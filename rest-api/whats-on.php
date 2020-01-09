@@ -272,13 +272,13 @@ class LWTV_Whats_On_JSON {
 				$showtime->add( $interval );
 
 				// Reformat the show name and episode name
-				$show_name      = substr( $episode->summary, 0, strpos( $episode->summary, ':' ) );
-				$episode_number = trim( substr( $episode->summary, strpos( $episode->summary, ':' ) + 1 ) );
-				$airdate        = $showtime->format( 'l F d, Y' );
+				$episode_number = trim( substr( strrchr( $episode->summary, ':' ), 1 ) );
+				$show_name      = substr( trim( str_replace( $episode_number, '', $episode->summary ) ), 0, -1 );
+				$airdate        = $showtime->format( 'Y-m-d' );
 
 				// Only list a show once, trying to compensate for Binge.
 				if ( isset( $by_day_array[ $airdate ] ) && array_key_exists( $show_name, $by_day_array[ $airdate ] ) ) {
-					if ( $by_day_array[ $airdate ][ $show_name ]['airtime'] === $showtime->format( 'g:i A' ) ) {
+					if ( $by_day_array[ $airdate ][ $show_name ]['timestamp'] === $showtime->getTimestamp() ) {
 
 						if ( is_array( $by_day_array[ $airdate ][ $show_name ]['title'] ) ) {
 							$by_day_array[ $airdate ][ $show_name ]['title'][] = $episode->description . ' (' . $episode_number . ')';
@@ -286,20 +286,20 @@ class LWTV_Whats_On_JSON {
 							$first = $by_day_array[ $airdate ][ $show_name ]['title'];
 							$newer = $episode->description . ' (' . $episode_number . ')';
 
-							$by_day_array[ $airdate ][ $show_name ]['title'] = array ( $first, $newer );
+							$by_day_array[ $airdate ][ $show_name ]['title'] = array( $first, $newer );
 						}
 					} else {
 						$by_day_array[ $airdate ][ $show_name . '.' . rand() ] = array(
 							'show_name' => $show_name,
 							'title'     => $episode->description . ' (' . $episode_number . ')',
-							'airtime'   => $showtime->format( 'g:i A' ),
+							'timestamp' => $showtime->getTimestamp(),
 						);
 					}
 				} else {
 					$by_day_array[ $airdate ][ $show_name ] = array(
 						'show_name' => $show_name,
 						'title'     => $episode->description . ' (' . $episode_number . ')',
-						'airtime'   => $showtime->format( 'g:i A' ),
+						'timestamp' => $showtime->getTimestamp(),
 					);
 				}
 			}

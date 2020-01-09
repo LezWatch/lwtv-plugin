@@ -115,7 +115,7 @@ class LWTV_FacetWP {
 				// Parse start and end dates  (use 'now' if 'current' or empty)
 				$values = (array) $params['facet_value'];
 				$start  = ( isset( $values['start'] ) ) ? $values['start'] : '';
-				$end    = ( isset( $values['finish'] ) && lcfirst( $values['finish'] ) !== 'current' ) ? $values['finish'] : date( 'Y' );
+				$end    = ( isset( $values['finish'] ) && lcfirst( $values['finish'] ) !== 'current' ) ? $values['finish'] : gmdate( 'Y' );
 
 				$params_start = $params;
 				$params_end   = $params;
@@ -133,7 +133,7 @@ class LWTV_FacetWP {
 				// Extra check for is it currently on air
 				$params_on_air = $params;
 				$on_air        = 'no';
-				if ( 'current' === lcfirst( $end ) || $end >= date( 'Y' ) ) {
+				if ( 'current' === lcfirst( $end ) || $end >= gmdate( 'Y' ) ) {
 					$on_air = 'yes';
 				}
 				$params_on_air['facet_name']          = 'show_on_air';

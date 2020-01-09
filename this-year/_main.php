@@ -17,10 +17,10 @@ class LWTV_This_Year {
 	 * @return n/a    outputs everything
 	 */
 	public static function display( $thisyear ) {
-		$thisyear    = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$thisyear    = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$valid_views = array( 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
 		$view        = get_query_var( 'view', 'overview' );
-		$baseurl     = ( date( 'Y' ) !== $thisyear ) ? '/this-year/' . $thisyear . '/' : '/this-year/';
+		$baseurl     = ( gmdate( 'Y' ) !== $thisyear ) ? '/this-year/' . $thisyear . '/' : '/this-year/';
 
 		?>
 		<div class="thisyear-container">
@@ -65,7 +65,7 @@ class LWTV_This_Year {
 	}
 
 	public static function overview( $thisyear ) {
-		$thisyear = ( isset( $thisyear ) ) ? $thisyear : date( 'Y' );
+		$thisyear = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$array    = array(
 			'shows'      => LWTV_This_Year_Shows::get_list( $thisyear, 'now', true ),
 			'characters' => LWTV_This_Year_Chars::get_list( $thisyear, true ),
@@ -154,11 +154,11 @@ class LWTV_This_Year {
 				<li class="page-item active"><span class="active page-link"><?php echo (int) $thisyear; ?></span></li>
 
 				<?php
-				if ( date( 'Y' ) !== $thisyear ) {
+				if ( gmdate( 'Y' ) !== $thisyear ) {
 					?>
 					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $thisyear + 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $thisyear + 1 ); ?></a></li>
 					<li class="page-item next"><a href="<?php echo esc_url( $baseurl . ( $thisyear + 1 ) . '/' . $view ); ?>" class="page-link" title="next year">Next <?php echo LWTV_Functions::symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ); ?></a></li>
-					<li class="page-item last ml-auto"><a href="<?php echo esc_url( $baseurl . date( 'Y' ) . '/' . $view ); ?>" class="page-link">Last (<?php echo (int) date( 'Y' ); ?>)<?php echo LWTV_Functions::symbolicons( 'caret-right.svg', 'fa-chevron-right' ); ?></a></li>
+					<li class="page-item last ml-auto"><a href="<?php echo esc_url( $baseurl . gmdate( 'Y' ) . '/' . $view ); ?>" class="page-link">Last (<?php echo (int) gmdate( 'Y' ); ?>)<?php echo LWTV_Functions::symbolicons( 'caret-right.svg', 'fa-chevron-right' ); ?></a></li>
 					<?php
 				}
 				?>

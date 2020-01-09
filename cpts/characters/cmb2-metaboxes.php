@@ -22,7 +22,7 @@ class LWTV_Characters_CMB2 {
 			'guest'     => 'Guest Character',
 		);
 
-		$all_years   = range( FIRST_LWTV_YEAR, date( 'Y' ) + 1 );
+		$all_years   = range( FIRST_LWTV_YEAR, gmdate( 'Y' ) + 1 );
 		$years_array = array();
 		foreach ( $all_years as $a_year ) {
 			$years_array[ $a_year ] = $a_year;
