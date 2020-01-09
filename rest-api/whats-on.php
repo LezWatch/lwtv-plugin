@@ -4,8 +4,6 @@ Description: REST-API: What's On?
 
 The code that runs the What's On TV API service
 - What's On: Outputs what's on TV today
-
-Version: 2.1
 */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -203,10 +201,12 @@ class LWTV_Whats_On_JSON {
 			$show_obj = get_page_by_path( $show, OBJECT, 'post_type_shows' );
 			if ( $show_obj ) {
 				$show_id   = $show_obj->ID;
-				$show_name = get_the_title( $show_id );
+				$show_name = trim( current( explode( '(', get_the_title( $show_id ) ) ) );
 
 				// Default reply
-				$return = 'There is no upcoming airing of ' . $show_name . ' in the next 30 days.';
+				$return = array(
+					'pretty' => 'There is no upcoming airing of ' . $show_name . ' in the next 30 days.',
+				);
 
 				// Timestamp things
 				$lwtv_tz   = new DateTimeZone( 'America/New_York' );

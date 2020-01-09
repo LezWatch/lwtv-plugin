@@ -41,16 +41,6 @@ class LWTV_ServerSideRendering {
 				'render_callback' => array( $this, 'render_tvshow_calendar' ),
 			)
 		);
-
-		// CPT Stuff: This is a proto-attempt to include CMB2 in the post.
-		register_block_type(
-			'lez-library/cpt-meta',
-			array(
-				'attributes'      => array( 'post_id' => array( 'type' => 'int' ) ),
-				'render_callback' => array( $this, 'render_cpt_meta' ),
-			)
-		);
-
 	}
 
 	/**
@@ -58,11 +48,11 @@ class LWTV_ServerSideRendering {
 	 */
 	public function render_tvshow_calendar() {
 
+		// Query Variables.
 		$date_query = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today';
-		$tz_query   = isset( $_GET['tvzone'] ) ? sanitize_text_field( $_GET['tvzone'] ) : 'America/New_York';
 
 		// Build out start and end dates.
-		$tz = new DateTimeZone( $tz_query );
+		$tz = new DateTimeZone( 'America/New_York' );
 
 		// This is for figuring out today
 		$today = new DateTime( 'today', $tz );
@@ -94,9 +84,9 @@ class LWTV_ServerSideRendering {
 		$calendar = LWTV_Whats_On_JSON::generate_tvshow_calendar( $start_datetime->format( 'Y-m-d' ) );
 
 		if ( isset( $calendar['none'] ) ) {
-			$return .= '<p>There are no shows on the air.</p>';
+			$return .= '<p>There are no shows on the air for this week.</p>';
 		} else {
-			$return .= '<p>All times are ' . $tz_query . '.</p>';
+			$return .= '<p>All times are displayed as US/Eastern, but are reflective of their original airdate and time.</p>';
 			$return .= '<table class="table lwtvc table-hover">';
 
 			foreach ( $calendar as $day => $shows ) {
@@ -112,16 +102,37 @@ class LWTV_ServerSideRendering {
 
 				foreach ( $shows as $show ) {
 					// Episode Title(s)
+					switch ( $show['show_name'] ) {
+						case 'Charmed':
+							$show['show_name'] = 'Charmed (2018)';
+							break;
+						case 'Party of Five':
+							$show['show_name'] = 'Party of Five (2020)';
+							break;
+						case 'Shameless':
+							$show['show_name'] = 'Shameless (US)';
+							break;
+					}
+
+					$show_page_obj = get_page_by_path( sanitize_title( $show['show_name'] ), OBJECT, 'post_type_shows' );
+
+					if ( isset( $show_page_obj->ID ) && 0 !== $show_page_obj->ID ) {
+						$show_name = '<a href="' . get_permalink( $show_page_obj->ID ) . '">' . $show['show_name'] . '</a>';
+					} else {
+						$show_name = $show['show_name'];
+					}
+
+					// Build output
 					$show_content = '<div class="ep-calendar-title">';
 					if ( is_array( $show['title'] ) ) {
-						$show_content .= '<em>' . $show['show_name'] . '</em>';
+						$show_content .= '<em>' . $show_name . '</em>';
 						$show_content .= '<ul>';
 						foreach ( $show['title'] as $one_show ) {
 							$show_content .= '<li>' . $one_show . '</li>';
 						}
 						$show_content .= '</ul>';
 					} else {
-						$show_content .= '<em>' . $show['show_name'] . '</em> - ' . $show['title'];
+						$show_content .= '<em>' . $show_name . '</em> - ' . $show['title'];
 					}
 					$show_content .= '</div>';
 
@@ -150,44 +161,6 @@ class LWTV_ServerSideRendering {
 
 		return $return;
 
-	}
-
-	/**
-	 * Render Custom Post Meta
-	 * @param  [type] $atts [description]
-	 * @return [type]       [description]
-	 */
-	public function render_cpt_meta( $atts ) {
-
-		// Don't show on the front end.
-		if ( is_single() && ! isset( $atts['post_id'] ) ) {
-			return;
-		}
-
-		switch ( get_post_type( $atts['post_id'] ) ) {
-			case 'post_type_shows':
-				$boxes  = '<h2>TV Show Details</h2>';
-				$boxes .= cmb2_get_metabox_form( 'show_details_metabox' );
-				//$boxes .= '<h3>Plots and Relationship Details</h3>';
-				//$boxes .= cmb2_get_metabox_form( 'shows_metabox' );
-				break;
-			case 'post_type_characters':
-				$boxes  = '<h2>Character Sexuality and Orientation</h2>';
-				$boxes .= cmb2_get_metabox_form( 'chars_metabox_grid' );
-				//$boxes .= '<h3>General Details</h3>';
-				//$boxes .= cmb2_get_metabox_form( 'chars_metabox_main' );
-				break;
-			case 'post_type_actors':
-				$boxes  = '<h2>Actor Details</h2>';
-				$boxes .= cmb2_get_metabox_form( 'actors_metabox' );
-				break;
-			default:
-				$boxes = 'This feature is only available on Actors, Characters, or Shows pages. Also you shouldn\'t be able to insert it, so how did you get here?';
-		}
-
-		if ( isset( $boxes ) ) {
-			return $boxes;
-		}
 	}
 }
 
