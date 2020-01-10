@@ -47,15 +47,12 @@ class LWTV_ServerSideRendering {
 	 * Render the calendar
 	 */
 	public function render_tvshow_calendar() {
+		// Build out start and end dates.
+		$tz    = new DateTimeZone( 'America/New_York' );
+		$today = new DateTime( 'today', $tz );
 
 		// Query Variables.
-		$date_query = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today';
-
-		// Build out start and end dates.
-		$tz = new DateTimeZone( 'America/New_York' );
-
-		// This is for figuring out today
-		$today = new DateTime( 'today', $tz );
+		$date_query = ( isset( $_GET['tvdate'] ) && ( $_GET['tvdate'] !== $today->format( 'Y-m-d' ) ) ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today';
 
 		// Calculating the dates three times, which is weird
 		// but every time I try to do it via modify, it
@@ -75,7 +72,7 @@ class LWTV_ServerSideRendering {
 			$start_datetime->modify( 'last Sunday' );
 		}
 		$end_datetime->modify( 'next Saturday' );
-		$prev_datetime->modify( 'last Sunday' );
+		$prev_datetime->modify( '1 week ago' );
 
 		// Begin the return
 		$return = '<h2 class="lwtv-calendar-week">Week of ' . $start_datetime->format( 'F d, Y' ) . ' - ' . $end_datetime->format( 'F d, Y' ) . ' </h2>';
@@ -112,6 +109,9 @@ class LWTV_ServerSideRendering {
 						case 'Shameless':
 							$show['show_name'] = 'Shameless (US)';
 							break;
+						case 'DC’s Legends of Tomorrow':
+							$show['show_name'] = 'Legends of Tomorrow';
+							break;
 					}
 
 					$show_page_obj = get_page_by_path( sanitize_title( $show['show_name'] ), OBJECT, 'post_type_shows' );
@@ -147,8 +147,8 @@ class LWTV_ServerSideRendering {
 
 			// NAVIGATION:
 
-			// Since we set this to Saturday, we have to add a day for the links.
-			$end_datetime->modify( '+1 day ' );
+			// NEXT week: Since we set this to Saturday, we have to add a day for the links.
+			$end_datetime->modify( '+1 day' );
 
 			// echo previous and next links:
 			$prev_week = add_query_arg( 'tvdate', $prev_datetime->format( 'Y-m-d' ), get_permalink() );
@@ -156,7 +156,18 @@ class LWTV_ServerSideRendering {
 			$next_week = add_query_arg( 'tvdate', $end_datetime->format( 'Y-m-d' ), get_permalink() );
 			$next_icon = LWTV_Functions::symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' );
 
-			$return .= '<nav aria-label="This Year navigation" role="navigation"><ul class="pagination justify-content-center"><li class="page-item first mr-auto"><a href="' . $prev_week . '" class="page-link">' . $prev_icon . ' Last Week</a></li><li class="page-item active"><a href="/calendar/" class="page-link">This Week</a></li><li class="page-item last ml-auto"><a href="' . $next_week . '" class="page-link">' . $next_icon . ' Next Week</a></li></ul></nav>';
+			$return .= '<nav aria-label="This Year navigation" role="navigation"><ul class="pagination justify-content-center"><li class="page-item first mr-auto"><a href="' . $prev_week . '" class="page-link">' . $prev_icon . ' Last Week</a></li>';
+
+			// Change today so we can check if the 'this week'
+			// button is needed, because ...
+			$today->modify( 'last Sunday' );
+
+			// ... We only show 'this week' when it's NOT this week
+			if ( 'today' !== $date_query && $today->format( 'Y-m-d' ) !== $date_query ) {
+				$return .= '<li class="page-item active"><a href="/calendar/" class="page-link">This Week</a></li>';
+			}
+
+			$return .= '<li class="page-item last ml-auto"><a href="' . $next_week . '" class="page-link">' . $next_icon . ' Next Week</a></li></ul></nav>';
 		}
 
 		return $return;
