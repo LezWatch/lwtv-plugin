@@ -47,35 +47,20 @@ class LWTV_ServerSideRendering {
 	 * Render the calendar
 	 */
 	public function render_tvshow_calendar() {
-
-		// Query Variables.
-		$date_query = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today';
+		// Require the calendar file
+		require_once( 'calendar.php' );
 
 		// Build out start and end dates.
-		$tz = new DateTimeZone( 'America/New_York' );
-
-		// This is for figuring out today
+		$tz    = new DateTimeZone( 'America/New_York' );
 		$today = new DateTime( 'today', $tz );
 
-		// Calculating the dates three times, which is weird
-		// but every time I try to do it via modify, it
-		// overwrites.
-		if ( 'today' === $date_query ) {
-			$start_datetime = new DateTime( 'today', $tz );
-			$end_datetime   = new DateTime( 'today', $tz );
-			$prev_datetime  = new DateTime( 'today', $tz );
-		} else {
-			$start_datetime = new DateTime( $date_query, $tz );
-			$end_datetime   = new DateTime( $date_query, $tz );
-			$prev_datetime  = new DateTime( $date_query, $tz );
-		}
+		// Query Variables.
+		$date_query = ( isset( $_GET['tvdate'] ) && ( $_GET['tvdate'] !== $today->format( 'Y-m-d' ) ) ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today';
 
-		// Start on Sunday
-		if ( 'Sun' !== $start_datetime->format( 'D' ) ) {
-			$start_datetime->modify( 'last Sunday' );
-		}
-		$end_datetime->modify( 'next Saturday' );
-		$prev_datetime->modify( 'last Sunday' );
+		// Get the dates
+		$start_datetime = LWTV_SSR_Calendar::start_datetime( $date_query );
+		$end_datetime   = LWTV_SSR_Calendar::end_datetime( $date_query );
+		$prev_datetime  = LWTV_SSR_Calendar::prev_datetime( $date_query );
 
 		// Begin the return
 		$return = '<h2 class="lwtv-calendar-week">Week of ' . $start_datetime->format( 'F d, Y' ) . ' - ' . $end_datetime->format( 'F d, Y' ) . ' </h2>';
@@ -83,7 +68,7 @@ class LWTV_ServerSideRendering {
 		// Array
 		$calendar = LWTV_Whats_On_JSON::generate_tvshow_calendar( $start_datetime->format( 'Y-m-d' ) );
 
-		if ( isset( $calendar['none'] ) ) {
+		if ( isset( $calendar['none'] ) || empty( $calendar ) ) {
 			$return .= '<p>There are no shows on the air for this week.</p>';
 		} else {
 			$return .= '<p>All times are displayed as US/Eastern, but are reflective of their original airdate and time.</p>';
@@ -102,30 +87,12 @@ class LWTV_ServerSideRendering {
 
 				foreach ( $shows as $show ) {
 					// Episode Title(s)
-					switch ( $show['show_name'] ) {
-						case 'Charmed':
-							$show['show_name'] = 'Charmed (2018)';
-							break;
-						case 'Party of Five':
-							$show['show_name'] = 'Party of Five (2020)';
-							break;
-						case 'Shameless':
-							$show['show_name'] = 'Shameless (US)';
-							break;
-					}
-
-					$show_page_obj = get_page_by_path( sanitize_title( $show['show_name'] ), OBJECT, 'post_type_shows' );
-
-					if ( isset( $show_page_obj->ID ) && 0 !== $show_page_obj->ID ) {
-						$show_name = '<a href="' . get_permalink( $show_page_obj->ID ) . '">' . $show['show_name'] . '</a>';
-					} else {
-						$show_name = $show['show_name'];
-					}
+					$show_name = LWTV_SSR_Calendar::show_name( $show['show_name'] );
 
 					// Build output
 					$show_content = '<div class="ep-calendar-title">';
 					if ( is_array( $show['title'] ) ) {
-						$show_content .= '<em>' . $show_name . '</em>';
+						$show_content .= '<em>' . $show_name . ' <span class="badge badge-secondary badge-pill">' . count( $show['title'] ) . '</span></em>';
 						$show_content .= '<ul>';
 						foreach ( $show['title'] as $one_show ) {
 							$show_content .= '<li>' . $one_show . '</li>';
@@ -144,20 +111,16 @@ class LWTV_ServerSideRendering {
 				}
 			}
 			$return .= '</tbody></table>';
-
-			// NAVIGATION:
-
-			// Since we set this to Saturday, we have to add a day for the links.
-			$end_datetime->modify( '+1 day ' );
-
-			// echo previous and next links:
-			$prev_week = add_query_arg( 'tvdate', $prev_datetime->format( 'Y-m-d' ), get_permalink() );
-			$prev_icon = LWTV_Functions::symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' );
-			$next_week = add_query_arg( 'tvdate', $end_datetime->format( 'Y-m-d' ), get_permalink() );
-			$next_icon = LWTV_Functions::symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' );
-
-			$return .= '<nav aria-label="This Year navigation" role="navigation"><ul class="pagination justify-content-center"><li class="page-item first mr-auto"><a href="' . $prev_week . '" class="page-link">' . $prev_icon . ' Last Week</a></li><li class="page-item active"><a href="/calendar/" class="page-link">This Week</a></li><li class="page-item last ml-auto"><a href="' . $next_week . '" class="page-link">' . $next_icon . ' Next Week</a></li></ul></nav>';
 		}
+
+		// NAVIGATION
+		// NEXT week: Since we set this to Saturday, we have to add a day for the links.
+		$end_datetime->modify( '+1 day' );
+		// Change today so we can check if the 'this week' button is needed
+		$today->modify( 'last Sunday' );
+
+		$navigation = LWTV_SSR_Calendar::navigation( $date_query, $today->format( 'Y-m-d' ), $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ) );
+		$return    .= $navigation;
 
 		return $return;
 
