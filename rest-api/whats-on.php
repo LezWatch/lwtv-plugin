@@ -212,6 +212,9 @@ class LWTV_Whats_On_JSON {
 					case 'Runaways':
 						$show_name = "Marvel's Runaways";
 						break;
+					case 'Agents of S.H.I.E.L.D.':
+						$show_name = "Marvel's Agents of S.H.I.E.L.D.";
+						break;
 				}
 
 				// Default reply
