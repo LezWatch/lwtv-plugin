@@ -204,7 +204,7 @@ class LWTV_OTD_JSON {
 				$return['loved']   = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
 				$return['score']   = get_post_meta( $post_id, 'lezshows_the_score', true );
 				$post_data         = get_post( $post_id );
-				$show_name         = trim( preg_replace( '~\([^)]+\)~', '', $post_data->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters.
+				$show_name         = trim( preg_replace( '~\ ([^)]+\)~', '', $post_data->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters but ONLY if they have a space.
 				$show_name         = str_replace( ' & ', ' and ', $show_name );
 				$show_name         = sanitize_title( $show_name );
 				$return['hashtag'] = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) );
