@@ -200,9 +200,8 @@ class LWTV_Whats_On_JSON {
 		if ( 'unknown' !== $show ) {
 			$show_obj = get_page_by_path( $show, OBJECT, 'post_type_shows' );
 			if ( $show_obj ) {
-				// Remove everything after a parenthesis to compensate
-				// for 'charmed (2018)' situations
-				$show_name = trim( current( explode( '(', get_the_title( $show_obj->ID ) ) ) );
+				// Remove everything after a space-and parenthesis to compensate for 'charmed (2018)' situations but NOT 'thirtysomething(else)' - can shows PLEASE stop being so clever? UGH.
+				$show_name = trim( current( explode( ' (', get_the_title( $show_obj->ID ) ) ) );
 
 				// We named these two shows differently
 				switch ( $show_name ) {
