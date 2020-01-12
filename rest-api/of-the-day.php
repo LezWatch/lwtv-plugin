@@ -201,12 +201,20 @@ class LWTV_OTD_JSON {
 				$return['hashtag'] = $hashtag;
 				break;
 			case 'show':
-				$return['loved']   = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
-				$return['score']   = get_post_meta( $post_id, 'lezshows_the_score', true );
-				$post_data         = get_post( $post_id );
-				$show_name         = trim( preg_replace( '~\ ([^)]+\)~', '', $post_data->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters but ONLY if they have a space.
-				$show_name         = str_replace( ' & ', ' and ', $show_name );
-				$show_name         = sanitize_title( $show_name );
+				$return['loved'] = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
+				$return['score'] = get_post_meta( $post_id, 'lezshows_the_score', true );
+
+				// We need to do some crazy generation here
+				$post_data = get_post( $post_id );
+				// Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters but ONLY if they have a space.
+				$show_name = trim( preg_replace( '~\ ([^)]+\)~', '', $post_data->post_title ) );
+				// change & to and for "WillAndGrace" or "LawAndOrder"
+				$show_name = str_replace( ' & ', ' and ', $show_name );
+				// change @ to a for "tagged"
+				$show_name = str_replace( '@', 'a', $show_name );
+				$show_name = sanitize_title( $show_name );
+
+				// Hashtag
 				$return['hashtag'] = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) );
 				break;
 		}
