@@ -388,16 +388,21 @@ class LWTV_CPT_Characters {
 	public static function get_chars_for_show( $show_id, $havecharcount, $role = 'regular' ) {
 
 		/**
-		 * The Shane Clause & The Clone Club Correlary
-		 * The Vanishing Xenaphobia
+		 * Funny things:
+		 *   - The Sara Lance Complexity -- Because someone is on a lot of shows,
+		 *                                  we have to make sure the IDs are right
+		 *                                  and the show isn't a partial match.
+		 *                                  Sara hasn't been on EVERY show yet.
+		 *   - The Shane Clause          -- Thanks to Shane sleeping with everyone,
+		 *                                  we had to limit this loop to 100 minimum
+		 *   - The Clone Club Correlary  -- Sarah Manning took the place of every
+		 *                                  single other character played by Tatiana
+		 *                                  Maslany.
+		 *   - The Vanishing Xenaphobia  -- When set to under 500, Xena doesn't show
+		 *                                  on the Xena:WP show page
 		 *
 		 * Calculate the max number of characters to list, based on the
 		 * previous count. Default/Minimum is 500 characters.
-		 *
-		 * Amusing note: Without this, Sarah Manning took the place of
-		 * every single other character played by Tatiana Maslany.
-		 *
-		 * Wih the number under 500, Xena won't show on your own page.
 		 */
 		$count = ( isset( $havecharcount ) && $havecharcount >= '500' ) ? $havecharcount : '500';
 
@@ -443,13 +448,12 @@ class LWTV_CPT_Characters {
 				$char_id     = get_the_ID();
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
-				// The Sara Lance Complexity:
 				// If the character is in this show, AND a published character,
 				// AND has this role ON THIS SHOW we will pass the following
 				// data to the character template to determine what to display.
 				if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
 					foreach ( $shows_array as $char_show ) {
-						// Becuase of show IDs having SIMILAR numbers, we need to be a litte more flex
+						// Because of show IDs having SIMILAR numbers, we need to be a little more flex
 						// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
 						if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
 							$characters[ $char_id ] = array(
