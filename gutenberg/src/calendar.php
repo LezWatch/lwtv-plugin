@@ -94,11 +94,14 @@ class LWTV_SSR_Calendar {
 			case 'Marvel\'s Runaways':
 				$name = 'Runaways';
 				break;
+			case 'Marvel\'s Agents of S.H.I.E.L.D.':
+				$show_name = 'Agents of S.H.I.E.L.D.';
+				break;
 		}
 
 		$show_page_obj = get_page_by_path( sanitize_title( $name ), OBJECT, 'post_type_shows' );
 
-		if ( isset( $show_page_obj->ID ) && 0 !== $show_page_obj->ID ) {
+		if ( isset( $show_page_obj->ID ) && 0 !== $show_page_obj->ID && 'publish' === get_post_status( $show_page_obj->ID ) ) {
 			$show_name = '<a href="' . get_permalink( $show_page_obj->ID ) . '">' . $name . '</a>';
 		} else {
 			$show_name = $name;

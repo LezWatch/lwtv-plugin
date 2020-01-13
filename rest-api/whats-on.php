@@ -200,8 +200,21 @@ class LWTV_Whats_On_JSON {
 		if ( 'unknown' !== $show ) {
 			$show_obj = get_page_by_path( $show, OBJECT, 'post_type_shows' );
 			if ( $show_obj ) {
-				$show_id   = $show_obj->ID;
-				$show_name = trim( current( explode( '(', get_the_title( $show_id ) ) ) );
+				// Remove everything after a space-and parenthesis to compensate for 'charmed (2018)' situations but NOT 'thirtysomething(else)' - can shows PLEASE stop being so clever? UGH.
+				$show_name = trim( current( explode( ' (', get_the_title( $show_obj->ID ) ) ) );
+
+				// We named these two shows differently
+				switch ( $show_name ) {
+					case 'Legends of Tomorrow':
+						$show_name = "DC's Legends of Tomorrow";
+						break;
+					case 'Runaways':
+						$show_name = "Marvel's Runaways";
+						break;
+					case 'Agents of S.H.I.E.L.D.':
+						$show_name = "Marvel's Agents of S.H.I.E.L.D.";
+						break;
+				}
 
 				// Default reply
 				$return = array(
@@ -224,7 +237,7 @@ class LWTV_Whats_On_JSON {
 
 					// See if anything on the array is the show we want.
 					foreach ( $whats_on as $key => $val ) {
-						if ( $val['show'] === $show_name ) {
+						if ( sanitize_title( $val['show'] ) === sanitize_title( $show_name ) ) {
 							// Translators: $val['count'] is the number of episodes.
 							$episodes = sprintf( _n( 'is %s upcoming airing', 'are %s upcoming airings', $val['count'] ), $val['count'] );
 
