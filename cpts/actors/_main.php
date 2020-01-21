@@ -9,6 +9,7 @@
 require_once 'calculations.php';
 require_once 'cmb2-metaboxes.php';
 require_once 'custom-columns.php';
+require_once 'privacy.php';
 
 /**
  * class LWTV_CPT_Actors
