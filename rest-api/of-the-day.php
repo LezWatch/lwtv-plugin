@@ -183,12 +183,12 @@ class LWTV_OTD_JSON {
 					$num_shows = count( $all_shows );
 					$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
 					$show_post = get_post( $shows_value['show'] );
-					$show_name = trim( preg_replace( '~\([^)]+\)~', '', $show_post->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters.
+					$show_name = trim( preg_replace( '~\ ([^)]+\)~', '', $show_post->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters.
 					$show_name = str_replace( ' & ', ' and ', $show_name );
 					$show_name = sanitize_title( $show_name );
 					$hashtag   = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) );
 				}
-				// Set all shows (not used becuase of Sara Lance)
+				// Set all shows (not used because of Sara Lance)
 				if ( '' !== $all_shows && ! empty( $shows_value ) ) {
 					$show_titles = array();
 					foreach ( $all_shows as $each_show ) {
@@ -207,7 +207,7 @@ class LWTV_OTD_JSON {
 				// We need to do some crazy generation here
 				$post_data = get_post( $post_id );
 				// Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters but ONLY if they have a space.
-				$show_name = trim( preg_replace( '~\ ([^)]+\)~', '', $post_data->post_title ) );
+				$show_name = trim( preg_replace( '~\([^)]+\)~', '', $post_data->post_title ) );
 				// change & to and for "WillAndGrace" or "LawAndOrder"
 				$show_name = str_replace( ' & ', ' and ', $show_name );
 				// change @ to a for "tagged"
