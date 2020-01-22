@@ -36,20 +36,13 @@ class LWTV_Shows_Like_This {
 					$tags_array[] = $tag->term_id;
 				}
 				if ( ! isset( $tags_array ) || ! empty( $tags_array ) ) {
-					$include = implode( ', ', $tags_array );
+					$include    = implode( ', ', $tags_array );
+					$taxonomies = 'lez_showtagged';
 				}
 			} else {
-				// Not tagged? Terms!
-				// Get the terms, we're going to include them
-				$terms = get_the_terms( $show_id, 'lez_genres' );
-				foreach ( $terms as $term ) {
-					$terms_array[] = $term->term_id;
-				}
-				$include = implode( ', ', $terms_array );
-				$exclude = '';
-
 				// Get the primary
-				$primary = ( get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) ) ? get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) : false;
+				$primary    = ( get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) ) ? get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) : false;
+				$taxonomies = 'lez_genres';
 
 				// If we have a primary, then we default to JUST that.
 				if ( false !== $primary ) {
@@ -57,14 +50,24 @@ class LWTV_Shows_Like_This {
 					if ( false !== $primary_key ) {
 						unset( $terms_array[ $primary_key ] );
 					}
+					$exclude = implode( ', ', $terms_array );
 					$include = $primary;
+				} else {
+					// Not tagged? Terms!
+					// Get the terms, we're going to include them
+					$terms = get_the_terms( $show_id, 'lez_genres' );
+					foreach ( $terms as $term ) {
+						$terms_array[] = $term->term_id;
+					}
+					$include = implode( ', ', $terms_array );
+					$exclude = '';
 				}
 			}
 
 			// Include the terms list
-			$rpbt_include = 'include_terms=""' . $include . '" related="false"';
+			$rpbt_include = 'include_terms=""' . $include . '" exclude_terms="' . $exclude . '"';
 
-			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" fields="ids" order="RAND" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies="lez_genres,lez_showtagged" ' . $rpbt_include . ']' );
+			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" fields="ids" order="RAND" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies=" ' . $taxonomies . '" ' . $rpbt_include . ' related="false"]' );
 		}
 
 		if ( empty( $return ) ) {
