@@ -40,7 +40,14 @@ class LWTV_Shows_Like_This {
 					$taxonomies = 'lez_showtagged';
 				}
 			} else {
-				// Get the primary
+				// Not tagged? Terms!
+				// Get the terms, we're going to include them
+				$terms = get_the_terms( $show_id, 'lez_genres' );
+				foreach ( $terms as $term ) {
+					$terms_array[] = $term->term_id;
+				}
+
+				// Now. Get the primary
 				$primary    = ( get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) ) ? get_post_meta( $show_id, 'lezshows_tvgenre_primary', true ) : false;
 				$taxonomies = 'lez_genres';
 
@@ -53,12 +60,6 @@ class LWTV_Shows_Like_This {
 					$exclude = implode( ', ', $terms_array );
 					$include = $primary;
 				} else {
-					// Not tagged? Terms!
-					// Get the terms, we're going to include them
-					$terms = get_the_terms( $show_id, 'lez_genres' );
-					foreach ( $terms as $term ) {
-						$terms_array[] = $term->term_id;
-					}
 					$include = implode( ', ', $terms_array );
 					$exclude = '';
 				}
