@@ -183,7 +183,7 @@ class LWTV_OTD_JSON {
 					$num_shows = count( $all_shows );
 					$showsmore = ( $num_shows > 1 ) ? ' (plus ' . ( $num_shows - 1 ) . ' more)' : '';
 					$show_post = get_post( $shows_value['show'] );
-					$show_name = trim( preg_replace( '~\ ([^)]+\)~', '', $show_post->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters.
+					$show_name = trim( preg_replace( '~\([^)]+\)~', '', $show_post->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters.
 					$show_name = str_replace( ' & ', ' and ', $show_name );
 					$show_name = sanitize_title( $show_name );
 					$hashtag   = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) );
