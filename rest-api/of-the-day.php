@@ -207,7 +207,7 @@ class LWTV_OTD_JSON {
 				// We need to do some crazy generation here
 				$post_data = get_post( $post_id );
 				// Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters but ONLY if they have a space.
-				$show_name = trim( preg_replace( '~\([^)]+\)~', '', $post_data->post_title ) );
+				$show_name = trim( preg_replace( '~\ ([^)]+\)~', '', $post_data->post_title ) );
 				// change & to and for "WillAndGrace" or "LawAndOrder"
 				$show_name = str_replace( ' & ', ' and ', $show_name );
 				// change @ to a for "tagged"
