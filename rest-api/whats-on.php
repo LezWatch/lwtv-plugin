@@ -302,7 +302,7 @@ class LWTV_Whats_On_JSON {
 							$by_day_array[ $airdate ][ $show_name ]['title'] = array( $first, $newer );
 						}
 					} else {
-						$by_day_array[ $airdate ][ $show_name . '.' . rand() ] = array(
+						$by_day_array[ $airdate ][ $show_name . '.' . wp_rand() ] = array(
 							'show_name' => $show_name,
 							'title'     => $episode->description . ' (' . $episode_number . ')',
 							'timestamp' => $showtime->getTimestamp(),
