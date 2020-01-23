@@ -9,7 +9,6 @@
 require_once 'calculations.php';
 require_once 'cmb2-metaboxes.php';
 require_once 'custom-columns.php';
-require_once 'privacy.php';
 
 /**
  * class LWTV_CPT_Actors
@@ -23,10 +22,23 @@ class LWTV_CPT_Actors {
 	 */
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'init', array( $this, 'init' ) );
+
+		// Create CPT and Taxes
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
+
+		// Amp
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
+
+		// Privacy Sidebar
+		add_action( 'init', array( $this, 'privacy_sidebar_register' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'privacy_sidebar_assets' ) );
+
+		// Yoast
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra' ) );
+
+		// Extra Hooks
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
 
 		// Define show taxonomies
@@ -68,6 +80,21 @@ class LWTV_CPT_Actors {
 		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
+	}
+
+	/**
+	 * Init
+	 */
+	public function init() {
+		register_post_meta(
+			'post_type_actors',
+			'actor_right_to_disappear',
+			array(
+				'show_in_rest' => true,
+				'single'       => true,
+				'type'         => 'string',
+			)
+		);
 	}
 
 	/*
@@ -314,6 +341,26 @@ class LWTV_CPT_Actors {
 		}
 		return $input;
 	}
+
+	/*
+	 * Add a custom sidebar.
+	 */
+	public function privacy_sidebar_register() {
+		wp_register_script(
+			'privacy-sidebar',
+			plugins_url( 'privacy-sidebar.js', __FILE__ ),
+			array( 'wp-plugins', 'wp-edit-post', 'wp-element' ),
+			'1.0'
+		);
+	}
+
+	/*
+	 * Assets for sidebar.
+	 */
+	public function privacy_sidebar_assets() {
+		wp_enqueue_script( 'privacy-sidebar' );
+	}
+
 
 }
 

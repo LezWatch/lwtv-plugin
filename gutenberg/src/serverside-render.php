@@ -48,7 +48,7 @@ class LWTV_ServerSideRendering {
 	 */
 	public function render_tvshow_calendar() {
 		// Require the calendar file
-		require_once( 'calendar.php' );
+		require_once( 'tvshow-calendar/calendar.php' );
 
 		// Build out start and end dates.
 		$tz    = new DateTimeZone( 'America/New_York' );
