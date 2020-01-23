@@ -28,17 +28,13 @@ class LWTV_CPT_Actors {
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 
-		// Amp
+		// Amp Hooks
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
 
-		// Privacy Sidebar
-		add_action( 'init', array( $this, 'privacy_sidebar_register' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'privacy_sidebar_assets' ) );
-
-		// Yoast
+		// Yoast Hooks
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra' ) );
 
-		// Extra Hooks
+		// Save Hooks
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
 
 		// Define show taxonomies
@@ -95,6 +91,70 @@ class LWTV_CPT_Actors {
 				'type'         => 'string',
 			)
 		);
+	}
+
+	/**
+	 * Adds our 'Unlisted' option to the 'Visibility' toggle menu.
+	 *
+	 * Requires JS to reposition our 'Unlisted' option so it is displayed in the
+	 * 'Visibility' dropdown menu. This is done due to lack of admin hooks...
+	 *
+	 * @param WP_Post $post
+	 */
+	public function add_visibility_option( $post ) {
+		/**
+		 * Filter if we should show the "Unlisted" visibility option or not.
+		 *
+		 * Return boolean true to bail.  Do checks against the $post variable.
+		 *
+		 * @param bool    $retval Default to false.
+		 * @param WP_Post $post The post to check.
+		 */
+		if ( true === apply_filters( 'unlisted_posts_bail', false, $post ) ) {
+			return;
+		}
+
+		$unlisted = (int) self::is_unlisted( $post->ID );
+	?>
+
+		<div id="post-visibility-unlisted" style="display:none;">
+			<input type="hidden" id="ray-unlisted" name="ray_unlisted" value="<?php echo $unlisted; ?>" />
+			<input type="radio" name="visibility" id="visibility-radio-unlisted" value="private" <?php checked( $unlisted, 1 ); ?> /> <label for="visibility-radio-unlisted" class="selectit"><?php _e( 'Unlisted', 'unlisted-posts' ); ?></label><br />
+		</div>
+
+		<script>
+		jQuery(function($){
+			var unlistedElem = $('#ray-unlisted');
+
+			<?php if ( self::is_unlisted( $post->ID ) ) : ?>
+				changeVisibilityLabel();
+			<?php endif; ?>
+
+			$('#post-visibility-unlisted').insertBefore('#post-visibility-select p').show();
+			$('input[name=visibility]').change(function(){
+				if ( 'visibility-radio-unlisted' === $(this).prop('id') ) {
+					unlistedElem.prop( 'value', 1 );
+				} else {
+					unlistedElem.prop( 'value', 0 );
+				}
+			});
+
+			$('a.save-post-visibility').on( 'click', function( e ) {
+				if ( 1 == unlistedElem.prop( 'value' ) ) {
+					// Fires after WP's slideUp() visiblity JS. Pssh!
+					setTimeout( function(){
+						changeVisibilityLabel();
+					}, 50);
+				}
+			});
+
+			function changeVisibilityLabel() {
+				$( '#post-visibility-display').text("<?php esc_attr_e( 'Private, Unlisted', 'unlisted-posts' ); ?>");
+			}
+		});
+		</script>
+
+	<?php
 	}
 
 	/*
@@ -341,26 +401,6 @@ class LWTV_CPT_Actors {
 		}
 		return $input;
 	}
-
-	/*
-	 * Add a custom sidebar.
-	 */
-	public function privacy_sidebar_register() {
-		wp_register_script(
-			'privacy-sidebar',
-			plugins_url( 'privacy-sidebar.js', __FILE__ ),
-			array( 'wp-plugins', 'wp-edit-post', 'wp-element' ),
-			'1.0'
-		);
-	}
-
-	/*
-	 * Assets for sidebar.
-	 */
-	public function privacy_sidebar_assets() {
-		wp_enqueue_script( 'privacy-sidebar' );
-	}
-
 
 }
 

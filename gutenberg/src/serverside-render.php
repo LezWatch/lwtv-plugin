@@ -58,9 +58,9 @@ class LWTV_ServerSideRendering {
 		$date_query = ( isset( $_GET['tvdate'] ) && ( $_GET['tvdate'] !== $today->format( 'Y-m-d' ) ) ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today';
 
 		// Get the dates
-		$start_datetime = LWTV_SSR_Calendar::start_datetime( $date_query );
-		$end_datetime   = LWTV_SSR_Calendar::end_datetime( $date_query );
-		$prev_datetime  = LWTV_SSR_Calendar::prev_datetime( $date_query );
+		$start_datetime = LWTV_SSR_Calendar::start_datetime( $date_query, $tz );
+		$end_datetime   = LWTV_SSR_Calendar::end_datetime( $date_query, $tz );
+		$prev_datetime  = LWTV_SSR_Calendar::prev_datetime( $date_query, $tz );
 
 		// Begin the return
 		$return = '<h2 class="lwtv-calendar-week">Week of ' . $start_datetime->format( 'F d, Y' ) . ' - ' . $end_datetime->format( 'F d, Y' ) . ' </h2>';
