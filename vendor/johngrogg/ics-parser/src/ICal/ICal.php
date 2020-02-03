@@ -97,14 +97,14 @@ class ICal
      *
      * @var integer
      */
-    public $filterDaysBefore = null;
+    public $filterDaysBefore;
 
     /**
      * With this being non-null the parser will ignore all events more than roughly this many days before now.
      *
      * @var integer
      */
-    public $filterDaysAfter = null;
+    public $filterDaysAfter;
 
     /**
      * The parsed calendar
@@ -182,7 +182,14 @@ class ICal
      *
      * @var string
      */
-    protected $httpUserAgent = null;
+    protected $httpUserAgent;
+
+    /**
+     * Holds the custom Accept Language string header
+     *
+     * @var string
+     */
+    protected $httpAcceptLanguage;
 
     /**
      * Define which variables can be configured
@@ -465,7 +472,7 @@ class ICal
      *
      * @var integer
      */
-    private $windowMinTimestamp = null;
+    private $windowMinTimestamp;
 
     /**
      * If `$filterDaysBefore` or `$filterDaysAfter` are set then the events are filtered according to the window defined
@@ -473,7 +480,7 @@ class ICal
      *
      * @var integer
      */
-    private $windowMaxTimestamp = null;
+    private $windowMaxTimestamp;
 
     /**
      * `true` if either `$filterDaysBefore` or `$filterDaysAfter` are set.
@@ -574,7 +581,7 @@ class ICal
      * @param  string $userAgent
      * @return ICal
      */
-    public function initUrl($url, $username = null, $password = null, $userAgent = null)
+    public function initUrl($url, $username = null, $password = null, $userAgent = null, $acceptLanguage = null)
     {
         if (!is_null($username) && !is_null($password)) {
             $this->httpBasicAuth['username'] = $username;
@@ -583,6 +590,10 @@ class ICal
 
         if (!is_null($userAgent)) {
             $this->httpUserAgent = $userAgent;
+        }
+
+        if (!is_null($acceptLanguage)) {
+            $this->httpAcceptLanguage = $acceptLanguage;
         }
 
         $this->initFile($url);
@@ -640,6 +651,7 @@ class ICal
                             }
 
                             $component = 'VTODO';
+
                             break;
 
                         // https://www.kanzaki.com/docs/ical/vevent.html
@@ -649,6 +661,7 @@ class ICal
                             }
 
                             $component = 'VEVENT';
+
                             break;
 
                         // https://www.kanzaki.com/docs/ical/vfreebusy.html
@@ -658,6 +671,7 @@ class ICal
                             }
 
                             $component = 'VFREEBUSY';
+
                             break;
 
                         case 'BEGIN:VALARM':
@@ -666,10 +680,12 @@ class ICal
                             }
 
                             $component = 'VALARM';
+
                             break;
 
                         case 'END:VALARM':
                             $component = 'VEVENT';
+
                             break;
 
                         case 'BEGIN:DAYLIGHT':
@@ -677,6 +693,7 @@ class ICal
                         case 'BEGIN:VCALENDAR':
                         case 'BEGIN:VTIMEZONE':
                             $component = $value;
+
                             break;
 
                         case 'END:DAYLIGHT':
@@ -686,6 +703,7 @@ class ICal
                         case 'END:VTIMEZONE':
                         case 'END:VTODO':
                             $component = 'VCALENDAR';
+
                             break;
 
                         case 'END:VEVENT':
@@ -694,10 +712,12 @@ class ICal
                             }
 
                             $component = 'VCALENDAR';
+
                             break;
 
                         default:
                             $this->addCalendarComponentWithKeyAndValue($component, $keyword, $value);
+
                             break;
                     }
                 }
@@ -743,7 +763,7 @@ class ICal
         $events = $this->cal['VEVENT'];
 
         if (!empty($events)) {
-            $lastIndex = sizeof($events) - 1;
+            $lastIndex = count($events) - 1;
             $lastEvent = $events[$lastIndex];
 
             if ((!isset($lastEvent['RRULE']) || $lastEvent['RRULE'] === '') && $this->doesEventStartOutsideWindow($lastEvent)) {
@@ -769,6 +789,7 @@ class ICal
             foreach ($events as $key => $anEvent) {
                 if ($anEvent === null) {
                     unset($events[$key]);
+
                     continue;
                 }
 
@@ -864,6 +885,7 @@ class ICal
                         $this->cal[$key1][$key2][$key3][$keyword] .= ',' . $value;
                     }
                 }
+
                 break;
 
             case 'VEVENT':
@@ -903,6 +925,7 @@ class ICal
                         $this->cal[$key1][$key2][$keyword] .= ',' . $value;
                     }
                 }
+
                 break;
 
             case 'VFREEBUSY':
@@ -925,14 +948,17 @@ class ICal
                 } else {
                     $this->cal[$key1][$key2][$key3][] = $value;
                 }
+
                 break;
 
             case 'VTODO':
                 $this->cal[$component][$this->todoCount - 1][$keyword] = $value;
+
                 break;
 
             default:
                 $this->cal[$component][$keyword] = $value;
+
                 break;
         }
 
@@ -1001,7 +1027,7 @@ class ICal
                     // Match semicolon separator outside of quoted substrings
                     preg_match_all('~[^' . PHP_EOL . '";]+(?:"[^"\\\]*(?:\\\.[^"\\\]*)*"[^' . PHP_EOL . '";]*)*~', $property, $attributes);
                     // Remove multi-dimensional array and use the first key
-                    $attributes = (sizeof($attributes) === 0) ? array($property) : reset($attributes);
+                    $attributes = (count($attributes) === 0) ? array($property) : reset($attributes);
 
                     if (is_array($attributes)) {
                         foreach ($attributes as $attribute) {
@@ -1012,7 +1038,7 @@ class ICal
                                 $values
                             );
                             // Remove multi-dimensional array and use the first key
-                            $value = (sizeof($values) === 0) ? null : reset($values);
+                            $value = (count($values) === 0) ? null : reset($values);
 
                             if (is_array($value) && isset($value[1])) {
                                 // Remove double quotes from beginning and end only
@@ -1146,6 +1172,7 @@ class ICal
      */
     protected function processEvents()
     {
+        $checks = array();
         $events = (isset($this->cal['VEVENT'])) ? $this->cal['VEVENT'] : array();
 
         if (!empty($events)) {
@@ -1262,6 +1289,7 @@ class ICal
 
                 if (!$allByDayStanzasValid) {
                     error_log("ICal::ProcessRecurrences: A \"{$frequency}\" RRULE should not contain BYDAY values with numeric prefixes");
+
                     continue;
                 }
             }
@@ -1313,12 +1341,13 @@ class ICal
 
             $frequencyRecurringDateTime = clone $initialEventDate;
             while ($frequencyRecurringDateTime->getTimestamp() <= $until) {
-                $candidateDateTimes = [];
+                $candidateDateTimes = array();
 
                 // phpcs:ignore Squiz.ControlStructures.SwitchDeclaration.MissingDefault
                 switch ($frequency) {
                     case 'DAILY':
                         $candidateDateTimes[] = clone $frequencyRecurringDateTime;
+
                         break;
 
                     case 'WEEKLY':
@@ -1368,11 +1397,12 @@ class ICal
                         foreach ($matchingDays as $day) {
                             $clonedDateTime = clone $frequencyRecurringDateTime;
                             $candidateDateTimes[] = $clonedDateTime->setISODate(
-                                $frequencyRecurringDateTime->format('Y'),
+                                $frequencyRecurringDateTime->format('o'),
                                 $frequencyRecurringDateTime->format('W'),
                                 $day
                             );
                         }
+
                         break;
 
                     case 'MONTHLY':
@@ -1401,6 +1431,7 @@ class ICal
                                 $day
                             );
                         }
+
                         break;
 
                     case 'YEARLY':
@@ -1433,6 +1464,7 @@ class ICal
                         } else {
                             $candidateDateTimes[] = clone $frequencyRecurringDateTime;
                         }
+
                         break;
                 }
 
@@ -1808,7 +1840,7 @@ class ICal
     public function eventsFromRange($rangeStart = null, $rangeEnd = null)
     {
         // Sort events before processing range
-        $events = $this->sortEventsWithOrder($this->events(), SORT_ASC);
+        $events = $this->sortEventsWithOrder($this->events());
 
         if (empty($events)) {
             return array();
@@ -1918,9 +1950,9 @@ class ICal
      */
     protected function isValidTimeZoneId($timeZone)
     {
-        return ($this->isValidIanaTimeZoneId($timeZone) !== false
+        return $this->isValidIanaTimeZoneId($timeZone) !== false
             || $this->isValidCldrTimeZoneId($timeZone) !== false
-            || $this->isValidWindowsTimeZoneId($timeZone) !== false);
+            || $this->isValidWindowsTimeZoneId($timeZone) !== false;
     }
 
     /**
@@ -1997,12 +2029,10 @@ class ICal
 
         if (is_null($format)) {
             $output = $dateTime;
+        } elseif ($format === self::UNIX_FORMAT) {
+            $output = $dateTime->getTimestamp();
         } else {
-            if ($format === self::UNIX_FORMAT) {
-                $output = $dateTime->getTimestamp();
-            } else {
-                $output = $dateTime->format($format);
-            }
+            $output = $dateTime->format($format);
         }
 
         return $output;
@@ -2231,7 +2261,7 @@ class ICal
     protected function fileOrUrl($filename)
     {
         $options = array();
-        if (!empty($this->httpBasicAuth) || !empty($this->httpUserAgent)) {
+        if (!empty($this->httpBasicAuth) || !empty($this->httpUserAgent) || !empty($this->httpAcceptLanguage)) {
             $options['http'] = array();
             $options['http']['header'] = array();
 
@@ -2245,6 +2275,10 @@ class ICal
 
             if (!empty($this->httpUserAgent)) {
                 array_push($options['http']['header'], "User-Agent: {$this->httpUserAgent}");
+            }
+
+            if (!empty($this->httpAcceptLanguage)) {
+                array_push($options['http']['header'], "Accept-language: {$this->httpAcceptLanguage}");
             }
         }
 
