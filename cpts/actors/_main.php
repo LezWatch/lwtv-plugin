@@ -22,10 +22,18 @@ class LWTV_CPT_Actors {
 	 */
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
+
+		// Create CPT and Taxes
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
+
+		// Amp Hooks
 		add_action( 'amp_init', array( $this, 'amp_init' ) );
+
+		// Yoast Hooks
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra' ) );
+
+		// Save Hooks
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
 
 		// Define show taxonomies

@@ -19,7 +19,7 @@ class LWTV_SSR_Calendar {
 	 * @param  string $date The date
 	 * @return object       DateTime object
 	 */
-	public function start_datetime( $date ) {
+	public static function start_datetime( $date, $tz ) {
 		$start_datetime = new DateTime( $date, $tz );
 
 		// If it's not Sunday, we want the previous Sunday
@@ -38,7 +38,7 @@ class LWTV_SSR_Calendar {
 	 * @param  string $date The date
 	 * @return object       DateTime object
 	 */
-	public function end_datetime( $date ) {
+	public static function end_datetime( $date, $tz ) {
 		$end_datetime = new DateTime( $date, $tz );
 
 		// If it's not Saturday, we want to jump to the next one
@@ -57,7 +57,7 @@ class LWTV_SSR_Calendar {
 	 * @param  string $date The date
 	 * @return object       DateTime object
 	 */
-	public function prev_datetime( $date ) {
+	public static function prev_datetime( $date, $tz ) {
 		$prev_datetime = new DateTime( $date, $tz );
 
 		// If it's not Sunday, we want the previous Sunday
@@ -76,7 +76,9 @@ class LWTV_SSR_Calendar {
 	 * @param  string $name Pretty name of show
 	 * @return string       Pretty Name with URL (if exists)
 	 */
-	public function show_name( $name ) {
+	public static function show_name( $name ) {
+
+		$displayname = $name;
 
 		switch ( $name ) {
 			case 'Charmed':
@@ -95,14 +97,17 @@ class LWTV_SSR_Calendar {
 				$name = 'Runaways';
 				break;
 			case 'Marvel\'s Agents of S.H.I.E.L.D.':
-				$show_name = 'Agents of S.H.I.E.L.D.';
+				$name = 'Agents of S.H.I.E.L.D.';
+				break;
+			case 'S.W.A.T.':
+				$name = 'SWAT';
 				break;
 		}
 
 		$show_page_obj = get_page_by_path( sanitize_title( $name ), OBJECT, 'post_type_shows' );
 
 		if ( isset( $show_page_obj->ID ) && 0 !== $show_page_obj->ID && 'publish' === get_post_status( $show_page_obj->ID ) ) {
-			$show_name = '<a href="' . get_permalink( $show_page_obj->ID ) . '">' . $name . '</a>';
+			$show_name = '<a href="' . get_permalink( $show_page_obj->ID ) . '">' . $displayname . '</a>';
 		} else {
 			$show_name = $name;
 		}
@@ -121,7 +126,7 @@ class LWTV_SSR_Calendar {
 	 * @param  string $next  Next week
 	 * @return string       HTML output for the navigation
 	 */
-	public function navigation( $date, $today, $last, $next ) {
+	public static function navigation( $date, $today, $last, $next ) {
 
 		// echo previous and next links:
 		$last_week      = add_query_arg( 'tvdate', $last, get_permalink() );
