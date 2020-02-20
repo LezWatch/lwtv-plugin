@@ -242,14 +242,14 @@ switch ( $view ) {
 				<div class="col">
 					<h3>Actors per Character</h3>
 					<?php LWTV_Stats::generate( 'actors', 'per-char', 'barchart' ); ?>
-					<p>This chart displays the number of actors who play each character. So for example, "11 Actors (1)" means there's one character who has 11 actors (and yes, there is one).</p>
+					<p>&nbsp;<br />The above chart displays the number of actors who play each character. So for example, "11 Actors (1)" means there's one character who has eleven (11) actors (and yes, there is one).</p>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
 					<h3>Characters per Actor</h3>
 					<?php LWTV_Stats::generate( 'actors', 'per-actor', 'barchart' ); ?>
-					<p>This chart displays the number of characters each actor plays. The actor with the highest number of characters played is the 'unknown' actor.</p>
+					<p>&nbsp;<br />The above chart displays the number of characters each actor plays. The actor with the highest number of characters played is the 'unknown' actor.</p>
 				</div>
 			</div>
 		</div>
