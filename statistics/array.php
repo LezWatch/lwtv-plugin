@@ -20,25 +20,36 @@ class LWTV_Stats_Arrays {
 	 * @return array
 	 */
 	public static function taxonomy( $post_type, $taxonomy, $terms = '', $operator = 'IN' ) {
-		$array = array();
 
-		// If no term provided, use get_terms for the taxonomy.
-		$taxonomies = ( '' === $terms ) ? get_terms( $taxonomy ) : array( $terms );
+		$transient = 'taxonomy_' . $taxonomy . '_' . $terms;
+		$array     = get_transient( $transient );
 
-		foreach ( $taxonomies as $term ) {
-			$term_obj          = ( '' !== $terms ) ? get_term_by( 'slug', $term, $taxonomy, 'ARRAY_A' ) : '';
-			$term_link         = get_term_link( $term, $taxonomy );
-			$term_slug         = ( '' === $terms ) ? $term->slug : $terms;
-			$term_name         = ( '' === $terms ) ? $term->name : $term_obj['name'];
-			$count_terms_query = LWTV_Loops::tax_query( $post_type, $taxonomy, 'slug', $term_slug, $operator );
-			$term_count        = $count_terms_query->post_count;
+		if ( false === $array ) {
 
-			$array[ $term_slug ] = array(
-				'count' => $term_count,
-				'name'  => $term_name,
-				'url'   => $term_link,
-			);
+			$array = array();
+
+			// If no term provided, use get_terms for the taxonomy.
+			$taxonomies = ( '' === $terms ) ? get_terms( $taxonomy ) : array( $terms );
+
+			foreach ( $taxonomies as $term ) {
+				$term_obj          = ( '' !== $terms ) ? get_term_by( 'slug', $term, $taxonomy, 'ARRAY_A' ) : '';
+				$term_link         = get_term_link( $term, $taxonomy );
+				$term_slug         = ( '' === $terms ) ? $term->slug : $terms;
+				$term_name         = ( '' === $terms ) ? $term->name : $term_obj['name'];
+				$count_terms_query = LWTV_Loops::tax_query( $post_type, $taxonomy, 'slug', $term_slug, $operator );
+				$term_count        = $count_terms_query->post_count;
+
+				$array[ $term_slug ] = array(
+					'count' => $term_count,
+					'name'  => $term_name,
+					'url'   => $term_link,
+				);
+			}
+
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
+
 		return $array;
 	}
 
@@ -80,50 +91,59 @@ class LWTV_Stats_Arrays {
 	 * @return array
 	 */
 	public static function dead_role() {
-		$array        = array();
-		$all_the_dead = LWTV_Loops::tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
-		$by_role      = array(
-			'regular'   => 0,
-			'guest'     => 0,
-			'recurring' => 0,
-		);
 
-		if ( $all_the_dead->have_posts() ) {
+		$transient = 'dead_role_stats';
+		$array     = get_transient( $transient );
 
-			foreach ( $all_the_dead->posts as $dead ) {
-				$all_shows = get_post_meta( $dead->ID, 'lezchars_show_group', true );
-				foreach ( $all_shows as $each_show ) {
-					if ( 'regular' === $each_show['type'] ) {
-						$by_role['regular']++;
-					}
-					if ( 'guest' === $each_show['type'] ) {
-						$by_role['guest']++;
-					}
-					if ( 'recurring' === $each_show['type'] ) {
-						$by_role['recurring']++;
+		if ( false === $array ) {
+			$array        = array();
+			$all_the_dead = LWTV_Loops::tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+			$by_role      = array(
+				'regular'   => 0,
+				'guest'     => 0,
+				'recurring' => 0,
+			);
+
+			if ( $all_the_dead->have_posts() ) {
+
+				foreach ( $all_the_dead->posts as $dead ) {
+					$all_shows = get_post_meta( $dead->ID, 'lezchars_show_group', true );
+					foreach ( $all_shows as $each_show ) {
+						if ( 'regular' === $each_show['type'] ) {
+							$by_role['regular']++;
+						}
+						if ( 'guest' === $each_show['type'] ) {
+							$by_role['guest']++;
+						}
+						if ( 'recurring' === $each_show['type'] ) {
+							$by_role['recurring']++;
+						}
 					}
 				}
+				wp_reset_query();
 			}
-			wp_reset_query();
-		}
 
-		$array = array(
-			'regular'   => array(
-				'count' => $by_role['regular'],
-				'name'  => 'Regular',
-				'url'   => home_url( '/role/regular/' ),
-			),
-			'guest'     => array(
-				'count' => $by_role['guest'],
-				'name'  => 'Guest',
-				'url'   => home_url( '/role/guest/' ),
-			),
-			'recurring' => array(
-				'count' => $by_role['recurring'],
-				'name'  => 'Recurring',
-				'url'   => home_url( '/role/recurring/' ),
-			),
-		);
+			$array = array(
+				'regular'   => array(
+					'count' => $by_role['regular'],
+					'name'  => 'Regular',
+					'url'   => home_url( '/role/regular/' ),
+				),
+				'guest'     => array(
+					'count' => $by_role['guest'],
+					'name'  => 'Guest',
+					'url'   => home_url( '/role/guest/' ),
+				),
+				'recurring' => array(
+					'count' => $by_role['recurring'],
+					'name'  => 'Recurring',
+					'url'   => home_url( '/role/recurring/' ),
+				),
+			);
+
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
+		}
 
 		return $array;
 	}
@@ -142,16 +162,26 @@ class LWTV_Stats_Arrays {
 	 * @return array
 	 */
 	public static function dead_meta_tax( $post_type, $meta_array, $key, $taxonomy = 'lez_cliches', $field = 'dead' ) {
-		$array = array();
 
-		foreach ( $meta_array as $value ) {
-			$query           = LWTV_Loops::post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, 'slug', $field );
-			$array[ $value ] = array(
-				'count' => $query->post_count,
-				'name'  => ucfirst( $value ),
-				'url'   => home_url( '/cliche/' . $value ),
-			);
+		$transient = 'dead_meta_tax_' . $post_type . '_' . $taxonomy . '_' . $field;
+		$array     = get_transient( $transient );
+
+		if ( false === $array ) {
+			$array = array();
+
+			foreach ( $meta_array as $value ) {
+				$query           = LWTV_Loops::post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, 'slug', $field );
+				$array[ $value ] = array(
+					'count' => $query->post_count,
+					'name'  => ucfirst( $value ),
+					'url'   => home_url( '/cliche/' . $value ),
+				);
+			}
+
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
+
 		return $array;
 	}
 
@@ -169,15 +199,26 @@ class LWTV_Stats_Arrays {
 	 * @return array
 	 */
 	public static function meta( $post_type, $meta_array, $key, $data, $compare = '=' ) {
-		$array = array();
-		foreach ( $meta_array as $value ) {
-			$meta_query      = LWTV_Loops::post_meta_query( $post_type, $key, $value, $compare );
-			$array[ $value ] = array(
-				'count' => $meta_query->post_count,
-				'name'  => ucfirst( $value ),
-				'url'   => home_url( '/' . $data . '/' . lcfirst( $value ) . '/' ),
-			);
+
+		$transient = 'meta_' . $key;
+		$array     = get_transient( $transient );
+
+		if ( false === $array ) {
+
+			$array = array();
+			foreach ( $meta_array as $value ) {
+				$meta_query      = LWTV_Loops::post_meta_query( $post_type, $key, $value, $compare );
+				$array[ $value ] = array(
+					'count' => $meta_query->post_count,
+					'name'  => ucfirst( $value ),
+					'url'   => home_url( '/' . $data . '/' . lcfirst( $value ) . '/' ),
+				);
+			}
+
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
+
 		return $array;
 	}
 
@@ -555,31 +596,42 @@ class LWTV_Stats_Arrays {
 	 */
 	public static function dead_year() {
 
-		// Create the date with regards to timezones
-		$tz        = 'America/New_York';
-		$timestamp = time();
-		$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
-		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
-		$this_year = $dt->format( 'Y' );
+		$transient = 'dead_year_stats';
+		$array     = get_transient( $transient );
 
-		// Death by year
-		$year_first           = FIRST_LWTV_YEAR;
-		$year_deathlist_array = array();
-		foreach ( range( $this_year, $year_first ) as $x ) {
-			$year_deathlist_array[ $x ] = $x;
+		if ( false === $array ) {
+
+			$array = array();
+
+			// Create the date with regards to timezones
+			$tz        = 'America/New_York';
+			$timestamp = time();
+			$dt        = new DateTime( 'now', new DateTimeZone( $tz ) ); //first argument "must" be a string
+			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
+			$this_year = $dt->format( 'Y' );
+
+			// Death by year
+			$year_first           = FIRST_LWTV_YEAR;
+			$year_deathlist_array = array();
+			foreach ( range( $this_year, $year_first ) as $x ) {
+				$year_deathlist_array[ $x ] = $x;
+			}
+
+			foreach ( $year_deathlist_array as $year ) {
+				$year_death_query = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+
+				$array[ $year ] = array(
+					'name'  => $year,
+					'count' => $year_death_query->post_count,
+					'url'   => home_url( '/this-year/' . $year . '/' ),
+				);
+			}
+
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
 
-		$year_death_array = array();
-		foreach ( $year_deathlist_array as $year ) {
-			$year_death_query = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-
-			$year_death_array[ $year ] = array(
-				'name'  => $year,
-				'count' => $year_death_query->post_count,
-				'url'   => home_url( '/this-year/' . $year . '/' ),
-			);
-		}
-		return $year_death_array;
+		return $array;
 	}
 
 	/*
@@ -595,85 +647,94 @@ class LWTV_Stats_Arrays {
 	 */
 	public static function dead_shows( $format ) {
 
-		// Shows With Dead Query
-		$dead_shows_query = LWTV_Loops::tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
+		$transient = 'dead_shows_' . $format;
+		$array     = get_transient( $transient );
 
-		// Shows With NO Dead Query
-		$alive_shows_query = LWTV_Loops::tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers', 'NOT IN' );
+		if ( false === $array ) {
 
-		// Predef Arrays
-		$noneshow_death_array = array();
-		$fullshow_death_array = array();
-		$someshow_death_array = array();
+			// Shows With Dead Query
+			$dead_shows_query = LWTV_Loops::tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
 
-		// Shows with no deaths
-		if ( $alive_shows_query->have_posts() ) {
-			while ( $alive_shows_query->have_posts() ) {
-				$alive_shows_query->the_post();
-				$show_id = get_the_ID();
+			// Shows With NO Dead Query
+			$alive_shows_query = LWTV_Loops::tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers', 'NOT IN' );
 
-				$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
-				$show_name = strtolower( $show_name );
+			// Predef Arrays
+			$noneshow_death_array = array();
+			$fullshow_death_array = array();
+			$someshow_death_array = array();
 
-				$noneshow_death_array[ $show_name ] = array(
-					'url'    => get_permalink( $show_id ),
-					'name'   => get_the_title( $show_id ),
-					'status' => get_post_status( $show_id ),
-				);
-			}
-			wp_reset_query();
-		}
+			// Shows with no deaths
+			if ( $alive_shows_query->have_posts() ) {
+				while ( $alive_shows_query->have_posts() ) {
+					$alive_shows_query->the_post();
+					$show_id = get_the_ID();
 
-		// Shows with deaths
-		if ( $dead_shows_query->have_posts() ) {
-			while ( $dead_shows_query->have_posts() ) {
-				$dead_shows_query->the_post();
-				$show_id = get_the_ID();
+					$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
+					$show_name = strtolower( $show_name );
 
-				$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
-				$show_name = strtolower( $show_name );
-
-				// Loop of characters who MIGHT be in this show
-				$this_show_characters_query = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
-
-				$fulldeathcount = get_post_meta( $show_id, 'lezshows_dead_count', true );
-				$allcharcount   = get_post_meta( $show_id, 'lezshows_char_count', true );
-
-				if ( $fulldeathcount === $allcharcount ) {
-					$fullshow_death_array[ $show_name ] = array(
-						'url'    => get_permalink( $show_id ),
-						'name'   => get_the_title( $show_id ),
-						'status' => get_post_status( $show_id ),
-					);
-				} else {
-					$someshow_death_array[ $show_name ] = array(
+					$noneshow_death_array[ $show_name ] = array(
 						'url'    => get_permalink( $show_id ),
 						'name'   => get_the_title( $show_id ),
 						'status' => get_post_status( $show_id ),
 					);
 				}
+				wp_reset_query();
 			}
-			wp_reset_query();
-		}
 
-		if ( 'simple' === $format ) {
-			$array = array(
-				'all'  => array(
-					'name'  => 'All characters are dead',
-					'count' => count( $fullshow_death_array ),
-					'url'   => '',
-				),
-				'some' => array(
-					'name'  => 'Some characters are dead',
-					'count' => count( $someshow_death_array ),
-					'url'   => '',
-				),
-				'none' => array(
-					'name'  => 'No characters are dead',
-					'count' => count( $noneshow_death_array ),
-					'url'   => '',
-				),
-			);
+			// Shows with deaths
+			if ( $dead_shows_query->have_posts() ) {
+				while ( $dead_shows_query->have_posts() ) {
+					$dead_shows_query->the_post();
+					$show_id = get_the_ID();
+
+					$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
+					$show_name = strtolower( $show_name );
+
+					// Loop of characters who MIGHT be in this show
+					$this_show_characters_query = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+
+					$fulldeathcount = get_post_meta( $show_id, 'lezshows_dead_count', true );
+					$allcharcount   = get_post_meta( $show_id, 'lezshows_char_count', true );
+
+					if ( $fulldeathcount === $allcharcount ) {
+						$fullshow_death_array[ $show_name ] = array(
+							'url'    => get_permalink( $show_id ),
+							'name'   => get_the_title( $show_id ),
+							'status' => get_post_status( $show_id ),
+						);
+					} else {
+						$someshow_death_array[ $show_name ] = array(
+							'url'    => get_permalink( $show_id ),
+							'name'   => get_the_title( $show_id ),
+							'status' => get_post_status( $show_id ),
+						);
+					}
+				}
+				wp_reset_query();
+			}
+
+			if ( 'simple' === $format ) {
+				$array = array(
+					'all'  => array(
+						'name'  => 'All characters are dead',
+						'count' => count( $fullshow_death_array ),
+						'url'   => '',
+					),
+					'some' => array(
+						'name'  => 'Some characters are dead',
+						'count' => count( $someshow_death_array ),
+						'url'   => '',
+					),
+					'none' => array(
+						'name'  => 'No characters are dead',
+						'count' => count( $noneshow_death_array ),
+						'url'   => '',
+					),
+				);
+			}
+
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
 
 		return $array;
@@ -689,53 +750,61 @@ class LWTV_Stats_Arrays {
 	 * @return array.
 	 */
 	public static function dead_complex_taxonomy( $type ) {
+
 		// Defaults.
 		$valid_types = array( 'stations', 'country' );
-		$array       = array();
 
 		// Bail early.
 		if ( ! in_array( $type, $valid_types, true ) ) {
 			return;
 		}
 
-		// Parse the taxonomy.
-		$taxonomy = get_terms( 'lez_' . $type );
+		$transient = 'dead_complex_taxonomy_lez_' . $type;
+		$array     = get_transient( $transient );
 
-		// For each station/nation, we need to count the data.
-		foreach ( $taxonomy as $the_tax ) {
-			// This is the name of the nation/station.
-			$slug = ( ! isset( $the_tax->slug ) ) ? $the_tax['slug'] : $the_tax->slug;
-			$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
+		if ( false === $array ) {
+			$array    = array();
+			$taxonomy = get_terms( 'lez_' . $type );
 
-			// Get the posts.
-			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
+			// For each station/nation, we need to count the data.
+			foreach ( $taxonomy as $the_tax ) {
+				// This is the name of the nation/station.
+				$slug = ( ! isset( $the_tax->slug ) ) ? $the_tax['slug'] : $the_tax->slug;
+				$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 
-			// Process the posts.
-			if ( $queery->have_posts() ) {
-				// Defaults.
-				$shows      = 0;
-				$characters = 0;
-				$dead_shows = 0;
-				$dead_chars = 0;
+				// Get the posts.
+				$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
 
-				foreach ( $queery->posts as $show ) {
-					// This data is universal for every thing we process.
-					$shows++;
-					$dead_chars += get_post_meta( $show->ID, 'lezshows_dead_count', true );
-					$characters += get_post_meta( $show->ID, 'lezshows_char_count', true );
-					if ( has_term( 'dead-queers', 'lez_tropes', $show->ID ) ) {
-						$dead_shows++;
+				// Process the posts.
+				if ( $queery->have_posts() ) {
+					// Defaults.
+					$shows      = 0;
+					$characters = 0;
+					$dead_shows = 0;
+					$dead_chars = 0;
+
+					foreach ( $queery->posts as $show ) {
+						// This data is universal for every thing we process.
+						$shows++;
+						$dead_chars += get_post_meta( $show->ID, 'lezshows_dead_count', true );
+						$characters += get_post_meta( $show->ID, 'lezshows_char_count', true );
+						if ( has_term( 'dead-queers', 'lez_tropes', $show->ID ) ) {
+							$dead_shows++;
+						}
 					}
-				}
 
-				$array[] = array(
-					'count'      => $dead_chars,
-					'name'       => $name,
-					'url'        => get_term_link( $the_tax ),
-					'characters' => $characters,
-					'shows'      => $shows,
-				);
+					$array[] = array(
+						'count'      => $dead_chars,
+						'name'       => $name,
+						'url'        => get_term_link( $the_tax ),
+						'characters' => $characters,
+						'shows'      => $shows,
+					);
+				}
 			}
+
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
 
 		return $array;
@@ -747,19 +816,29 @@ class LWTV_Stats_Arrays {
 	 * @return array
 	 */
 	public static function scores( $post_type ) {
-		$the_queery = LWTV_Loops::post_type_query( $post_type );
-		$array      = array();
-		if ( $the_queery->have_posts() ) {
-			while ( $the_queery->have_posts() ) {
-				$the_queery->the_post();
-				$post               = get_post();
-				$array[ $post->ID ] = array(
-					'id'    => $post->ID,
-					'count' => get_post_meta( $post->ID, 'lezshows_the_score', true ),
-					'url'   => get_the_permalink( $post->ID ),
-				);
+
+		$transient = 'scores_' . $post_type;
+		$array     = get_transient( $transient );
+
+		if ( false === $array ) {
+
+			$the_queery = LWTV_Loops::post_type_query( $post_type );
+			$array      = array();
+			if ( $the_queery->have_posts() ) {
+				while ( $the_queery->have_posts() ) {
+					$the_queery->the_post();
+					$post               = get_post();
+					$array[ $post->ID ] = array(
+						'id'    => $post->ID,
+						'count' => get_post_meta( $post->ID, 'lezshows_the_score', true ),
+						'url'   => get_the_permalink( $post->ID ),
+					);
+				}
+				wp_reset_query();
 			}
-			wp_reset_query();
+
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
 
 		return $array;
@@ -774,45 +853,55 @@ class LWTV_Stats_Arrays {
 	 * @return void
 	 */
 	public static function actor_chars( $type = 'characters' ) {
-		// list of people
-		$all_query = LWTV_Loops::post_type_query( 'post_type_' . $type );
-		$array     = array();
-		if ( $all_query->have_posts() ) {
-			while ( $all_query->have_posts() ) {
-				$all_query->the_post();
-				// The data we parse depends on the data type
-				switch ( $type ) {
-					case 'characters':
-						$data = get_post_meta( get_the_id(), 'lezchars_actor', true );
-						$name = 'actors';
-						break;
-					case 'actors':
-						$data = get_post_meta( get_the_id(), 'lezactors_char_count', true );
-						$name = 'characters';
-						break;
-				}
-				// Now that we have the data, let's count and store
-				if ( is_numeric( $data ) ) {
-					$key = $data;
-				} else {
-					$key = count( $data );
-				}
 
-				// Check key
-				if ( ! array_key_exists( $key, $array ) && is_numeric( $key ) ) {
-					$array[ $key ] = array(
-						'name'  => $key . ' ' . $name,
-						'count' => '1',
-						'url'   => '',
-					);
-				} else {
-					$array[ $key ]['count']++;
+		$transient = 'actor_chars_' . $type;
+		$array     = get_transient( $transient );
+
+		if ( false === $array ) {
+
+			// list of people
+			$all_query = LWTV_Loops::post_type_query( 'post_type_' . $type );
+			$array     = array();
+			if ( $all_query->have_posts() ) {
+				while ( $all_query->have_posts() ) {
+					$all_query->the_post();
+					// The data we parse depends on the data type
+					switch ( $type ) {
+						case 'characters':
+							$data = get_post_meta( get_the_id(), 'lezchars_actor', true );
+							$name = 'actors';
+							break;
+						case 'actors':
+							$data = get_post_meta( get_the_id(), 'lezactors_char_count', true );
+							$name = 'characters';
+							break;
+					}
+					// Now that we have the data, let's count and store
+					if ( is_numeric( $data ) ) {
+						$key = $data;
+					} else {
+						$key = count( $data );
+					}
+
+					// Check key
+					if ( ! array_key_exists( $key, $array ) && is_numeric( $key ) ) {
+						$array[ $key ] = array(
+							'name'  => $key . ' ' . $name,
+							'count' => '1',
+							'url'   => '',
+						);
+					} else {
+						$array[ $key ]['count']++;
+					}
 				}
+				wp_reset_query();
 			}
-			wp_reset_query();
-		}
 
-		ksort( $array );
+			ksort( $array );
+
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
+		}
 
 		return $array;
 	}
@@ -826,239 +915,268 @@ class LWTV_Stats_Arrays {
 	 * @return void
 	 */
 	public static function show_roles( $type = 'dead' ) {
-		// List of shows
-		$all_shows_query = LWTV_Loops::post_type_query( 'post_type_shows' );
 
-		$guest_alive_array     = array();
-		$recurring_alive_array = array();
-		$main_alive_array      = array();
-		$guest_dead_array      = array();
-		$recurring_dead_array  = array();
-		$main_dead_array       = array();
+		$transient = 'show_roles_' . $type;
+		$array     = get_transient( $transient );
 
-		if ( $all_shows_query->have_posts() ) {
+		if ( false === $array ) {
+			$array  = array();
 
-			while ( $all_shows_query->have_posts() ) {
-				$all_shows_query->the_post();
-				$show_id = get_the_id();
+			// List of shows
+			$all_shows_query = LWTV_Loops::post_type_query( 'post_type_shows' );
 
-				$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
-				$show_name = strtolower( $show_name );
+			$guest_alive_array     = array();
+			$recurring_alive_array = array();
+			$main_alive_array      = array();
+			$guest_dead_array      = array();
+			$recurring_dead_array  = array();
+			$main_dead_array       = array();
 
-				$role_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			if ( $all_shows_query->have_posts() ) {
 
-				if ( $role_loop->have_posts() ) {
+				while ( $all_shows_query->have_posts() ) {
+					$all_shows_query->the_post();
+					$show_id = get_the_id();
 
-					$guest     = array(
-						'alive' => 0,
-						'dead'  => 0,
-					);
-					$regular   = array(
-						'alive' => 0,
-						'dead'  => 0,
-					);
-					$recurring = array(
-						'alive' => 0,
-						'dead'  => 0,
-					);
+					$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
+					$show_name = strtolower( $show_name );
 
-					$char_id     = get_the_id();
-					$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+					$role_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
-					if ( '' !== $shows_array ) {
+					if ( $role_loop->have_posts() ) {
 
-						foreach ( $shows_array as $each_show ) {
-							if ( 'guest' === $char_show['type'] ) {
-								$guest['alive']++;
-								if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-									$guest['dead']++;
+						$guest     = array(
+							'alive' => 0,
+							'dead'  => 0,
+						);
+						$regular   = array(
+							'alive' => 0,
+							'dead'  => 0,
+						);
+						$recurring = array(
+							'alive' => 0,
+							'dead'  => 0,
+						);
+
+						$char_id     = get_the_id();
+						$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+						if ( '' !== $shows_array ) {
+
+							foreach ( $shows_array as $each_show ) {
+								if ( 'guest' === $char_show['type'] ) {
+									$guest['alive']++;
+									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
+										$guest['dead']++;
+									}
 								}
-							}
-							if ( 'regular' === $char_show['type'] ) {
-								$regular['alive']++;
-								if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-									$regular['dead']++;
+								if ( 'regular' === $char_show['type'] ) {
+									$regular['alive']++;
+									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
+										$regular['dead']++;
+									}
 								}
-							}
-							if ( 'recurring' === $char_show['type'] ) {
-								$recurring['alive']++;
-								if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-									$recurring['dead']++;
+								if ( 'recurring' === $char_show['type'] ) {
+									$recurring['alive']++;
+									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
+										$recurring['dead']++;
+									}
 								}
 							}
 						}
-					}
 
-					// Make Alive Query
-					if ( 0 === $regular['alive'] && 0 !== $recurring['alive'] && 0 === $guest['alive'] ) {
-						$recurring_alive_array[ $show_name ] = array(
-							'url'    => get_permalink( $show_id ),
-							'name'   => get_the_title( $show_id ),
-							'status' => get_post_status( $show_id ),
-						);
-					}
-					if ( 0 === $regular['alive'] && 0 === $recurring['alive'] && 0 !== $guest['alive'] ) {
-						$guest_alive_array[ $show_name ] = array(
-							'url'    => get_permalink( $show_id ),
-							'name'   => get_the_title( $show_id ),
-							'status' => get_post_status( $show_id ),
-						);
-					}
-					if ( 0 !== $regular['alive'] && 0 === $guest['alive'] && 0 === $recurring['alive'] ) {
-						$main_alive_array[ $show_name ] = array(
-							'url'    => get_permalink( $show_id ),
-							'name'   => get_the_title( $show_id ),
-							'status' => get_post_status( $show_id ),
-						);
-					}
+						// Make Alive Query
+						if ( 0 === $regular['alive'] && 0 !== $recurring['alive'] && 0 === $guest['alive'] ) {
+							$recurring_alive_array[ $show_name ] = array(
+								'url'    => get_permalink( $show_id ),
+								'name'   => get_the_title( $show_id ),
+								'status' => get_post_status( $show_id ),
+							);
+						}
+						if ( 0 === $regular['alive'] && 0 === $recurring['alive'] && 0 !== $guest['alive'] ) {
+							$guest_alive_array[ $show_name ] = array(
+								'url'    => get_permalink( $show_id ),
+								'name'   => get_the_title( $show_id ),
+								'status' => get_post_status( $show_id ),
+							);
+						}
+						if ( 0 !== $regular['alive'] && 0 === $guest['alive'] && 0 === $recurring['alive'] ) {
+							$main_alive_array[ $show_name ] = array(
+								'url'    => get_permalink( $show_id ),
+								'name'   => get_the_title( $show_id ),
+								'status' => get_post_status( $show_id ),
+							);
+						}
 
-					// Make Dead Data
-					if ( 0 === $regular['dead'] && 0 !== $recurring['dead'] && 0 === $guest['dead'] ) {
-						$recurring_dead_array[ $show_name ] = array(
-							'url'    => get_permalink( $show_id ),
-							'name'   => get_the_title( $show_id ),
-							'status' => get_post_status( $show_id ),
-						);
+						// Make Dead Data
+						if ( 0 === $regular['dead'] && 0 !== $recurring['dead'] && 0 === $guest['dead'] ) {
+							$recurring_dead_array[ $show_name ] = array(
+								'url'    => get_permalink( $show_id ),
+								'name'   => get_the_title( $show_id ),
+								'status' => get_post_status( $show_id ),
+							);
+						}
+						if ( 0 === $regular['dead'] && 0 === $recurring['dead'] && 0 !== $guest['dead'] ) {
+							$guest_dead_array[ $show_name ] = array(
+								'url'    => get_permalink( $show_id ),
+								'name'   => get_the_title( $show_id ),
+								'status' => get_post_status( $show_id ),
+							);
+						}
+						if ( 0 !== $regular['dead'] && 0 === $guest['dead'] && 0 === $recurring['dead'] ) {
+							$main_dead_array[ $show_name ] = array(
+								'url'    => get_permalink( $show_id ),
+								'name'   => get_the_title( $show_id ),
+								'status' => get_post_status( $show_id ),
+							);
+						}
+						wp_reset_query();
 					}
-					if ( 0 === $regular['dead'] && 0 === $recurring['dead'] && 0 !== $guest['dead'] ) {
-						$guest_dead_array[ $show_name ] = array(
-							'url'    => get_permalink( $show_id ),
-							'name'   => get_the_title( $show_id ),
-							'status' => get_post_status( $show_id ),
-						);
-					}
-					if ( 0 !== $regular['dead'] && 0 === $guest['dead'] && 0 === $recurring['dead'] ) {
-						$main_dead_array[ $show_name ] = array(
-							'url'    => get_permalink( $show_id ),
-							'name'   => get_the_title( $show_id ),
-							'status' => get_post_status( $show_id ),
-						);
-					}
-					wp_reset_query();
 				}
+				wp_reset_query();
 			}
-			wp_reset_query();
-		}
 
-		$alive_array = array(
-			'guest'     => array(
-				'name'  => 'Only Guests',
-				'count' => count( $guest_alive_array ),
-				'url'   => home_url( '/role/guest/' ),
-			),
-			'main'      => array(
-				'name'  => 'Only Main',
-				'count' => count( $main_alive_array ),
-				'url'   => home_url( '/role/regular/' ),
-			),
-			'recurring' => array(
-				'name'  => 'Only Recurring',
-				'count' => count( $recurring_alive_array ),
-				'url'   => home_url( '/role/recurring/' ),
-			),
-		);
+			$alive_array = array(
+				'guest'     => array(
+					'name'  => 'Only Guests',
+					'count' => count( $guest_alive_array ),
+					'url'   => home_url( '/role/guest/' ),
+				),
+				'main'      => array(
+					'name'  => 'Only Main',
+					'count' => count( $main_alive_array ),
+					'url'   => home_url( '/role/regular/' ),
+				),
+				'recurring' => array(
+					'name'  => 'Only Recurring',
+					'count' => count( $recurring_alive_array ),
+					'url'   => home_url( '/role/recurring/' ),
+				),
+			);
 
-		$dead_array = array(
-			'guest'     => array(
-				'name'  => 'Only Guests',
-				'count' => $guest['dead'],
-				'url'   => home_url( '/role/guest/' ),
-			),
-			'main'      => array(
-				'name'  => 'Only Main',
-				'count' => $regular['dead'],
-				'url'   => home_url( '/role/regular/' ),
-			),
-			'recurring' => array(
-				'name'  => 'Only Recurring',
-				'count' => $recurring['dead'],
-				'url'   => home_url( '/role/recurring/' ),
-			),
-		);
+			$dead_array = array(
+				'guest'     => array(
+					'name'  => 'Only Guests',
+					'count' => $guest['dead'],
+					'url'   => home_url( '/role/guest/' ),
+				),
+				'main'      => array(
+					'name'  => 'Only Main',
+					'count' => $regular['dead'],
+					'url'   => home_url( '/role/regular/' ),
+				),
+				'recurring' => array(
+					'name'  => 'Only Recurring',
+					'count' => $recurring['dead'],
+					'url'   => home_url( '/role/recurring/' ),
+				),
+			);
 
-		$array = $alive_array;
-		if ( 'dead' === $type ) {
-			$array = $dead_array;
+			if ( 'dead' === $type ) {
+				$array = $dead_array;
+			} else {
+				$array = $alive_array;
+			}
+
+			set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
 
 		return $array;
 	}
 
+	/**
+	 * Complex Taxonomy Breakdown
+	 * @param  boolean $count [description]
+	 * @param  string  $data  [description]
+	 * @param  string  $type  [description]
+	 * @return array          [description]
+	 */
 	public static function complex_taxonomy( $count, $data, $type ) {
 
 		// Default
 		$array     = array();
 		$post_type = 'post_type_' . $type;
+		$do_count  = ( isset( $count ) && 0 !== $count ) ? 'yes' : 'no';
 
-		if ( 'queer-irl' === $data ) {
+		$transient = 'complex_taxonomy_' . $data . '_' . $type . '_' . $do_count;
+		$array     = get_transient( $transient );
 
-			$array = array(
-				'queer'     => array(
-					'name'  => 'Queer',
-					'count' => 0,
-					'url'   => home_url(),
-				),
-				'not_queer' => array(
-					'name'  => 'Not Queer',
-					'count' => 0,
-					'url'   => home_url(),
-				),
-			);
+		if ( false === $array ) {
+			$array    = array();
 
-			switch ( $type ) {
-				case 'characters':
-					$taxonomy                    = self::taxonomy( 'post_type_characters', 'lez_cliches', 'queer-irl' );
-					$array['queer']['count']     = $taxonomy['queer-irl']['count'];
-					$array['queer']['url']       = home_url( '/cliche/queer-irl/' );
-					$array['not_queer']['count'] = ( $count - $array['queer']['count'] );
-					break;
-				case 'actors':
-					$all_actors_query = LWTV_Loops::post_type_query( 'post_type_actors' );
-					if ( $all_actors_query->have_posts() ) {
-						while ( $all_actors_query->have_posts() ) {
-							$all_actors_query->the_post();
-							$the_id   = get_the_id();
-							$is_queer = LWTV_Loops::is_actor_queer( $the_id );
+			if ( 'queer-irl' === $data ) {
 
-							// And now we set the numbers!
-							switch ( $is_queer ) {
-								case 'yes':
-									$array['queer']['count']++;
-									break;
-								case 'no':
-									$array['not_queer']['count']++;
-									break;
+				$array = array(
+					'queer'     => array(
+						'name'  => 'Queer',
+						'count' => 0,
+						'url'   => home_url(),
+					),
+					'not_queer' => array(
+						'name'  => 'Not Queer',
+						'count' => 0,
+						'url'   => home_url(),
+					),
+				);
+
+				switch ( $type ) {
+					case 'characters':
+						$taxonomy                    = self::taxonomy( 'post_type_characters', 'lez_cliches', 'queer-irl' );
+						$array['queer']['count']     = $taxonomy['queer-irl']['count'];
+						$array['queer']['url']       = home_url( '/cliche/queer-irl/' );
+						$array['not_queer']['count'] = ( $count - $array['queer']['count'] );
+						break;
+					case 'actors':
+						$all_actors_query = LWTV_Loops::post_type_query( 'post_type_actors' );
+						if ( $all_actors_query->have_posts() ) {
+							while ( $all_actors_query->have_posts() ) {
+								$all_actors_query->the_post();
+								$the_id   = get_the_id();
+								$is_queer = LWTV_Loops::is_actor_queer( $the_id );
+
+								// And now we set the numbers!
+								switch ( $is_queer ) {
+									case 'yes':
+										$array['queer']['count']++;
+										break;
+									case 'no':
+										$array['not_queer']['count']++;
+										break;
+								}
 							}
+							wp_reset_query();
 						}
-						wp_reset_query();
-					}
-					break;
-			}
-		} else {
-			// Get all the terms
-			$taxonomies = get_terms( 'lez_' . $data );
-			foreach ( $taxonomies as $term ) {
-				$term_obj            = get_term_by( 'slug', $term, $data, 'ARRAY_A' );
-				$term_link           = get_term_link( $term, $data );
-				$term_slug           = $term->slug;
-				$term_name           = $term->name;
-				$count_terms_queery  = LWTV_Loops::tax_query( $post_type, 'lez_' . $data, 'slug', $term_slug, 'IN' );
-				$term_count          = $count_terms_queery->post_count;
-				$array[ $term_slug ] = array(
-					'count' => $term_count,
-					'name'  => $term_name,
-					'url'   => $term_link,
-				);
-				$count              -= $term_count;
+						break;
+				}
+			} else {
+				// Get all the terms
+				$taxonomies = get_terms( 'lez_' . $data );
+				foreach ( $taxonomies as $term ) {
+					$term_obj            = get_term_by( 'slug', $term, $data, 'ARRAY_A' );
+					$term_link           = get_term_link( $term, $data );
+					$term_slug           = $term->slug;
+					$term_name           = $term->name;
+					$count_terms_queery  = LWTV_Loops::tax_query( $post_type, 'lez_' . $data, 'slug', $term_slug, 'IN' );
+					$term_count          = $count_terms_queery->post_count;
+					$array[ $term_slug ] = array(
+						'count' => $term_count,
+						'name'  => $term_name,
+						'url'   => $term_link,
+					);
+					$count              -= $term_count;
+				}
+
+				if ( 'yes' === $do_count ) {
+					$array['none'] = array(
+						'count' => $count,
+						'name'  => 'None',
+						'url'   => '',
+					);
+				}
 			}
 
-			if ( isset( $count ) && 0 !== $count ) {
-				$array['none'] = array(
-					'count' => $count,
-					'name'  => 'None',
-					'url'   => '',
-				);
-			}
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
 
 		return $array;
