@@ -203,7 +203,7 @@ class LWTV_Whats_On_JSON {
 				// Remove everything after a space-and parenthesis to compensate for 'charmed (2018)' situations but NOT 'thirtysomething(else)' - can shows PLEASE stop being so clever? UGH.
 				$show_name = trim( current( explode( ' (', get_the_title( $show_obj->ID ) ) ) );
 
-				// We named these two shows differently
+				// We named these shows differently
 				switch ( $show_name ) {
 					case 'Legends of Tomorrow':
 						$show_name = "DC's Legends of Tomorrow";
