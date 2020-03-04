@@ -59,17 +59,17 @@
     },
     {
         "name": "nesbot/carbon",
-        "version": "2.29.1",
-        "version_normalized": "2.29.1.0",
+        "version": "2.31.0",
+        "version_normalized": "2.31.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/briannesbitt/Carbon.git",
-            "reference": "e509be5bf2d703390e69e14496d9a1168452b0a2"
+            "reference": "bbc0ab53f41a4c6f223c18efcdbd9bc725eb5d2d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/e509be5bf2d703390e69e14496d9a1168452b0a2",
-            "reference": "e509be5bf2d703390e69e14496d9a1168452b0a2",
+            "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/bbc0ab53f41a4c6f223c18efcdbd9bc725eb5d2d",
+            "reference": "bbc0ab53f41a4c6f223c18efcdbd9bc725eb5d2d",
             "shasum": ""
         },
         "require": {
@@ -85,7 +85,7 @@
             "phpunit/phpunit": "^7.5 || ^8.0",
             "squizlabs/php_codesniffer": "^3.4"
         },
-        "time": "2020-01-21T09:36:43+00:00",
+        "time": "2020-03-01T11:11:58+00:00",
         "bin": [
             "bin/carbon"
         ],
@@ -131,17 +131,17 @@
     },
     {
         "name": "symfony/polyfill-mbstring",
-        "version": "v1.13.1",
-        "version_normalized": "1.13.1.0",
+        "version": "v1.14.0",
+        "version_normalized": "1.14.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-mbstring.git",
-            "reference": "7b4aab9743c30be783b73de055d24a39cf4b954f"
+            "reference": "34094cfa9abe1f0f14f48f490772db7a775559f2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7b4aab9743c30be783b73de055d24a39cf4b954f",
-            "reference": "7b4aab9743c30be783b73de055d24a39cf4b954f",
+            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/34094cfa9abe1f0f14f48f490772db7a775559f2",
+            "reference": "34094cfa9abe1f0f14f48f490772db7a775559f2",
             "shasum": ""
         },
         "require": {
@@ -150,11 +150,11 @@
         "suggest": {
             "ext-mbstring": "For best performance"
         },
-        "time": "2019-11-27T14:18:11+00:00",
+        "time": "2020-01-13T11:15:53+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.13-dev"
+                "dev-master": "1.14-dev"
             }
         },
         "installation-source": "dist",
@@ -192,17 +192,17 @@
     },
     {
         "name": "symfony/translation",
-        "version": "v5.0.4",
-        "version_normalized": "5.0.4.0",
+        "version": "v5.0.5",
+        "version_normalized": "5.0.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/translation.git",
-            "reference": "28e1054f1ea26c63762d9260c37cb1056ea62dbb"
+            "reference": "e9b93f42a1fd6aec6a0872d59ee5c8219a7d584b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/translation/zipball/28e1054f1ea26c63762d9260c37cb1056ea62dbb",
-            "reference": "28e1054f1ea26c63762d9260c37cb1056ea62dbb",
+            "url": "https://api.github.com/repos/symfony/translation/zipball/e9b93f42a1fd6aec6a0872d59ee5c8219a7d584b",
+            "reference": "e9b93f42a1fd6aec6a0872d59ee5c8219a7d584b",
             "shasum": ""
         },
         "require": {
@@ -236,7 +236,7 @@
             "symfony/config": "",
             "symfony/yaml": ""
         },
-        "time": "2020-01-21T08:40:24+00:00",
+        "time": "2020-02-04T07:41:34+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {

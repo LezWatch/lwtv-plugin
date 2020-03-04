@@ -212,8 +212,9 @@ class LWTV_Debug {
 					}
 				}
 
+				// If they're cartoons, they can have no actor.
 				$actors = get_post_meta( $char_id, 'lezchars_actor', true );
-				if ( ! $actors ) {
+				if ( ! $actors && ! has_term( 'cartoon', 'lez_cliches' ) ) {
 					$problems[] = 'No actors listed.';
 				}
 
