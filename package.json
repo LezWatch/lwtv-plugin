@@ -13,6 +13,6 @@
     "chart.js": "^2.9.3",
     "copy": "^0.3.2",
     "download-git-repo": "^2.0.0",
-    "tablesorter": "^2.31.2"
+    "tablesorter": "^2.31.3"
   }
 }

@@ -327,17 +327,17 @@ class FacetWP_Integration_CMB2 {
 
 		// Check for special field types
 		if ( 'text_data' == $field->type() ) {
-			$index['facet_value'] = gmdate( $date_format, strtotime( $field->value() ) );
+			$index['facet_value'] = date( $date_format, strtotime( $field->value() ) );
 			$this->index_row( $index, $defaults );
 
 			return false;
 		} elseif ( 'text_date_timestamp' == $field->type() ) {
-			$index['facet_value'] = gmdate( $date_format, $field->value() );
+			$index['facet_value'] = date( $date_format, $field->value() );
 			$this->index_row( $index, $defaults );
 
 			return false;
 		} elseif ( 'text_datetime_timestamp' == $field->type() ) {
-			$index['facet_value'] = gmdate( $extended_format, $field->value() );
+			$index['facet_value'] = date( $extended_format, $field->value() );
 			$this->index_row( $index, $defaults );
 
 			return false;
