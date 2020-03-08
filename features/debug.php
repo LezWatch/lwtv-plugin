@@ -31,8 +31,8 @@ class LWTV_Debug {
 				// Get the actors...
 				$character_actors = get_post_meta( $post->ID, 'lezchars_actor', true );
 
-				if ( ! $character_actors || empty( $character_actors ) ) {
-					// If there are no actors, we have a different problem...
+				if ( ! has_term( 'cartoon', 'lez_cliches' ) && ( ! $character_actors || empty( $character_actors ) ) ) {
+					// If there are no actors and it's not a cartoon we have a different problem...
 					$items[] = array(
 						'url'     => get_permalink(),
 						'id'      => get_the_id(),
