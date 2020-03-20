@@ -181,7 +181,7 @@ class LWTV_CPT_Shows {
 			'rest_base'           => 'show',
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-video-alt',
-			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'author', 'excerpt', 'thumbnail', 'revisions' ),
 			'has_archive'         => 'shows',
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,
