@@ -134,7 +134,7 @@ class LWTV_CPT_Actors {
 			'rest_base'           => 'actor',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-id',
-			'supports'            => array( 'title', 'editor', 'author', 'thumbnail', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions' ),
 			'has_archive'         => 'actors',
 			'rewrite'             => array( 'slug' => 'actor' ),
 			'taxonomies'          => $actor_taxonomies,
