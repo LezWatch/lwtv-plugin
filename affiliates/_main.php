@@ -153,6 +153,7 @@ class LWTV_Affilliates {
 	 */
 	public static function network( $id, $format = 'wide', $network = 'cbs' ) {
 
+		$advert = '';
 		switch ( $network ) {
 			case 'cbs':
 				require_once 'cbs.php';
@@ -162,7 +163,6 @@ class LWTV_Affilliates {
 
 		return $advert;
 	}
-
 
 	/**
 	 * Call Local Affilate Data
@@ -203,8 +203,9 @@ class LWTV_Affilliates {
 	 * This is just random
 	 */
 	public static function actors( $id, $format ) {
-		$return = self::random( $id, $format );
-		return $return;
+		$affiliates = self::random( $id, $format );
+		$advert     = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . $affiliates . '</center></div><!-- END Affiliate Ads -->';
+		return $advert;
 	}
 
 	/**
@@ -306,7 +307,7 @@ class LWTV_Affilliates {
 			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'];
 
 			// Clean the URL to get the top domain ...
-			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk' );
+			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk', '.ca', '.go' );
 			foreach ( $removal_array as $removal ) {
 				$hostname = str_replace( $removal, '', $hostname );
 			}
@@ -325,16 +326,13 @@ class LWTV_Affilliates {
 					break;
 				case '7eer':
 				case 'cbs':
-					$url    = 'https://CBS-AllAccess.qflm.net/c/1242493/650979/3065';
-					$extra  = '<img height="0" width="0" src="//CBS-AllAccess.qflm.net/i/1242493/650979/3065" style="position:absolute;visibility:hidden;" border="0" />';
-					$name   = 'CBS All Access';
+					$url   = 'https://cbsallaccess.qflm.net/c/1242493/176097/3065';
+					$extra = '<img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/176097/3065" style="position:absolute;visibility:hidden;" border="0" />';
+					$name  = 'CBS All Access';
 					break;
 				case 'abc':
 				case 'nbc':
 					$name = strtoupper( $hostname );
-					break;
-				case 'abc.go':
-					$name = 'ABC';
 					break;
 				case 'bbcamerica':
 					$name = 'BBC America';
