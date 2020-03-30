@@ -122,10 +122,9 @@ class LWTV_Related_Posts {
 
 			// Bail early if no tags or it's not an array.
 			if ( $post_tags ) {
-
 				foreach ( $post_tags as $tag ) {
 					$maybe = array(
-						'show'      => get_page_by_path( $tag->name, OBJECT, 'post_type_shows' ),
+						'show'      => get_page_by_path( $tag->slug, OBJECT, 'post_type_shows' ),
 						'actor'     => get_page_by_path( $tag->name, OBJECT, 'post_type_actors' ),
 						'character' => get_page_by_path( $tag->name, OBJECT, 'post_type_characters' ),
 					);
