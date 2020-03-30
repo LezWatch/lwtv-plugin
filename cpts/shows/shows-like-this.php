@@ -30,7 +30,9 @@ class LWTV_Shows_Like_This {
 		if ( ! empty( $show_id ) && has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {
 
 			// Get the tags and add them to include if they exist. Default if so.
-			$tagged = get_the_terms( $show_id, 'lez_showtagged' );
+			$tagged  = get_the_terms( $show_id, 'lez_showtagged' );
+			$exclude = '';
+			$include = '';
 			if ( ! empty( $tagged ) ) {
 				foreach ( $tagged as $tag ) {
 					$tags_array[] = $tag->term_id;
@@ -61,7 +63,6 @@ class LWTV_Shows_Like_This {
 					$include = $primary;
 				} else {
 					$include = implode( ', ', $terms_array );
-					$exclude = '';
 				}
 			}
 
