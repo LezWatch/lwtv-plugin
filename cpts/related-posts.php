@@ -126,7 +126,7 @@ class LWTV_Related_Posts {
 					$maybe = array(
 						'show'      => get_page_by_path( $tag->slug, OBJECT, 'post_type_shows' ),
 						'actor'     => get_page_by_path( $tag->slug, OBJECT, 'post_type_actors' ),
-						//'character' => get_page_by_path( $tag->slug, OBJECT, 'post_type_characters' ),
+						'character' => get_page_by_path( $tag->slug, OBJECT, 'post_type_characters' ),
 					);
 
 					foreach ( $maybe as $type => $item ) {
