@@ -205,14 +205,14 @@ class LWTV_Whats_On_JSON {
 
 				// We named these shows differently
 				switch ( $show_name ) {
+					case 'Agents of S.H.I.E.L.D.':
+						$show_name = "Marvel's Agents of S.H.I.E.L.D.";
+						break;
 					case 'Legends of Tomorrow':
 						$show_name = "DC's Legends of Tomorrow";
 						break;
 					case 'Runaways':
 						$show_name = "Marvel's Runaways";
-						break;
-					case 'Agents of S.H.I.E.L.D.':
-						$show_name = "Marvel's Agents of S.H.I.E.L.D.";
 						break;
 				}
 
@@ -344,8 +344,14 @@ class LWTV_Whats_On_JSON {
 				$showtime->add( $interval );
 
 				// Reformat the show name and episode name
-				$show_name      = substr( $episode->summary, 0, strpos( $episode->summary, ':' ) );
-				$episode_number = trim( substr( $episode->summary, strpos( $episode->summary, ':' ) + 1 ) );
+				$colon_count = substr_count( $episode->summary, ':' );
+				if ( 1 === $colon_count ) {
+					$show_name      = substr( $episode->summary, 0, strpos( $episode->summary, ':' ) );
+					$episode_number = trim( substr( $episode->summary, strpos( $episode->summary, ':' ) + 1 ) );
+				} else {
+					$show_name      = substr( $episode->summary, 0, strrpos( $episode->summary, ':' ) );
+					$episode_number = trim( substr( $episode->summary, strrpos( $episode->summary, ':' ) + 1 ) );
+				}
 
 				if ( array_key_exists( $show_name, $on_array ) ) {
 					if ( ! is_array( $on_array[ $show_name ]['title'] ) ) {
