@@ -125,8 +125,8 @@ class LWTV_Related_Posts {
 				foreach ( $post_tags as $tag ) {
 					$maybe = array(
 						'show'      => get_page_by_path( $tag->slug, OBJECT, 'post_type_shows' ),
-						'actor'     => get_page_by_path( $tag->name, OBJECT, 'post_type_actors' ),
-						'character' => get_page_by_path( $tag->name, OBJECT, 'post_type_characters' ),
+						'actor'     => get_page_by_path( $tag->slug, OBJECT, 'post_type_actors' ),
+						//'character' => get_page_by_path( $tag->slug, OBJECT, 'post_type_characters' ),
 					);
 
 					foreach ( $maybe as $type => $item ) {
@@ -135,11 +135,6 @@ class LWTV_Related_Posts {
 						}
 					}
 				}
-
-				// Remove the character relation for now.
-				// Need to figure out how to prioritize shows and exclude characters if both
-				// exist.
-				unset( $related['character'] );
 
 				foreach ( $related as $type => $item ) {
 					if ( ! empty( $related[ $type ] ) ) {
