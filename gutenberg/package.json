@@ -8,6 +8,8 @@
     "eject": "cgb-scripts eject"
   },
   "dependencies": {
-    "cgb-scripts": "1.23.0"
+    "cgb-scripts": "1.24.0",
+    "minimist": ">=0.2.1",
+    "kind-of": ">=6.0.3"
   }
 }
