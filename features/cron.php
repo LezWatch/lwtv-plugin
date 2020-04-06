@@ -162,7 +162,7 @@ SQL;
 	 */
 	public function tv_maze_cron() {
 		$upload_dir = wp_upload_dir();
-		$ics_file   = $upload_dir['baseurl'] . '/tvmaze.ics';
+		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
 		$response   = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
 			file_put_contents( $ics_file, $response['body'] );

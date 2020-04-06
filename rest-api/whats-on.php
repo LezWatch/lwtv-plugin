@@ -120,7 +120,7 @@ class LWTV_Whats_On_JSON {
 
 		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
 		$upload_dir = wp_upload_dir();
-		$tvmaze_url = $upload_dir['baseurl'] . '/tvmaze.ics';
+		$tvmaze_url = $upload_dir['basedir'] . '/tvmaze.ics';
 		$calendar   = LWTV_ICS_Parser::generate_by_date( $tvmaze_url, $when );
 		$whats_on   = $calendar;
 
@@ -145,7 +145,7 @@ class LWTV_Whats_On_JSON {
 		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
 		$lwtv_tz  = new DateTimeZone( 'America/New_York' );
 		$upload_dir = wp_upload_dir();
-		$tvmaze_url = $upload_dir['baseurl'] . '/tvmaze.ics';
+		$tvmaze_url = $upload_dir['basedir'] . '/tvmaze.ics';
 		$calendar = LWTV_ICS_Parser::generate_by_date( $tvmaze_url, 'date', $date );
 		$whats_on = $calendar;
 
@@ -170,7 +170,7 @@ class LWTV_Whats_On_JSON {
 		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
 		$lwtv_tz    = new DateTimeZone( 'America/New_York' );
 		$upload_dir = wp_upload_dir();
-		$tvmaze_url = $upload_dir['baseurl'] . '/tvmaze.ics';
+		$tvmaze_url = $upload_dir['basedir'] . '/tvmaze.ics';
 
 		if ( 'now' === $when ) {
 			$calendar = LWTV_ICS_Parser::generate_by_date( $tvmaze_url, 'week' );
@@ -238,7 +238,7 @@ class LWTV_Whats_On_JSON {
 				// Get a list of all the shows
 				require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
 				$upload_dir = wp_upload_dir();
-				$tvmaze_url = $upload_dir['baseurl'] . '/tvmaze.ics';
+				$tvmaze_url = $upload_dir['basedir'] . '/tvmaze.ics';
 				$calendar   = LWTV_ICS_Parser::generate_by_date( $tvmaze_url, 'full' );
 
 				// Make sure we have anything on TV in the next 30 days
@@ -282,7 +282,7 @@ class LWTV_Whats_On_JSON {
 
 		$by_day_array   = array();
 		$upload_dir     = wp_upload_dir();
-		$tvmaze_url     = $upload_dir['baseurl'] . '/tvmaze.ics';
+		$tvmaze_url     = $upload_dir['basedir'] . '/tvmaze.ics';
 		$episodes_array = LWTV_ICS_Parser::generate_by_date( $tvmaze_url, 'week', $date );
 
 		if ( empty( $episodes_array ) ) {
