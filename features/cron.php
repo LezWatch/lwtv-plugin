@@ -71,6 +71,11 @@ class LWTV_Cron {
 		if ( ! wp_next_scheduled( 'lwtv_cache_event_daily' ) ) {
 			wp_schedule_event( strtotime( '06:01:00' ), 'daily', 'lwtv_cache_event_daily' );
 		}
+
+		add_action( 'lwtv_tv_maze_hourly', array( $this, 'tv_maze_cron' ) );
+		if ( ! wp_next_scheduled( 'lwtv_tv_maze_hourly' ) ) {
+			wp_schedule_event( time(), 'hourly', 'lwtv_tv_maze_hourly' );
+		}
 	}
 
 	/**
@@ -145,6 +150,22 @@ SQL;
 	public function varnish_cache_daily() {
 		foreach ( $this->daily_urls as $url ) {
 			wp_remote_get( home_url( $url ) );
+		}
+	}
+
+	/**
+	 * TV Maze Cron Job
+	 *
+	 * Saves the ICS data to a file so we're not overloading the API.
+	 * @access public
+	 * @return void
+	 */
+	public function tv_maze_cron() {
+		$upload_dir = wp_upload_dir();
+		$ics_file   = $upload_dir['baseurl'] . '/tvmaze.ics';
+		$response   = wp_remote_get( TV_MAZE );
+		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+			file_put_contents( $ics_file, $response['body'] );
 		}
 	}
 
