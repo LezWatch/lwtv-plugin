@@ -43,10 +43,14 @@ class LWTV_Shows_Like_This {
 				}
 			} else {
 				// Not tagged? Terms!
-				// Get the terms, we're going to include them
+				// Get the genre terms, we're going to include them
 				$terms = get_the_terms( $show_id, 'lez_genres' );
-				foreach ( $terms as $term ) {
-					$terms_array[] = $term->term_id;
+				if ( isset( $terms ) && is_array( $terms ) ) {
+					foreach ( $terms as $term ) {
+						$terms_array[] = $term->term_id;
+					}
+				} else {
+					$terms_array[] = '';
 				}
 
 				// Now. Get the primary
