@@ -166,7 +166,7 @@ class LWTV_CPT_Shows {
 			array( 'lez-library/featured-image' ),
 			array(
 				'core/paragraph',
-				array( 'placeholder' => 'Everything we need to know about this show ...' ),
+				array( 'placeholder' => 'Everything we need to know about this show.' ),
 			),
 		);
 		$args     = array(
