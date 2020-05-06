@@ -128,6 +128,8 @@ class LWTV_CPT_Characters {
 			'taxonomies'          => $char_taxonomies,
 			'delete_with_user'    => false,
 			'exclude_from_search' => false,
+			'capability_type'     => array( 'character', 'characters' ),
+			'map_meta_cap'        => true,
 		);
 		register_post_type( 'post_type_characters', $args );
 	}

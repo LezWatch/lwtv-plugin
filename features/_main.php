@@ -6,6 +6,7 @@
 // Include the base files
 require_once 'cron.php';           // Custom Cron jobs.
 require_once 'custom-loops.php';   // Custom Loops
+require_once 'custom-roles.php';   // Custom Roles
 require_once 'debug.php';          // Debug tools
 require_once 'private-data.php';   // Data Removal Code
 require_once 'profiles.php';       // User Profile Stuff

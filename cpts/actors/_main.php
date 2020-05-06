@@ -140,6 +140,8 @@ class LWTV_CPT_Actors {
 			'taxonomies'          => $actor_taxonomies,
 			'delete_with_user'    => false,
 			'exclude_from_search' => false,
+			'capability_type'     => array( 'actor', 'actors' ),
+			'map_meta_cap'        => true,
 		);
 		register_post_type( 'post_type_actors', $args );
 	}

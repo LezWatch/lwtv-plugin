@@ -185,7 +185,9 @@ class LWTV_CPT_Shows {
 			'has_archive'         => 'shows',
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,
-
+			'exclude_from_search' => false,
+			'capability_type'     => array( 'show', 'shows' ),
+			'map_meta_cap'        => true,
 		);
 		register_post_type( 'post_type_shows', $args );
 	}
