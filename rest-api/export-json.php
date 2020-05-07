@@ -35,7 +35,7 @@ class LWTV_Export_JSON {
 	 * Rest API init
 	 *
 	 * Creates callbacks
-	 *   - /lwtv/v1/of-the-day/
+	 *   - /lwtv/v1/export/
 	 *
 	 * @since 1.0
 	 */
@@ -107,7 +107,11 @@ class LWTV_Export_JSON {
 				$return_array = self::export_show( $item );
 				break;
 			case 'list':
+			case 'wiki':
 				$return_array = self::export_list( $item );
+				break;
+			case 'raw':
+				$return_array = self::export_raw( $item );
 				break;
 			default:
 				$return_array = '';
@@ -122,7 +126,11 @@ class LWTV_Export_JSON {
 		return $return_array;
 	}
 
-
+	/**
+	 * Export list of all data with basic output
+	 * @param  string $item characters, actors, or shows.
+	 * @return array        json array.
+	 */
 	public static function export_list( $item ) {
 
 		// Default to empty. This will properly error later.
@@ -138,23 +146,55 @@ class LWTV_Export_JSON {
 					switch ( $item ) {
 						case 'actor':
 						case 'actors':
-							$return[] = self::export_actor( $post->post_name );
+							$return[] = self::export_actor( $post->post_name, 'wiki' );
 							break;
 						case 'character':
 						case 'characters':
-							$return[] = self::export_character( $post->post_name );
+							$return[] = self::export_character( $post->post_name, 'wiki' );
 							break;
 						case 'show':
 						case 'shows':
-							$return[] = self::export_show( $post->post_name );
+							$return[] = self::export_show( $post->post_name, 'wiki' );
 							break;
 					}
 				}
 			}
 		}
-
 		return $return;
+	}
 
+	/**
+	 * Export list of all data in  more raw way.
+	 * @param  string $item actors or shows.
+	 * @return array        json array.
+	 */
+	public static function export_raw( $item ) {
+
+		// Default to empty. This will properly error later.
+		$return = array();
+
+		// NB: You can't do actors.
+		if ( in_array( $item, array( 'shows', 'actors' ), true ) ) {
+			$the_loop = LWTV_Loops::post_type_query( 'post_type_' . $item );
+			if ( $the_loop->have_posts() ) {
+				while ( $the_loop->have_posts() ) {
+					$the_loop->the_post();
+					$post = get_post();
+
+					switch ( $item ) {
+						case 'actor':
+						case 'actors':
+							$return[] = self::export_actor( $post->post_name, 'raw' );
+							break;
+						case 'show':
+						case 'shows':
+							$return[] = self::export_show( $post->post_name, 'raw' );
+							break;
+					}
+				}
+			}
+		}
+		return $return;
 	}
 
 	/**
@@ -164,13 +204,15 @@ class LWTV_Export_JSON {
 	 * Entry ID: {slug}
 	 * Entry Name: {post title}
 	 * Entry Description: {lez_formats} airing in {lez_nations} from {lezshows_airdates}
+	 * Links: {IMDB}
 	 *
 	 * @access public
 	 * @param string $item - name or ID of show
+	 * @param string $format - plain or detailed
 	 * @return array
 	 * @since 1.0
 	 */
-	public static function export_show( $item ) {
+	public static function export_show( $item, $format = 'wiki' ) {
 
 		// Default to empty. This will properly error later.
 		$return = array();
@@ -181,59 +223,74 @@ class LWTV_Export_JSON {
 		} else {
 			// Let's get the ID by the title
 			$page = get_page_by_path( $item, OBJECT, 'post_type_shows' );
-
-			// If page doesn't exist, let's try by SQL.
-			if ( null === $page ) {
-				global $wpdb;
-				$item_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . esc_sql( $item ) . "'" );
-				$page    = get_post( $item_id );
-			}
 		}
+
+		// If page doesn't exist, let's try by SQL.
+		if ( ! isset( $page ) || null === $page ) {
+			global $wpdb;
+			$item_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . esc_sql( $item ) . "'" );
+			$page    = get_post( $item_id );
+		}
+
 		// Let's make sure.
 		if ( isset( $page ) && 'post_type_shows' === get_post_type( $page->ID ) ) {
 
-			// Show Formats
-			$format_terms = get_the_terms( $page->ID, 'lez_formats', true );
-			if ( $format_terms && ! is_wp_error( $format_terms ) ) {
-				$format_string = join( ', ', wp_list_pluck( $format_terms, 'name' ) );
-			}
+			// Empty to start
+			$data = array();
 
-			// Nations
-			$nation_terms = get_the_terms( $page->ID, 'lez_country', true );
-			if ( $nation_terms && ! is_wp_error( $nation_terms ) ) {
-				$nation_array = wp_list_pluck( $nation_terms, 'name' );
-			}
-			if ( isset( $nation_array ) ) {
-				if ( count( $nation_array ) > 1 ) {
-					$last_element = array_pop( $nation_array );
-					array_push( $nation_array, 'and ' . $last_element );
-				}
-				$nation_string = implode( ', ', $nation_array );
-			}
-
-			// Airdates
-			$airdates = get_post_meta( $page->ID, 'lezshows_airdates', true );
-			if ( $airdates ) {
-				$airdates['finish'] = ( 'current' === $airdates['finish'] ) ? 'now' : $airdates['finish'];
-				$dates              = 'from ' . $airdates['start'] . '-' . $airdates['finish'];
-				if ( $airdates['start'] === $airdates['finish'] ) {
-					$dates = 'in ' . $airdates['finish'];
-				}
-			}
-
-			// Build the description
-			$description = array(
-				'formats' => isset( $format_string ) ? $format_string : '',
-				'nations' => isset( $nation_string ) ? $nation_string : '',
-				'dates'   => isset( $dates ) ? $dates : '',
-			);
-
+			// Basic data
 			$return = array(
 				'uid'         => $page->ID,
 				'id'          => $page->post_name,
 				'name'        => $page->post_title,
-				'description' => $description['formats'] . ' airing in ' . $description['nations'] . ' ' . $description['dates'] . '.',
 			);
+
+			// Show Formats
+			$format_terms = get_the_terms( $page->ID, 'lez_formats', true );
+			$data['formats'] = ( $format_terms && ! is_wp_error( $format_terms ) ) ? join( ', ', wp_list_pluck( $format_terms, 'name' ) ) : '';
+
+			// Nations
+			$data['nations'] = '';
+			$nation_terms = get_the_terms( $page->ID, 'lez_country', true );
+			$nation_array = ( $nation_terms && ! is_wp_error( $nation_terms ) ) ? wp_list_pluck( $nation_terms, 'name' ) : '';
+			if ( is_array( $nation_array ) ) {
+				if ( count( $nation_array ) > 1 && 'wiki' === $format ) {
+					$last_element = array_pop( $nation_array );
+					array_push( $nation_array, 'and ' . $last_element );
+				}
+				$data['nations'] = implode( ', ', $nation_array );
+			}
+
+			// Stations
+			$station_terms = get_the_terms( $page->ID, 'lez_stations', true );
+			$data['stations'] = ( $station_terms && ! is_wp_error( $station_terms ) ) ? join( ', ', wp_list_pluck( $station_terms, 'name' ) ) : '';
+
+			// Airdates
+			$airdates = get_post_meta( $page->ID, 'lezshows_airdates', true );
+			if ( $airdates ) {
+				$airdates['finish']  = ( 'current' === $airdates['finish'] ) ? 'now' : $airdates['finish'];
+				$data['dates_raw']   = $airdates['start'] . '-' . $airdates['finish'];
+				$data['dates_plain'] = 'from ' . $data['dates_raw'];
+				if ( $airdates['start'] === $airdates['finish'] ) {
+					$data['dates_raw']   = $airdates['finish'];
+					$data['dates_plain'] = 'in ' . $data['dates_raw'];
+				}
+			}
+
+			// IMDB
+			$data['imdb'] = ( get_post_meta( $page->ID, 'lezshows_imdb', true ) ) ? 'https://imdb.com/' . get_post_meta( $page->ID, 'lezshows_imdb', true ) : '';
+
+			switch ( $format ) {
+				case 'wiki':
+					$return['description'] = $data['formats'] . ' airing in ' . $data['nations'] . ' ' . $data['dates_plain'] . '.';
+					break;
+				case 'raw':
+					$return['format']   = $data['formats'];
+					$return['nation']   = $data['nations'];
+					$return['airdates'] = $data['dates_raw'];
+					$return['stations'] = $data['stations'];
+					$return['imdb']     = $data['imdb'];
+			}
 		}
 
 		return $return;
@@ -246,13 +303,14 @@ class LWTV_Export_JSON {
 	 * Entry ID: {slug}
 	 * Entry Name: {post title}
 	 * Entry Description: A {lezchars_sexuality} {lezchars_gender} character on {*show(s)}. Played by {actor}.
+	 * Links: {N/A -- there are no extra links.}
 	 *
 	 * @access public
 	 * @param string $item - name or ID of character
 	 * @return array
 	 * @since 1.0
 	 */
-	public static function export_character( $item ) {
+	public static function export_character( $item, $format = 'wiki' ) {
 
 		// Default to empty. This will properly error later.
 		$return = array();
@@ -344,14 +402,15 @@ class LWTV_Export_JSON {
 	 * Export format:
 	 * Entry ID: {slug}
 	 * Entry Name: {post title}
-	 * Entry Description: {lez_actor_sexuality} {lez_actor_gender} actor b. {lezactors_birth} and died {lezactors_death}. {lezactors_wikipedia}
+	 * Entry Description (plain): {lez_actor_sexuality} {lez_actor_gender} actor b. {lezactors_birth} and died {lezactors_death}. {lezactors_wikipedia}
+	 * Detailed: {twitter, instagram, etc}
 	 *
 	 * @access public
 	 * @param string $item - name or ID of actor
 	 * @return array
 	 * @since 1.0
 	 */
-	public static function export_actor( $item ) {
+	public static function export_actor( $item, $format = 'wiki' ) {
 
 		// Default to empty. This will properly error later.
 		$return = array();
@@ -374,48 +433,69 @@ class LWTV_Export_JSON {
 		// Let's make sure.
 		if ( isset( $page ) && 'post_type_actors' === get_post_type( $page->ID ) ) {
 
+			// Empty Array
+			$data = array();
+
 			// Sexuality
 			$sexuality_terms = get_the_terms( $page->ID, 'lez_actor_sexuality', true );
-			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-				$sexuality_string = join( ', ', wp_list_pluck( $sexuality_terms, 'name' ) );
-			}
+			$data['sexuality'] = ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) ? join( ', ', wp_list_pluck( $sexuality_terms, 'name' ) ) : '';
 
 			// Gender
 			$gender_terms = get_the_terms( $page->ID, 'lez_actor_gender', true );
-			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
-				$gender_string = join( ', ', wp_list_pluck( $gender_terms, 'name' ) );
-			}
+			$data['gender'] = ( $gender_terms && ! is_wp_error( $gender_terms ) ) ? join( ', ', wp_list_pluck( $gender_terms, 'name' ) ) : '';
 
 			// Born
 			if ( get_post_meta( $page->ID, 'lezactors_birth', true ) ) {
-				$get_birth = new DateTime( get_post_meta( $page->ID, 'lezactors_birth', true ) );
-				$born      = ' b. ' . date_format( $get_birth, 'F d, Y' );
+				$get_birth    = new DateTime( get_post_meta( $page->ID, 'lezactors_birth', true ) );
 			}
 
 			// Died
 			if ( get_post_meta( $page->ID, 'lezactors_death', true ) ) {
-				$get_dead = new DateTime( get_post_meta( $page->ID, 'lezactors_death', true ) );
-				$died     = ' and died ' . date_format( $get_dead, 'F d, Y' );
+				$get_dead    = new DateTime( get_post_meta( $page->ID, 'lezactors_death', true ) );
 			}
 
-			if ( get_post_meta( $page->ID, 'lezactors_wikipedia', true ) ) {
-				$wikipedia = ' ' . esc_url( get_post_meta( $page->ID, 'lezactors_wikipedia', true ) );
-			}
+			// Homepage
+			$data['website'] = ( get_post_meta( $page->ID, 'lezactors_homepage', true ) ) ? esc_url( get_post_meta( $page->ID, 'lezactors_homepage', true ) ) : '';
 
-			$description = array(
-				'sexuality' => isset( $sexuality_string ) ? $sexuality_string : '',
-				'gender'    => isset( $gender_string ) ? $gender_string : '',
-				'born'      => isset( $born ) ? $born : '',
-				'died'      => isset( $died ) ? $died : '',
-				'wikipedia' => isset( $wikipedia ) ? $wikipedia : '',
-			);
+			// Wikipedia
+			$data['wikipedia'] = ( get_post_meta( $page->ID, 'lezactors_imdb', true ) ) ? esc_url( get_post_meta( $page->ID, 'lezactors_wikipedia', true ) ) : '';
+
+			// IMdb
+			$data['imdb'] = ( get_post_meta( $page->ID, 'lezactors_imdb', true ) ) ? 'https://imdb.com/' . get_post_meta( $page->ID, 'lezactors_imdb', true ) : '';
+
+			// Twitter
+			$data['twitter'] = ( get_post_meta( $page->ID, 'lezactors_twitter', true ) ) ? 'https://twitter.com/' . get_post_meta( $page->ID, 'lezactors_twitter', true ) : '';
+
+			// Instagram
+			$data['instagram'] = ( get_post_meta( $page->ID, 'lezactors_instagram', true ) ) ? 'https://instagram.com/' . get_post_meta( $page->ID, 'lezactors_instagram', true ) : '';
 
 			$return = array(
 				'uid'         => $page->ID,
 				'id'          => $page->post_name,
 				'name'        => $page->post_title,
-				'description' => $description['sexuality'] . ' ' . $description['gender'] . ' actor' . $description['born'] . $description['died'] . '.' . $description['wikipedia'],
 			);
+
+			switch ( $format ) {
+				case 'wiki':
+					// Collect oddites
+					$data['born'] = ( isset( $get_birth ) ) ? ' b. ' . date_format( $get_birth, 'F d, Y' ) : '';
+					$data['died'] = ( isset( $get_dead ) ) ? ' and died ' . date_format( $get_dead, 'F d, Y' ) : '';
+
+					// Now Build
+					$return['description'] = $data['sexuality'] . ' ' . $data['gender'] . ' actor' . $data['born'] . $data['died'] . '. ' . $data['wikipedia'];
+					break;
+				case 'raw':
+					$return['sexuality'] = $data['sexuality'];
+					$return['gender']    = $data['gender'];
+					$return['born']      = ( isset( $get_birth ) ) ? date_format( $get_birth, 'F d, Y' ) : '';
+					$return['died']      = ( isset( $get_dead ) ) ? date_format( $get_dead, 'F d, Y' ) : '';
+					$return['website']   = $data['website'];
+					$return['imdb']      = $data['imdb'];
+					$return['wikipedia'] = $data['wikipedia'];
+					$return['twitter']   = $data['twitter'];
+					$return['instagram'] = $data['instagram'];
+					break;
+			}
 		}
 
 		return $return;
