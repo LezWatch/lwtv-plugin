@@ -173,8 +173,7 @@ class LWTV_Export_JSON {
 		// Default to empty. This will properly error later.
 		$return = array();
 
-		// NB: You can't do actors.
-		if ( in_array( $item, array( 'shows', 'actors' ), true ) ) {
+		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
 			$the_loop = LWTV_Loops::post_type_query( 'post_type_' . $item );
 			if ( $the_loop->have_posts() ) {
 				while ( $the_loop->have_posts() ) {
@@ -185,6 +184,10 @@ class LWTV_Export_JSON {
 						case 'actor':
 						case 'actors':
 							$return[] = self::export_actor( $post->post_name, 'raw' );
+							break;
+						case 'character':
+						case 'characters':
+							$return[] = self::export_character( $post->post_name, 'raw' );
 							break;
 						case 'show':
 						case 'shows':
@@ -321,22 +324,30 @@ class LWTV_Export_JSON {
 		} else {
 			// Let's get the ID by the title
 			$page = get_page_by_path( $item, OBJECT, 'post_type_characters' );
-
-			// If page doesn't exist, let's try by SQL.
-			if ( null === $page ) {
-				global $wpdb;
-				$item_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . esc_sql( $item ) . "'" );
-				$page    = get_post( $item_id );
-			}
 		}
+
+		// If page doesn't exist, let's try by SQL.
+		if ( ! isset( $page ) || null === $page ) {
+			global $wpdb;
+			$item_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . esc_sql( $item ) . "'" );
+			$page    = get_post( $item_id );
+		}
+
 		// Let's make sure.
 		if ( isset( $page ) && 'post_type_characters' === get_post_type( $page->ID ) ) {
 
+			// Basic Data we always need
+			$return = array(
+				'uid'         => $page->ID,
+				'id'          => $page->post_name,
+				'name'        => $page->post_title,
+			);
+
+			$data = array();
+
 			// Sexuality
 			$sexuality_terms = get_the_terms( $page->ID, 'lez_sexuality', true );
-			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-				$sexuality_string = join( ', ', wp_list_pluck( $sexuality_terms, 'name' ) );
-			}
+			$data['sexuality'] = ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) ? join( ', ', wp_list_pluck( $sexuality_terms, 'name' ) ) : '';
 
 			// Gender
 			$gender_terms = get_the_terms( $page->ID, 'lez_gender', true );
@@ -344,6 +355,7 @@ class LWTV_Export_JSON {
 				$gender_string = implode( ', ', wp_list_pluck( $gender_terms, 'name' ) );
 				$gender_string = ( 'Cisgender' === $gender_string ) ? 'Cisgender Female' : $gender_string;
 			}
+			$data['gender'] = ( isset( $gender_string ) ) ? $gender_string : '';
 
 			// Shows
 			$all_shows = get_post_meta( $page->ID, 'lezchars_show_group', true );
@@ -353,44 +365,43 @@ class LWTV_Export_JSON {
 				}
 
 				if ( isset( $the_shows ) ) {
-					if ( count( $the_shows ) > 1 ) {
+					if ( count( $the_shows ) > 1 && 'wiki' === $format ) {
 						$last_element = array_pop( $the_shows );
 						array_push( $the_shows, 'and ' . $last_element );
 					}
 					$show = implode( ', ', $the_shows );
 				}
 			}
+			$data['show'] = ( isset( $show ) ) ? $show : '';
 
-			// Characters
-			$all_chars = get_post_meta( $page->ID, 'lezchars_actor', true );
-			if ( ! is_array( $all_chars ) ) {
-				$all_chars = array( get_post_meta( $page->ID, 'lezchars_actor', true ) );
+			// Actors
+			$all_actors = get_post_meta( $page->ID, 'lezchars_actor', true );
+			if ( ! is_array( $all_actors ) ) {
+				$all_actors = array( get_post_meta( $page->ID, 'lezchars_actor', true ) );
 			}
-			foreach ( $all_chars as $a_char ) {
-				$the_chars[] = get_the_title( $a_char );
+			foreach ( $all_actors as $an_actor ) {
+				$the_actors[] = get_the_title( $an_actor );
 			}
-			if ( isset( $the_chars ) ) {
-				if ( count( $the_chars ) > 1 ) {
-					$last_element = array_pop( $the_chars );
-					array_push( $the_chars, 'and ' . $last_element );
+			if ( isset( $the_actors ) ) {
+				if ( count( $the_actors ) > 1 && 'wiki' === $format ) {
+					$last_element = array_pop( $the_actors );
+					array_push( $the_actors, 'and ' . $last_element );
 				}
-				$character = implode( ', ', $the_chars );
+				$actor = implode( ', ', $the_actors );
 			}
+			$data['actor'] = ( isset( $actor ) ) ? $actor : '';
 
-			// Build the description
-			$description = array(
-				'sexuality' => isset( $sexuality_string ) ? $sexuality_string : '',
-				'gender'    => isset( $gender_string ) ? $gender_string : '',
-				'show'      => isset( $show ) ? $show : '',
-				'character' => isset( $character ) ? $character : '',
-			);
-
-			$return = array(
-				'uid'         => $page->ID,
-				'id'          => $page->post_name,
-				'name'        => $page->post_title,
-				'description' => 'A ' . $description['sexuality'] . ' ' . $description['gender'] . ' character on ' . $description['show'] . '. Played by ' . $description['character'] . '.',
-			);
+			switch ( $format ) {
+				case 'wiki':
+					$return['description'] = 'A ' . $data['sexuality'] . ' ' . $data['gender'] . ' character on ' . $data['show'] . '. Played by ' . $data['actor'] . '.';
+					break;
+				case 'raw':
+					$return['sexuality'] = $data['sexuality'];
+					$return['gender']    = $data['gender'];
+					$return['show']      = $data['show'];
+					$return['actor']     = $data['actor'];
+					break;
+			}
 		}
 
 		return $return;
