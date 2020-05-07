@@ -281,7 +281,7 @@ class LWTV_Export_JSON {
 			}
 
 			// IMDB
-			$data['imdb'] = ( get_post_meta( $page->ID, 'lezshows_imdb', true ) ) ? 'https://imdb.com/' . get_post_meta( $page->ID, 'lezshows_imdb', true ) : '';
+			$data['imdb'] = ( get_post_meta( $page->ID, 'lezshows_imdb', true ) ) ? 'https://imdb.com/title/' . get_post_meta( $page->ID, 'lezshows_imdb', true ) : '';
 
 			switch ( $format ) {
 				case 'wiki':
@@ -469,10 +469,10 @@ class LWTV_Export_JSON {
 			$data['website'] = ( get_post_meta( $page->ID, 'lezactors_homepage', true ) ) ? esc_url( get_post_meta( $page->ID, 'lezactors_homepage', true ) ) : '';
 
 			// Wikipedia
-			$data['wikipedia'] = ( get_post_meta( $page->ID, 'lezactors_imdb', true ) ) ? esc_url( get_post_meta( $page->ID, 'lezactors_wikipedia', true ) ) : '';
+			$data['wikipedia'] = ( get_post_meta( $page->ID, 'lezactors_wikipedia', true ) ) ? esc_url( get_post_meta( $page->ID, 'lezactors_wikipedia', true ) ) : '';
 
 			// IMdb
-			$data['imdb'] = ( get_post_meta( $page->ID, 'lezactors_imdb', true ) ) ? 'https://imdb.com/' . get_post_meta( $page->ID, 'lezactors_imdb', true ) : '';
+			$data['imdb'] = ( get_post_meta( $page->ID, 'lezactors_imdb', true ) ) ? 'https://imdb.com/name/' . get_post_meta( $page->ID, 'lezactors_imdb', true ) : '';
 
 			// Twitter
 			$data['twitter'] = ( get_post_meta( $page->ID, 'lezactors_twitter', true ) ) ? 'https://twitter.com/' . get_post_meta( $page->ID, 'lezactors_twitter', true ) : '';
