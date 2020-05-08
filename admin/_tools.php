@@ -10,14 +10,16 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+require_once 'dashboard.php';
 require_once 'screeners.php';
 
 class LWTV_Tools {
 
 	/**
-	 * Page ID
+	 * Local Variables
 	 */
-	protected $page_id = null;
+	protected $page_id = null;        // page ID
+	protected static $tool_tabs;       // all tabs
 
 	/*
 	 * Construct
@@ -27,6 +29,34 @@ class LWTV_Tools {
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+
+		self::$tool_tabs = array(
+			'queer_checker' => array(
+				'name' => 'Queer Checker',
+				'desc' => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
+			),
+			'actor_checker' => array(
+				'name' => 'Actor Checker',
+				'desc' => 'Checks that all information for actors appears correct. This includes social media and links.',
+			),
+		//	'actor_wiki' => array(
+		//		'name' => 'Actor Wikidata',
+		//		'desc' => 'Compare actors to their wikidata entries.',
+		//	),
+			'actor_empty' => array(
+				'name' => 'Incomplete Actors',
+				'desc' => 'Actors that have not yet been updated since the Great Migration.',
+			),
+			'character_checker' => array(
+				'name' => 'Character Checker',
+				'desc' => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
+			),
+			'show_checker' => array(
+				'name' => 'Show Checker',
+				'desc' => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc.',
+			),
+		);
+
 	}
 
 	/*
@@ -38,14 +68,14 @@ class LWTV_Tools {
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
 		add_action( 'admin_post_lwtv_tools_fix_actors', array( $this, 'fix_actors_problems' ) );
+		add_action( 'admin_post_lwtv_tools_wikidata_actors', array( $this, 'check_actors_wikidata' ) );
 	}
 
 	public function admin_enqueue_scripts( $hook ) {
 		// Load only on ?page=mypluginname
-		if ( 'toplevel_page_lwtv_tools' !== $hook ) {
-				return;
+		if ( 'toplevel_page_lwtv_tools' === $hook ) {
+				wp_enqueue_style( 'lwtv_tools_admin', plugins_url( 'assets/css/lwtv-tools.css', dirname( __FILE__ ) ), array(), '1.0.0' );
 		}
-		wp_enqueue_style( 'lwtv_tools_admin', plugins_url( 'assets/css/lwtv-tools.css', dirname( __FILE__ ) ), array(), '1.0.0' );
 	}
 
 	/*
@@ -56,16 +86,18 @@ class LWTV_Tools {
 	public function add_settings_page() {
 
 		// Add Tools pages
-		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ), LWTV_Functions::get_icon_svg(), 2 );
-		add_submenu_page( 'lwtv_tools', 'Tools', 'Tools', 'edit_posts', 'lwtv_tools', array( $this, 'settings_page' ) );
+		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'upload_files', 'lwtv_tools', array( $this, 'settings_page' ), LWTV_Functions::get_icon_svg(), 2 );
+		add_submenu_page( 'lwtv_tools', 'Tools', 'Tools', 'upload_files', 'lwtv_tools', array( $this, 'settings_page' ) );
+		// Builds page would show the last few builds from Github with data from Codeship.
+		// add_submenu_page( 'lwtv_tools', 'Builds', 'Builds', 'manage_options', 'lwtv_tools', array( $this, 'builds_page' ) );
 		if ( class_exists( 'LWTV_Screeners' ) ) {
-			add_submenu_page( 'lwtv_tools', 'Screeners', 'Screeners', 'edit_posts', 'screeners', array( 'LWTV_Screeners', 'settings_page' ) );
+			add_submenu_page( 'lwtv_tools', 'Screeners', 'Screeners', 'manage_options', 'screeners', array( 'LWTV_Screeners', 'settings_page' ) );
 		}
 
 		global $submenu;
-		$submenu['lwtv_tools'][] = array( 'Documentation', 'edit_posts', esc_url( 'https://docs.lezwatchtv.com/' ) );
-		$submenu['lwtv_tools'][] = array( 'Slack', 'edit_posts', esc_url( 'https://lezwatchtv.slack.com/' ) );
-		$submenu['lwtv_tools'][] = array( 'Trello', 'edit_posts', esc_url( 'https://trello.com/b/hpDs7bvy/lezwatchtv' ) );
+		$submenu['lwtv_tools'][] = array( 'Documentation', 'upload_files', esc_url( 'https://docs.lezwatchtv.com/' ) );
+		$submenu['lwtv_tools'][] = array( 'Slack', 'read', esc_url( 'https://lezwatchtv.slack.com/' ) );
+		$submenu['lwtv_tools'][] = array( 'Trello', 'manage_options', esc_url( 'https://trello.com/b/hpDs7bvy/lezwatchtv' ) );
 
 		// Admin notices
 		add_action( 'load-$page_id', array( $this, 'admin_notices' ) );
@@ -92,7 +124,7 @@ class LWTV_Tools {
 		}
 
 		if ( isset( $content ) ) {
-			$message = '<div class="notice notice-' . esc_attr( $_GET['message'] ) . ' is-dismissable"><p>' . $content . '</p></div>'; // phpcs:ignore WordPress.Security.NonceVerification
+			$message = '<div class="notice notice-' . esc_attr( $_GET['message'] ) . ' is-dismissable"><p>' . esc_html( $content ) . '</p></div>';
 			add_action( 'admin_notices', $message );
 		}
 	}
@@ -101,8 +133,8 @@ class LWTV_Tools {
 	 * Settings Page Content
 	 */
 	public function settings_page() {
-
-		$active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'intro'; // phpcs:ignore WordPress.Security.NonceVerification
+		// Get the active tab for later
+		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'intro';
 
 		?>
 		<div class="wrap">
@@ -111,10 +143,12 @@ class LWTV_Tools {
 
 			<h2 class="nav-tab-wrapper">
 				<a href="?page=lwtv_tools" class="nav-tab <?php echo ( 'intro' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Introduction</a>
-				<a  href="?page=lwtv_tools&tab=queer_checker" class="nav-tab <?php echo ( 'queer_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Queer Checker</a>
-				<a  href="?page=lwtv_tools&tab=actor_checker" class="nav-tab <?php echo ( 'actor_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Actor Checker</a>
-				<a  href="?page=lwtv_tools&tab=character_checker" class="nav-tab <?php echo ( 'character_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Character Checker</a>
-				<a  href="?page=lwtv_tools&tab=show_checker" class="nav-tab <?php echo ( 'show_checker' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Show Checker</a>
+				<?php
+				foreach ( self::$tool_tabs as $tab => $value ) {
+					$active = ( $tab === $active_tab ) ? 'nav-tab-active' : '';
+					echo '<a href="?page=lwtv_tools&tab=' . esc_attr( $tab ) . '" class="nav-tab ' . esc_attr( $active ) . '">' . esc_html( $value['name'] ) . '</a>';
+				}
+				?>
 			</h2>
 
 			<div id="dashboard" class="lwtvtab">
@@ -129,11 +163,14 @@ class LWTV_Tools {
 					case 'actor_checker':
 						self::tab_actor_checker();
 						break;
+					case 'actor_wiki':
+						self::tab_actor_wiki();
+						break;
+					case 'actor_empty':
+						self::tab_actor_empty();
+						break;
 					case 'character_checker':
 						self::tab_character_checker();
-						break;
-					case 'build_status':
-						self::tab_build_status();
 						break;
 					default:
 						self::tab_introduction();
@@ -171,19 +208,19 @@ class LWTV_Tools {
 
 		<div class="tab-block"><div class="lwtv-tools-container">
 			<h3>LezWatch.TV Tools</h3>
-			<p>Sometimes we need extra tools to do things here. If data gets out of sync or we update things incorrectly, the checkers can help identify those errors before people get snippy.</p>
+			<p>Sometimes we need extra tools to do things here. If data gets out of sync or we update things incorrectly, the checkers can help identify those errors before people notice.</p>
 			<p>Keep in mind, the checkers have to check a lot of data, so they can be slow.</p>
-		</div></div>
-
-		<div class="tab-block"><div class="lwtv-tools-container">
-			<h3>External Resources</h3>
 
 			<ul>
-				<li><a href="https://docs.lezwatchtv.com">Documentation</a></li>
-				<li><a href="https://lezwatch.slack.com">Slack</a></li>
-				<li><a href="https://trello.com/b/hpDs7bvy/lezwatchtv">Trello Board</a></li>
+				<?php
+				foreach ( self::$tool_tabs as $tab => $value ) {
+					echo '<li>&bull; <a href="?page=lwtv_tools&tab=' . esc_attr( $tab ) . '">' . esc_html( $value['name'] ) . '</a> - ' . esc_html( $value['desc'] ) . '</li>';
+				}
+				?>
 			</ul>
+
 		</div></div>
+
 		<?php
 	}
 
@@ -276,7 +313,7 @@ class LWTV_Tools {
 					<input type="hidden" name="action" value="lwtv_tools_fix_actors">
 					<input type="hidden" name="broken_actors" value='<?php echo $json_it; ?>'>
 					<?php wp_nonce_field( 'lwtv_tools_fix_actors', 'lwtv_tools_fix_actors_nonce', false ); ?>
-					<input type="hidden" name="_wp_http_referer" value="<?php echo $redirect; ?>">
+					<input type="hidden" name="_wp_http_referer" value="<?php esc_url_raw( $redirect ); ?>">
 					<?php submit_button( 'Fix Actors' ); ?>
 				</form>
 			</div>
@@ -320,6 +357,99 @@ class LWTV_Tools {
 	}
 
 	/**
+	 * Do some juggling to see how actors compare to Wikidata
+	 * @var [type]
+	 */
+	public static function tab_actor_wiki() {
+		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
+		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
+
+		$items    = LWTV_Debug::list_actors_wikidata();
+
+		/*
+			Instead of looping through all, let's do something else.
+
+			1. Select actor from drop down
+			2. Check THAT actor.
+			3. Output results
+
+			$json_it = will be the actor ID
+
+		 */
+
+		?>
+		<div class="lwtv-tools-container">
+
+			<p>Pick an actor you want to check:</p>
+
+			<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="POST">
+				<input type="hidden" name="action" value="lwtv_tools_wikidata_actors">
+				<select id="actor_id" name="actor">
+					<?php
+					foreach ( $items as $id => $name ) {
+						echo '<option value="' . $id . '">' . $name . '</option>';
+					}
+					?>
+				</select>
+				<?php wp_nonce_field( 'lwtv_tools_wikidata_actors', 'lwtv_tools_wikidata_actors_nonce', false ); ?>
+				<input type="hidden" name="_wp_http_referer" value="<?php echo esc_url_raw( $redirect ); ?>">
+				<?php submit_button( 'Check' ); ?>
+			</form>
+
+			<!-- Form needs to output HERE -->
+		</div>
+
+		<?php
+
+	}
+
+	/**
+	 * Output the results of actors without data ...
+	 */
+	public static function tab_actor_empty() {
+
+		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
+		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
+		$items    = LWTV_Debug::find_actors_empty();
+		$json_it  = wp_json_encode( $items );
+
+		if ( empty( $items ) || ! is_array( $items ) ) {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>All actors have at least some information.</p>
+				</div>
+			</div>
+			<?php
+		} else {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
+				<div id="lwtv-tools-alerts">
+					<p>The following actor(s) have not have their data entered yet. Please review and update them.</p>
+				</div>
+			</div>
+
+			<div class="lwtv-tools-table">
+				<table class="widefat fixed" cellspacing="0">
+					<thead><tr>
+						<th id="character" class="manage-column column-character" scope="col">Actor</th>
+						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+					</tr></thead>
+
+					<tbody>
+						<?php
+						self::table_content( $items );
+						?>
+					</tbody>
+				</table>
+			</div>
+			<?php
+		}
+	}
+
+	/**
 	 * Output the results of Show checking...
 	 */
 	public static function tab_show_checker() {
@@ -342,7 +472,7 @@ class LWTV_Tools {
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
-					<p>The following show(s) need your attention. Keep in mind, some shows are listed as not having characters on purpose.</p>
+					<p>The following show(s) need your attention.</p>
 				</div>
 			</div>
 
