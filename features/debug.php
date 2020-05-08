@@ -464,7 +464,7 @@ class LWTV_Debug {
 				);
 
 				// If there's 0 screentime, it's okay there are no Characters
-				if ( ( ! $check['chars'] || empty( $check['chars'] ) ) && ! empty( $check['screentime'] ) && 0 === $check['screentime'] ) {
+				if ( ( ! $check['chars'] || empty( $check['chars'] ) ) && $check['screentime'] > 1 ) {
 					$problems[] = 'No characters listed.';
 				}
 
@@ -480,15 +480,15 @@ class LWTV_Debug {
 					$problems[] = 'No worthit details.';
 				}
 
-				if ( empty( $check['realness'] ) || ! is_numeric( $check['realness'] ) ) {
+				if ( ! is_numeric( $check['realness'] ) ) {
 					$problems[] = 'No realness rating.';
 				}
 
-				if ( empty( $check['quality'] ) || ! is_numeric( $check['quality'] ) ) {
+				if ( ! is_numeric( $check['quality'] ) ) {
 					$problems[] = 'No quality rating.';
 				}
 
-				if ( empty( $check['screentime'] ) || ! is_numeric( $check['screentime'] ) ) {
+				if ( ! is_numeric( $check['screentime'] ) ) {
 					$problems[] = 'No screentime rating.';
 				}
 
