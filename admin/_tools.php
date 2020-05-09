@@ -282,7 +282,7 @@ class LWTV_Tools {
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
-					<p>Every actor has at least one character.</p>
+					<p>Every actor has at least one character and their data looks sane.</p>
 				</div>
 			</div>
 			<?php
@@ -463,7 +463,7 @@ class LWTV_Tools {
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
-					<p>All shows look good.</p>
+					<p>All shows look good and the data looks sane.</p>
 				</div>
 			</div>
 			<?php
@@ -508,7 +508,7 @@ class LWTV_Tools {
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
-					<p>All characters look good.</p>
+					<p>All characters look good and their data looks sane. Even Sara Lance.</p>
 				</div>
 			</div>
 			<?php
