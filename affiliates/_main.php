@@ -343,6 +343,9 @@ class LWTV_Affilliates {
 				case 'youtube':
 					$name = 'YouTube';
 					break;
+				case 'tv.youtube':
+					$name = 'YouTube.TV';
+					break;
 				case 'tellofilms':
 					$name = 'Tello Films';
 					break;
