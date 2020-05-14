@@ -496,6 +496,7 @@ class LWTV_CPT_Characters {
 		// Math and Taxonomies
 		LWTV_Characters_Calculate::do_the_math( $post_id );
 		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		LWTV_Debug::check_actors_wikidata( $post->ID );
 
 		// Get a list of URLs to flush
 		$clear_urls = LWTV_Cache::collect_urls_for_characters( $post_id );

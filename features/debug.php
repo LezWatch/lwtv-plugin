@@ -39,6 +39,16 @@ class LWTV_Debug {
 	}
 
 	/**
+	 * Clean up the WikiDate
+	 * @param  string $date Wikiformated date: +1968-07-07T00:00:00Z
+	 * @return string      LezWatch formated date: 1968-07-07
+	 */
+	public static function format_wikidate( $date ) {
+		$clean = trim( substr( $date, 0, strpos( $date, 'T' ) ), '+' );
+		return $clean;
+	}
+
+	/**
 	 * Validate IMDB
 	 * @param  string  $string IMDB ID
 	 * @return boolean         true/false
@@ -183,29 +193,105 @@ class LWTV_Debug {
 	}
 
 	/**
-	 * List Actors for Wikidata.
+	 * Find Actors' WikiData
 	 */
-	public static function list_actors_wikidata() {
+	public static function check_actors_wikidata( $actors = 0 ) {
 
-		// Default
 		$items = array();
 
-		// Get all the actors
-		$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
+		// If actors aren't a number or 0, AND they're not an array, we check evryone...
+		if ( ( ! is_numeric( $actors ) || 0 == $actors ) && ! is_array( $actors ) ) {
+			// Get all the actors
+			$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
 
-		if ( $the_loop->have_posts() ) {
-			while ( $the_loop->have_posts() ) {
-				$the_loop->the_post();
-				$post = get_post();
-
-				// Make item:
-				$items[ $post->ID ] = get_the_title( $post->ID );
+			if ( $the_loop->have_posts() ) {
+				$post_ids  = wp_list_pluck( $the_loop->posts, 'ID' );
+				$actors    = implode( ',', $post_ids );
+				wp_reset_query();
 			}
-			wp_reset_query();
+		} elseif ( is_numeric( $actors ) ) {
+			$actors = array( $actors );
+		}
+
+		// For everyone in the list...
+		foreach ( $actors as $actor_id ) {
+			$items[ $actor_id ] = array(
+				'id'   => $actor_id,
+				'name' => get_the_title( $actor_id ),
+			);
+
+			// What we can check for
+			$check_ours = array(
+				'birth'     => get_post_meta( $actor_id, 'lezactors_birth', true ),
+				'death'     => get_post_meta( $actor_id, 'lezactors_death', true ),
+				'imdb'      => get_post_meta( $actor_id, 'lezactors_imdb', true ),
+				'wikipedia' => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
+				'instagram' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
+				'twitter'   => get_post_meta( $actor_id, 'lezactors_twitter', true ),
+				'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
+			);
+
+			$permalink   = basename( get_permalink( $actor_id ) );
+
+			$wiki_queery = "https://query.wikidata.org/sparql?query=SELECT%20%3Fhuman%20%3Flwtv_id%0AWHERE%20%7B%0A%20%20%3Fhuman%20wdt%3AP7105%20%3Flwtv_id%20.%0A%20%20FILTER%20(regex(%3Flwtv_id%2C%20'%5E" . $permalink . "'))%0A%7D";
+
+			$wikiq_data = wp_remote_get( $wiki_queery );
+			$wikiq_body = $wikiq_data['body'];
+
+			// Stripmine the URI
+			preg_match( '/<uri>\s*([^\;]+)<\/uri>/', $wikiq_body, $wikilink );
+
+			if ( isset( $wikilink[1] ) && false !== filter_var( $wikilink[1], FILTER_VALIDATE_URL ) ) {
+
+				$wiki_data  = wp_remote_get( $wikilink[1] );
+				$wiki_array = json_decode( $wiki_data['body'], true );
+
+				$wiki_actor = array_shift( $wiki_array['entities'] );
+				$wiki_link  = '';
+
+				// If there's a wikipedia URL, let's get details.
+				if ( '' !== $check_ours['wikipedia'] ) {
+					$parsed_wiki = parse_url( $check_ours['wikipedia'] );
+					$wiki_lang   = @array_shift( explode( '.', $parsed_wiki['host'] ) );
+
+					if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
+						$wiki_link = $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['url'];
+					}
+				} elseif ( isset( $wiki_actor['sitelinks']['enwiki'] ) ) {
+					$wiki_link = $wiki_actor['sitelinks']['enwiki']['url'];
+				};
+
+				$check_wiki = array(
+					'birth'     => ( isset( $wiki_actor['claims']['P569'] ) ) ? self::format_wikidate( $wiki_actor['claims']['P569'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
+					'death'     => ( isset( $wiki_actor['claims']['P570'] ) ) ? self::format_wikidate( $wiki_actor['claims']['P570'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
+					'wikipedia' => $wiki_link,
+					'imdb'      => ( isset( $wiki_actor['claims']['P345'] ) ) ? $wiki_actor['claims']['P345'][0]['mainsnak']['datavalue']['value'] : '',
+					'instagram' => ( isset( $wiki_actor['claims']['P2003'] ) ) ? $wiki_actor['claims']['P2003'][0]['mainsnak']['datavalue']['value'] : '',
+					'twitter'   => ( isset( $wiki_actor['claims']['P2002'] ) ) ? $wiki_actor['claims']['P2002'][0]['mainsnak']['datavalue']['value'] : '',
+					'website'   => ( isset( $wiki_actor['claims']['P856'] ) ) ? $wiki_actor['claims']['P856'][0]['mainsnak']['datavalue']['value'] : '',
+				);
+
+				foreach ( $check_ours as $item => $data ) {
+					if ( $data === $check_wiki[ $item ] ) {
+						$result = 'match';
+					} else {
+						$result = array(
+							'ours'     => $data,
+							'wikidata' => $check_wiki[ $item ],
+						);
+					}
+
+					$items[ $actor_id ][ $item ] = $result;
+				}
+			}
+		}
+
+		// Save it all in the DB
+		foreach ( $items as $one_item => $one_data ) {
+			update_post_meta( $one_data['id'], '_lezactors_wikidata', $one_data );
 		}
 
 		return $items;
-
 	}
 
 	/**
@@ -235,7 +321,7 @@ class LWTV_Debug {
 					'imdb'  => get_post_meta( $actor_id, 'lezactors_imdb', true ),
 					'insta' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
 					'twits' => get_post_meta( $actor_id, 'lezactors_twitter', true ),
-					'home'  => get_post_meta( $actor_id, 'lezactors_website', true ),
+					'home'  => get_post_meta( $actor_id, 'lezactors_homepage', true ),
 				);
 
 				if ( ! $check['chars'] || empty( $check['chars'] ) ) {

@@ -42,7 +42,6 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 	 *    wp lwtv calc show ID
 	 *
 	*/
-
 	public function calc( $args, $assoc_args ) {
 
 		// Valid things to calculate:
@@ -91,6 +90,59 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 		}
 
 		WP_CLI::success( 'Calculations run for ' . get_the_title( $post_id ) . ': ' . $score );
+	}
+
+	/**
+	 * Get information on WikiData
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp lwtv wiki actor ID
+	 *
+	*/
+	public function wiki( $args, $assoc_args ) {
+
+		// Valid things to calculate:
+		$valid_wiki = array( 'actor' );
+
+		// Defaults
+		$format = ( isset( $assoc_args['format'] ) ) ? $assoc_args['format'] : 'table';
+
+		// Check for valid arguments and post types
+		if ( empty( $args ) || ! in_array( $args[0], $valid_wiki, true ) ) {
+			WP_CLI::error( 'You must provide a valid type of content to check against WikiData. Currently we can only check actors.' );
+		}
+
+		// Check for valid IDs
+		if ( empty( $args[1] ) || ! is_numeric( $args[1] ) ) {
+			WP_CLI::error( 'You must provide a valid post ID to calculate.' );
+		}
+
+		// Set the post IDs:
+		$post_type = sanitize_text_field( $args[0] );
+		$post_id   = (int) $args[1];
+
+		// Last sanity check: Is the post ID a member of THIS post type...
+		if ( get_post_type( $post_id ) !== 'post_type_' . $post_type . 's' ) {
+			WP_CLI::error( 'You can only check data for ' . $post_type . 's on ' . $post_type . ' pages.' );
+		}
+
+		// Do the thing!
+		// i.e. run the calculations
+		switch ( $post_type ) {
+			case 'actor':
+				$items = LWTV_Debug::check_actors_wikidata( $post_id );
+				break;
+		}
+
+		if ( empty( $items ) ) {
+			WP_CLI::error( 'Something has gone horribly wrong. Go get Mika.' );
+		} elseif ( ! isset( $items[ $post_id ]['wikipedia'] ) ) {
+			WP_CLI::error( 'No data from WikiData.' );
+		}
+
+		WP_CLI::success( 'WikiData comparison for ' . get_the_title( $post_id ) . ' complete!' );
+		WP_CLI\Utils\format_items( $format, $items, array( 'id', 'name', 'birth', 'death', 'imdb', 'wikipedia', 'instagram', 'twitter', 'website' ) );
 	}
 
 	/**

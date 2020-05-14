@@ -21,6 +21,55 @@ class LWTV_Actors_CMB2 {
 	public function __construct() {
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_wikidata_meta_box' ) );
+	}
+
+	/*
+	 * Non CMB2 Metaboxes
+	 */
+	public function add_wikidata_meta_box() {
+		add_meta_box(
+			'metabox_lezactors_wikidata',
+			'WikiData',
+			array( $this, 'wikidata_meta_box_callback' ),
+			'post_type_actors',
+			'side',
+			'high',
+		);
+	}
+
+	public function wikidata_meta_box_callback( $post ) {
+
+		// When we run this, images break?
+		$test = LWTV_Debug::check_actors_wikidata( $post->ID );
+
+		$wikidata = get_post_meta( $post->ID, '_lezactors_wikidata' );
+
+		if ( ! empty( $wikidata ) ) {
+			unset( $wikidata['0']['id'] );
+			unset( $wikidata['0']['name'] );
+
+			foreach ( $wikidata['0'] as $datatype => $result ) {
+				if ( 'match' === $result ) {
+					unset( $wikidata['0'][ $datatype ] );
+				}
+			}
+		}
+
+		if ( empty( $wikidata['0'] ) ) {
+			echo '<p>WikiData has no information on ' . esc_html( get_the_title( $post->ID ) ) . '.</p>';
+		} elseif ( empty( $wikidata['0'] ) ) {
+			echo '<p>All data for ' . esc_html( get_the_title( $post->ID ) ) . ' matches WikiData!</p>';
+		} else {
+			echo '<p>The following data does not match WikiData:</p>';
+			echo '<ul>';
+			foreach ( $wikidata['0'] as $datatype => $result ) {
+				echo '<li><strong>' . esc_html( ucfirst( $datatype ) ) . ':</strong><ul><li><em>Our Data:</em> ' . esc_html( $result['ours'] ) . '</li><li><em>WikiData:</em> ' . esc_html( $result['wikidata'] ) . '</li></ul></li>';
+			}
+			echo '<ul>';
+
+			echo '<p>(Warning: This doesn\'t yet refresh on save.)</p>';
+		}
 	}
 
 	/*
