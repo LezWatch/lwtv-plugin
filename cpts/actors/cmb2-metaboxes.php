@@ -45,23 +45,32 @@ class LWTV_Actors_CMB2 {
 
 		$wikidata = get_post_meta( $post->ID, '_lezactors_wikidata' );
 
-		if ( ! empty( $wikidata ) ) {
+		// If Wikidata isn't empty AND there's a valid Q code, we go
+		if ( ! empty( $wikidata ) && ! empty( $wikidata['0']['wikidata'] ) ) {
+
+			// Build URL
+			$wikidata_url = 'https:www.wikidata.org/wiki/' . $wikidata['0']['wikidata'];
+
+			// Clean array
 			unset( $wikidata['0']['id'] );
 			unset( $wikidata['0']['name'] );
+			unset( $wikidata['0']['wikidata'] );
 
 			foreach ( $wikidata['0'] as $datatype => $result ) {
-				if ( 'match' === $result ) {
+				if ( 'match' === $result || 'n/a' === $result ) {
 					unset( $wikidata['0'][ $datatype ] );
 				}
 			}
+		} else {
+			$wikidata = false;
 		}
 
-		if ( empty( $wikidata['0'] ) ) {
-			echo '<p>WikiData has no information on ' . esc_html( get_the_title( $post->ID ) ) . '.</p>';
+		if ( ! $wikidata ) {
+			echo '<p>No information for ' . esc_html( get_the_title( $post->ID ) ) . ' found in WikiData.</p>';
 		} elseif ( empty( $wikidata['0'] ) ) {
-			echo '<p>All data for ' . esc_html( get_the_title( $post->ID ) ) . ' matches WikiData!</p>';
+			echo '<p>All data for ' . esc_html( get_the_title( $post->ID ) ) . ' matches <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData!</a></p>';
 		} else {
-			echo '<p>The following data does not match WikiData:</p>';
+			echo '<p>The following data does not match <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData!</a>:</p>';
 			echo '<ul>';
 			foreach ( $wikidata['0'] as $datatype => $result ) {
 				echo '<li><strong>' . esc_html( ucfirst( $datatype ) ) . ':</strong><ul><li><em>Our Data:</em> ' . esc_html( $result['ours'] ) . '</li><li><em>WikiData:</em> ' . esc_html( $result['wikidata'] ) . '</li></ul></li>';

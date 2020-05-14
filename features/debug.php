@@ -233,17 +233,19 @@ class LWTV_Debug {
 
 			$permalink   = basename( get_permalink( $actor_id ) );
 
-			$wiki_queery = "https://query.wikidata.org/sparql?query=SELECT%20%3Fhuman%20%3Flwtv_id%0AWHERE%20%7B%0A%20%20%3Fhuman%20wdt%3AP7105%20%3Flwtv_id%20.%0A%20%20FILTER%20(regex(%3Flwtv_id%2C%20'%5E" . $permalink . "'))%0A%7D";
+			// Search for the actor:
+			$search_name   = str_replace( ' ', '%20', get_the_title( $actor_id ) );
+			$search_queery = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' . $search_name . '&language=en&format=json';
+			$search_data   = wp_remote_get( $search_queery );
+			$search_body   = json_decode( $search_data['body'], true );
 
-			$wikiq_data = wp_remote_get( $wiki_queery );
-			$wikiq_body = $wikiq_data['body'];
+			if ( isset( $search_body['search']['0']['id'] ) ) {
+				// Set the WikiData ID
+				$items[ $actor_id ]['wikidata'] = $search_body['search']['0']['id'];
 
-			// Stripmine the URI
-			preg_match( '/<uri>\s*([^\;]+)<\/uri>/', $wikiq_body, $wikilink );
-
-			if ( isset( $wikilink[1] ) && false !== filter_var( $wikilink[1], FILTER_VALIDATE_URL ) ) {
-
-				$wiki_data  = wp_remote_get( $wikilink[1] );
+				// Build the data
+				$wiki_queery = 'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' . $search_body['search']['0']['id'] . '&format=json';
+				$wiki_data  = wp_remote_get( $wiki_queery );
 				$wiki_array = json_decode( $wiki_data['body'], true );
 
 				$wiki_actor = array_shift( $wiki_array['entities'] );
@@ -255,10 +257,12 @@ class LWTV_Debug {
 					$wiki_lang   = @array_shift( explode( '.', $parsed_wiki['host'] ) );
 
 					if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
-						$wiki_link = $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['url'];
+						$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['title'] );
+						$wiki_link  = 'https://' . $wiki_lang . '.wikipedia.org/wiki/' . $wiki_title;
 					}
 				} elseif ( isset( $wiki_actor['sitelinks']['enwiki'] ) ) {
-					$wiki_link = $wiki_actor['sitelinks']['enwiki']['url'];
+					$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks']['enwiki']['title'] );
+					$wiki_link = 'https://en.wikipedia.org/wiki/' . $wiki_title;
 				};
 
 				$check_wiki = array(
@@ -274,6 +278,8 @@ class LWTV_Debug {
 				foreach ( $check_ours as $item => $data ) {
 					if ( $data === $check_wiki[ $item ] ) {
 						$result = 'match';
+					} elseif ( '' === $check_wiki[ $item ] ) {
+						$result = 'n/a';
 					} else {
 						$result = array(
 							'ours'     => $data,

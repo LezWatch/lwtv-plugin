@@ -142,7 +142,7 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 		}
 
 		WP_CLI::success( 'WikiData comparison for ' . get_the_title( $post_id ) . ' complete!' );
-		WP_CLI\Utils\format_items( $format, $items, array( 'id', 'name', 'birth', 'death', 'imdb', 'wikipedia', 'instagram', 'twitter', 'website' ) );
+		WP_CLI\Utils\format_items( $format, $items, array( 'id', 'name', 'wikidata', 'birth', 'death', 'imdb', 'wikipedia', 'instagram', 'twitter', 'website' ) );
 	}
 
 	/**
