@@ -38,12 +38,20 @@ class LWTV_Actors_CMB2 {
 		);
 	}
 
+	/**
+	 * WikiData MetaBox
+	 * @param  object $post Post Object
+	 * @return echo         The MetaBox content.
+	 */
 	public function wikidata_meta_box_callback( $post ) {
 
-		// When we run this, images break?
-		$test = LWTV_Debug::check_actors_wikidata( $post->ID );
-
-		$wikidata = get_post_meta( $post->ID, '_lezactors_wikidata' );
+		// If it's an auto draft, we do nothing. Else, we roll.
+		if ( 'auto-draft' === get_post_status( $post->ID ) || '' === get_the_title( $post->ID ) ) {
+			$wikidata = 'auto-draft';
+		} else {
+			$test = LWTV_Debug::check_actors_wikidata( $post->ID );
+			$wikidata = get_post_meta( $post->ID, '_lezactors_wikidata' );
+		}
 
 		// If Wikidata isn't empty AND there's a valid Q code, we go
 		if ( ! empty( $wikidata ) && ! empty( $wikidata['0']['wikidata'] ) ) {
@@ -61,12 +69,15 @@ class LWTV_Actors_CMB2 {
 					unset( $wikidata['0'][ $datatype ] );
 				}
 			}
-		} else {
+		} elseif ( empty( $wikidata ) ) {
 			$wikidata = false;
 		}
 
 		if ( ! $wikidata ) {
 			echo '<p>No information for ' . esc_html( get_the_title( $post->ID ) ) . ' found in WikiData.</p>';
+		} elseif ( 'auto-draft' === $wikidata ) {
+			echo '<p>WikiData checks pending. Once we fill in some information, it will be able to check.</p>';
+			// To Do: A button here to trigger the check
 		} elseif ( empty( $wikidata['0'] ) ) {
 			echo '<p>All data for ' . esc_html( get_the_title( $post->ID ) ) . ' matches <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData!</a></p>';
 		} else {
@@ -78,6 +89,7 @@ class LWTV_Actors_CMB2 {
 			echo '<ul>';
 
 			echo '<p>(Warning: This doesn\'t yet refresh on save.)</p>';
+			// To Do: A button here to rerun the check.
 		}
 	}
 
