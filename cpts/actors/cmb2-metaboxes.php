@@ -57,7 +57,7 @@ class LWTV_Actors_CMB2 {
 		if ( ! empty( $wikidata ) && ! empty( $wikidata['0']['wikidata'] ) ) {
 
 			// Build URL
-			$wikidata_url = 'https:www.wikidata.org/wiki/' . $wikidata['0']['wikidata'];
+			$wikidata_url = 'https://www.wikidata.org/wiki/' . $wikidata['0']['wikidata'];
 
 			// Clean array
 			unset( $wikidata['0']['id'] );
