@@ -206,6 +206,11 @@ class LWTV_CPT_Characters {
 		global $post;
 		$shows_ids    = get_post_meta( $post->ID, 'lezchars_show_group', true );
 		$shows_titles = array();
+
+		if ( ! array( $shows_ids ) ) {
+			$shows_ids = array( $shows_ids );
+		}
+
 		if ( '' !== $shows_ids && ! is_null( $shows_ids ) ) {
 			foreach ( $shows_ids as $each_show ) {
 				array_push( $shows_titles, get_the_title( $each_show['show'] ) );

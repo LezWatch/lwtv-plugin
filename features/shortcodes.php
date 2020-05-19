@@ -313,31 +313,31 @@ class LWTV_Shortcodes {
 			);
 		}
 
+		// Get all the stupid social...
+		$twitter      = ( ! empty( $content['twitter'] ) ) ? '<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">' . LWTV_Functions::symbolicons( 'twitter.svg', 'fa-twitter' ) . '</a>' : false;
+		$instagram    = ( ! empty( $content['instagram'] ) ) ? '<a href="https://instagram.com/' . $content['instagram'] . '" target="_blank" rel="nofollow">' . LWTV_Functions::symbolicons( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
+		$tumblr       = ( ! empty( $content['tumblr'] ) ) ? '<a href="' . $content['tumblr'] . '" target="_blank" rel="nofollow">' . LWTV_Functions::symbolicons( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
+		$website      = ( ! empty( $content['website'] ) ) ? '<a href="' . $content['website'] . '" target="_blank" rel="nofollow">' . LWTV_Functions::symbolicons( 'home.svg', 'fa-home' ) . '</a>' : false;
+
+		$social_array = array( $website, $twitter, $instagram, $tumblr );
+		$social_array = array_filter( $social_array );
+
 		switch ( $format ) {
 			case 'thumbnail':
 				$author_details = '<div>' . $content['avatar'] . '<br>' . $content['name'] . ' ' . $content['title'] . '</div>';
 				break;
 			case 'compact':
-				// Get all the stupid social...
-				$twitter      = ( ! empty( $content['twitter'] ) ) ? '<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">twitter</a>' : false;
-				$instagram    = ( ! empty( $content['instagram'] ) ) ? '<a href="https://instagram.com/' . $content['instagram'] . '" target="_blank" rel="nofollow">instagram</a>' : false;
-				$tumblr       = ( ! empty( $content['tumblr'] ) ) ? '<a href="' . $content['tumblr'] . '" target="_blank" rel="nofollow">tumblr</a>' : false;
-				$website      = ( ! empty( $content['website'] ) ) ? '<a href="' . $content['website'] . '" target="_blank" rel="nofollow">website</a>' : false;
-				$social_array = array( $twitter, $instagram, $tumblr, $website );
-				$social_array = array_filter( $social_array );
 				$author_title = ( '' !== $content['title'] ) ? '<strong>' . $content['title'] . '</strong><br />' : '';
-
 				// Show it
-				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h5 class="author_name"><a href="' . $content['url'] . '">' . $content['name'] . '</a></h5><hr>' . $author_title . implode( ' | ', $social_array ) . '</div>';
+				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h5 class="author_name"><a href="' . $content['url'] . '">' . $content['name'] . '</a></h5><hr>' . $author_title . implode( ' ', $social_array ) . '</div>';
 				break;
 			case 'large':
 				// Sort out the title
 				$content['title'] = ( '' !== $content['title'] ) ? '(' . $content['title'] . ')' : '';
 				$view_articles    = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . LWTV_Functions::symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $author_id ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
-				$view_twitter     = ( ! empty( $content['twitter'] ) ) ? '<div class="author-twitter">' . LWTV_Functions::symbolicons( 'twitter.svg', 'fa-twitter' ) . '&nbsp;<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">@' . $content['twitter'] . '</a> </div>' : '';
 
 				// Build it.
-				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h4 class="author_name">' . $content['name'] . ' ' . $content['title'] . '</h4><div class="author-bio">' . nl2br( $content['bio'] ) . '</div><div class="author-details">' . $view_articles . $view_twitter . $content['fav_shows'] . '</div>';
+				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h4 class="author_name">' . $content['name'] . ' ' . $content['title'] . implode( ' ', $social_array ) . '</h4><div class="author-bio">' . nl2br( $content['bio'] ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
 				break;
 			default:
 				$author_details = '';

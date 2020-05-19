@@ -27,7 +27,7 @@ class LWTV_This_Year_JSON {
 	 * Rest API init
 	 *
 	 * Creates callbacks
-	 *   - /lwtv/v1/stats/[shows|characters|death]/[simple|complex|years]
+	 *   - /lwtv/v1/this-year/[shows|characters|death]/[simple|complex|years]
 	 */
 	public function rest_api_init() {
 

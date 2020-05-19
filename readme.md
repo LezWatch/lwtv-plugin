@@ -22,7 +22,7 @@ Defines `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwi
 
 Stored in `/admin/` -- Makes admin panels
 
-* `_tools.php` - Automated checks on data
+* `_tools.php` - Semi-Automated checks on data
 * `screeners.php` - A list of all screeners
 
 ### Affiliates
@@ -106,6 +106,7 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - Post Type Array - Generate an array of all posts in a specific post type.
     - Post Meta AND Taxonomy Query - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
     - Related Posts by Tags.
+* `custom-roles.php` - Custom roles created for curation of content
 * `debug.php` - Debugging Tools for weird content.
 * `ics-parser.php` - Connection to the ICS Parser for calendar data.
 * `private-data.php` - Shows alert that a page is hidden if the post is set private.
@@ -122,7 +123,8 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - Display author information: `[author name="ipstenu"]`
 * `sort-stopwords.php` - Filter post order by for shows to NOT include the/an/a when sorting.
 * `wp-cli.php`- WP-CLI
-    - Re-run calculations for specific post content (actors & shows): `wp lwtv calc actor ID`
+    - Re-run calculations for specific post content (actors & shows): `wp lwtv calc [actor|show|character] ID`
+    - Compare data to WikiData: `wp lwtv wiki [actor] ID`
     - Find miss matched data: ex. `wp lwtv find queerchars`
 
 ### Gutenberg
@@ -141,7 +143,7 @@ Blocks for Gutenberg. The file `_main.php` acts as an autoloader.
 
 ### Node Scripts
 
-Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`)
+Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`). This is removed by the builder script when pushed to production.
 
 * `postinstall.js` - script run at the end of NPM to move files to the correct location.
 
@@ -170,6 +172,8 @@ The file `_main.php` acts as an autoloader.
     - LWTV: `/lwtv.php`
         - filter Data before it's saved to rename values (capitalization)
         - split actors and shows into separate entries, and add additional orderby params
+* Imagify - `imagify.php`
+    - prevents GIFs from being processed.
 
 ### Rest API
 
@@ -187,14 +191,16 @@ Stored in `/rest-api/` - These files generate the REST API output.
     - API to communicate with IMDb and generate information (used by Alexa)
 * Of The Day - `of-the-day.php`
     - The code that runs the X Of the Day API service. Every 24 hours, a new character and show of the day are spawned
-* Shows - `shows-like-this.php`
+* Shows like this - `shows-like-this.php`
     - Similar shows.
 * Slack - `slack.php`
     - Beginning of code to report newly dead characters to Slack (very buggy, currently disabled)
 * Statistics - `stats.php`
     - JSON API version of the stats (mostly)
+* This Year - `this-year.php`
+    - Outputs simplified lists of what happened in a given year.
 * What Happened - `what-happened.php`
-    - Outputs data based on what happened in a given year.
+    - Outputs data based on what happened in a given year, year-month, or specific day.
 * What's On - `whats-on.php`
     - What's on TV tonight (or tomorrow).
 
@@ -239,8 +245,6 @@ Stored in `/statistics/` - These files generate everything for stats, from graph
     - Queerness
 * Gutenberg: `gutenberg-ssr.php`
     - Server side rendering to show statistics.
-* Query Variables: `query_vars.php`
-    -- Code to customize query variables
 * Output: `class LWTV_Stats_Output` - `output.php`
     - Lists
     - Percentages
@@ -250,10 +254,12 @@ Stored in `/statistics/` - These files generate everything for stats, from graph
     - Stacked Barcharts
     - Piecharts
     - Trendlines
+* Query Variables: `query_vars.php`
+    -- Code to customize query variables
 
 _Templates (`/templates/`)_
 
-Output templates used by the shortcodes and Gutenberg (as well as when included on the pages themselves). These were originally in the theme, but were moved here to allow for updates.
+Output templates used by the shortcodes and Gutenberg (as well as when included on the pages themselves). These were originally in the theme, but were moved here to allow for easier updates.
 
 ### This Year
 
@@ -261,8 +267,12 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 
 * `_main.php` - Basic data loading, calls templates etc.
 * `characters.php` - all data on characters per year
-* `shows.php` - all data on shows per year
 * `query_vars.php` - customize query variables
+* `shows.php` - all data on shows per year
+
+### Vendor Files
+
+Stored in `/vendor/` - this has to be included for things to function properly.
 
 ## Development
 

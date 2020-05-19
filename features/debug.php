@@ -199,8 +199,10 @@ class LWTV_Debug {
 
 		$items = array();
 
-		// If actors aren't a number or 0, AND they're not an array, we check evryone...
-		if ( ( ! is_numeric( $actors ) || 0 == $actors ) && ! is_array( $actors ) ) {
+		// If actors aren't a number or 0, AND they're not an array, we check everyone...
+		if ( is_numeric( $actors ) && 0 !== $actors ) {
+			$actors = array( $actors );
+		} elseif ( ! is_array( $actors ) ) {
 			// Get all the actors
 			$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
 
@@ -209,8 +211,6 @@ class LWTV_Debug {
 				$actors    = implode( ',', $post_ids );
 				wp_reset_query();
 			}
-		} elseif ( is_numeric( $actors ) ) {
-			$actors = array( $actors );
 		}
 
 		// For everyone in the list...
