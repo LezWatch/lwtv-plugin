@@ -253,31 +253,33 @@ class LWTV_Affilliates {
 	 * Get the stations and kick back a simple true/falsey
 	 * @param  int    $post_id Post ID
 	 * @return array           Array of special status
+	 *
+	 * This used to have AMC and BBC and more via Commission Junction.
+	 * That was a failed experience.
 	 */
 	public static function get_special_stations( $post_id ) {
 		$slug             = get_post_field( 'post_name', $post_id );
 		$stations         = get_the_terms( $post_id, 'lez_stations' );
 		$is_special       = array(
-			'amc'      => false,
-			'bbc'      => false,
 			'cbs'      => false,
-			'showtime' => false,
-			'starz'    => false,
 		);
 		$special_stations = array(
-			'amc'      => array( 'amc', 'sundancetv', 'shudder', 'bbc-america', 'ifc' ),
-			'bbc'      => array( 'bbc-four', 'bbc-one', 'bbc-three', 'bbc-two', 'bbc-wales', 'cbbc' ),
 			'cbs'      => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb' ),
-			'showtime' => array( 'showtime' ),
-			'starz'    => array( 'starz' ),
 		);
 
-		// Convert stations into a simple array of slugs.
-		// We prioritize CBS because they pay the best.
+		// Special stations are 'sub' stations that belong to someone bigger, we're going to convert them
+		// into a simpler list.
 		if ( $stations && ! is_wp_error( $stations ) ) {
+			// Since we have stations, we will loop through the stations on the show.
 			foreach ( $stations as $station ) {
-				if ( in_array( $station->slug, $special_stations['cbs'], true ) ) {
-					$is_special['cbs'] = true;
+				// Loop through all the special stations.
+				foreach ( $special_stations as $special_station => $special_value ) {
+					// If the special station is NOT already true (remember shows can have multiple stations)
+					// AND the show is in the array for the special station (i.e. Legends is on CW which is CBS)
+					// then we want to set the station to true:
+					if ( false === $is_special[ $special_station ] && in_array( $station->slug, $special_stations[ $special_station ], true ) ) {
+						$is_special[ $special_station ] = true;
+					}
 				}
 			}
 		}
