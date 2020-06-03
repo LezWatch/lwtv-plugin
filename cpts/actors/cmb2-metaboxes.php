@@ -78,6 +78,8 @@ class LWTV_Actors_CMB2 {
 		} elseif ( 'auto-draft' === $wikidata ) {
 			echo '<p>WikiData checks pending. Once we fill in some information, it will be able to check.</p>';
 			// To Do: A button here to trigger the check
+		} elseif ( ! isset( $wikidata_url ) ) {
+			echo '<p>There is no WikiData available on this actor.</p>';
 		} elseif ( empty( $wikidata['0'] ) ) {
 			echo '<p>All data for ' . esc_html( get_the_title( $post->ID ) ) . ' matches <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData!</a></p>';
 		} else {
@@ -87,6 +89,8 @@ class LWTV_Actors_CMB2 {
 				echo '<li><strong>' . esc_html( ucfirst( $datatype ) ) . ':</strong><ul><li><em>Our Data:</em> ' . esc_html( $result['ours'] ) . '</li><li><em>WikiData:</em> ' . esc_html( $result['wikidata'] ) . '</li></ul></li>';
 			}
 			echo '<ul>';
+
+			echo '<p>Please double check. WikiData is sometimes wrong about Social Media.</p>';
 
 			echo '<p>(Warning: This doesn\'t yet refresh on save.)</p>';
 			// To Do: A button here to rerun the check.
