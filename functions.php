@@ -27,7 +27,7 @@ if ( ! defined( 'FIRST_LWTV_YEAR' ) ) {
 /**
  * class LWTV_Functions
  *
- * The background functions for the site, independant of the theme.
+ * The background functions for the site, independent of the theme.
  */
 class LWTV_Functions {
 
@@ -212,7 +212,7 @@ new LWTV_Functions();
 /*
  * Add-Ons.
  */
-require_once 'admin/_tools.php';
+require_once 'admin/_main.php';
 require_once 'affiliates/_main.php';
 require_once 'cpts/_main.php';
 require_once 'features/_main.php';

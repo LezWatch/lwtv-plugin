@@ -10,9 +10,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-require_once 'dashboard.php';
-require_once 'screeners.php';
-
 class LWTV_Tools {
 
 	/**
@@ -27,8 +24,9 @@ class LWTV_Tools {
 	 * Actions to happen immediately
 	 */
 	public function __construct() {
-		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_menu', array( $this, 'add_admin_notices' ) );
+		add_action( 'admin_post_lwtv_tools_fix_actors', array( $this, 'fix_actors_problems' ) );
+		add_action( 'admin_post_lwtv_tools_wikidata_actors', array( $this, 'check_actors_wikidata' ) );
 
 		self::$tool_tabs = array(
 			'queer_checker' => array(
@@ -39,10 +37,6 @@ class LWTV_Tools {
 				'name' => 'Actor Checker',
 				'desc' => 'Checks that all information for actors appears correct. This includes social media and links.',
 			),
-		//	'actor_wiki' => array(
-		//		'name' => 'Actor Wikidata',
-		//		'desc' => 'Compare actors to their wikidata entries.',
-		//	),
 			'actor_empty' => array(
 				'name' => 'Incomplete Actors',
 				'desc' => 'Actors that have not yet been updated since the Great Migration.',
@@ -60,45 +54,11 @@ class LWTV_Tools {
 	}
 
 	/*
-	 * Init
-	 *
-	 * Actions to happen on WP init
-	 * - add settings page to tools
-	 */
-	public function init() {
-		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
-		add_action( 'admin_post_lwtv_tools_fix_actors', array( $this, 'fix_actors_problems' ) );
-		add_action( 'admin_post_lwtv_tools_wikidata_actors', array( $this, 'check_actors_wikidata' ) );
-	}
-
-	public function admin_enqueue_scripts( $hook ) {
-		// Load only on ?page=mypluginname
-		if ( 'toplevel_page_lwtv_tools' === $hook ) {
-				wp_enqueue_style( 'lwtv_tools_admin', plugins_url( 'assets/css/lwtv-tools.css', dirname( __FILE__ ) ), array(), '1.0.0' );
-		}
-	}
-
-	/*
 	 * Settings
 	 *
 	 * Create our settings page
 	 */
-	public function add_settings_page() {
-
-		// Add Tools pages
-		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'upload_files', 'lwtv_tools', array( $this, 'settings_page' ), LWTV_Functions::get_icon_svg(), 2 );
-		add_submenu_page( 'lwtv_tools', 'Tools', 'Tools', 'upload_files', 'lwtv_tools', array( $this, 'settings_page' ) );
-		// Builds page would show the last few builds from Github with data from Codeship.
-		// add_submenu_page( 'lwtv_tools', 'Builds', 'Builds', 'manage_options', 'lwtv_tools', array( $this, 'builds_page' ) );
-		if ( class_exists( 'LWTV_Screeners' ) ) {
-			add_submenu_page( 'lwtv_tools', 'Screeners', 'Screeners', 'manage_options', 'screeners', array( 'LWTV_Screeners', 'settings_page' ) );
-		}
-
-		global $submenu;
-		$submenu['lwtv_tools'][] = array( 'Documentation', 'upload_files', esc_url( 'https://docs.lezwatchtv.com/' ) );
-		$submenu['lwtv_tools'][] = array( 'Slack', 'read', esc_url( 'https://lezwatchtv.slack.com/' ) );
-		$submenu['lwtv_tools'][] = array( 'Trello', 'manage_options', esc_url( 'https://trello.com/b/hpDs7bvy/lezwatchtv' ) );
-
+	public function add_admin_notices() {
 		// Admin notices
 		add_action( 'load-$page_id', array( $this, 'admin_notices' ) );
 	}
@@ -132,7 +92,7 @@ class LWTV_Tools {
 	/*
 	 * Settings Page Content
 	 */
-	public function settings_page() {
+	public static function settings_page() {
 		// Get the active tab for later
 		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'intro';
 
@@ -204,12 +164,39 @@ class LWTV_Tools {
 	 * Static Introduction to what the hell is going on...
 	 */
 	public static function tab_introduction() {
+
+		$options   = get_option( 'lwtv_debugger_status' );
+		$timestamp = $options['timestamp'];
+		unset( $options['timestamp'] );
+
 		?>
 
 		<div class="tab-block"><div class="lwtv-tools-container">
 			<h3>LezWatch.TV Tools</h3>
 			<p>Sometimes we need extra tools to do things here. If data gets out of sync or we update things incorrectly, the checkers can help identify those errors before people notice.</p>
 			<p>Keep in mind, the checkers have to check a lot of data, so they can be slow.</p>
+
+			<p>The tools were last run on <strong><?php echo esc_html( get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) ); ?></strong>.</p>
+
+			<ul>
+				<?php
+				$output = '';
+				foreach ( $options as $an_option ) {
+					if ( $an_option['count'] > 0 ) {
+						$output .= '<li>&bull; ' . $an_option['name'] . ' - ' . $an_option['count'] . '</li>';
+					}
+				}
+
+				if ( ! empty( $output ) ) {
+					$output = '<p><strong>Current Status</strong></p>' . $output;
+				}
+
+				echo wp_kses_post( $output );
+
+				?>
+			</ul>
+
+			<hr>
 
 			<ul>
 				<?php
