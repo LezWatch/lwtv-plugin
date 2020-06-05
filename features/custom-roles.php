@@ -136,7 +136,7 @@ class LWTV_Roles {
 
 			# Check current admin page.
 			if ( in_array( $pagenow, $disallowed_pages ) || ( 'edit.php' === $pagenow && ( null === $_GET['post_type'] || ( isset( $_GET['post_type'] ) && ! in_array( $_GET['post_type'], $allowed_cpts ) ) ) ) ) {
-				wp_redirect( admin_url( '/admin.php?page=lwtv_intro' ) );
+				wp_redirect( admin_url( '/admin.php?page=lwtv' ) );
 				exit;
 			}
 		}

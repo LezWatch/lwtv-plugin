@@ -6,7 +6,7 @@
  */
 
 
-$valid_views = array( 'formats', 'tropes', 'genres', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
+$valid_views = array( 'formats', 'tropes', 'genres', 'intersectionality', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
 $sent_view       = get_query_var( 'view', 'overview' );
 $view            = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 
@@ -187,6 +187,22 @@ switch ( $view ) {
 				<div class="col-sm-6">
 					<?php LWTV_Stats::generate( 'shows', 'stars', 'percentage' ); ?>
 				</div>
+			</div>
+		</div>
+		<?php
+		break;
+
+	case 'intersectionality':
+		?>
+		<div class="container chart-container">
+			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
+				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
+				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
+			</ul>
+			<p>&nbsp;</p>
+			<div class="tab-content" id="v-pills-tabContent">
+				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php LWTV_Stats::generate( 'shows', 'intersections', 'barchart' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php LWTV_Stats::generate( 'shows', 'intersections', 'list' ); ?></div>
 			</div>
 		</div>
 		<?php
