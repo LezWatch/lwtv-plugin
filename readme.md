@@ -131,7 +131,7 @@ Stored in `/features/` -- a collection of miscellaneous features.
 
 Stored in `/gutenberg/`
 
-Blocks for Gutenberg. The file `_main.php` acts as an autoloader.
+Blocks for Gutenberg. The file `_main.php` acts as an autoloader. If you're updating the CSS, you will need to rebuild the Gutenblocks. Read `/gutenberg/README.md` for more information.
 
 * Author Boxes: Display author information
 * Custom Post Type Meta Data: _currently disabled_
@@ -305,4 +305,4 @@ Composer will move everything into the right place, even NPM files.
 Pushes to branches are automatically deployed via Codeship as follows:
 
 * Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site)
-* Master: [lezwatchtv.com](https://lezwatchtv.com)
+* Main: [lezwatchtv.com](https://lezwatchtv.com)
