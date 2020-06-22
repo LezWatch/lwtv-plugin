@@ -13,13 +13,13 @@ class LWTV_Imagify {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'imagify_auto_optimize_attachment', array( $this, 'no_optimize_gif' ) );
+		add_action( 'imagify_auto_optimize_attachment', array( $this, 'no_optimize_gif' ), 10, 3 );
 		add_filter( 'intermediate_image_sizes_advanced', array( $this, 'disable_upload_sizes_gifs' ), 10, 2 );
 	}
 
 	/**
 	 * Prevent automatic optimization for GIF.
-	 * URI:  https://github.com/wp-media/imagify-helpers/tree/master/optimization/imagify-no-auto-optimize-gif/
+	 * URI:  https://github.com/wp-media/imagify-helpers/tree/master/optimization/imagify-no-auto-optimize-pdf
 	 * Copyright SAS WP MEDIA 2018
 	 *
 	 * @author Grégory Viguier
