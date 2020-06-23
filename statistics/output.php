@@ -162,7 +162,7 @@ class LWTV_Stats_Output {
 				$sum = 0;
 				foreach ( $array as $item ) {
 					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
-					$sum = $sum + (real) $item['count'];
+					$sum = $sum + (float) $item['count'];
 				}
 				$average = round( $sum / $n );
 				$return  = $average;
@@ -171,9 +171,9 @@ class LWTV_Stats_Output {
 				$high = 0;
 				foreach ( $array as $key => $value ) {
 					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
-					if ( (real) $value['count'] > (real) $high ) {
+					if ( (float) $value['count'] > (float) $high ) {
 						// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
-						$high = (real) $value['count'];
+						$high = (float) $value['count'];
 						if ( 'shows' === $subject ) {
 							$high .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}
@@ -185,9 +185,9 @@ class LWTV_Stats_Output {
 				$low = 20;
 				foreach ( $array as $key => $value ) {
 					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
-					if ( (real) $low > (real) $value['count'] ) {
+					if ( (float) $low > (float) $value['count'] ) {
 						// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
-						$low = (real) $value['count'];
+						$low = (float) $value['count'];
 						if ( 'shows' === $subject ) {
 							$low .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}

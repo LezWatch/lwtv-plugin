@@ -79,9 +79,8 @@ class LWTV_Shows_CMB2 {
 	 */
 	public function cmb2_get_genres_options() {
 		$the_id = ( false !== get_the_ID() ) ? get_the_ID() : 0;
-		if ( 0 === $the_id ) {
-			$return = '';
-		} else {
+		$return = '';
+		if ( 0 !== $the_id ) {
 			$terms = get_the_terms( $the_id, 'lez_genres' );
 
 			if ( $terms && ! is_wp_error( $terms ) ) {

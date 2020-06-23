@@ -369,7 +369,7 @@ class LWTV_Affilliates {
 			$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $name . '</a>' . $extra;
 		}
 
-		$link_output = implode( $links, '' );
+		$link_output = implode( '', $links );
 
 		$icon   = LWTV_Functions::symbolicons( 'tv-hd.svg', 'fa-tv' );
 		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span> ' . $link_output;
