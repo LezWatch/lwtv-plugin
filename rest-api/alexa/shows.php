@@ -45,7 +45,7 @@ class LWTV_Alexa_Shows {
 			foreach ( $results as $show ) {
 				$show_slug = get_post_field( 'post_name', $show );
 				$show_name = get_the_title( $show );
-				$similar   = LWTV_Shows_Like_This_JSON::similar_show( $show_slug );
+				$similar   = ( new LWTV_Shows_Like_This_JSON() )->similar_show( $show_slug );
 				foreach ( $similar['related'] as $a_show ) {
 					$related_array[] = $a_show['title'];
 				}
@@ -70,7 +70,7 @@ class LWTV_Alexa_Shows {
 	 *
 	 * @return string Shows we recommend
 	 */
-	public static function recommended() {
+	public function recommended() {
 
 		// Number of shows
 		$count = wp_count_posts( 'post_type_shows' )->publish;
@@ -136,7 +136,7 @@ class LWTV_Alexa_Shows {
 			return false;
 		}
 
-		$queery_args  = LWTV_Alexa_Common::search_posts( 'shows', $name );
+		$queery_args  = ( new LWTV_Alexa_Common() )->search_posts( 'shows', $name );
 		$the_shows    = new WP_Query( $queery_args );
 		$return_array = array();
 

@@ -39,7 +39,7 @@ class LWTV_Export_JSON {
 	 *
 	 * @since 1.0
 	 */
-	public static function rest_api_init() {
+	public function rest_api_init() {
 
 		register_rest_route(
 			'lwtv/v1',
@@ -72,7 +72,7 @@ class LWTV_Export_JSON {
 	 *
 	 * @since 1.0
 	 */
-	public static function rest_api_callback( $data ) {
+	public function rest_api_callback( $data ) {
 		$params = $data->get_params();
 		// Type of Custom Post (show, actor, character)
 		$type = ( isset( $params['type'] ) && '' !== $params['type'] ) ? sanitize_title_for_query( $params['type'] ) : 'actor';
@@ -86,7 +86,7 @@ class LWTV_Export_JSON {
 	/*
 	 * export function
 	 */
-	public static function export( $type = 'actor', $item = 'unknown' ) {
+	public function export( $type = 'actor', $item = 'unknown' ) {
 
 		// Sanitize (the switch will check the type)
 		$type = sanitize_text_field( $type );
@@ -131,13 +131,13 @@ class LWTV_Export_JSON {
 	 * @param  string $item characters, actors, or shows.
 	 * @return array        json array.
 	 */
-	public static function export_list( $item ) {
+	public function export_list( $item ) {
 
 		// Default to empty. This will properly error later.
 		$return = array();
 
 		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
-			$the_loop = LWTV_Loops::post_type_query( 'post_type_' . $item );
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_' . $item );
 			if ( $the_loop->have_posts() ) {
 				while ( $the_loop->have_posts() ) {
 					$the_loop->the_post();
@@ -168,13 +168,13 @@ class LWTV_Export_JSON {
 	 * @param  string $item actors or shows.
 	 * @return array        json array.
 	 */
-	public static function export_raw( $item ) {
+	public function export_raw( $item ) {
 
 		// Default to empty. This will properly error later.
 		$return = array();
 
 		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
-			$the_loop = LWTV_Loops::post_type_query( 'post_type_' . $item );
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_' . $item );
 			if ( $the_loop->have_posts() ) {
 				while ( $the_loop->have_posts() ) {
 					$the_loop->the_post();
@@ -215,7 +215,7 @@ class LWTV_Export_JSON {
 	 * @return array
 	 * @since 1.0
 	 */
-	public static function export_show( $item, $format = 'wiki' ) {
+	public function export_show( $item, $format = 'wiki' ) {
 
 		// Default to empty. This will properly error later.
 		$return = array();
@@ -313,7 +313,7 @@ class LWTV_Export_JSON {
 	 * @return array
 	 * @since 1.0
 	 */
-	public static function export_character( $item, $format = 'wiki' ) {
+	public function export_character( $item, $format = 'wiki' ) {
 
 		// Default to empty. This will properly error later.
 		$return = array();
@@ -421,7 +421,7 @@ class LWTV_Export_JSON {
 	 * @return array
 	 * @since 1.0
 	 */
-	public static function export_actor( $item, $format = 'wiki' ) {
+	public function export_actor( $item, $format = 'wiki' ) {
 
 		// Default to empty. This will properly error later.
 		$return = array();

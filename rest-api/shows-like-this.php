@@ -31,7 +31,7 @@ class LWTV_Shows_Like_This_JSON {
 	 * Creates callbacks
 	 *   - /lwtv/v1/of-the-day/
 	 */
-	public static function rest_api_init() {
+	public function rest_api_init() {
 
 		register_rest_route(
 			'lwtv/v1',
@@ -54,7 +54,7 @@ class LWTV_Shows_Like_This_JSON {
 	/**
 	 * Rest API Callback
 	 */
-	public static function rest_api_callback( $data ) {
+	public function rest_api_callback( $data ) {
 		$params = $data->get_params();
 		$show   = ( isset( $params['show'] ) && '' !== $params['show'] ) ? sanitize_title_for_query( $params['show'] ) : 'unknown';
 
@@ -65,7 +65,7 @@ class LWTV_Shows_Like_This_JSON {
 	/*
 	 * Similar Show function
 	 */
-	public static function similar_show( $show = 'unknown' ) {
+	public function similar_show( $show = 'unknown' ) {
 
 		$return = false;
 

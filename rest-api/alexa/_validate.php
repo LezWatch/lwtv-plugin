@@ -13,7 +13,7 @@ if ( ! defined( 'WPINC' ) ) {
  */
 class LWTV_Alexa_Validate {
 
-	public static function the_request( $request ) {
+	public function the_request( $request ) {
 
 		$chain_url = $request->get_header( 'signaturecertchainurl' );
 		$timestamp = $request['request']['timestamp'];

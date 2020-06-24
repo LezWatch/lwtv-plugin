@@ -62,7 +62,7 @@ class LWTV_ICS_Parser {
 	 * @param  string $date date event happens [Y-m-d]
 	 * @return array        array of all the shows on that day
 	 */
-	public static function generate_by_date( $url, $when, $date = false ) {
+	public function generate_by_date( $url, $when, $date = false ) {
 		$ical = new ICal();
 		$ical->initUrl( esc_url( $url ) );
 
@@ -131,7 +131,7 @@ class LWTV_ICS_Parser {
 	 * @param  string  $format Format of the date (default Y-m-d)
 	 * @return boolean         True/false
 	 */
-	public static function validate_date( $date, $format = 'Y-m-d' ) {
+	public function validate_date( $date, $format = 'Y-m-d' ) {
 		$d = DateTime::createFromFormat( $format, $date );
 		return $d && $d->format( $format ) === $date;
 	}

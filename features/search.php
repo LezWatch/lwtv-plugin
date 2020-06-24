@@ -34,7 +34,7 @@ class LWTV_Search {
 		global $wpdb;
 
 		if ( is_search() ) {
-			$join .=' LEFT JOIN '.$wpdb->postmeta. ' ON '. $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
+			$join .= ' LEFT JOIN ' . $wpdb->postmeta . ' ON ' . $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
 		}
 
 		return $join;
@@ -79,7 +79,7 @@ class LWTV_Search {
 		global $wpdb;
 
 		if ( is_search() ) {
-			return "DISTINCT";
+			return 'DISTINCT';
 		}
 		return $where;
 	}
@@ -97,33 +97,34 @@ class LWTV_Search {
 		global $wp_rewrite;
 
 		// if we can't get rewrites or permalinks, we're probably not using pretty permalinks
-		if ( !isset( $wp_rewrite ) || !is_object( $wp_rewrite ) || !$wp_rewrite->using_permalinks() )
+		if ( ! isset( $wp_rewrite ) || ! is_object( $wp_rewrite ) || ! $wp_rewrite->using_permalinks() ) {
 			return;
+		}
 
 		// Set Search Base - default is 'search'
 		$search_base = $wp_rewrite->search_base;
 
-		if ( is_search() && !is_admin() && strpos( $_SERVER['REQUEST_URI'], "/{$search_base}/" ) === false ) {
+		if ( is_search() && ! is_admin() && strpos( $_SERVER['REQUEST_URI'], "/{$search_base}/" ) === false ) {
 
 			// Get Post Types
 			$query_post_types = get_query_var( 'post_type' );
 
-			if ( is_null( $query_post_types ) || empty( $query_post_types ) || !array( $query_post_types ) ) {
+			if ( is_null( $query_post_types ) || empty( $query_post_types ) || ! array( $query_post_types ) ) {
 				$query_post_types = array( 'post_type_characters', 'post_type_shows', 'post_type_actors' );
 			}
 
-			if ( $query_post_types == 'any' ) $query_post_types = array( 'post', 'page', 'post_type_characters', 'post_type_shows', 'post_type_actors' );
+			if ( 'any' === $query_post_types ) {
+				$query_post_types = array( 'post', 'page', 'post_type_characters', 'post_type_shows', 'post_type_actors' );
+			}
 
 			$query_post_type_url = '/?';
 			foreach ( $query_post_types as $value ) {
-				$query_post_type_url .= '&post_type[]=' . $value ;
+				$query_post_type_url .= '&post_type[]=' . $value;
 			}
 
 			wp_redirect(
-				home_url( "/{$search_base}/"
-				. urlencode( get_query_var( 's' ) )
-				. urldecode( $query_post_type_url )
-				) );
+				home_url( "/{$search_base}/" . urlencode( get_query_var( 's' ) ) . urldecode( $query_post_type_url ) )
+			);
 			exit();
 		}
 	}

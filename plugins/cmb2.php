@@ -45,7 +45,7 @@ class LWTV_CMB2_Addons {
 	 * @param  array|string $query_args Optional. Array or string of arguments to get terms
 	 * @return array CMB2 options array
 	 */
-	public static function select2_get_options_array_tax( $taxonomies, $query_args = '' ) {
+	public function select2_get_options_array_tax( $taxonomies, $query_args = '' ) {
 		$defaults    = array(
 			'hide_empty' => false,
 		);
@@ -71,7 +71,7 @@ class LWTV_CMB2_Addons {
 	 * exists, we remove it. If that emptys the array, we'll add it back, but this
 	 * prevents cases like clichés being 'none' and 'athlete'.
 	 */
-	public static function select2_taxonomy_save( $post_id, $postmeta, $taxonomy ) {
+	public function select2_taxonomy_save( $post_id, $postmeta, $taxonomy ) {
 
 		global $wpdb;
 

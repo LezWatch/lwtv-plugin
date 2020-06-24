@@ -49,7 +49,7 @@ class LWTV_Affilliate_Ads_Widgets extends WP_Widget {
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput
-		echo '<!-- BEGIN Affiliate Ads --><center>' . LWTV_Affilliates::widget( $instance['type'], $instance['format'] ) . '</center><!-- END Affiliate Ads -->';
+		echo '<!-- BEGIN Affiliate Ads --><center>' . ( new LWTV_Affilliates() )->widget( $instance['type'], $instance['format'] ) . '</center><!-- END Affiliate Ads -->';
 
 		echo wp_kses_post( $args['after_widget'] );
 	}

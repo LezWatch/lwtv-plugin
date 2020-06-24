@@ -5,10 +5,10 @@
  * @package LezWatch.TV
  */
 
-$deadchars = LWTV_Stats::generate( 'characters', 'dead', 'count' );
-$allchars  = LWTV_Stats::generate( 'characters', 'all', 'count' );
-$deadshows = LWTV_Stats::generate( 'shows', 'dead', 'count' );
-$allshows  = LWTV_Stats::generate( 'shows', 'all', 'count' );
+$deadchars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
+$allchars  = ( new LWTV_Stats() )->generate( 'characters', 'all', 'count' );
+$deadshows = ( new LWTV_Stats() )->generate( 'shows', 'dead', 'count' );
+$allshows  = ( new LWTV_Stats() )->generate( 'shows', 'all', 'count' );
 
 $deadchar_percent = round( ( $deadchars / $allchars ) * 100, 2 );
 $deadshow_percent = round( ( $deadshows / $allshows ) * 100, 2 );
@@ -58,12 +58,12 @@ switch ( $view ) {
 			</div>
 		</div>
 
-		<p>&nbsp;<br/>On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
+		<p>&nbsp;<br/>On average, <strong><?php ( new LWTV_Stats() )->generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
 
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php LWTV_Stats::generate( 'characters', 'dead-years', 'trendline' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-years', 'trendline' ); ?>
 				</div>
 			</div>
 		</div>
@@ -75,10 +75,10 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'piechart' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-sex', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
-					<?php LWTV_Stats::generate( 'characters', 'dead-sex', 'percentage' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-sex', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -86,10 +86,10 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'piechart' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-gender', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
-					<?php LWTV_Stats::generate( 'characters', 'dead-gender', 'percentage' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-gender', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -97,10 +97,10 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php LWTV_Stats::generate( 'characters', 'dead-role', 'piechart' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-role', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
-					<?php LWTV_Stats::generate( 'characters', 'dead-role', 'percentage' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-role', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -111,10 +111,10 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php LWTV_Stats::generate( 'characters', 'dead-shows', 'piechart' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-shows', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
-					<?php LWTV_Stats::generate( 'shows', 'dead-shows', 'percentage' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'shows', 'dead-shows', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -125,12 +125,12 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col">
-					<?php LWTV_Stats::generate( 'shows', 'dead-stations', 'barchart' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'shows', 'dead-stations', 'barchart' ); ?>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
-					<?php LWTV_Stats::generate( 'shows', 'dead-stations', 'percentage' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'shows', 'dead-stations', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -141,12 +141,12 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col">
-					<?php LWTV_Stats::generate( 'shows', 'dead-nations', 'barchart' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'shows', 'dead-nations', 'barchart' ); ?>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
-					<?php LWTV_Stats::generate( 'shows', 'dead-nations', 'percentage' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'shows', 'dead-nations', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -154,17 +154,17 @@ switch ( $view ) {
 		break;
 	case 'years':
 		?>
-		<p>On average, <strong><?php LWTV_Stats::generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
+		<p>On average, <strong><?php ( new LWTV_Stats() )->generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
 
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col">
-					<?php LWTV_Stats::generate( 'characters', 'dead-years', 'barchart' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-years', 'barchart' ); ?>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
-					<?php LWTV_Stats::generate( 'characters', 'dead-years', 'percentage' ); ?>
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-years', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>

@@ -17,7 +17,7 @@ class LWTV_Stats_SSR {
 	 *
 	 * @since 1.0
 	 */
-	public static function statistics( $atts ) {
+	public function statistics( $atts ) {
 		$attributes = shortcode_atts(
 			array(
 				'page' => 'main',
@@ -33,7 +33,7 @@ class LWTV_Stats_SSR {
 		return '<div class="lwtv-stats">' . $output . '</div>';
 	}
 
-	public static function get_include_contents( $filename ) {
+	public function get_include_contents( $filename ) {
 		if ( is_file( $filename ) ) {
 			ob_start();
 			include $filename;

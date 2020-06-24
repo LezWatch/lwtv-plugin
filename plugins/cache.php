@@ -12,7 +12,7 @@ class LWTV_Cache {
 	 * @param  int     $post_id ID of the character
 	 * @return array   array of URLs
 	 */
-	public static function collect_urls_for_characters( $post_id ) {
+	public function collect_urls_for_characters( $post_id ) {
 
 		// defaults:
 		$clean_urls = array();
@@ -52,7 +52,7 @@ class LWTV_Cache {
 	 * Clean URLs
 	 * @return void
 	 */
-	public static function clean_urls( $clear_urls ) {
+	public function clean_urls( $clear_urls ) {
 		foreach ( $clear_urls as $url ) {
 			// Reload the data by calling the page
 			$request = wp_remote_get( $url . '/?nocache' );

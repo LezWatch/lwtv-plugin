@@ -105,7 +105,7 @@ class LWTV_This_Year_JSON {
 	 * @param  int     $year What year
 	 * @return array   Array of data
 	 */
-	public static function this_year( $type, $year ) {
+	public function this_year( $type, $year ) {
 
 		// Remove <!--fwp-loop--> from output
 		// phpcs:ignore
@@ -132,21 +132,21 @@ class LWTV_This_Year_JSON {
 	 * @param  int   $year  Year
 	 * @return array        Array of data from one year
 	 */
-	public static function one_year( $year ) {
+	public function one_year( $year ) {
 		$year  = (string) $year;
 		$array = array(
 			'year'       => (int) $year,
-			'characters' => LWTV_This_Year_Chars::get_list( $year, true ),
-			'dead'       => LWTV_This_Year_Chars::get_dead( $year, true ),
-			'shows'      => LWTV_This_Year_Shows::get_list( $year, 'now', true ),
-			'started'    => LWTV_This_Year_Shows::get_list( $year, 'started', true ),
-			'canceled'   => LWTV_This_Year_Shows::get_list( $year, 'ended', true ),
+			'characters' => ( new LWTV_This_Year_Chars() )->get_list( $year, true ),
+			'dead'       => ( new LWTV_This_Year_Chars() )->get_dead( $year, true ),
+			'shows'      => ( new LWTV_This_Year_Shows() )->get_list( $year, 'now', true ),
+			'started'    => ( new LWTV_This_Year_Shows() )->get_list( $year, 'started', true ),
+			'canceled'   => ( new LWTV_This_Year_Shows() )->get_list( $year, 'ended', true ),
 		);
 
 		return $array;
 	}
 
-	public static function ten_years( $year ) {
+	public function ten_years( $year ) {
 
 		$array      = array();
 		$end_year   = ( $year >= FIRST_LWTV_YEAR ) ? $year : FIRST_LWTV_YEAR;
@@ -156,11 +156,11 @@ class LWTV_This_Year_JSON {
 		while ( $start_year <= $end_year ) {
 			if ( ( $start_year >= FIRST_LWTV_YEAR && $start_year <= gmdate( 'Y' ) ) ) {
 				$array[ $start_year ] = array(
-					'characters' => LWTV_This_Year_Chars::get_list( (string) $start_year, true ),
-					'dead'       => LWTV_This_Year_Chars::get_dead( (string) $start_year, true ),
-					'shows'      => LWTV_This_Year_Shows::get_list( (string) $start_year, 'now', true ),
-					'started'    => LWTV_This_Year_Shows::get_list( (string) $start_year, 'started', true ),
-					'canceled'   => LWTV_This_Year_Shows::get_list( (string) $start_year, 'ended', true ),
+					'characters' => ( new LWTV_This_Year_Chars() )->get_list( (string) $start_year, true ),
+					'dead'       => ( new LWTV_This_Year_Chars() )->get_dead( (string) $start_year, true ),
+					'shows'      => ( new LWTV_This_Year_Shows() )->get_list( (string) $start_year, 'now', true ),
+					'started'    => ( new LWTV_This_Year_Shows() )->get_list( (string) $start_year, 'started', true ),
+					'canceled'   => ( new LWTV_This_Year_Shows() )->get_list( (string) $start_year, 'ended', true ),
 				);
 			}
 			$start_year++;

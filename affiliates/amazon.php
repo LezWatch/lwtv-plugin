@@ -19,7 +19,7 @@ class LWTV_Affiliate_Amazon {
 	/**
 	 * Determine what ad to show
 	 */
-	public static function show_ads( $post_id, $format = 'wide' ) {
+	public function show_ads( $post_id, $format = 'wide' ) {
 		$the_ad = self::output_widget( $post_id, $format );
 		return $the_ad;
 	}
@@ -27,7 +27,7 @@ class LWTV_Affiliate_Amazon {
 	/**
 	 * Output widget
 	 */
-	public static function output_widget( $post_id, $format ) {
+	public function output_widget( $post_id, $format ) {
 		$output = self::bounty( $post_id, $format );
 		return $output;
 	}
@@ -35,7 +35,7 @@ class LWTV_Affiliate_Amazon {
 	/**
 	 * Generate a random bounty
 	 */
-	public static function bounty( $post_id, $format ) {
+	public function bounty( $post_id, $format ) {
 
 		$amazon_ads = array(
 			'banner' => array(

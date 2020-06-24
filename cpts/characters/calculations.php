@@ -21,7 +21,7 @@ class LWTV_Characters_Calculate {
 	 * @param  int $post_id Post ID of character
 	 * @return n/a
 	 */
-	public static function do_the_math( $post_id ) {
+	public function do_the_math( $post_id ) {
 		// Calculate Death
 		self::death( $post_id );
 	}
@@ -31,7 +31,7 @@ class LWTV_Characters_Calculate {
 	 * @param  int   $post_id
 	 * @return N/A   No return, just update
 	 */
-	public static function death( $post_id ) {
+	public function death( $post_id ) {
 		// get the most recent death and save it as a new meta
 		$character_death = get_post_meta( $post_id, 'lezchars_death_year', true );
 		$last_char_death = get_post_meta( $post_id, 'lezchars_last_death', true );

@@ -10,7 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_Tools {
+class LWTV_Admin_Tools {
 
 	/**
 	 * Local Variables
@@ -176,7 +176,7 @@ class LWTV_Tools {
 			<p>Sometimes we need extra tools to do things here. If data gets out of sync or we update things incorrectly, the checkers can help identify those errors before people notice.</p>
 			<p>Keep in mind, the checkers have to check a lot of data, so they can be slow.</p>
 
-			<p>The tools were last run on <strong><?php echo esc_html( get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) ); ?></strong>.</p>
+			<p>The tools were last run on <strong><?php echo esc_html( get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) ); ?></strong>.</p>
 
 			<ul>
 				<?php
@@ -216,7 +216,7 @@ class LWTV_Tools {
 	 */
 	public static function tab_queer_checker() {
 
-		$items = LWTV_Debug::find_queerchars();
+		$items = ( new LWTV_Debug() )->find_queerchars();
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -261,7 +261,7 @@ class LWTV_Tools {
 
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = LWTV_Debug::find_actors_problems();
+		$items    = ( new LWTV_Debug() )->find_actors_problems();
 		$json_it  = wp_json_encode( $items );
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
@@ -324,10 +324,10 @@ class LWTV_Tools {
 		$broken_actors = json_decode( $_POST['broken_actors'], true );
 
 		if ( ! is_array( $broken_actors ) ) {
-			$broken_actors = LWTV_Debug::find_actors_problems();
+			$broken_actors = ( new LWTV_Debug() )->find_actors_problems();
 		}
 
-		$items = LWTV_Debug::fix_actors_problems( $broken_actors );
+		$items = ( new LWTV_Debug() )->fix_actors_problems( $broken_actors );
 
 		if ( ! isset( $items ) || 0 === $items || is_null( $items ) ) {
 			$message = 'warning';
@@ -351,7 +351,7 @@ class LWTV_Tools {
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
 
-		$items    = LWTV_Debug::list_actors_wikidata();
+		$items    = ( new LWTV_Debug() )->list_actors_wikidata();
 
 		/*
 			Instead of looping through all, let's do something else.
@@ -374,7 +374,7 @@ class LWTV_Tools {
 				<select id="actor_id" name="actor">
 					<?php
 					foreach ( $items as $id => $name ) {
-						echo '<option value="' . $id . '">' . $name . '</option>';
+						echo '<option value="' . esc_attr( $id ) . '">' . esc_html( $name ) . '</option>';
 					}
 					?>
 				</select>
@@ -397,7 +397,7 @@ class LWTV_Tools {
 
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = LWTV_Debug::find_actors_empty();
+		$items    = ( new LWTV_Debug() )->find_actors_empty();
 		$json_it  = wp_json_encode( $items );
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
@@ -443,7 +443,7 @@ class LWTV_Tools {
 
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = LWTV_Debug::find_shows_problems();
+		$items    = ( new LWTV_Debug() )->find_shows_problems();
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -488,7 +488,7 @@ class LWTV_Tools {
 
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = LWTV_Debug::find_characters_problems();
+		$items    = ( new LWTV_Debug() )->find_characters_problems();
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -527,4 +527,4 @@ class LWTV_Tools {
 	}
 }
 
-new LWTV_Tools();
+new LWTV_Admin_Tools();

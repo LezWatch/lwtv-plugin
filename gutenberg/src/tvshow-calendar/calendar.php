@@ -19,7 +19,7 @@ class LWTV_SSR_Calendar {
 	 * @param  string $date The date
 	 * @return object       DateTime object
 	 */
-	public static function start_datetime( $date, $tz ) {
+	public function start_datetime( $date, $tz ) {
 		$start_datetime = new DateTime( $date, $tz );
 
 		// If it's not Sunday, we want the previous Sunday
@@ -38,7 +38,7 @@ class LWTV_SSR_Calendar {
 	 * @param  string $date The date
 	 * @return object       DateTime object
 	 */
-	public static function end_datetime( $date, $tz ) {
+	public function end_datetime( $date, $tz ) {
 		$end_datetime = new DateTime( $date, $tz );
 
 		// If it's not Saturday, we want to jump to the next one
@@ -57,7 +57,7 @@ class LWTV_SSR_Calendar {
 	 * @param  string $date The date
 	 * @return object       DateTime object
 	 */
-	public static function prev_datetime( $date, $tz ) {
+	public function prev_datetime( $date, $tz ) {
 		$prev_datetime = new DateTime( $date, $tz );
 
 		// If it's not Sunday, we want the previous Sunday
@@ -76,7 +76,7 @@ class LWTV_SSR_Calendar {
 	 * @param  string $name Pretty name of show
 	 * @return string       Pretty Name with URL (if exists)
 	 */
-	public static function show_name( $name ) {
+	public function show_name( $name ) {
 
 		$displayname = $name;
 
@@ -123,13 +123,13 @@ class LWTV_SSR_Calendar {
 	 * @param  string $next  Next week
 	 * @return string       HTML output for the navigation
 	 */
-	public static function navigation( $date, $today, $last, $next ) {
+	public function navigation( $date, $today, $last, $next ) {
 
 		// echo previous and next links:
 		$last_week      = add_query_arg( 'tvdate', $last, get_permalink() );
-		$last_week_icon = LWTV_Functions::symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' );
+		$last_week_icon = ( new LWTV_Functions() )->symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' );
 		$next_week      = add_query_arg( 'tvdate', $next, get_permalink() );
-		$next_week_icon = LWTV_Functions::symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' );
+		$next_week_icon = ( new LWTV_Functions() )->symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' );
 
 		$navigation = '<nav aria-label="This Year navigation" role="navigation"><ul class="pagination justify-content-center"><li class="page-item first mr-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';
 

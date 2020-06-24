@@ -20,7 +20,7 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	public static function lists( $subject, $data, $array, $count ) {
+	public function lists( $subject, $data, $array, $count ) {
 		?>
 		<table id="<?php echo esc_html( $subject ); ?>Table" class="tablesorter table table-striped table-hover">
 			<thead>
@@ -59,7 +59,7 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	public static function percentages( $subject, $data, $array, $count ) {
+	public function percentages( $subject, $data, $array, $count ) {
 		$pieces = preg_split( '(_|-)', $data );
 		if ( in_array( 'country', $pieces, true ) ) {
 			$count = 0;
@@ -149,7 +149,7 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	public static function averages( $subject, $data, $array, $count, $type = 'average' ) {
+	public function averages( $subject, $data, $array, $count, $type = 'average' ) {
 
 		$valid_types = array( 'high', 'low', 'average' );
 		if ( ! in_array( $type, $valid_types, true ) ) {
@@ -162,7 +162,7 @@ class LWTV_Stats_Output {
 				$sum = 0;
 				foreach ( $array as $item ) {
 					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
-					$sum = $sum + (real) $item['count'];
+					$sum = $sum + (float) $item['count'];
 				}
 				$average = round( $sum / $n );
 				$return  = $average;
@@ -171,9 +171,9 @@ class LWTV_Stats_Output {
 				$high = 0;
 				foreach ( $array as $key => $value ) {
 					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
-					if ( (real) $value['count'] > (real) $high ) {
+					if ( (float) $value['count'] > (float) $high ) {
 						// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
-						$high = (real) $value['count'];
+						$high = (float) $value['count'];
 						if ( 'shows' === $subject ) {
 							$high .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}
@@ -185,9 +185,9 @@ class LWTV_Stats_Output {
 				$low = 20;
 				foreach ( $array as $key => $value ) {
 					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
-					if ( (real) $low > (real) $value['count'] ) {
+					if ( (float) $low > (float) $value['count'] ) {
 						// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
-						$low = (real) $value['count'];
+						$low = (float) $value['count'];
 						if ( 'shows' === $subject ) {
 							$low .= ' (<a href="' . $value['url'] . '">' . get_the_title( $value['id'] ) . '</a>)';
 						}
@@ -205,7 +205,7 @@ class LWTV_Stats_Output {
 	 * @param $y array y-coords
 	 * @returns array() m=>slope, b=>intercept
 	 */
-	public static function linear_regression( $x, $y ) {
+	public function linear_regression( $x, $y ) {
 
 		// calculate number points
 		$n = count( $x );
@@ -254,7 +254,7 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	public static function barcharts( $subject, $data, $array ) {
+	public function barcharts( $subject, $data, $array ) {
 
 		// Remove the zeros
 		foreach ( $array as $key => $value ) {
@@ -361,7 +361,7 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	public static function stacked_barcharts( $subject, $data, $array ) {
+	public function stacked_barcharts( $subject, $data, $array ) {
 
 		$count     = count( $array );
 		$step_size = '5';
@@ -498,24 +498,24 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	public static function piecharts( $subject, $data, $array ) {
+	public function piecharts( $subject, $data, $array ) {
 		// Strip extra word(s) to make the chart key readable
 		switch ( $data ) {
 			case 'sexuality':
 			case 'dead-sex':
 				$fixname = 'sexual';
-				$count   = LWTV_Stats::generate( 'characters', 'all', 'count' );
+				$count   = ( new LWTV_Stats() )->generate( 'characters', 'all', 'count' );
 				$center  = $count . ' Characters';
 				break;
 			case 'gender':
 			case 'dead-gender':
 				$fixname = 'gender';
-				$count   = LWTV_Stats::generate( 'characters', 'all', 'count' );
+				$count   = ( new LWTV_Stats() )->generate( 'characters', 'all', 'count' );
 				$center  = $count . ' Characters';
 				break;
 			case 'dead-shows':
 				$fixname = 'queers are dead';
-				$count   = LWTV_Stats::generate( 'shows', 'all', 'count' );
+				$count   = ( new LWTV_Stats() )->generate( 'shows', 'all', 'count' );
 				$center  = $count . ' Shows';
 				break;
 			default:
@@ -602,7 +602,7 @@ class LWTV_Stats_Output {
 	 *
 	 * @return Content
 	 */
-	public static function trendline( $subject, $data, $array ) {
+	public function trendline( $subject, $data, $array ) {
 
 		$array = array_reverse( $array );
 

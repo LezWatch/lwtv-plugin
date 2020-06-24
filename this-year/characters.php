@@ -7,24 +7,12 @@
 
 class LWTV_This_Year_Chars {
 
-	public static function toc() {
-		?>
-		<section id="toc" class="toc-container card-body">
-			<nav class="breadcrumb">
-				<h4 class="toc-title">Go to:</h4>
-				<a class="breadcrumb-item smoothscroll" href="#onair">Characters On Air</a>
-				<a class="breadcrumb-item smoothscroll" href="#died">Characters Who Died</a>
-			</nav>
-		</section>
-		<?php
-	}
-
 	/**
 	 * Output the dead
 	 * @param  [type] $thisyear [description]
 	 * @return [type]           [description]
 	 */
-	public static function dead( $thisyear ) {
+	public function dead( $thisyear ) {
 		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$char_array = self::get_dead( $thisyear );
 		$list_array = $char_array['list'];
@@ -103,7 +91,7 @@ class LWTV_This_Year_Chars {
 	 * @param mixed $thisyear
 	 * @return void
 	 */
-	public static function list( $thisyear ) {
+	public function list( $thisyear ) {
 		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$loop_array = self::get_list( $thisyear );
 		$char_array = $loop_array['list'];
@@ -182,9 +170,9 @@ class LWTV_This_Year_Chars {
 	 * @param  boolean $count    Just a count?
 	 * @return array             All the data you need.
 	 */
-	public static function get_dead( $thisyear, $count = false ) {
+	public function get_dead( $thisyear, $count = false ) {
 		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
-		$dead_loop  = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
+		$dead_loop  = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
 		$queery     = wp_list_pluck( $dead_loop->posts, 'ID' );
 		$show_array = array();
 		$list_array = array();
@@ -295,9 +283,9 @@ class LWTV_This_Year_Chars {
 	 * @param  boolean $count    Just a count?
 	 * @return array             All the data you need.
 	 */
-	public static function get_list( $thisyear, $count = false ) {
+	public function get_list( $thisyear, $count = false ) {
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
-		$loop          = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $thisyear, 'REGEXP' );
+		$loop          = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $thisyear, 'REGEXP' );
 		$queery        = wp_list_pluck( $loop->posts, 'ID' );
 		$counted_chars = 0;
 		$show_array    = array();

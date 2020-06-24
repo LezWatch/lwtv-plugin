@@ -32,7 +32,7 @@ class LWTV_OTD_JSON {
 	 * Creates callbacks
 	 *   - /lwtv/v1/of-the-day/
 	 */
-	public static function rest_api_init() {
+	public function rest_api_init() {
 
 		register_rest_route(
 			'lwtv/v1',
@@ -63,7 +63,7 @@ class LWTV_OTD_JSON {
 	/**
 	 * Rest API Callback for Of The Day
 	 */
-	public static function otd_rest_api_callback( $data ) {
+	public function otd_rest_api_callback( $data ) {
 		$params = $data->get_params();
 		$type   = ( isset( $params['type'] ) && '' !== $params['type'] ) ? sanitize_title_for_query( $params['type'] ) : 'unknown';
 		$format = ( isset( $params['format'] ) && '' !== $params['format'] ) ? sanitize_title_for_query( $params['format'] ) : 'default';
@@ -75,7 +75,7 @@ class LWTV_OTD_JSON {
 	/*
 	 * Of the Day function
 	 */
-	public static function of_the_day( $type = 'character', $format = 'default' ) {
+	public function of_the_day( $type = 'character', $format = 'default' ) {
 
 		// Valid types of 'of the day'.
 		// If there's no known type, we'll assume character
@@ -97,7 +97,7 @@ class LWTV_OTD_JSON {
 		// Create the array
 		switch ( $type ) {
 			case 'death':
-				$of_the_day_array = LWTV_BYQ_JSON::on_this_day( $date, $format );
+				$of_the_day_array = ( new LWTV_BYQ_JSON() )->on_this_day( $date, $format );
 				break;
 			case 'birthday':
 				$of_the_day_array = self::birthday( $date, $format );
@@ -128,7 +128,7 @@ class LWTV_OTD_JSON {
 	 * @param string $type (default: 'character')
 	 * @return array
 	 */
-	public static function character_show( $date = '', $type = 'character' ) {
+	public function character_show( $date = '', $type = 'character' ) {
 
 		// Defaults...
 		$return = array();
@@ -228,7 +228,7 @@ class LWTV_OTD_JSON {
 	 * @param  string $type [character|show]
 	 * @return number $id   [ID of the show or character]
 	 */
-	public static function find_char_show( $type = 'character', $date = '' ) {
+	public function find_char_show( $type = 'character', $date = '' ) {
 
 		// phpcs:disable
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
@@ -343,7 +343,7 @@ class LWTV_OTD_JSON {
 	 * @param mixed $date
 	 * @return array()
 	 */
-	public static function character_awareness( $date = '' ) {
+	public function character_awareness( $date = '' ) {
 
 		$return = '';
 
@@ -446,10 +446,10 @@ class LWTV_OTD_JSON {
 	 * @param  string $format [description]
 	 * @return [type]         [description]
 	 */
-	public static function birthday( $date = '', $format = 'default' ) {
+	public function birthday( $date = '', $format = 'default' ) {
 
 		// Get all our birthdays
-		$actor_loop = LWTV_Loops::post_meta_query( 'post_type_actors', 'lezactors_birth', $date, 'LIKE' );
+		$actor_loop = ( new LWTV_Loops() )->post_meta_query( 'post_type_actors', 'lezactors_birth', $date, 'LIKE' );
 
 		if ( $actor_loop->have_posts() ) {
 			foreach ( $actor_loop->posts as $actor ) {

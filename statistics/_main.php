@@ -86,7 +86,7 @@ class LWTV_Stats {
 	 *
 	 * @return array
 	 */
-	public static function generate( $subject, $data, $format ) {
+	public function generate( $subject, $data, $format ) {
 		// Bail early if we're not an approved subject matter.
 		if ( ! in_array( $subject, array( 'characters', 'shows', 'actors' ), true ) ) {
 			return;
@@ -112,13 +112,13 @@ class LWTV_Stats {
 			case 'formats':
 			case 'intersections':
 				// Simple taxonomy data.
-				$array = LWTV_Stats_Arrays::taxonomy( $post_type, $taxonomy );
+				$array = ( new LWTV_Stats_Arrays() )->taxonomy( $post_type, $taxonomy );
 				break;
 			case 'queer-irl':
 			case 'triggers':
 			case 'stars':
 				// Complex Taxonomy Data.
-				$array = LWTV_Stats_Arrays::complex_taxonomy( $count, $data, $subject );
+				$array = ( new LWTV_Stats_Arrays() )->complex_taxonomy( $count, $data, $subject );
 				break;
 			case 'role':
 				$roles = array(
@@ -126,7 +126,7 @@ class LWTV_Stats {
 					'recurring',
 					'guest',
 				);
-				$array = LWTV_Stats_Arrays::meta( $post_type, $role_array, 'lezchars_show_group', $data, 'LIKE' );
+				$array = ( new LWTV_Stats_Arrays() )->meta( $post_type, $role_array, 'lezchars_show_group', $data, 'LIKE' );
 				break;
 			case 'thumbs':
 				$thumbs = array(
@@ -135,36 +135,36 @@ class LWTV_Stats {
 					'Meh',
 					'TBD',
 				);
-				$array  = LWTV_Stats_Arrays::meta( $post_type, $thumbs, 'lezshows_worthit_rating', $data );
+				$array  = ( new LWTV_Stats_Arrays() )->meta( $post_type, $thumbs, 'lezshows_worthit_rating', $data );
 				break;
 			case 'weloveit':
 			case 'current':
-				$array = LWTV_Stats_Arrays::yes_no( $post_type, $data, $count );
+				$array = ( new LWTV_Stats_Arrays() )->yes_no( $post_type, $data, $count );
 				break;
 			case 'scores':
 				// Show Scores.
-				$array = LWTV_Stats_Arrays::scores( $post_type );
+				$array = ( new LWTV_Stats_Arrays() )->scores( $post_type );
 				break;
 			case 'charroles':
 				// show roles of character in each role.
-				$array = LWTV_Stats_Arrays::show_roles();
+				$array = ( new LWTV_Stats_Arrays() )->show_roles();
 				break;
 			case 'per-char':
 				// Custom call for actor/character.
-				$array = LWTV_Stats_Arrays::actor_chars( 'characters' );
+				$array = ( new LWTV_Stats_Arrays() )->actor_chars( 'characters' );
 				break;
 			case 'per-actor':
 				// Custom call for character/actor.
-				$array = LWTV_Stats_Arrays::actor_chars( 'actors' );
+				$array = ( new LWTV_Stats_Arrays() )->actor_chars( 'actors' );
 				break;
 		}
 
 		// Custom call for Deep Dive Data
 		// - nations, stations, formats
 		if ( empty( $array ) && ( 'country' === substr( $data, 0, 7 ) || 'stations' === substr( $data, 0, 8 ) || 'formats' === substr( $data, 0, 7 ) ) ) {
-			$array    = LWTV_Stats_Arrays::taxonomy_breakdowns( $count, $format, $data, $subject );
+			$array    = ( new LWTV_Stats_Arrays() )->taxonomy_breakdowns( $count, $format, $data, $subject );
 			$precount = $count;
-			$count    = LWTV_Stats_Arrays::taxonomy_breakdowns( $precount, 'count', $data, $subject );
+			$count    = ( new LWTV_Stats_Arrays() )->taxonomy_breakdowns( $precount, 'count', $data, $subject );
 		}
 
 		// And dead stats? IN-fucking-sane.
@@ -172,29 +172,29 @@ class LWTV_Stats {
 		if ( empty( $array ) && false !== strpos( $data, 'dead' ) ) {
 			switch ( $data ) {
 				case 'dead':
-					$array = LWTV_Stats_Arrays::dead_basic( $subject, 'array' );
-					$count = LWTV_Stats_Arrays::dead_basic( $subject, 'count' );
+					$array = ( new LWTV_Stats_Arrays() )->dead_basic( $subject, 'array' );
+					$count = ( new LWTV_Stats_Arrays() )->dead_basic( $subject, 'count' );
 					break;
 				case 'dead-sex':
-					$array = LWTV_Stats_Arrays::dead_taxonomy( $post_type, 'lez_sexuality' );
+					$array = ( new LWTV_Stats_Arrays() )->dead_taxonomy( $post_type, 'lez_sexuality' );
 					break;
 				case 'dead-gender':
-					$array = LWTV_Stats_Arrays::dead_taxonomy( $post_type, 'lez_gender' );
+					$array = ( new LWTV_Stats_Arrays() )->dead_taxonomy( $post_type, 'lez_gender' );
 					break;
 				case 'dead-role':
-					$array = LWTV_Stats_Arrays::dead_role();
+					$array = ( new LWTV_Stats_Arrays() )->dead_role();
 					break;
 				case 'dead-shows':
-					$array = LWTV_Stats_Arrays::dead_shows( 'simple' );
+					$array = ( new LWTV_Stats_Arrays() )->dead_shows( 'simple' );
 					break;
 				case 'dead-years':
-					$array = LWTV_Stats_Arrays::dead_year();
+					$array = ( new LWTV_Stats_Arrays() )->dead_year();
 					break;
 				case 'dead-stations':
-					$array = LWTV_Stats_Arrays::dead_complex_taxonomy( 'stations' );
+					$array = ( new LWTV_Stats_Arrays() )->dead_complex_taxonomy( 'stations' );
 					break;
 				case 'dead-nations':
-					$array = LWTV_Stats_Arrays::dead_complex_taxonomy( 'country' );
+					$array = ( new LWTV_Stats_Arrays() )->dead_complex_taxonomy( 'country' );
 					break;
 			}
 		}
@@ -202,34 +202,34 @@ class LWTV_Stats {
 		// Acutally output shit.
 		switch ( $format ) {
 			case 'barchart':
-				LWTV_Stats_Output::barcharts( $subject, $data, $array );
+				( new LWTV_Stats_Output() )->barcharts( $subject, $data, $array );
 				break;
 			case 'stackedbar':
-				LWTV_Stats_Output::stacked_barcharts( $subject, $data, $array );
+				( new LWTV_Stats_Output() )->stacked_barcharts( $subject, $data, $array );
 				break;
 			case 'piechart':
-				LWTV_Stats_Output::piecharts( $subject, $data, $array );
+				( new LWTV_Stats_Output() )->piecharts( $subject, $data, $array );
 				break;
 			case 'trendline':
-				LWTV_Stats_Output::trendline( $subject, $data, $array );
+				( new LWTV_Stats_Output() )->trendline( $subject, $data, $array );
 				break;
 			case 'count':
 				$return = $count;
 				break;
 			case 'list':
-				LWTV_Stats_Output::lists( $subject, $data, $array, $count );
+				( new LWTV_Stats_Output() )->lists( $subject, $data, $array, $count );
 				break;
 			case 'percentage':
-				LWTV_Stats_Output::percentages( $subject, $data, $array, $count );
+				( new LWTV_Stats_Output() )->percentages( $subject, $data, $array, $count );
 				break;
 			case 'average':
-				LWTV_Stats_Output::averages( $subject, $data, $array, $count, 'average' );
+				( new LWTV_Stats_Output() )->averages( $subject, $data, $array, $count, 'average' );
 				break;
 			case 'high':
-				LWTV_Stats_Output::averages( $subject, $data, $array, $count, 'high' );
+				( new LWTV_Stats_Output() )->averages( $subject, $data, $array, $count, 'high' );
 				break;
 			case 'low':
-				LWTV_Stats_Output::averages( $subject, $data, $array, $count, 'low' );
+				( new LWTV_Stats_Output() )->averages( $subject, $data, $array, $count, 'low' );
 				break;
 			case 'array':
 				$return = $array;
@@ -250,9 +250,9 @@ class LWTV_Stats {
 	 *
 	 * @return array
 	 */
-	public static function showcount( $type, $tax, $term ) {
+	public function showcount( $type, $tax, $term ) {
 
-		$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
+		$queery = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
 		$return = 0;
 
 		// Create the date with regards to timezones

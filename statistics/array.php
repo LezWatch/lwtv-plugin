@@ -19,7 +19,7 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array
 	 */
-	public static function taxonomy( $post_type, $taxonomy, $terms = '', $operator = 'IN' ) {
+	public function taxonomy( $post_type, $taxonomy, $terms = '', $operator = 'IN' ) {
 
 		$transient = 'taxonomy_' . $taxonomy . '_' . $terms;
 		$array     = get_transient( $transient );
@@ -36,7 +36,7 @@ class LWTV_Stats_Arrays {
 				$term_link         = get_term_link( $term, $taxonomy );
 				$term_slug         = ( '' === $terms ) ? $term->slug : $terms;
 				$term_name         = ( '' === $terms ) ? $term->name : $term_obj['name'];
-				$count_terms_query = LWTV_Loops::tax_query( $post_type, $taxonomy, 'slug', $term_slug, $operator );
+				$count_terms_query = ( new LWTV_Loops() )->tax_query( $post_type, $taxonomy, 'slug', $term_slug, $operator );
 				$term_count        = $count_terms_query->post_count;
 
 				$array[ $term_slug ] = array(
@@ -63,13 +63,13 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array
 	 */
-	public static function dead_taxonomy( $post_type, $taxonomy ) {
+	public function dead_taxonomy( $post_type, $taxonomy ) {
 
 		$array      = array();
 		$taxonomies = get_terms( $taxonomy );
 
 		foreach ( $taxonomies as $term ) {
-			$queery = LWTV_Loops::tax_two_query( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
+			$queery = ( new LWTV_Loops() )->tax_two_query( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
 
 			$array[ $term->slug ] = array(
 				'count' => $queery->post_count,
@@ -90,14 +90,14 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array
 	 */
-	public static function dead_role() {
+	public function dead_role() {
 
 		$transient = 'dead_role_stats';
 		$array     = get_transient( $transient );
 
 		if ( false === $array ) {
 			$array        = array();
-			$all_the_dead = LWTV_Loops::tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+			$all_the_dead = ( new LWTV_Loops() )->tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
 			$by_role      = array(
 				'regular'   => 0,
 				'guest'     => 0,
@@ -161,7 +161,7 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array
 	 */
-	public static function dead_meta_tax( $post_type, $meta_array, $key, $taxonomy = 'lez_cliches', $field = 'dead' ) {
+	public function dead_meta_tax( $post_type, $meta_array, $key, $taxonomy = 'lez_cliches', $field = 'dead' ) {
 
 		$transient = 'dead_meta_tax_' . $post_type . '_' . $taxonomy . '_' . $field;
 		$array     = get_transient( $transient );
@@ -170,7 +170,7 @@ class LWTV_Stats_Arrays {
 			$array = array();
 
 			foreach ( $meta_array as $value ) {
-				$query           = LWTV_Loops::post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, 'slug', $field );
+				$query           = ( new LWTV_Loops() )->post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, 'slug', $field );
 				$array[ $value ] = array(
 					'count' => $query->post_count,
 					'name'  => ucfirst( $value ),
@@ -198,7 +198,7 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array
 	 */
-	public static function meta( $post_type, $meta_array, $key, $data, $compare = '=' ) {
+	public function meta( $post_type, $meta_array, $key, $data, $compare = '=' ) {
 
 		$transient = 'meta_' . $key;
 		$array     = get_transient( $transient );
@@ -207,7 +207,7 @@ class LWTV_Stats_Arrays {
 
 			$array = array();
 			foreach ( $meta_array as $value ) {
-				$meta_query      = LWTV_Loops::post_meta_query( $post_type, $key, $value, $compare );
+				$meta_query      = ( new LWTV_Loops() )->post_meta_query( $post_type, $key, $value, $compare );
 				$array[ $value ] = array(
 					'count' => $meta_query->post_count,
 					'name'  => ucfirst( $value ),
@@ -235,7 +235,7 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array
 	 */
-	public static function yes_no( $post_type, $data, $count ) {
+	public function yes_no( $post_type, $data, $count ) {
 
 		$array = array(
 			'no'  => array(
@@ -299,7 +299,7 @@ class LWTV_Stats_Arrays {
 	 * @param mixed $subject - string; post type (shows, characters).
 	 * @return void
 	 */
-	public static function taxonomy_breakdowns( $count, $format, $data, $subject ) {
+	public function taxonomy_breakdowns( $count, $format, $data, $subject ) {
 		// Set defaults.
 		$array = array();
 		// Arrays of the secondary taxonomies we care about.
@@ -356,7 +356,7 @@ class LWTV_Stats_Arrays {
 			// This is the display name (used by stacked barcharts).
 			$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 			// Get the posts.
-			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
+			$queery = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
 			// Process the posts.
 			if ( $queery->have_posts() ) {
 				// Defaults.
@@ -540,7 +540,7 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array or count
 	 */
-	public static function dead_basic( $subject, $output ) {
+	public function dead_basic( $subject, $output ) {
 
 		switch ( $subject ) {
 			case 'characters':
@@ -594,7 +594,7 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array
 	 */
-	public static function dead_year() {
+	public function dead_year() {
 
 		$transient = 'dead_year_stats';
 		$array     = get_transient( $transient );
@@ -618,7 +618,7 @@ class LWTV_Stats_Arrays {
 			}
 
 			foreach ( $year_deathlist_array as $year ) {
-				$year_death_query = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+				$year_death_query = ( new LWTV_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 
 				$array[ $year ] = array(
 					'name'  => $year,
@@ -645,7 +645,7 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array
 	 */
-	public static function dead_shows( $format ) {
+	public function dead_shows( $format ) {
 
 		$transient = 'dead_shows_' . $format;
 		$array     = get_transient( $transient );
@@ -653,10 +653,10 @@ class LWTV_Stats_Arrays {
 		if ( false === $array ) {
 
 			// Shows With Dead Query
-			$dead_shows_query = LWTV_Loops::tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
+			$dead_shows_query = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
 
 			// Shows With NO Dead Query
-			$alive_shows_query = LWTV_Loops::tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers', 'NOT IN' );
+			$alive_shows_query = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers', 'NOT IN' );
 
 			// Predef Arrays
 			$noneshow_death_array = array();
@@ -691,7 +691,7 @@ class LWTV_Stats_Arrays {
 					$show_name = strtolower( $show_name );
 
 					// Loop of characters who MIGHT be in this show
-					$this_show_characters_query = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+					$this_show_characters_query = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 					$fulldeathcount = get_post_meta( $show_id, 'lezshows_dead_count', true );
 					$allcharcount   = get_post_meta( $show_id, 'lezshows_char_count', true );
@@ -749,7 +749,7 @@ class LWTV_Stats_Arrays {
 	 * @param mixed $type - string.
 	 * @return array.
 	 */
-	public static function dead_complex_taxonomy( $type ) {
+	public function dead_complex_taxonomy( $type ) {
 
 		// Defaults.
 		$valid_types = array( 'stations', 'country' );
@@ -773,7 +773,7 @@ class LWTV_Stats_Arrays {
 				$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 
 				// Get the posts.
-				$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
+				$queery = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
 
 				// Process the posts.
 				if ( $queery->have_posts() ) {
@@ -815,14 +815,14 @@ class LWTV_Stats_Arrays {
 	 *
 	 * @return array
 	 */
-	public static function scores( $post_type ) {
+	public function scores( $post_type ) {
 
 		$transient = 'scores_' . $post_type;
 		$array     = get_transient( $transient );
 
 		if ( false === $array ) {
 
-			$the_queery = LWTV_Loops::post_type_query( $post_type );
+			$the_queery = ( new LWTV_Loops() )->post_type_query( $post_type );
 			$array      = array();
 			if ( $the_queery->have_posts() ) {
 				while ( $the_queery->have_posts() ) {
@@ -852,7 +852,7 @@ class LWTV_Stats_Arrays {
 	 * @param string $type (default: 'chars')
 	 * @return void
 	 */
-	public static function actor_chars( $type = 'characters' ) {
+	public function actor_chars( $type = 'characters' ) {
 
 		$transient = 'actor_chars_' . $type;
 		$array     = get_transient( $transient );
@@ -860,7 +860,7 @@ class LWTV_Stats_Arrays {
 		if ( false === $array ) {
 
 			// list of people
-			$all_query = LWTV_Loops::post_type_query( 'post_type_' . $type );
+			$all_query = ( new LWTV_Loops() )->post_type_query( 'post_type_' . $type );
 			$array     = array();
 			if ( $all_query->have_posts() ) {
 				while ( $all_query->have_posts() ) {
@@ -914,7 +914,7 @@ class LWTV_Stats_Arrays {
 	 * @param string $type (default: 'dead')
 	 * @return void
 	 */
-	public static function show_roles( $type = 'dead' ) {
+	public function show_roles( $type = 'dead' ) {
 
 		$transient = 'show_roles_' . $type;
 		$array     = get_transient( $transient );
@@ -923,7 +923,7 @@ class LWTV_Stats_Arrays {
 			$array  = array();
 
 			// List of shows
-			$all_shows_query = LWTV_Loops::post_type_query( 'post_type_shows' );
+			$all_shows_query = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
 
 			$guest_alive_array     = array();
 			$recurring_alive_array = array();
@@ -941,7 +941,7 @@ class LWTV_Stats_Arrays {
 					$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
 					$show_name = strtolower( $show_name );
 
-					$role_loop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+					$role_loop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 					if ( $role_loop->have_posts() ) {
 
@@ -1091,7 +1091,7 @@ class LWTV_Stats_Arrays {
 	 * @param  string  $type  [description]
 	 * @return array          [description]
 	 */
-	public static function complex_taxonomy( $count, $data, $type ) {
+	public function complex_taxonomy( $count, $data, $type ) {
 
 		// Default
 		$array     = array();
@@ -1127,12 +1127,12 @@ class LWTV_Stats_Arrays {
 						$array['not_queer']['count'] = ( $count - $array['queer']['count'] );
 						break;
 					case 'actors':
-						$all_actors_query = LWTV_Loops::post_type_query( 'post_type_actors' );
+						$all_actors_query = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 						if ( $all_actors_query->have_posts() ) {
 							while ( $all_actors_query->have_posts() ) {
 								$all_actors_query->the_post();
 								$the_id   = get_the_id();
-								$is_queer = LWTV_Loops::is_actor_queer( $the_id );
+								$is_queer = ( new LWTV_Loops() )->is_actor_queer( $the_id );
 
 								// And now we set the numbers!
 								switch ( $is_queer ) {
@@ -1156,7 +1156,7 @@ class LWTV_Stats_Arrays {
 					$term_link           = get_term_link( $term, $data );
 					$term_slug           = $term->slug;
 					$term_name           = $term->name;
-					$count_terms_queery  = LWTV_Loops::tax_query( $post_type, 'lez_' . $data, 'slug', $term_slug, 'IN' );
+					$count_terms_queery  = ( new LWTV_Loops() )->tax_query( $post_type, 'lez_' . $data, 'slug', $term_slug, 'IN' );
 					$term_count          = $count_terms_queery->post_count;
 					$array[ $term_slug ] = array(
 						'count' => $term_count,

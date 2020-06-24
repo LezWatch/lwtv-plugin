@@ -6,12 +6,12 @@
 
 class LWTV_Affiliate_Local {
 
-	public static function show_ads( $post_id, $format = 'wide' ) {
+	public function show_ads( $post_id, $format = 'wide' ) {
 		$the_ad = self::output_widget( $post_id, $format );
 		return $the_ad;
 	}
 
-	public static function output_widget( $post_id, $format ) {
+	public function output_widget( $post_id, $format ) {
 		$ad_array = array(
 			'facetwp'    => array(
 				'name' => 'FacetWP',
