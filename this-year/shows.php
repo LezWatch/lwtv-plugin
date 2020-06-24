@@ -7,19 +7,6 @@
 
 class LWTV_This_Year_Shows {
 
-	public function toc() {
-		?>
-		<section id="toc" class="toc-container card-body">
-			<nav class="breadcrumb">
-				<h4 class="toc-title">Go to:</h4>
-				<a class="breadcrumb-item smoothscroll" href="#showsonair">Shows On Air</a>
-				<a class="breadcrumb-item smoothscroll" href="#showsstart">Shows That Began</a>
-				<a class="breadcrumb-item smoothscroll" href="#showsend">Shows That Ended</a>
-			</nav>
-		</section>
-		<?php
-	}
-
 	/**
 	 * List of shows for the year.
 	 *

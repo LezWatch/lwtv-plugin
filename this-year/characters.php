@@ -7,18 +7,6 @@
 
 class LWTV_This_Year_Chars {
 
-	public function toc() {
-		?>
-		<section id="toc" class="toc-container card-body">
-			<nav class="breadcrumb">
-				<h4 class="toc-title">Go to:</h4>
-				<a class="breadcrumb-item smoothscroll" href="#onair">Characters On Air</a>
-				<a class="breadcrumb-item smoothscroll" href="#died">Characters Who Died</a>
-			</nav>
-		</section>
-		<?php
-	}
-
 	/**
 	 * Output the dead
 	 * @param  [type] $thisyear [description]
