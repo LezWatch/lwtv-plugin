@@ -72,7 +72,7 @@ class LWTV_Alexa_Common {
 	 * THIS IS OLD and can be removed once BYQ is retired, but let's not break things...
 	 * This accepts POST data
 	 */
-	public static function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
+	public function bury_your_queers_rest_api_callback( WP_REST_Request $request ) {
 		$type   = ( isset( $request['request']['type'] ) ) ? $request['request']['type'] : false;
 		$intent = ( isset( $request['request']['intent']['name'] ) ) ? $request['request']['intent']['name'] : false;
 		$date   = ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false;
@@ -80,7 +80,7 @@ class LWTV_Alexa_Common {
 
 		// Call the validation:
 		require_once 'alexa/alexa-validate.php';
-		$validate_alexa = LWTV_Alexa_Validate::the_request( $request );
+		$validate_alexa = ( new LWTV_Alexa_Validate() )->the_request( $request );
 
 		if ( 1 !== $validate_alexa['success'] ) {
 			$response = array(
@@ -126,13 +126,13 @@ class LWTV_Alexa_Common {
 					break;
 				case 'HowMany':
 					if ( false === $date || false === $timestamp ) {
-						$data    = LWTV_Stats_JSON::statistics( 'death', 'simple' );
+						$data    = ( new LWTV_Stats_JSON() )->statistics( 'death', 'simple' );
 						$whodied = 'A total of ' . $data['characters']['dead'] . ' queer female, non-binary, and trans characters have died on TV.';
 					} elseif ( ! preg_match( '/^[0-9]{4}$/', $date ) ) {
 						$whodied    = 'I\'m sorry. I don\'t know how to calculate deaths in anything but years right now. ' . $helptext;
 						$endsession = false;
 					} else {
-						$data     = LWTV_Stats_JSON::statistics( 'death', 'years' );
+						$data     = ( new LWTV_Stats_JSON() )->statistics( 'death', 'years' );
 						$count    = $data[ $date ]['count'];
 						$how_many = 'No queer female, non-binary, or trans characters died on TV in ' . $date . '.';
 						if ( $count > 0 ) {
@@ -143,7 +143,7 @@ class LWTV_Alexa_Common {
 					break;
 				case 'WhoDied':
 					if ( false === $date || false === $timestamp ) {
-						$data    = LWTV_BYQ_JSON::last_death();
+						$data    = ( new LWTV_BYQ_JSON() )->last_death();
 						$name    = $data['name'];
 						$whodied = 'The last queer female, non-binary, or trans character to die was ' . $name . ' on ' . gmdate( 'F j, Y', $data['died'] ) . '.';
 					} elseif ( preg_match( '/^[0-9]{4}-(0[1-9]|1[0-2])$/', $date ) ) {
@@ -151,7 +151,7 @@ class LWTV_Alexa_Common {
 						$endsession = false;
 					} else {
 						$this_day = gmdate( 'm-d', $timestamp );
-						$data     = LWTV_BYQ_JSON::on_this_day( $this_day );
+						$data     = ( new LWTV_BYQ_JSON() )->on_this_day( $this_day );
 						$count    = ( 'none' === key( $data ) ) ? 0 : count( $data );
 						$how_many = 'No queer female, non-binary, or trans characters died';
 						$the_dead = '';

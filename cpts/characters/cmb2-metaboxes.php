@@ -37,7 +37,7 @@ class LWTV_Characters_CMB2 {
 	 * Create a list of all shows
 	 */
 	public function cmb2_get_shows_options() {
-		$return = LWTV_CMB2::get_post_options(
+		$return = ( new LWTV_CMB2() )->get_post_options(
 			array(
 				'post_type'   => 'post_type_shows',
 				'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
@@ -51,7 +51,7 @@ class LWTV_Characters_CMB2 {
 	 * Create a list of all actors
 	 */
 	public function cmb2_get_actors_options() {
-		$return = LWTV_CMB2::get_post_options(
+		$return = ( new LWTV_CMB2() )->get_post_options(
 			array(
 				'post_type'   => 'post_type_actors',
 				'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
@@ -161,8 +161,8 @@ class LWTV_Characters_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_cliches' ),
-				'default'           => LWTV_CMB2::get_select2_defaults( 'lezchars_cliches', 'lez_cliches', $post_id, true ),
+				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_cliches' ),
+				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezchars_cliches', 'lez_cliches', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'Common clichés ...',
 				),

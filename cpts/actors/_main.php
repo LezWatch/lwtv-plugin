@@ -207,7 +207,7 @@ class LWTV_CPT_Actors {
 		remove_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 
 		// Do the math
-		LWTV_Actors_Calculate::do_the_math( $post_id );
+		( new LWTV_Actors_Calculate() )->do_the_math( $post_id );
 
 		// If it's not an auto-draft, let's flush cache.
 		if ( 'auto-draft' !== get_post_status( $post_id ) ) {

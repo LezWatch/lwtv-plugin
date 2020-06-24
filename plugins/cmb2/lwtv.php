@@ -56,7 +56,7 @@ class LWTV_CMB2 {
 	/**
 	 * Extra Get post options.
 	 */
-	public static function get_post_options( $query_args, $the_id = 0 ) {
+	public function get_post_options( $query_args, $the_id = 0 ) {
 		$args = wp_parse_args(
 			$query_args,
 			array(
@@ -118,7 +118,7 @@ class LWTV_CMB2 {
 	 * @param  boolean $none     does it have a 'none'?
 	 * @return array             An array of Term IDs
 	 */
-	public static function get_select2_defaults( $postmeta, $taxonomy, $post_id = 0, $none = false ) {
+	public function get_select2_defaults( $postmeta, $taxonomy, $post_id = 0, $none = false ) {
 
 		if ( 0 === $post_id ) {
 			return;
@@ -146,7 +146,7 @@ class LWTV_CMB2 {
 	 * @param  string $str Show title
 	 * @return string      Edited show title
 	 */
-	public static function showshort( $str ) {
+	public function showshort( $str ) {
 		list( $first, $rest ) = explode( ' ', $str . ' ', 2 );
 		// the extra space is to prevent "undefined offset" notices on single-word titles.
 		$validarticles = array( 'a ', 'an ', 'lá ', 'la ', 'las ', 'les ', 'los ', 'el ', 'the ' );

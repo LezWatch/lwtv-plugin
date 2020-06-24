@@ -18,7 +18,7 @@ class LWTV_Debug {
 	 * @param  string $for    Social Media Type
 	 * @return string         sanitized username
 	 */
-	public static function sanitize_social( $string, $for ) {
+	public function sanitize_social( $string, $for ) {
 
 		$clean = preg_replace( '/[^a-zA-Z_.0-9]/', '', $string );
 
@@ -43,7 +43,7 @@ class LWTV_Debug {
 	 * @param  string $date Wikiformated date: +1968-07-07T00:00:00Z
 	 * @return string      LezWatch formated date: 1968-07-07
 	 */
-	public static function format_wikidate( $date ) {
+	public function format_wikidate( $date ) {
 		$clean = trim( substr( $date, 0, strpos( $date, 'T' ) ), '+' );
 		return $clean;
 	}
@@ -53,7 +53,7 @@ class LWTV_Debug {
 	 * @param  string  $string IMDB ID
 	 * @return boolean         true/false
 	 */
-	public static function validate_imdb( $string ) {
+	public function validate_imdb( $string ) {
 
 		$result = true;
 
@@ -75,13 +75,13 @@ class LWTV_Debug {
 	 * Find all characters who are mismatched with their queer settings
 	 * and the actor who plays them
 	 */
-	public static function find_queerchars() {
+	public function find_queerchars() {
 
 		// Empty to start
 		$items = array();
 
 		// Get all the characters
-		$the_loop = LWTV_Loops::post_type_query( 'post_type_characters' );
+		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters' );
 
 		if ( $the_loop->have_posts() ) {
 			while ( $the_loop->have_posts() ) {
@@ -104,7 +104,7 @@ class LWTV_Debug {
 
 					// If ANY actor is flagged as queer, we're queer.
 					foreach ( $character_actors as $actor ) {
-						$actor_queer = ( 'yes' === LWTV_Loops::is_actor_queer( $actor ) || $actor_queer ) ? true : false;
+						$actor_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $actor ) || $actor_queer ) ? true : false;
 					}
 
 					if ( $actor_queer && ! $flagged_queer ) {
@@ -144,13 +144,13 @@ class LWTV_Debug {
 	/**
 	 * Find Actors with problems.
 	 */
-	public static function find_actors_empty() {
+	public function find_actors_empty() {
 
 		// Default
 		$items = array();
 
 		// Get all the actors
-		$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
+		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 
 		if ( $the_loop->have_posts() ) {
 			while ( $the_loop->have_posts() ) {
@@ -195,7 +195,7 @@ class LWTV_Debug {
 	/**
 	 * Find Actors' WikiData
 	 */
-	public static function check_actors_wikidata( $actors = 0 ) {
+	public function check_actors_wikidata( $actors = 0 ) {
 
 		$items = array();
 
@@ -204,7 +204,7 @@ class LWTV_Debug {
 			$actors = array( $actors );
 		} elseif ( ! is_array( $actors ) ) {
 			// Get all the actors
-			$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 
 			if ( $the_loop->have_posts() ) {
 				$post_ids  = wp_list_pluck( $the_loop->posts, 'ID' );
@@ -303,13 +303,13 @@ class LWTV_Debug {
 	/**
 	 * Find Actors with problems.
 	 */
-	public static function find_actors_problems() {
+	public function find_actors_problems() {
 
 		// Default
 		$items = array();
 
 		// Get all the actors
-		$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
+		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 
 		if ( $the_loop->have_posts() ) {
 			while ( $the_loop->have_posts() ) {
@@ -400,14 +400,14 @@ class LWTV_Debug {
 	 *
 	 * Right now all it can do is fix actors who are listed as having 0 characters
 	 */
-	public static function fix_actors_problems( $actors = 0 ) {
+	public function fix_actors_problems( $actors = 0 ) {
 
 		$items = 0;
 
 		if ( ! is_array( $actors ) ) {
 			$actors = array();
 			// Get all the actors
-			$the_loop = LWTV_Loops::post_type_query( 'post_type_actors' );
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 
 			if ( $the_loop->have_posts() ) {
 				while ( $the_loop->have_posts() ) {
@@ -435,7 +435,7 @@ class LWTV_Debug {
 
 		// For everyone in the list...
 		foreach ( $actors as $actor ) {
-			LWTV_Actors_Calculate::do_the_math( $actor['id'] );
+			( new LWTV_Actors_Calculate() )->do_the_math( $actor['id'] );
 			$items++;
 		}
 
@@ -445,12 +445,12 @@ class LWTV_Debug {
 	/**
 	 * Find Characters with Problems
 	 */
-	public static function find_characters_problems() {
+	public function find_characters_problems() {
 		// Default
 		$items = array();
 
 		// Get all the shows
-		$the_loop = LWTV_Loops::post_type_query( 'post_type_characters' );
+		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters' );
 
 		if ( $the_loop->have_posts() ) {
 			while ( $the_loop->have_posts() ) {
@@ -523,12 +523,12 @@ class LWTV_Debug {
 	/**
 	 * Find Shows with Problems
 	 */
-	public static function find_shows_problems() {
+	public function find_shows_problems() {
 		// Default
 		$items = array();
 
 		// Get all the shows
-		$the_loop = LWTV_Loops::post_type_query( 'post_type_shows' );
+		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
 
 		if ( $the_loop->have_posts() ) {
 			while ( $the_loop->have_posts() ) {

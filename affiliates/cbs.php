@@ -6,7 +6,7 @@
 
 
 class LWTV_Affiliate_CBS {
-	public static function show_ads( $post_id, $format = 'wide' ) {
+	public function show_ads( $post_id, $format = 'wide' ) {
 		$the_ad = self::output_widget( $post_id, $format );
 		return $the_ad;
 	}
@@ -14,9 +14,9 @@ class LWTV_Affiliate_CBS {
 	/**
 	 * Figure out which ad we really want to show....
 	 */
-	public static function output_widget( $post_id, $format ) {
+	public function output_widget( $post_id, $format ) {
 
-		// expire - optional but formated DD-MM-YYYY
+		// expire - optional but formatted DD-MM-YYYY
 		// banner - 728x90
 		// thin   - 160x600
 		// tiny   - 320x50

@@ -213,7 +213,9 @@ class LWTV_CPT_Characters {
 
 		if ( '' !== $shows_ids && ! is_null( $shows_ids ) ) {
 			foreach ( $shows_ids as $each_show ) {
-				array_push( $shows_titles, get_the_title( $each_show['show'] ) );
+				if ( isset( $each_show['show'] ) ) {
+					array_push( $shows_titles, get_the_title( $each_show['show'] ) );
+				}
 			}
 		}
 		return implode( ', ', $shows_titles );
@@ -272,8 +274,8 @@ class LWTV_CPT_Characters {
 	 * @param string $output (default: 'query')
 	 * @return void
 	 */
-	public static function list_characters( $show_id, $output = 'query' ) {
-		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+	public function list_characters( $show_id, $output = 'query' ) {
+		$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 		$characters     = array();
 		$char_counts    = array(
 			'total' => 0,
@@ -331,7 +333,7 @@ class LWTV_CPT_Characters {
 							// the show gets the points.
 							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
 								$top_actor = reset( $actors_ids );
-								if ( 'yes' === LWTV_Loops::is_actor_queer( $top_actor ) ) {
+								if ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $top_actor ) ) {
 									$char_counts['quirl']++;
 								}
 							}
@@ -343,7 +345,7 @@ class LWTV_CPT_Characters {
 
 							// Now to see if we have trans IRL...
 							foreach ( $actors_ids as $actor ) {
-								if ( 'yes' === LWTV_Loops::is_actor_trans( $actor ) ) {
+								if ( 'yes' === ( new LWTV_Loops() )->is_actor_trans( $actor ) ) {
 									$char_counts['txirl']++;
 									// It's possible to have MORE trans actors than characters.
 								}
@@ -392,7 +394,7 @@ class LWTV_CPT_Characters {
 	 * @param mixed $role: regular (default), recurring, guest
 	 * @return array of characters
 	 */
-	public static function get_chars_for_show( $show_id, $havecharcount, $role = 'regular' ) {
+	public function get_chars_for_show( $show_id, $havecharcount, $role = 'regular' ) {
 
 		/**
 		 * Funny things:
@@ -499,16 +501,16 @@ class LWTV_CPT_Characters {
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
 		// Math and Taxonomies
-		LWTV_Characters_Calculate::do_the_math( $post_id );
-		LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
-		LWTV_Debug::check_actors_wikidata( $post->ID );
+		( new LWTV_Characters_Calculate() )->do_the_math( $post_id );
+		( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		( new LWTV_Debug() )->check_actors_wikidata( $post->ID );
 
 		// Get a list of URLs to flush
-		$clear_urls = LWTV_Cache::collect_urls_for_characters( $post_id );
+		$clear_urls = ( new LWTV_Cache() )->collect_urls_for_characters( $post_id );
 
 		// If we've got a list of URLs, then flush.
 		if ( ! empty( $clear_urls ) ) {
-			LWTV_Cache::clean_urls( $clear_urls );
+			( new LWTV_Cache() )->clean_urls( $clear_urls );
 		}
 
 		// re-hook this function

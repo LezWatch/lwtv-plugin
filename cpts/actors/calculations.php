@@ -21,7 +21,7 @@ class LWTV_Actors_Calculate {
 	 *
 	 * @param int $post_id The post ID.
 	 */
-	public static function count_queers( $post_id, $type = 'count' ) {
+	public function count_queers( $post_id, $type = 'count' ) {
 
 		$type_array = array( 'count', 'none', 'dead' );
 
@@ -31,7 +31,7 @@ class LWTV_Actors_Calculate {
 		}
 
 		// Loop to get the list of characters
-		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+		$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
 		$queercount     = 0;
 		$deadcount      = 0;
 
@@ -85,14 +85,14 @@ class LWTV_Actors_Calculate {
 	 * @param mixed $post_id
 	 * @return void
 	 */
-	public static function do_the_math( $post_id ) {
+	public function do_the_math( $post_id ) {
 		if ( 'post_type_actors' === get_post_type( $post_id ) ) {
 			// Calculate Actor Data:
 			update_post_meta( $post_id, 'lezactors_char_count', self::count_queers( $post_id, 'count' ) );
 			update_post_meta( $post_id, 'lezactors_dead_count', self::count_queers( $post_id, 'dead' ) );
 
 			// Is Queer?
-			$is_queer = ( 'yes' === LWTV_Loops::is_actor_queer( $post_id ) ) ? true : false;
+			$is_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $post_id ) ) ? true : false;
 			update_post_meta( $post_id, 'lezactors_queer', $is_queer );
 		}
 	}

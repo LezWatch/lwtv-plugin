@@ -24,7 +24,7 @@ $view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' :
 // Count
 $all_stations = get_terms( 'lez_stations', array( 'hide_empty' => 0 ) );
 $count        = wp_count_terms( 'lez_stations' );
-$shows_count  = LWTV_Stats::generate( 'shows', 'total', 'count' );
+$shows_count  = ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' );
 
 // Title
 switch ( $station ) {
@@ -32,8 +32,8 @@ switch ( $station ) {
 		$title_station = 'All Stations (' . $count . ')';
 		break;
 	default:
-		$characters     = LWTV_Stats::generate( 'characters', 'stations_' . $station . '_all', 'count' );
-		$shows          = LWTV_Stats::generate( 'shows', 'stations_' . $station . '_all', 'count' );
+		$characters     = ( new LWTV_Stats() )->generate( 'characters', 'stations_' . $station . '_all', 'count' );
+		$shows          = ( new LWTV_Stats() )->generate( 'shows', 'stations_' . $station . '_all', 'count' );
 		$station_object = get_term_by( 'slug', $station, 'lez_stations', 'ARRAY_A' );
 		$title_station  = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_object['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 }
@@ -120,7 +120,7 @@ switch ( $station ) {
 									<th scope="row"><a href="?station=' . esc_attr( $the_station->slug ) . '">' . esc_html( $the_station->name ) . '</a></th>
 									<td>' . (int) $the_station->count . '</td>
 									<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
-									<td>' . (int) LWTV_Stats::showcount( 'score', 'stations', $the_station->slug ) . '</td>
+									<td>' . (int) ( new LWTV_Stats() )->showcount( 'score', 'stations', $the_station->slug ) . '</td>
 								</tr>';
 						}
 						?>
@@ -130,15 +130,15 @@ switch ( $station ) {
 			} else {
 				$this_one_view = substr( $view, 1 );
 				if ( 'shows' !== $valid_views[ $this_one_view ] ) {
-					LWTV_Stats::generate( $cpts_type, 'stations' . $station . $view, 'stackedbar' );
+					( new LWTV_Stats() )->generate( $cpts_type, 'stations' . $station . $view, 'stackedbar' );
 				} else {
 					?>
 					<div class="row">
 						<div class="col-sm-6">
-							<?php LWTV_Stats::generate( 'shows', $this_one_view, 'piechart' ); ?>
+							<?php ( new LWTV_Stats() )->generate( 'shows', $this_one_view, 'piechart' ); ?>
 						</div>
 						<div class="col-sm-6">
-							<?php LWTV_Stats::generate( 'shows', $this_one_view, 'percentage' ); ?>
+							<?php ( new LWTV_Stats() )->generate( 'shows', $this_one_view, 'percentage' ); ?>
 						</div>
 					</div>
 					<?php
@@ -149,10 +149,10 @@ switch ( $station ) {
 
 			if ( '_all' !== $station ) {
 
-				$onair      = LWTV_Stats::showcount( 'onair', 'stations', ltrim( $station, '_' ) );
-				$allshows   = LWTV_Stats::showcount( 'total', 'stations', ltrim( $station, '_' ) );
-				$showscore  = LWTV_Stats::showcount( 'score', 'stations', ltrim( $station, '_' ) );
-				$onairscore = LWTV_Stats::showcount( 'onairscore', 'stations', ltrim( $station, '_' ) );
+				$onair      = ( new LWTV_Stats() )->showcount( 'onair', 'stations', ltrim( $station, '_' ) );
+				$allshows   = ( new LWTV_Stats() )->showcount( 'total', 'stations', ltrim( $station, '_' ) );
+				$showscore  = ( new LWTV_Stats() )->showcount( 'score', 'stations', ltrim( $station, '_' ) );
+				$onairscore = ( new LWTV_Stats() )->showcount( 'onairscore', 'stations', ltrim( $station, '_' ) );
 
 				if ( '_all' === $view ) {
 					echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this station is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>' );
@@ -160,7 +160,7 @@ switch ( $station ) {
 				}
 			}
 
-			LWTV_Stats::generate( $cpts_type, 'stations' . $station . $view, $format );
+			( new LWTV_Stats() )->generate( $cpts_type, 'stations' . $station . $view, $format );
 		}
 		?>
 		</div>
@@ -170,7 +170,7 @@ switch ( $station ) {
 		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php LWTV_Stats::generate( $cpts_type, 'stations' . $station . $view, $format ); ?>
+			<?php ( new LWTV_Stats() )->generate( $cpts_type, 'stations' . $station . $view, $format ); ?>
 		</div>
 		<?php
 	}

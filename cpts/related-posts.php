@@ -27,13 +27,13 @@ class LWTV_Related_Posts {
 	 * @param mixed $slug
 	 * @return void
 	 */
-	public static function related_posts( $slug ) {
+	public function related_posts( $slug ) {
 
 		if ( ! self::are_there_posts( $slug ) ) {
 			return;
 		}
 
-		$related_post_loop  = LWTV_Loops::related_posts_by_tag( 'post', $slug );
+		$related_post_loop  = ( new LWTV_Loops() )->related_posts_by_tag( 'post', $slug );
 		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
 		$the_related_posts  = '<em>Coming soon...</em>';
 
@@ -64,13 +64,13 @@ class LWTV_Related_Posts {
 	 * @param mixed $slug
 	 * @return void
 	 */
-	public static function count_related_posts( $slug ) {
+	public function count_related_posts( $slug ) {
 
 		if ( ! self::are_there_posts( $slug ) ) {
 			return;
 		}
 
-		$related_post_loop  = LWTV_Loops::related_posts_by_tag( 'post', $slug );
+		$related_post_loop  = ( new LWTV_Loops() )->related_posts_by_tag( 'post', $slug );
 		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
 
 		return $related_post_query;
@@ -84,7 +84,7 @@ class LWTV_Related_Posts {
 	 * @param mixed $slug
 	 * @return void
 	 */
-	public static function are_there_posts( $slug ) {
+	public function are_there_posts( $slug ) {
 
 		// If there are no posts with the tag, return false
 		$term = term_exists( $slug, 'post_tag' );
@@ -114,9 +114,9 @@ class LWTV_Related_Posts {
 				'character' => '',
 			);
 			$icons       = array(
-				'show'      => LWTV_Functions::symbolicons( 'tv-hd.svg', 'fa-tv' ),
-				'actor'     => LWTV_Functions::symbolicons( 'team.svg', 'fa-users' ),
-				'character' => LWTV_Functions::symbolicons( 'contact-card.svg', 'fa-users' ),
+				'show'      => ( new LWTV_Functions() )->symbolicons( 'tv-hd.svg', 'fa-tv' ),
+				'actor'     => ( new LWTV_Functions() )->symbolicons( 'team.svg', 'fa-users' ),
+				'character' => ( new LWTV_Functions() )->symbolicons( 'contact-card.svg', 'fa-users' ),
 			);
 			$related_out = '';
 

@@ -16,7 +16,7 @@ class LWTV_This_Year {
 	 * @param  int    $thisyear the year.
 	 * @return n/a    outputs everything
 	 */
-	public static function display( $thisyear ) {
+	public function display( $thisyear ) {
 		$thisyear    = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$valid_views = array( 'characters-on-air', 'dead-characters', 'shows-on-air', 'new-shows', 'canceled-shows' );
 		$view        = get_query_var( 'view', 'overview' );
@@ -39,19 +39,19 @@ class LWTV_This_Year {
 			<?php
 			switch ( $view ) {
 				case 'characters-on-air':
-					LWTV_This_Year_Chars::list( $thisyear );
+					( new LWTV_This_Year_Chars() )->list( $thisyear );
 					break;
 				case 'dead-characters':
-					LWTV_This_Year_Chars::dead( $thisyear );
+					( new LWTV_This_Year_Chars() )->dead( $thisyear );
 					break;
 				case 'shows-on-air':
-					LWTV_This_Year_Shows::list( $thisyear );
+					( new LWTV_This_Year_Shows() )->list( $thisyear );
 					break;
 				case 'new-shows':
-					LWTV_This_Year_Shows::new( $thisyear );
+					( new LWTV_This_Year_Shows() )->new( $thisyear );
 					break;
 				case 'canceled-shows':
-					LWTV_This_Year_Shows::canceled( $thisyear );
+					( new LWTV_This_Year_Shows() )->canceled( $thisyear );
 					break;
 				default:
 					self::overview( $thisyear );
@@ -64,14 +64,14 @@ class LWTV_This_Year {
 		<?php
 	}
 
-	public static function overview( $thisyear ) {
+	public function overview( $thisyear ) {
 		$thisyear = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$array    = array(
-			'shows'      => LWTV_This_Year_Shows::get_list( $thisyear, 'now', true ),
-			'characters' => LWTV_This_Year_Chars::get_list( $thisyear, true ),
-			'dead'       => LWTV_This_Year_Chars::get_dead( $thisyear, true ),
-			'started'    => LWTV_This_Year_Shows::get_list( $thisyear, 'started', true ),
-			'canceled'   => LWTV_This_Year_Shows::get_list( $thisyear, 'ended', true ),
+			'shows'      => ( new LWTV_This_Year_Shows() )->get_list( $thisyear, 'now', true ),
+			'characters' => ( new LWTV_This_Year_Chars() )->get_list( $thisyear, true ),
+			'dead'       => ( new LWTV_This_Year_Chars() )->get_dead( $thisyear, true ),
+			'started'    => ( new LWTV_This_Year_Shows() )->get_list( $thisyear, 'started', true ),
+			'canceled'   => ( new LWTV_This_Year_Shows() )->get_list( $thisyear, 'ended', true ),
 		);
 		?>
 
@@ -130,7 +130,7 @@ class LWTV_This_Year {
 	 * @param  [type]  $thisyear
 	 * @return boolean           [description]
 	 */
-	public static function navigation( $thisyear, $view ) {
+	public function navigation( $thisyear, $view ) {
 		$lastyear = FIRST_LWTV_YEAR;
 		$baseurl  = '/this-year/';
 		$view     = ( 'overview' === $view ) ? '' : $view;
@@ -143,8 +143,8 @@ class LWTV_This_Year {
 				// If it's not 1961, we can show the first year we have queers
 				if ( $thisyear !== $lastyear ) {
 					?>
-					<li class="page-item first mr-auto"><a href="<?php echo esc_url( $baseurl . $lastyear . '/' . $view ); ?>" class="page-link"><?php echo LWTV_Functions::symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ); ?> First (<?php echo (int) $lastyear; ?>)</a></li>
-					<li class="page-item previous"><a href="<?php echo esc_url( $baseurl . ( $thisyear - 1 ) . '/' . $view ); ?>" title="previous year" class="page-link"><?php echo LWTV_Functions::symbolicons( 'caret-left.svg', 'fa-chevron-left' ); ?> Previous</a></li>
+					<li class="page-item first mr-auto"><a href="<?php echo esc_url( $baseurl . $lastyear . '/' . $view ); ?>" class="page-link"><?php echo ( new LWTV_Functions() )->symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ); ?> First (<?php echo (int) $lastyear; ?>)</a></li>
+					<li class="page-item previous"><a href="<?php echo esc_url( $baseurl . ( $thisyear - 1 ) . '/' . $view ); ?>" title="previous year" class="page-link"><?php echo ( new LWTV_Functions() )->symbolicons( 'caret-left.svg', 'fa-chevron-left' ); ?> Previous</a></li>
 					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $thisyear - 2 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $thisyear - 2 ); ?></a></li>
 					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $thisyear - 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $thisyear - 1 ); ?></a></li>
 					<?php
@@ -157,8 +157,8 @@ class LWTV_This_Year {
 				if ( gmdate( 'Y' ) !== $thisyear ) {
 					?>
 					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $thisyear + 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $thisyear + 1 ); ?></a></li>
-					<li class="page-item next"><a href="<?php echo esc_url( $baseurl . ( $thisyear + 1 ) . '/' . $view ); ?>" class="page-link" title="next year">Next <?php echo LWTV_Functions::symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ); ?></a></li>
-					<li class="page-item last ml-auto"><a href="<?php echo esc_url( $baseurl . gmdate( 'Y' ) . '/' . $view ); ?>" class="page-link">Last (<?php echo (int) gmdate( 'Y' ); ?>)<?php echo LWTV_Functions::symbolicons( 'caret-right.svg', 'fa-chevron-right' ); ?></a></li>
+					<li class="page-item next"><a href="<?php echo esc_url( $baseurl . ( $thisyear + 1 ) . '/' . $view ); ?>" class="page-link" title="next year">Next <?php echo ( new LWTV_Functions() )->symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ); ?></a></li>
+					<li class="page-item last ml-auto"><a href="<?php echo esc_url( $baseurl . gmdate( 'Y' ) . '/' . $view ); ?>" class="page-link">Last (<?php echo (int) gmdate( 'Y' ); ?>)<?php echo ( new LWTV_Functions() )->symbolicons( 'caret-right.svg', 'fa-chevron-right' ); ?></a></li>
 					<?php
 				}
 				?>

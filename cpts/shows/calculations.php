@@ -19,7 +19,7 @@ class LWTV_Shows_Calculate {
 	/**
 	 * Calculate show rating.
 	 */
-	public static function show_score( $post_id ) {
+	public function show_score( $post_id ) {
 
 		if ( ! isset( $post_id ) ) {
 			return;
@@ -102,7 +102,7 @@ class LWTV_Shows_Calculate {
 	 *
 	 * @param int $post_id The post ID.
 	 */
-	public static function count_queers( $post_id, $type = 'count' ) {
+	public function count_queers( $post_id, $type = 'count' ) {
 		$type_array = array( 'count', 'none', 'dead', 'queer-irl', 'score' );
 
 		// If this isn't a show post, return nothing
@@ -113,10 +113,10 @@ class LWTV_Shows_Calculate {
 		// Here we need to break down the scores
 		if ( 'score' === $type ) {
 			$char_score      = 0;
-			$all_chars       = LWTV_CPT_Characters::list_characters( $post_id, 'count' );
-			$chars_regular   = LWTV_CPT_Characters::get_chars_for_show( $post_id, $all_chars, 'regular' );
-			$chars_recurring = LWTV_CPT_Characters::get_chars_for_show( $post_id, $all_chars, 'recurring' );
-			$chars_guest     = LWTV_CPT_Characters::get_chars_for_show( $post_id, $all_chars, 'guest' );
+			$all_chars       = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'count' );
+			$chars_regular   = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $all_chars, 'regular' );
+			$chars_recurring = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $all_chars, 'recurring' );
+			$chars_guest     = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $all_chars, 'guest' );
 
 			// Points: Regular = 5; Recurring = 2; Guests = 1
 			$char_score = ( count( $chars_regular ) * 5 ) + ( count( $chars_recurring ) * 2 ) + count( $chars_guest );
@@ -124,11 +124,11 @@ class LWTV_Shows_Calculate {
 			// Bonuses and Demerits
 			// Bonuses:  queer irl = 4pts; no cliches = 2pt; trans played by non-trans = 2pts
 			// Demerits: dead = -3pts; trans played by non-trans = -2pts
-			$queer_irl   = ( max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'queer-irl' ) ) * 10 );
-			$no_cliches  = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'none' ) * 5 );
-			$the_dead    = ( max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'dead' ) ) * -5 );
-			$trans_chars = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'trans' ) );
-			$trans_irl   = max( 0, LWTV_CPT_Characters::list_characters( $post_id, 'trans-irl' ) );
+			$queer_irl   = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'queer-irl' ) ) * 10 );
+			$no_cliches  = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'none' ) * 5 );
+			$the_dead    = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'dead' ) ) * -5 );
+			$trans_chars = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'trans' ) );
+			$trans_irl   = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'trans-irl' ) );
 			$trans_score = 0;
 			if ( $trans_irl < $trans_chars ) {
 				$trans_score = ( ( $trans_chars - $trans_irl ) * -5 );
@@ -161,16 +161,16 @@ class LWTV_Shows_Calculate {
 				$return = $char_score;
 				break;
 			case 'count':
-				$return = LWTV_CPT_Characters::list_characters( $post_id, 'count' );
+				$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'count' );
 				break;
 			case 'dead':
-				$return = LWTV_CPT_Characters::list_characters( $post_id, 'dead' );
+				$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'dead' );
 				break;
 			case 'none':
-				$return = LWTV_CPT_Characters::list_characters( $post_id, 'none' );
+				$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'none' );
 				break;
 			case 'queer-irl':
-				$return = LWTV_CPT_Characters::list_characters( $post_id, 'queer-irl' );
+				$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'queer-irl' );
 				break;
 		}
 
@@ -180,7 +180,7 @@ class LWTV_Shows_Calculate {
 	/**
 	 * Calculate show tropes score.
 	 */
-	public static function show_tropes_score( $post_id ) {
+	public function show_tropes_score( $post_id ) {
 
 		$score        = 0;
 		$tropes       = wp_get_post_terms( $post_id, 'lez_tropes', true );
@@ -263,7 +263,7 @@ class LWTV_Shows_Calculate {
 	/**
 	 * Calculate show character score.
 	 */
-	public static function show_character_score( $post_id ) {
+	public function show_character_score( $post_id ) {
 
 		// Base Score
 		$score = array(
@@ -293,7 +293,7 @@ class LWTV_Shows_Calculate {
 	/**
 	 * Calculate show character data.
 	 */
-	public static function show_character_data( $post_id ) {
+	public function show_character_data( $post_id ) {
 
 		// If this isn't a show post, return nothing
 		if ( get_post_type( $post_id ) !== 'post_type_shows' ) {
@@ -326,7 +326,7 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Loop to get the list of characters
-		$charactersloop = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
+		$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
 
 		// Store as array to defeat some stupid with counting and prevent querying the database too many times
 		if ( $charactersloop->have_posts() ) {
@@ -381,7 +381,7 @@ class LWTV_Shows_Calculate {
 	 * @param mixed $post_id
 	 * @return void
 	 */
-	public static function do_the_math( $post_id ) {
+	public function do_the_math( $post_id ) {
 
 		// If this isn't a show, we bail.
 		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {

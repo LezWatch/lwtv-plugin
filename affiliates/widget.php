@@ -49,7 +49,7 @@ class LWTV_Affilliate_Ads_Widgets extends WP_Widget {
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput
-		echo '<!-- BEGIN Affiliate Ads --><center>' . LWTV_Affilliates::widget( $instance['type'], $instance['format'] ) . '</center><!-- END Affiliate Ads -->';
+		echo '<!-- BEGIN Affiliate Ads --><center>' . ( new LWTV_Affilliates() )->widget( $instance['type'], $instance['format'] ) . '</center><!-- END Affiliate Ads -->';
 
 		echo wp_kses_post( $args['after_widget'] );
 	}
@@ -92,7 +92,7 @@ class LWTV_Affilliate_Ads_Widgets extends WP_Widget {
 			<label for="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>">Type of Ad (Source): </label>
 			<select id="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'type' ) ); ?>" class="widefat">
 				<?php
-				foreach ( LWTV_Affilliates::$valid_types as $type ) {
+				foreach ( ( new LWTV_Affilliates() )->$valid_types as $type ) {
 					echo '<option ' . selected( $instance['type'], $type ) . 'value="' . esc_attr( $type ) . '">' . esc_html( ucfirst( $type ) ) . '</option>';
 				}
 				?>
@@ -103,7 +103,7 @@ class LWTV_Affilliate_Ads_Widgets extends WP_Widget {
 			<label for="<?php echo esc_attr( $this->get_field_id( 'format' ) ); ?>">Format of Ad (Style): </label>
 			<select id="<?php echo esc_attr( $this->get_field_id( 'format' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'format' ) ); ?>" class="widefat">
 				<?php
-				foreach ( LWTV_Affilliates::$valid_formats as $format ) {
+				foreach ( ( new LWTV_Affilliates() )->$valid_formats as $format ) {
 					echo '<option ' . selected( $instance['format'], $format ) . 'value="' . esc_attr( $format ) . '">' . esc_html( ucfirst( $format ) ) . '</option>';
 				}
 				?>

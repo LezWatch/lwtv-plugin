@@ -13,12 +13,12 @@ class LWTV_Affiliate_CJ {
 	 * @param  string  $format  Ad Format (Default Wide)
 	 * @return string           The ad itself
 	 */
-	public static function show_ads( $post_id, $network, $format = 'wide' ) {
+	public function show_ads( $post_id, $network, $format = 'wide' ) {
 		$the_ad = self::output_widget( $post_id, $network, $format );
 		return $the_ad;
 	}
 
-	public static function output_widget( $post_id, $network, $format ) {
+	public function output_widget( $post_id, $network, $format ) {
 
 		$wide_array = array(
 			'amc'   => array(

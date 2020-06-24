@@ -113,7 +113,7 @@ class LWTV_Stats_JSON {
 	 *
 	 * @return array with stats data
 	 */
-	public static function statistics( $stat_type = 'characters', $format = 'simple', $page = 1 ) {
+	public function statistics( $stat_type = 'characters', $format = 'simple', $page = 1 ) {
 
 		// Remove <!--fwp-loop--> from output
 		// phpcs:ignore
@@ -172,7 +172,7 @@ class LWTV_Stats_JSON {
 	 * @param string $format (default: 'simple')
 	 * @return array
 	 */
-	public static function get_actors( $format = 'simple', $page = 1 ) {
+	public function get_actors( $format = 'simple', $page = 1 ) {
 
 		// Remove <!--fwp-loop--> from output
 		// phpcs:ignore
@@ -193,16 +193,16 @@ class LWTV_Stats_JSON {
 				$stats_array = self::format_id( 'actor', $page );
 				break;
 			case 'queer-irl':
-				$stats_array = LWTV_Stats::generate( 'actors', 'queer-irl', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'actors', 'queer-irl', 'array' );
 				break;
 			case 'gender':
-				$stats_array = LWTV_Stats::generate( 'actors', 'actor_gender', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'actors', 'actor_gender', 'array' );
 				break;
 			case 'sexuality':
-				$stats_array = LWTV_Stats::generate( 'actors', 'actor_sexuality', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'actors', 'actor_sexuality', 'array' );
 				break;
 			case 'complex':
-				$queery = LWTV_Loops::post_type_query( 'post_type_actors', $page );
+				$queery = ( new LWTV_Loops() )->post_type_query( 'post_type_actors', $page );
 
 				if ( $queery->have_posts() ) {
 					while ( $queery->have_posts() ) {
@@ -214,7 +214,7 @@ class LWTV_Stats_JSON {
 							'dead_chars' => get_post_meta( $post->ID, 'lezactors_dead_count', true ),
 							'gender'     => implode( ', ', wp_get_post_terms( $post->ID, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
 							'sexuality'  => implode( ', ', wp_get_post_terms( $post->ID, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-							'queer'      => LWTV_Loops::is_actor_queer( $post->ID ),
+							'queer'      => ( new LWTV_Loops() )->is_actor_queer( $post->ID ),
 							'url'        => get_the_permalink( $post->ID ),
 						);
 					}
@@ -241,7 +241,7 @@ class LWTV_Stats_JSON {
 	 * @param string $format (default: 'simple')
 	 * @return array
 	 */
-	public static function get_characters( $format = 'simple', $page = 1 ) {
+	public function get_characters( $format = 'simple', $page = 1 ) {
 
 		// Remove <!--fwp-loop--> from output
 		// phpcs:ignore
@@ -262,20 +262,20 @@ class LWTV_Stats_JSON {
 				$stats_array = self::format_id( 'character', $page );
 				break;
 			case 'cliches':
-				$stats_array = LWTV_Stats::generate( 'characters', 'cliches', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'characters', 'cliches', 'array' );
 				break;
 			case 'sexuality':
-				$stats_array = LWTV_Stats::generate( 'characters', 'sexuality', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'characters', 'sexuality', 'array' );
 				break;
 			case 'gender':
-				$stats_array = LWTV_Stats::generate( 'characters', 'gender', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'characters', 'gender', 'array' );
 				break;
 			case 'romantic':
-				$stats_array = LWTV_Stats::generate( 'characters', 'romantic', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'characters', 'romantic', 'array' );
 				break;
 			case 'complex':
 				$stats_array    = array();
-				$charactersloop = LWTV_Loops::post_type_query( 'post_type_characters', $page );
+				$charactersloop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters', $page );
 				if ( $charactersloop->have_posts() ) {
 					while ( $charactersloop->have_posts() ) {
 						$charactersloop->the_post();
@@ -343,7 +343,7 @@ class LWTV_Stats_JSON {
 	 * @param string $format (default: 'simple')
 	 * @return void
 	 */
-	public static function get_death( $format = 'simple' ) {
+	public function get_death( $format = 'simple' ) {
 		// Remove <!--fwp-loop--> from output
 		// phpcs:ignore
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
@@ -356,15 +356,15 @@ class LWTV_Stats_JSON {
 		switch ( $format ) {
 			case 'complex':
 				$stats_array = array(
-					'shows'     => LWTV_Stats::generate( 'characters', 'dead-shows', 'array' ),
-					'sexuality' => LWTV_Stats::generate( 'characters', 'dead-sex', 'array' ),
-					'gender'    => LWTV_Stats::generate( 'characters', 'dead-gender', 'array' ),
+					'shows'     => ( new LWTV_Stats() )->generate( 'characters', 'dead-shows', 'array' ),
+					'sexuality' => ( new LWTV_Stats() )->generate( 'characters', 'dead-sex', 'array' ),
+					'gender'    => ( new LWTV_Stats() )->generate( 'characters', 'dead-gender', 'array' ),
 					// Currently broken.
-					//'roles'     => LWTV_Stats::generate( 'characters', 'dead-roles', 'array' ),
+					//'roles'     => ( new LWTV_Stats() )->generate( 'characters', 'dead-roles', 'array' ),
 				);
 				break;
 			case 'years':
-				$stats_array = LWTV_Stats::generate( 'characters', 'dead-years', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'characters', 'dead-years', 'array' );
 				break;
 			case 'simple':
 				$dead_chars  = get_term_by( 'slug', 'dead', 'lez_cliches' );
@@ -393,7 +393,7 @@ class LWTV_Stats_JSON {
 	 * @param string $format (default: 'simple')
 	 * @return array
 	 */
-	public static function get_shows( $format = 'simple', $page = 1 ) {
+	public function get_shows( $format = 'simple', $page = 1 ) {
 
 		global $wpdb;
 
@@ -416,34 +416,34 @@ class LWTV_Stats_JSON {
 				$stats_array = self::format_id( 'show', $page );
 				break;
 			case 'tropes':
-				$stats_array = LWTV_Stats::generate( 'shows', 'tropes', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'shows', 'tropes', 'array' );
 				break;
 			case 'nations':
-				$stats_array = LWTV_Stats::generate( 'shows', 'country', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'shows', 'country', 'array' );
 				break;
 			case 'genres':
-				$stats_array = LWTV_Stats::generate( 'shows', 'genres', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'shows', 'genres', 'array' );
 				break;
 			case 'triggers':
-				$stats_array = LWTV_Stats::generate( 'shows', 'triggers', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'shows', 'triggers', 'array' );
 				break;
 			case 'formats':
-				$stats_array = LWTV_Stats::generate( 'shows', 'formats', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'shows', 'formats', 'array' );
 				break;
 			case 'stars':
-				$stats_array = LWTV_Stats::generate( 'shows', 'stars', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'shows', 'stars', 'array' );
 				break;
 			case 'loved':
-				$stats_array = LWTV_Stats::generate( 'shows', 'weloveit', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'shows', 'weloveit', 'array' );
 				break;
 			case 'worth-it':
-				$stats_array = LWTV_Stats::generate( 'shows', 'thumbs', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'shows', 'thumbs', 'array' );
 				break;
 			case 'intersections':
-				$stats_array = LWTV_Stats::generate( 'shows', 'intersections', 'array' );
+				$stats_array = ( new LWTV_Stats() )->generate( 'shows', 'intersections', 'array' );
 				break;
 			case 'complex':
-				$showsloop = LWTV_Loops::post_type_query( 'post_type_shows', $page );
+				$showsloop = ( new LWTV_Loops() )->post_type_query( 'post_type_shows', $page );
 				if ( $showsloop->have_posts() ) {
 					while ( $showsloop->have_posts() ) {
 						$showsloop->the_post();
@@ -507,7 +507,7 @@ class LWTV_Stats_JSON {
 					'dead_chars' => get_post_meta( $id, 'lezactors_dead_count', true ),
 					'gender'     => implode( ', ', wp_get_post_terms( $id, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
 					'sexuality'  => implode( ', ', wp_get_post_terms( $id, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-					'queer'      => LWTV_Loops::is_actor_queer( $id ),
+					'queer'      => ( new LWTV_Loops() )->is_actor_queer( $id ),
 					'url'        => get_the_permalink( $id ),
 				);
 				break;
@@ -555,7 +555,7 @@ class LWTV_Stats_JSON {
 	 * @static
 	 * @return array
 	 */
-	public static function get_show_taxonomy( $type, $format = 'simple', $page = 1 ) {
+	public function get_show_taxonomy( $type, $format = 'simple', $page = 1 ) {
 
 		$valid_types   = array( 'stations', 'country' );
 		$valid_formats = array( 'simple', 'complex' );
@@ -616,7 +616,7 @@ class LWTV_Stats_JSON {
 			$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 
 			// Get the posts for this singular term (i.e. a specific station)
-			$queery = LWTV_Loops::tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
+			$queery = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
 
 			// If we have anyone assigned to this station/nation, let's process
 			if ( $queery->have_posts() ) {
@@ -650,9 +650,9 @@ class LWTV_Stats_JSON {
 
 					// Only run this if we're complex...
 					if ( 'complex' === $format ) {
-						$return[ $slug ]['onair']           = LWTV_Stats::showcount( 'onair', $type, $slug );
-						$return[ $slug ]['avg_score']       = LWTV_Stats::showcount( 'score', $type, $slug );
-						$return[ $slug ]['avg_onair_score'] = LWTV_Stats::showcount( 'onairscore', $type, $slug );
+						$return[ $slug ]['onair']           = ( new LWTV_Stats() )->showcount( 'onair', $type, $slug );
+						$return[ $slug ]['avg_score']       = ( new LWTV_Stats() )->showcount( 'score', $type, $slug );
+						$return[ $slug ]['avg_onair_score'] = ( new LWTV_Stats() )->showcount( 'onairscore', $type, $slug );
 					}
 
 					// Character counts

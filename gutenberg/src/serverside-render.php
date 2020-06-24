@@ -58,15 +58,15 @@ class LWTV_ServerSideRendering {
 		$date_query = ( isset( $_GET['tvdate'] ) && ( $_GET['tvdate'] !== $today->format( 'Y-m-d' ) ) ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today';
 
 		// Get the dates
-		$start_datetime = LWTV_SSR_Calendar::start_datetime( $date_query, $tz );
-		$end_datetime   = LWTV_SSR_Calendar::end_datetime( $date_query, $tz );
-		$prev_datetime  = LWTV_SSR_Calendar::prev_datetime( $date_query, $tz );
+		$start_datetime = ( new LWTV_SSR_Calendar() )->start_datetime( $date_query, $tz );
+		$end_datetime   = ( new LWTV_SSR_Calendar() )->end_datetime( $date_query, $tz );
+		$prev_datetime  = ( new LWTV_SSR_Calendar() )->prev_datetime( $date_query, $tz );
 
 		// Begin the return
 		$return = '<h2 class="lwtv-calendar-week">Week of ' . $start_datetime->format( 'F d, Y' ) . ' - ' . $end_datetime->format( 'F d, Y' ) . ' </h2>';
 
 		// Array
-		$calendar = LWTV_Whats_On_JSON::generate_tvshow_calendar( $start_datetime->format( 'Y-m-d' ) );
+		$calendar = ( new LWTV_Whats_On_JSON() )->generate_tvshow_calendar( $start_datetime->format( 'Y-m-d' ) );
 
 		if ( isset( $calendar['none'] ) || empty( $calendar ) ) {
 			$return .= '<p>There are no shows on the air for this week.</p>';
@@ -87,7 +87,7 @@ class LWTV_ServerSideRendering {
 
 				foreach ( $shows as $show ) {
 					// Episode Title(s)
-					$show_name = LWTV_SSR_Calendar::show_name( $show['show_name'] );
+					$show_name = ( new LWTV_SSR_Calendar() )->show_name( $show['show_name'] );
 
 					// Build output
 					$show_content = '<div class="ep-calendar-title">';
@@ -119,7 +119,7 @@ class LWTV_ServerSideRendering {
 		// Change today so we can check if the 'this week' button is needed
 		$today->modify( 'last Sunday' );
 
-		$navigation = LWTV_SSR_Calendar::navigation( $date_query, $today->format( 'Y-m-d' ), $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ) );
+		$navigation = ( new LWTV_SSR_Calendar() )->navigation( $date_query, $today->format( 'Y-m-d' ), $prev_datetime->format( 'Y-m-d' ), $end_datetime->format( 'Y-m-d' ) );
 		$return    .= $navigation;
 
 		return $return;

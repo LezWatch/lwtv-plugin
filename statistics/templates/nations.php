@@ -28,15 +28,15 @@ $format        = ( ! in_array( $sent_format, $valid_formats, true ) ) ? 'bar' : 
 // Count
 $nations     = get_terms( 'lez_country', array( 'hide_empty' => 0 ) );
 $count       = wp_count_terms( 'lez_country' );
-$shows_count = LWTV_Stats::generate( 'shows', 'total', 'count' );
+$shows_count = ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' );
 
 switch ( $country ) {
 	case 'all':
 		$title_country = 'All Countries (' . $count . ')';
 		break;
 	default:
-		$characters     = LWTV_Stats::generate( 'characters', 'country_' . $country . '_all', 'count' );
-		$shows          = LWTV_Stats::generate( 'shows', 'country_' . $country . '_all', 'count' );
+		$characters     = ( new LWTV_Stats() )->generate( 'characters', 'country_' . $country . '_all', 'count' );
+		$shows          = ( new LWTV_Stats() )->generate( 'shows', 'country_' . $country . '_all', 'count' );
 		$country_object = get_term_by( 'slug', $country, 'lez_country', 'ARRAY_A' );
 		$title_country  = '<a href="' . home_url( '/country/' . $country ) . '">' . $country_object['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 }
@@ -136,7 +136,7 @@ switch ( $country ) {
 							<th scope="row"><a href="?country=' . esc_attr( $nation->slug ) . '">' . esc_html( $nation->name ) . '</a></th>
 							<td>' . (int) $nation->count . '</td>
 							<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
-							<td>' . (int) LWTV_Stats::showcount( 'score', 'country', $nation->slug ) . '</td>
+							<td>' . (int) ( new LWTV_Stats() )->showcount( 'score', 'country', $nation->slug ) . '</td>
 						</tr>';
 					}
 					?>
@@ -146,31 +146,31 @@ switch ( $country ) {
 			} else {
 				$this_one_view = substr( $view, 1 );
 				if ( 'shows' !== $valid_views[ $this_one_view ] ) {
-					LWTV_Stats::generate( $cpts_type, 'country' . $country . $view, 'stackedbar' );
+					( new LWTV_Stats() )->generate( $cpts_type, 'country' . $country . $view, 'stackedbar' );
 				} else {
 					?>
 					<div class="row">
 						<div class="col-sm-6">
-							<?php LWTV_Stats::generate( 'shows', $this_one_view, 'piechart' ); ?>
+							<?php ( new LWTV_Stats() )->generate( 'shows', $this_one_view, 'piechart' ); ?>
 						</div>
 						<div class="col-sm-6">
-							<?php LWTV_Stats::generate( 'shows', $this_one_view, 'percentage' ); ?>
+							<?php ( new LWTV_Stats() )->generate( 'shows', $this_one_view, 'percentage' ); ?>
 						</div>
 					</div>
 					<?php
 				}
 			}
 		} else {
-			$onair      = LWTV_Stats::showcount( 'onair', 'country', ltrim( $country, '_' ) );
-			$allshows   = LWTV_Stats::showcount( 'total', 'country', ltrim( $country, '_' ) );
-			$showscore  = LWTV_Stats::showcount( 'score', 'country', ltrim( $country, '_' ) );
-			$onairscore = LWTV_Stats::showcount( 'onairscore', 'country', ltrim( $country, '_' ) );
+			$onair      = ( new LWTV_Stats() )->showcount( 'onair', 'country', ltrim( $country, '_' ) );
+			$allshows   = ( new LWTV_Stats() )->showcount( 'total', 'country', ltrim( $country, '_' ) );
+			$showscore  = ( new LWTV_Stats() )->showcount( 'score', 'country', ltrim( $country, '_' ) );
+			$onairscore = ( new LWTV_Stats() )->showcount( 'onairscore', 'country', ltrim( $country, '_' ) );
 
 			if ( '_all' === $view ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this country is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>' );
 			}
 
-			LWTV_Stats::generate( $cpts_type, 'country' . $country . $view, $format );
+			( new LWTV_Stats() )->generate( $cpts_type, 'country' . $country . $view, $format );
 		}
 		?>
 		</div>
@@ -180,7 +180,7 @@ switch ( $country ) {
 		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php LWTV_Stats::generate( $cpts_type, 'country' . $country . $view, $format ); ?>
+			<?php ( new LWTV_Stats() )->generate( $cpts_type, 'country' . $country . $view, $format ); ?>
 		</div>
 		<?php
 	}

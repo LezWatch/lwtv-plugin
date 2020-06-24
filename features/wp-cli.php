@@ -74,14 +74,14 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 		switch ( $post_calc ) {
 			case 'show':
 				// Rerun show calculations
-				LWTV_Shows_Calculate::do_the_math( $post_id );
+				( new LWTV_Shows_Calculate() )->do_the_math( $post_id );
 				$chars = get_post_meta( $post_id, 'lezshows_char_count', true );
 				$dead  = get_post_meta( $post_id, 'lezshows_dead_count', true );
 				$score = 'Score (' . get_post_meta( $post_id, 'lezshows_the_score', true ) . ') Chars (' . $chars . ') Dead (' . $dead . ')';
 				break;
 			case 'actor':
 				// Recount characters and flag queerness
-				LWTV_Actors_Calculate::do_the_math( $post_id );
+				( new LWTV_Actors_Calculate() )->do_the_math( $post_id );
 				$queer = ( get_post_meta( $post_id, 'lezactors_queer', true ) ) ? 'Yes' : 'No';
 				$chars = get_post_meta( $post_id, 'lezactors_char_count', true );
 				$deads = get_post_meta( $post_id, 'lezactors_dead_count', true );
@@ -131,7 +131,7 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 		// i.e. run the calculations
 		switch ( $post_type ) {
 			case 'actor':
-				$items = LWTV_Debug::check_actors_wikidata( $post_id );
+				$items = ( new LWTV_Debug() )->check_actors_wikidata( $post_id );
 				break;
 		}
 
@@ -178,15 +178,15 @@ class WP_CLI_LWTV_Commands extends WP_CLI_Command {
 		switch ( $find ) {
 			case 'queerchars':
 				WP_CLI::log( 'Searching all characters for associated actor queerness ...' );
-				$items = LWTV_Debug::find_queerchars();
+				$items = ( new LWTV_Debug() )->find_queerchars();
 				break;
 			case 'nochars':
 				if ( $try_to_fix ) {
 					WP_CLI::log( 'Attempting to fix actors without characters ....' );
-					$items = LWTV_Debug::fix_actors_no_chars();
+					$items = ( new LWTV_Debug() )->fix_actors_no_chars();
 				} else {
 					WP_CLI::log( 'Searching all actors to ensure they have a character ....' );
-					$items = LWTV_Debug::find_actors_no_chars();
+					$items = ( new LWTV_Debug() )->find_actors_no_chars();
 				}
 		}
 

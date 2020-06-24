@@ -58,7 +58,7 @@ class LWTV_Alexa_Skills {
 	 */
 	public function flash_briefing_rest_api_callback( $data ) {
 		require_once 'alexa/flash-brief.php';
-		$response = LWTV_Alexa_Flash_Brief::flash_briefing();
+		$response = ( new LWTV_Alexa_Flash_Brief() )->flash_briefing();
 		return $response;
 	}
 
@@ -83,7 +83,7 @@ class LWTV_Alexa_Skills {
 
 		// Call the validation:
 		require_once 'alexa/_validate.php';
-		$validate = LWTV_Alexa_Validate::the_request( $request );
+		$validate = ( new LWTV_Alexa_Validate() )->the_request( $request );
 		if ( 1 !== $validate['success'] ) {
 			$response = array(
 				'message' => $validate['message'],
@@ -123,13 +123,13 @@ class LWTV_Alexa_Skills {
 				case 'HowMany':
 					require_once 'alexa/byq.php';
 					if ( false === $value['date'] ) {
-						$output = LWTV_Alexa_BYQ::how_many( 'simple' );
+						$output = ( new LWTV_Alexa_BYQ() )->how_many( 'simple' );
 					} else {
-						$output = LWTV_Alexa_BYQ::how_many( $value['date'] );
+						$output = ( new LWTV_Alexa_BYQ() )->how_many( $value['date'] );
 					}
 					break;
 				case 'CharOTD':
-					$data   = LWTV_OTD_JSON::character_show( $value['date'], 'character' );
+					$data   = ( new LWTV_OTD_JSON() )->character_show( $value['date'], 'character' );
 					$name   = $data['name'];
 					$show   = $data['shows'];
 					$output = 'The LezWatch T. V. character of the day is ' . $name . ' from ' . $show . '.';
@@ -141,25 +141,25 @@ class LWTV_Alexa_Skills {
 					break;
 				case 'WhatsNew':
 					require_once 'alexa/newest.php';
-					$output = LWTV_Alexa_Newest::whats_new();
+					$output = ( new LWTV_Alexa_Newest() )->whats_new();
 					break;
 				case 'WhoDied':
 					if ( ! $value['date'] ) {
 						require_once 'alexa/newest.php';
-						$output = 'The last character on LezWatch T. V. to die was ' . LWTV_Alexa_Newest::latest( 'death' ) . '.';
+						$output = 'The last character on LezWatch T. V. to die was ' . ( new LWTV_Alexa_Newest() )->latest( 'death' ) . '.';
 					} else {
 						require_once 'alexa/byq.php';
-						$output = LWTV_Alexa_BYQ::on_a_day( $value['date'] );
+						$output = ( new LWTV_Alexa_BYQ() )->on_a_day( $value['date'] );
 					}
 					break;
 				case 'WhatHappened':
 					require_once 'alexa/this-year.php';
-					$output = LWTV_Alexa_This_Year::what_happened( $value['date'] );
+					$output = ( new LWTV_Alexa_This_Year() )->what_happened( $value['date'] );
 					break;
 				case 'WhoAreYouActor':
 					if ( isset( $value['actor'] ) ) {
 						require_once 'alexa/who-are-you.php';
-						$output = LWTV_Alexa_Who::actor( $value['actor'] );
+						$output = ( new LWTV_Alexa_Who() )->actor( $value['actor'] );
 					} else {
 						$output     = 'I\'m sorry, I didn\'t quite catch what actor you\'re asking about. Can you please ask me again? I\'ll listen harder.';
 						$endsession = false;
@@ -168,7 +168,7 @@ class LWTV_Alexa_Skills {
 				case 'WhoAreYouChar':
 					if ( isset( $value['character'] ) ) {
 						require_once 'alexa/who-are-you.php';
-						$output = LWTV_Alexa_Who::character( $value['character'] );
+						$output = ( new LWTV_Alexa_Who() )->character( $value['character'] );
 					} else {
 						$output     = 'I\'m sorry, I didn\'t quite catch what character you\'re asking about. Can you please ask me again? I\'ll listen harder.';
 						$endsession = false;
@@ -177,7 +177,7 @@ class LWTV_Alexa_Skills {
 				case 'WhoAreYouShow':
 					if ( isset( $value['show'] ) ) {
 						require_once 'alexa/who-are-you.php';
-						$output = LWTV_Alexa_Who::show( $value['show'] );
+						$output = ( new LWTV_Alexa_Who() )->show( $value['show'] );
 					} else {
 						$output     = 'I\'m sorry, I didn\'t quite catch what television show you\'re asking about. Can you please ask me again? I\'ll listen harder. ';
 						$endsession = false;
@@ -189,7 +189,7 @@ class LWTV_Alexa_Skills {
 						$endsession = false;
 					} else {
 						require_once 'alexa/who-are-you.php';
-						$output = LWTV_Alexa_Who::is_gay( $value['actor'] );
+						$output = ( new LWTV_Alexa_Who() )->is_gay( $value['actor'] );
 					}
 					break;
 				case 'SimilarShow':
@@ -198,13 +198,13 @@ class LWTV_Alexa_Skills {
 						$endsession = false;
 					} else {
 						require_once 'alexa/shows.php';
-						$output = LWTV_Alexa_Shows::similar_to( $value['show'] );
+						$output = ( new LWTV_Alexa_Shows() )->similar_to( $value['show'] );
 					}
 					break;
 				case 'WhatsOn':
 					$the_date = ( ! $value['date'] ) ? 'today' : $value['date'];
 					require_once 'alexa/whats-on.php';
-					$output = LWTV_Alexa_Whats_On::on_a_day( $the_date );
+					$output = ( new LWTV_Alexa_Whats_On() )->on_a_day( $the_date );
 					break;
 				case 'WhatsOnShows':
 					if ( ! $value['show'] ) {
@@ -212,12 +212,12 @@ class LWTV_Alexa_Skills {
 						$endsession = false;
 					} else {
 						require_once 'alexa/whats-on.php';
-						$output = LWTV_Alexa_Whats_On::show( $value['show'] );
+						$output = ( new LWTV_Alexa_Whats_On() )->show( $value['show'] );
 					}
 					break;
 				case 'RecommendShows':
 					require_once 'alexa/shows.php';
-					$output = LWTV_Alexa_Shows::recommended();
+					$output = ( new LWTV_Alexa_Shows() )->recommended();
 					break;
 				case 'AMAZON.HelpIntent':
 					$output     = 'This is the News skill by LezWatch T. V. News, home of the world\'s greatest database of queer female, non-binary and transgender characters on international television. ' . $helptext;

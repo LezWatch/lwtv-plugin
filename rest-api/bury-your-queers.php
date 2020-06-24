@@ -119,7 +119,7 @@ class LWTV_BYQ_JSON {
 	 * This is a separate function becuase otherwise I use the same call twice
 	 * and that's stupid
 	 */
-	public static function list_of_dead_characters( $dead_chars_loop ) {
+	public function list_of_dead_characters( $dead_chars_loop ) {
 
 		$death_list_array = array();
 
@@ -196,9 +196,9 @@ class LWTV_BYQ_JSON {
 	 *
 	 * @return array with last dead character data
 	 */
-	public static function last_death() {
+	public function last_death() {
 		// Get all our dead queers
-		$dead_chars_loop  = LWTV_Loops::tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+		$dead_chars_loop  = ( new LWTV_Loops() )->tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		// Extract the last death
@@ -219,7 +219,7 @@ class LWTV_BYQ_JSON {
 	 *
 	 * @return array with character data
 	 */
-	public static function on_this_day( $this_day = 'today', $type = 'json' ) {
+	public function on_this_day( $this_day = 'today', $type = 'json' ) {
 
 		// Default to today
 		if ( 'today' === $this_day ) {
@@ -235,7 +235,7 @@ class LWTV_BYQ_JSON {
 		$type        = ( ! in_array( $type, $valid_types, true ) ) ? 'json' : $type;
 
 		// Get all our dead queers
-		$dead_chars_loop  = LWTV_Loops::post_meta_query( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
+		$dead_chars_loop  = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		$died_today_array = array();
@@ -295,7 +295,7 @@ class LWTV_BYQ_JSON {
 	 * @param mixed &$wp_query
 	 * @return void
 	 */
-	public static function search_by_title_only( $search, &$wp_query ) {
+	public function search_by_title_only( $search, &$wp_query ) {
 		global $wpdb;
 		if ( empty( $search ) ) {
 			return $search; // skip processing - no search term in query
@@ -326,7 +326,7 @@ class LWTV_BYQ_JSON {
 	 *
 	 * @return array with character data
 	 */
-	public static function when_died( $name = 'no-name' ) {
+	public function when_died( $name = 'no-name' ) {
 
 		// phpcs:disable
 		// Remove <!--fwp-loop--> from output

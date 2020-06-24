@@ -261,11 +261,11 @@ class LWTV_CPT_Shows {
 		remove_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
 
 		// Save show scores
-		LWTV_Shows_Calculate::do_the_math( $post_id );
+		( new LWTV_Shows_Calculate() )->do_the_math( $post_id );
 
 		// Sync up data
 		foreach ( self::$select2_taxonomies as $postmeta => $taxonomy ) {
-			LWTV_CMB2_Addons::select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
+			( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 		}
 
 		// re-hook this function

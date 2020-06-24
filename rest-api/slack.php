@@ -48,7 +48,7 @@ class LWTV_Slack_Integration {
 	 * This is used as a slash command of /last-death
 	 */
 	public function death_rest_api_callback( $data ) {
-		$death = LWTV_BYQ_JSON::last_death();
+		$death = ( new LWTV_BYQ_JSON() )->last_death();
 		$since = human_time_diff( $death['died'], current_time( 'timestamp' ) );
 
 		// Get the shows
@@ -77,7 +77,7 @@ class LWTV_Slack_Integration {
 	public function check_death_status() {
 		$return  = false;
 		$current = (int) get_option( 'lwtv_last_death' );
-		$death   = LWTV_BYQ_JSON::last_death();
+		$death   = ( new LWTV_BYQ_JSON() )->last_death();
 
 		// If there's no last death or the number doesn't match, update
 		// the last death and report TRUE
@@ -99,7 +99,7 @@ class LWTV_Slack_Integration {
 		}
 
 		// Get the data
-		$death = LWTV_BYQ_JSON::last_death();
+		$death = ( new LWTV_BYQ_JSON() )->last_death();
 
 		// Calculate Death
 		$tz        = 'America/New_York';

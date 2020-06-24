@@ -7,7 +7,7 @@
 
 class LWTV_This_Year_Shows {
 
-	public static function toc() {
+	public function toc() {
 		?>
 		<section id="toc" class="toc-container card-body">
 			<nav class="breadcrumb">
@@ -27,7 +27,7 @@ class LWTV_This_Year_Shows {
 	 * @param mixed $thisyear
 	 * @return void
 	 */
-	public static function list( $thisyear ) {
+	public function list( $thisyear ) {
 		$fail_msg      = '<p>No shows were on air this year.</p>';
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'now' );
@@ -148,7 +148,7 @@ class LWTV_This_Year_Shows {
 	 * @param mixed $thisyear
 	 * @return void
 	 */
-	public static function new( $thisyear ) {
+	public function new( $thisyear ) {
 		$fail_msg      = '<p>No shows were new this year.</p>';
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'started' );
@@ -268,7 +268,7 @@ class LWTV_This_Year_Shows {
 	 * @param mixed $thisyear
 	 * @return void
 	 */
-	public static function canceled( $thisyear ) {
+	public function canceled( $thisyear ) {
 		$fail_msg      = '<p>No shows were canceled this year.</p>';
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'ended' );
@@ -383,7 +383,7 @@ class LWTV_This_Year_Shows {
 	 * get all the shows that were active for a year
 	 * @return array massive array of everything.
 	 */
-	public static function get_list( $thisyear, $type = 'now', $count = false ) {
+	public function get_list( $thisyear, $type = 'now', $count = false ) {
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$valid_types   = array( 'now', 'started', 'ended' );
 		$type          = ( ! in_array( $type, $valid_types, true ) ) ? 'now' : $type;
@@ -391,7 +391,7 @@ class LWTV_This_Year_Shows {
 		$shows_formats = array();
 		$shows_country = array();
 		$counted_shows = 0;
-		$shows_queery  = LWTV_Loops::post_type_query( 'post_type_shows' );
+		$shows_queery  = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
 
 		if ( $shows_queery->have_posts() ) {
 			while ( $shows_queery->have_posts() ) {

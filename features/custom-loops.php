@@ -33,7 +33,7 @@ class LWTV_Loops {
 	 * @param mixed $the_id
 	 * @return void
 	 */
-	public static function is_actor_queer( $the_id ) {
+	public function is_actor_queer( $the_id ) {
 
 		if ( ! isset( $the_id ) || 'post_type_actors' !== get_post_type( $the_id ) ) {
 			return;
@@ -79,7 +79,7 @@ class LWTV_Loops {
 	 * @param mixed $the_id
 	 * @return void
 	 */
-	public static function is_actor_trans( $the_id ) {
+	public function is_actor_trans( $the_id ) {
 
 		if ( ! isset( $the_id ) || 'post_type_actors' !== get_post_type( $the_id ) ) {
 			return;
@@ -119,7 +119,7 @@ class LWTV_Loops {
 	 *
 	 * @return array The WP_Query Array
 	 */
-	public static function tax_query( $post_type, $taxonomy, $field, $term, $operator = 'IN' ) {
+	public function tax_query( $post_type, $taxonomy, $field, $term, $operator = 'IN' ) {
 		$count  = wp_count_posts( $post_type )->publish;
 		$queery = new WP_Query(
 			array(
@@ -158,7 +158,7 @@ class LWTV_Loops {
 	 *
 	 * @return array The WP_Query Array
 	 */
-	public static function tax_two_query( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1 = 'IN', $operator2 = 'IN', $relation = 'AND' ) {
+	public function tax_two_query( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1 = 'IN', $operator2 = 'IN', $relation = 'AND' ) {
 		$count = wp_count_posts( $post_type )->publish;
 		$query = new WP_Query(
 			array(
@@ -200,7 +200,7 @@ class LWTV_Loops {
 	 *
 	 * @return array The WP_Query Array
 	 */
-	public static function post_meta_query( $post_type, $key, $value, $compare = '=' ) {
+	public function post_meta_query( $post_type, $key, $value, $compare = '=' ) {
 		$count = wp_count_posts( $post_type )->publish;
 		if ( '' !== $value ) {
 			$query = new WP_Query(
@@ -257,7 +257,7 @@ class LWTV_Loops {
 	 *
 	 * @return array The WP_Query Array
 	 */
-	public static function wp_meta_query( $key, $value, $compare = '=', $relation = 'AND' ) {
+	public function wp_meta_query( $key, $value, $compare = '=', $relation = 'AND' ) {
 
 		global $wpdb;
 
@@ -291,7 +291,7 @@ class LWTV_Loops {
 	 * @return array The WP_Query Array
 	 */
 
-	public static function post_type_query( $post_type, $page = 0 ) {
+	public function post_type_query( $post_type, $page = 0 ) {
 		if ( 0 === $page ) {
 			$count  = wp_count_posts( $post_type )->publish;
 			$offset = 0;
@@ -333,7 +333,7 @@ class LWTV_Loops {
 	 * @return array The WP_Query Array
 	 */
 
-	public static function post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, $field, $terms, $compare = '=', $operator = 'IN' ) {
+	public function post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, $field, $terms, $compare = '=', $operator = 'IN' ) {
 		$count = wp_count_posts( $post_type )->publish;
 		$query = new WP_Query(
 			array(
@@ -372,7 +372,7 @@ class LWTV_Loops {
 	 * @param string $slug i.e. the slug of the post we're trying to relate to
 	 * @return void
 	 */
-	public static function related_posts_by_tag( $post_type, $slug ) {
+	public function related_posts_by_tag( $post_type, $slug ) {
 		$term = term_exists( $slug, 'post_tag' );
 		if ( 0 === $term || null === $term ) {
 			return;

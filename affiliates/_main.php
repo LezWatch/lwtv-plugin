@@ -57,7 +57,7 @@ class LWTV_Affilliates {
 	 * Usage: [affiliates]
 	 * @since 1.0
 	*/
-	public static function shortcode_affiliates( $atts ) {
+	public function shortcode_affiliates( $atts ) {
 		if ( is_archive() ) {
 			$affiliates = $this->widget( 'random', 'thin' );
 		} else {
@@ -75,26 +75,26 @@ class LWTV_Affilliates {
 	 * @access public
 	 * @return array
 	 */
-	public static function widget( $type, $format ) {
+	public function widget( $type, $format ) {
 
 		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 		$id     = get_the_ID();
 
 		switch ( $type ) {
 			case 'amazon':
-				$advert = '<!-- Amazon -->' . self::amazon( $id, $format );
+				$advert = '<!-- Amazon -->' . $this->amazon( $id, $format );
 				break;
 			case 'apple':
-				$advert = '<!-- Apple -->' . self::apple( $id, $format );
+				$advert = '<!-- Apple -->' . $this->apple( $id, $format );
 				break;
 			case 'cbs':
-				$advert = '<!-- CBS -->' . self::network( $id, $format, 'cbs' );
+				$advert = '<!-- CBS -->' . $this->network( $id, $format, 'cbs' );
 				break;
 			case 'local':
-				$advert = '<!-- Local -->' . self::local( $id, $format );
+				$advert = '<!-- Local -->' . $this->local( $id, $format );
 				break;
 			default:
-				$advert = '<!-- Random -->' . self::random( $id, $format );
+				$advert = '<!-- Random -->' . $this->random( $id, $format );
 		}
 
 		return '<div class="affiliate-ads">' . $advert . '</div>';
@@ -104,24 +104,24 @@ class LWTV_Affilliates {
 	 * Call something random...
 	 * This is a basic check of a random number
 	 */
-	public static function random( $id, $format ) {
+	public function random( $id, $format ) {
 		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 		$number = wp_rand();
 
 		switch ( $format ) {
 			case 'banner':
 			case 'thin':
-				$advert = self::network( $id, $format, 'cbs' );
+				$advert = $this->network( $id, $format, 'cbs' );
 				break;
 			case 'wide':
 				if ( 0 === $number % 2 ) {
-					$advert = '<!-- CBS -->' . self::network( $id, $format, 'cbs' );
+					$advert = '<!-- CBS -->' . $this->network( $id, $format, 'cbs' );
 				} else {
-					$advert = '<!-- Amazon -->' . self::amazon( $id, $format );
+					$advert = '<!-- Amazon -->' . $this->amazon( $id, $format );
 				}
 				break;
 			case 'tiny':
-				$advert = '<!-- CBS -->' . self::network( $id, $format, 'cbs' );
+				$advert = '<!-- CBS -->' . $this->network( $id, $format, 'cbs' );
 				break;
 		}
 
@@ -131,17 +131,17 @@ class LWTV_Affilliates {
 	/**
 	 * Call Amazon Affilate Data
 	 */
-	public static function amazon( $id, $format ) {
+	public function amazon( $id, $format ) {
 		require_once 'amazon.php';
-		return LWTV_Affiliate_Amazon::show_ads( $id, $format );
+		return ( new LWTV_Affiliate_Amazon() )->show_ads( $id, $format );
 	}
 
 	/**
 	 * Call Apple Affiliate Data
 	 */
-	public static function apple( $id, $format ) {
+	public function apple( $id, $format ) {
 		require_once 'apple.php';
-		return LWTV_Affiliate_Apple::show_ads( $id, $format );
+		return ( new LWTV_Affiliate_Apple() )->show_ads( $id, $format );
 	}
 
 	/**
@@ -151,13 +151,13 @@ class LWTV_Affilliates {
 	 * @param  array  $network  Network to be called (default CBS)
 	 * @return string           The ad
 	 */
-	public static function network( $id, $format = 'wide', $network = 'cbs' ) {
+	public function network( $id, $format = 'wide', $network = 'cbs' ) {
 
 		$advert = '';
 		switch ( $network ) {
 			case 'cbs':
 				require_once 'cbs.php';
-				$advert = LWTV_Affiliate_CBS::show_ads( $id, $format );
+				$advert = ( new LWTV_Affiliate_CBS() )->show_ads( $id, $format );
 				break;
 		}
 
@@ -167,9 +167,9 @@ class LWTV_Affilliates {
 	/**
 	 * Call Local Affilate Data
 	 */
-	public static function local( $id, $format = 'wide' ) {
+	public function local( $id, $format = 'wide' ) {
 		require_once 'local.php';
-		return LWTV_Affiliate_Local::show_ads( $id, $format );
+		return ( new LWTV_Affiliate_Local() )->show_ads( $id, $format );
 	}
 
 	/**
@@ -185,7 +185,7 @@ class LWTV_Affilliates {
 	 * @param  [string] $text [URL]
 	 * @return [string]       [URL with our tag added]
 	 */
-	public static function amazon_publisher_studio( $text ) {
+	public function amazon_publisher_studio( $text ) {
 		$regex_url = '#<a href="(?:https://(?:www\.){0,1}amazon\.com(?:/.*){0,1}(?:/dp/|/gp/product/))(.*?)(?:/.*|$)"#';
 
 		if ( preg_match( $regex_url, $text, $url ) ) {
@@ -202,8 +202,8 @@ class LWTV_Affilliates {
 	 * Determine what to call for actors
 	 * This is just random
 	 */
-	public static function actors( $id, $format ) {
-		$affiliates = self::random( $id, $format );
+	public function actors( $id, $format ) {
+		$affiliates = $this->random( $id, $format );
 		$advert     = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . $affiliates . '</center></div><!-- END Affiliate Ads -->';
 		return $advert;
 	}
@@ -212,8 +212,8 @@ class LWTV_Affilliates {
 	 * Determine what to call for characters
 	 * This is just random
 	 */
-	public static function characters( $id, $format ) {
-		$affiliates = self::random( $id, $format );
+	public function characters( $id, $format ) {
+		$affiliates = $this->random( $id, $format );
 		$advert     = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . $affiliates . '</center></div><!-- END Affiliate Ads -->';
 		return $advert;
 	}
@@ -222,23 +222,23 @@ class LWTV_Affilliates {
 	 * Determine what to call for shows
 	 * This is much more complex!
 	 */
-	public static function shows( $id, $format ) {
+	public function shows( $id, $format ) {
 
 		// Show a different show ad depending on things...
 		if ( 'affiliate' === $format ) {
 			// Show an affiliate link
-			$affiliates = self::affiliate_link( $id );
+			$affiliates = $this->affiliate_link( $id );
 		} else {
 			// Show an advert
 			$format     = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
-			$is_special = self::get_special_stations( $id );
+			$is_special = $this->get_special_stations( $id );
 
 			// If it's a special station, we'll show that, else show random
 			if ( $is_special['cbs'] ) {
 				// CBS pays best.
-				$get_the_ad = self::network( $id, $format, 'cbs' );
+				$get_the_ad = $this->network( $id, $format, 'cbs' );
 			} else {
-				$get_the_ad = self::random( $id, $format );
+				$get_the_ad = $this->random( $id, $format );
 			}
 
 			$affiliates = '<div class="affiliate-ads"><center>' . $get_the_ad . '</center></div>';
@@ -257,7 +257,7 @@ class LWTV_Affilliates {
 	 * This used to have AMC and BBC and more via Commission Junction.
 	 * That was a failed experience.
 	 */
-	public static function get_special_stations( $post_id ) {
+	public function get_special_stations( $post_id ) {
 		$slug             = get_post_field( 'post_name', $post_id );
 		$stations         = get_the_terms( $post_id, 'lez_stations' );
 		$is_special       = array(
@@ -297,7 +297,7 @@ class LWTV_Affilliates {
 	 * This is used by shows to figure out where people can watch things
 	 * There's some juggling for certain sites
 	 */
-	public static function affiliate_link( $id ) {
+	public function affiliate_link( $id ) {
 
 		$affiliate_url = get_post_meta( $id, 'lezshows_affiliate', true );
 		$links         = array();
@@ -371,7 +371,7 @@ class LWTV_Affilliates {
 
 		$link_output = implode( '', $links );
 
-		$icon   = LWTV_Functions::symbolicons( 'tv-hd.svg', 'fa-tv' );
+		$icon   = ( new LWTV_Functions() )->symbolicons( 'tv-hd.svg', 'fa-tv' );
 		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span> ' . $link_output;
 
 		return $output;

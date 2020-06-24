@@ -94,7 +94,7 @@ class LWTV_Functions {
 	 * @param string $icon_color - What color to use.
 	 * @return string
 	 */
-	public static function get_icon_svg( $base64 = true, $icon_color = false ) {
+	public function get_icon_svg( $base64 = true, $icon_color = false ) {
 		global $_wp_admin_css_colors;
 
 		$fill = ( false !== $icon_color ) ? sanitize_hex_color( $icon_color ) : '#82878c';
@@ -171,7 +171,7 @@ class LWTV_Functions {
 	 * @param string $fontawesome (default: 'fa-square')
 	 * @return icon
 	 */
-	public static function symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square' ) {
+	public function symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square' ) {
 
 		$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
 		$square = get_template_directory_uri( '/images/square.svg' );
@@ -202,7 +202,7 @@ class LWTV_Functions {
 	 * @param  string $format [description]
 	 * @return [type]         [description]
 	 */
-	public static function validate_date( $date, $format = 'Y-m-d' ) {
+	public function validate_date( $date, $format = 'Y-m-d' ) {
 		$d = DateTime::createFromFormat( $format, $date );
 		// The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
 		return $d && $d->format( $format ) === $date;

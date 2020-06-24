@@ -305,4 +305,4 @@ Composer will move everything into the right place, even NPM files.
 Pushes to branches are automatically deployed via Codeship as follows:
 
 * Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site)
-* Main: [lezwatchtv.com](https://lezwatchtv.com)
+* Production: [lezwatchtv.com](https://lezwatchtv.com)

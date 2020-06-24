@@ -23,7 +23,7 @@ class LWTV_Alexa_Who {
 	 * @access public
 	 * @return string
 	 */
-	public static function actor( $name = false ) {
+	public function actor( $name = false ) {
 
 		$output = 'I\'m sorry, I don\'t recognize that name. Please try again, asking me who a specific actor is.';
 		if ( ! $name ) {
@@ -79,7 +79,7 @@ class LWTV_Alexa_Who {
 	/**
 	 * What is show?
 	 */
-	public static function show( $name = false ) {
+	public function show( $name = false ) {
 		$output = 'I\'m sorry, I don\'t recognize that television show by name.';
 		if ( ! $name ) {
 			return $output;
@@ -129,7 +129,7 @@ class LWTV_Alexa_Who {
 	 * @param bool $name (default: false)
 	 * @return void
 	 */
-	public static function is_gay( $name = false ) {
+	public function is_gay( $name = false ) {
 
 		$failure = 'I\'m sorry, I don\'t recognize that name. Please try again, asking me who a specific actor is.';
 		if ( ! $name ) {
@@ -164,13 +164,13 @@ class LWTV_Alexa_Who {
 	 * @param mixed $name (default: = false)
 	 * @return void
 	 */
-	public static function search_this( $post_type, $name = false ) {
+	public function search_this( $post_type, $name = false ) {
 		// If there's no name or it's not a valid post type, bail.
 		if ( ! $name || ! in_array( $post_type, array( 'actors', 'characters', 'shows' ), true ) ) {
 			return false;
 		}
 
-		$queery_args  = LWTV_Alexa_Common::search_posts( $post_type, $name );
+		$queery_args  = ( new LWTV_Alexa_Common() )->search_posts( $post_type, $name );
 		$this_search  = new WP_Query( $queery_args );
 		$return_array = array();
 
@@ -214,7 +214,7 @@ class LWTV_Alexa_Who {
 	 * @param  int    $post_id Post ID
 	 * @return array           Actor Data
 	 */
-	public static function search_actors( $post_id ) {
+	public function search_actors( $post_id ) {
 
 		// Age calculations
 		if ( get_post_meta( $post_id, 'lezactors_death', true ) ) {
@@ -274,7 +274,7 @@ class LWTV_Alexa_Who {
 	 * @param  int    $post_id Post ID
 	 * @return array           Character Data
 	 */
-	public static function search_characters( $post_id ) {
+	public function search_characters( $post_id ) {
 
 		// Are the dead?
 		$dead = ( has_term( 'dead', 'lez_cliches', $post_id ) ) ? true : false;
@@ -329,7 +329,7 @@ class LWTV_Alexa_Who {
 	 * @param  int    $post_id Post ID
 	 * @return array           Show Data
 	 */
-	public static function search_shows( $post_id ) {
+	public function search_shows( $post_id ) {
 
 		if ( get_post_meta( $post_id, 'lezshows_airdates', true ) ) {
 			$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );

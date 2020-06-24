@@ -69,7 +69,7 @@ class LWTV_IMDb_JSON {
 	/*
 	 * Of the Day function
 	 */
-	public static function imdb( $id ) {
+	public function imdb( $id ) {
 
 		$type = substr( $id, 0, 2 );
 

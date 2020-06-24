@@ -62,7 +62,7 @@ class LWTV_Shows_CMB2 {
 	 */
 	public function cmb2_get_shows_options() {
 		$the_id = ( false !== get_the_ID() ) ? get_the_ID() : 0;
-		$return = LWTV_CMB2::get_post_options(
+		$return = ( new LWTV_CMB2() )->get_post_options(
 			array(
 				'post_type'   => 'post_type_shows',
 				'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
@@ -229,8 +229,8 @@ class LWTV_Shows_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_stations' ),
-				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_tvstations', 'lez_stations', $post_id, true ),
+				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_stations' ),
+				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezshows_tvstations', 'lez_stations', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. NBC',
 				),
@@ -246,8 +246,8 @@ class LWTV_Shows_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_country' ),
-				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_tvnations', 'lez_country', $post_id, true ),
+				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_country' ),
+				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezshows_tvnations', 'lez_country', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Canada',
 				),
@@ -285,8 +285,8 @@ class LWTV_Shows_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_genres' ),
-				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_tvgenre', 'lez_genres', $post_id ),
+				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_genres' ),
+				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezshows_tvgenre', 'lez_genres', $post_id ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Drama',
 				),
@@ -337,8 +337,8 @@ class LWTV_Shows_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_intersections' ),
-				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_intersectional', 'lez_intersections', $post_id ),
+				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_intersections' ),
+				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezshows_intersectional', 'lez_intersections', $post_id ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Disabilities',
 				),
@@ -353,8 +353,8 @@ class LWTV_Shows_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => LWTV_CMB2_Addons::select2_get_options_array_tax( 'lez_tropes' ),
-				'default'           => LWTV_CMB2::get_select2_defaults( 'lezshows_tropes', 'lez_tropes', $post_id ),
+				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_tropes' ),
+				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezshows_tropes', 'lez_tropes', $post_id ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Bury Your Queers',
 				),

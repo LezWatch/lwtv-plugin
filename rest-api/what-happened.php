@@ -125,7 +125,7 @@ class LWTV_What_Happened_JSON {
 		}
 
 		// Calculate death
-		$death_query_year         = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+		$death_query_year         = ( new LWTV_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 		$count_array['dead_year'] = $death_query_year->post_count;
 
 		switch ( $format ) {
@@ -133,8 +133,8 @@ class LWTV_What_Happened_JSON {
 				$count_array['dead'] = $count_array['dead_year'];
 				break;
 			case 'month':
-				$death_query       = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-				$death_list_array  = LWTV_BYQ_JSON::list_of_dead_characters( $death_query );
+				$death_query       = ( new LWTV_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+				$death_list_array  = ( new LWTV_BYQ_JSON() )->list_of_dead_characters( $death_query );
 				$death_query_count = 0;
 				foreach ( $death_list_array as $the_dead ) {
 					if ( $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {
@@ -144,7 +144,7 @@ class LWTV_What_Happened_JSON {
 				$count_array['dead'] = $death_query_count;
 				break;
 			case 'day':
-				$death_query         = LWTV_Loops::post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'm/d/Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+				$death_query         = ( new LWTV_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'm/d/Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 				$count_array['dead'] = $death_query->post_count;
 				break;
 			default:
@@ -221,7 +221,7 @@ class LWTV_What_Happened_JSON {
 	 * @static
 	 * @return void
 	 */
-	public static function count_shows( $thisyear = false ) {
+	public function count_shows( $thisyear = false ) {
 
 		// Create the date with regards to timezones
 		$tz        = 'America/New_York';
@@ -230,7 +230,7 @@ class LWTV_What_Happened_JSON {
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 
 		$thisyear        = ( ! $thisyear ) ? $dt->format( 'Y' ) : $thisyear;
-		$shows_queery    = LWTV_Loops::post_type_query( 'post_type_shows' );
+		$shows_queery    = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
 		$shows_this_year = array(
 			'current' => 0,
 			'ended'   => 0,

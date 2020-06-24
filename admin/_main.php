@@ -33,12 +33,12 @@ class LWTV_Admin_Menu {
 		global $submenu;
 
 		// Add main menu
-		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'read', 'lwtv', array( $this, 'settings_page' ), LWTV_Functions::get_icon_svg(), 2 );
+		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'read', 'lwtv', array( $this, 'settings_page' ), ( new LWTV_Functions() )->get_icon_svg(), 2 );
 
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 
 		if ( class_exists( 'LWTV_Tools' ) ) {
-			add_submenu_page( 'lwtv', 'Tools', 'Tools', 'upload_files', 'lwtv_tools', 'LWTV_Tools::settings_page' );
+			add_submenu_page( 'lwtv', 'Tools', 'Tools', 'upload_files', 'lwtv_tools', '( new LWTV_Tools() )->settings_page' );
 		}
 
 		// Builds page would show the last few builds from Github with data from Codeship.
