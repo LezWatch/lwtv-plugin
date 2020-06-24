@@ -47,7 +47,8 @@ class LWTV_Alexa_Newest {
 			$name   = $data['name'];
 			$output = $name . ' on ' . gmdate( 'F j, Y', $data['died'] );
 		} else {
-			$get_post_type = ( 'post' === $posttype ) ? 'post' : 'post_type_' . $posttype;
+			$data          = array();
+			$get_post_type = ( 'post' === $posttype ) ? 'post' : 'post_type_' . $posttype . 's';
 
 			$post_args = array(
 				'post_type'      => $get_post_type,
