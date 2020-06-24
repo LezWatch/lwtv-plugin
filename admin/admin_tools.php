@@ -10,7 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_Tools {
+class LWTV_Admin_Tools {
 
 	/**
 	 * Local Variables
@@ -527,4 +527,4 @@ class LWTV_Tools {
 	}
 }
 
-new LWTV_Tools();
+new LWTV_Admin_Tools();

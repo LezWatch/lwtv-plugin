@@ -37,8 +37,8 @@ class LWTV_Admin_Menu {
 
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 
-		if ( class_exists( 'LWTV_Tools' ) ) {
-			add_submenu_page( 'lwtv', 'Tools', 'Tools', 'upload_files', 'lwtv_tools', '( new LWTV_Tools() )->settings_page' );
+		if ( class_exists( 'LWTV_Admin_Tools' ) ) {
+			add_submenu_page( 'lwtv', 'Tools', 'Tools', 'upload_files', 'lwtv_tools', 'LWTV_Admin_Tools::settings_page' );
 		}
 
 		// Builds page would show the last few builds from Github with data from Codeship.
