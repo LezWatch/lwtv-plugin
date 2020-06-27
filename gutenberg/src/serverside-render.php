@@ -69,9 +69,20 @@ class LWTV_ServerSideRendering {
 		$calendar = ( new LWTV_Whats_On_JSON() )->generate_tvshow_calendar( $start_datetime->format( 'Y-m-d' ) );
 
 		if ( isset( $calendar['none'] ) || empty( $calendar ) ) {
-			$return .= '<p>There are no shows on the air for this week.</p>';
+			// We can't find anything listed
+			$return .= '<p>There are no shows on the air for the week starting ' . $start_datetime->format( 'F d, Y' ) . '.</p>';
+
+			if ( $end_datetime > $today ) {
+				// End date is in the future
+				$return .= '<p>We only project the calendar 2-4 weeks in advance. Future planned airings are subject to change without notice.<p>';
+			} else {
+				// It's the past
+				$return .= '<p>We don\'t keep historical calendar records, so you won\'t be able to retrive listings from long ago. Sorry.</p>';
+			}
 		} else {
 			$return .= '<p>All times are displayed as US/Eastern, but are reflective of their original airdate and time.</p>';
+			$return .= '<p>Be advised, airdates and times are subject to change without notice. Always check your local listings.<p>';
+
 			$return .= '<table class="table lwtvc table-hover">';
 
 			foreach ( $calendar as $day => $shows ) {
