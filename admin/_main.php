@@ -44,8 +44,11 @@ class LWTV_Admin_Menu {
 		// Builds page would show the last few builds from Github with data from Codeship.
 		//add_submenu_page( 'lwtv', 'Builds', 'Builds', 'manage_options', 'lwtv_builds', array( $this, 'builds_page' ) );
 
+		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$submenu['lwtv'][] = array( 'Documentation', 'read', esc_url( 'https://docs.lezwatchtv.com/' ) );
+		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$submenu['lwtv'][] = array( 'Slack', 'read', esc_url( 'https://lezwatchtv.slack.com/' ) );
+		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$submenu['lwtv'][] = array( 'Trello', 'manage_options', esc_url( 'https://trello.com/b/hpDs7bvy/lezwatchtv' ) );
 	}
 

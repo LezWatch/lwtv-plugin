@@ -12,7 +12,6 @@ class LWTV_Affilliates {
 	// These define the possible layouts and affiliates
 	public static $valid_types;
 	public static $valid_formats;
-	public static $format_sizes;
 
 	/**
 	 * __construct function.
@@ -21,14 +20,6 @@ class LWTV_Affilliates {
 
 		self::$valid_types   = array( 'random', 'cbs', 'amazon' );
 		self::$valid_formats = array( 'banner', 'text', 'thin', 'tiny', 'wide' );
-		self::$format_sizes  = array(
-			'affiliate' => '',
-			'banner'    => '728x90',
-			'text'      => '',
-			'thin'      => '160x600',
-			'tiny'      => '320x50',
-			'wide'      => '300x250',
-		);
 
 		add_filter( 'widget_text', 'do_shortcode' );
 		add_action( 'init', array( $this, 'init' ) );
@@ -108,28 +99,18 @@ class LWTV_Affilliates {
 		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 		$number = wp_rand();
 
-		switch ( $format ) {
-			case 'banner':
-			case 'thin':
-				$advert = $this->network( $id, $format, 'cbs' );
-				break;
-			case 'wide':
-				if ( 0 === $number % 2 ) {
-					$advert = '<!-- CBS -->' . $this->network( $id, $format, 'cbs' );
-				} else {
-					$advert = '<!-- Amazon -->' . $this->amazon( $id, $format );
-				}
-				break;
-			case 'tiny':
-				$advert = '<!-- CBS -->' . $this->network( $id, $format, 'cbs' );
-				break;
+		// It's all CBS or Amazon now :(
+		if ( 0 === $number % 2 ) {
+			$advert = '<!-- CBS -->' . $this->network( $id, $format, 'cbs' );
+		} else {
+			$advert = '<!-- Amazon -->' . $this->amazon( $id, $format );
 		}
 
 		return $advert;
 	}
 
 	/**
-	 * Call Amazon Affilate Data
+	 * Call Amazon Affiliate Data
 	 */
 	public function amazon( $id, $format ) {
 		require_once 'amazon.php';

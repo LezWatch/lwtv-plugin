@@ -31,7 +31,7 @@ class LWTV_Tools_Dashboard {
 		unset( $options['timestamp'] );
 		?>
 		<div class="main">
-			<p>The tools were last run on <strong><?php echo esc_html( get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) ); ?></strong>.</p>
+			<p>The tools were last run on <strong><?php echo esc_html( get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) ); ?></strong>.</p>
 
 			<p><strong>Current Status</strong></p>
 

@@ -148,10 +148,10 @@ class LWTV_Admin_Tools {
 			$class = ( 0 === $number % 2 ) ? '' : 'alternate';
 			echo '
 			<tr class="' . esc_attr( $class ) . '">
-				<td><strong><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" target="_new">' . get_the_title( (int) $item['id'] ) . '</a></strong>
+				<td><strong><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" target="_new">' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '</a></strong>
 
-				<div class="row-actions"><span class="edit"><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" aria-label="Edit ' . get_the_title( (int) $item['id'] ) . '">Edit</a>
-				| </span><span class="view"><a href="' . esc_url( get_permalink( (int) $item['id'] ) ) . '" rel="bookmark" aria-label="View ' . get_the_title( (int) $item['id'] ) . '">View</a></span></div>
+				<div class="row-actions"><span class="edit"><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" aria-label="Edit ' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '">Edit</a>
+				| </span><span class="view"><a href="' . esc_url( get_permalink( (int) $item['id'] ) ) . '" rel="bookmark" aria-label="View ' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '">View</a></span></div>
 				</td>
 				<td>' . wp_kses_post( $item['problem'] ) . '</td>
 			</tr>
@@ -262,7 +262,7 @@ class LWTV_Admin_Tools {
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
 		$items    = ( new LWTV_Debug() )->find_actors_problems();
-		$json_it  = wp_json_encode( $items );
+		//$json_it  = wp_json_encode( $items );
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -298,7 +298,7 @@ class LWTV_Admin_Tools {
 
 				<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="POST">
 					<input type="hidden" name="action" value="lwtv_tools_fix_actors">
-					<input type="hidden" name="broken_actors" value='<?php echo $json_it; ?>'>
+					<input type="hidden" name="broken_actors" value='<?php echo wp_json_encode( $items ); ?>'>
 					<?php wp_nonce_field( 'lwtv_tools_fix_actors', 'lwtv_tools_fix_actors_nonce', false ); ?>
 					<input type="hidden" name="_wp_http_referer" value="<?php esc_url_raw( $redirect ); ?>">
 					<?php submit_button( 'Fix Actors' ); ?>
