@@ -84,6 +84,7 @@ class LWTV_Alexa_Shows {
 			'post_status'    => 'publish',
 			'posts_per_page' => 40,
 			'orderby'        => 'rand',
+			'no_found_rows'  => true,
 			'meta_query'     => array(
 				array(
 					'key'     => 'lezshows_worthit_show_we_love',

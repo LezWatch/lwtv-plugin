@@ -50,6 +50,7 @@ class LWTV_Alexa_Common {
 				'post_type'      => 'post_type_' . $post_type,
 				'post_status'    => 'publish',
 				'posts_per_page' => 15,
+				'no_found_rows'  => true,
 			);
 		} else {
 			// No IDs shouldn't be possible, but we want a failsafe.
@@ -60,6 +61,7 @@ class LWTV_Alexa_Common {
 				'posts_per_page' => 15,
 				'orderby'        => 'title',
 				'order'          => 'ASC',
+				'no_found_rows'  => true,
 			);
 		}
 

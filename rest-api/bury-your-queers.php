@@ -379,6 +379,7 @@ class LWTV_BYQ_JSON {
 				'post_type'      => 'post_type_characters',
 				'post_status'    => 'publish',
 				'posts_per_page' => 100,
+				'no_found_rows'  => true,
 			);
 
 			$the_character = new WP_Query( $args );
