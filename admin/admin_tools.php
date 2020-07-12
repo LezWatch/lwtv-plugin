@@ -258,12 +258,7 @@ class LWTV_Admin_Tools {
 	 * Output the results of actor checking...
 	 */
 	public static function tab_actor_checker() {
-
-		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
-		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = ( new LWTV_Debug() )->find_actors_problems();
-		//$json_it  = wp_json_encode( $items );
-
+		$items = ( new LWTV_Debug() )->find_actors_problems();
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
@@ -278,7 +273,7 @@ class LWTV_Admin_Tools {
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
-					<p>The following actor(s) need your attention. Some can be automatically fixed, other will need to be manually corrected.</p>
+					<p>The following actor(s) need your attention.</p>
 				</div>
 			</div>
 
@@ -295,52 +290,9 @@ class LWTV_Admin_Tools {
 						?>
 					</tbody>
 				</table>
-
-				<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="POST">
-					<input type="hidden" name="action" value="lwtv_tools_fix_actors">
-					<input type="hidden" name="broken_actors" value='<?php echo wp_json_encode( $items ); ?>'>
-					<?php wp_nonce_field( 'lwtv_tools_fix_actors', 'lwtv_tools_fix_actors_nonce', false ); ?>
-					<input type="hidden" name="_wp_http_referer" value="<?php esc_url_raw( $redirect ); ?>">
-					<?php submit_button( 'Fix Actors' ); ?>
-				</form>
 			</div>
 			<?php
 		}
-	}
-
-	/*
-	 * Attempt to fix the actors...
-	 */
-	public function fix_actors_problems() {
-
-		if ( ! wp_verify_nonce( $_POST['lwtv_tools_fix_actors_nonce'], 'lwtv_tools_fix_actors' ) ) {
-			die( 'Invalid nonce.' );
-		}
-
-		if ( ! isset( $_POST['_wp_http_referer'] ) ) {
-			die( 'Missing target.' );
-		}
-
-		$broken_actors = json_decode( $_POST['broken_actors'], true );
-
-		if ( ! is_array( $broken_actors ) ) {
-			$broken_actors = ( new LWTV_Debug() )->find_actors_problems();
-		}
-
-		$items = ( new LWTV_Debug() )->fix_actors_problems( $broken_actors );
-
-		if ( ! isset( $items ) || 0 === $items || is_null( $items ) ) {
-			$message = 'warning';
-		} elseif ( is_numeric( $items ) ) {
-			$message = 'success';
-		} else {
-			$message = 'error';
-		}
-
-		$url = add_query_arg( 'message', $message, urldecode( $_POST['_wp_http_referer'] ) );
-
-		wp_safe_redirect( $url );
-		exit;
 	}
 
 	/**
@@ -350,7 +302,6 @@ class LWTV_Admin_Tools {
 	public static function tab_actor_wiki() {
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-
 		$items    = ( new LWTV_Debug() )->list_actors_wikidata();
 
 		/*
