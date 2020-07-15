@@ -188,6 +188,7 @@ class LWTV_What_Happened_JSON {
 					'orderby'        => 'date',
 					'order'          => 'DESC',
 					'date_query'     => array( $date_args ),
+					'no_found_rows'  => true,
 				);
 				$queery               = new WP_Query( $post_args );
 				$count_array[ $name ] = $queery->post_count;

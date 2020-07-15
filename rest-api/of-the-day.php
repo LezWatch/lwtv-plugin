@@ -291,6 +291,7 @@ class LWTV_OTD_JSON {
 				's'              => '-TBD', // Excluding posts with "TBD" as the content
 				'tax_query'      => $tax_query_array,
 				'meta_query'     => $meta_query_array,
+				'no_found_rows'  => true,
 			);
 			$post = new WP_Query( $args );
 

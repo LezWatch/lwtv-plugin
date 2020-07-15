@@ -24,7 +24,14 @@ class LWTV_Alexa_Flash_Brief {
 	 * @return void
 	 */
 	public function flash_briefing() {
-		$queery = new WP_Query( array( 'numberposts' => '10' ) );
+		// Arguments
+		$queery_args = array(
+			'numberposts' => '10',
+			'no_found_rows'  => true,
+		);
+
+		// The Queery
+		$queery = new WP_Query( $queery_args );
 		if ( $queery->have_posts() ) {
 			while ( $queery->have_posts() ) {
 				$queery->the_post();
