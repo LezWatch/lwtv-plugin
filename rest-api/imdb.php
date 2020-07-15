@@ -90,6 +90,7 @@ class LWTV_IMDb_JSON {
 			'post_type'      => $post_type,
 			'facetwp'        => false,
 			'posts_per_page' => 1,
+			'no_found_rows'  => true,
 			'meta_query'     => array(
 				array(
 					'key'     => $meta_key,

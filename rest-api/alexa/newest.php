@@ -55,6 +55,7 @@ class LWTV_Alexa_Newest {
 				'posts_per_page' => '1',
 				'orderby'        => 'date',
 				'order'          => 'DESC',
+				'no_found_rows'  => true,
 			);
 
 			$queery = new WP_Query( $post_args );
