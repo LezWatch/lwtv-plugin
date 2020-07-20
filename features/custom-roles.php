@@ -64,7 +64,7 @@ class LWTV_Roles {
 	 */
 	public function add_role_caps() {
 		// The roles who get to do this:
-		$roles = array( 'data_editor' );
+		$roles = array( 'data_editor', 'editor', 'administrator' );
 
 		// The CPTs they work for
 		$cpts  = array( 'actor', 'character', 'show' );
@@ -84,6 +84,8 @@ class LWTV_Roles {
 					$role->add_cap( 'edit_others_' . $the_cpt . 's' );
 					$role->add_cap( 'edit_published_' . $the_cpt . 's' );
 					$role->add_cap( 'publish_' . $the_cpt . 's' );
+					$role->add_cap( 'delete_' . $the_cpt );
+					$role->add_cap( 'delete_' . $the_cpt . 's' );
 					$role->add_cap( 'delete_others_' . $the_cpt . 's' );
 					$role->add_cap( 'delete_private_' . $the_cpt . 's' );
 					$role->add_cap( 'delete_published_' . $the_cpt . 's' );
