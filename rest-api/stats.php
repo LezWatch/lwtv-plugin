@@ -45,11 +45,9 @@ class LWTV_Stats_JSON {
 			'lwtv/v1',
 			'/stats/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array(
-					$this,
-					'stats_rest_api_callback',
-				),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'stats_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -58,11 +56,9 @@ class LWTV_Stats_JSON {
 			'lwtv/v1',
 			'/stats/(?P<type>[a-zA-Z.\-]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array(
-					$this,
-					'stats_rest_api_callback',
-				),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'stats_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -71,11 +67,9 @@ class LWTV_Stats_JSON {
 			'lwtv/v1',
 			'/stats/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array(
-					$this,
-					'stats_rest_api_callback',
-				),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'stats_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -84,8 +78,9 @@ class LWTV_Stats_JSON {
 			'lwtv/v1',
 			'/stats/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z]+)/(?P<page>[0-9.\-]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'stats_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'stats_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -130,7 +125,7 @@ class LWTV_Stats_JSON {
 
 		// Sanity Check
 		if ( ! in_array( $stat_type, $valid_type, true ) || ! in_array( $format, $valid_format, true ) ) {
-			return wp_send_json_error( 'No route was found matching the URL and request method.', 404 );
+			return new WP_Error( 'not_found', 'No route was found matching the URL and request method' );
 		}
 
 		switch ( $stat_type ) {
@@ -183,7 +178,7 @@ class LWTV_Stats_JSON {
 
 		// Sanity Check
 		if ( ! in_array( $format, $valid_format, true ) ) {
-			return wp_send_json_error( 'No route was found matching the URL and request method.', 404 );
+			return new WP_Error( 'not_found', 'No route was found matching the URL and request method' );
 		}
 
 		$stats_array = array();
@@ -252,7 +247,7 @@ class LWTV_Stats_JSON {
 
 		// Sanity Check
 		if ( ! in_array( $format, $valid_format, true ) ) {
-			return wp_send_json_error( 'No route was found matching the URL and request method.', 404 );
+			return new WP_Error( 'not_found', 'No route was found matching the URL and request method' );
 		}
 
 		$stats_array = array();
@@ -406,7 +401,7 @@ class LWTV_Stats_JSON {
 
 		// Sanity Check
 		if ( ! in_array( $format, $valid_format, true ) ) {
-			return wp_send_json_error( 'No route was found matching the URL and request method.', 404 );
+			return new WP_Error( 'not_found', 'No route was found matching the URL and request method' );
 		}
 
 		$stats_array = array();
@@ -562,7 +557,7 @@ class LWTV_Stats_JSON {
 
 		// Early bail
 		if ( ! in_array( $type, $valid_types, true ) ) {
-			return wp_send_json_error( 'Invalid input. No such type.', 404 );
+			return new WP_Error( 'not_found', 'No route was found matching the URL and request method' );
 		}
 
 		// Get our defaults

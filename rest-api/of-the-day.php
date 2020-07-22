@@ -38,24 +38,27 @@ class LWTV_OTD_JSON {
 			'lwtv/v1',
 			'/of-the-day/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'otd_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'otd_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/of-the-day/(?P<type>[a-zA-Z]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'otd_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'otd_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/of-the-day/(?P<type>[a-zA-Z]+)/(?P<format>[a-zA-Z0-9-]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'otd_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'otd_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 	}

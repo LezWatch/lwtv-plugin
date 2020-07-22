@@ -35,20 +35,23 @@ class LWTV_Alexa_Skills {
 		// @codingStandardsIgnoreStart
 		// Briefing
 		register_rest_route( 'lwtv/v1', '/alexa-skills/briefing/', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'flash_briefing_rest_api_callback' ),
+			'methods'             => 'GET',
+			'callback'            => array( $this, 'flash_briefing_rest_api_callback' ),
+			'permission_callback' => '__return_true',
 		) );
 
 		// News Skill (rebranded BYQ)
 		register_rest_route( 'lwtv/v2', '/alexa-skills/news/', array(
-			'methods'  => [ 'GET', 'POST' ],
-			'callback' => array( $this, 'news_rest_api_callback' ),
+			'methods'             => [ 'GET', 'POST' ],
+			'callback'            => array( $this, 'news_rest_api_callback' ),
+			'permission_callback' => '__return_true',
 		) );
 
 		// DEPRECATED: Bury Your Queers
 		register_rest_route( 'lwtv/v1', '/alexa-skills/byq/', array(
-			'methods'  => [ 'GET', 'POST' ],
-			'callback' => array( 'LWTV_Alexa_Common', 'bury_your_queers_rest_api_callback' ),
+			'methods'             => [ 'GET', 'POST' ],
+			'callback'            => array( 'LWTV_Alexa_Common', 'bury_your_queers_rest_api_callback' ),
+			'permission_callback' => '__return_true',
 		) );
 		// @codingStandardsIgnoreEnd
 	}

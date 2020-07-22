@@ -37,8 +37,9 @@ class LWTV_Slack_Integration {
 			'lwtv/v1',
 			'/slack/last-death/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'death_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'death_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 	}
