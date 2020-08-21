@@ -36,11 +36,9 @@ class LWTV_This_Year_JSON {
 			'lwtv/v1',
 			'/this-year/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array(
-					$this,
-					'rest_api_callback',
-				),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -49,11 +47,9 @@ class LWTV_This_Year_JSON {
 			'lwtv/v1',
 			'/this-year/(?P<type>[a-zA-Z.\-]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array(
-					$this,
-					'rest_api_callback',
-				),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -62,11 +58,9 @@ class LWTV_This_Year_JSON {
 			'lwtv/v1',
 			'/this-year/(?P<type>[a-zA-Z.\-]+)/(?P<year>[\d]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array(
-					$this,
-					'rest_api_callback',
-				),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -93,7 +87,7 @@ class LWTV_This_Year_JSON {
 		}
 
 		if ( empty( $response ) ) {
-			return wp_send_json_error( 'Invalid year.', 404 );
+			return new WP_Error( 'not_found', 'Invalid year.' );
 		}
 
 		return $response;

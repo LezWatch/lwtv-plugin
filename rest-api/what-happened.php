@@ -40,32 +40,36 @@ class LWTV_What_Happened_JSON {
 			'lwtv/v1',
 			'/what-happened/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'what_happened_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'what_happened_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/what-happened/(?P<date>[\d]{4}-[\d]{2}-[\d]{2})',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'what_happened_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'what_happened_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/what-happened/(?P<date>[\d]{4}-[\d]{2})',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'what_happened_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'what_happened_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/what-happened/(?P<date>[\d]{4})',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'what_happened_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'what_happened_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -121,7 +125,7 @@ class LWTV_What_Happened_JSON {
 
 		// If it's before FIRST_LWTV_YEAR then we have issues....
 		if ( $datetime->format( 'Y' ) < FIRST_LWTV_YEAR ) {
-			return wp_send_json_error( FIRST_LWTV_YEAR );
+			return new WP_Error( 'too_soon', 'This year is before the first year any queers were on TV.' );
 		}
 
 		// Calculate death

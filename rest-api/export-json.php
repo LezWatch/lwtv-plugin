@@ -45,24 +45,27 @@ class LWTV_Export_JSON {
 			'lwtv/v1',
 			'/export/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/export/(?P<type>[a-zA-Z]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/export/(?P<type>[a-zA-Z0-9-]+)/(?P<item>[a-zA-Z0-9-]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 	}

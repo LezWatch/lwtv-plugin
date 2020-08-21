@@ -41,8 +41,9 @@ class LWTV_BYQ_JSON {
 			'lwtv/v1',
 			'/last-death',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'last_death_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'last_death_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -50,8 +51,9 @@ class LWTV_BYQ_JSON {
 			'lwtv/v1',
 			'/on-this-day/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'on_this_day_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'on_this_day_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -59,8 +61,9 @@ class LWTV_BYQ_JSON {
 			'lwtv/v1',
 			'/on-this-day/(?P<date>[\d]{2}-[\d]{2})',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'on_this_day_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'on_this_day_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -68,8 +71,9 @@ class LWTV_BYQ_JSON {
 			'lwtv/v1',
 			'/when-died/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'when_died_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'when_died_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -77,8 +81,9 @@ class LWTV_BYQ_JSON {
 			'lwtv/v1',
 			'/when-died/(?P<name>[a-zA-Z0-9-]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'when_died_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'when_died_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -281,7 +286,7 @@ class LWTV_BYQ_JSON {
 				}
 				break;
 			default:
-				$died_today_array = wp_send_json_error( 'An unexpected error has occurred.' );
+				$died_today_array = new WP_Error( 'invalid', 'An unexpected error has occurred.' );
 		}
 
 		return $died_today_array;

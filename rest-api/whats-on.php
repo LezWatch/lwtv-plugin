@@ -37,24 +37,27 @@ class LWTV_Whats_On_JSON {
 			'lwtv/v1',
 			'/whats-on/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/whats-on/(?P<when>[a-zA-Z0-9-]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/whats-on/(?P<when>[a-zA-Z0-9-]+)/(?P<name>[a-zA-Z0-9-]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 	}

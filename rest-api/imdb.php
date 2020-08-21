@@ -36,16 +36,18 @@ class LWTV_IMDb_JSON {
 			'lwtv/v1',
 			'/imdb/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'imdb_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'imdb_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/imdb/(?P<id>[a-zA-Z0-9-]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'imdb_rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'imdb_rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 	}
@@ -60,7 +62,7 @@ class LWTV_IMDb_JSON {
 		if ( in_array( substr( $id, 0, 2 ), array( 'tt', 'nm' ), true ) ) {
 			$return = $this->imdb( $id );
 		} else {
-			$return = wp_send_json_error( 'Invalid input.' );
+			$return = new WP_Error( 'invalid', 'An unexpected error has occurred.' );
 		}
 
 		return $return;

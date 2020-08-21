@@ -37,16 +37,18 @@ class LWTV_Shows_Like_This_JSON {
 			'lwtv/v1',
 			'/similar-shows/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 		register_rest_route(
 			'lwtv/v1',
 			'/similar-shows/(?P<show>[a-zA-Z]+)',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'rest_api_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 	}
