@@ -213,88 +213,92 @@ class LWTV_Debug {
 			}
 		}
 
-		// For everyone in the list...
-		foreach ( $actors as $actor_id ) {
-			$items[ $actor_id ] = array(
-				'id'   => $actor_id,
-				'name' => get_the_title( $actor_id ),
-			);
-
-			// What we can check for
-			$check_ours = array(
-				'birth'     => get_post_meta( $actor_id, 'lezactors_birth', true ),
-				'death'     => get_post_meta( $actor_id, 'lezactors_death', true ),
-				'imdb'      => get_post_meta( $actor_id, 'lezactors_imdb', true ),
-				'wikipedia' => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
-				'instagram' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
-				'twitter'   => get_post_meta( $actor_id, 'lezactors_twitter', true ),
-				'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
-			);
-
-			$permalink   = basename( get_permalink( $actor_id ) );
-
-			// Search for the actor:
-			$search_name   = str_replace( ' ', '%20', get_the_title( $actor_id ) );
-			$search_queery = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' . $search_name . '&language=en&format=json';
-			$search_data   = wp_remote_get( $search_queery );
-			$search_body   = json_decode( $search_data['body'], true );
-
-			if ( isset( $search_body['search']['0']['id'] ) ) {
-				// Set the WikiData ID
-				$items[ $actor_id ]['wikidata'] = $search_body['search']['0']['id'];
-
-				// Build the data
-				$wiki_queery = 'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' . $search_body['search']['0']['id'] . '&format=json';
-				$wiki_data  = wp_remote_get( $wiki_queery );
-				$wiki_array = json_decode( $wiki_data['body'], true );
-
-				$wiki_actor = array_shift( $wiki_array['entities'] );
-				$wiki_link  = '';
-
-				// If there's a wikipedia URL, let's get details.
-				if ( '' !== $check_ours['wikipedia'] ) {
-					$parsed_wiki = parse_url( $check_ours['wikipedia'] );
-					$wiki_lang   = @array_shift( explode( '.', $parsed_wiki['host'] ) );
-
-					if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
-						$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['title'] );
-						$wiki_link  = 'https://' . $wiki_lang . '.wikipedia.org/wiki/' . $wiki_title;
-					}
-				} elseif ( isset( $wiki_actor['sitelinks']['enwiki'] ) ) {
-					$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks']['enwiki']['title'] );
-					$wiki_link = 'https://en.wikipedia.org/wiki/' . $wiki_title;
-				};
-
-				$check_wiki = array(
-					'birth'     => ( isset( $wiki_actor['claims']['P569'] ) ) ? self::format_wikidate( $wiki_actor['claims']['P569'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
-					'death'     => ( isset( $wiki_actor['claims']['P570'] ) ) ? self::format_wikidate( $wiki_actor['claims']['P570'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
-					'wikipedia' => $wiki_link,
-					'imdb'      => ( isset( $wiki_actor['claims']['P345'] ) ) ? $wiki_actor['claims']['P345'][0]['mainsnak']['datavalue']['value'] : '',
-					'instagram' => ( isset( $wiki_actor['claims']['P2003'] ) ) ? $wiki_actor['claims']['P2003'][0]['mainsnak']['datavalue']['value'] : '',
-					'twitter'   => ( isset( $wiki_actor['claims']['P2002'] ) ) ? $wiki_actor['claims']['P2002'][0]['mainsnak']['datavalue']['value'] : '',
-					'website'   => ( isset( $wiki_actor['claims']['P856'] ) ) ? $wiki_actor['claims']['P856'][0]['mainsnak']['datavalue']['value'] : '',
+		if ( is_array( $actors ) ) {
+			// For everyone in the list...
+			foreach ( $actors as $actor_id ) {
+				$items[ $actor_id ] = array(
+					'id'   => $actor_id,
+					'name' => get_the_title( $actor_id ),
 				);
 
-				foreach ( $check_ours as $item => $data ) {
-					if ( $data === $check_wiki[ $item ] ) {
-						$result = 'match';
-					} elseif ( '' === $check_wiki[ $item ] ) {
-						$result = 'n/a';
-					} else {
-						$result = array(
-							'ours'     => $data,
-							'wikidata' => $check_wiki[ $item ],
-						);
-					}
+				// What we can check for
+				$check_ours = array(
+					'birth'     => get_post_meta( $actor_id, 'lezactors_birth', true ),
+					'death'     => get_post_meta( $actor_id, 'lezactors_death', true ),
+					'imdb'      => get_post_meta( $actor_id, 'lezactors_imdb', true ),
+					'wikipedia' => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
+					'instagram' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
+					'twitter'   => get_post_meta( $actor_id, 'lezactors_twitter', true ),
+					'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
+				);
 
-					$items[ $actor_id ][ $item ] = $result;
+				$permalink   = basename( get_permalink( $actor_id ) );
+
+				// Search for the actor:
+				$search_name   = str_replace( ' ', '%20', get_the_title( $actor_id ) );
+				$search_queery = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' . $search_name . '&language=en&format=json';
+				$search_data   = wp_remote_get( $search_queery );
+				$search_body   = json_decode( $search_data['body'], true );
+
+				if ( isset( $search_body['search']['0']['id'] ) ) {
+					// Set the WikiData ID
+					$items[ $actor_id ]['wikidata'] = $search_body['search']['0']['id'];
+
+					// Build the data
+					$wiki_queery = 'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' . $search_body['search']['0']['id'] . '&format=json';
+					$wiki_data  = wp_remote_get( $wiki_queery );
+					$wiki_array = json_decode( $wiki_data['body'], true );
+
+					$wiki_actor = array_shift( $wiki_array['entities'] );
+					$wiki_link  = '';
+
+					// If there's a wikipedia URL, let's get details.
+					if ( '' !== $check_ours['wikipedia'] ) {
+						$parsed_wiki = parse_url( $check_ours['wikipedia'] );
+						$wiki_lang   = @array_shift( explode( '.', $parsed_wiki['host'] ) );
+
+						if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
+							$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['title'] );
+							$wiki_link  = 'https://' . $wiki_lang . '.wikipedia.org/wiki/' . $wiki_title;
+						}
+					} elseif ( isset( $wiki_actor['sitelinks']['enwiki'] ) ) {
+						$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks']['enwiki']['title'] );
+						$wiki_link = 'https://en.wikipedia.org/wiki/' . $wiki_title;
+					};
+
+					$check_wiki = array(
+						'birth'     => ( isset( $wiki_actor['claims']['P569'] ) ) ? self::format_wikidate( $wiki_actor['claims']['P569'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
+						'death'     => ( isset( $wiki_actor['claims']['P570'] ) ) ? self::format_wikidate( $wiki_actor['claims']['P570'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
+						'wikipedia' => $wiki_link,
+						'imdb'      => ( isset( $wiki_actor['claims']['P345'] ) ) ? $wiki_actor['claims']['P345'][0]['mainsnak']['datavalue']['value'] : '',
+						'instagram' => ( isset( $wiki_actor['claims']['P2003'] ) ) ? $wiki_actor['claims']['P2003'][0]['mainsnak']['datavalue']['value'] : '',
+						'twitter'   => ( isset( $wiki_actor['claims']['P2002'] ) ) ? $wiki_actor['claims']['P2002'][0]['mainsnak']['datavalue']['value'] : '',
+						'website'   => ( isset( $wiki_actor['claims']['P856'] ) ) ? $wiki_actor['claims']['P856'][0]['mainsnak']['datavalue']['value'] : '',
+					);
+
+					foreach ( $check_ours as $item => $data ) {
+						if ( $data === $check_wiki[ $item ] ) {
+							$result = 'match';
+						} elseif ( '' === $check_wiki[ $item ] ) {
+							$result = 'n/a';
+						} else {
+							$result = array(
+								'ours'     => $data,
+								'wikidata' => $check_wiki[ $item ],
+							);
+						}
+
+						$items[ $actor_id ][ $item ] = $result;
+					}
 				}
 			}
 		}
 
-		// Save it all in the DB
-		foreach ( $items as $one_item => $one_data ) {
-			update_post_meta( $one_data['id'], '_lezactors_wikidata', $one_data );
+		if ( is_array( $items ) ) {
+			// Save it all in the DB
+			foreach ( $items as $one_item => $one_data ) {
+				update_post_meta( $one_data['id'], '_lezactors_wikidata', $one_data );
+			}
 		}
 
 		return $items;
@@ -387,7 +391,7 @@ class LWTV_Debug {
 		$option = get_option( 'lwtv_debugger_status' );
 		$option['actor_problems'] = array(
 			'name' => 'Actors with Issues',
-			'count' => count( $items ),
+			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
 		);
 		$option['timestamp']      = time();
 		update_option( 'lwtv_debugger_status', $option );
@@ -512,7 +516,7 @@ class LWTV_Debug {
 		$option = get_option( 'lwtv_debugger_status' );
 		$option['character_problems'] = array(
 			'name' => 'Characters with Issues',
-			'count' => count( $items ),
+			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
 		);
 		$option['timestamp']          = time();
 		update_option( 'lwtv_debugger_status', $option );
@@ -624,7 +628,7 @@ class LWTV_Debug {
 		$option = get_option( 'lwtv_debugger_status' );
 		$option['show_problems'] = array(
 			'name' => 'Shows with Issues',
-			'count' => count( $items ),
+			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
 		);
 		$option['timestamp']     = time();
 		update_option( 'lwtv_debugger_status', $option );
