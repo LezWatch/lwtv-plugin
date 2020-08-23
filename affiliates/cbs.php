@@ -25,7 +25,7 @@ class LWTV_Affiliate_CBS {
 		// tiny   - 320x50
 		// wide   - 300x250
 		$named_array = array(
-			'macguyver'                  => array(
+			'macgyver'                   => array(
 				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/379708/3065" id="379708"><img src="//a.impactradius-go.com/display-ad/3065-379708" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379708/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/379704/3065" id="379704"><img src="//a.impactradius-go.com/display-ad/3065-379704" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379704/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/379707/3065" id="379707"><img src="//a.impactradius-go.com/display-ad/3065-379707" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379707/3065" style="position:absolute;visibility:hidden;" border="0" />',
