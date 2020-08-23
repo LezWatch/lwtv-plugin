@@ -879,8 +879,10 @@ class LWTV_Stats_Arrays {
 					// Now that we have the data, let's count and store
 					if ( is_numeric( $data ) ) {
 						$key = $data;
-					} else {
+					} elseif ( is_array( $data ) ) {
 						$key = count( $data );
+					} else {
+						$key = 0;
 					}
 
 					// Check key
