@@ -404,7 +404,7 @@ class LWTV_CPT_Characters {
 		 *                                  Sara hasn't been on EVERY show yet.
 		 *   - The Shane Clause          -- Thanks to Shane sleeping with everyone,
 		 *                                  we had to limit this loop to 100 minimum
-		 *   - The Clone Club Correlary  -- Sarah Manning took the place of every
+		 *   - The Clone Club Corollary  -- Sarah Manning took the place of every
 		 *                                  single other character played by Tatiana
 		 *                                  Maslany.
 		 *   - The Vanishing Xenaphobia  -- When set to under 500, Xena doesn't show

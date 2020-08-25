@@ -17,16 +17,6 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Characters_Calculate {
 
 	/**
-	 * Does the Math
-	 * @param  int $post_id Post ID of character
-	 * @return n/a
-	 */
-	public function do_the_math( $post_id ) {
-		// Calculate Death
-		self::death( $post_id );
-	}
-
-	/**
 	 * Calculate the most recent death
 	 * @param  int   $post_id
 	 * @return N/A   No return, just update
@@ -47,6 +37,22 @@ class LWTV_Characters_Calculate {
 				update_post_meta( $post_id, 'lezchars_last_death', $newest_death );
 			}
 		}
+	}
+
+	/**
+	 * Does the Math
+	 * @param  int $post_id Post ID of character
+	 * @return n/a
+	 */
+	public function do_the_math( $post_id ) {
+
+		// If this isn't a character, and it's not published yet, we bail.
+		if ( 'post_type_characters' !== get_post_type( $post_id ) && 'publish' !== get_post_status( $post_id ) ) {
+			return;
+		}
+
+		// Calculate Death
+		self::death( $post_id );
 	}
 
 }
