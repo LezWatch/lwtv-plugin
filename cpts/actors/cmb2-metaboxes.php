@@ -34,7 +34,7 @@ class LWTV_Actors_CMB2 {
 			array( $this, 'wikidata_meta_box_callback' ),
 			'post_type_actors',
 			'side',
-			'high',
+			'high'
 		);
 	}
 

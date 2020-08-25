@@ -22,8 +22,9 @@ Defines `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwi
 
 Stored in `/admin/` -- Makes admin panels
 
-* `_tools.php` - Semi-Automated checks on data
-* `screeners.php` - A list of all screeners
+* `_main.php` - Loader file and mapping
+* `admin_tools.php` - UX for checkers
+* `dashboard.php` - Powers wp-admin dashboard code
 
 ### Affiliates
 
@@ -31,10 +32,9 @@ Stored in `/affiliates/` -- Auto Adds in Affiliate Codes
 
 * `/images/` - Images used by local 'ads'
 * `_main.php` - Determines which ad to show and when
-* `amazon.php` - Amazon (utilizes ApaiIO library (from (LezWatch Library)[https://github.com/LezWatch/lezwatch-library]))
+* `amazon.php` - Amazon basic ads.
 * `apple.php` - Apple iTunes/TV ads
 * `cbs.php` - CBS ads (ImpactRadius)
-* `cj.php` - Commission Junction (AMC and Starz)
 * `local.php` - Local Ads (Yikes, DreamHost, FacetWP)
 * `widget.php` - Widget code to display ads
 
@@ -56,7 +56,7 @@ _Images (`images`)_
 _Javascript (`js`)_
 
 * `Chart.bundle.min.js` - Stat charts from [ChartJS](https://chartjs.org)
-* `Chart.colors.js` - Colors for charts (currently unused)
+* `Chart.plugin.js` - Custom add-ons for charts
 * `cmb2_ajax.js` - Ajaxified code for CMB2 and post edits
 * `jquery.tablesorter.js` - Allow for table sorting
 * `palette.js` - Colors for charts
@@ -119,8 +119,8 @@ Stored in `/features/` -- a collection of miscellaneous features.
 * `shortcodes.php` - Various shortcodes used on LezWatch.TV
     - Display The first year we had queers: `[firstyear]`
     - Display This Month recap: `[thismonth]` or `[thismonth date="2017-01"]`
-    - Display screener information: `[screener title="Some Like It Hot" summary="A quirky black and white romcom" queer="2" worth="yes" trigger="low"]`
-    - Display author information: `[author name="ipstenu"]`
+    - Display screener information: `[screener title="Some Like It Hot" summary="A quirky black and white romcom" queer="2" worth="yes" trigger="low"]` (now a block)
+    - Display author information: `[author name="ipstenu"]` (now a block)
 * `sort-stopwords.php` - Filter post order by for shows to NOT include the/an/a when sorting.
 * `wp-cli.php`- WP-CLI
     - Re-run calculations for specific post content (actors & shows): `wp lwtv calc [actor|show|character] ID`
@@ -153,6 +153,8 @@ Stored in `/plugins/`
 
 The file `_main.php` acts as an autoloader.
 
+* Cache: `cache.php`
+    - Generates data used by Proxy Cache Purge and WP Rocket to know what to flush.
 * CMB2: `/cmb2.php`
     - calls other files
     - generates a CB2 formatted list of terms
@@ -274,9 +276,15 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 
 Stored in `/vendor/` - this has to be included for things to function properly.
 
+* `/bin/` - temp holder for composer
+* `/composer/` - composer library and auto loader
+* `/johngrogg/ics-parser` - ICS parser code (for TV calendar)
+* `/nesbot/carbon/` - Required by ICS Parser
+* `/symfony/` - Required by ICS parser
+
 ## Development
 
-Update code like you normally would. If you don't want to push it anywhere, make a local branch. Always remember, merge to **development** first and check on the (private) dev server. If that works, do a pull request from development to **master** to automatically update.
+Update code like you normally would. If you don't want to push it anywhere, make a local branch. Always remember, merge to **development** first and check on the (private) dev server. If that works, do a pull request from development to **production** to automatically update.
 
 ### Libraries
 

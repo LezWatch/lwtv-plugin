@@ -80,7 +80,9 @@ class LWTV_FacetWP {
 				$params['facet_value']         = $params['facet_value'];
 				$params['facet_display_value'] = ucfirst( $params['facet_display_value'] );
 				$class->insert( $params );
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 			// Shows we Love
 			// Change 'on' to 'yes'
@@ -88,7 +90,9 @@ class LWTV_FacetWP {
 				$params['facet_value']         = ( 'on' === $params['facet_value'] ) ? 'yes' : 'no';
 				$params['facet_display_value'] = ( 'on' === $params['facet_display_value'] ) ? 'Yes' : 'No';
 				$class->insert( $params );
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 			// Shows with Death
 			// If the count is 1 or more, there's death
@@ -96,7 +100,9 @@ class LWTV_FacetWP {
 				$params['facet_value']         = ( $params['facet_value'] >= 1 ) ? 'yes' : 'no';
 				$params['facet_display_value'] = ( $params['facet_display_value'] >= 1 ) ? 'Yes' : 'No';
 				$class->insert( $params );
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 			// Trigger Warning
 			// If 'on' change to 'High', else capitalize
@@ -104,7 +110,9 @@ class LWTV_FacetWP {
 				$params['facet_value']         = ( 'on' === $params['facet_display_value'] ) ? 'high' : $params['facet_display_value'];
 				$params['facet_display_value'] = ( 'on' === $params['facet_display_value'] ) ? 'High' : ucfirst( $params['facet_display_value'] );
 				$class->insert( $params );
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 			// Airdates
 			// Saves two values for two sources
@@ -141,7 +149,9 @@ class LWTV_FacetWP {
 				$params_on_air['facet_display_value'] = ucfirst( $on_air );
 				$class->insert( $params_on_air );
 
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 			// Shows by Gender, Sexuality, Romance
 			// If they have a count higher than 0, we flag them.
@@ -156,7 +166,9 @@ class LWTV_FacetWP {
 						$class->insert( $params );
 					}
 				}
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 
 			// Some extra weird things...
@@ -193,7 +205,9 @@ class LWTV_FacetWP {
 					$params_stars['facet_display_value'] = 'None';
 					$class->insert( $params_stars );
 				}
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 		}
 
@@ -205,7 +219,9 @@ class LWTV_FacetWP {
 				$params['facet_value']         = ( '1' === $params['facet_value'] ) ? 'yes' : 'no';
 				$params['facet_display_value'] = ( '1' === $params['facet_display_value'] ) ? 'Is Queer' : 'Is Not Queer';
 				$class->insert( $params );
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 		}
 
@@ -221,7 +237,9 @@ class LWTV_FacetWP {
 					$params['facet_display_value'] = get_the_title( $val );
 					$class->insert( $params );
 				}
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 			// Shows
 			// Saves one value for each show
@@ -233,7 +251,9 @@ class LWTV_FacetWP {
 						$params['facet_display_value'] = get_the_title( $val['show'] );
 						$class->insert( $params );
 				}
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 			// User Roles
 			// Saves one value for each show
@@ -245,7 +265,9 @@ class LWTV_FacetWP {
 						$params['facet_display_value'] = ucfirst( $val['type'] );
 						$class->insert( $params );
 				}
-				return false; // skip default indexing
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
 			}
 		}
 

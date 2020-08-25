@@ -25,115 +25,82 @@ class LWTV_Affiliate_CBS {
 		// tiny   - 320x50
 		// wide   - 300x250
 		$named_array = array(
-			'the-good-wife'                 => array(
-				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/839602/3065" id="839602"><img src="//a.impactradius-go.com/display-ad/3065-839602" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/839602/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/825525/3065" id="825525"><img src="//a.impactradius-go.com/display-ad/3065-825525" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/825525/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/825532/3065" id="825532"><img src="//a.impactradius-go.com/display-ad/3065-825532" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/825532/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'wide'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/825528/3065" id="825528"><img src="//a.impactradius-go.com/display-ad/3065-825528" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/825528/3065" style="position:absolute;visibility:hidden;" border="0" />',
-			),
-			'the-good-fight'                => array(
-				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/829238/3065" id="829238"><img src="//a.impactradius-go.com/display-ad/3065-829238" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/829238/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/829232/3065" id="829232"><img src="//a.impactradius-go.com/display-ad/3065-829232" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/829232/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/829235/3065" id="829235"><img src="//a.impactradius-go.com/display-ad/3065-829235" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/829235/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'wide'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/839610/3065" id="839610"><img src="//a.impactradius-go.com/display-ad/3065-839610" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/839610/3065" style="position:absolute;visibility:hidden;" border="0" />',
-			),
-			'macgyver'                      => array(
+			'macgyver'                   => array(
 				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/379708/3065" id="379708"><img src="//a.impactradius-go.com/display-ad/3065-379708" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379708/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/379704/3065" id="379704"><img src="//a.impactradius-go.com/display-ad/3065-379704" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379704/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/379707/3065" id="379707"><img src="//a.impactradius-go.com/display-ad/3065-379707" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379707/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'wide'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/379705/3065" id="379705"><img src="//a.impactradius-go.com/display-ad/3065-379705" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379705/3065" style="position:absolute;visibility:hidden;" border="0" />',
 			),
-			'madam-secretary'               => array(
+			'madam-secretary'            => array(
 				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/379713/3065" id="379713"><img src="//a.impactradius-go.com/display-ad/3065-379713" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379713/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/379709/3065" id="379709"><img src="//a.impactradius-go.com/display-ad/3065-379709" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379709/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/379712/3065" id="379712"><img src="//a.impactradius-go.com/display-ad/3065-379712" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379712/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'wide'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/379710/3065" id="379710"><img src="//a.impactradius-go.com/display-ad/3065-379710" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379710/3065" style="position:absolute;visibility:hidden;" border="0" />',
 			),
-			'mom'                           => array(
-				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/820991/3065" id="820991"><img src="//a.impactradius-go.com/display-ad/3065-820991" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/820991/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/820987/3065" id="820987"><img src="//a.impactradius-go.com/display-ad/3065-820987" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/820987/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/820990/3065" id="820990"><img src="//a.impactradius-go.com/display-ad/3065-820990" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/820990/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'wide'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/820988/3065" id="820988"><img src="//a.impactradius-go.com/display-ad/3065-820988" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/820988/3065" style="position:absolute;visibility:hidden;" border="0" />',
-			),
-			'star-trek-the-next-generation' => array(
-				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/366253/3065" id="366253"><img src="//a.impactradius-go.com/display-ad/3065-366253" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366253/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/366255/3065" id="366255"><img src="//a.impactradius-go.com/display-ad/3065-366255" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366255/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/366252/3065" id="366252"><img src="//a.impactradius-go.com/display-ad/3065-366252" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366252/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'wide'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/366250/3065" id="366250"><img src="//a.impactradius-go.com/display-ad/3065-366250" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366250/3065" style="position:absolute;visibility:hidden;" border="0" />',
-			),
-			'star-trek-deep-space-nine'     => array(
-				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/366252/3065" id="366252"><img src="//a.impactradius-go.com/display-ad/3065-366252" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366252/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/366255/3065" id="366255"><img src="//a.impactradius-go.com/display-ad/3065-366255" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366255/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/366252/3065" id="366252"><img src="//a.impactradius-go.com/display-ad/3065-366252" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366252/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'wide'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/366250/3065" id="366250"><img src="//a.impactradius-go.com/display-ad/3065-366250" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366250/3065" style="position:absolute;visibility:hidden;" border="0" />',
-			),
-			'star-trek-discovery'           => array(
+			'star-trek'                  => array(
 				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/567414/3065" id="567414"><img src="//a.impactradius-go.com/display-ad/3065-567414" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/567414/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/618680/3065" id="618680"><img src="//a.impactradius-go.com/display-ad/3065-618680" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/618680/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/618683/3065" id="618683"><img src="//a.impactradius-go.com/display-ad/3065-618683" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/618683/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/366255/3065" id="366255"><img src="//a.impactradius-go.com/display-ad/3065-366255" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366255/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/567409/3065" id="567409"><img src="//a.impactradius-go.com/display-ad/3065-567409" border="0" alt="" width="300" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/567409/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'wide'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/567410/3065" id="567410"><img src="//a.impactradius-go.com/display-ad/3065-567410" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/567410/3065" style="position:absolute;visibility:hidden;" border="0" />',
 			),
-			'star-trek-picard'           => array(
-				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/366252/3065" id="366252"><img src="//a.impactradius-go.com/display-ad/3065-366252" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366252/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/366255/3065" id="366255"><img src="//a.impactradius-go.com/display-ad/3065-366255" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366255/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/366252/3065" id="366252"><img src="//a.impactradius-go.com/display-ad/3065-366252" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366252/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'wide'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/366250/3065" id="366250"><img src="//a.impactradius-go.com/display-ad/3065-366250" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366250/3065" style="position:absolute;visibility:hidden;" border="0" />',
-			),
-			'the-young-and-the-restless'    => array(
+			'the-young-and-the-restless' => array(
 				'banner' => '<a href="https://cbsallaccess.qflm.net/c/1242493/359951/3065" id="359951"><img src="//a.impactradius-go.com/display-ad/3065-359951" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359951/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'thin'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/359947/3065" id="359947"><img src="//a.impactradius-go.com/display-ad/3065-359947" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359947/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'tiny'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/359950/3065" id="359950"><img src="//a.impactradius-go.com/display-ad/3065-359950" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359950/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'wide'   => '<a href="https://cbsallaccess.qflm.net/c/1242493/359948/3065" id="359948"><img src="//a.impactradius-go.com/display-ad/3065-359948" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359948/3065" style="position:absolute;visibility:hidden;" border="0" />',
 			),
-
 		);
 
 		$generic_array = array(
 			'banner' => array(
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/844547/3065" id="844547"><img src="//a.impactradius-go.com/display-ad/3065-844547" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/844547/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/553296/3065" id="553296"><img src="//a.impactradius-go.com/display-ad/3065-553296" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/553296/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/824216/3065" id="824216"><img src="//a.impactradius-go.com/display-ad/3065-824216" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/824216/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/366253/3065" id="366253"><img src="//a.impactradius-go.com/display-ad/3065-366253" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366253/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/359938/3065" id="359938"><img src="//a.impactradius-go.com/display-ad/3065-359938" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359938/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/359941/3065" id="359941"><img src="//a.impactradius-go.com/display-ad/3065-359941" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359941/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/359946/3065" id="359946"><img src="//a.impactradius-go.com/display-ad/3065-359946" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359946/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/359957/3065" id="359957"><img src="//a.impactradius-go.com/display-ad/3065-359957" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359957/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/553296/3065" id="553296"><img src="//a.impactradius-go.com/display-ad/3065-553296" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/553296/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/567414/3065" id="567414"><img src="//a.impactradius-go.com/display-ad/3065-567414" border="0" alt="" width="728" height="90"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/567414/3065" style="position:absolute;visibility:hidden;" border="0" />',
 			),
 			'thin'   => array(
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/844542/3065" id="844542"><img src="//a.impactradius-go.com/display-ad/3065-844542" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/844542/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/553290/3065" id="553290"><img src="//a.impactradius-go.com/display-ad/3065-553290" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/553290/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/359962/3065" id="359962"><img src="//a.impactradius-go.com/display-ad/3065-359962" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359962/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/567408/3065" id="567408"><img src="//a.impactradius-go.com/display-ad/3065-567408" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/567408/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/379709/3065" id="379709"><img src="//a.impactradius-go.com/display-ad/3065-379709" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/379709/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/359934/3065" id="359934"><img src="//a.impactradius-go.com/display-ad/3065-359934" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359934/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/359953/3065" id="359953"><img src="//a.impactradius-go.com/display-ad/3065-359953" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359953/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/366255/3065" id="366255"><img src="//a.impactradius-go.com/display-ad/3065-366255" border="0" alt="" width="160" height="600"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/366255/3065" style="position:absolute;visibility:hidden;" border="0" />',
 			),
 			'tiny'   => array(
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/844545/3065" id="844545"><img src="//a.impactradius-go.com/display-ad/3065-844545" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/844545/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/824215/3065" id="824215"><img src="//a.impactradius-go.com/display-ad/3065-824215" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/824215/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/553293/3065" id="553293"><img src="//a.impactradius-go.com/display-ad/3065-553293" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/553293/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/567412/3065" id="567412"><img src="//a.impactradius-go.com/display-ad/3065-567412" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/567412/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/359960/3065" id="359960"><img src="//a.impactradius-go.com/display-ad/3065-359960" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359960/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/359956/3065" id="359956"><img src="//a.impactradius-go.com/display-ad/3065-359956" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359956/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/359945/3065" id="359945"><img src="//a.impactradius-go.com/display-ad/3065-359945" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359945/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/359937/3065" id="359937"><img src="//a.impactradius-go.com/display-ad/3065-359937" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359937/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/359940/3065" id="359940"><img src="//a.impactradius-go.com/display-ad/3065-359940" border="0" alt="" width="320" height="50"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359940/3065" style="position:absolute;visibility:hidden;" border="0" />',
 			),
 			'wide'   => array(
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/844543/3065" id="844543"><img src="//a.impactradius-go.com/display-ad/3065-844543" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/844543/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/553291/3065" id="553291"><img src="//a.impactradius-go.com/display-ad/3065-553291" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/553291/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/359958/3065" id="359958"><img src="//a.impactradius-go.com/display-ad/3065-359958" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359958/3065" style="position:absolute;visibility:hidden;" border="0" />',
-				'<a href="https://cbsallaccess.qflm.net/c/1242493/359954/3065" id="359954"><img src="//a.impactradius-go.com/display-ad/3065-359954" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359954/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/567410/3065" id="567410"><img src="//a.impactradius-go.com/display-ad/3065-567410" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/567410/3065" style="position:absolute;visibility:hidden;" border="0" />',
 				'<a href="https://cbsallaccess.qflm.net/c/1242493/359935/3065" id="359935"><img src="//a.impactradius-go.com/display-ad/3065-359935" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359935/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/359954/3065" id="359954"><img src="//a.impactradius-go.com/display-ad/3065-359954" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359954/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/359942/3065" id="359942"><img src="//a.impactradius-go.com/display-ad/3065-359942" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359942/3065" style="position:absolute;visibility:hidden;" border="0" />',
+				'<a href="https://cbsallaccess.qflm.net/c/1242493/359944/3065" id="359944"><img src="//a.impactradius-go.com/display-ad/3065-359944" border="0" alt="" width="300" height="250"/></a><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/359944/3065" style="position:absolute;visibility:hidden;" border="0" />',
 			),
 		);
 
 		if ( 'text' === $format ) {
-			$the_ad = '<h3 id="553299"><a href="//cbsallaccess.qflm.net/c/1242493/553299/3065">Watch groundbreaking original series now when you try 1 week FREE of CBS All Access! </a></h3><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/553299/3065" style="position:absolute;visibility:hidden;" border="0" />';
+			$the_ad = '<h3 id="553299"><a href="https://cbsallaccess.qflm.net/c/1242493/553299/3065">Watch groundbreaking original series now when you try 1 week FREE of CBS All Access! </a></h3><img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/553299/3065" style="position:absolute;visibility:hidden;" border="0" />';
 		} else {
 			$slug = get_post_field( 'post_name', $post_id );
 
-			if ( array_key_exists( $slug, $named_array ) ) {
-				$the_ad = $named_array[ $slug ][ $format ];
+			// If the slug CONTAINS Star Trek, it's star-trek
+			if ( strpos( $slug, 'star-trek' ) ) {
+				$slug = 'star-trek';
 			}
 
-			// if nothing is set...
-			if ( ! isset( $the_ad ) ) {
+			// Check if the slug is in the $named_array, and use that.
+			// Else, generic.
+			if ( array_key_exists( $slug, $named_array ) ) {
+				$the_ad = $named_array[ $slug ][ $format ];
+			} else {
 				$the_ad = $generic_array[ $format ][ array_rand( $generic_array[ $format ] ) ];
 			}
 		}
