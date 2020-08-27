@@ -27,9 +27,6 @@ class LWTV_CPT_Actors {
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 
-		// Amp Hooks
-		add_action( 'amp_init', array( $this, 'amp_init' ) );
-
 		// Yoast Hooks
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra' ) );
 
@@ -39,11 +36,11 @@ class LWTV_CPT_Actors {
 		// Define show taxonomies
 		// SLUG => PRETTY NAME
 		self::$all_taxonomies = array(
-			'actor_gender'    => array(
+			'lez_actor_gender'    => array(
 				'name'   => 'actor gender',
 				'plural' => 'actor gender',
 			),
-			'actor_sexuality' => array(
+			'lez_actor_sexuality' => array(
 				'name'   => 'actor sexuality',
 				'plural' => 'actor sexuality',
 			),
@@ -57,7 +54,9 @@ class LWTV_CPT_Actors {
 
 			$all_tax_array = array();
 			foreach ( self::$all_taxonomies as $actor_tax => $actor_array ) {
-				$all_tax_array[] = 'lez_' . $actor_tax;
+				if ( ! isset( $a_char_tax['hide'] ) || false !== $actor_array['hide'] ) {
+					$all_tax_array[] = $actor_tax;
+				}
 			}
 
 			if ( in_array( $taxonomy->name, $all_tax_array ) ) {
@@ -85,7 +84,7 @@ class LWTV_CPT_Actors {
 
 		$actor_taxonomies = array();
 		foreach ( self::$all_taxonomies as $actor_tax => $actor_array ) {
-			$actor_taxonomies[] = 'lez_' . $actor_tax;
+			$actor_taxonomies[] = $actor_tax;
 		}
 
 		$labels   = array(
@@ -151,23 +150,25 @@ class LWTV_CPT_Actors {
 	 *
 	 */
 	public function create_taxonomies() {
-		foreach ( self::$all_taxonomies as $tax_slug => $tax_details ) {
+		foreach ( self::$all_taxonomies as $tax_slug => $tax_array ) {
+			// Remove lez_ from slug.
+			$slug = str_replace( 'lez_', '', $tax_slug );
 
-			$slug        = $tax_slug;
-			$pretty      = $tax_details['name'];
-			$name_plural = ( isset( $tax_details['plural'] ) ) ? ucwords( $tax_details['plural'] ) : ucwords( $tax_details['name'] ) . 's';
+			// Determine names.
+			$name_singular = ucwords( $tax_array['name'] );
+			$name_plural   = ( isset( $tax_array['plural'] ) ) ? ucwords( $tax_array['plural'] ) : ucwords( $tax_array['name'] ) . 's';
 
 			// Labels for taxonomy
 			$labels = array(
 				'name'                       => $name_plural,
-				'singular_name'              => ucwords( $pretty ),
+				'singular_name'              => $name_singular,
 				'search_items'               => 'Search ' . $name_plural,
 				'popular_items'              => 'Popular ' . $name_plural,
 				'all_items'                  => 'All' . $name_plural,
-				'edit_item'                  => 'Edit ' . ucwords( $pretty ),
-				'update_item'                => 'Update ' . ucwords( $pretty ),
-				'add_new_item'               => 'Add New ' . ucwords( $pretty ),
-				'new_item_name'              => 'New' . ucwords( $pretty ) . 'Name',
+				'edit_item'                  => 'Edit ' . $name_singular,
+				'update_item'                => 'Update ' . $name_singular,
+				'add_new_item'               => 'Add New ' . $name_singular,
+				'new_item_name'              => 'New' . $name_singular . 'Name',
 				'separate_items_with_commas' => 'Separate ' . $name_plural . ' with commas',
 				'add_or_remove_items'        => 'Add or remove' . $name_plural,
 				'choose_from_most_used'      => 'Choose from the most used ' . $name_plural,
@@ -186,11 +187,9 @@ class LWTV_CPT_Actors {
 				'show_in_nav_menus'     => true,
 				'rewrite'               => array( 'slug' => rtrim( $slug, 's' ) ),
 			);
-			// Taxonomy name
-			$taxonomyname = 'lez_' . $slug;
 
 			// Register taxonomy
-			register_taxonomy( $taxonomyname, 'post_type_actors', $arguments );
+			register_taxonomy( $tax_slug, 'post_type_actors', $arguments );
 		}
 	}
 
@@ -206,13 +205,10 @@ class LWTV_CPT_Actors {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 
-		// Do the math
-		( new LWTV_Actors_Calculate() )->do_the_math( $post_id );
-
-		// If it's not an auto-draft, let's flush cache.
+		// Don't do this on auto-drafts or drafts.
 		if ( 'auto-draft' !== get_post_status( $post_id ) ) {
-			// Cache Things...
-			$request = wp_remote_get( get_permalink( $post_id ) . '/?nocache' );
+			// Do the math
+			( new LWTV_Actors_Calculate() )->do_the_math( $post_id );
 		}
 
 		// re-hook this function
@@ -250,13 +246,6 @@ class LWTV_CPT_Actors {
 	public function yoast_seo_register_extra() {
 		wpseo_register_var_replacement( '%%characters%%', array( $this, 'yoast_retrieve_characters_replacement' ), 'basic', 'Information on how many characters an actor plays.' );
 		wpseo_register_var_replacement( '%%is_queer%%', array( $this, 'yoast_retrieve_queer_replacement' ), 'basic', 'Output if the actor is queer IRL.' );
-	}
-
-	/*
-	 * AMP
-	 */
-	public function amp_init() {
-		add_post_type_support( 'post_type_actors', AMP_QUERY_VAR );
 	}
 
 	/*

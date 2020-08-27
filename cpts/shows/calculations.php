@@ -402,11 +402,6 @@ class LWTV_Shows_Calculate {
 	 */
 	public function do_the_math( $post_id ) {
 
-		// If this isn't a show, and it's not published yet, we bail.
-		if ( 'post_type_shows' !== get_post_type( $post_id ) && 'publish' !== get_post_status( $post_id ) ) {
-			return;
-		}
-
 		// Get the ratings
 		$score_show_rating = self::show_score( $post_id );
 		$score_show_tropes = self::show_tropes_score( $post_id );

@@ -45,12 +45,6 @@ class LWTV_Characters_Calculate {
 	 * @return n/a
 	 */
 	public function do_the_math( $post_id ) {
-
-		// If this isn't a character, and it's not published yet, we bail.
-		if ( 'post_type_characters' !== get_post_type( $post_id ) && 'publish' !== get_post_status( $post_id ) ) {
-			return;
-		}
-
 		// Calculate Death
 		self::death( $post_id );
 	}

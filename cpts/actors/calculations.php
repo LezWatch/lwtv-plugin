@@ -87,11 +87,6 @@ class LWTV_Actors_Calculate {
 	 */
 	public function do_the_math( $post_id ) {
 
-		// If this isn't a actor, and it's not published yet, we bail.
-		if ( 'post_type_actors' !== get_post_type( $post_id ) && 'publish' !== get_post_status( $post_id ) ) {
-			return;
-		}
-
 		// Update counts
 		update_post_meta( $post_id, 'lezactors_char_count', self::count_queers( $post_id, 'count' ) );
 		update_post_meta( $post_id, 'lezactors_dead_count', self::count_queers( $post_id, 'dead' ) );

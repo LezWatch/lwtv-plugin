@@ -21,20 +21,22 @@ class LWTV_CPT_Characters {
 	 * Constructor
 	 */
 	public function __construct() {
-
-		self::$all_taxonomies = array(
-			// Display Name        => slug.
-			'cliché'               => 'cliches',
-			'gender'               => 'gender',
-			'sexual orientation'   => 'sexuality',
-			'romantic orientation' => 'romantic',
-		);
-
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
+
+		// Create CPT and Taxes
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
-		add_action( 'amp_init', array( $this, 'amp_init' ) );
+
+		// Yoast Hooks
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
+
+		// Define show taxonomies
+		self::$all_taxonomies = array(
+			'lez_cliches'   => array( 'name' => 'cliché' ),
+			'lez_gender'    => array( 'name' => 'gender' ),
+			'lez_sexuality' => array( 'name' => 'sexual orientation' ),
+			'lez_romantic'  => array( 'name' => 'romantic orientation' ),
+		);
 
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
@@ -43,8 +45,10 @@ class LWTV_CPT_Characters {
 		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
 
 			$all_tax_array = array();
-			foreach ( self::$all_taxonomies as $pretty => $slug ) {
-				$all_tax_array[] = 'lez_' . $slug;
+			foreach ( self::$all_taxonomies as $char_tax => $char_array ) {
+				if ( ! isset( $char_tax['hide'] ) || false !== $char_array['hide'] ) {
+					$all_tax_array[] = $char_tax;
+				}
 			}
 
 			if ( in_array( $taxonomy->name, $all_tax_array ) ) {
@@ -53,7 +57,6 @@ class LWTV_CPT_Characters {
 			return $response;
 		}, 10, 2 );
 		// phpcs:enable
-
 	}
 
 	/**
@@ -72,8 +75,8 @@ class LWTV_CPT_Characters {
 	public function create_post_type() {
 
 		$char_taxonomies = array();
-		foreach ( self::$all_taxonomies as $pretty => $slug ) {
-			$char_taxonomies[] = 'lez_' . $slug;
+		foreach ( self::$all_taxonomies as $slug => $array ) {
+			$char_taxonomies[] = $slug;
 		}
 
 		$labels   = array(
@@ -139,24 +142,34 @@ class LWTV_CPT_Characters {
 	 */
 	public function create_taxonomies() {
 
-		foreach ( self::$all_taxonomies as $pretty => $slug ) {
+		foreach ( self::$all_taxonomies as $tax_slug => $tax_array ) {
+			// Remove lez_ from slug.
+			$slug = str_replace( 'lez_', '', $tax_slug );
+
+			// Determine names.
+			$name_singular = ucwords( $tax_array['name'] );
+			$name_plural   = ( isset( $tax_array['plural'] ) ) ? ucwords( $tax_array['plural'] ) : ucwords( $tax_array['name'] ) . 's';
+
 			// Labels for taxonomy
 			$labels = array(
-				'name'                       => ucwords( $pretty ) . 's',
-				'singular_name'              => ucwords( $pretty ),
-				'search_items'               => 'Search ' . ucwords( $pretty ) . 's',
-				'popular_items'              => 'Popular ' . ucwords( $pretty ) . 's',
-				'all_items'                  => 'All' . ucwords( $pretty ) . 's',
-				'edit_item'                  => 'Edit ' . ucwords( $pretty ),
-				'update_item'                => 'Update ' . ucwords( $pretty ),
-				'add_new_item'               => 'Add New ' . ucwords( $pretty ),
-				'new_item_name'              => 'New' . ucwords( $pretty ) . 'Name',
-				'separate_items_with_commas' => 'Separate ' . $pretty . 's with commas',
-				'add_or_remove_items'        => 'Add or remove' . $pretty . 's',
-				'choose_from_most_used'      => 'Choose from the most used ' . $pretty . 's',
-				'not_found'                  => 'No ' . ucwords( $pretty ) . 's found.',
-				'menu_name'                  => ucwords( $pretty ) . 's',
+				'name'                       => $name_plural,
+				'singular_name'              => $name_singular,
+				'search_items'               => 'Search ' . $name_plural,
+				'popular_items'              => 'Popular ' . $name_plural,
+				'all_items'                  => 'All' . $name_plural,
+				'parent_item'                => null,
+				'parent_item_colon'          => null,
+				'edit_item'                  => 'Edit ' . $name_singular,
+				'update_item'                => 'Update ' . $name_singular,
+				'add_new_item'               => 'Add New ' . $name_singular,
+				'new_item_name'              => 'New' . $name_singular . 'Name',
+				'separate_items_with_commas' => 'Separate ' . $name_plural . ' with commas',
+				'add_or_remove_items'        => 'Add or remove' . $name_plural,
+				'choose_from_most_used'      => 'Choose from the most used ' . $name_plural,
+				'not_found'                  => 'No ' . $name_plural . ' found.',
+				'menu_name'                  => $name_plural,
 			);
+
 			//parameters for the new taxonomy
 			$arguments = array(
 				'hierarchical'          => false,
@@ -169,11 +182,9 @@ class LWTV_CPT_Characters {
 				'show_in_nav_menus'     => true,
 				'rewrite'               => array( 'slug' => rtrim( $slug, 's' ) ),
 			);
-			// Taxonomy name
-			$taxonomyname = 'lez_' . $slug;
 
 			// Register taxonomy
-			register_taxonomy( $taxonomyname, 'post_type_characters', $arguments );
+			register_taxonomy( $tax_slug, 'post_type_characters', $arguments );
 		}
 	}
 
@@ -227,13 +238,6 @@ class LWTV_CPT_Characters {
 	public function yoast_seo_register_extra_replacements() {
 		wpseo_register_var_replacement( '%%actors%%', array( $this, 'yoast_retrieve_actors_replacement' ), 'basic', 'A list of actors who played the character, separated by commas.' );
 		wpseo_register_var_replacement( '%%shows%%', array( $this, 'yoast_retrieve_shows_replacement' ), 'basic', 'A list of shows the character was on, separated by commas.' );
-	}
-
-	/*
-	 * AMP
-	 */
-	public function amp_init() {
-		add_post_type_support( 'post_type_characters', AMP_QUERY_VAR );
 	}
 
 	/*
@@ -492,24 +496,26 @@ class LWTV_CPT_Characters {
 	 */
 	public function save_post_meta( $post_id ) {
 
-		// Bail if this is an auto-draft
-		if ( 'auto-draft' === get_post_status( $post_id ) ) {
-			return;
-		}
-
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
-		// Math and Taxonomies
-		( new LWTV_Characters_Calculate() )->do_the_math( $post_id );
+		// Don't do this on auto-drafts or drafts.
+		if ( 'auto-draft' !== get_post_status( $post_id ) ) {
+			// Character scores
+			( new LWTV_Characters_Calculate() )->do_the_math( $post_id );
+
+			// Get a list of URLs to flush
+			$clear_urls = ( new LWTV_Cache() )->collect_urls_for_characters( $post_id );
+		}
+
+		// Always Sync Taxonomies
 		( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+
+		// Always update Wikidata
 		( new LWTV_Debug() )->check_actors_wikidata( $post_id );
 
-		// Get a list of URLs to flush
-		$clear_urls = ( new LWTV_Cache() )->collect_urls_for_characters( $post_id );
-
 		// If we've got a list of URLs, then flush.
-		if ( ! empty( $clear_urls ) ) {
+		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
 			( new LWTV_Cache() )->clean_urls( $clear_urls );
 		}
 

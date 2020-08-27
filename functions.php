@@ -189,9 +189,13 @@ class LWTV_Functions {
 		}
 
 		// Override for AMP - NO ICONS
+		// Disabled due to weird errors?
+		// amp_is_available was called <strong>incorrectly</strong>. amp_is_available() (or amp_is_request(), formerly is_amp_endpoint()) was called too early and so it will not work properly. WordPress is currently doing the &quot;facetwp_pager_html&quot; action. Calling this function before the &quot;wp&quot; action means it will not have access to WP_Query and the queried object to determine if it is an AMP response, thus neither the &quot;amp_skip_post()&quot; filter nor the AMP enabled toggle will be considered. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 2.0.0.) in /home/wp_ksvp9u/lezwatchtv.com/wp-includes/functions.php on line 5225
+		/*
 		if ( is_amp_endpoint() ) {
 			$return = '';
 		}
+		*/
 
 		return $return;
 	}
