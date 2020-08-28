@@ -38,9 +38,11 @@ class LWTV_Tools_Dashboard {
 			<ul>
 				<?php
 				$output = '';
-				foreach ( $options as $an_option ) {
-					if ( $an_option['count'] > 0 ) {
-						$output .= '<li>&bull; ' . $an_option['name'] . ' - ' . $an_option['count'] . '</li>';
+				if ( is_array( $options ) ) {
+					foreach ( $options as $an_option ) {
+						if ( $an_option['count'] > 0 ) {
+							$output .= '<li>&bull; ' . $an_option['name'] . ' - ' . $an_option['count'] . '</li>';
+						}
 					}
 				}
 
