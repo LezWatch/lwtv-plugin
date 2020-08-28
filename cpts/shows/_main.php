@@ -25,11 +25,13 @@ class LWTV_CPT_Shows {
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'init', array( $this, 'init' ) );
+
+		// Create CPT and Taxes
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
-		add_action( 'amp_init', array( $this, 'amp_init' ) );
 
 		// Define show taxonomies
+		// slug => name/purals/etc
 		self::$all_taxonomies = array(
 			'lez_stations'      => array( 'name' => 'TV station' ),
 			'lez_tropes'        => array( 'name' => 'trope' ),
@@ -129,8 +131,8 @@ class LWTV_CPT_Shows {
 	public function create_post_type() {
 
 		$show_taxonomies = array();
-		foreach ( self::$all_taxonomies as $a_show_tax => $a_show_array ) {
-			$show_taxonomies[] = $a_show_tax;
+		foreach ( self::$all_taxonomies as $show_tax => $show_array ) {
+			$show_taxonomies[] = $show_tax;
 		}
 
 		$labels   = array(
@@ -200,27 +202,29 @@ class LWTV_CPT_Shows {
 		foreach ( self::$all_taxonomies as $tax_slug => $tax_details ) {
 			$slug = str_replace( 'lez_', '', $tax_slug );
 
-			$name_plural = ( isset( $tax_details['plural'] ) ) ? ucwords( $tax_details['plural'] ) : ucwords( $tax_details['name'] ) . 's';
+			$name_singular = ucwords( $tax_details['name'] );
+			$name_plural   = ( isset( $tax_details['plural'] ) ) ? ucwords( $tax_details['plural'] ) : ucwords( $tax_details['name'] ) . 's';
 
 			// Labels for taxonomy
 			$labels = array(
 				'name'                       => $name_plural,
-				'singular_name'              => ucwords( $tax_details['name'] ),
+				'singular_name'              => $name_singular,
 				'search_items'               => 'Search ' . $name_plural,
 				'popular_items'              => 'Popular ' . $name_plural,
 				'all_items'                  => 'All' . $name_plural,
 				'parent_item'                => null,
 				'parent_item_colon'          => null,
-				'edit_item'                  => 'Edit ' . ucwords( $tax_details['name'] ),
-				'update_item'                => 'Update ' . ucwords( $tax_details['name'] ),
-				'add_new_item'               => 'Add New ' . ucwords( $tax_details['name'] ),
-				'new_item_name'              => 'New' . ucwords( $tax_details['name'] ) . 'Name',
+				'edit_item'                  => 'Edit ' . $name_singular,
+				'update_item'                => 'Update ' . $name_singular,
+				'add_new_item'               => 'Add New ' . $name_singular,
+				'new_item_name'              => 'New' . $name_singular . 'Name',
 				'separate_items_with_commas' => 'Separate ' . $name_plural . ' with commas',
 				'add_or_remove_items'        => 'Add or remove' . $name_plural,
 				'choose_from_most_used'      => 'Choose from the most used ' . $name_plural,
 				'not_found'                  => 'No ' . $name_plural . ' found.',
 				'menu_name'                  => $name_plural,
 			);
+
 			//parameters for the new taxonomy
 			$arguments = array(
 				'hierarchical'          => false,
@@ -235,11 +239,9 @@ class LWTV_CPT_Shows {
 				'rest_controller_class' => 'WP_REST_Terms_Controller',
 				'rewrite'               => array( 'slug' => rtrim( $slug, 's' ) ),
 			);
-			// Taxonomy name
-			$taxonomyname = 'lez_' . $slug;
 
 			// Register taxonomy
-			register_taxonomy( $taxonomyname, 'post_type_shows', $arguments );
+			register_taxonomy( $tax_slug, 'post_type_shows', $arguments );
 		}
 	}
 
@@ -252,31 +254,22 @@ class LWTV_CPT_Shows {
 	 */
 	public function save_post_meta( $post_id, $post, $update ) {
 
-		// Don't do this on auto-drafts
-		if ( 'auto-draft' === get_post_status( $post_id ) ) {
-			return;
-		}
-
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
 
-		// Save show scores
-		( new LWTV_Shows_Calculate() )->do_the_math( $post_id );
+		// Don't do this on auto-drafts or drafts.
+		if ( 'auto-draft' !== get_post_status( $post_id ) && 'draft' !== get_post_status( $post_id ) ) {
+			// Save show scores
+			( new LWTV_Shows_Calculate() )->do_the_math( $post_id );
+		}
 
-		// Sync up data
+		// ALWAYS sync up data.
 		foreach ( self::$select2_taxonomies as $postmeta => $taxonomy ) {
 			( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 		}
 
 		// re-hook this function
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ) );
-	}
-
-	/*
-	 * Add CPT to AMP
-	 */
-	public function amp_init() {
-		add_post_type_support( 'post_type_shows', AMP_QUERY_VAR );
 	}
 
 	/*

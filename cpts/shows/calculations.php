@@ -103,52 +103,71 @@ class LWTV_Shows_Calculate {
 	 * @param int $post_id The post ID.
 	 */
 	public function count_queers( $post_id, $type = 'count' ) {
-		$type_array = array( 'count', 'none', 'dead', 'queer-irl', 'score' );
 
-		// If this isn't a show post, return nothing
-		if ( 'post_type_shows' !== get_post_type( $post_id ) || ! in_array( esc_attr( $type ), $type_array, true ) ) {
+		if ( ! isset( $post_id ) ) {
 			return;
 		}
 
-		// Here we need to break down the scores
+		$type_array = array( 'count', 'none', 'dead', 'queer-irl', 'score' );
+
+		// If this isn't one of the above types, return.
+		if ( ! in_array( esc_attr( $type ), $type_array, true ) ) {
+			return;
+		}
+
+		// before we do the math, let's see if we have any characters:
+		$char_count = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'count' );
+
+		// No characters? It's a zero.
+		if ( 0 === $char_count ) {
+			return 0;
+		}
+
+		// Here we need to break down the scores:
 		if ( 'score' === $type ) {
-			$char_score      = 0;
-			$all_chars       = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'count' );
-			$chars_regular   = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $all_chars, 'regular' );
-			$chars_recurring = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $all_chars, 'recurring' );
-			$chars_guest     = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $all_chars, 'guest' );
+			$char_score = 0;
 
-			// Points: Regular = 5; Recurring = 2; Guests = 1
-			$char_score = ( count( $chars_regular ) * 5 ) + ( count( $chars_recurring ) * 2 ) + count( $chars_guest );
+			// If the count for all characters is 0, we don't need to run this.
+			if ( 0 !== $char_count ) {
+				$chars_regular   = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $char_count, 'regular' );
+				$chars_recurring = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $char_count, 'recurring' );
+				$chars_guest     = ( new LWTV_CPT_Characters() )->get_chars_for_show( $post_id, $char_count, 'guest' );
 
-			// Bonuses and Demerits
-			// Bonuses:  queer irl = 4pts; no cliches = 2pt; trans played by non-trans = 2pts
-			// Demerits: dead = -3pts; trans played by non-trans = -2pts
-			$queer_irl   = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'queer-irl' ) ) * 10 );
-			$no_cliches  = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'none' ) * 5 );
-			$the_dead    = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'dead' ) ) * -5 );
-			$trans_chars = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'trans' ) );
-			$trans_irl   = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'trans-irl' ) );
-			$trans_score = 0;
-			if ( $trans_irl < $trans_chars ) {
-				$trans_score = ( ( $trans_chars - $trans_irl ) * -5 );
-			} else {
-				$trans_score = $trans_chars * 10;
+				// Points: Regular = 5; Recurring = 2; Guests = 1
+				$char_score = ( count( $chars_regular ) * 5 ) + ( count( $chars_recurring ) * 2 ) + count( $chars_guest );
+
+				// Bonuses and Demerits
+				// Bonuses:  queer irl = 4pts; no cliches = 2pt; trans played by non-trans = 2pts
+				// Demerits: dead = -3pts; trans played by non-trans = -2pts
+				$queer_irl   = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'queer-irl' ) ) * 10 );
+				$no_cliches  = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'none' ) * 5 );
+				$the_dead    = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'dead' ) ) * -5 );
+				$trans_chars = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'trans' ) );
+				$trans_irl   = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'trans-irl' ) );
+				$trans_score = 0;
+				if ( $trans_irl < $trans_chars ) {
+					$trans_score = ( ( $trans_chars - $trans_irl ) * -5 );
+				} else {
+					$trans_score = $trans_chars * 10;
+				}
+
+				// Add it all together (negatives are taken care of above)
+				$char_score = $char_score + $queer_irl + $no_cliches + $the_dead + $trans_score;
 			}
 
-			// Add it all together (negatives are taken care of above)
-			$char_score = $char_score + $queer_irl + $no_cliches + $the_dead + $trans_score;
-
-			// Adjust scores based on type of series
-			if ( has_term( 'movie', 'lez_formats', $post_id ) ) {
-				// Movies have a low bar, since they have low stakes
-				$char_score = ( $char_score / 2 );
-			} elseif ( has_term( 'mini-series', 'lez_formats', $post_id ) ) {
-				// Mini-Series similarly have a small run
-				$char_score = ( $char_score / 1.5 );
-			} elseif ( has_term( 'web-series', 'lez_formats', $post_id ) ) {
-				// WebSeries tend to be more daring, but again, low stakes.
-				$char_score = ( $char_score / 1.25 );
+			// If the score is 0, nothing else needs be done.
+			if ( 0 !== $char_score ) {
+				// Adjust scores based on type of series
+				if ( has_term( 'movie', 'lez_formats', $post_id ) ) {
+					// Movies have a low bar, since they have low stakes
+					$char_score = ( $char_score / 2 );
+				} elseif ( has_term( 'mini-series', 'lez_formats', $post_id ) ) {
+					// Mini-Series similarly have a small run
+					$char_score = ( $char_score / 1.5 );
+				} elseif ( has_term( 'web-series', 'lez_formats', $post_id ) ) {
+					// WebSeries tend to be more daring, but again, low stakes.
+					$char_score = ( $char_score / 1.25 );
+				}
 			}
 
 			// Finally make sure we're between 0 and 100
@@ -161,7 +180,7 @@ class LWTV_Shows_Calculate {
 				$return = $char_score;
 				break;
 			case 'count':
-				$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'count' );
+				$return = $char_count;
 				break;
 			case 'dead':
 				$return = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'dead' );
@@ -182,6 +201,10 @@ class LWTV_Shows_Calculate {
 	 */
 	public function show_tropes_score( $post_id ) {
 
+		if ( ! isset( $post_id ) ) {
+			return;
+		}
+
 		$score        = 0;
 		$tropes       = wp_get_post_terms( $post_id, 'lez_tropes', true );
 		$count_tropes = ( $tropes ) ? count( $tropes ) : 0;
@@ -193,7 +216,8 @@ class LWTV_Shows_Calculate {
 		$bad_tropes   = array( 'queerbashing', 'in-prison', 'queerbaiting', 'big-bad-queers' );
 		$ploy_tropes  = array( 'queer-for-ratings', 'queer-laughs', 'happy-then-not', 'erasure', 'subtext' );
 
-		if ( has_term( 'none', 'lez_tropes', $post_id ) ) {
+		// If there a no tropes, we have a default of 80.
+		if ( ( 0 === $count_tropes ) || has_term( 'none', 'lez_tropes', $post_id ) ) {
 			// No tropes: 80
 			$score = 80;
 		} else {
@@ -235,7 +259,7 @@ class LWTV_Shows_Calculate {
 
 			// Pause for C Shows
 			if ( 0 === $has_tropes['any'] ) {
-				// If a show has NOT good/maybe/bad/ploy tropes, it gets a C
+				// If a show has NO good/maybe/bad/ploy tropes, it gets a C
 				$score = 70;
 			} else {
 				$base_score     = ( $has_tropes['good'] + $has_tropes['maybe'] - $has_tropes['ploy'] - $has_tropes['bad'] );
@@ -282,7 +306,7 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Update post meta for counts
-		// NOTE: This cannot be an array becuase of how it's used for Facet later on.
+		// NOTE: This cannot be an array because of how it's used for Facet later on.
 		// MIKA! SERIOUSLY! NO!
 		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
 		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
@@ -294,11 +318,6 @@ class LWTV_Shows_Calculate {
 	 * Calculate show character data.
 	 */
 	public function show_character_data( $post_id ) {
-
-		// If this isn't a show post, return nothing
-		if ( get_post_type( $post_id ) !== 'post_type_shows' ) {
-			return;
-		}
 
 		// What role each character has
 		$role_data = array(
@@ -359,10 +378,10 @@ class LWTV_Shows_Calculate {
 			wp_reset_query();
 		}
 
-		// Update the roles
+		// Update the roles score
 		update_post_meta( $post_id, 'lezshows_char_roles', $role_data );
 
-		// Update the taxonomies
+		// Update the taxonomies scores
 		foreach ( $valid_taxes as $title => $taxonomy ) {
 			update_post_meta( $post_id, 'lezshows_char_' . $title, $tax_data[ $title ] );
 		}
@@ -383,23 +402,18 @@ class LWTV_Shows_Calculate {
 	 */
 	public function do_the_math( $post_id ) {
 
-		// If this isn't a show, we bail.
-		if ( 'post_type_shows' !== get_post_type( $post_id ) ) {
-			return;
-		}
-
 		// Get the ratings
 		$score_show_rating = self::show_score( $post_id );
+		$score_show_tropes = self::show_tropes_score( $post_id );
 		$score_chars_total = self::show_character_score( $post_id );
 		$score_chars_alive = $score_chars_total['alive'];
 		$score_chars_score = $score_chars_total['score'];
-		$score_show_tropes = self::show_tropes_score( $post_id );
 
 		// Generate character data
 		self::show_character_data( $post_id );
 
 		// Calculate the full score
-		$calculate = ( $score_show_rating + $score_chars_alive + $score_chars_score + $score_show_tropes ) / 4;
+		$calculate = ( $score_show_rating + $score_show_tropes + $score_chars_alive + $score_chars_score ) / 4;
 
 		// Add Intersectionality Bonus
 		// If you do good with intersectionality you can have more points up to 15
@@ -407,16 +421,12 @@ class LWTV_Shows_Calculate {
 		$intersection = get_the_terms( $post_id, 'lez_intersections' );
 		if ( is_array( $intersection ) ) {
 			$count_inters = count( $intersection );
+			$calculate   += min( ( $count_inters * 3 ), 15 );
 		}
-		$calculate += min( ( $count_inters * 3 ), 15 );
 
 		// Keep it between 0 and 100
-		if ( $calculate > 100 ) {
-			$calculate = 100;
-		}
-		if ( $calculate < 0 ) {
-			$calculate = 0;
-		}
+		$calculate = ( $calculate > 100 ) ? 100 : $calculate;
+		$calculate = ( $calculate < 0 ) ? 0 : $calculate;
 
 		// Update the meta
 		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
