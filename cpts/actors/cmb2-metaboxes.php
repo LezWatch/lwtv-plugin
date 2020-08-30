@@ -46,7 +46,7 @@ class LWTV_Actors_CMB2 {
 	public function wikidata_meta_box_callback( $post ) {
 
 		// If it's an auto draft, we do nothing. Else, we roll.
-		if ( 'draft' === get_post_status( $post->ID ) || 'auto-draft' === get_post_status( $post->ID ) || '' === get_the_title( $post->ID ) ) {
+		if ( ! isset( $post->ID ) || 'draft' === get_post_status( $post->ID ) || 'auto-draft' === get_post_status( $post->ID ) || '' === get_the_title( $post->ID ) ) {
 			$wikidata = 'auto-draft';
 		} else {
 			( new LWTV_Debug() )->check_actors_wikidata( $post->ID );
