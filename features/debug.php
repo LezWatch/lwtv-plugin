@@ -232,7 +232,7 @@ class LWTV_Debug {
 					'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
 				);
 
-				$permalink   = basename( get_permalink( $actor_id ) );
+				$permalink = basename( get_permalink( $actor_id ) );
 
 				// Search for the actor:
 				$search_name   = str_replace( ' ', '%20', get_the_title( $actor_id ) );
