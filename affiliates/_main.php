@@ -2,6 +2,10 @@
 /**
  * Name: Affiliate Code
  * Description: Automagical affiliate things
+ *
+ * Links:
+ * https://appleservices-console.partnerize.com/v2/overview/overview
+ * https://affiliate.itunes.apple.com/resources/documentation/basic_affiliate_link_guidelines_for_the_phg_network/
  */
 
 // Require Widgets code
@@ -115,14 +119,6 @@ class LWTV_Affilliates {
 	public function amazon( $id, $format ) {
 		require_once 'amazon.php';
 		return ( new LWTV_Affiliate_Amazon() )->show_ads( $id, $format );
-	}
-
-	/**
-	 * Call Apple Affiliate Data
-	 */
-	public function apple( $id, $format ) {
-		require_once 'apple.php';
-		return ( new LWTV_Affiliate_Apple() )->show_ads( $id, $format );
 	}
 
 	/**
@@ -290,7 +286,7 @@ class LWTV_Affilliates {
 			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'];
 
 			// Clean the URL to get the top domain ...
-			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk', '.ca', '.go' );
+			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk', '.ca', '.go', 'tv.' );
 			foreach ( $removal_array as $removal ) {
 				$hostname = str_replace( $removal, '', $hostname );
 			}
@@ -304,7 +300,7 @@ class LWTV_Affilliates {
 					break;
 				case 'apple':
 				case 'itunes':
-					$url  = $clean_url . '?mt=4&at=1010lMaT';
+					$url  = $clean_url . '?at=1010lMaT&ct=lwtv';
 					$name = 'iTunes';
 					break;
 				case '7eer':
