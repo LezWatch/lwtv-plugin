@@ -22,7 +22,7 @@ class LWTV_Affilliates {
 	 */
 	public function __construct() {
 
-		self::$valid_types   = array( 'random', 'cbs', 'amazon' );
+		self::$valid_types   = array( 'random', 'cbs', 'amazon', 'fubutv' );
 		self::$valid_formats = array( 'banner', 'text', 'thin', 'tiny', 'wide' );
 
 		add_filter( 'widget_text', 'do_shortcode' );
@@ -85,8 +85,11 @@ class LWTV_Affilliates {
 			case 'cbs':
 				$advert = '<!-- CBS -->' . $this->network( $id, $format, 'cbs' );
 				break;
+			case 'fubutv':
+				$advert = '<!-- FubuTV -->' . $this->fubutv( $id, $format );
+				break;
 			case 'local':
-				$advert = '<!-- Local -->' . $this->local( $id, $format );
+				$advert = '<!-- Local/Affiliate -->' . $this->local( $id, $format );
 				break;
 			default:
 				$advert = '<!-- Random -->' . $this->random( $id, $format );
@@ -101,14 +104,15 @@ class LWTV_Affilliates {
 	 */
 	public function random( $id, $format ) {
 		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
-		$number = wp_rand();
 
-		// It's all CBS or Amazon now :(
-		if ( 0 === $number % 2 ) {
-			$advert = '<!-- CBS -->' . $this->network( $id, $format, 'cbs' );
-		} else {
-			$advert = '<!-- Amazon -->' . $this->amazon( $id, $format );
-		}
+		$choices = array(
+			'cbs'    => '<!-- CBS -->' . $this->network( $id, $format, 'cbs' ),
+			'fubutv' => '<!-- FubuTV -->' . $this->fubutv( $id, $format ),
+			'amazon' => '<!-- Amazon -->' . $this->amazon( $id, $format ),
+		);
+
+		$random = array_rand( $choices );
+		$advert = $choices[ $random ];
 
 		return $advert;
 	}
@@ -119,6 +123,14 @@ class LWTV_Affilliates {
 	public function amazon( $id, $format ) {
 		require_once 'amazon.php';
 		return ( new LWTV_Affiliate_Amazon() )->show_ads( $id, $format );
+	}
+
+	/**
+	 * Call FubuTV Affiliate Data
+	 */
+	public function fubutv( $id, $format ) {
+		require_once 'fubutv.php';
+		return ( new LWTV_Affiliate_FubuTV() )->show_ads( $id, $format );
 	}
 
 	/**
@@ -142,7 +154,7 @@ class LWTV_Affilliates {
 	}
 
 	/**
-	 * Call Local Affilate Data
+	 * Call Local Affiliate Data
 	 */
 	public function local( $id, $format = 'wide' ) {
 		require_once 'local.php';
@@ -286,63 +298,95 @@ class LWTV_Affilliates {
 			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'];
 
 			// Clean the URL to get the top domain ...
-			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk', '.ca', '.go', 'tv.' );
+			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk', '.ca', '.go' );
 			foreach ( $removal_array as $removal ) {
 				$hostname = str_replace( $removal, '', $hostname );
 			}
 
-			// Lets get the URLs!
-			switch ( $hostname ) {
-				case 'amazon':
-					$url   = $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20';
-					$name  = 'Amazon';
-					$extra = '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />';
-					break;
-				case 'apple':
-				case 'itunes':
-					$url  = $clean_url . '?at=1010lMaT&ct=lwtv';
-					$name = 'iTunes';
-					break;
-				case '7eer':
-				case 'cbs':
-					$url   = 'https://cbsallaccess.qflm.net/c/1242493/176097/3065';
-					$extra = '<img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/176097/3065" style="position:absolute;visibility:hidden;" border="0" />';
-					$name  = 'CBS All Access';
-					break;
-				case 'abc':
-				case 'nbc':
-					$name = strtoupper( $hostname );
-					break;
-				case 'bbcamerica':
-					$name = 'BBC America';
-					break;
-				case 'cwtv':
-					$name = 'The CW';
-					break;
-				case 'youtube':
-					$name = 'YouTube';
-					break;
-				case 'tv.youtube':
-					$name = 'YouTube.TV';
-					break;
-				case 'tellofilms':
-					$name = 'Tello Films';
-					break;
-				case 'cartoonnetwork':
-					$name = 'Cartoon Network';
-					break;
-				case 'roosterteeth':
-					$name = 'Roster Teeth';
-					break;
-				case 'showtimeanytime':
-				case 'sho':
-					$name = 'Showtime';
-					break;
-				default:
-					$name = ucfirst( $hostname );
-			}
+			// Clean urls to their parent.
+			$host_array = array(
+				'7eer'            => 'cbs',
+				'itunes'          => 'apple',
+				'tv.apple'        => 'apple',
+				'watch.amazon'    => 'amazon',
+				'peacocktv'       => 'peacock',
+				'sho'             => 'showtime',
+				'showtimeanytime' => 'showtime',
+			);
 
-			$extra   = ( isset( $extra ) ) ? $extra : '';
+			// Get the slug based on the hostname to host_array.
+			$slug = ( in_array( $hostname, $host_array ) ) ? $host_array[ $hostname ] : $hostname;
+
+			// URL and name params based on host.
+			$url_array = array(
+				'abc'            => array(
+					'name' => 'ABC',
+				),
+				'amazon'         => array(
+					'url'   => $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20',
+					'extra' => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
+					'name'  => 'Amazon',
+				),
+				'amc'            => array(
+					'name' => 'AMC',
+				),
+				'apple'          => array(
+					'url'  => $clean_url . '?at=1010lMaT&ct=lwtv',
+					'name' => 'Apple TV',
+				),
+				'bbcamerica'     => array(
+					'name' => 'BBC America',
+				),
+				'cartoonnetwork' => array(
+					'name' => 'Cartoon Network',
+				),
+				'cbs'            => array(
+					'url'   => 'https://cbsallaccess.qflm.net/c/1242493/176097/3065',
+					'extra' => '<img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/176097/3065" style="position:absolute;visibility:hidden;" border="0" />',
+					'name'  => 'CBS All Access',
+				),
+				'cwtv'            => array(
+					'name' => 'The CW',
+				),
+				'hbomax'         => array(
+					'name' => 'HBO Max',
+				),
+				'nbc'            => array(
+					'name' => 'NBC',
+				),
+				'peacock'        => array(
+					'name' => 'Peacock',
+				),
+				'roosterteeth'   => array(
+					'name' => 'Roster Teeth',
+				),
+				'showtime'       => array(
+					'name' => 'Showtime',
+				),
+				'tellofilms'     => array(
+					'name' => 'Tello Films',
+				),
+				'youtube'        => array(
+					'name' => 'YouTube',
+				),
+				'tv.youtube'     => array(
+					'name' => 'YouTube.TV',
+				),
+			);
+
+			// Set extra based on slug in url_array.
+			// If not set, leave empty.
+			$extra   = ( isset( $url_array[ $slug ]['extra'] ) ) ? $url_array[ $slug ]['extra'] : '';
+
+			// Set name based on slug in url_array.
+			// If not set, capitalize string.
+			$name   = ( isset( $url_array[ $slug ]['name'] ) ) ? $url_array[ $slug ]['name'] : ucfirst( $hostname );
+
+			// Set URL based on slug in url_array
+			// If not set, use $clean_url
+			$url   = ( isset( $url_array[ $slug ]['url'] ) ) ? $url_array[ $slug ]['url'] : $clean_url;
+
+			// Add to the links array.
 			$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $name . '</a>' . $extra;
 		}
 
