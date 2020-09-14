@@ -191,6 +191,13 @@ class LWTV_OTD_JSON {
 					$show_name = sanitize_title( $show_name );
 					$hashtag   = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) );
 				}
+				// Set all shows but we only use the one because Sara Lance.
+				if ( '' !== $all_shows && ! empty( $shows_value ) ) {
+					$show_titles = array();
+					foreach ( $all_shows as $each_show ) {
+						array_push( $show_titles, get_the_title( $each_show['show'] ) );
+					}
+				}
 
 				$return['status']  = ( has_term( 'dead', 'lez_cliches', $post_id ) ) ? 'dead' : 'alive';
 				$return['shows']   = ( empty( $show_titles ) ) ? 'n/a' : implode( ', ', $show_titles );
