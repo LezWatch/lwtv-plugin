@@ -103,16 +103,14 @@ class LWTV_Affilliates {
 	 * This is a basic check of a random number
 	 */
 	public function random( $id, $format ) {
-		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
-
+		$format  = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 		$choices = array(
 			'cbs'    => '<!-- CBS -->' . $this->network( $id, $format, 'cbs' ),
 			'fubutv' => '<!-- FubuTV -->' . $this->fubutv( $id, $format ),
 			'amazon' => '<!-- Amazon -->' . $this->amazon( $id, $format ),
 		);
-
-		$random = array_rand( $choices );
-		$advert = $choices[ $random ];
+		$random  = array_rand( $choices );
+		$advert  = $choices[ $random ];
 
 		return $advert;
 	}

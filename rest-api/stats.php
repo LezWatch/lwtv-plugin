@@ -100,6 +100,10 @@ class LWTV_Stats_JSON {
 		$page      = ( isset( $params['page'] ) && '' !== $params['page'] ) ? intval( $params['page'] ) : '1';
 		$response  = $this->statistics( $stat_type, $format, $page );
 
+		if ( false === $response ) {
+			return new WP_Error( 'not_found', 'No route was found matching the URL and request method' );
+		}
+
 		return $response;
 	}
 
@@ -397,7 +401,7 @@ class LWTV_Stats_JSON {
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 
 		// Validate Data
-		$valid_format = array( 'simple', 'complex', 'nations', 'formats', 'stars', 'triggers', 'loved', 'worth-it', 'tropes', 'genres', 'id' );
+		$valid_format = array( 'simple', 'complex', 'nations', 'formats', 'stars', 'triggers', 'loved', 'worth-it', 'tropes', 'genres', 'id', 'name' );
 
 		// Sanity Check
 		if ( ! in_array( $format, $valid_format, true ) ) {
@@ -409,6 +413,9 @@ class LWTV_Stats_JSON {
 		switch ( $format ) {
 			case 'id':
 				$stats_array = self::format_id( 'show', $page );
+				break;
+			case 'name':
+				$stats_array = self::format_slug( 'show', $page );
 				break;
 			case 'tropes':
 				$stats_array = ( new LWTV_Stats() )->generate( 'shows', 'tropes', 'array' );
@@ -477,7 +484,32 @@ class LWTV_Stats_JSON {
 	}
 
 	/**
-	 * get_show_taxonomy function.
+	 * format_slug function.
+	 *
+	 * Get show/actor/character by slug and return data.
+	 *
+	 * @access public
+	 * @static
+	 * @return array
+	 */
+	public function format_slug( $post_type, $slug ) {
+
+		// If there's no name or it's not a valid post type, bail.
+		if ( ! $slug || ! in_array( $post_type, array( 'actors', 'characters', 'shows' ), true ) ) {
+			return false;
+		}
+
+		$post = get_page_by_path( $slug, OBJECT, 'post_type_' . $cpt . 's' );
+
+		$stats_array = self::format_id( $post_type, $post->ID );
+
+		return $stats_array;
+	}
+
+	/**
+	 * format_id function.
+	 *
+	 * Get show/actor/character by ID and return data.
 	 *
 	 * @access public
 	 * @static
