@@ -191,7 +191,7 @@ class LWTV_OTD_JSON {
 					$show_name = sanitize_title( $show_name );
 					$hashtag   = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) );
 				}
-				// Set all shows (not used because of Sara Lance)
+				// Set all shows but we only use the one because Sara Lance.
 				if ( '' !== $all_shows && ! empty( $shows_value ) ) {
 					$show_titles = array();
 					foreach ( $all_shows as $each_show ) {
@@ -206,6 +206,7 @@ class LWTV_OTD_JSON {
 			case 'show':
 				$return['loved'] = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
 				$return['score'] = get_post_meta( $post_id, 'lezshows_the_score', true );
+				$return['characters'] = get_post_meta( $post_id, 'lezshows_char_count', true );
 
 				// We need to do some crazy generation here
 				$post_data = get_post( $post_id );

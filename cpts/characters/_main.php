@@ -411,13 +411,13 @@ class LWTV_CPT_Characters {
 		 *   - The Clone Club Corollary  -- Sarah Manning took the place of every
 		 *                                  single other character played by Tatiana
 		 *                                  Maslany.
-		 *   - The Vanishing Xenaphobia  -- When set to under 500, Xena doesn't show
+		 *   - The Vanishing Xenaphobia  -- When set to under 200, Xena doesn't show
 		 *                                  on the Xena:WP show page
 		 *
 		 * Calculate the max number of characters to list, based on the
-		 * previous count. Default/Minimum is 500 characters.
+		 * previous count. Default/Minimum is 200 characters.
 		 */
-		$count = ( isset( $havecharcount ) && $havecharcount >= '500' ) ? $havecharcount : '500';
+		$count = ( isset( $havecharcount ) && $havecharcount >= '200' ) ? $havecharcount : '200';
 
 		// Valid Roles:
 		$valid_roles = array( 'regular', 'recurring', 'guest' );

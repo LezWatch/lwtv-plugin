@@ -207,8 +207,8 @@ class LWTV_Debug {
 			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 
 			if ( $the_loop->have_posts() ) {
-				$post_ids  = wp_list_pluck( $the_loop->posts, 'ID' );
-				$actors    = implode( ',', $post_ids );
+				$post_ids = wp_list_pluck( $the_loop->posts, 'ID' );
+				$actors   = implode( ',', $post_ids );
 				wp_reset_query();
 			}
 		}
@@ -232,13 +232,17 @@ class LWTV_Debug {
 					'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
 				);
 
-				$permalink   = basename( get_permalink( $actor_id ) );
+				$permalink = basename( get_permalink( $actor_id ) );
 
 				// Search for the actor:
 				$search_name   = str_replace( ' ', '%20', get_the_title( $actor_id ) );
 				$search_queery = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' . $search_name . '&language=en&format=json';
 				$search_data   = wp_remote_get( $search_queery );
-				$search_body   = json_decode( $search_data['body'], true );
+
+				// Check for errors.
+				if ( ! is_wp_error( $search_data ) ) {
+					$search_body = json_decode( $search_data['body'], true );
+				}
 
 				if ( isset( $search_body['search']['0']['id'] ) ) {
 					// Set the WikiData ID
@@ -263,7 +267,7 @@ class LWTV_Debug {
 						}
 					} elseif ( isset( $wiki_actor['sitelinks']['enwiki'] ) ) {
 						$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks']['enwiki']['title'] );
-						$wiki_link = 'https://en.wikipedia.org/wiki/' . $wiki_title;
+						$wiki_link  = 'https://en.wikipedia.org/wiki/' . $wiki_title;
 					};
 
 					$check_wiki = array(
