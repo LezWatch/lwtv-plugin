@@ -32,7 +32,7 @@ class LWTV_Ways_To_Watch {
 				$hostname = str_replace( $removal, '', $hostname );
 			}
 
-			// Clean urls to their parent.
+			// URLs that belong to someone else.
 			$host_array = array(
 				'7eer'            => 'cbs',
 				'itunes'          => 'apple',
@@ -41,33 +41,22 @@ class LWTV_Ways_To_Watch {
 				'peacocktv'       => 'peacock',
 				'sho'             => 'showtime',
 				'showtimeanytime' => 'showtime',
+				'youtu.be'        => 'youtube',
 			);
-
-			// Get the slug based on the hostname to host_array.
-			$slug = ( in_array( $hostname, $host_array ) ) ? $host_array[ $hostname ] : $hostname;
 
 			// URL and name params based on host.
 			$url_array = array(
-				'abc'            => array(
-					'name' => 'ABC',
-				),
 				'amazon'         => array(
 					'url'   => $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20',
 					'extra' => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
-					'name'  => 'Amazon',
-				),
-				'amc'            => array(
-					'name' => 'AMC',
+					'name'  => 'Amazon Prime TV',
 				),
 				'apple'          => array(
 					'url'  => $clean_url . '?at=1010lMaT&ct=lwtv',
-					'name' => 'Apple TV',
+					'name' => 'Apple TV+',
 				),
 				'bbcamerica'     => array(
 					'name' => 'BBC America',
-				),
-				'bet'            => array(
-					'name' => 'BET',
 				),
 				'cartoonnetwork' => array(
 					'name' => 'Cartoon Network',
@@ -77,23 +66,23 @@ class LWTV_Ways_To_Watch {
 					'extra' => '<img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/176097/3065" style="position:absolute;visibility:hidden;" border="0" />',
 					'name'  => 'CBS All Access',
 				),
-				'cwtv'            => array(
+				'cwtv'           => array(
 					'name' => 'The CW',
+				),
+				'dcuniverse'     => array(
+					'name' => 'DC Universe',
+				),
+				'disneyplus'     => array(
+					'name' => 'Disney+',
 				),
 				'hbomax'         => array(
 					'name' => 'HBO Max',
 				),
-				'nbc'            => array(
-					'name' => 'NBC',
-				),
 				'peacock'        => array(
-					'name' => 'Peacock',
+					'name' => 'Peacock TV',
 				),
 				'roosterteeth'   => array(
 					'name' => 'Roster Teeth',
-				),
-				'showtime'       => array(
-					'name' => 'Showtime',
 				),
 				'tellofilms'     => array(
 					'name' => 'Tello Films',
@@ -106,17 +95,22 @@ class LWTV_Ways_To_Watch {
 				),
 			);
 
+			// Get the slug based on the hostname to host_array.
+			$slug = ( array_key_exists( $hostname, $host_array ) ) ? $host_array[ $hostname ] : $hostname;
+
 			// Set extra based on slug in url_array.
 			// If not set, leave empty.
-			$extra   = ( isset( $url_array[ $slug ]['extra'] ) ) ? $url_array[ $slug ]['extra'] : '';
+			$extra = ( isset( $url_array[ $slug ]['extra'] ) ) ? $url_array[ $slug ]['extra'] : '';
 
 			// Set name based on slug in url_array.
 			// If not set, capitalize string.
-			$name   = ( isset( $url_array[ $slug ]['name'] ) ) ? $url_array[ $slug ]['name'] : ucfirst( $hostname );
+			// If it's three letters, it's always capitalized.
+			$name = ( isset( $url_array[ $slug ]['name'] ) ) ? $url_array[ $slug ]['name'] : ucfirst( $slug );
+			$name = ( ! isset( $url_array[ $slug ]['name'] ) && 3 === strlen( $name ) ) ? strtoupper( $name ) : $name;
 
 			// Set URL based on slug in url_array
 			// If not set, use $clean_url
-			$url   = ( isset( $url_array[ $slug ]['url'] ) ) ? $url_array[ $slug ]['url'] : $clean_url;
+			$url = ( isset( $url_array[ $slug ]['url'] ) ) ? $url_array[ $slug ]['url'] : $clean_url;
 
 			// Add to the links array.
 			$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $name . '</a>' . $extra;

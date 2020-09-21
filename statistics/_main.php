@@ -47,10 +47,10 @@ class LWTV_Stats {
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );
 
-			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js', array( 'jquery' ), '2.8.0', false );
+			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js', array( 'jquery' ), '2.9.3', false );
 			wp_enqueue_script( 'chartjs-plugins', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.plugins.js', array( 'chartjs' ), '1.0.0', false );
 			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
-			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.31.1', false );
+			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.31.3', false );
 			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css/theme.bootstrap_4.min.css', array(), '2.31.1', false );
 
 			switch ( $statistics ) {
@@ -157,14 +157,35 @@ class LWTV_Stats {
 				// Custom call for character/actor.
 				$array = ( new LWTV_Stats_Arrays() )->actor_chars( 'actors' );
 				break;
+			case 'on-air':
+				// Custom call for on-air (show or character)
+				$array = ( new LWTV_Stats_Arrays() )->on_air( $post_type );
 		}
 
 		// Custom call for Deep Dive Data
 		// - nations, stations, formats
-		if ( empty( $array ) && ( 'country' === substr( $data, 0, 7 ) || 'stations' === substr( $data, 0, 8 ) || 'formats' === substr( $data, 0, 7 ) ) ) {
-			$array    = ( new LWTV_Stats_Arrays() )->taxonomy_breakdowns( $count, $format, $data, $subject );
-			$precount = $count;
-			$count    = ( new LWTV_Stats_Arrays() )->taxonomy_breakdowns( $precount, 'count', $data, $subject );
+		$details = explode( '_', $data );
+		if ( empty( $array ) && ( 'country' === $details[0] || 'stations' === $details[0] || 'formats' === $details[0] ) ) {
+			$minor = $details[1]; // station or nation name.
+			if ( 'trendline' === $format && 'on-air' === $details[2] ) {
+				$data = 'on-air';
+				// Build Pre-Array based on station or nation
+				switch ( $details[0] ) {
+					case 'stations':
+						$prearray = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_stations', 'slug', $minor );
+						break;
+					case 'country':
+						$prearray = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_country', 'slug', $minor );
+						break;
+				}
+
+				$array    = ( new LWTV_Stats_Arrays() )->on_air( $post_type, $prearray, $minor );
+				$count    = ( new LWTV_Stats() )->showcount( 'total', 'stations', $minor );
+			} else {
+				$array    = ( new LWTV_Stats_Arrays() )->taxonomy_breakdowns( $count, $format, $data, $subject );
+				$precount = $count;
+				$count    = ( new LWTV_Stats_Arrays() )->taxonomy_breakdowns( $precount, 'count', $data, $subject );
+			}
 		}
 
 		// And dead stats? IN-fucking-sane.

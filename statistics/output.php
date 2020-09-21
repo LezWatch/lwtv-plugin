@@ -621,7 +621,7 @@ class LWTV_Stats_Output {
 		?>
 
 		<div id="container" style="width: 100%;">
-			<canvas id="trend<?php echo esc_attr( ucfirst( $cleandata ) ); ?>" width="700" height="550"></canvas>
+			<canvas id="trend<?php echo esc_attr( ucfirst( $cleandata ) ); ?>" width="700"></canvas>
 		</div>
 
 		<script>
@@ -671,6 +671,32 @@ class LWTV_Stats_Output {
 						],
 					}
 				]
+			},
+			options : {
+				layout: {
+					padding: {
+						top: 10,
+						left: 0,
+						bottom: 0,
+						right: 0
+					}
+				},
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero: true,
+							stepSize: 1,
+							suggestedMin: 1,
+							suggestedMax: 2,
+							padding: 10
+						}
+					}],
+					xAxes: [{
+						ticks: {
+							padding: 10
+						}
+					}]
+				}
 			}
 		});
 		</script>

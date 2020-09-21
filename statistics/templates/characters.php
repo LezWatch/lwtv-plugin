@@ -5,7 +5,7 @@
  * @package LezWatch.TV
  */
 
-$valid_views     = array( 'cliches', 'gender', 'sexuality', 'queer-irl', 'roles' );
+$valid_views     = array( 'cliches', 'gender', 'sexuality', 'queer-irl', 'roles', 'on-air' );
 $sent_view       = get_query_var( 'view', 'overview' );
 $view            = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 $character_count = ( new LWTV_Stats() )->generate( 'characters', 'total', 'count' );
@@ -250,6 +250,17 @@ switch ( $view ) {
 					<h3>Characters per Actor</h3>
 					<?php ( new LWTV_Stats() )->generate( 'actors', 'per-actor', 'barchart' ); ?>
 					<p>&nbsp;<br />The above chart displays the number of characters each actor plays. The actor with the highest number of characters played is the 'unknown' actor.</p>
+				</div>
+			</div>
+		</div>
+		<?php
+		break;
+	case 'on-air':
+		?>
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<?php ( new LWTV_Stats() )->generate( 'characters', 'on-air', 'trendline' ); ?>
 				</div>
 			</div>
 		</div>

@@ -14,9 +14,9 @@ Further documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatc
 
 The main file `functions.php` calls all other needed files.
 
-Defines `LWTV_LIBRARY` - If the library files are found, this is set to true.
-
-Defines `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwise defined). Currently 1961.
+Defines:
+* `LWTV_LIBRARY` - If the library files are found, this is set to true.
+* `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwise defined). Currently 1961.
 
 ### Admin Panels
 
@@ -33,9 +33,10 @@ Stored in `/affiliates/` -- Auto Adds in Affiliate Codes
 * `/images/` - Images used by local 'ads'
 * `_main.php` - Determines which ad to show and when
 * `amazon.php` - Amazon basic ads.
-* `apple.php` - Apple iTunes/TV ads
 * `cbs.php` - CBS ads (ImpactRadius)
+* `fubutv.php` - FubuTV ads (ImpactRadius)
 * `local.php` - Local Ads (Yikes, DreamHost, FacetWP)
+* `ways-to-watch.php` - Affiliate links and prettyfication of services
 * `widget.php` - Widget code to display ads
 
 ### Assets
@@ -87,6 +88,7 @@ _Shows (`/shows/`)_
 
 * `_main.php` - Builds CPT and Taxonomies, adds to Dashboard, triggers saving related post meta, Yoast Meta Replacement, AMP support
 * `calculations.php` - Show score math
+* `calendar-names.php` - Processes TV show names when they don't match TV Maze
 * `cmb2-metaboxes.php` - CMB2 code to make display nicer
 * `custom-columns.php` - Define columns for post listing
 * `shows-link-this.php` - Calculations for 'shows like this' (uses [Related Posts by Taxonomy](https://wordpress.org/plugins/related-posts-by-taxonomy/))
@@ -97,15 +99,17 @@ Stored in `/features/` -- a collection of miscellaneous features.
 
 * `_main.php` - Calls all other files
 * `cron.php` - Custom cron jobs to load high-traffic pages and ensure Varnish is cached.
-* `custom-loops.php` - Custom arrays and WP_Query calls that are repeated in multiple places.
-    - Determine if actor is queer
-    - Taxonomy Array
-    - Taxonomy Two Array - used for generating a query of posts that are in two taxonomies
-    - Post Meta Array
-    - WP Meta Query
-    - Post Type Array - Generate an array of all posts in a specific post type.
-    - Post Meta AND Taxonomy Query - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
-    - Related Posts by Tags.
+* `custom-loops.php` - `class LWTV_Loops` - Custom arrays and WP_Query calls that are repeated in multiple places.
+    - `is_actor_queer()` - Determine if actor is queer (yes/no)
+    - `is_actor_trans()` - Determine if an actor is trans (called by is queer) (yes/no)
+    - `is_show_on_air()` - Determine if a show is on air or not (bool)
+    - `tax_query()` - Taxonomy Array
+    - `tax_two_query()` - Taxonomy Two Array is used for generating a query of posts that are in two taxonomies
+    - `post_meta_query()` - Post Meta Array returns the whole post data. Can handle compares and likes
+    - `wp_meta_query()` - SQL version of meta query _(not currently used)_
+    - `post_type_query()` - Generate an object of all posts in a specific post type.
+    - `post_meta_and_tax_query()` - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
+    - `related_posts_by_tag()` - Related Posts by Tags.
 * `custom-roles.php` - Custom roles created for curation of content
 * `debug.php` - Debugging Tools for weird content.
 * `ics-parser.php` - Connection to the ICS Parser for calendar data.
@@ -133,13 +137,16 @@ Stored in `/gutenberg/`
 
 Blocks for Gutenberg. The file `_main.php` acts as an autoloader. If you're updating the CSS, you will need to rebuild the Gutenblocks. Read `/gutenberg/README.md` for more information.
 
-* Author Boxes: Display author information
-* Custom Post Type Meta Data: _currently disabled_
-* Glossary: Show a visual glossary of taxonomies with icons
-* Grade: Give something a grade and an explanation
-* Screeners: For reviews of shows that haven't aired yet
-* Statistics: _currently disabled_
-* TV Show Calendar: Lists all the shows on air
+The source code is in `/src/` broken up by folder, with one special file
+
+* `serverside-render.php` - Serverside Renders for code that cannot be a pure JS Block
+* `/author-box/` - Author Boxes: Display author information
+* `/cpt-meta/` - Custom Post Type Meta Data: _currently disabled_
+* `/glossary/` - Glossary: Show a visual glossary of taxonomies with icons
+* `/grade/` - Grade: Give something a grade and an explanation
+* `/screener/` - Screeners: For reviews of shows that haven't aired yet
+* `/statistics/` - Statistics: _currently disabled_
+* `/tvshow-calendar/` - TV Show Calendar: Lists all the shows on air
 
 ### Node Scripts
 
@@ -153,74 +160,65 @@ Stored in `/plugins/`
 
 The file `_main.php` acts as an autoloader.
 
-* Cache: `cache.php`
+* `cache.php` - Custom Cache specific to DreamPress hosting
     - Generates data used by Proxy Cache Purge and WP Rocket to know what to flush.
-* CMB2: `/cmb2.php`
+* `/cmb2.php` - Integration with CMB2
     - calls other files
     - generates a CB2 formatted list of terms
-* CMB2 Folder - `/cmb2/`
-    - Select2: `/cmb-field-select2/` - CMB2 Field Type: Select2
-    - Grid: `/cmb2-grid/` - A grid display system
-    - Custom CSS: `/cmb2.css`
-    - LWTV: `/lwtv.php` - Favorite shows for author profiles, Symbolicon support
+* `/cmb2/` - CMB2 add on libraries
+    - `/cmb-field-select2/` - CMB2 Field Type: Select2
+    - `/cmb2-grid/` - CMB2 Grid Display
+    - `/cmb2.css` - Custom CSS
+    - `/lwtv.php` - Special code for us -- Favourite shows for author profiles, Symbolicon support
     - Year Range: `/year-range.php` - 'date_year_range' custom field type
-* FacetWP - `/facet.php`
+* `/facet.php` -- Facet WP
     - calls other files
     - Only show pagination if there's more than one page
     - Reset Shortcode
-* FacetWP Folder - `/facetwp/`
-    - CMB2: `/facetwp-cmb2/` - FacetWP Integration with CMB2
-    - JS: `facet.js` - Pagination Scrolling and Refresh Warning
-    - LWTV: `/lwtv.php`
+* `/facetwp/` - FacetWP Folder
+    - `/facetwp-cmb2/` - FacetWP Integration with CMB2
+    - `facet.js` - Pagination Scrolling and Refresh Warning
+    - `/lwtv.php`
         - filter Data before it's saved to rename values (capitalization)
         - split actors and shows into separate entries, and add additional orderby params
-* Imagify - `imagify.php`
+* `imagify.php`  - Imagify integration
     - prevents GIFs from being processed.
 
 ### Rest API
 
 Stored in `/rest-api/` - These files generate the REST API output.
 
-* Main: `_main.php` - autoloader
-* Alexa Skills: `alexa-skills.php` - Builds the basic Alexa API (see also Alexa Skills section below)
-* LezWatch.TV Plugin (formerly Bury Your Queers) - `bury-your-queers.php`
+* `_main.php` - autoloader
+* `alexa-skills.php` - Builds the basic Alexa API (see also Alexa Skills section below)
+* `bury-your-queers.php` -  LezWatch.TV Plugin (formerly Bury Your Queers)
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"
     - When Died - "X died on date Y"
-* Export - `export-json.php`
-    - Customized export. Currently used for WikiData.
-* IMDb - `imdb.php`
-    - API to communicate with IMDb and generate information (used by Alexa)
-* Of The Day - `of-the-day.php`
-    - The code that runs the X Of the Day API service. Every 24 hours, a new character and show of the day are spawned
-* Shows like this - `shows-like-this.php`
-    - Similar shows.
-* Slack - `slack.php`
-    - Beginning of code to report newly dead characters to Slack (very buggy, currently disabled)
-* Statistics - `stats.php`
-    - JSON API version of the stats (mostly)
-* This Year - `this-year.php`
-    - Outputs simplified lists of what happened in a given year.
-* What Happened - `what-happened.php`
-    - Outputs data based on what happened in a given year, year-month, or specific day.
-* What's On - `whats-on.php`
-    - What's on TV tonight (or tomorrow).
+* `export-json.php` - Export content in JSON format. Currently used for WikiData.
+* `imdb.php`- API to communicate with IMDb and generate information (used by Alexa)
+* `of-the-day.php` - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
+* `shows-like-this.php` - Similar shows.
+* `slack.php` - Beginning of code to report newly dead characters to Slack _(very buggy, currently disabled)_
+* `stats.php` - JSON API version of the stats (mostly)
+* `this-year.php` - Outputs simplified lists of what happened in a given year.
+* `what-happened.php` - Outputs data based on what happened in a given year, year-month, or specific day.
+* `whats-on.php` - What's on TV tonight (or tomorrow).
 
 _Alexa Skills (`/alexa/`)_
 
-* Common: `_common.php` - Code used by multiple Alexa skills
-* Validation: `_validate.php` - Validates the requests as coming from Amazon
-* Bury Your Queers: `byq.php` - Old BYQ code
-* Flash Briefing: `flash-brief.php` - Since the flash brief has trouble with media in post content, we've made our own special version.
-* Newest: `newest.php` - Generate the newest shows or characters (or deaths)
-* Shows: `shows.php` - Skills for interactions with shows (similar shows, recommended shows, etc.)
-* This Year: `this-year.php` - Gives you an idea how this year is going...
-* What's On: `whats-on.php` - Generates what's on TV stuff.
-* Who Are You: `who-are-you.php` - Runs all code that discusses actors, characters, and shows.
+* `_common.php` - Code used by multiple Alexa skills
+* `_validate.php` - Validates the requests as coming from Amazon
+* `byq.php` - Old BYQ code
+* `flash-brief.php` - Since the flash brief has trouble with media in post content, we've made our own special version.
+* `newest.php` - Generate the newest shows or characters (or deaths)
+* `shows.php` - Skills for interactions with shows (similar shows, recommended shows, etc.)
+* `this-year.php` - Gives you an idea how this year is going...
+* `whats-on.php` - Generates what's on TV stuff.
+* `who-are-you.php` - Runs all code that discusses actors, characters, and shows.
 
 _Templates (`/templates/`)_
 
-* Export JSON: `export-json.php` - uses var query data to determine what to show.
+* `export-json.php` - uses var query data to determine what to show.
 
 
 ### Statistics
@@ -257,7 +255,7 @@ Stored in `/statistics/` - These files generate everything for stats, from graph
     - Piecharts
     - Trendlines
 * Query Variables: `query_vars.php`
-    -- Code to customize query variables
+    - Code to customize query variables
 
 _Templates (`/templates/`)_
 
@@ -312,5 +310,5 @@ Composer will move everything into the right place, even NPM files.
 
 Pushes to branches are automatically deployed via Codeship as follows:
 
-* Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site)
+* Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site) (password required - Ask Mika)
 * Production: [lezwatchtv.com](https://lezwatchtv.com)

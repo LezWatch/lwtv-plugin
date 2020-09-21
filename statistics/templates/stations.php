@@ -15,8 +15,10 @@ $valid_views = array(
 	'sexuality' => 'characters',
 	'gender'    => 'characters',
 	'tropes'    => 'shows',
-	// for now we're removing this: 'intersections' => 'shows',
+	// removed becuase there's not enough data yet.
+	// 'intersections' => 'shows',
 	'formats'   => 'shows',
+	'on-air'    => 'shows',
 );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' : $sent_view;
@@ -59,7 +61,7 @@ switch ( $station ) {
 				<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
 				<?php
 				if ( 'all' !== $station ) {
-					echo '<a class="btn btn-default btn-outline-primary" href="/statistics/stations/" role="button">Reset</a>';
+					echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/stations/" role="button">Reset</a>';
 				}
 				?>
 			</div>
@@ -76,9 +78,11 @@ switch ( $station ) {
 	}
 
 	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl ) ) . '">OVERVIEW</a></li>';
-	foreach ( $valid_views as $the_view => $the_post_type ) {
-		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+	if ( 'all' !== $station ) {
+		foreach ( $valid_views as $the_view => $the_post_type ) {
+			$active = ( $view === $the_view ) ? ' active' : '';
+			echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		}
 	}
 	?>
 </ul>
@@ -86,7 +90,7 @@ switch ( $station ) {
 <p>&nbsp;</p>
 
 <?php
-	$col_class = ( 'all' !== $station && 'overview' !== $view ) ? 'col-sm-6' : 'col';
+	$col_class = ( 'all' !== $station && 'overview' !== $view && 'on-air' !== $view ) ? 'col-sm-6' : 'col';
 	$cpts_type = ( 'overview' === $view ) ? 'shows' : $valid_views[ $view ];
 ?>
 
@@ -100,64 +104,56 @@ switch ( $station ) {
 		$station = ( 'overview' === $station ) ? '_all' : '_' . $station;
 
 		if ( '_all' === $station ) {
-			if ( '_all' === $view ) {
-				?>
-				<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
-				<table id="stationsTable" class="tablesorter table table-striped table-hover">
-					<thead>
-						<tr>
-							<th scope="col">Station Name</th>
-							<th scope="col">Total Shows</th>
-							<th scope="col">Percentage (of all shows)</th>
-							<th scope="col">Avg Score</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php
-						foreach ( $all_stations as $the_station ) {
-							$percent = round( ( ( $the_station->count / $shows_count ) * 100 ), 1 );
-							echo '<tr>
-									<th scope="row"><a href="?station=' . esc_attr( $the_station->slug ) . '">' . esc_html( $the_station->name ) . '</a></th>
-									<td>' . (int) $the_station->count . '</td>
-									<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
-									<td>' . (int) ( new LWTV_Stats() )->showcount( 'score', 'stations', $the_station->slug ) . '</td>
-								</tr>';
-						}
-						?>
-					</tbody>
-				</table>
-				<?php
-			} else {
-				$this_one_view = substr( $view, 1 );
-				if ( 'shows' !== $valid_views[ $this_one_view ] ) {
-					( new LWTV_Stats() )->generate( $cpts_type, 'stations' . $station . $view, 'stackedbar' );
-				} else {
-					?>
-					<div class="row">
-						<div class="col-sm-6">
-							<?php ( new LWTV_Stats() )->generate( 'shows', $this_one_view, 'piechart' ); ?>
-						</div>
-						<div class="col-sm-6">
-							<?php ( new LWTV_Stats() )->generate( 'shows', $this_one_view, 'percentage' ); ?>
-						</div>
-					</div>
+			// Always show the same thing here.
+			?>
+			<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
+			<table id="stationsTable" class="tablesorter table table-striped table-hover">
+				<thead>
+					<tr>
+						<th scope="col">Station Name</th>
+						<th scope="col">Total Shows</th>
+						<th scope="col">Percentage (of all shows)</th>
+						<th scope="col">Avg Score</th>
+					</tr>
+				</thead>
+				<tbody>
 					<?php
-				}
-			}
+					foreach ( $all_stations as $the_station ) {
+						$percent = round( ( ( $the_station->count / $shows_count ) * 100 ), 1 );
+						echo '<tr>
+								<th scope="row"><a href="?station=' . esc_attr( $the_station->slug ) . '">' . esc_html( $the_station->name ) . '</a></th>
+								<td>' . (int) $the_station->count . '</td>
+								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
+								<td>' . (int) ( new LWTV_Stats() )->showcount( 'score', 'stations', $the_station->slug ) . '</td>
+							</tr>';
+					}
+					?>
+				</tbody>
+			</table>
+			<?php
 		} else {
-			$format = 'piechart';
+			// There is a specific Station!
+			$format     = 'piechart';
+			$onair      = ( new LWTV_Stats() )->showcount( 'onair', 'stations', ltrim( $station, '_' ) );
+			$allshows   = ( new LWTV_Stats() )->showcount( 'total', 'stations', ltrim( $station, '_' ) );
+			$showscore  = ( new LWTV_Stats() )->showcount( 'score', 'stations', ltrim( $station, '_' ) );
+			$onairscore = ( new LWTV_Stats() )->showcount( 'onairscore', 'stations', ltrim( $station, '_' ) );
 
-			if ( '_all' !== $station ) {
+			if ( '_all' === $view ) {
+				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this station is ' . $showscore );
 
-				$onair      = ( new LWTV_Stats() )->showcount( 'onair', 'stations', ltrim( $station, '_' ) );
-				$allshows   = ( new LWTV_Stats() )->showcount( 'total', 'stations', ltrim( $station, '_' ) );
-				$showscore  = ( new LWTV_Stats() )->showcount( 'score', 'stations', ltrim( $station, '_' ) );
-				$onairscore = ( new LWTV_Stats() )->showcount( 'onairscore', 'stations', ltrim( $station, '_' ) );
-
-				if ( '_all' === $view ) {
-					echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this station is ' . $showscore . ', and ' . $onairscore . ' for shows currently on air (out of a possible 100).</p>' );
-					$format = 'barchart';
+				if ( 0 !== $onair ) {
+					echo wp_kses_post( ', and ' . $onairscore . ' for shows currently on air' );
 				}
+
+				echo wp_kses_post( ' (out of a possible 100).</p>' );
+
+				$format = 'barchart';
+			}
+
+			if ( '_on-air' === $view ) {
+				$format = 'trendline';
+				echo wp_kses_post( '<h4>Shows On-Air Per Year</h4>' );
 			}
 
 			( new LWTV_Stats() )->generate( $cpts_type, 'stations' . $station . $view, $format );
@@ -166,7 +162,7 @@ switch ( $station ) {
 		</div>
 
 	<?php
-	if ( '_all' !== $station && '_all' !== $view ) {
+	if ( '_all' !== $station && '_all' !== $view && '_on-air' !== $view ) {
 		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">

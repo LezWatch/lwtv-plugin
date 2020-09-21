@@ -252,12 +252,22 @@ switch ( $view ) {
 	case 'on-air':
 		?>
 		<div class="container chart-container">
+			<h4>Currently On Air</h4>
 			<div class="row">
 				<div class="col-sm-6">
 					<?php ( new LWTV_Stats() )->generate( 'shows', 'current', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
 					<?php ( new LWTV_Stats() )->generate( 'shows', 'current', 'percentage' ); ?>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<h4>On Air Per Year</h4>
+			<div class="row">
+				<div class="col">
+					<?php ( new LWTV_Stats() )->generate( 'shows', 'on-air', 'trendline' ); ?>
 				</div>
 			</div>
 		</div>
