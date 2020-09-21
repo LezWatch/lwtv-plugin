@@ -160,7 +160,7 @@ switch ( $country ) {
 
 			if ( '_on-air' === $view ) {
 				$format = 'trendline';
-				echo wp_kses_post( '<h4>Shows On-Air Per Year</h4>' );
+				echo wp_kses_post( '<h3>Shows On-Air Per Year</h3>' );
 			}
 
 			( new LWTV_Stats() )->generate( $cpts_type, 'country' . $country . $view, $format );

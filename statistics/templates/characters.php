@@ -177,6 +177,7 @@ switch ( $view ) {
 		break;
 	case 'cliches':
 		?>
+		<h3>Cliché Demographics</h3>
 		<div class="container chart-container">
 			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
 				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
@@ -192,6 +193,7 @@ switch ( $view ) {
 		break;
 	case 'sexuality':
 		?>
+		<h3>Character Sexuality Breakdown</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -207,6 +209,7 @@ switch ( $view ) {
 		break;
 	case 'gender':
 		?>
+		<h3>Character Breakdown By Gender</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -222,6 +225,7 @@ switch ( $view ) {
 		break;
 	case 'queer-irl':
 		?>
+		<h3>Characters Played by Queer Actors</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -237,17 +241,18 @@ switch ( $view ) {
 		break;
 	case 'roles':
 		?>
+		<h3>Character/Actor Comparisons</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col">
-					<h3>Actors per Character</h3>
+					<h4>Actors per Character</h4>
 					<?php ( new LWTV_Stats() )->generate( 'actors', 'per-char', 'barchart' ); ?>
 					<p>&nbsp;<br />The above chart displays the number of actors who play each character. So for example, "11 Actors (1)" means there's one character who has eleven (11) actors (and yes, there is one).</p>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
-					<h3>Characters per Actor</h3>
+					<h4>Characters per Actor</h4>
 					<?php ( new LWTV_Stats() )->generate( 'actors', 'per-actor', 'barchart' ); ?>
 					<p>&nbsp;<br />The above chart displays the number of characters each actor plays. The actor with the highest number of characters played is the 'unknown' actor.</p>
 				</div>
@@ -257,6 +262,7 @@ switch ( $view ) {
 		break;
 	case 'on-air':
 		?>
+		<h3>Number of Characters On-Air per Year</h3>
 		<div class="container">
 			<div class="row">
 				<div class="col">

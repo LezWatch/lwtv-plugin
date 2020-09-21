@@ -65,7 +65,7 @@ switch ( $showform ) {
 				<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
 				<?php
 				if ( 'all' !== $showform ) {
-					echo '<a class="btn btn-default btn-outline-primary" href="/statistics/nations/" role="button">Reset</a>';
+					echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/nations/" role="button">Reset</a>';
 				}
 				?>
 			</div>

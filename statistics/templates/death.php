@@ -71,7 +71,7 @@ switch ( $view ) {
 		break;
 	case 'characters':
 		?>
-		<h3>By Character Sexual Orientation</h3>
+		<h3>Death By Character Sexual Orientation</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -82,7 +82,7 @@ switch ( $view ) {
 				</div>
 			</div>
 		</div>
-		<h3>By Character Gender Identity</h3>
+		<h3>Death By Character Gender Identity</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -93,7 +93,7 @@ switch ( $view ) {
 				</div>
 			</div>
 		</div>
-		<h3>By Character Role</h3>
+		<h3>Death By Character Role</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -108,6 +108,7 @@ switch ( $view ) {
 		break;
 	case 'shows':
 		?>
+		<h3>Death per Show Breakdown</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -122,6 +123,7 @@ switch ( $view ) {
 		break;
 	case 'stations':
 		?>
+		<h3>Death per Station/Network Breakdown</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col">
@@ -138,6 +140,7 @@ switch ( $view ) {
 		break;
 	case 'nations':
 		?>
+		<h3>Death per Country Breakdown</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col">
@@ -154,6 +157,7 @@ switch ( $view ) {
 		break;
 	case 'years':
 		?>
+		<h3>Death per Year Breakdown</h3>
 		<p>On average, <strong><?php ( new LWTV_Stats() )->generate( 'characters', 'dead-years', 'average' ); ?></strong> characters die per year (including years where no queers died).</p>
 
 		<div class="container chart-container">
