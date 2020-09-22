@@ -17,19 +17,19 @@ $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
 	<div class="row">
 		<div class="col">
 			<div class="card text-center">
-				<h3 class="card-header alert-success">Characters</h3>
+				<h3 class="card-header alert-info">Shows</h3>
 				<div class="card-body bg-light">
-					<h5 class="card-title"><?php echo (int) $characters; ?></h5>
-					<a href="characters" class="btn btn-primary btn-sm">Character Statistics</a>
+					<h5 class="card-title"><?php echo (int) $shows; ?></h5>
+					<a href="shows" class="btn btn-primary btn-sm">Show Statistics</a>
 				</div>
 			</div>
 		</div>
 		<div class="col">
 			<div class="card text-center">
-				<h3 class="card-header alert-info">Shows</h3>
+				<h3 class="card-header alert-success">Characters</h3>
 				<div class="card-body bg-light">
-					<h5 class="card-title"><?php echo (int) $shows; ?></h5>
-					<a href="shows" class="btn btn-primary btn-sm">Show Statistics</a>
+					<h5 class="card-title"><?php echo (int) $characters; ?></h5>
+					<a href="characters" class="btn btn-primary btn-sm">Character Statistics</a>
 				</div>
 			</div>
 		</div>

@@ -214,18 +214,9 @@ class LWTV_Whats_On_JSON {
 				// Remove everything after a space-and parenthesis to compensate for 'charmed (2018)' situations but NOT 'thirtysomething(else)' - can shows PLEASE stop being so clever? UGH.
 				$show_name = trim( current( explode( ' (', get_the_title( $show_obj->ID ) ) ) );
 
-				// We named these shows differently
-				switch ( $show_name ) {
-					case 'Agents of S.H.I.E.L.D.':
-						$show_name = "Marvel's Agents of S.H.I.E.L.D.";
-						break;
-					case 'Legends of Tomorrow':
-						$show_name = "DC's Legends of Tomorrow";
-						break;
-					case 'Runaways':
-						$show_name = "Marvel's Runaways";
-						break;
-				}
+				// Call the namer to try and sort out different names.
+				require_once dirname( __FILE__, 2 ) . '/cpts/shows/calendar-names.php';
+				$show_name = ( new LWTV_Shows_Calendar() )->check_name( $show_name, 'lwtv' );
 
 				// Default reply
 				$return = array(

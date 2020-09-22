@@ -214,7 +214,8 @@ class LWTV_Affilliates {
 		// Show a different show ad depending on things...
 		if ( 'affiliate' === $format ) {
 			// Show an affiliate link
-			$affiliates = $this->affiliate_link( $id );
+			require_once( 'ways-to-watch.php' );
+			$affiliates = ( new LWTV_Ways_To_Watch() )->affiliate_link( $id );
 		} else {
 			// Show an advert
 			$format     = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
@@ -239,10 +240,11 @@ class LWTV_Affilliates {
 	/**
 	 * Get the stations and kick back a simple true/falsey
 	 * @param  int    $post_id Post ID
-	 * @return array           Array of special status
+	 * @return array  Array of special status
 	 *
-	 * This used to have AMC and BBC and more via Commission Junction.
-	 * That was a failed experience.
+	 * A special status is for stations that belong to someone bigger.
+	 * Think like how The CW is owned by CBS. They share ads so we share
+	 * ads.
 	 */
 	public function get_special_stations( $post_id ) {
 		$slug             = get_post_field( 'post_name', $post_id );
@@ -251,11 +253,11 @@ class LWTV_Affilliates {
 			'cbs'      => false,
 		);
 		$special_stations = array(
-			'cbs'      => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb' ),
+			'cbs'      => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb', 'showtime' ),
 		);
 
-		// Special stations are 'sub' stations that belong to someone bigger, we're going to convert them
-		// into a simpler list.
+		//
+		// We're going to convert them into a simpler list.
 		if ( $stations && ! is_wp_error( $stations ) ) {
 			// Since we have stations, we will loop through the stations on the show.
 			foreach ( $stations as $station ) {
@@ -277,123 +279,6 @@ class LWTV_Affilliates {
 		}
 
 		return $is_special;
-	}
-
-	/**
-	 * Call Custom Affiliate Links
-	 * This is used by shows to figure out where people can watch things
-	 * There's some juggling for certain sites
-	 */
-	public function affiliate_link( $id ) {
-
-		$affiliate_url = get_post_meta( $id, 'lezshows_affiliate', true );
-		$links         = array();
-
-		// Parse each URL to figure out who it is...
-		foreach ( $affiliate_url as $url ) {
-			$parsed_url = wp_parse_url( $url );
-			$hostname   = $parsed_url['host'];
-			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'];
-
-			// Clean the URL to get the top domain ...
-			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk', '.ca', '.go' );
-			foreach ( $removal_array as $removal ) {
-				$hostname = str_replace( $removal, '', $hostname );
-			}
-
-			// Clean urls to their parent.
-			$host_array = array(
-				'7eer'            => 'cbs',
-				'itunes'          => 'apple',
-				'tv.apple'        => 'apple',
-				'watch.amazon'    => 'amazon',
-				'peacocktv'       => 'peacock',
-				'sho'             => 'showtime',
-				'showtimeanytime' => 'showtime',
-			);
-
-			// Get the slug based on the hostname to host_array.
-			$slug = ( in_array( $hostname, $host_array ) ) ? $host_array[ $hostname ] : $hostname;
-
-			// URL and name params based on host.
-			$url_array = array(
-				'abc'            => array(
-					'name' => 'ABC',
-				),
-				'amazon'         => array(
-					'url'   => $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20',
-					'extra' => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
-					'name'  => 'Amazon',
-				),
-				'amc'            => array(
-					'name' => 'AMC',
-				),
-				'apple'          => array(
-					'url'  => $clean_url . '?at=1010lMaT&ct=lwtv',
-					'name' => 'Apple TV',
-				),
-				'bbcamerica'     => array(
-					'name' => 'BBC America',
-				),
-				'cartoonnetwork' => array(
-					'name' => 'Cartoon Network',
-				),
-				'cbs'            => array(
-					'url'   => 'https://cbsallaccess.qflm.net/c/1242493/176097/3065',
-					'extra' => '<img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/176097/3065" style="position:absolute;visibility:hidden;" border="0" />',
-					'name'  => 'CBS All Access',
-				),
-				'cwtv'            => array(
-					'name' => 'The CW',
-				),
-				'hbomax'         => array(
-					'name' => 'HBO Max',
-				),
-				'nbc'            => array(
-					'name' => 'NBC',
-				),
-				'peacock'        => array(
-					'name' => 'Peacock',
-				),
-				'roosterteeth'   => array(
-					'name' => 'Roster Teeth',
-				),
-				'showtime'       => array(
-					'name' => 'Showtime',
-				),
-				'tellofilms'     => array(
-					'name' => 'Tello Films',
-				),
-				'youtube'        => array(
-					'name' => 'YouTube',
-				),
-				'tv.youtube'     => array(
-					'name' => 'YouTube.TV',
-				),
-			);
-
-			// Set extra based on slug in url_array.
-			// If not set, leave empty.
-			$extra   = ( isset( $url_array[ $slug ]['extra'] ) ) ? $url_array[ $slug ]['extra'] : '';
-
-			// Set name based on slug in url_array.
-			// If not set, capitalize string.
-			$name   = ( isset( $url_array[ $slug ]['name'] ) ) ? $url_array[ $slug ]['name'] : ucfirst( $hostname );
-
-			// Set URL based on slug in url_array
-			// If not set, use $clean_url
-			$url   = ( isset( $url_array[ $slug ]['url'] ) ) ? $url_array[ $slug ]['url'] : $clean_url;
-
-			// Add to the links array.
-			$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $name . '</a>' . $extra;
-		}
-
-		$link_output = implode( '', $links );
-
-		$icon   = ( new LWTV_Functions() )->symbolicons( 'tv-hd.svg', 'fa-tv' );
-		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span> ' . $link_output;
-
-		return $output;
 	}
 
 }

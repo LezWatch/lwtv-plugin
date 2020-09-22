@@ -9,6 +9,7 @@
 require_once 'calculations.php';
 require_once 'cmb2-metaboxes.php';
 require_once 'custom-columns.php';
+require_once 'jetpack.php';
 require_once 'shows-like-this.php';
 
 /**
@@ -183,7 +184,7 @@ class LWTV_CPT_Shows {
 			'rest_base'           => 'show',
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-video-alt',
-			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'publicize' ),
 			'has_archive'         => 'shows',
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,

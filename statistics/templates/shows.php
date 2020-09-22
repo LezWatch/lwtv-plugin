@@ -135,6 +135,7 @@ switch ( $view ) {
 		break;
 	case 'tropes':
 		?>
+		<h3>Trope Breakdown</h3>
 		<div class="container chart-container">
 			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
 				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
@@ -150,6 +151,7 @@ switch ( $view ) {
 		break;
 	case 'genres':
 		?>
+		<h3>Genre Breakdown</h3>
 		<div class="container chart-container">
 			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
 				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
@@ -165,6 +167,7 @@ switch ( $view ) {
 		break;
 	case 'worth-it':
 		?>
+		<h3>Worth-It (Watchability) Breakdown</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -179,6 +182,8 @@ switch ( $view ) {
 		break;
 	case 'stars':
 		?>
+		<h3>Show Star Breakdown</h3>
+		<p>Show Stars are given out based on the character demographics and the production. A show made by and for queer women is considered a Gold Star, a show for queers in general by queers in general is a Silver Star, and a show for the general population, but by queers with a heavy dose of queers is a Bronze Star.</p>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -194,6 +199,7 @@ switch ( $view ) {
 
 	case 'intersectionality':
 		?>
+		<h3>Intersectionality Breakdown</h3>
 		<div class="container chart-container">
 			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
 				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
@@ -209,6 +215,8 @@ switch ( $view ) {
 		break;
 	case 'formats':
 		?>
+		<h3>Show Format Breakdown</h3>
+		<p>See <a href="/statistics/formats/">Format Statistics</a> for more information.</p>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -223,6 +231,7 @@ switch ( $view ) {
 		break;
 	case 'triggers':
 		?>
+		<h3>Trigger Warning Breakdown</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -237,6 +246,7 @@ switch ( $view ) {
 		break;
 	case 'we-love-it':
 		?>
+		<h3>Shows We Love Breakdown</h3>
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
@@ -252,12 +262,22 @@ switch ( $view ) {
 	case 'on-air':
 		?>
 		<div class="container chart-container">
+			<h4>Currently On Air</h4>
 			<div class="row">
 				<div class="col-sm-6">
 					<?php ( new LWTV_Stats() )->generate( 'shows', 'current', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
 					<?php ( new LWTV_Stats() )->generate( 'shows', 'current', 'percentage' ); ?>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<h4>On Air Per Year</h4>
+			<div class="row">
+				<div class="col">
+					<?php ( new LWTV_Stats() )->generate( 'shows', 'on-air', 'trendline' ); ?>
 				</div>
 			</div>
 		</div>

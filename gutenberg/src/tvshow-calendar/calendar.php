@@ -78,35 +78,20 @@ class LWTV_SSR_Calendar {
 	 */
 	public function show_name( $name ) {
 
+		// Defaults
 		$displayname = $name;
+		$show_name   = $name;
 
-		switch ( $name ) {
-			case 'Charmed':
-				$name = 'Charmed (2018)';
-				break;
-			case 'Party of Five':
-				$name = 'Party of Five (2020)';
-				break;
-			case 'Shameless':
-				$name = 'Shameless (US)';
-				break;
-			case 'DC\'s Legends of Tomorrow':
-				$name = 'Legends of Tomorrow';
-				break;
-			case 'Marvel\'s Runaways':
-				$name = 'Runaways';
-				break;
-			case 'Marvel\'s Agents of S.H.I.E.L.D.':
-				$name = 'Agents of S.H.I.E.L.D.';
-				break;
-		}
+		// Call the namer to try and sort out different names.
+		require_once dirname( __FILE__, 4 ) . '/cpts/shows/calendar-names.php';
+		$name = ( new LWTV_Shows_Calendar() )->check_name( $name, 'tvmaze' );
 
+		// Find the show based on the LezWatch name
 		$show_page_obj = get_page_by_path( sanitize_title( $name ), OBJECT, 'post_type_shows' );
 
+		// If we have a show, we will link.
 		if ( isset( $show_page_obj->ID ) && 0 !== $show_page_obj->ID && 'publish' === get_post_status( $show_page_obj->ID ) ) {
 			$show_name = '<a href="' . get_permalink( $show_page_obj->ID ) . '">' . $displayname . '</a>';
-		} else {
-			$show_name = $name;
 		}
 
 		return $show_name;
