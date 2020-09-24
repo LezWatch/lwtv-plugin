@@ -58,6 +58,7 @@ _Javascript (`js`)_
 
 * `Chart.bundle.min.js` - Stat charts from [ChartJS](https://chartjs.org)
 * `Chart.plugin.js` - Custom add-ons for charts
+* `chartjs-plugin-annotation.min.js` - Annotations for ChartJS.
 * `cmb2_ajax.js` - Ajaxified code for CMB2 and post edits
 * `jquery.tablesorter.js` - Allow for table sorting
 * `palette.js` - Colors for charts
