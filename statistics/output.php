@@ -694,7 +694,7 @@ class LWTV_Stats_Output {
 						mode: 'horizontal',
 						scaleID: 'y-axis-0',
 						value: 0.5,
-						endValue: <?php echo (int) max( $trend ); ?>,
+						endValue: <?php echo (int) end( $trend ); ?>,
 						borderColor: "rgba(75,192,192,1)",
 						borderWidth: 2,
 						label: {
