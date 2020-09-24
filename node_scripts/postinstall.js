@@ -26,6 +26,11 @@ copy.one( "node_modules/chart.js/dist/Chart.bundle.min.js", "assets/js", {flatte
   if (err) return console.log(err);
 });
 
+// Chart.JS
+copy.one( "node_modules/chartjs-plugin-annotation/chartjs-plugin-annotation.min.js", "assets/js", {flatten: true}, function(err) {
+  if (err) return console.log(err);
+});
+
 // TableSorter
 copy.one( "node_modules/tablesorter/dist/js/jquery.tablesorter.js", "assets/js", {flatten: true}, function(err) {
   if (err) return console.log(err);

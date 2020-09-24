@@ -200,6 +200,30 @@ class LWTV_Stats_Output {
 	}
 
 	/**
+	 * Calculate Trendlines
+	 */
+	public function calculate_trendline( $array ) {
+		// Calculate Trend
+		$names = array();
+		$count = array();
+		$trend = array();
+
+		foreach ( $array as $item ) {
+			$names[] = $item['name'];
+			$count[] = $item['count'];
+		}
+
+		$trendarray = self::linear_regression( $names, $count );
+
+		foreach ( $array as $item ) {
+			$number = ( $trendarray['slope'] * $item['name'] ) + $trendarray['intercept'];
+			$trend[] = ( $number <= 0 ) ? 0 : $number;
+		}
+
+		return $trend;
+	}
+
+	/**
 	 * linear regression function
 	 * @param $x array x-coords
 	 * @param $y array y-coords
@@ -605,19 +629,10 @@ class LWTV_Stats_Output {
 	public function trendline( $subject, $data, $array ) {
 
 		$array = array_reverse( $array );
+		$trend = self::calculate_trendline( $array );
 
-		// Calculate Trend
-		$names = array();
-		$count = array();
-		foreach ( $array as $item ) {
-			$names[] = $item['name'];
-			$count[] = $item['count'];
-		}
-
-		$trendarray = self::linear_regression( $names, $count );
-
-		// Strip hypens becuase ChartJS doesn't like it.
-		$cleandata = str_replace( '-', '', $data );
+		// Strip hyphens because ChartJS doesn't like it.
+		$cleandata = str_replace( '-', '_', $data );
 		?>
 
 		<div id="container" style="width: 100%;">
@@ -627,7 +642,6 @@ class LWTV_Stats_Output {
 		<script>
 		var ctx = document.getElementById("trend<?php echo esc_attr( ucfirst( $cleandata ) ); ?>").getContext("2d");
 		var trend<?php echo esc_attr( ucfirst( $cleandata ) ); ?> = new Chart(ctx, {
-			type: 'bar',
 			data: {
 				labels : [
 					<?php
@@ -636,64 +650,56 @@ class LWTV_Stats_Output {
 					}
 					?>
 				],
-				datasets : [
-					{
-						type: 'line',
-						label: 'Number of <?php echo wp_kses_post( ucfirst( $subject ) ); ?>',
-						backgroundColor: "rgba(255,99,132,0.2)",
-						borderColor: "rgba(255,99,132,1)",
-						borderWidth: 2,
-						hoverBackgroundColor: "rgba(255,99,132,0.4)",
-						hoverBorderColor: "rgba(255,99,132,1)",
-						data : [
-							<?php
-							foreach ( $array as $item ) {
-								echo '"' . (int) $item['count'] . '", ';
-							}
-							?>
-						],
-					},
-					{
-						type: 'line',
-						label: 'Trendline',
-						pointRadius: 0,
-						borderColor: "rgba(75,192,192,1)",
-						borderWidth: 2,
-						fill: false,
-						data: [
-							<?php
-							foreach ( $array as $item ) {
-								$number = ( $trendarray['slope'] * $item['name'] ) + $trendarray['intercept'];
-								$number = ( $number <= 0 ) ? 0 : $number;
-								echo '"' . (int) $number . '", ';
-							}
-							?>
-						],
-					}
-				]
+				datasets : [{
+					type: 'bar',
+					label: 'Number of <?php echo wp_kses_post( ucfirst( $subject ) ); ?>',
+					backgroundColor: "rgba(255,99,132,0.2)",
+					borderColor: "rgba(255,99,132,1)",
+					borderWidth: 2,
+					hoverBackgroundColor: "rgba(255,99,132,0.4)",
+					hoverBorderColor: "rgba(255,99,132,1)",
+					data : [
+						<?php
+						foreach ( $array as $item ) {
+							echo '"' . (int) $item['count'] . '", ';
+						}
+						?>
+					],
+				}]
 			},
 			options : {
-				layout: {
-					padding: {
-						top: 10,
-						left: 0,
-						bottom: 0,
-						right: 0
-					}
-				},
 				scales: {
+					x: {
+						gridLines: {
+							offsetGridLines: false
+						}
+					},
 					yAxes: [{
 						ticks: {
 							beginAtZero: true,
 							stepSize: 1,
 							suggestedMin: 1,
-							suggestedMax: 2,
-							padding: 10
+							suggestedMax: 5,
 						}
 					}],
 					xAxes: [{
 						ticks: {
-							padding: 10
+							padding: 1
+						}
+					}]
+				},
+				annotation: {
+					annotations: [{
+						type: 'line',
+						mode: 'horizontal',
+						scaleID: 'y-axis-0',
+						value: 0.5,
+						endValue: <?php echo (int) max( $trend ); ?>,
+						borderColor: "rgba(75,192,192,1)",
+						borderWidth: 2,
+						label: {
+							content: 'Trendline',
+							yAdjust: -16,
 						}
 					}]
 				}
