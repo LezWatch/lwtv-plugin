@@ -24,6 +24,11 @@ class LWTV_CPT_Show_Jetpack {
 
 		$post = get_post();
 
+		// If there's no title, slow your roll.
+		if ( ! isset( $post->post_title ) ) {
+			return $message;
+		}
+
 		$show_name = trim( preg_replace( '~\([^)]+\)~', '', $post->post_title ) );
 		$show_name = str_replace( ' & ', ' and ', $show_name );
 		$show_name = sanitize_title( $show_name );

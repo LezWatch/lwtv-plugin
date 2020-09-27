@@ -58,7 +58,7 @@ _Javascript (`js`)_
 
 * `Chart.bundle.min.js` - Stat charts from [ChartJS](https://chartjs.org)
 * `Chart.plugin.js` - Custom add-ons for charts
-* `chartjs-plugin-annotation.min.js` - Annotations for ChartJS.
+* `chartjs-plugin-annotation.min.js` - Annotations for ChartJS
 * `cmb2_ajax.js` - Ajaxified code for CMB2 and post edits
 * `jquery.tablesorter.js` - Allow for table sorting
 * `palette.js` - Colors for charts
@@ -140,7 +140,7 @@ Blocks for Gutenberg. The file `_main.php` acts as an autoloader. If you're upda
 
 The source code is in `/src/` broken up by folder, with one special file
 
-* `serverside-render.php` - Serverside Renders for code that cannot be a pure JS Block
+* `serverside-render.php` - Server-side Renders: Run PHP code in JS blocks
 * `/author-box/` - Author Boxes: Display author information
 * `/cpt-meta/` - Custom Post Type Meta Data: _currently disabled_
 * `/glossary/` - Glossary: Show a visual glossary of taxonomies with icons
@@ -151,7 +151,7 @@ The source code is in `/src/` broken up by folder, with one special file
 
 ### Node Scripts
 
-Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`). This is removed by the builder script when pushed to production.
+Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`). _This is removed by the builder script when pushed to production._
 
 * `postinstall.js` - script run at the end of NPM to move files to the correct location.
 
@@ -226,37 +226,38 @@ _Templates (`/templates/`)_
 
 Stored in `/statistics/` - These files generate everything for stats, from graphs to the rest API stuff.
 
-* Base Code: `class LWTV_Stats` - `_main.php`
-    - Generate: Statistics Base Code
-* Arrays: `class LWTV_Stats_Arrays` - `array.php`
-    - Taxonomy Array
-    - Taxonomy Array for dead
-    - Array for dead by role
-    - Meta and Taxonomy Array
-    - Simple Meta Array
-    - Yes/No Arrays
-    - Nations
-    - Basic Death
-    - Death By Year
-    - Death on Shows
-    - Death in Taxonomies
-    - Show Scores
-    - Actors/Characters
-    - Roles on Shows
-    - Queerness
-* Gutenberg: `gutenberg-ssr.php`
-    - Server side rendering to show statistics.
-* Output: `class LWTV_Stats_Output` - `output.php`
-    - Lists
-    - Percentages
-    - Averages
-    - Linear regression function
-    - Barcharts
-    - Stacked Barcharts
-    - Piecharts
-    - Trendlines
-* Query Variables: `query_vars.php`
-    - Code to customize query variables
+* `_main.php` - Base Code: `class LWTV_Stats`
+    - `function generate()` - Generates base stats. This makes a lot of calls to arrays and outputs
+    - `function showcount()` - Slices shows into smaller chunks (i.e 'all shows in Australia') and can output raw counts, on-air counts, scores, or on-air scores.
+* `array.php` -  Arrays: `class LWTV_Stats_Arrays`
+    - `function taxonomy()` - Generate array to parse taxonomy content
+    - `functions dead_taxonomy()` - Generate Taxonomy Array for dead characters
+    - `function dead_role()` - Array for dead characters by role (regular, etc)
+    - `function dead_meta_tax()` - Generate array to parse taxonomy content as it relates to post metas (for dead characters)
+    - `function meta()` - Generate array to parse post meta data
+    - `function yes_no()` - Generates arrays for content that has Yes/No values (shows we love, on air)
+    - `function taxonomy_breakdowns()` - generates complex arrays of cross related data from multiple taxonomies to list 'all miniseres in the USA' (this one makes us cry)
+    - `function dead_basic()` - Simple counts of all shows with dead, or all dead characters
+    - `function dead_year()` - Simple counts of death by year (Sara Lance...)
+    - `function on_air()` - Shows or characters on air per year
+    - `function dead_shows()` - Array of shows with (and without) dead characters, but because of Sara Lance, we have to cross relate to make sure all the shows with death have actually dead characters (yes, a show can have a dead-flag but no actively dead characters)
+    - `function dead_complex_taxonomy()` - Complex death taxonomies for stations and nations.
+    - `function scores()` - Show Scores
+    - `function actor_chars()` - How many actors or characters per actor or character...
+    - `function show_roles()` - Roles of characters on Shows, with how many of each role are dead
+    - `function complex_taxonomy()` - How many characters are played by out queer actors, but also how many characters for each term.
+* `gutenberg-ssr.php` - Gutenberg Server side rendering to show stats
+*  `output.php` - Output: `class LWTV_Stats_Output`
+    - `function lists()` - Table lists with simple counts
+    - `function percentages()` - Table lists with percentages and a bar
+    - `function averages()` - Averages, highs, and lows (ex show scores)
+    - `function calculate_trendline()` - Calculates trendline data
+    - `function linear_regression()` - Calculates linear regression (used by trends)
+    - `function barcharts()` - Horizontal barcharts
+    - `function stacked_barcharts()` - Stacked Barcharts (also horizontal)
+    - `function piecharts()` - Piecharts (actually donuts...)
+    - `function trendline()` - Trendlines (against a vertical barchart)
+* `query_vars.php` - Query Variables customization (to make virtual pages) and Yoast meta
 
 _Templates (`/templates/`)_
 
@@ -273,7 +274,7 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 
 ### Vendor Files
 
-Stored in `/vendor/` - this has to be included for things to function properly.
+Stored in `/vendor/` - this has to be included for things to function properly. Everything is loaded by `autoload.php`. This is all autogenerated by Composer.
 
 * `/bin/` - temp holder for composer
 * `/composer/` - composer library and auto loader

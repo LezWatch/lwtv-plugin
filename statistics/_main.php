@@ -270,7 +270,7 @@ class LWTV_Stats {
 	 * @param string $tax   The taxonomy   (stations, nations, etc)
 	 * @param string $term  The term       (amc, united-kingdom, etc)
 	 *
-	 * @return array
+	 * @return array        [total number, on-air, total score, on-air score]
 	 */
 	public function showcount( $type, $tax, $term ) {
 
