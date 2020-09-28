@@ -183,9 +183,13 @@ class LWTV_Functions {
 		}
 
 		if ( isset( $icon ) ) {
-			// @codingStandardsIgnoreStart
-			$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
-			// @codingStandardsIgnoreEnd
+			$filetype = wp_check_filetype( $icon );
+
+			if ( 'svg' === $filetype['ext'] ) {
+				// @codingStandardsIgnoreStart
+				$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
+				// @codingStandardsIgnoreEnd
+			}
 		}
 
 		return $return;
