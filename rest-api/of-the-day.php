@@ -205,7 +205,7 @@ class LWTV_OTD_JSON {
 				break;
 			case 'show':
 				$return['loved'] = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
-				$return['score'] = get_post_meta( $post_id, 'lezshows_the_score', true );
+				$return['score'] = number_format( (float) get_post_meta( $post_id, 'lezshows_the_score', true ), 2, '.', '' );
 				$return['characters'] = get_post_meta( $post_id, 'lezshows_char_count', true );
 
 				// We need to do some crazy generation here
