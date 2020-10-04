@@ -20,7 +20,6 @@ class LWTV_Affiliate_FubuTV {
 	 */
 	public function output( $post_id, $format ) {
 
-		// expire - optional but formatted DD-MM-YYYY
 		// banner - 728x90
 		// thin   - 160x600
 		// tiny   - 320x50
