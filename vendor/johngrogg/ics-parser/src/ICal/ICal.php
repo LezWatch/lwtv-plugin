@@ -13,8 +13,6 @@
 
 namespace ICal;
 
-use Carbon\Carbon;
-
 class ICal
 {
     // phpcs:disable Generic.Arrays.DisallowLongArraySyntax
@@ -582,6 +580,7 @@ class ICal
      * @param  string $username
      * @param  string $password
      * @param  string $userAgent
+     * @param  string $acceptLanguage
      * @return ICal
      */
     public function initUrl($url, $username = null, $password = null, $userAgent = null, $acceptLanguage = null)
@@ -855,7 +854,8 @@ class ICal
     {
         $string = implode(PHP_EOL, $lines);
         $string = preg_replace('/' . PHP_EOL . '[ \t]/', '', $string);
-        $lines  = explode(PHP_EOL, $string);
+
+        $lines = explode(PHP_EOL, $string);
 
         return $lines;
     }
@@ -896,7 +896,6 @@ class ICal
                         $this->cal[$key1][$key2][$key3][$keyword] .= ',' . $value;
                     }
                 }
-
                 break;
 
             case 'VEVENT':
@@ -936,7 +935,6 @@ class ICal
                         $this->cal[$key1][$key2][$keyword] .= ',' . $value;
                     }
                 }
-
                 break;
 
             case 'VFREEBUSY':
@@ -959,7 +957,6 @@ class ICal
                 } else {
                     $this->cal[$key1][$key2][$key3][] = $value;
                 }
-
                 break;
 
             case 'VTODO':
@@ -1411,7 +1408,6 @@ class ICal
                                 $day
                             );
                         }
-
                         break;
 
                     case 'MONTHLY':
@@ -1440,7 +1436,6 @@ class ICal
                                 $day
                             );
                         }
-
                         break;
 
                     case 'YEARLY':
@@ -1473,7 +1468,6 @@ class ICal
                         } else {
                             $candidateDateTimes[] = clone $frequencyRecurringDateTime;
                         }
-
                         break;
                 }
 
@@ -1617,7 +1611,7 @@ class ICal
      * @param  \DateTime $initialDateTime
      * @return array
      */
-    protected function getDaysOfMonthMatchingByDayRRule($byDays, $initialDateTime)
+    protected function getDaysOfMonthMatchingByDayRRule(array $byDays, $initialDateTime)
     {
         $matchingDays = array();
 
@@ -1677,7 +1671,7 @@ class ICal
      * @param  array $valuesList
      * @return array
      */
-    protected function filterValuesUsingBySetPosRRule($bySetPos, $valuesList)
+    protected function filterValuesUsingBySetPosRRule(array $bySetPos, array $valuesList)
     {
         $filteredMatches = array();
 
@@ -1742,8 +1736,9 @@ class ICal
      */
     public function events()
     {
-        $array  = $this->cal;
-        $array  = isset($array['VEVENT']) ? $array['VEVENT'] : array();
+        $array = $this->cal;
+        $array = isset($array['VEVENT']) ? $array['VEVENT'] : array();
+
         $events = array();
 
         if (!empty($array)) {
@@ -2202,7 +2197,7 @@ class ICal
         }
 
         $output          = array();
-        $currentTimeZone = $this->defaultTimeZone;
+        $currentTimeZone = new \DateTimeZone($this->defaultTimeZone);
 
         foreach ($exdates as $subArray) {
             end($subArray);
@@ -2215,14 +2210,14 @@ class ICal
                     $icalDate = $subArray[$key];
 
                     if (substr($icalDate, -1) === 'Z') {
-                        $currentTimeZone = self::TIME_ZONE_UTC;
+                        $currentTimeZone = new \DateTimeZone(self::TIME_ZONE_UTC);
                     }
 
-                    $output[] = new Carbon($icalDate, $currentTimeZone);
+                    $output[] = new \DateTime($icalDate, $currentTimeZone);
 
                     if ($key === $finalKey) {
                         // Reset to default
-                        $currentTimeZone = $this->defaultTimeZone;
+                        $currentTimeZone = new \DateTimeZone($this->defaultTimeZone);
                     }
                 }
             }
