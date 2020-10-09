@@ -10,6 +10,8 @@ class LWTV_Algolia {
 		add_filter( 'algolia_should_index_user', array( $this, 'algolia_never_index' ) );
 		add_filter( 'algolia_should_index_term', array( $this, 'algolia_never_index' ) );
 		add_filter( 'algolia_post_shared_attributes', array( $this, 'algolia_reduce_attributes' ), 10, 2 );
+		add_filter( 'algolia_post_posts_shared_attributes', array( $this, 'algolia_reduce_attributes' ), 10, 2 );
+		add_filter( 'algolia_post_pages_shared_attributes', array( $this, 'algolia_reduce_attributes' ), 10, 2 );
 		add_filter( 'algolia_post_post_type_actors_shared_attributes', array( $this, 'algolia_reduce_attributes' ), 10, 2 );
 		add_filter( 'algolia_post_post_type_shows_shared_attributes', array( $this, 'algolia_reduce_attributes' ), 10, 2 );
 		add_filter( 'algolia_post_post_type_characters_shared_attributes', array( $this, 'algolia_reduce_attributes' ), 10, 2 );
