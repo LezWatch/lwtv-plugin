@@ -46,7 +46,7 @@ class LWTV_Algolia {
 				break;
 			case 'post_type_characters':
 			case 'post_type_actors':
-				$score = 50;
+				$score = 150;
 				break;
 			default:
 				$score = 0;
