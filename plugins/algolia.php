@@ -39,19 +39,28 @@ class LWTV_Algolia {
 			}
 		}
 
-		// Add Scoring for individual ranking
+		// Remove trailing S to look better
+		if ( isset( $attributes['post_type_label'] ) ) {
+			$attributes['post_type_label'] = substr( $attributes['post_type_label'], 0, -1 );
+		}
+
+		// Add Data for individual ranking
 		switch ( $post->post_type ) {
 			case 'post_type_shows':
-				$score = round( get_post_meta( $post->ID, 'lezshows_the_score', true ), 2 );
+				$attributes['score'] = round( get_post_meta( $post->ID, 'lezshows_the_score', true ), 2 );
 				break;
 			case 'post_type_characters':
+				$attributes['score'] = 150;
+				// list all actors?
+				// list all shows?
+				break;
 			case 'post_type_actors':
-				$score = 150;
+				$attributes['score'] = 150;
+				// list all characters?
 				break;
 			default:
-				$score = 0;
+				$attributes['score'] = 0;
 		}
-		$attributes['score'] = ( isset( $score ) ) ? $score : 0;
 
 		return $attributes;
 	}
