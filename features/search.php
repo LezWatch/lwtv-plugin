@@ -10,7 +10,6 @@
  */
 class LWTV_Search {
 
-
 	public function __construct() {
 		// Only run if we're NOT in the admin screen!
 		if ( ! is_admin() ) {
@@ -18,7 +17,8 @@ class LWTV_Search {
 			add_filter( 'posts_where', array( $this, 'search_where' ) );
 			add_filter( 'posts_distinct', array( $this, 'search_distinct' ) );
 		}
-		add_action( 'template_redirect', array( $this, 'search_redirect' ) );
+		// Disabled to get Algolia to work
+		//add_action( 'template_redirect', array( $this, 'search_redirect' ) );
 	}
 
 	/**
