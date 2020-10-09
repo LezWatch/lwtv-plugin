@@ -149,7 +149,7 @@ class LWTV_Stats_Arrays {
 	}
 
 	/*
-	 * Statistics Meta and Taxonomy Array
+	 * Dead Statistics Meta and Taxonomy Array
 	 *
 	 * Generate array to parse taxonomy content as it relates to post metas
 	 *
@@ -200,7 +200,7 @@ class LWTV_Stats_Arrays {
 	 */
 	public function meta( $post_type, $meta_array, $key, $data, $compare = '=' ) {
 
-		$transient = 'meta_' . $key;
+		$transient = 'stats_meta_' . $key;
 		$array     = get_transient( $transient );
 
 		if ( false === $array ) {
@@ -289,7 +289,7 @@ class LWTV_Stats_Arrays {
 	}
 
 	/**
-	 * Calculate taxonomy_breakdowns statistics
+	 * Calculate statistics for complicated taxonomies
 	 *
 	 * @access public
 	 * @static
@@ -834,7 +834,7 @@ class LWTV_Stats_Arrays {
 
 
 	/**
-	 * Complex death taxonomies.
+	 * Complex death taxonomies for stations and nations.
 	 *
 	 * @access public
 	 * @static
@@ -1014,7 +1014,7 @@ class LWTV_Stats_Arrays {
 		$array     = get_transient( $transient );
 
 		if ( false === $array ) {
-			$array  = array();
+			$array = array();
 
 			// List of shows
 			$all_shows_query = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
@@ -1196,7 +1196,7 @@ class LWTV_Stats_Arrays {
 		$array     = get_transient( $transient );
 
 		if ( false === $array ) {
-			$array    = array();
+			$array = array();
 
 			if ( 'queer-irl' === $data ) {
 

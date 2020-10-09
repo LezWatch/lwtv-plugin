@@ -27,7 +27,7 @@ class LWTV_Ways_To_Watch {
 			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'];
 
 			// Clean the URL to get the top domain ...
-			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk', '.ca', '.go' );
+			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk', '.ca', '.go', '.org' );
 			foreach ( $removal_array as $removal ) {
 				$hostname = str_replace( $removal, '', $hostname );
 			}
@@ -79,7 +79,7 @@ class LWTV_Ways_To_Watch {
 					'name' => 'HBO Max',
 				),
 				'peacock'        => array(
-					'name' => 'Peacock TV',
+					'name' => 'Peacock TV (NBC)',
 				),
 				'roosterteeth'   => array(
 					'name' => 'Roster Teeth',

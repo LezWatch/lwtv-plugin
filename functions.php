@@ -99,14 +99,6 @@ class LWTV_Functions {
 
 		$fill = ( false !== $icon_color ) ? sanitize_hex_color( $icon_color ) : '#82878c';
 
-		/*
-		if ( is_admin() && false === $icon_color ) {
-			$admin_colors  = json_decode( wp_json_encode( $_wp_admin_css_colors ), true );
-			$current_color = get_user_option( 'admin_color' );
-			$fill          = $admin_colors[ $current_color ]['icon_colors']['base'];
-		}
-		*/
-
 		$svg = '<svg width="100%" height="100%" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:' . $fill . '"><path d="M4,10c0,-4.411 3.589,-8 8,-8c4.411,0 8,3.589 8,8v2.08c0.706,0.102 1.378,0.308 2,0.605v-2.685c0,-5.514 -4.486,-10 -10,-10c-5.514,0 -10,4.486 -10,10v2.685c0.622,-0.297 1.294,-0.503 2,-0.605Zm8,-6c-3.309,0 -6,2.691 -6,6v1.025c0.578,-0.772 1.294,-1.43 2.112,-1.929c0.412,-1.77 1.994,-3.096 3.888,-3.096c1.894,0 3.476,1.326 3.888,3.096c0.819,0.499 1.534,1.157 2.112,1.929v-1.025c0,-3.309 -2.691,-6 -6,-6Zm7,10h-1.712c-0.654,-2.307 -2.771,-4 -5.288,-4c-2.517,0 -4.634,1.693 -5.288,4h-1.712c-2.761,0 -5,2.239 -5,5c0,2.761 2.239,5 5,5h14c2.761,0 5,-2.239 5,-5c0,-2.761 -2.239,-5 -5,-5Z" transform="scale(0.666667)" fill="' . $fill . '"></path></svg>';
 
 		if ( $base64 ) {

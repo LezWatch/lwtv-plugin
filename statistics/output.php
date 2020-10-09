@@ -216,7 +216,7 @@ class LWTV_Stats_Output {
 		$trendarray = self::linear_regression( $names, $count );
 
 		foreach ( $array as $item ) {
-			$number = ( $trendarray['slope'] * $item['name'] ) + $trendarray['intercept'];
+			$number  = ( $trendarray['slope'] * $item['name'] ) + $trendarray['intercept'];
 			$trend[] = ( $number <= 0 ) ? 0 : $number;
 		}
 
@@ -251,15 +251,19 @@ class LWTV_Stats_Output {
 			$xx_sum += ( $x[ $i ] * $x[ $i ] );
 		}
 
-		// calculate slope
-		$slope = ( ( $n * $xy_sum ) - ( $x_sum * $y_sum ) ) / ( ( $n * $xx_sum ) - ( $x_sum * $x_sum ) );
+		// Pre-check for zeros...
+		$divisor = ( ( $n * $xx_sum ) - ( $x_sum * $x_sum ) );
+		if ( 0 !== $divisor ) {
+			// calculate slope
+			$slope = ( ( $n * $xy_sum ) - ( $x_sum * $y_sum ) ) / $divisor;
+			// calculate intercept
+			$intercept = ( $y_sum - ( $slope * $x_sum ) ) / $n;
+		}
 
-		// calculate intercept
-		$intercept = ( $y_sum - ( $slope * $x_sum ) ) / $n;
-
+		// Sort return.
 		$return = array(
-			'slope'     => $slope,
-			'intercept' => $intercept,
+			'slope'     => ( isset( $slope ) ) ? $slope : 0,
+			'intercept' => ( isset( $intercept ) ) ? $intercept : 0,
 		);
 		return $return;
 	}
@@ -684,6 +688,7 @@ class LWTV_Stats_Output {
 					}],
 					xAxes: [{
 						ticks: {
+							beginAtZero: true,
 							padding: 1
 						}
 					}]
@@ -693,7 +698,7 @@ class LWTV_Stats_Output {
 						type: 'line',
 						mode: 'horizontal',
 						scaleID: 'y-axis-0',
-						value: 0.5,
+						value: <?php echo (int) min( $trend ); ?>,
 						endValue: <?php echo (int) end( $trend ); ?>,
 						borderColor: "rgba(75,192,192,1)",
 						borderWidth: 2,
