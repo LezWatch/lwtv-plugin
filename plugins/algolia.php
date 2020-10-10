@@ -92,6 +92,10 @@ class LWTV_Algolia {
 				break;
 			case 'post_type_actors':
 				$attributes['score'] = 150;
+
+				// Default
+				$meta_array  = array();
+
 				// list all characters
 				$char_group = get_post_meta( $post->ID, 'lezactors_char_list', true );
 				if ( '' !== $char_group && is_array( $char_group ) ) {
