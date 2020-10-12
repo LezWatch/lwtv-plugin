@@ -51,11 +51,9 @@ class LWTV_Algolia {
 		// Add Data for individual ranking
 		switch ( $post->post_type ) {
 			case 'post_type_shows':
-				// Base score on show score + 50
-				$attributes['score'] = round( get_post_meta( $post->ID, 'lezshows_the_score', true ), 2 ) + 50;
+				$attributes['score'] = 175;
 				break;
 			case 'post_type_characters':
-				// Hardcode score
 				$attributes['score'] = 150;
 
 				// Create meta
@@ -91,7 +89,7 @@ class LWTV_Algolia {
 
 				break;
 			case 'post_type_actors':
-				$attributes['score'] = 150;
+				$attributes['score'] = 125;
 
 				// Default
 				$meta_array  = array();
