@@ -93,7 +93,13 @@ class LWTV_Algolia {
 					$attributes['score'] = 125;
 
 					// Default
-					$meta_array  = array();
+					$meta_array = array();
+
+					// Meta by name, meta by nature
+					$name_array = explode( ' ', get_the_title( $post->ID ) );
+					foreach ( $name_array as $name ) {
+						$meta_array[] = $name;
+					}
 
 					// list all characters
 					$char_group = get_post_meta( $post->ID, 'lezactors_char_list', true );
