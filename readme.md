@@ -161,6 +161,8 @@ Stored in `/plugins/`
 
 The file `_main.php` acts as an autoloader.
 
+* `algolia.php` - Integration with Algolia Search
+    - Adds score meta, as well as show/actor/character meta to specific post types
 * `cache.php` - Custom Cache specific to DreamPress hosting
     - Generates data used by Proxy Cache Purge and WP Rocket to know what to flush.
 * `/cmb2.php` - Integration with CMB2

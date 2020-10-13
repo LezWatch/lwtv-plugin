@@ -215,7 +215,7 @@ class LWTV_Shortcodes {
 	 *
 	 * @since 1.0
 	 */
-	public function glossary( $atts ) {
+	public static function glossary( $atts ) {
 		$attr = shortcode_atts(
 			array(
 				'taxonomy' => '',
@@ -248,7 +248,7 @@ class LWTV_Shortcodes {
 	 *
 	 * @since 1.2
 	*/
-	public function author_box( $attributes ) {
+	public static function author_box( $attributes ) {
 
 		wp_enqueue_style( 'author-box-shortcode', content_url( 'library/assets/css/author-box.css' ), array(), self::$version );
 
