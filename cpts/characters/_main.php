@@ -195,17 +195,23 @@ class LWTV_CPT_Characters {
 	 */
 	public function yoast_retrieve_actors_replacement() {
 		global $post;
-		$actors     = array();
-		$actors_ids = get_post_meta( $post->ID, 'lezchars_actor', true );
-		if ( ! is_array( $actors_ids ) ) {
-			$actors_ids = array( get_post_meta( $post->ID, 'lezchars_actor', true ) );
-		}
-		if ( '' !== $actors_ids && ! is_null( $actors_ids ) ) {
-			foreach ( $actors_ids as $each_actor ) {
-				array_push( $actors, get_the_title( $each_actor ) );
+
+		$return = 'Unknown';
+		if ( is_object( $post ) ) {
+			$actors     = array();
+			$actors_ids = get_post_meta( $post->ID, 'lezchars_actor', true );
+			if ( ! is_array( $actors_ids ) ) {
+				$actors_ids = array( get_post_meta( $post->ID, 'lezchars_actor', true ) );
 			}
+			if ( '' !== $actors_ids && ! is_null( $actors_ids ) ) {
+				foreach ( $actors_ids as $each_actor ) {
+					array_push( $actors, get_the_title( $each_actor ) );
+				}
+			}
+			$return = implode( ', ', $actors );
 		}
-		return implode( ', ', $actors );
+
+		return $return;
 	}
 
 	/*
@@ -215,21 +221,26 @@ class LWTV_CPT_Characters {
 	 */
 	public function yoast_retrieve_shows_replacement() {
 		global $post;
-		$shows_ids    = get_post_meta( $post->ID, 'lezchars_show_group', true );
-		$shows_titles = array();
 
-		if ( ! is_array( $shows_ids ) ) {
-			$shows_ids = array( $shows_ids );
-		}
+		$shows_string = '';
+		if ( is_object( $post ) ) {
+			$shows_ids    = get_post_meta( $post->ID, 'lezchars_show_group', true );
+			$shows_titles = array();
 
-		if ( '' !== $shows_ids && ! is_null( $shows_ids ) ) {
-			foreach ( $shows_ids as $each_show ) {
-				if ( isset( $each_show['show'] ) ) {
-					array_push( $shows_titles, get_the_title( $each_show['show'] ) );
+			if ( ! is_array( $shows_ids ) ) {
+				$shows_ids = array( $shows_ids );
+			}
+
+			if ( '' !== $shows_ids && ! is_null( $shows_ids ) ) {
+				foreach ( $shows_ids as $each_show ) {
+					if ( isset( $each_show['show'] ) ) {
+						array_push( $shows_titles, get_the_title( $each_show['show'] ) );
+					}
 				}
 			}
+			$shows_string = implode( ', ', $shows_titles );
 		}
-		return implode( ', ', $shows_titles );
+		return $shows_string;
 	}
 
 	/*

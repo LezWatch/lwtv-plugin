@@ -24,7 +24,8 @@ class LWTV_Ways_To_Watch {
 		foreach ( $affiliate_url as $url ) {
 			$parsed_url = wp_parse_url( $url );
 			$hostname   = $parsed_url['host'];
-			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'];
+			$clean_path = ( isset ( $parsed_url['path'] ) ) ? $parsed_url['path'] : '';
+			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $clean_path;
 
 			// Clean the URL to get the top domain ...
 			$removal_array = array( 'www.', '.com', 'itunes.', '.co.uk', '.ca', '.go', '.org' );
