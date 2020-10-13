@@ -74,9 +74,7 @@ class LWTV_Algolia {
 				}
 				if ( '' !== $actor_group && is_array( $actor_group ) ) {
 					foreach ( $actor_group as $each_actor ) {
-						if ( 'private' === get_post_status( $each_actor ) ) {
-							$meta_array[] = 'Unknown';
-						} else {
+						if ( 'private' !== get_post_status( $each_actor ) && 'Unknown' !== get_the_title( $each_actor ) ) {
 							$meta_array[] = get_the_title( $each_actor );
 						}
 					}
@@ -89,34 +87,38 @@ class LWTV_Algolia {
 
 				break;
 			case 'post_type_actors':
-				$attributes['score'] = 125;
+				if ( 'Unknown' === get_the_title( $post->ID ) ) {
+					$attributes['score'] = 0;
+				} else {
+					$attributes['score'] = 125;
 
-				// Default
-				$meta_array  = array();
+					// Default
+					$meta_array  = array();
 
-				// list all characters
-				$char_group = get_post_meta( $post->ID, 'lezactors_char_list', true );
-				if ( '' !== $char_group && is_array( $char_group ) ) {
-					foreach ( $char_group as $each_char ) {
-						$meta_array[] = get_the_title( $each_char );
+					// list all characters
+					$char_group = get_post_meta( $post->ID, 'lezactors_char_list', true );
+					if ( '' !== $char_group && is_array( $char_group ) ) {
+						foreach ( $char_group as $each_char ) {
+							$meta_array[] = get_the_title( $each_char );
+						}
 					}
-				}
 
-				// list all shows
-				$show_group = get_post_meta( $post->ID, 'lezactors_show_list', true );
-				if ( '' !== $show_group && is_array( $show_group ) ) {
-					foreach ( $show_group as $each_show ) {
-						$meta_array[] = get_the_title( $each_show );
+					// list all shows
+					$show_group = get_post_meta( $post->ID, 'lezactors_show_list', true );
+					if ( '' !== $show_group && is_array( $show_group ) ) {
+						foreach ( $show_group as $each_show ) {
+							$meta_array[] = get_the_title( $each_show );
+						}
 					}
-				}
 
-				// If we have a meta array, we build it.
-				if ( is_array( $meta_array ) && ! empty( $meta_array ) ) {
-					$attributes['lwtv_meta'] = implode( ', ', array_unique( $meta_array ) );
+					// If we have a meta array, we build it.
+					if ( is_array( $meta_array ) && ! empty( $meta_array ) ) {
+						$attributes['lwtv_meta'] = implode( ', ', array_unique( $meta_array ) );
+					}
 				}
 				break;
 			default:
-				$attributes['score'] = 0;
+				$attributes['score'] = 10;
 		}
 
 		return $attributes;
