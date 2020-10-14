@@ -186,6 +186,8 @@ The file `_main.php` acts as an autoloader.
         - split actors and shows into separate entries, and add additional orderby params
 * `imagify.php`  - Imagify integration
     - prevents GIFs from being processed.
+* `jetpack.php`  - Jetpack integration
+    - Adds Post Type to sort.
 
 ### Rest API
 
