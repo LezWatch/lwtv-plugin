@@ -253,13 +253,14 @@ class LWTV_Whats_On_JSON {
 
 							// Summary of the next episode is pulled from
 							// their api!
-							$summary = self::next_ep_summary( $val['show'] );
+							$details = self::next_ep_details( $val['show'] );
 
 							// Episode titles
 							$return = array(
 								'pretty'  => 'There ' . $episodes . ' of "' . $show_name . '" in the next 30 days. ' . $will_air . ' will air on ' . $val['airdate'] . ' at ' . $val['airtime'] . ' US/Eastern.',
 								'nextep'  => $val['nextep'],
-								'summary' => $summary,
+								'summary' => $details['summary'],
+								'tvmaze'  => $details['tvmaze'],
 							);
 						}
 					}
@@ -270,25 +271,35 @@ class LWTV_Whats_On_JSON {
 		return $return;
 	}
 
-	public function next_ep_summary( $showname = false ) {
+	public function next_ep_details( $showname = false ) {
 		if ( false === $showname ) {
 			$summary = 'TBD';
 		} else {
 			// Hit TV Maze API for show info:
 			$show_info = wp_remote_get( 'http://api.tvmaze.com/singlesearch/shows?q=' . $showname );
 
+			// If there's content, let's make it an array
 			$show_array = isset( $show_info['body'] ) ? json_decode( $show_info['body'], true ) : false;
+
+			// Extract show URL if it exists
+			$tvmaze = ( isset( $show_array['url'] ) ) ? $show_array['url'] : 'https://tvmaze.com/';
 
 			// Grab next episode URL
 			$next_episode = ( isset( $show_array['_links']['nextepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['nextepisode']['href'] ) : false;
 
+			// If the episode URL has data, we use it as an array
 			$next_array = isset( $next_episode['body'] ) ? json_decode( $next_episode['body'], true ) : false;
 
-			// Extract summary
+			// Extract summary from the episode array
 			$summary = ( isset( $next_array['summary'] ) ) ? wp_filter_nohtml_kses( $next_array['summary'] ) : 'TBD';
 		}
 
-		return $summary;
+		$return = array(
+			'summary' => $summary,
+			'tvmaze'  => $tvmaze,
+		);
+
+		return $return;
 	}
 
 	/**
