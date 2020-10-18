@@ -222,9 +222,14 @@ class LWTV_CPT_Actors {
 	 */
 	public function yoast_retrieve_characters_replacement() {
 		global $post;
-		$char_count = get_post_meta( $post->ID, 'lezactors_char_count', true );
-		// translators: %s is the number of characters
-		$characters = ( 0 === $char_count ) ? 'no characters' : sprintf( _n( '%s character', '%s characters', $char_count ), $char_count );
+
+		$characters = '0';
+		if ( is_object( $post ) ) {
+			$char_count = get_post_meta( $post->ID, 'lezactors_char_count', true );
+			// translators: %s is the number of characters
+			$characters = ( 0 === $char_count ) ? 'no characters' : sprintf( _n( '%s character', '%s characters', $char_count ), $char_count );
+		}
+
 		return $characters;
 	}
 
@@ -235,8 +240,12 @@ class LWTV_CPT_Actors {
 	 */
 	public function yoast_retrieve_queer_replacement() {
 		global $post;
-		$is_queer = get_post_meta( $post->ID, 'lezactors_queer', true );
-		$queer    = ( $is_queer ) ? 'a queer actor' : 'an actor';
+
+		$queer = 'an actor';
+		if ( is_object( $post ) ) {
+			$is_queer = get_post_meta( $post->ID, 'lezactors_queer', true );
+			$queer    = ( $is_queer ) ? 'a queer actor' : 'an actor';
+		}
 		return $queer;
 	}
 

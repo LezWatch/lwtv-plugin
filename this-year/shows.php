@@ -240,7 +240,7 @@ class LWTV_This_Year_Shows {
 			} else {
 				$has_shows = false;
 			}
-			if ( ! $has_shows ) {
+			if ( ! isset( $has_shows ) || ! $has_shows ) {
 				echo wp_kses_post( $fail_msg );
 			}
 			?>
