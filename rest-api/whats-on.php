@@ -30,7 +30,7 @@ class LWTV_Whats_On_JSON {
 	 * Creates callbacks
 	 *   - /lwtv/v1/whats-on/
 	 *   - /lwtv/v1/whats-on/[today|tomorrow|week|month|year]
-	 *   - /lwtv/v1/whats-on/show/YYYY-MM-DD
+	 *   - YYYY-MM-DD
 	 */
 	public function rest_api_init() {
 		register_rest_route(
@@ -146,11 +146,11 @@ class LWTV_Whats_On_JSON {
 	public function whats_on_date( $date ) {
 
 		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
-		$lwtv_tz  = new DateTimeZone( 'America/New_York' );
+		$lwtv_tz    = new DateTimeZone( 'America/New_York' );
 		$upload_dir = wp_upload_dir();
 		$tvmaze_url = $upload_dir['basedir'] . '/tvmaze.ics';
-		$calendar = ( new LWTV_ICS_Parser() )->generate_by_date( $tvmaze_url, 'date', $date );
-		$whats_on = $calendar;
+		$calendar   = ( new LWTV_ICS_Parser() )->generate_by_date( $tvmaze_url, 'date', $date );
+		$whats_on   = $calendar;
 
 		if ( empty( $whats_on ) ) {
 			$datetime = new DateTime( $when, $lwtv_tz );
@@ -208,7 +208,10 @@ class LWTV_Whats_On_JSON {
 			$show = get_permalink( $show );
 		}
 
-		if ( 'unknown' !== $show ) {
+		// If someone put in an invalid entry
+		if ( false === $show || 'unknown' === $show ) {
+			$return = 'No showname was entered. You have to tell us what show you want airdates for.';
+		} else {
 			$show_obj = get_page_by_path( $show, OBJECT, 'post_type_shows' );
 			if ( $show_obj ) {
 				// Remove everything after a space-and parenthesis to compensate for 'charmed (2018)' situations but NOT 'thirtysomething(else)' - can shows PLEASE stop being so clever? UGH.
@@ -248,11 +251,15 @@ class LWTV_Whats_On_JSON {
 							// Translators: $val['count'] is the number of episodes.
 							$will_air = _n( 'It', 'The first', $val['count'] );
 
-							// Episode titles
+							// Summary of the next episode is pulled from
+							// their api!
+							$summary = self::next_ep_summary( $val['show'] );
 
+							// Episode titles
 							$return = array(
-								'pretty' => 'There ' . $episodes . ' of "' . $show_name . '" in the next 30 days. ' . $will_air . ' will air on ' . $val['airdate'] . ' at ' . $val['airtime'] . ' US/Eastern.',
-								'nextep' => $val['nextep'],
+								'pretty'  => 'There ' . $episodes . ' of "' . $show_name . '" in the next 30 days. ' . $will_air . ' will air on ' . $val['airdate'] . ' at ' . $val['airtime'] . ' US/Eastern.',
+								'nextep'  => $val['nextep'],
+								'summary' => $summary,
 							);
 						}
 					}
@@ -261,6 +268,27 @@ class LWTV_Whats_On_JSON {
 		}
 
 		return $return;
+	}
+
+	public function next_ep_summary( $showname = false ) {
+		if ( false === $showname ) {
+			$summary = 'TBD';
+		} else {
+			// Hit TV Maze API for show info:
+			$show_info = wp_remote_get( 'http://api.tvmaze.com/singlesearch/shows?q=' . $showname );
+
+			$show_array = isset( $show_info['body'] ) ? json_decode( $show_info['body'], true ) : false;
+
+			// Grab next episode URL
+			$next_episode = ( isset( $show_array['_links']['nextepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['nextepisode']['href'] ) : false;
+
+			$next_array = isset( $next_episode['body'] ) ? json_decode( $next_episode['body'], true ) : false;
+
+			// Extract summary
+			$summary = ( isset( $next_array['summary'] ) ) ? $next_array['summary'] : 'TBD';
+		}
+
+		return $summary;
 	}
 
 	/**
