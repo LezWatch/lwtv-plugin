@@ -285,7 +285,7 @@ class LWTV_Whats_On_JSON {
 			$next_array = isset( $next_episode['body'] ) ? json_decode( $next_episode['body'], true ) : false;
 
 			// Extract summary
-			$summary = ( isset( $next_array['summary'] ) ) ? $next_array['summary'] : 'TBD';
+			$summary = ( isset( $next_array['summary'] ) ) ? wp_filter_nohtml_kses( $next_array['summary'] ) : 'TBD';
 		}
 
 		return $summary;
