@@ -213,7 +213,7 @@ class LWTV_SSR_Calendar {
 		$return    .= $navigation;
 
 		// Powered by
-		$return .= '<p><small><a href="https://www.tvmaze.com">Powered by TVMaze.</a></small></p>';
+		$return .= '<p><small><a href="https://www.tvmaze.com" target="_new">Powered by TVMaze.</a></small></p>';
 
 		return $return;
 	}
