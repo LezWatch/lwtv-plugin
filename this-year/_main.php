@@ -136,7 +136,7 @@ class LWTV_This_Year {
 		$view     = ( 'overview' === $view ) ? '' : $view;
 		?>
 
-		<nav aria-label="This Year navigation" role="navigation" class="yikes-pagination">
+		<nav aria-label="This Year Navigation" role="navigation" class="yikes-pagination">
 			<ul class="pagination justify-content-center">
 
 				<?php
