@@ -18,15 +18,15 @@ class LWTV_Jetpack {
 		if ( class_exists( 'Jetpack_Search' ) ) {
 			Jetpack_Search::instance()->set_filters( [
 				'Content Type' => [
-					'type'     => 'post_type',
-					'count'    => 10,
+					'type'  => 'post_type',
+					'count' => 10,
 				],
-				'Categories' => [
+				'Categories'   => [
 					'type'     => 'taxonomy',
 					'taxonomy' => 'category',
 					'count'    => 10,
 				],
-				'Tags' => [
+				'Tags'         => [
 					'type'     => 'taxonomy',
 					'taxonomy' => 'post_tag',
 					'count'    => 10,
