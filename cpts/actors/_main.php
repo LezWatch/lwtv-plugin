@@ -36,13 +36,10 @@ class LWTV_CPT_Actors {
 		// Define show taxonomies
 		// SLUG => PRETTY NAME
 		self::$all_taxonomies = array(
-			'lez_actor_gender'    => array(
-				'name'   => 'actor gender',
-				'plural' => 'actor gender',
-			),
+			'lez_actor_gender'    => array( 'name' => 'gender' ),
 			'lez_actor_sexuality' => array(
-				'name'   => 'actor sexuality',
-				'plural' => 'actor sexuality',
+				'name'   => 'sexuality',
+				'plural' => 'sexualities',
 			),
 		);
 
@@ -54,7 +51,7 @@ class LWTV_CPT_Actors {
 
 			$all_tax_array = array();
 			foreach ( self::$all_taxonomies as $actor_tax => $actor_array ) {
-				if ( ! isset( $a_char_tax['hide'] ) || false !== $actor_array['hide'] ) {
+				if ( ! isset( $actor_array['hide'] ) || false !== $actor_array['hide'] ) {
 					$all_tax_array[] = $actor_tax;
 				}
 			}

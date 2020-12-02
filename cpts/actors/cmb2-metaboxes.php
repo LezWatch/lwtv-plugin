@@ -218,6 +218,18 @@ class LWTV_Actors_CMB2 {
 				),
 			)
 		);
+		// Field: Excerpt
+		$field_excerpt = $cmb_actorside->add_field(
+			array(
+				'name'      => 'Additional Notes',
+				'id'        => 'excerpt',
+				'desc'      => 'Enter any terms here that should be used for search. For example, if someone change their name, list their deadname here so it can be searched.',
+				'type'      => 'textarea',
+				'escape_cb' => false,
+				'default'   => get_post_field( 'post_excerpt', $post_id ),
+			)
+		);
+
 		// Actor Sidebar Grid
 		if ( ! is_admin() ) {
 			return;
@@ -228,11 +240,13 @@ class LWTV_Actors_CMB2 {
 			$row3           = $grid_actorside->addRow();
 			$row4           = $grid_actorside->addRow();
 			$row5           = $grid_actorside->addRow();
+			$row6           = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
 			$row2->addColumns( array( $field_birth, $field_death ) );
 			$row3->addColumns( array( $field_imdb, $field_wiki ) );
 			$row4->addColumns( array( $field_home ) );
 			$row5->addColumns( array( $field_twitter, $field_instagram ) );
+			$row6->addColumns( array( $field_excerpt ) );
 		}
 	}
 
