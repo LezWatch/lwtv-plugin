@@ -69,5 +69,6 @@
             "install-path": "../johngrogg/ics-parser"
         }
     ],
-    "dev": true
+    "dev": true,
+    "dev-package-names": []
 }
