@@ -208,20 +208,21 @@ class LWTV_Shows_Calculate {
 		$score        = 0;
 		$tropes       = wp_get_post_terms( $post_id, 'lez_tropes', true );
 		$count_tropes = ( $tropes ) ? count( $tropes ) : 0;
+		$has_dead     = ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) ? true : false;
 
 		// Good tropes are always good.
 		// Maybe tropes are only good IF there isn't Queer-for-Ratings
 		$good_tropes  = array( 'happy-ending', 'everyones-queer' );
 		$maybe_tropes = array( 'big-queer-wedding', 'coming-out', 'subtext' );
 		$bad_tropes   = array( 'queerbashing', 'in-prison', 'queerbaiting', 'big-bad-queers' );
-		$ploy_tropes  = array( 'queer-for-ratings', 'queer-laughs', 'happy-then-not', 'erasure', 'subtext' );
+		$ploy_tropes  = array( 'queer-for-ratings', 'queer-laughs', 'happy-then-not', 'erasure', 'subtext', 'queer-of-the-week', 'background-queers' );
 
 		// If there a no tropes, we have a default of 80.
 		if ( ( 0 === $count_tropes ) || has_term( 'none', 'lez_tropes', $post_id ) ) {
 			// No tropes: 80
 			$score = 80;
 		} else {
-			// Calculate how many good tropes a show has
+			// Base Tropes Score
 			$has_tropes = array(
 				'good'  => 0,
 				'maybe' => 0,
@@ -229,6 +230,7 @@ class LWTV_Shows_Calculate {
 				'ploy'  => 0,
 				'any'   => 0,
 			);
+			// Calculate good tropes
 			foreach ( $good_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
 					$has_tropes['good']++;
@@ -262,24 +264,37 @@ class LWTV_Shows_Calculate {
 				// If a show has NO good/maybe/bad/ploy tropes, it gets a C
 				$score = 70;
 			} else {
+				// Most shows need math!
 				$base_score     = ( $has_tropes['good'] + $has_tropes['maybe'] - $has_tropes['ploy'] - $has_tropes['bad'] );
 				$counted_tropes = $has_tropes['good'] + $has_tropes['maybe'] + $has_tropes['ploy'] + $has_tropes['bad'];
 
 				if ( $base_score > 0 ) {
 					$score = ( ( $base_score / $counted_tropes ) * 100 );
-					// Dead Queers: remove one-third of the score
-					if ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) {
-						$score = ( $score * .66 );
-					}
 				} else {
 					$score = 0;
 				}
 			}
 		}
 
-		// Sanity Check
-		$score = ( $score > 100 ) ? 100 : $score;
+		// Add Intersectionality Bonus
+		// If you do good with intersectionality you can have more points up to 15
+		$count_inters = 0;
+		$intersection = get_the_terms( $post_id, 'lez_intersections' );
+		if ( is_array( $intersection ) ) {
+			$count_inters = count( $intersection );
+			$score       += min( ( $count_inters * 3 ), 15 );
+		}
+
+		// Sanity Check: Below 0?
 		$score = ( $score < 0 ) ? 0 : $score;
+
+		// If there are any Dead Queers: remove one-third of the score
+		if ( 0 !== $score && $has_dead ) {
+			$score = ( $score * .66 );
+		}
+
+		// Sanity Check: Still above 100?
+		$score = ( $score > 100 ) ? 100 : $score;
 
 		return $score;
 	}
@@ -414,15 +429,6 @@ class LWTV_Shows_Calculate {
 
 		// Calculate the full score
 		$calculate = ( $score_show_rating + $score_show_tropes + $score_chars_alive + $score_chars_score ) / 4;
-
-		// Add Intersectionality Bonus
-		// If you do good with intersectionality you can have more points up to 15
-		$count_inters = 0;
-		$intersection = get_the_terms( $post_id, 'lez_intersections' );
-		if ( is_array( $intersection ) ) {
-			$count_inters = count( $intersection );
-			$calculate   += min( ( $count_inters * 3 ), 15 );
-		}
 
 		// Keep it between 0 and 100
 		$calculate = ( $calculate > 100 ) ? 100 : $calculate;

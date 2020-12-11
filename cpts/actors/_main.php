@@ -297,18 +297,20 @@ class LWTV_CPT_Actors {
 	public function post_page_metabox() {
 		global $post;
 
-		switch ( $post->post_type ) {
-			case 'post_type_actors':
-				$countqueers = get_post_meta( $post->ID, 'lezactors_char_count', true );
-				$deadqueers  = get_post_meta( $post->ID, 'lezactors_dead_count', true );
-				echo '<div class="misc-pub-section lwtv misc-pub-lwtv">
-					<span id="characters">Characters: <b>' . (int) $countqueers . '</b> total';
-				if ( $deadqueers ) {
-					echo '/ <b>' . (int) $deadqueers . '</b> dead';
-				}
-				echo '</span>
-				</div>';
-				break;
+		if ( is_object( $post ) ) {
+			switch ( $post->post_type ) {
+				case 'post_type_actors':
+					$countqueers = get_post_meta( $post->ID, 'lezactors_char_count', true );
+					$deadqueers  = get_post_meta( $post->ID, 'lezactors_dead_count', true );
+					echo '<div class="misc-pub-section lwtv misc-pub-lwtv">
+						<span id="characters">Characters: <b>' . (int) $countqueers . '</b> total';
+					if ( $deadqueers ) {
+						echo '/ <b>' . (int) $deadqueers . '</b> dead';
+					}
+					echo '</span>
+					</div>';
+					break;
+			}
 		}
 	}
 

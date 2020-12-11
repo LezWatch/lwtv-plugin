@@ -136,7 +136,7 @@ class LWTV_This_Year {
 		$view     = ( 'overview' === $view ) ? '' : $view;
 		?>
 
-		<nav aria-label="This Year navigation" role="navigation">
+		<nav aria-label="This Year Navigation" role="navigation" class="yikes-pagination">
 			<ul class="pagination justify-content-center">
 
 				<?php
@@ -144,7 +144,7 @@ class LWTV_This_Year {
 				if ( $thisyear !== $lastyear ) {
 					?>
 					<li class="page-item first mr-auto"><a href="<?php echo esc_url( $baseurl . $lastyear . '/' . $view ); ?>" class="page-link"><?php echo ( new LWTV_Functions() )->symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ); ?> First (<?php echo (int) $lastyear; ?>)</a></li>
-					<li class="page-item previous"><a href="<?php echo esc_url( $baseurl . ( $thisyear - 1 ) . '/' . $view ); ?>" title="previous year" class="page-link"><?php echo ( new LWTV_Functions() )->symbolicons( 'caret-left.svg', 'fa-chevron-left' ); ?> Previous</a></li>
+					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $thisyear - 1 ) . '/' . $view ); ?>" title="previous year" class="page-link"><?php echo ( new LWTV_Functions() )->symbolicons( 'caret-left.svg', 'fa-chevron-left' ); ?> Previous</a></li>
 					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $thisyear - 2 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $thisyear - 2 ); ?></a></li>
 					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $thisyear - 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $thisyear - 1 ); ?></a></li>
 					<?php
@@ -157,8 +157,8 @@ class LWTV_This_Year {
 				if ( gmdate( 'Y' ) !== $thisyear ) {
 					?>
 					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $thisyear + 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $thisyear + 1 ); ?></a></li>
-					<li class="page-item next"><a href="<?php echo esc_url( $baseurl . ( $thisyear + 1 ) . '/' . $view ); ?>" class="page-link" title="next year">Next <?php echo ( new LWTV_Functions() )->symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ); ?></a></li>
-					<li class="page-item last ml-auto"><a href="<?php echo esc_url( $baseurl . gmdate( 'Y' ) . '/' . $view ); ?>" class="page-link">Last (<?php echo (int) gmdate( 'Y' ); ?>)<?php echo ( new LWTV_Functions() )->symbolicons( 'caret-right.svg', 'fa-chevron-right' ); ?></a></li>
+					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $thisyear + 1 ) . '/' . $view ); ?>" class="page-link" title="next year">Next <?php echo ( new LWTV_Functions() )->symbolicons( 'caret-right.svg', 'fa-chevron-right' ); ?></a></li>
+					<li class="page-item last ml-auto"><a href="<?php echo esc_url( $baseurl . gmdate( 'Y' ) . '/' . $view ); ?>" class="page-link">Last (<?php echo (int) gmdate( 'Y' ); ?>) <?php echo ( new LWTV_Functions() )->symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ); ?></a></li>
 					<?php
 				}
 				?>

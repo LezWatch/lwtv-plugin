@@ -116,7 +116,7 @@ class LWTV_SSR_Calendar {
 		$next_week      = add_query_arg( 'tvdate', $next, get_permalink() );
 		$next_week_icon = ( new LWTV_Functions() )->symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' );
 
-		$navigation = '<nav aria-label="This Year navigation" role="navigation"><ul class="pagination justify-content-center"><li class="page-item first mr-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';
+		$navigation = '<nav aria-label="Calendar Navigation" role="navigation" class="yikes-pagination"><ul class="pagination justify-content-center"><li class="page-item first mr-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';
 
 		// ... We only show 'this week' when it's NOT this week
 		if ( 'today' !== $date && $today !== $date ) {
