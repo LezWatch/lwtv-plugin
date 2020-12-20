@@ -181,8 +181,8 @@ class LWTV_Stats {
 						break;
 				}
 
-				$array    = ( new LWTV_Stats_Arrays() )->on_air( $post_type, $prearray, $minor );
-				$count    = ( new LWTV_Stats() )->showcount( 'total', 'stations', $minor );
+				$array = ( new LWTV_Stats_Arrays() )->on_air( $post_type, $prearray, $minor );
+				$count = ( new LWTV_Stats() )->showcount( 'total', 'stations', $minor );
 			} else {
 				$array    = ( new LWTV_Stats_Arrays() )->taxonomy_breakdowns( $count, $format, $data, $subject );
 				$precount = $count;
@@ -208,7 +208,7 @@ class LWTV_Stats {
 					$array = ( new LWTV_Stats_Arrays() )->dead_role();
 					break;
 				case 'dead-list':
-					$array = ( new LWTV_Stats_Arrays() )->dead_list();
+					$array = ( new LWTV_Stats_Arrays() )->dead_list( $format );
 					break;
 				case 'dead-shows':
 					$array = ( new LWTV_Stats_Arrays() )->dead_shows( 'simple' );
@@ -258,6 +258,7 @@ class LWTV_Stats {
 				( new LWTV_Stats_Output() )->averages( $subject, $data, $array, $count, 'low' );
 				break;
 			case 'array':
+			default:
 				$return = $array;
 				break;
 		}

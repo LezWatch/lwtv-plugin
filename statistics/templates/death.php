@@ -175,13 +175,18 @@ switch ( $view ) {
 		<?php
 		break;
 	case 'list':
+		$time_since = ( new LWTV_Stats() )->generate( 'characters', 'dead-list', 'time' );
+		$time_start = '<a href="#' . $time_since['start'] . '">' . $time_since['start'] . '</a>';
+		$time_end   = '<a href="#' . $time_since['end'] . '">' . $time_since['end'] . '</a>';
 		?>
+		<h3>List of All Dead Characters</h3>
+
+		<p>The longest timespan between character deaths is <strong><?php echo (int) $time_since['time']; ?> days</strong> (<?php echo wp_kses_post( $time_start ); ?> to <?php echo wp_kses_post( $time_end ); ?>). The shortest timespan is <strong>0 days</strong> (multiple characters have died on the same day).</p>
 
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<h3>List of All Dead Characters</h3>
-					<table class="table table-md table-hover table-striped">
+					<table id="DeadcharactersTable" class="tablesorter table table-striped table-hover">
 						<thead class="thead-dark">
 							<tr>
 								<th style="width: 150px;" scope="col">Date</th>
@@ -193,7 +198,7 @@ switch ( $view ) {
 							$list_array = ( new LWTV_Stats() )->generate( 'characters', 'dead-list', 'array' );
 							foreach ( $list_array as $date => $chars ) {
 								echo '<tr>';
-								echo '<td>' . esc_html( $date ) . ' (' . count( $chars ) . ')</td>';
+								echo '<td><a name="' . esc_html( $date ) . '">' . esc_html( $date ) . '</a></td>';
 								echo '<td><ul>';
 								foreach ( $chars as $char ) {
 									echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a></li>';

@@ -86,7 +86,7 @@ class LWTV_Stats_Arrays {
 	 * @param  string $format [all|YEAR]
 	 * @return array          All the dead, yo
 	 */
-	public function dead_list( $format = 'all' ) {
+	public function dead_list( $format = 'array' ) {
 		$transient = 'dead_list_' . $format;
 		$array     = get_transient( $transient );
 
@@ -115,10 +115,40 @@ class LWTV_Stats_Arrays {
 			}
 		}
 
-		// sort by date
-		ksort( $array );
+		// sort by date (newest first)
+		krsort( $array );
 
-		return $array;
+		// Change what we output...
+		switch ( $format ) {
+			case 'array':
+				$return = $array;
+				break;
+			case 'time':
+				$keys   = array_keys( $array );
+				$count  = count( $keys ) - 1;
+				$return = array(
+					'time'  => 0,
+					'start' => '',
+					'end'   => '',
+				);
+				for ( $i = 0; $i < $count; $i++ ) {
+					$date1 = date_create( $keys[ $i ] );
+					$date2 = date_create( $keys[ $i + 1 ] );
+					$diff  = date_diff( $date1, $date2 );
+					$days  = $diff->format( '%a' );
+					if ( $days > $return['time'] ) {
+						$return = array(
+							'time'  => $days,
+							'end'   => $keys[ $i ],
+							'start' => $keys[ $i + 1 ],
+						);
+					}
+				}
+
+				break;
+		}
+
+		return $return;
 	}
 
 	/*
