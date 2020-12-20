@@ -13,7 +13,7 @@ $allshows  = ( new LWTV_Stats() )->generate( 'shows', 'all', 'count' );
 $deadchar_percent = round( ( $deadchars / $allchars ) * 100, 2 );
 $deadshow_percent = round( ( $deadshows / $allshows ) * 100, 2 );
 
-$valid_views = array( 'characters', 'shows', 'stations', 'nations', 'years' );
+$valid_views = array( 'characters', 'shows', 'stations', 'nations', 'years', 'list' );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 ?>
@@ -169,6 +169,41 @@ switch ( $view ) {
 			<div class="row">
 				<div class="col">
 					<?php ( new LWTV_Stats() )->generate( 'characters', 'dead-years', 'percentage' ); ?>
+				</div>
+			</div>
+		</div>
+		<?php
+		break;
+	case 'list':
+		?>
+
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<h3>List of All Dead Characters</h3>
+					<table class="table table-md table-hover table-striped">
+						<thead class="thead-dark">
+							<tr>
+								<th style="width: 150px;" scope="col">Date</th>
+								<th scope="col">Character(s)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+							$list_array = ( new LWTV_Stats() )->generate( 'characters', 'dead-list', 'array' );
+							foreach ( $list_array as $date => $chars ) {
+								echo '<tr>';
+								echo '<td>' . esc_html( $date ) . ' (' . count( $chars ) . ')</td>';
+								echo '<td><ul>';
+								foreach ( $chars as $char ) {
+									echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a></li>';
+								}
+								echo '</ul></td>';
+								echo '</tr>';
+							}
+							?>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>

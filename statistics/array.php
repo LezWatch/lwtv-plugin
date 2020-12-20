@@ -80,6 +80,47 @@ class LWTV_Stats_Arrays {
 		return $array;
 	}
 
+	/**
+	 * List of dead characters
+	 *
+	 * @param  string $format [all|YEAR]
+	 * @return array          All the dead, yo
+	 */
+	public function dead_list( $format = 'all' ) {
+		$transient = 'dead_list_' . $format;
+		$array     = get_transient( $transient );
+
+		if ( false === $array ) {
+			$array     = array();
+			$dead_loop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', '', '!=' );
+			$queery    = wp_list_pluck( $dead_loop->posts, 'ID' );
+
+			if ( $dead_loop->have_posts() ) {
+				foreach ( $queery as $char ) {
+					$died = get_post_meta( $char, 'lezchars_death_year', true );
+
+					foreach ( $died as $died_date ) {
+						// If there's no entry, add it.
+						if ( ! isset( $array[ $died_date ] ) ) {
+							$array[ $died_date ] = array();
+						}
+
+						$array[ $died_date ][ $char ] = array(
+							'name' => get_the_title( $char ),
+							'url'  => get_the_permalink( $char ),
+						);
+					}
+				}
+				wp_reset_query();
+			}
+		}
+
+		// sort by date
+		ksort( $array );
+
+		return $array;
+	}
+
 	/*
 	 * Statistics Array for DEAD by ROLE
 	 *

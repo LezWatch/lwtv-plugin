@@ -161,6 +161,7 @@ class LWTV_Stats {
 			case 'on-air':
 				// Custom call for on-air (show or character)
 				$array = ( new LWTV_Stats_Arrays() )->on_air( $post_type );
+				break;
 		}
 
 		// Custom call for Deep Dive Data
@@ -205,6 +206,9 @@ class LWTV_Stats {
 					break;
 				case 'dead-role':
 					$array = ( new LWTV_Stats_Arrays() )->dead_role();
+					break;
+				case 'dead-list':
+					$array = ( new LWTV_Stats_Arrays() )->dead_list();
 					break;
 				case 'dead-shows':
 					$array = ( new LWTV_Stats_Arrays() )->dead_shows( 'simple' );

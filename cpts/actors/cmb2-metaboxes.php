@@ -226,7 +226,7 @@ class LWTV_Actors_CMB2 {
 				'desc'      => 'Enter any terms here that should be used for search. For example, if someone change their name, list their deadname here so it can be searched.',
 				'type'      => 'textarea',
 				'escape_cb' => false,
-				'default'   => get_post_field( 'post_excerpt', $post_id ),
+				'default'   => get_post_field( 'post_excerpt' ),
 			)
 		);
 

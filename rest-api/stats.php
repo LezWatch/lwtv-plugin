@@ -365,6 +365,9 @@ class LWTV_Stats_JSON {
 			case 'years':
 				$stats_array = ( new LWTV_Stats() )->generate( 'characters', 'dead-years', 'array' );
 				break;
+			case 'list':
+				$stats_array = ( new LWTV_Stats() )->generate( 'characters', 'dead-list', 'array' );
+				break;
 			case 'simple':
 				$dead_chars  = get_term_by( 'slug', 'dead', 'lez_cliches' );
 				$dead_shows  = get_term_by( 'slug', 'dead-queers', 'lez_tropes' );
