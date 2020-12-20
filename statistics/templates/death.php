@@ -190,21 +190,32 @@ switch ( $view ) {
 						<thead class="thead-dark">
 							<tr>
 								<th style="width: 150px;" scope="col">Date</th>
+								<th style="width: 125px;" scope="col">Days Since</th>
 								<th scope="col">Character(s)</th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php
 							$list_array = ( new LWTV_Stats() )->generate( 'characters', 'dead-list', 'array' );
-							foreach ( $list_array as $date => $chars ) {
-								echo '<tr>';
-								echo '<td><a name="' . esc_html( $date ) . '">' . esc_html( $date ) . '</a></td>';
-								echo '<td><ul>';
-								foreach ( $chars as $char ) {
-									echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a></li>';
-								}
-								echo '</ul></td>';
-								echo '</tr>';
+							foreach ( $list_array as $date => $list ) {
+								?>
+								<tr>
+									<td><a name="<?php echo esc_html( $date ); ?>"><?php echo esc_html( $date ); ?></a></td>
+									<td>
+									<?php
+										$since = ( isset( $list['since'] ) ) ? $list['since'] : 'n/a';
+										echo esc_html( $since );
+									?>
+									</td>
+									<td><ul>
+										<?php
+										foreach ( $list['chars'] as $char ) {
+											echo '<li><a href="' . esc_url( $char['url'] ) . '">' . esc_html( $char['name'] ) . '</a></li>';
+										}
+										?>
+									</ul></td>
+								</tr>
+								<?php
 							}
 							?>
 						</tbody>

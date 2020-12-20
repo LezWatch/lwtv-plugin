@@ -102,10 +102,12 @@ class LWTV_Stats_Arrays {
 					foreach ( $died as $died_date ) {
 						// If there's no entry, add it.
 						if ( ! isset( $array[ $died_date ] ) ) {
-							$array[ $died_date ] = array();
+							$array[ $died_date ] = array(
+								'date' => $died_date,
+							);
 						}
 
-						$array[ $died_date ][ $char ] = array(
+						$array[ $died_date ]['chars'][ $char ] = array(
 							'name' => get_the_title( $char ),
 							'url'  => get_the_permalink( $char ),
 						);
@@ -118,32 +120,40 @@ class LWTV_Stats_Arrays {
 		// sort by date (newest first)
 		krsort( $array );
 
+		// calculate time since last death
+		$keys      = array_keys( $array );
+		$key_count = count( $keys ) - 1;
+		for ( $i = 0; $i < $key_count; $i++ ) {
+			// Check the diff
+			$date1 = date_create( $keys[ $i ] );
+			$date2 = date_create( $keys[ $i + 1 ] );
+			$diff  = date_diff( $date1, $date2 );
+			$days  = $diff->format( '%a' );
+
+			// Add the time since last death
+			$array[ $keys[ $i ] ]['since'] = $days;
+		}
+
 		// Change what we output...
 		switch ( $format ) {
 			case 'array':
 				$return = $array;
 				break;
 			case 'time':
-				$keys   = array_keys( $array );
-				$count  = count( $keys ) - 1;
-				$return = array(
-					'time'  => 0,
-					'start' => '',
-					'end'   => '',
+				$diff_since = array(
+					'time' => max( array_column( $array, 'since' ) ),
 				);
-				for ( $i = 0; $i < $count; $i++ ) {
-					$date1 = date_create( $keys[ $i ] );
-					$date2 = date_create( $keys[ $i + 1 ] );
-					$diff  = date_diff( $date1, $date2 );
-					$days  = $diff->format( '%a' );
-					if ( $days > $return['time'] ) {
-						$return = array(
-							'time'  => $days,
-							'end'   => $keys[ $i ],
-							'start' => $keys[ $i + 1 ],
-						);
+				for ( $i = 0; $i < $key_count; $i++ ) {
+					if ( $diff_since['time'] === $array[ $keys[ $i ] ]['since'] ) {
+						$diff_since['end']   = $keys[ $i ];
+						$diff_since['start'] = $keys[ $i + 1 ];
 					}
 				}
+				$return = array(
+					'time'  => $diff_since['time'],
+					'start' => $diff_since['start'],
+					'end'   => $diff_since['end'],
+				);
 
 				break;
 		}
