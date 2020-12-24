@@ -88,6 +88,9 @@ class LWTV_Ways_To_Watch {
 				'tellofilms'     => array(
 					'name' => 'Tello Films',
 				),
+				'tntdrama'       => array(
+					'name' => 'TNT Drama',
+				),
 				'youtube'        => array(
 					'name' => 'YouTube',
 				),

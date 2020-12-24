@@ -120,7 +120,7 @@ class LWTV_SSR_Calendar {
 
 		// ... We only show 'this week' when it's NOT this week
 		if ( 'today' !== $date && $today !== $date ) {
-			$navigation .= '<li class="page-item active"><a href="/calendar/" class="page-link">This Week</a></li>';
+			$navigation .= '<li class="page-item"><a href="/calendar/" class="page-link">This Week</a></li>';
 		}
 
 		$navigation .= '<li class="page-item last ml-auto"><a href="' . $next_week . '" class="page-link">' . $next_week_icon . ' Next Week</a></li></ul></nav>';
@@ -156,7 +156,7 @@ class LWTV_SSR_Calendar {
 				$return .= '<p>We only project the calendar 2-4 weeks in advance. Future planned airings are subject to change without notice.<p>';
 			} else {
 				// It's the past
-				$return .= '<p>We don\'t keep historical calendar records, so you won\'t be able to retrive listings from long ago. Sorry.</p>';
+				$return .= '<p>We don\'t keep historical calendar records, so you won\'t be able to retrieve listings from long ago. Sorry.</p>';
 			}
 		} else {
 			$return .= '<p>All times are displayed as US/Eastern, but are reflective of their original airdate and time.</p>';
