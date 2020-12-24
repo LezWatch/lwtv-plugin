@@ -7,7 +7,7 @@
     "build": "cgb-scripts build"
   },
   "dependencies": {
-    "cgb-scripts": ">=1.14.0",
+    "cgb-scripts": "1.23.0",
     "kind-of": ">=6.0.3",
     "minimist": ">=0.2.1"
   }
