@@ -39,6 +39,8 @@ class LWTV_Ways_To_Watch {
 				'itunes'          => 'apple',
 				'tv.apple'        => 'apple',
 				'watch.amazon'    => 'amazon',
+				'disneynow'       => 'disney',
+				'disneyplus'      => 'disney',
 				'peacocktv'       => 'peacock',
 				'sho'             => 'showtime',
 				'showtimeanytime' => 'showtime',
@@ -73,7 +75,7 @@ class LWTV_Ways_To_Watch {
 				'dcuniverse'     => array(
 					'name' => 'DC Universe',
 				),
-				'disneyplus'     => array(
+				'disney'         => array(
 					'name' => 'Disney+',
 				),
 				'hbomax'         => array(
