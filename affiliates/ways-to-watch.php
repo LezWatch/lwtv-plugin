@@ -54,6 +54,9 @@ class LWTV_Ways_To_Watch {
 					'extra' => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
 					'name'  => 'Amazon Prime TV',
 				),
+				'atresplayer'    => array(
+					'name' => 'ATRESPlayer',
+				),
 				'apple'          => array(
 					'url'  => $clean_url . '?at=1010lMaT&ct=lwtv',
 					'name' => 'Apple TV+',
