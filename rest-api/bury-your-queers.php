@@ -121,7 +121,7 @@ class LWTV_BYQ_JSON {
 	/**
 	 * Generate the massive list of all the dead
 	 *
-	 * This is a separate function becuase otherwise I use the same call twice
+	 * This is a separate function because otherwise I use the same call twice
 	 * and that's stupid
 	 */
 	public function list_of_dead_characters( $dead_chars_loop ) {

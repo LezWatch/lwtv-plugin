@@ -311,7 +311,11 @@ class LWTV_CPT_Characters {
 				// If the character is in this show, AND a published character
 				// we will pass the following data to the character template
 				// to determine what to display
-				if ( '' !== $shows_array && ! empty( $shows_array ) && 'publish' === get_post_status( $char_id ) ) {
+				if (
+					'' !== $shows_array &&
+					! empty( $shows_array ) &&
+					'publish' === get_post_status( $char_id )
+				) {
 					foreach ( $shows_array as $char_show ) {
 						if ( (int) $char_show['show'] === $show_id ) {
 							$characters[ $char_id ] = array(
@@ -365,8 +369,17 @@ class LWTV_CPT_Characters {
 									// It's possible to have MORE trans actors than characters.
 								}
 							}
+						} else {
+							// If they're not published, or not in the show, we drop
+							// them from the array. This is because show 123 will false
+							// flag 1234 sometimes.
+							unset( $charactersloop->posts[ $char_id ] );
 						}
 					}
+				} else {
+					// If they're not published, or not in the show, we drop them from
+					// the array. This is because show 123 will false flag 1234 sometimes.
+					unset( $charactersloop->posts[ $char_id ] );
 				}
 			}
 			wp_reset_query();
@@ -374,24 +387,31 @@ class LWTV_CPT_Characters {
 
 		switch ( $output ) {
 			case 'dead':
+				// Count of dead characters
 				$return = $char_counts['dead'];
 				break;
 			case 'none':
+				// count of characters with NO clichés
 				$return = $char_counts['none'];
 				break;
 			case 'queer-irl':
+				// count of characters who are queer IRL
 				$return = $char_counts['quirl'];
 				break;
 			case 'trans':
+				// Count of trans characters
 				$return = $char_counts['trans'];
 				break;
 			case 'trans-irl':
+				// count of characters who are trans IRL
 				$return = $char_counts['txirl'];
 				break;
 			case 'query':
+				// WP Loop of characters
 				$return = $charactersloop;
 				break;
 			case 'count':
+				// Count of all characters on the show
 				$return = $char_counts['total'];
 				break;
 		}
