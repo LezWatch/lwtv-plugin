@@ -67,8 +67,8 @@ class LWTV_CMB2_Addons {
 	 * Otherwise, we're always going to nuke the terms and re-save as the post
 	 * meta.
 	 *
-	 * Also we're going to check for the existance of the NONE taxonomy. If that
-	 * exists, we remove it. If that emptys the array, we'll add it back, but this
+	 * Also we're going to check for the existence of the NONE taxonomy. If that
+	 * exists, we remove it. If that empties the array, we'll add it back, but this
 	 * prevents cases like clichés being 'none' and 'athlete'.
 	 */
 	public function select2_taxonomy_save( $post_id, $postmeta, $taxonomy ) {
@@ -103,6 +103,9 @@ class LWTV_CMB2_Addons {
 			if ( false !== $none_term ) {
 				wp_set_object_terms( $post_id, $none_term->term_id, $taxonomy );
 				update_post_meta( $post_id, $postmeta, array( $none_term->term_id ) );
+			} else {
+				wp_set_object_terms( $post_id, '', $taxonomy );
+				update_post_meta( $post_id, $postmeta, '' );
 			}
 		}
 	}
