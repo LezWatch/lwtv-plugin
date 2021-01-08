@@ -29,25 +29,25 @@ class LWTV_Admin_Tools {
 		add_action( 'admin_post_lwtv_tools_wikidata_actors', array( $this, 'check_actors_wikidata' ) );
 
 		self::$tool_tabs = array(
-			'queer_checker' => array(
+			'queer_checker'        => array(
 				'name' => 'Queer Checker',
 				'desc' => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
 			),
-			'actor_checker' => array(
+			'actor_checker'        => array(
 				'name' => 'Actor Checker',
 				'desc' => 'Checks that all information for actors appears correct. This includes social media and links.',
 			),
-			'actor_empty' => array(
+			'actor_empty'          => array(
 				'name' => 'Incomplete Actors',
 				'desc' => 'Actors that have not yet been updated since the Great Migration.',
 			),
-			'character_checker' => array(
+			'character_checker'    => array(
 				'name' => 'Character Checker',
 				'desc' => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
 			),
-			'show_checker' => array(
+			'show_checker'         => array(
 				'name' => 'Show Checker',
-				'desc' => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc.',
+				'desc' => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
 			),
 		);
 
@@ -117,9 +117,6 @@ class LWTV_Admin_Tools {
 					case 'queer_checker':
 						self::tab_queer_checker();
 						break;
-					case 'show_checker':
-						self::tab_show_checker();
-						break;
 					case 'actor_checker':
 						self::tab_actor_checker();
 						break;
@@ -131,6 +128,9 @@ class LWTV_Admin_Tools {
 						break;
 					case 'character_checker':
 						self::tab_character_checker();
+						break;
+					case 'show_checker':
+						self::tab_show_checker();
 						break;
 					default:
 						self::tab_introduction();
@@ -411,6 +411,7 @@ class LWTV_Admin_Tools {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following show(s) need your attention.</p>
+					<p>Note: Remember that intersectionality is meant to be a <em>positive</em> representation. If it's bad disability rep (like Grey's Anatomy with Arizona), do not list them.</p>
 				</div>
 			</div>
 
@@ -436,9 +437,6 @@ class LWTV_Admin_Tools {
 	 * Output the results of character checking...
 	 */
 	public static function tab_character_checker() {
-
-		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
-		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
 		$items    = ( new LWTV_Debug() )->find_characters_problems();
 
 		if ( empty( $items ) || ! is_array( $items ) ) {

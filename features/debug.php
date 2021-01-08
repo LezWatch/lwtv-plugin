@@ -628,6 +628,10 @@ class LWTV_Debug {
 			wp_reset_query();
 		}
 
+		$items_intersection = self::find_intersection_problems();
+
+		$items = array_merge( $items, $items_intersection );
+
 		// Update Options
 		$option = get_option( 'lwtv_debugger_status' );
 		$option['show_problems'] = array(
@@ -638,6 +642,79 @@ class LWTV_Debug {
 		update_option( 'lwtv_debugger_status', $option );
 
 		return $items;
+	}
+
+	/**
+	 * Check shows with intersectionality
+	 * Ensure they have matching characters.
+	 * @return [type] [description]
+	 */
+	public function find_intersection_problems() {
+
+		$items = array();
+
+		// list everything that has a DISABLED intersection tag
+		$disabled_shows_loop  = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_intersections', 'slug', 'disabilities' );
+
+		if ( $disabled_shows_loop->have_posts() ) {
+			while ( $disabled_shows_loop->have_posts() ) {
+				$disabled_shows_loop->the_post();
+				$post     = get_post();
+				$show_id  = $post->ID;
+
+				// Try to get the problems.
+				$problems = self::check_disabled_characters( $show_id );
+
+				// if there are problems, we put them in items.
+				if ( ! empty( $problems ) ) {
+					$items[] = array(
+						'url'     => get_permalink( $show_id ),
+						'id'      => $show_id,
+						'problem' => implode( ' ', $problems ),
+					);
+				}
+			}
+
+			wp_reset_query();
+		}
+
+		return $items;
+	}
+
+	public function check_disabled_characters( $show_id ) {
+		// Get all the queers for the show:
+		$character_loop = ( new LWTV_CPT_Characters() )->list_characters( $show_id, 'query' );
+
+		// Default has disabled
+		$has_disabled = false;
+		$problems     = array();
+
+		// Loop through all characters on each show
+		if ( $character_loop->have_posts() ) {
+			while ( $character_loop->have_posts() ) {
+				$character_loop->the_post();
+				$post     = get_post();
+				$char_id  = $post->ID;
+
+				// If someone has disabled, we're good
+				if ( has_term( 'disabled', 'lez_cliches', $char_id ) ) {
+					$has_disabled = true;
+				}
+
+				// Mentally ill is NOT positive.
+				if ( has_term( 'mentally-ill', 'lez_cliches', $char_id ) ) {
+					$problems[] = get_the_title( $char_id ) . ' is flagged mentally ill on a show with the disability intersection. Make sure the show has POSITIVE disability rep.';
+				}
+			}
+
+			wp_reset_query();
+		}
+
+		if ( ! $has_disabled ) {
+			$problems[] = 'No character on this show is tagged as disabled. Please review.';
+		}
+
+		return $problems;
 	}
 
 }
