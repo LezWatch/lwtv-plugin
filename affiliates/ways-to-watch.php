@@ -27,10 +27,26 @@ class LWTV_Ways_To_Watch {
 			$clean_path = ( isset( $parsed_url['path'] ) ) ? $parsed_url['path'] : '';
 			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $clean_path;
 
-			// Clean the URL to get the top domain ...
-			$removal_array = array( 'www.', 'play.', '.com', 'itunes.', '.co.uk', '.ca', '.go', '.org' );
-			foreach ( $removal_array as $removal ) {
-				$hostname = str_replace( $removal, '', $hostname );
+			// While I'd love to use an array to trim this stuff, some
+			// people use really weird URLs so we have to hard code.
+			// It catches about 90% of people.
+
+			// Remove common subdomains from the beginning:
+			$subdomain = array( 'www.', 'play.', 'premium.', 'tv.', 'watch.' );
+			foreach ( $subdomain as $remove ) {
+				$count = strlen( $remove );
+				if ( substr( $hostname, 0, $count ) === $remove ) {
+					$hostname = ltrim( $hostname, $remove );
+				}
+			}
+
+			// Remove TLDs from the end:
+			$gtldomain = array( '.com', '.co.uk', '.ca', '.go', '.org' );
+			foreach ( $gtldomain as $remove ) {
+				$count = strlen( $remove );
+				if ( substr( $hostname, -$count ) === $remove ) {
+					$hostname = rtrim( $hostname, $remove );
+				}
 			}
 
 			// URLs that belong to someone else.
