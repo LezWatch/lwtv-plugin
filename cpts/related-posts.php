@@ -93,12 +93,8 @@ class LWTV_Related_Posts {
 		}
 
 		// If there are no posts IN the tag, return false
-		$count_array = array(
-			'taxonomy' => 'post_tag',
-			'fields'   => 'count',
-		);
-		$count_terms = get_terms( $count_array );
-		if ( 1 >= $count_terms ) {
+		$term_data = get_term_by( 'id', $term, 'post_tag' );
+		if ( 1 >= $term_data->count ) {
 			return false;
 		}
 
