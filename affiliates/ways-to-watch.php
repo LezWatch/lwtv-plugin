@@ -45,7 +45,7 @@ class LWTV_Ways_To_Watch {
 			foreach ( $gtldomain as $remove ) {
 				$count = strlen( $remove );
 				if ( substr( $hostname, -$count ) === $remove ) {
-					$hostname = rtrim( $hostname, $remove );
+					$hostname = substr( $hostname, 0, -$count );
 				}
 			}
 
@@ -88,6 +88,9 @@ class LWTV_Ways_To_Watch {
 					'url'   => 'https://cbsallaccess.qflm.net/c/1242493/176097/3065',
 					'extra' => '<img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/176097/3065" style="position:absolute;visibility:hidden;" border="0" />',
 					'name'  => 'CBS All Access',
+				),
+				'cc'             => array(
+					'name' => 'Comedy Central',
 				),
 				'cwtv'           => array(
 					'name' => 'The CW',
