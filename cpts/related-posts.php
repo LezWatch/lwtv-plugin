@@ -92,6 +92,16 @@ class LWTV_Related_Posts {
 			return false;
 		}
 
+		// If there are no posts IN the tag, return false
+		$count_array = array(
+			'taxonomy' => 'post_tag',
+			'fields'   => 'count',
+		);
+		$count_terms = get_terms( $count_array );
+		if ( 1 >= $count_terms ) {
+			return false;
+		}
+
 		// Elsa let it go and return true
 		return true;
 	}
