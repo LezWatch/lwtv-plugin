@@ -27,10 +27,26 @@ class LWTV_Ways_To_Watch {
 			$clean_path = ( isset( $parsed_url['path'] ) ) ? $parsed_url['path'] : '';
 			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $clean_path;
 
-			// Clean the URL to get the top domain ...
-			$removal_array = array( 'www.', 'play.', '.com', 'itunes.', '.co.uk', '.ca', '.go', '.org' );
-			foreach ( $removal_array as $removal ) {
-				$hostname = str_replace( $removal, '', $hostname );
+			// While I'd love to use an array to trim this stuff, some
+			// people use really weird URLs so we have to hard code.
+			// It catches about 90% of people.
+
+			// Remove common subdomains from the beginning:
+			$subdomain = array( 'www.', 'play.', 'premium.', 'watch.', 'globoplay.' );
+			foreach ( $subdomain as $remove ) {
+				$count = strlen( $remove );
+				if ( substr( $hostname, 0, $count ) === $remove ) {
+					$hostname = ltrim( $hostname, $remove );
+				}
+			}
+
+			// Remove TLDs from the end:
+			$gtldomain = array( '.com', '.co.uk', '.ca', '.go', '.org' );
+			foreach ( $gtldomain as $remove ) {
+				$count = strlen( $remove );
+				if ( substr( $hostname, -$count ) === $remove ) {
+					$hostname = substr( $hostname, 0, -$count );
+				}
 			}
 
 			// URLs that belong to someone else.
@@ -38,9 +54,11 @@ class LWTV_Ways_To_Watch {
 				'7eer'            => 'cbs',
 				'itunes'          => 'apple',
 				'tv.apple'        => 'apple',
+				'itunes.apple'    => 'apple',
 				'watch.amazon'    => 'amazon',
 				'disneynow'       => 'disney',
 				'disneyplus'      => 'disney',
+				'globoplay.glob'  => 'globo',
 				'peacocktv'       => 'peacock',
 				'sho'             => 'showtime',
 				'showtimeanytime' => 'showtime',
@@ -64,6 +82,9 @@ class LWTV_Ways_To_Watch {
 				'bbcamerica'     => array(
 					'name' => 'BBC America',
 				),
+				'bifltheseries'  => array(
+					'name' => 'BIFL',
+				),
 				'cartoonnetwork' => array(
 					'name' => 'Cartoon Network',
 				),
@@ -71,6 +92,9 @@ class LWTV_Ways_To_Watch {
 					'url'   => 'https://cbsallaccess.qflm.net/c/1242493/176097/3065',
 					'extra' => '<img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/176097/3065" style="position:absolute;visibility:hidden;" border="0" />',
 					'name'  => 'CBS All Access',
+				),
+				'cc'             => array(
+					'name' => 'Comedy Central',
 				),
 				'cwtv'           => array(
 					'name' => 'The CW',
@@ -99,8 +123,11 @@ class LWTV_Ways_To_Watch {
 				'youtube'        => array(
 					'name' => 'YouTube',
 				),
+				'tv.line.me'     => array(
+					'name' => 'LineTV',
+				),
 				'tv.youtube'     => array(
-					'name' => 'YouTube.TV',
+					'name' => 'YouTube TV',
 				),
 			);
 
@@ -116,6 +143,11 @@ class LWTV_Ways_To_Watch {
 			// If it's three letters, it's always capitalized.
 			$name = ( isset( $url_array[ $slug ]['name'] ) ) ? $url_array[ $slug ]['name'] : ucfirst( $slug );
 			$name = ( ! isset( $url_array[ $slug ]['name'] ) && 3 === strlen( $name ) ) ? strtoupper( $name ) : $name;
+
+			// Crazy failsafe
+			if ( empty( $name ) ) {
+				$name = 'Watch';
+			}
 
 			// Set URL based on slug in url_array
 			// If not set, use $clean_url

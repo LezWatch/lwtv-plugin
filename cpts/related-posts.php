@@ -92,6 +92,12 @@ class LWTV_Related_Posts {
 			return false;
 		}
 
+		// If there are no posts IN the tag, return false
+		$term_data = get_term_by( 'id', $term, 'post_tag' );
+		if ( 1 >= $term_data->count ) {
+			return false;
+		}
+
 		// Elsa let it go and return true
 		return true;
 	}
