@@ -32,7 +32,7 @@ class LWTV_Ways_To_Watch {
 			// It catches about 90% of people.
 
 			// Remove common subdomains from the beginning:
-			$subdomain = array( 'www.', 'play.', 'premium.', 'tv.', 'watch.', 'globoplay.' );
+			$subdomain = array( 'www.', 'play.', 'premium.', 'watch.', 'globoplay.' );
 			foreach ( $subdomain as $remove ) {
 				$count = strlen( $remove );
 				if ( substr( $hostname, 0, $count ) === $remove ) {
@@ -54,6 +54,7 @@ class LWTV_Ways_To_Watch {
 				'7eer'            => 'cbs',
 				'itunes'          => 'apple',
 				'tv.apple'        => 'apple',
+				'itunes.apple'    => 'apple',
 				'watch.amazon'    => 'amazon',
 				'disneynow'       => 'disney',
 				'disneyplus'      => 'disney',
@@ -80,6 +81,9 @@ class LWTV_Ways_To_Watch {
 				),
 				'bbcamerica'     => array(
 					'name' => 'BBC America',
+				),
+				'bifltheseries'  => array(
+					'name' => 'BIFL',
 				),
 				'cartoonnetwork' => array(
 					'name' => 'Cartoon Network',
@@ -119,8 +123,11 @@ class LWTV_Ways_To_Watch {
 				'youtube'        => array(
 					'name' => 'YouTube',
 				),
+				'tv.line.me'     => array(
+					'name' => 'LineTV',
+				),
 				'tv.youtube'     => array(
-					'name' => 'YouTube.TV',
+					'name' => 'YouTube TV',
 				),
 			);
 
@@ -136,6 +143,11 @@ class LWTV_Ways_To_Watch {
 			// If it's three letters, it's always capitalized.
 			$name = ( isset( $url_array[ $slug ]['name'] ) ) ? $url_array[ $slug ]['name'] : ucfirst( $slug );
 			$name = ( ! isset( $url_array[ $slug ]['name'] ) && 3 === strlen( $name ) ) ? strtoupper( $name ) : $name;
+
+			// Crazy failsafe
+			if ( empty( $name ) ) {
+				$name = 'Watch';
+			}
 
 			// Set URL based on slug in url_array
 			// If not set, use $clean_url
