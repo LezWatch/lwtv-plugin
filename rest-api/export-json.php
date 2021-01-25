@@ -343,7 +343,7 @@ class LWTV_Export_JSON {
 
 				// Sexuality -- array of all applicable
 				$sexuality       = array();
-				$sexuality_terms = get_the_terms( $post->ID, 'lez_gender', true );
+				$sexuality_terms = get_the_terms( $post->ID, 'lez_sexuality', true );
 				if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
 					foreach ( $sexuality_terms as $sexuality_term ) {
 						$sexuality[] = $sexuality_term->name;
