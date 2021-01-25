@@ -181,6 +181,7 @@ class LWTV_CPT_Characters {
 				'query_var'             => true,
 				'show_in_nav_menus'     => true,
 				'rewrite'               => array( 'slug' => rtrim( $slug, 's' ) ),
+				'rest_base'             => rtrim( $slug, 's' ),
 			);
 
 			// Register taxonomy

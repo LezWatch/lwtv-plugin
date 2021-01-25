@@ -37,6 +37,8 @@ class LWTV_Export_JSON {
 	 * Creates callbacks
 	 *   - /lwtv/v1/export/
 	 *
+	 * Doc: https://docs.lezwatchtv.com/api/global/export/
+	 *
 	 * @since 1.0
 	 */
 	public function rest_api_init() {
@@ -50,6 +52,7 @@ class LWTV_Export_JSON {
 				'permission_callback' => '__return_true',
 			)
 		);
+
 		register_rest_route(
 			'lwtv/v1',
 			'/export/(?P<type>[a-zA-Z]+)',
@@ -68,6 +71,24 @@ class LWTV_Export_JSON {
 				'permission_callback' => '__return_true',
 			)
 		);
+		register_rest_route(
+			'lwtv/v1',
+			'/export/(?P<type>[a-zA-Z0-9-]+)/(?P<item>[a-zA-Z0-9-]+)/(?P<tax>[a-zA-Z0-9-]+)',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+		register_rest_route(
+			'lwtv/v1',
+			'/export/(?P<type>[a-zA-Z0-9-]+)/(?P<item>[a-zA-Z0-9-]+)/(?P<tax>[a-zA-Z0-9-]+)/(?P<term>[a-zA-Z0-9-]+)',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'rest_api_callback' ),
+				'permission_callback' => '__return_true',
+			)
+		);
 	}
 
 	/**
@@ -77,23 +98,34 @@ class LWTV_Export_JSON {
 	 */
 	public function rest_api_callback( $data ) {
 		$params = $data->get_params();
+
 		// Type of Custom Post (show, actor, character)
 		$type = ( isset( $params['type'] ) && '' !== $params['type'] ) ? sanitize_title_for_query( $params['type'] ) : 'actor';
+
 		// Specific item (actor name etc)
 		$item = ( isset( $params['item'] ) && '' !== $params['item'] ) ? sanitize_title_for_query( $params['item'] ) : 'unknown';
 
-		$response = $this->export( $type, $item );
+		// Taxonomy
+		$tax = ( isset( $params['tax'] ) && '' !== $params['tax'] ) ? sanitize_title_for_query( $params['tax'] ) : 'none';
+
+		// Term
+		$term = ( isset( $params['term'] ) && '' !== $params['term'] ) ? sanitize_title_for_query( $params['term'] ) : 'none';
+
+		$response = $this->export( $type, $item, $tax, $term );
+
 		return $response;
 	}
 
 	/*
 	 * export function
 	 */
-	public function export( $type = 'actor', $item = 'unknown' ) {
+	public function export( $type = 'actor', $item = 'unknown', $tax, $term ) {
 
 		// Sanitize (the switch will check the type)
 		$type = sanitize_text_field( $type );
 		$item = sanitize_text_field( $item );
+		$tax  = sanitize_text_field( $tax );
+		$term = sanitize_text_field( $term );
 
 		// Create the array
 		switch ( $type ) {
@@ -115,6 +147,9 @@ class LWTV_Export_JSON {
 				break;
 			case 'raw':
 				$return_array = self::export_raw( $item );
+				break;
+			case 'full':
+				$return_array = self::export_full( $item, $tax, $term );
 				break;
 			default:
 				$return_array = '';
@@ -201,6 +236,159 @@ class LWTV_Export_JSON {
 			}
 		}
 		return $return;
+	}
+
+	/**
+	 * Exports lists of data with more details, based on specific.
+	 * @param  string $item actors or shows.
+	 * @return array        json array.
+	 */
+	public function export_full( $item, $tax, $term ) {
+
+		// Remove <!--fwp-loop--> from output
+		// phpcs:ignore
+		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+
+		// Prep Return
+		$response_array = array();
+
+		// Valid Data
+		$valid_item = array( 'characters' );
+		$valid_tax  = array( 'cliches', 'gender', 'sexuality', 'romantic' );
+
+		// If it's not in the array, we have to fail.
+		if ( ! in_array( $item, $valid_item, true ) ) {
+			return new WP_Error( 'not_found', 'Full listing only supports "characters" at this time.' );
+		}
+
+		if ( ! isset( $tax ) || 'none' === $tax ) {
+			// If there is no Taxonomy, we list the groups we allow and their counts
+			$term_params = array(
+				'hide_empty' => false,
+				'parent'     => 0,
+			);
+
+			foreach ( $valid_tax as $this_tax ) {
+				$response_array[ $this_tax ] = wp_count_terms( 'lez_' . $this_tax, $term_params );
+			}
+		} elseif ( ! in_array( $tax, $valid_tax, true ) ) {
+			// Failure
+			return new WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $tax );
+		} else {
+			if ( ! isset( $term ) || 'none' === $term ) {
+				// Make list of all terms
+				$terms = get_terms(
+					array(
+						'taxonomy' => 'lez_' . $tax,
+					),
+				);
+
+				// Process list to show term slug and count
+				foreach ( $terms as $one_term ) {
+					$response_array[ $one_term->slug ] = $one_term->count;
+				}
+			} else {
+				$response_array = self::get_full_list( $item, $tax, $term );
+			}
+		}
+
+		return $response_array;
+
+	}
+
+	/**
+	 * get_full_list function.
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function get_full_list( $type, $group, $term ) {
+		switch ( $type ) {
+			case 'character':
+			case 'characters':
+				$response = self::get_full_list_characters( $group, $term );
+				break;
+		}
+
+		if ( ! isset( $response ) ) {
+			return new WP_Error( 'not_found', 'Currently we can only list data on characters. The rest is coming soon.' );
+		} else {
+			return $response;
+		}
+	}
+
+	/**
+	 * get_full_list_characters function.
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function get_full_list_characters( $group, $term ) {
+		$the_loop   = ( new LWTV_Loops() )->tax_query( 'post_type_characters', 'lez_' . $group, 'slug', $term );
+		$characters = array();
+
+		if ( $the_loop->have_posts() ) {
+			while ( $the_loop->have_posts() ) {
+				$the_loop->the_post();
+				$post = get_post();
+
+				// Gender -- array of all applicable
+				$gender       = array();
+				$gender_terms = get_the_terms( $post->ID, 'lez_gender', true );
+				if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
+					foreach ( $gender_terms as $gender_term ) {
+						$gender[] = $gender_term->name;
+					}
+				}
+
+				// Sexuality -- array of all applicable
+				$sexuality       = array();
+				$sexuality_terms = get_the_terms( $post->ID, 'lez_sexuality', true );
+				if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
+					foreach ( $sexuality_terms as $sexuality_term ) {
+						$sexuality[] = $sexuality_term->name;
+					}
+				}
+
+				// Cliches -- array of all applicable
+				$cliches     = array();
+				$lez_cliches = get_the_terms( $post->ID, 'lez_cliches' );
+				if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
+					foreach ( $lez_cliches as $the_cliche ) {
+						$cliches[] = $the_cliche->name;
+					}
+				}
+
+				// Shows
+				$shows_full  = get_post_meta( $post->ID, 'lezchars_show_group', true );
+				$shows_clean = array();
+				foreach ( $shows_full as $show ) {
+					$shows_clean[] = array(
+						'name'     => get_the_title( $show['show'] ),
+						'chartype' => $show['type'],
+						'years'    => $show['appears'],
+					);
+				}
+
+				$characters[ $post->post_name ] = array(
+					'id'        => $post->ID,
+					'name'      => $post->post_title,
+					'sexuality' => $sexuality,
+					'gender'    => $gender,
+					'cliches'   => $cliches,
+					'shows'     => $shows_clean,
+					'url'       => home_url( '/character/' ) . $post->post_name,
+				);
+			}
+
+			wp_reset_query();
+		}
+
+		if ( ! isset( $characters ) ) {
+			return new WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $term );
+		} else {
+			return $characters;
+		}
 	}
 
 	/**
