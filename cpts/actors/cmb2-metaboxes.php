@@ -138,7 +138,7 @@ class LWTV_Actors_CMB2 {
 				'id'               => $prefix . 'sexuality',
 				'taxonomy'         => 'lez_actor_sexuality',
 				'type'             => 'taxonomy_select',
-				'default'          => 'heterosexual',
+				'default'          => 'unknown',
 				'show_option_none' => false,
 				'remove_default'   => 'true',
 			)
