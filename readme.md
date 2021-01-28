@@ -197,7 +197,7 @@ Stored in `/rest-api/` - These files generate the REST API output.
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"
     - When Died - "X died on date Y"
-* `export-json.php` - Export content in JSON format. Currently used for WikiData.
+* `export-json.php` - Export content in JSON format. Mostly used for WikiData.
 * `imdb.php`- API to communicate with IMDb and generate information (used by Alexa)
 * `of-the-day.php` - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
 * `shows-like-this.php` - Similar shows.
@@ -316,3 +316,11 @@ Pushes to branches are automatically deployed via Codeship as follows:
 
 * Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site) (password required - Ask Mika)
 * Production: [lezwatchtv.com](https://lezwatchtv.com)
+
+## Notes
+
+Possible API integrations...
+
+* Get a list of seasons: http://api.tvmaze.com/shows/1/seasons
+* TV Detail: https://developers.themoviedb.org/3/tv/get-tv-details
+* Find by IMDB: https://developers.themoviedb.org/3/find/find-by-id
