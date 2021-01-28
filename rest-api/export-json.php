@@ -358,26 +358,26 @@ class LWTV_Export_JSON {
 						$cliches[] = $the_cliche->name;
 					}
 				}
+				$cliches_clean = implode( '; ', $cliches );
 
 				// Shows
 				$shows_full  = get_post_meta( $post->ID, 'lezchars_show_group', true );
-				$shows_clean = array();
+				$shows_array = array();
 				foreach ( $shows_full as $show ) {
-					$shows_clean[] = array(
-						'name'     => get_the_title( $show['show'] ),
-						'chartype' => $show['type'],
-						'years'    => $show['appears'],
-					);
+					$appears = implode( ';', $show['appears'] );
+					$shows_array[] = get_the_title( $show['show'] ) . ' - ' . $show['type'] . ' (' . $appears . ')';
 				}
+				$shows_clean = implode( '; ', $shows_array );
 
 				$characters[ $post->post_name ] = array(
 					'id'        => $post->ID,
 					'name'      => $post->post_title,
+					'url'       => home_url( '/character/' ) . $post->post_name,
+					'image'     => wp_get_attachment_url( get_post_thumbnail_id( $post->ID ) ),
 					'sexuality' => $sexuality,
 					'gender'    => $gender,
-					'cliches'   => $cliches,
+					'cliches'   => $cliches_clean,
 					'shows'     => $shows_clean,
-					'url'       => home_url( '/character/' ) . $post->post_name,
 				);
 			}
 

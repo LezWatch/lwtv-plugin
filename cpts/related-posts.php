@@ -94,7 +94,7 @@ class LWTV_Related_Posts {
 
 		// If there are no posts IN the tag, return false
 		$term_data = get_term_by( 'id', $term, 'post_tag' );
-		if ( 1 >= $term_data->count ) {
+		if ( ! isset( $term_data->count ) || 1 >= $term_data->count ) {
 			return false;
 		}
 
