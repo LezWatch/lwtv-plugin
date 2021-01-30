@@ -288,9 +288,12 @@ class LWTV_Whats_On_JSON {
 				// If the next episode URL has data, we use it as an array
 				$episodes_array['next'] = ( false !== $next_episode && isset( $next_episode['body'] ) ) ? json_decode( $next_episode['body'], true ) : false;
 
-				if ( false !== $episodes_array['next'] ) {
-					// Build out next episode:
-					$next  = ( isset( $episodes_array['next']['name'] ) ) ? '"' . $episodes_array['next']['name'] . '"' : 'TBD';
+				// Build out next episode:
+				// If there's a next episode and it has a title, we go!
+				// There are rare cases where episodes have no titles, and those tend to be
+				// errors.
+				if ( false !== $episodes_array['next'] && isset( $episodes_array['next']['name'] ) ) {
+					$next  = '"' . $episodes_array['next']['name'] . '"';
 					$next .= ( isset( $episodes_array['next']['season'] ) && isset( $episodes_array['next']['number'] ) ) ? ' (' . $episodes_array['next']['season'] . 'x' . $episodes_array['next']['number'] . ')' : '';
 					$next .= ( isset( $episodes_array['next']['airstamp'] ) ) ? ' on ' . self::convert_time( $episodes_array['next']['airstamp'] ) : '';
 
@@ -299,9 +302,10 @@ class LWTV_Whats_On_JSON {
 					$array['next_summary'] = ( isset( $episodes_array['next']['summary'] ) ) ? wp_filter_nohtml_kses( $episodes_array['next']['summary'] ) : 'TBD';
 				}
 
-				if ( false !== $episodes_array['previous'] ) {
-					// Build out Previous episode
-					$previous  = ( isset( $episodes_array['previous']['name'] ) ) ? $episodes_array['previous']['name'] : 'TBD';
+				// Build out Previous episode:
+				// Same logic, no title, no listing.
+				if ( false !== $episodes_array['previous'] && isset( $episodes_array['previous']['name'] ) ) {
+					$previous  = '"' . $episodes_array['previous']['name'] . '"';
 					$previous .= ( isset( $episodes_array['previous']['season'] ) && isset( $episodes_array['previous']['number'] ) ) ? ' (' . $episodes_array['previous']['season'] . 'x' . $episodes_array['previous']['number'] . ')' : '';
 					$previous .= ( isset( $episodes_array['previous']['airstamp'] ) ) ? ' on ' . self::convert_time( $episodes_array['previous']['airstamp'] ) : '';
 
