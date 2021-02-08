@@ -67,6 +67,9 @@ class LWTV_Ways_To_Watch {
 
 			// URL and name params based on host.
 			$url_array = array(
+				'adultswim' => array(
+					'name' => 'Adult Swim',
+				),
 				'amazon'         => array(
 					'url'   => $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20',
 					'extra' => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',

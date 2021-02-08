@@ -693,17 +693,12 @@ class LWTV_Debug {
 		if ( $character_loop->have_posts() ) {
 			while ( $character_loop->have_posts() ) {
 				$character_loop->the_post();
-				$post     = get_post();
-				$char_id  = $post->ID;
+				$post    = get_post();
+				$char_id = $post->ID;
 
 				// If someone has disabled, we're good
 				if ( has_term( 'disabled', 'lez_cliches', $char_id ) ) {
 					$has_disabled = true;
-				}
-
-				// Mentally ill is NOT positive.
-				if ( has_term( 'mentally-ill', 'lez_cliches', $char_id ) ) {
-					$problems[] = get_the_title( $char_id ) . ' is flagged mentally ill on a show with the disability intersection. Make sure the show has POSITIVE disability rep.';
 				}
 			}
 

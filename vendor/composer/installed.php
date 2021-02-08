@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '34a526df82a452bd90dbee886d073fee3956ca86',
+    'reference' => '476fffdcea8cb169e0bb595d9f2edf89dbabd6a3',
     'name' => 'lezwatch/lwtv-plugin',
   ),
   'versions' => 
@@ -27,7 +27,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '34a526df82a452bd90dbee886d073fee3956ca86',
+      'reference' => '476fffdcea8cb169e0bb595d9f2edf89dbabd6a3',
     ),
   ),
 );
