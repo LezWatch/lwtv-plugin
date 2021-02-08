@@ -197,7 +197,7 @@ Stored in `/rest-api/` - These files generate the REST API output.
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"
     - When Died - "X died on date Y"
-* `export-json.php` - Export content in JSON format. Mostly used for WikiData.
+* `export-json.php` - Export content in JSON format. Mostly used for WikiData and Universities.
 * `imdb.php`- API to communicate with IMDb and generate information (used by Alexa)
 * `of-the-day.php` - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
 * `shows-like-this.php` - Similar shows.
