@@ -253,7 +253,7 @@ class LWTV_Affilliates {
 			'cbs'      => false,
 		);
 		$special_stations = array(
-			'cbs'      => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb', 'showtime' ),
+			'cbs'      => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb', 'showtime', 'paramount-network', 'paramount-comedy', 'nick-com', 'nickelodeon', 'teen-nick', 'nick-jr' ),
 		);
 
 		//
