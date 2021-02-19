@@ -141,7 +141,10 @@ class LWTV_FacetWP {
 				// Extra check for is it currently on air
 				$params_on_air = $params;
 				$on_air        = 'no';
-				if ( 'current' === lcfirst( $end ) || $end >= gmdate( 'Y' ) ) {
+				$on_air_meta   = get_post_meta( $params['post_id'], 'lezshows_on_air', true );
+				if ( isset( $on_air_meta ) && in_array( $on_air_meta, array( 'yes', 'no' ) ) ) {
+					$on_air = $on_air_meta;
+				} elseif ( 'current' === lcfirst( $end ) || $end > gmdate( 'Y' ) ) {
 					$on_air = 'yes';
 				}
 				$params_on_air['facet_name']          = 'show_on_air';
@@ -172,7 +175,7 @@ class LWTV_FacetWP {
 			}
 
 			// Some extra weird things...
-			// Becuase you can't store data for EMPTY fields so there's a 'fake'
+			// Because you can't store data for EMPTY fields so there's a 'fake'
 			// facet called 'all_the_missing' and we use it to pass through data
 			if ( 'all_the_missing' === $params['facet_name'] ) {
 				// If we do not love the show...

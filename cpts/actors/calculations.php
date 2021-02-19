@@ -170,6 +170,9 @@ class LWTV_Actors_Calculate {
 		// Is Queer?
 		$is_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $post_id ) ) ? true : false;
 		update_post_meta( $post_id, 'lezactors_queer', $is_queer );
+
+		// Trigger indexing to update facets.
+		FWP()->indexer->index( $post_id );
 	}
 
 }

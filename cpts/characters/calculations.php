@@ -47,6 +47,9 @@ class LWTV_Characters_Calculate {
 	public function do_the_math( $post_id ) {
 		// Calculate Death
 		self::death( $post_id );
+
+		// Trigger indexing to update facets.
+		FWP()->indexer->index( $post_id );
 	}
 
 }

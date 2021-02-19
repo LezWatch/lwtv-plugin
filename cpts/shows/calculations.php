@@ -436,6 +436,17 @@ class LWTV_Shows_Calculate {
 
 		// Update the meta
 		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
+
+		// Cheat and update the show 'on-air' ness.
+		$on_air   = 'no';
+		$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
+		if ( 'current' === lcfirst( $airdates['finish'] ) || $airdates['finish'] >= gmdate( 'Y' ) ) {
+			$on_air = 'yes';
+		}
+		update_post_meta( $post_id, 'lezshows_on_air', $on_air );
+
+		// Trigger indexing to update facets.
+		FWP()->indexer->index( $post_id );
 	}
 }
 

@@ -232,13 +232,15 @@ class LWTV_Whats_On_JSON {
 			// Get the details based on Show ID!
 			$details = self::get_show_details( $show_id, $show_name );
 
-			// Return details:
-			$return = array(
-				'pretty'       => 'The next episode of "' . $show_name . '" ( ' . $details['next'] . ') will air on US/Eastern.',
-				'next'   => $details['next'],
-				'next_summary' => $details['next_summary'],
-				'tvmaze'       => $details['tvmaze'],
-			);
+			if ( is_array( $details ) && isset( $details['next'] ) ) {
+				// Return details:
+				$return = array(
+					'pretty'       => 'The next episode of "' . $show_name . '" ( ' . $details['next'] . ') will air on US/Eastern.',
+					'next'         => $details['next'],
+					'next_summary' => $details['next_summary'],
+					'tvmaze'       => $details['tvmaze'],
+				);
+			}
 		}
 
 		return $return;
