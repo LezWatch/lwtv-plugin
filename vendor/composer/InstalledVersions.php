@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '476fffdcea8cb169e0bb595d9f2edf89dbabd6a3',
+    'reference' => '83586f4b00457695abde02ca4181070454fa7bec',
     'name' => 'lezwatch/lwtv-plugin',
   ),
   'versions' => 
@@ -51,7 +51,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '476fffdcea8cb169e0bb595d9f2edf89dbabd6a3',
+      'reference' => '83586f4b00457695abde02ca4181070454fa7bec',
     ),
   ),
 );
@@ -276,7 +276,6 @@ self::$canGetVendors = method_exists('Composer\Autoload\ClassLoader', 'getRegist
 $installed = array();
 
 if (self::$canGetVendors) {
-
 foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $loader) {
 if (isset(self::$installedByVendor[$vendorDir])) {
 $installed[] = self::$installedByVendor[$vendorDir];
