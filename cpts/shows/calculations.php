@@ -440,7 +440,7 @@ class LWTV_Shows_Calculate {
 		// Cheat and update the show 'on-air' ness.
 		$on_air   = 'no';
 		$airdates = get_post_meta( $post_id, 'lezshows_airdates', true );
-		if ( 'current' === lcfirst( $airdates['finish'] ) || $airdates['finish'] >= gmdate( 'Y' ) ) {
+		if ( ! isset( $airdates['finish'] ) || 'current' === lcfirst( $airdates['finish'] ) || $airdates['finish'] >= gmdate( 'Y' ) ) {
 			$on_air = 'yes';
 		}
 		update_post_meta( $post_id, 'lezshows_on_air', $on_air );
