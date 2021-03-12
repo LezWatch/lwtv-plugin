@@ -92,9 +92,9 @@ class LWTV_Ways_To_Watch {
 					'name' => 'Cartoon Network',
 				),
 				'cbs'            => array(
-					'url'   => 'https://cbsallaccess.qflm.net/c/1242493/176097/3065',
-					'extra' => '<img height="0" width="0" src="//cbsallaccess.qflm.net/i/1242493/176097/3065" style="position:absolute;visibility:hidden;" border="0" />',
-					'name'  => 'CBS All Access',
+					'url'   => 'https://paramountplus.qflm.net/c/1242493/1007327/3065',
+					'extra' => '<img height="0" width="0" src="https://paramountplus.qflm.net/i/1242493/1007327/3065" style="position:absolute;visibility:hidden;" border="0" />',
+					'name'  => 'Paramount+',
 				),
 				'cc'             => array(
 					'name' => 'Comedy Central',
