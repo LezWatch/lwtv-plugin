@@ -83,7 +83,7 @@ class LWTV_Affilliates {
 				$advert = '<!-- Apple -->' . $this->apple( $id, $format );
 				break;
 			case 'cbs':
-				$advert = '<!-- CBS -->' . $this->network( $id, $format, 'cbs' );
+				$advert = '<!-- CBS / Paramount + -->' . $this->network( $id, $format, 'cbs' );
 				break;
 			case 'fubutv':
 				$advert = '<!-- FubuTV -->' . $this->fubutv( $id, $format );
@@ -105,7 +105,7 @@ class LWTV_Affilliates {
 	public function random( $id, $format ) {
 		$format  = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 		$choices = array(
-			'cbs'    => '<!-- CBS -->' . $this->network( $id, $format, 'cbs' ),
+			'cbs'    => '<!-- CBS / Paramount + -->' . $this->network( $id, $format, 'cbs' ),
 			'fubutv' => '<!-- FubuTV -->' . $this->fubutv( $id, $format ),
 			'amazon' => '<!-- Amazon -->' . $this->amazon( $id, $format ),
 		);
@@ -250,10 +250,10 @@ class LWTV_Affilliates {
 		$slug             = get_post_field( 'post_name', $post_id );
 		$stations         = get_the_terms( $post_id, 'lez_stations' );
 		$is_special       = array(
-			'cbs'      => false,
+			'cbs' => false,
 		);
 		$special_stations = array(
-			'cbs'      => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb', 'showtime', 'paramount-network', 'paramount-comedy', 'nick-com', 'nickelodeon', 'teen-nick', 'nick-jr' ),
+			'cbs' => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb', 'showtime', 'paramount-network', 'paramount-comedy', 'paramount', 'nick-com', 'nickelodeon', 'teen-nick', 'nick-jr', 'comedy-central', 'bet', 'mtv' ),
 		);
 
 		//
