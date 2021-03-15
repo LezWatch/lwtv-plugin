@@ -264,7 +264,7 @@ class LWTV_Whats_On_JSON {
 		}
 
 		// If there's content, let's make it an array
-		$show_array = isset( $show_info['body'] ) ? json_decode( $show_info['body'], true ) : false;
+		$show_array = ( ! is_wp_error( $show_info ) && isset( $show_info['body'] ) ) ? json_decode( $show_info['body'], true ) : false;
 
 		// Just in case we still have nothing...
 		if ( false !== $show_array ) {
