@@ -24,6 +24,7 @@ class LWTV_Shows_Calendar {
 			'DC\'s Legends of Tomorrow'        => 'Legends of Tomorrow',
 			'Marvel\'s Runaways'               => 'Runaways',
 			'Marvel\'s Agents of S.H.I.E.L.D.' => 'Agents of S.H.I.E.L.D.',
+			'Genera+ion'                       => 'Generation', // this is using the SLUG.
 		);
 
 		$search_array = $name_array;
