@@ -76,6 +76,12 @@ class LWTV_Cron {
 		if ( ! wp_next_scheduled( 'lwtv_tv_maze_hourly' ) ) {
 			wp_schedule_event( time(), 'hourly', 'lwtv_tv_maze_hourly' );
 		}
+
+		add_action( 'lwtv_tools_check_daily', array( $this, 'tools_check' ) );
+		if ( ! wp_next_scheduled( 'lwtv_tools_check_daily' ) ) {
+			wp_schedule_event( strtotime( '03:01:00' ), 'daily', 'lwtv_tools_check_daily' );
+		}
+
 	}
 
 	/**
@@ -167,6 +173,25 @@ SQL;
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
 			file_put_contents( $ics_file, $response['body'] );
 		}
+	}
+
+	/**
+	 * Do a deep dive and check for problems.
+	 * @return void
+	 */
+	public function tools_check() {
+		// if it's not Sunday, don't run
+		if ( gmdate( 'D' ) !== 'Sun' ) {
+			return;
+		}
+
+		$actor_no_chars = ( new LWTV_Debug() )->find_actors_no_chars();
+		$actor_problems = ( new LWTV_Debug() )->find_actors_problems();
+		$actor_wikidata = ( new LWTV_Debug() )->list_actors_wikidata();
+		$actor_empties  = ( new LWTV_Debug() )->find_actors_empty();
+		$queerchars     = ( new LWTV_Debug() )->find_queerchars();
+		$show_problems  = ( new LWTV_Debug() )->find_shows_problems();
+		$char_problems  = ( new LWTV_Debug() )->find_characters_problems();
 	}
 
 }
