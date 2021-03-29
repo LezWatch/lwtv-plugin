@@ -99,7 +99,7 @@ _Shows (`/shows/`)_
 Stored in `/features/` -- a collection of miscellaneous features.
 
 * `_main.php` - Calls all other files
-* `cron.php` - Custom cron jobs to load high-traffic pages and ensure Varnish is cached.
+* `cron.php` - Custom cron jobs to pre-cache high-traffic pages, and run regular jobs.
 * `custom-loops.php` - `class LWTV_Loops` - Custom arrays and WP_Query calls that are repeated in multiple places.
     - `is_actor_queer()` - Determine if actor is queer (yes/no)
     - `is_actor_trans()` - Determine if an actor is trans (called by is queer) (yes/no)

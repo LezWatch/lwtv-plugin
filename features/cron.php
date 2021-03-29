@@ -177,21 +177,35 @@ SQL;
 
 	/**
 	 * Do a deep dive and check for problems.
+	 *
+	 * Run a different check every day to lower load.
+	 *
 	 * @return void
 	 */
 	public function tools_check() {
-		// if it's not Sunday, don't run
-		if ( gmdate( 'D' ) !== 'Sun' ) {
-			return;
+		switch ( gmdate( 'D' ) ) {
+			case 'Mon':
+				$check = ( new LWTV_Debug() )->find_actors_problems();
+				break;
+			case 'Tue':
+				$check = ( new LWTV_Debug() )->list_actors_wikidata();
+				break;
+			case 'Wed':
+				$check = ( new LWTV_Debug() )->find_actors_no_chars();
+				break;
+			case 'Thu':
+				$check = ( new LWTV_Debug() )->find_actors_empty();
+				break;
+			case 'Fri':
+				$check = ( new LWTV_Debug() )->find_queerchars();
+				break;
+			case 'Sat':
+				$check = ( new LWTV_Debug() )->find_shows_problems();
+				break;
+			case 'Sun':
+				$check = ( new LWTV_Debug() )->find_characters_problems();
+				break;
 		}
-
-		$actor_no_chars = ( new LWTV_Debug() )->find_actors_no_chars();
-		$actor_problems = ( new LWTV_Debug() )->find_actors_problems();
-		$actor_wikidata = ( new LWTV_Debug() )->list_actors_wikidata();
-		$actor_empties  = ( new LWTV_Debug() )->find_actors_empty();
-		$queerchars     = ( new LWTV_Debug() )->find_queerchars();
-		$show_problems  = ( new LWTV_Debug() )->find_shows_problems();
-		$char_problems  = ( new LWTV_Debug() )->find_characters_problems();
 	}
 
 }
