@@ -76,6 +76,12 @@ class LWTV_Cron {
 		if ( ! wp_next_scheduled( 'lwtv_tv_maze_hourly' ) ) {
 			wp_schedule_event( time(), 'hourly', 'lwtv_tv_maze_hourly' );
 		}
+
+		add_action( 'lwtv_tools_check_daily', array( $this, 'tools_check' ) );
+		if ( ! wp_next_scheduled( 'lwtv_tools_check_daily' ) ) {
+			wp_schedule_event( strtotime( '03:01:00' ), 'daily', 'lwtv_tools_check_daily' );
+		}
+
 	}
 
 	/**
@@ -166,6 +172,39 @@ SQL;
 		$response   = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
 			file_put_contents( $ics_file, $response['body'] );
+		}
+	}
+
+	/**
+	 * Do a deep dive and check for problems.
+	 *
+	 * Run a different check every day to lower load.
+	 *
+	 * @return void
+	 */
+	public function tools_check() {
+		switch ( gmdate( 'D' ) ) {
+			case 'Mon':
+				$check = ( new LWTV_Debug() )->find_actors_problems();
+				break;
+			case 'Tue':
+				$check = ( new LWTV_Debug() )->list_actors_wikidata();
+				break;
+			case 'Wed':
+				$check = ( new LWTV_Debug() )->find_actors_no_chars();
+				break;
+			case 'Thu':
+				$check = ( new LWTV_Debug() )->find_actors_empty();
+				break;
+			case 'Fri':
+				$check = ( new LWTV_Debug() )->find_queerchars();
+				break;
+			case 'Sat':
+				$check = ( new LWTV_Debug() )->find_shows_problems();
+				break;
+			case 'Sun':
+				$check = ( new LWTV_Debug() )->find_characters_problems();
+				break;
 		}
 	}
 
