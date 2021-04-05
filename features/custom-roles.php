@@ -55,7 +55,7 @@ class LWTV_Roles {
 				'manage_categories' => true, // so they can add sexualities etc
 				'unfiltered_html'   => true,
 			);
-			$result = add_role( 'data_editor', 'Data Editor', $de_capabilities );
+			$result          = add_role( 'data_editor', 'Data Editor', $de_capabilities );
 		}
 	}
 
@@ -67,7 +67,7 @@ class LWTV_Roles {
 		$roles = array( 'data_editor', 'editor', 'administrator' );
 
 		// The CPTs they work for
-		$cpts  = array( 'actor', 'character', 'show' );
+		$cpts = array( 'actor', 'character', 'show' );
 
 		// Loop through each role and assign capabilities
 		foreach ( $roles as $the_role ) {
@@ -83,6 +83,7 @@ class LWTV_Roles {
 					$role->add_cap( 'edit_' . $the_cpt . 's' );
 					$role->add_cap( 'edit_others_' . $the_cpt . 's' );
 					$role->add_cap( 'edit_published_' . $the_cpt . 's' );
+					$role->add_cap( 'edit_private_' . $the_cpt . 's' );
 					$role->add_cap( 'publish_' . $the_cpt . 's' );
 					$role->add_cap( 'delete_' . $the_cpt );
 					$role->add_cap( 'delete_' . $the_cpt . 's' );
