@@ -6,6 +6,11 @@
  * Links:
  * https://appleservices-console.partnerize.com/v2/overview/overview
  * https://affiliate.itunes.apple.com/resources/documentation/basic_affiliate_link_guidelines_for_the_phg_network/
+ *
+ * https://affiliate-program.amazon.com/home/bannerlinks
+ * https://affiliate-program.amazon.com/home/bounties/all?category=amazontv
+ *
+ * https://app.impact.com/login.user
  */
 
 // Require Widgets code
@@ -54,9 +59,9 @@ class LWTV_Affilliates {
 	*/
 	public function shortcode_affiliates( $atts ) {
 		if ( is_archive() ) {
-			$affiliates = $this->widget( 'random', 'thin' );
+			$affiliates = $this->random( 'random', 'thin' );
 		} else {
-			$affiliates = $this->widget( 'random', 'wide' );
+			$affiliates = $this->random( 'random', 'wide' );
 		}
 
 		$advert = '<!-- BEGIN Affiliate Ads --><center>' . $affiliates . '</center><!-- END Affiliate Ads -->';
@@ -65,98 +70,31 @@ class LWTV_Affilliates {
 	}
 
 	/**
-	 * Build the widget
-	 *
-	 * @access public
-	 * @return array
-	 */
-	public function widget( $type, $format ) {
-
-		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
-		$id     = get_the_ID();
-
-		switch ( $type ) {
-			case 'amazon':
-				$advert = '<!-- Amazon -->' . $this->amazon( $id, $format );
-				break;
-			case 'apple':
-				$advert = '<!-- Apple -->' . $this->apple( $id, $format );
-				break;
-			case 'cbs':
-				$advert = '<!-- CBS / Paramount + -->' . $this->network( $id, $format, 'cbs' );
-				break;
-			case 'fubutv':
-				$advert = '<!-- FubuTV -->' . $this->fubutv( $id, $format );
-				break;
-			case 'local':
-				$advert = '<!-- Local/Affiliate -->' . $this->local( $id, $format );
-				break;
-			default:
-				$advert = '<!-- Random -->' . $this->random( $id, $format );
-		}
-
-		return '<div class="affiliate-ads">' . $advert . '</div>';
-	}
-
-	/**
 	 * Call something random...
 	 * This is a basic check of a random number
 	 */
 	public function random( $id, $format ) {
-		$format  = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
-		$choices = array(
-			'cbs'    => '<!-- CBS / Paramount + -->' . $this->network( $id, $format, 'cbs' ),
-			'fubutv' => '<!-- FubuTV -->' . $this->fubutv( $id, $format ),
-			'amazon' => '<!-- Amazon -->' . $this->amazon( $id, $format ),
-		);
-		$random  = array_rand( $choices );
-		$advert  = $choices[ $random ];
+		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 
-		return $advert;
-	}
-
-	/**
-	 * Call Amazon Affiliate Data
-	 */
-	public function amazon( $id, $format ) {
-		require_once 'amazon.php';
-		return ( new LWTV_Affiliate_Amazon() )->show_ads( $id, $format );
-	}
-
-	/**
-	 * Call FubuTV Affiliate Data
-	 */
-	public function fubutv( $id, $format ) {
-		require_once 'fubutv.php';
-		return ( new LWTV_Affiliate_FubuTV() )->show_ads( $id, $format );
-	}
-
-	/**
-	 * Network Channels
-	 * @param  int    $id       Post ID
-	 * @param  string $format   Type of Add (default WIDE)
-	 * @param  array  $network  Network to be called (default CBS)
-	 * @return string           The ad
-	 */
-	public function network( $id, $format = 'wide', $network = 'cbs' ) {
-
-		$advert = '';
-		switch ( $network ) {
-			case 'cbs':
-				require_once 'cbs.php';
-				$advert = ( new LWTV_Affiliate_CBS() )->show_ads( $id, $format );
+		switch ( $format ) {
+			case 'banner':
+				$advert = adrotate_group( 1 );
+				break;
+			case 'text':
+				$advert = '';
+				break;
+			case 'thin':
+				$advert = adrotate_group( 3 );
+				break;
+			case 'tiny':
+				$advert = adrotate_group( 4 );
+				break;
+			case 'wide':
+				$advert = adrotate_group( 2 );
 				break;
 		}
 
-		return $advert;
-	}
-
-	/**
-	 * Call Local Affiliate Data
-	 */
-	public function local( $id, $format = 'wide' ) {
-		require_once 'local.php';
-		return ( new LWTV_Affiliate_Local() )->show_ads( $id, $format );
+		return '<div class="aa-random">' . $advert . '</div>';
 	}
 
 	/**
@@ -211,74 +149,19 @@ class LWTV_Affilliates {
 	 */
 	public function shows( $id, $format ) {
 
+		$advert = '';
+
 		// Show a different show ad depending on things...
 		if ( 'affiliate' === $format ) {
 			// Show an affiliate link
-			require_once( 'ways-to-watch.php' );
-			$affiliates = ( new LWTV_Ways_To_Watch() )->affiliate_link( $id );
+			require_once 'ways-to-watch.php';
+			$advert = ( new LWTV_Ways_To_Watch() )->affiliate_link( $id );
 		} else {
-			// Show an advert
-			$format     = ( in_array( $format, self::$valid_formats, true ) ) ? $format : 'wide';
-			$is_special = $this->get_special_stations( $id );
-
-			// If it's a special station, we'll show that, else show random
-			if ( $is_special['cbs'] ) {
-				// CBS pays best.
-				$get_the_ad = $this->network( $id, $format, 'cbs' );
-			} else {
-				$get_the_ad = $this->random( $id, $format );
-			}
-
-			$affiliates = '<div class="affiliate-ads"><center>' . $get_the_ad . '</center></div>';
+			$affiliates = $this->random( $id, $format );
+			$advert     = '<!-- BEGIN Affiliate Ads --><div class="affiliate-ads"><center>' . $affiliates . '</center></div><!-- END Affiliate Ads -->';
 		}
-
-		$advert = '<!-- BEGIN Affiliate Links -->' . $affiliates . '<!-- END Affiliate Links -->';
 
 		return $advert;
-	}
-
-	/**
-	 * Get the stations and kick back a simple true/falsey
-	 * @param  int    $post_id Post ID
-	 * @return array  Array of special status
-	 *
-	 * A special status is for stations that belong to someone bigger.
-	 * Think like how The CW is owned by CBS. They share ads so we share
-	 * ads.
-	 */
-	public function get_special_stations( $post_id ) {
-		$slug             = get_post_field( 'post_name', $post_id );
-		$stations         = get_the_terms( $post_id, 'lez_stations' );
-		$is_special       = array(
-			'cbs' => false,
-		);
-		$special_stations = array(
-			'cbs' => array( 'cbs', 'cbs-all-access', 'cw', 'the-cw', 'cw-seed', 'upn', 'wb', 'showtime', 'paramount-network', 'paramount-comedy', 'paramount', 'nick-com', 'nickelodeon', 'teen-nick', 'nick-jr', 'comedy-central', 'bet', 'mtv' ),
-		);
-
-		//
-		// We're going to convert them into a simpler list.
-		if ( $stations && ! is_wp_error( $stations ) ) {
-			// Since we have stations, we will loop through the stations on the show.
-			foreach ( $stations as $station ) {
-				// Loop through all the special stations.
-				foreach ( $special_stations as $special_station => $special_value ) {
-					// If the special station is NOT already true (remember shows can have multiple stations)
-					// AND the show is in the array for the special station (i.e. Legends is on CW which is CBS)
-					// then we want to set the station to true:
-					if ( false === $is_special[ $special_station ] && in_array( $station->slug, $special_stations[ $special_station ], true ) ) {
-						$is_special[ $special_station ] = true;
-					}
-				}
-			}
-		}
-
-		// CBS is always true for Star Trek so let's double check.
-		if ( strpos( $slug, 'star-trek' ) !== false ) {
-			$is_special['cbs'] = true;
-		}
-
-		return $is_special;
 	}
 
 }
