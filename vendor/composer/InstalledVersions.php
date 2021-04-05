@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '83586f4b00457695abde02ca4181070454fa7bec',
+    'reference' => '531d309e58ad9ce484ab5222639708b58e1a8181',
     'name' => 'lezwatch/lwtv-plugin',
   ),
   'versions' => 
@@ -51,7 +51,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '83586f4b00457695abde02ca4181070454fa7bec',
+      'reference' => '531d309e58ad9ce484ab5222639708b58e1a8181',
     ),
   ),
 );
