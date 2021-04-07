@@ -22,12 +22,12 @@ download('origgami/cmb2-grid', 'plugins/cmb2/cmb2-grid/', function (err) {
 //mustardbees/cmb-field-select2
 
 // Chart.JS
-copy.one( "node_modules/chart.js/dist/Chart.bundle.min.js", "assets/js", {flatten: true}, function(err) {
+copy.one( "node_modules/chart.js/dist/chart.min.js", "assets/js", {flatten: true}, function(err) {
   if (err) return console.log(err);
 });
 
 // Chart.JS
-copy.one( "node_modules/chartjs-plugin-annotation/chartjs-plugin-annotation.min.js", "assets/js", {flatten: true}, function(err) {
+copy.one( "node_modules/chartjs-plugin-annotation/dist/chartjs-plugin-annotation.min.js", "assets/js", {flatten: true}, function(err) {
   if (err) return console.log(err);
 });
 

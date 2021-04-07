@@ -47,9 +47,9 @@ class LWTV_Stats {
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );
 
-			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.bundle.min.js', array( 'jquery' ), '2.9.4', false );
-			wp_enqueue_script( 'chartjs-plugins', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.plugins.js', array( 'chartjs' ), '1.0.0', false );
-			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '0.5.7', false );
+			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chart.min.js', array( 'jquery' ), '3.0.2', false );
+			wp_enqueue_script( 'chartjs-plugins', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.plugins.js', array( 'chartjs' ), '1.0.1', false );
+			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '1.0.0-rc', false );
 			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
 			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.31.3', false );
 			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css/theme.bootstrap_4.min.css', array(), '2.31.1', false );
