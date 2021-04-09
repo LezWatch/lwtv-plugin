@@ -121,7 +121,7 @@ class LWTV_Stats_Output {
 						echo '<tr>';
 							echo '<th scope="row"><a href="' . esc_url( $item['url'] ) . '">' . wp_kses_post( ucfirst( $item['name'] ) ) . '</a></th>';
 							echo '<td>' . (int) $item['count'] . '</td>';
-							echo '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $first_count ) . '%</div></div></td>';
+							echo '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $first_count ) . '%</td>';
 						if ( isset( $second_title ) ) {
 							// how many characters per station/nation?
 							$second_count = round( ( ( $item['count'] / $item['characters'] ) * 100 ), 1 );
