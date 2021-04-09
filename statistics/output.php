@@ -125,7 +125,7 @@ class LWTV_Stats_Output {
 						if ( isset( $second_title ) ) {
 							// how many characters per station/nation?
 							$second_count = round( ( ( $item['count'] / $item['characters'] ) * 100 ), 1 );
-							echo '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $second_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $second_count ) . '%</div></div></td>';
+							echo '<td><div class="progress" style="height: 20px;"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $second_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><center>' . esc_html( $second_count ) . '%</center></div></div></td>';
 						}
 						echo '</tr>';
 					}
