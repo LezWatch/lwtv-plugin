@@ -1,4 +1,4 @@
-Chart.pluginService.register({
+Chart.plugins.register({
 	beforeDraw: function (chart) {
 		if (chart.config.options.elements.center) {
 	//Get ctx from string

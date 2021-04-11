@@ -121,11 +121,11 @@ class LWTV_Stats_Output {
 						echo '<tr>';
 							echo '<th scope="row"><a href="' . esc_url( $item['url'] ) . '">' . wp_kses_post( ucfirst( $item['name'] ) ) . '</a></th>';
 							echo '<td>' . (int) $item['count'] . '</td>';
-							echo '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $first_count ) . '%</div></div></td>';
+							echo '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $first_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $first_count ) . '%</td>';
 						if ( isset( $second_title ) ) {
 							// how many characters per station/nation?
 							$second_count = round( ( ( $item['count'] / $item['characters'] ) * 100 ), 1 );
-							echo '<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $second_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $second_count ) . '%</div></div></td>';
+							echo '<td><div class="progress" style="height: 20px;"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $second_count ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><center>' . esc_html( $second_count ) . '%</center></div></div></td>';
 						}
 						echo '</tr>';
 					}
@@ -303,8 +303,8 @@ class LWTV_Stats_Output {
 
 		<script>
 		// Defaults
-		Chart.defaults.global.responsive = true;
-		Chart.defaults.global.legend.display = false;
+		Chart.defaults.responsive = true;
+		Chart.defaults.plugins.legend.display = false;
 
 		// Bar Chart
 		var bar<?php echo esc_attr( $bar_id ); ?>Data = {
@@ -348,9 +348,11 @@ class LWTV_Stats_Output {
 		};
 		var ctx = document.getElementById("bar<?php echo esc_attr( $bar_id ); ?>").getContext("2d");
 		var bar<?php echo esc_attr( $bar_id ); ?> = new Chart(ctx, {
-			type: 'horizontalBar',
+			type: 'bar',
 			data: bar<?php echo esc_attr( $bar_id ); ?>Data,
 			options: {
+				responsive: true,
+				indexAxis: 'y',
 				tooltips: {
 					callbacks: {
 						title: function(tooltipItems, data) {
@@ -446,8 +448,8 @@ class LWTV_Stats_Output {
 
 		<script>
 		// Defaults
-		Chart.defaults.global.responsive = true;
-		Chart.defaults.global.legend.display = false;
+		Chart.defaults.responsive = true;
+		Chart.defaults.plugins.legend.display = false;
 
 		// Bar Chart
 		var barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?>Data = {
@@ -494,13 +496,14 @@ class LWTV_Stats_Output {
 		};
 		var ctx = document.getElementById("barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?>").getContext("2d");
 		var barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?> = new Chart(ctx, {
-			type: 'horizontalBar',
+			type: 'bar',
 			data: barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?>Data,
 			options: {
+				indexAxis: 'y',
 				scales: {
-					xAxes: [{ stacked: true }],
-					yAxes: [{ stacked: true }]
-				},
+					x: { stacked: true },
+					y: { stacked: true }
+				}
 				tooltips: {
 					mode: 'index',
 					intersect: false
@@ -509,6 +512,8 @@ class LWTV_Stats_Output {
 		});
 
 		</script>
+
+		????/
 		<?php
 	}
 
@@ -672,41 +677,18 @@ class LWTV_Stats_Output {
 				}]
 			},
 			options : {
-				scales: {
-					x: {
-						gridLines: {
-							offsetGridLines: false
+				plugins: {
+					annotation: {
+						annotations: {
+							line1: {
+								type: 'line',
+								yMin: <?php echo (int) min( $trend ); ?>,
+								yMax: <?php echo (int) end( $trend ); ?>,
+								borderColor: 'rgba(75,192,192,1)',
+								borderWidth: 2,
+							}
 						}
-					},
-					yAxes: [{
-						ticks: {
-							beginAtZero: true,
-							stepSize: 1,
-							suggestedMin: 1,
-							suggestedMax: 5,
-						}
-					}],
-					xAxes: [{
-						ticks: {
-							beginAtZero: true,
-							padding: 1
-						}
-					}]
-				},
-				annotation: {
-					annotations: [{
-						type: 'line',
-						mode: 'horizontal',
-						scaleID: 'y-axis-0',
-						value: <?php echo (int) min( $trend ); ?>,
-						endValue: <?php echo (int) end( $trend ); ?>,
-						borderColor: "rgba(75,192,192,1)",
-						borderWidth: 2,
-						label: {
-							content: 'Trendline',
-							yAdjust: -16,
-						}
-					}]
+					}
 				}
 			}
 		});

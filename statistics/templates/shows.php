@@ -144,7 +144,7 @@ switch ( $view ) {
 			<p>&nbsp;</p>
 			<div class="tab-content" id="v-pills-tabContent">
 				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'tropes', 'barchart' ); ?></div>
-				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'tropes', 'list' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'tropes', 'percentage' ); ?></div>
 			</div>
 		</div>
 		<?php
@@ -160,7 +160,7 @@ switch ( $view ) {
 			<p>&nbsp;</p>
 			<div class="tab-content" id="v-pills-tabContent">
 				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'genres', 'barchart' ); ?></div>
-				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'genres', 'list' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'genres', 'percentage' ); ?></div>
 			</div>
 		</div>
 		<?php
@@ -208,7 +208,7 @@ switch ( $view ) {
 			<p>&nbsp;</p>
 			<div class="tab-content" id="v-pills-tabContent">
 				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'intersections', 'barchart' ); ?></div>
-				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'intersections', 'list' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'intersections', 'percentage' ); ?></div>
 			</div>
 		</div>
 		<?php
