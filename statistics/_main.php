@@ -72,6 +72,7 @@ class LWTV_Stats {
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#charactersTable").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 				case 'tropes':
+				case 'genres':
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showsTable").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 			}
