@@ -226,8 +226,11 @@ class LWTV_Whats_On_JSON {
 				}
 			}
 
-			// Remove everything after a space-and parenthesis to compensate for 'charmed (2018)' situations but NOT 'thirtysomething(else)' - can shows PLEASE stop being so clever? UGH.
-			$show_name = trim( current( explode( ' (', get_the_title( $show_id ) ) ) );
+			// Remove everything after a space-and parenthesis to compensate for
+			// 'charmed (2018)' situations but NOT 'thirtysomething(else)'
+			// can shows PLEASE stop being so clever? UGH.
+			// Also remove accents, which TVMaze is having ish with.
+			$show_name = remove_accents( trim( current( explode( ' (', get_the_title( $show_id ) ) ) ) );
 
 			// Get the details based on Show ID!
 			$details = self::get_show_details( $show_id, $show_name );
