@@ -188,7 +188,7 @@ SQL;
 				$check = ( new LWTV_Debug() )->find_actors_problems();
 				break;
 			case 'Tue':
-				$check = ( new LWTV_Debug() )->list_actors_wikidata();
+				// Nothing yet.
 				break;
 			case 'Wed':
 				$check = ( new LWTV_Debug() )->find_actors_no_chars();

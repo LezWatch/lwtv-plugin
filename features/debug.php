@@ -181,11 +181,13 @@ class LWTV_Debug {
 
 		// Update Options
 		$option = get_option( 'lwtv_debugger_status' );
+
 		$option['actor_empty'] = array(
-			'name' => 'Incomplete Actors',
+			'name'  => 'Incomplete Actors',
 			'count' => count( $items ),
 		);
-		$option['timestamp']  = time();
+
+		$option['timestamp'] = time();
 		update_option( 'lwtv_debugger_status', $option );
 
 		return $items;
