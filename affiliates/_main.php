@@ -2,15 +2,6 @@
 /**
  * Name: Affiliate Code
  * Description: Automagical affiliate things
- *
- * Links:
- * https://appleservices-console.partnerize.com/v2/overview/overview
- * https://affiliate.itunes.apple.com/resources/documentation/basic_affiliate_link_guidelines_for_the_phg_network/
- *
- * https://affiliate-program.amazon.com/home/bannerlinks
- * https://affiliate-program.amazon.com/home/bounties/all?category=amazontv
- *
- * https://app.impact.com/login.user
  */
 
 // Require Widgets code
@@ -27,8 +18,8 @@ class LWTV_Affilliates {
 	 */
 	public function __construct() {
 
-		self::$valid_types   = array( 'random', 'cbs', 'amazon', 'fubutv' );
-		self::$valid_formats = array( 'banner', 'text', 'thin', 'tiny', 'wide' );
+		self::$valid_types   = array( 'random' );
+		self::$valid_formats = array( 'text', 'thin', 'tiny', 'wide' );
 
 		add_filter( 'widget_text', 'do_shortcode' );
 		add_action( 'init', array( $this, 'init' ) );
@@ -81,7 +72,7 @@ class LWTV_Affilliates {
 				$advert = adrotate_group( 1 );
 				break;
 			case 'text':
-				$advert = '';
+				$advert = adrotate_group( 5 );
 				break;
 			case 'thin':
 				$advert = adrotate_group( 3 );

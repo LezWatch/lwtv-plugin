@@ -64,9 +64,8 @@ class LWTV_Affilliate_Ads_Widgets extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 		$new_instance['title'] = wp_strip_all_tags( $new_instance['title'] );
 
-		// Types of ads
-		// phpcs:ignore WordPress.PHP.StrictInArray
-		$new_instance['type'] = ( in_array( $new_instance['type'], LWTV_Affilliates::$valid_types ) ) ? sanitize_html_class( $new_instance['type'] ) : 'random';
+		// Types of ads (only random now)
+		$new_instance['type'] = 'random';
 
 		// Ad format
 		// phpcs:ignore WordPress.PHP.StrictInArray
