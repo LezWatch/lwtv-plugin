@@ -437,7 +437,7 @@ class LWTV_Admin_Tools {
 	 * Output the results of character checking...
 	 */
 	public static function tab_character_checker() {
-		$items    = ( new LWTV_Debug() )->find_characters_problems();
+		$items = ( new LWTV_Debug() )->find_characters_problems();
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
