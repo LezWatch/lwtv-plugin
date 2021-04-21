@@ -65,24 +65,30 @@ class LWTV_Affilliates {
 	 * This is a basic check of a random number
 	 */
 	public function random( $id, $format ) {
-		$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 
-		switch ( $format ) {
-			case 'banner':
-				$advert = adrotate_group( 1 );
-				break;
-			case 'text':
-				$advert = adrotate_group( 5 );
-				break;
-			case 'thin':
-				$advert = adrotate_group( 3 );
-				break;
-			case 'tiny':
-				$advert = adrotate_group( 4 );
-				break;
-			case 'wide':
-				$advert = adrotate_group( 2 );
-				break;
+		$format = 'none';
+		$advert = '<!-- No Ad Available -->';
+
+		if ( function_exists( 'adrotate_group' ) ) {
+			$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
+
+			switch ( $format ) {
+				case 'banner':
+					$advert = adrotate_group( 1 );
+					break;
+				case 'text':
+					$advert = adrotate_group( 5 );
+					break;
+				case 'thin':
+					$advert = adrotate_group( 3 );
+					break;
+				case 'tiny':
+					$advert = adrotate_group( 4 );
+					break;
+				case 'wide':
+					$advert = adrotate_group( 2 );
+					break;
+			}
 		}
 
 		return '<div class="aa-random">' . $advert . '</div>';
