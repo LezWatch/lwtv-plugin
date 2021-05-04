@@ -92,7 +92,7 @@ switch ( $view ) {
 								echo '<tr>
 										<th scope="row"><a href="' . esc_url( site_url( '/cliche/' . $cliche->slug ) ) . '">' . esc_html( $cliche->name ) . '</a></th>
 										<td>' . (int) $cliche->count . '</td>
-										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
+										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
 									</tr>';
 							}
 							?>
@@ -127,7 +127,7 @@ switch ( $view ) {
 								echo '<tr>
 										<th scope="row"><a href="' . esc_url( site_url( '/sexuality/' . $sexuality->slug ) ) . '">' . esc_html( $sexuality->name ) . '</a></th>
 										<td>' . (int) $sexuality->count . '</td>
-										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
+										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
 									</tr>';
 							}
 							?>
@@ -162,7 +162,7 @@ switch ( $view ) {
 								echo '<tr>
 										<th scope="row"><a href="' . esc_url( site_url( '/gender/' . $gender->slug ) ) . '">' . esc_html( $gender->name ) . '</a></th>
 										<td>' . (int) $gender->count . '</td>
-										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
+										<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
 									</tr>';
 							}
 							?>

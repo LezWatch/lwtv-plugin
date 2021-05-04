@@ -84,7 +84,7 @@ $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
 						echo '<tr>
 								<th scope="row"><a href="' . esc_url( site_url( 'statistics/nations/?country=' . $nation->slug ) ) . '">' . esc_html( $nation->name ) . '</a></th>
 								<td>' . (int) $nation->count . '</td>
-								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">&nbsp;' . esc_html( $percent ) . '%</div></div></td>
+								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
 							</tr>';
 					}
 					?>
