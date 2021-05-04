@@ -20,6 +20,8 @@ use Composer\Semver\VersionParser;
 
 
 
+
+
 class InstalledVersions
 {
 private static $installed = array (
@@ -30,7 +32,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'ce6611b650d021fa0c82dfb7fb5f527b1f364de9',
+    'reference' => '3e33b9b440d9a4bb2bc0f4555b4e449b2d641390',
     'name' => 'lezwatch/lwtv-plugin',
   ),
   'versions' => 
@@ -51,7 +53,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'ce6611b650d021fa0c82dfb7fb5f527b1f364de9',
+      'reference' => '3e33b9b440d9a4bb2bc0f4555b4e449b2d641390',
     ),
   ),
 );
@@ -70,7 +72,6 @@ $packages = array();
 foreach (self::getInstalled() as $installed) {
 $packages[] = array_keys($installed['versions']);
 }
-
 
 if (1 === \count($packages)) {
 return $packages[0];
@@ -263,6 +264,7 @@ public static function reload($data)
 self::$installed = $data;
 self::$installedByVendor = array();
 }
+
 
 
 
