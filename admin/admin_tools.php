@@ -29,23 +29,23 @@ class LWTV_Admin_Tools {
 		add_action( 'admin_post_lwtv_tools_wikidata_actors', array( $this, 'check_actors_wikidata' ) );
 
 		self::$tool_tabs = array(
-			'queer_checker'        => array(
+			'queer_checker'     => array(
 				'name' => 'Queer Checker',
 				'desc' => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
 			),
-			'actor_checker'        => array(
+			'actor_checker'     => array(
 				'name' => 'Actor Checker',
 				'desc' => 'Checks that all information for actors appears correct. This includes social media and links.',
 			),
-			'actor_empty'          => array(
+			'actor_empty'       => array(
 				'name' => 'Incomplete Actors',
 				'desc' => 'Actors that have not yet been updated since the Great Migration.',
 			),
-			'character_checker'    => array(
+			'character_checker' => array(
 				'name' => 'Character Checker',
 				'desc' => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
 			),
-			'show_checker'         => array(
+			'show_checker'      => array(
 				'name' => 'Show Checker',
 				'desc' => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
 			),
@@ -63,6 +63,21 @@ class LWTV_Admin_Tools {
 		add_action( 'load-$page_id', array( $this, 'admin_notices' ) );
 	}
 
+	public static function last_run( $tool ) {
+		$options = get_option( 'lwtv_debugger_status' );
+
+		// Get the timestamp from the individual last run OR the global.
+		if ( 'intro' !== $tool && isset( $options[ $tool ]['last'] ) ) {
+			$timestamp = $options[ $tool ]['last'];
+		} else {
+			$timestamp = $options['timestamp'];
+		}
+
+		$last_run = '<strong>' . get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) . '</strong> (' . human_time_diff( $timestamp ) . ' ago).';
+
+		return $last_run;
+	}
+
 	/*
 	 * Admin Notices
 	 */
@@ -71,7 +86,9 @@ class LWTV_Admin_Tools {
 			return;
 		}
 
-		switch ( $_GET['message'] ) { // phpcs:ignore WordPress.Security.NonceVerification
+		$notice_value = sanitize_text_field( $_GET['message'] ); // phpcs:ignore WordPress.Security.NonceVerification
+
+		switch ( $notice_value ) {
 			case 'success':
 				$content = 'Automatic fix complete.';
 				break;
@@ -81,10 +98,14 @@ class LWTV_Admin_Tools {
 			case 'error':
 				$content = 'Something has gone gay-ly wrong.';
 				break;
+			case 'rerun':
+				$content      = 'Check has been re-run.';
+				$notice_value = 'success';
+				break;
 		}
 
 		if ( isset( $content ) ) {
-			$message = '<div class="notice notice-' . esc_attr( $_GET['message'] ) . ' is-dismissable"><p>' . esc_html( $content ) . '</p></div>';
+			$message = '<div class="notice notice-' . esc_attr( $notice_value ) . ' is-dismissable"><p>' . esc_html( $content ) . '</p></div>';
 			add_action( 'admin_notices', $message );
 		}
 	}
@@ -94,8 +115,7 @@ class LWTV_Admin_Tools {
 	 */
 	public static function settings_page() {
 		// Get the active tab for later
-		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'intro';
-
+		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'intro'; // phpcs:ignore WordPress.Security.NonceVerification
 		?>
 		<div class="wrap">
 
@@ -165,24 +185,27 @@ class LWTV_Admin_Tools {
 	 */
 	public static function tab_introduction() {
 
-		$options   = get_option( 'lwtv_debugger_status' );
-		$timestamp = $options['timestamp'];
-		unset( $options['timestamp'] );
+		// Get the options
+		$options = get_option( 'lwtv_debugger_status' );
 
+		// Get the last run.
+		$last_run = self::last_run( 'intro' );
 		?>
 
 		<div class="tab-block"><div class="lwtv-tools-container">
 			<h3>LezWatch.TV Tools</h3>
 			<p>Sometimes we need extra tools to do things here. If data gets out of sync or we update things incorrectly, the checkers can help identify those errors before people notice.</p>
-			<p>Keep in mind, the checkers have to check a lot of data, so they can be slow.</p>
 
-			<p>The tools were last run on <strong><?php echo esc_html( get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) ); ?></strong>.</p>
+			<p>When visiting the individual tools, it will show you the status of the last run. To re-run the tool, press the 'Check Again' button at the bottom of the page.</p>
+
+			<p>The tools were last run on <?php echo wp_kses_post( $last_run ); ?></p>
 
 			<ul>
 				<?php
 				$output = '';
 				foreach ( $options as $an_option ) {
-					if ( $an_option['count'] > 0 ) {
+					$number = ( isset( $an_option['count'] ) ) ? $an_option['count'] : 0;
+					if ( (int) $number > 0 ) {
 						$output .= '<li>&bull; ' . $an_option['name'] . ' - ' . $an_option['count'] . '</li>';
 					}
 				}
@@ -216,7 +239,16 @@ class LWTV_Admin_Tools {
 	 */
 	public static function tab_queer_checker() {
 
-		$items = ( new LWTV_Debug() )->find_queerchars();
+		$items = get_transient( 'lwtv_debug_queercheck' );
+
+		// Check whether the button has been pressed AND also check the nonce
+		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_queer_checker_clicked' ) ) || false === $items ) {
+			$items = ( new LWTV_Debug() )->find_queerchars();
+		}
+
+		// Get the last run time.
+		$last_run_time = self::last_run( 'queercheck' );
+		$last_run_echo = '<p>The queer checker was last run on ' . $last_run_time . '</p>';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -224,6 +256,7 @@ class LWTV_Admin_Tools {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>Every character's queerness matches their actors.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
 			<?php
@@ -233,6 +266,7 @@ class LWTV_Admin_Tools {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following character(s) need your attention. Please edit the actor or character queerness as indicated.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
 
@@ -252,19 +286,40 @@ class LWTV_Admin_Tools {
 			</div>
 			<?php
 		}
+
+		?>
+		<form action="admin.php?page=lwtv_tools&tab=queer_checker" method="post">
+			<?php wp_nonce_field( 'run_queer_checker_clicked' ); ?>
+			<input type="hidden" value="true" name="rerun" />
+			<?php submit_button( 'Check Again' ); ?>
+		</form>
+		<?php
+
 	}
 
 	/**
 	 * Output the results of actor checking...
 	 */
 	public static function tab_actor_checker() {
-		$items = ( new LWTV_Debug() )->find_actors_problems();
+
+		$items = get_transient( 'lwtv_debug_actor_problems' );
+
+		// Check whether the button has been pressed AND also check the nonce
+		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_checker_clicked' ) ) || false === $items ) {
+			$items = ( new LWTV_Debug() )->find_actors_problems();
+		}
+
+		// Get the last run time.
+		$last_run_time = self::last_run( 'actor_problems' );
+		$last_run_echo = '<p>The actor checker was last run on ' . $last_run_time . '</p>';
+
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>Every actor has at least one character and their data looks sane.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
 			<?php
@@ -274,6 +329,7 @@ class LWTV_Admin_Tools {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following actor(s) need your attention.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
 
@@ -293,10 +349,19 @@ class LWTV_Admin_Tools {
 			</div>
 			<?php
 		}
+
+		?>
+		<form action="admin.php?page=lwtv_tools&tab=actor_checker" method="post">
+			<?php wp_nonce_field( 'run_actor_checker_clicked' ); ?>
+			<input type="hidden" value="true" name="rerun" />
+			<?php submit_button( 'Check Again' ); ?>
+		</form>
+		<?php
 	}
 
 	/**
 	 * Do some juggling to see how actors compare to Wikidata
+	 * CURRENTLY NOT USED
 	 * @var [type]
 	 */
 	public static function tab_actor_wiki() {
@@ -346,10 +411,19 @@ class LWTV_Admin_Tools {
 	 */
 	public static function tab_actor_empty() {
 
-		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
-		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = ( new LWTV_Debug() )->find_actors_empty();
-		$json_it  = wp_json_encode( $items );
+		$items = get_transient( 'lwtv_debug_actor_empty' );
+
+		// Check whether the button has been pressed AND also check the nonce
+		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_empty_clicked' ) ) || false === $items ) {
+			$items = ( new LWTV_Debug() )->find_actors_empty();
+		}
+
+		// Get the last run time.
+		$last_run_time = self::last_run( 'actor_empty' );
+		$last_run_echo = '<p>The incomplete actor checker was last run on ' . $last_run_time . '</p>';
+
+		// Convert to JSON
+		$json_it = wp_json_encode( $items );
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -357,6 +431,7 @@ class LWTV_Admin_Tools {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>All actors have at least some information.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
 			<?php
@@ -366,6 +441,7 @@ class LWTV_Admin_Tools {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following actor(s) have not have their data entered yet. Please review and update them.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
 
@@ -385,6 +461,14 @@ class LWTV_Admin_Tools {
 			</div>
 			<?php
 		}
+
+		?>
+		<form action="admin.php?page=lwtv_tools&tab=actor_empty" method="post">
+			<?php wp_nonce_field( 'run_actor_empty_clicked' ); ?>
+			<input type="hidden" value="true" name="rerun" />
+			<?php submit_button( 'Check Again' ); ?>
+		</form>
+		<?php
 	}
 
 	/**
@@ -392,9 +476,16 @@ class LWTV_Admin_Tools {
 	 */
 	public static function tab_show_checker() {
 
-		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
-		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = ( new LWTV_Debug() )->find_shows_problems();
+		$items = get_transient( 'lwtv_debug_show_problems' );
+
+		// Check whether the button has been pressed AND also check the nonce
+		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_problems_clicked' ) ) || false === $items ) {
+			$items = ( new LWTV_Debug() )->find_shows_problems();
+		}
+
+		// Get the last run time.
+		$last_run_time = self::last_run( 'show_problems' );
+		$last_run_echo = '<p>The show checker was last run on ' . $last_run_time . '</p>';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -402,6 +493,7 @@ class LWTV_Admin_Tools {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>All shows look good and the data looks sane.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
 			<?php
@@ -412,6 +504,7 @@ class LWTV_Admin_Tools {
 				<div id="lwtv-tools-alerts">
 					<p>The following show(s) need your attention.</p>
 					<p>Note: Remember that intersectionality is meant to be a <em>positive</em> representation. If it's bad disability rep (like Grey's Anatomy with Arizona), do not list them.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
 
@@ -431,13 +524,32 @@ class LWTV_Admin_Tools {
 			</div>
 			<?php
 		}
+
+		?>
+		<form action="admin.php?page=lwtv_tools&tab=show_checker" method="post">
+			<?php wp_nonce_field( 'run_show_checker_clicked' ); ?>
+			<input type="hidden" value="true" name="rerun" />
+			<?php submit_button( 'Check Again' ); ?>
+		</form>
+		<?php
+
 	}
 
 	/**
 	 * Output the results of character checking...
 	 */
 	public static function tab_character_checker() {
-		$items = ( new LWTV_Debug() )->find_characters_problems();
+
+		$items = get_transient( 'lwtv_debug_character_problems' );
+
+		// Check whether the button has been pressed AND also check the nonce
+		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_character_checker_clicked' ) ) || false === $items ) {
+			$items = ( new LWTV_Debug() )->find_characters_problems();
+		}
+
+		// Get the last run time.
+		$last_run_time = self::last_run( 'character_problems' );
+		$last_run_echo = '<p>The character checker was last run on ' . $last_run_time . '</p>';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -445,6 +557,7 @@ class LWTV_Admin_Tools {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>All characters look good and their data looks sane. Even Sara Lance.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
 			<?php
@@ -454,6 +567,7 @@ class LWTV_Admin_Tools {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following character(s) need your attention.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
 
@@ -473,6 +587,14 @@ class LWTV_Admin_Tools {
 			</div>
 			<?php
 		}
+
+		?>
+		<form action="admin.php?page=lwtv_tools&tab=character_checker" method="post">
+			<?php wp_nonce_field( 'run_character_checker_clicked' ); ?>
+			<input type="hidden" value="true" name="rerun" />
+			<?php submit_button( 'Check Again' ); ?>
+		</form>
+		<?php
 	}
 }
 

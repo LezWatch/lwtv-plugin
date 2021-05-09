@@ -128,11 +128,15 @@ class LWTV_Debug {
 			wp_reset_query();
 		}
 
+		// Save Transient
+		set_transient( 'lwtv_debug_queercheck', $items, WEEK_IN_SECONDS );
+
 		// Update Options
-		$option = get_option( 'lwtv_debugger_status' );
+		$option               = get_option( 'lwtv_debugger_status' );
 		$option['queercheck'] = array(
-			'name' => 'Queer Checker',
+			'name'  => 'Queer Checker',
 			'count' => count( $items ),
+			'last'  => time(),
 		);
 		$option['timestamp']  = time();
 		update_option( 'lwtv_debugger_status', $option );
@@ -179,15 +183,17 @@ class LWTV_Debug {
 			wp_reset_query();
 		}
 
-		// Update Options
-		$option = get_option( 'lwtv_debugger_status' );
+		// Save Transient
+		set_transient( 'lwtv_debug_actor_empty', $items, WEEK_IN_SECONDS );
 
+		// Update Options
+		$option                = get_option( 'lwtv_debugger_status' );
 		$option['actor_empty'] = array(
 			'name'  => 'Incomplete Actors',
 			'count' => count( $items ),
+			'last'  => time(),
 		);
-
-		$option['timestamp'] = time();
+		$option['timestamp']   = time();
 		update_option( 'lwtv_debugger_status', $option );
 
 		return $items;
@@ -355,13 +361,16 @@ class LWTV_Debug {
 					$problems[] = 'Wikipedia URL does not point to Wikipedia.';
 				}
 
-				// -IMDb IDs should be valid for the space they're in, e.g. "nm" and digits for people (props Jamie)
+				// -IMDb IDs should be valid for the space they're in, e.g. "nm"
+				// and digits for people (props Jamie)
 				if ( ! empty( $check['imdb'] ) && self::validate_imdb( $check['imdb'] ) == false ) {
 					$problems[] = 'IMDb ID is invalid (ex: nm12345).';
 				}
 
-				// -Instagram and Twitter usernames should follow whatever the actual restrictions on those are  (props Jamie)
-				// -If Instagram or Twitter usernames are the same format as IMDb IDs, that's suspicious (props Jamie)
+				// -Instagram and Twitter usernames should follow whatever the
+				// actual restrictions on those are  (props Jamie)
+				// -If Instagram or Twitter usernames are the same format as IMDb IDs,
+				// that's suspicious (props Jamie)
 				if ( ! empty( $check['insta'] ) ) {
 					// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
 					if ( self::sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] && self::validate_imdb( $check['insta'] ) !== false ) {
@@ -374,7 +383,8 @@ class LWTV_Debug {
 					}
 				}
 
-				// -"Website" links should *not* point to Wikipedia, since that would make them Wikipedia links (props Jamie)
+				// -"Website" links should *not* point to Wikipedia, since that
+				// would make them Wikipedia links (props Jamie)
 				if ( ! empty( $check['home'] ) ) {
 					if ( strpos( $check['home'], 'wikipedia.org/' ) !== false ) {
 						$problems[] = 'Homepage points to Wikipedia.';
@@ -393,11 +403,15 @@ class LWTV_Debug {
 			wp_reset_query();
 		}
 
+		// Save Transient
+		set_transient( 'lwtv_debug_actor_problems', $items, WEEK_IN_SECONDS );
+
 		// Update Options
-		$option = get_option( 'lwtv_debugger_status' );
+		$option                   = get_option( 'lwtv_debugger_status' );
 		$option['actor_problems'] = array(
-			'name' => 'Actors with Issues',
+			'name'  => 'Actors with Issues',
 			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
+			'last'  => time(),
 		);
 		$option['timestamp']      = time();
 		update_option( 'lwtv_debugger_status', $option );
@@ -518,11 +532,15 @@ class LWTV_Debug {
 			wp_reset_query();
 		}
 
+		// Save Transient
+		set_transient( 'lwtv_debug_character_problems', $items, WEEK_IN_SECONDS );
+
 		// Update Options
-		$option = get_option( 'lwtv_debugger_status' );
+		$option                       = get_option( 'lwtv_debugger_status' );
 		$option['character_problems'] = array(
-			'name' => 'Characters with Issues',
+			'name'  => 'Characters with Issues',
 			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
+			'last'  => time(),
 		);
 		$option['timestamp']          = time();
 		update_option( 'lwtv_debugger_status', $option );
@@ -594,7 +612,7 @@ class LWTV_Debug {
 					$problems[] = 'No screentime rating.';
 				}
 
-				if ( ! empty( $check['imdb'] ) && self::validate_imdb( $check['imdb'] ) == false ) {
+				if ( ! empty( $check['imdb'] ) && self::validate_imdb( $check['imdb'] ) === false ) {
 					$problems[] = 'IMDb ID is invalid (ex: tt12345).';
 				}
 
@@ -634,11 +652,15 @@ class LWTV_Debug {
 
 		$items = array_merge( $items, $items_intersection );
 
+		// Save Transient
+		set_transient( 'lwtv_debug_show_problems', $items, WEEK_IN_SECONDS );
+
 		// Update Options
-		$option = get_option( 'lwtv_debugger_status' );
+		$option                  = get_option( 'lwtv_debugger_status' );
 		$option['show_problems'] = array(
-			'name' => 'Shows with Issues',
+			'name'  => 'Shows with Issues',
 			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
+			'last'  => time(),
 		);
 		$option['timestamp']     = time();
 		update_option( 'lwtv_debugger_status', $option );
@@ -656,13 +678,13 @@ class LWTV_Debug {
 		$items = array();
 
 		// list everything that has a DISABLED intersection tag
-		$disabled_shows_loop  = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_intersections', 'slug', 'disabilities' );
+		$disabled_shows_loop = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_intersections', 'slug', 'disabilities' );
 
 		if ( $disabled_shows_loop->have_posts() ) {
 			while ( $disabled_shows_loop->have_posts() ) {
 				$disabled_shows_loop->the_post();
-				$post     = get_post();
-				$show_id  = $post->ID;
+				$post    = get_post();
+				$show_id = $post->ID;
 
 				// Try to get the problems.
 				$problems = self::check_disabled_characters( $show_id );
@@ -683,6 +705,11 @@ class LWTV_Debug {
 		return $items;
 	}
 
+	/**
+	 * Check all characters who are disabled.
+	 * @param  [type] $show_id [description]
+	 * @return [type]          [description]
+	 */
 	public function check_disabled_characters( $show_id ) {
 		// Get all the queers for the show:
 		$character_loop = ( new LWTV_CPT_Characters() )->list_characters( $show_id, 'query' );
