@@ -479,7 +479,7 @@ class LWTV_Admin_Tools {
 		$items = get_transient( 'lwtv_debug_show_problems' );
 
 		// Check whether the button has been pressed AND also check the nonce
-		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_problems_clicked' ) ) || false === $items ) {
+		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_checker_clicked' ) ) || false === $items ) {
 			$items = ( new LWTV_Debug() )->find_shows_problems();
 		}
 
