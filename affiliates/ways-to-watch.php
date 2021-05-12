@@ -67,7 +67,7 @@ class LWTV_Ways_To_Watch {
 
 			// URL and name params based on host.
 			$url_array = array(
-				'adultswim' => array(
+				'adultswim'      => array(
 					'name' => 'Adult Swim',
 				),
 				'amazon'         => array(
