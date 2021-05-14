@@ -51,18 +51,19 @@ class LWTV_Ways_To_Watch {
 
 			// URLs that belong to someone else.
 			$host_array = array(
-				'7eer'            => 'cbs',
-				'itunes'          => 'apple',
-				'tv.apple'        => 'apple',
-				'itunes.apple'    => 'apple',
-				'watch.amazon'    => 'amazon',
-				'disneynow'       => 'disney',
-				'disneyplus'      => 'disney',
-				'globoplay.globo' => 'globo',
-				'peacocktv'       => 'peacock',
-				'sho'             => 'showtime',
-				'showtimeanytime' => 'showtime',
-				'youtu.be'        => 'youtube',
+				'7eer'                       => 'cbs',
+				'itunes'                     => 'apple',
+				'tv.apple'                   => 'apple',
+				'itunes.apple'               => 'apple',
+				'watch.amazon'               => 'amazon',
+				'disneynow'                  => 'disney',
+				'disneyplus'                 => 'disney',
+				'disneyplusoriginals.disney' => 'disney',
+				'globoplay.globo'            => 'globo',
+				'peacocktv'                  => 'peacock',
+				'sho'                        => 'showtime',
+				'showtimeanytime'            => 'showtime',
+				'youtu.be'                   => 'youtube',
 			);
 
 			// URL and name params based on host.
