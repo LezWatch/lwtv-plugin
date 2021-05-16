@@ -1,41 +1,39 @@
 import { registerBlockType } from '@wordpress/blocks';
 
 const { Fragment } = wp.element;
-const { InspectorControls, MediaUpload, MediaUploadCheck, RichText } = wp.blockEditor;
+const { InspectorControls, MediaUpload, MediaUploadCheck, MediaPlaceholder, RichText } = wp.blockEditor;
 const { PanelBody, Button, ResponsiveWrapper, TextControl } = wp.components;
 const { withSelect } = wp.data;
 
-import './style.scss';
-
 registerBlockType( 'lwtv/affiliate-item', {
-	title: 'Affiliate Grid Item',
+    title: 'Affiliate Grid Item',
 
-	category: 'lezwatch',
+    category: 'lezwatch',
     parent: [ 'lwtv/affiliate-grid' ],
-	icon: 'editor-rtl',
-	category: 'layout',
-	className: false,
-	attributes: {
-		name: {
-			type: 'string',
-			default: 'Example Affiliate',
-		},
-		url: {
-			type: 'string',
-		},
-		descr: {
-			type: 'string',
-			default: 'We are cool! Shop here!',
-		},
+    icon: 'editor-rtl',
+    category: 'layout',
+    className: true,
+    attributes: {
+        name: {
+            type: 'string',
+            default: 'Example Affiliate',
+        },
+        url: {
+            type: 'string',
+        },
+        descr: {
+            type: 'string',
+            default: 'We are cool! Shop here!',
+        },
         imgUrl: {
             type: 'string',
-            default: 'https://via.placeholder.com/600x320.png?text=LezWatchTV+Placeholder+Affiliate+Image',
+            default: js_data.affiliate_default_image_url,
         }
-	},
+    },
     description: 'An individual affiliate.',
 
     edit( { attributes, setAttributes, isSelected, className } ) {
-		const { name, url, descr, imgUrl } = attributes;
+        const { name, url, descr, imgUrl } = attributes;
 
         function selectImage(value) {
             console.log(value);
@@ -44,19 +42,21 @@ registerBlockType( 'lwtv/affiliate-item', {
             })
         }
 
-		return (
-			<Fragment>
+        return (
+            <Fragment>
                 <InspectorControls>
-					<PanelBody title={ 'Affiliate Item Settings' }>
+                    <PanelBody title={ 'Affiliate Item Settings' }>
                     <TextControl
                         label={ 'Affiliate Link' }
                         help={ 'Link to affiliate network (with any variables needed)' }
                         onChange={ ( url ) => setAttributes( { url } ) }
                         value={ url }
                 />
-					</PanelBody>
-				</InspectorControls>
-                <div className="col-sm-6">
+                    </PanelBody>
+                </InspectorControls>
+                <div
+                    className={ `${ className } col mb-4` }
+                >
                     <div class="card">
                       <div class="card-body">
                           <MediaUpload
@@ -83,12 +83,12 @@ registerBlockType( 'lwtv/affiliate-item', {
                       </div>
                     </div>
                 </div>
-			</Fragment>
-		);
-	},
+            </Fragment>
+        );
+    },
 
     save( { attributes, className } ) {
-		const { name, url, descr, imgUrl  } = attributes;
+        const { name, url, descr, imgUrl  } = attributes;
 
         let returnImage = <img src={ imgUrl } class="card-img-top" alt={ name } />;
         let button = '';
@@ -97,7 +97,7 @@ registerBlockType( 'lwtv/affiliate-item', {
             button = <a href={ url } target="_new" class="btn btn-primary">Shop { name }</a>;
         }
 
-		return (
+        return (
             <div className={ `${ className } col mb-4` } >
                 <div class="card">
                   { returnImage }
@@ -108,6 +108,6 @@ registerBlockType( 'lwtv/affiliate-item', {
                   </div>
                 </div>
             </div>
-		);
-	},
+        );
+    },
 } );
