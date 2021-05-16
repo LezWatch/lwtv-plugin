@@ -93,8 +93,8 @@ class LWTV_Related_Posts {
 		}
 
 		// If there are no posts IN the tag, return false
-		$term_data = get_term_by( 'id', $term, 'post_tag' );
-		if ( ! isset( $term_data->count ) || 1 >= $term_data->count ) {
+		$term_data = get_term_by( 'id', $term['term_id'], 'post_tag' );
+		if ( ! isset( $term_data->count ) ) {
 			return false;
 		}
 
@@ -130,9 +130,8 @@ class LWTV_Related_Posts {
 			if ( $post_tags ) {
 				foreach ( $post_tags as $tag ) {
 					$maybe = array(
-						'show'      => get_page_by_path( $tag->slug, OBJECT, 'post_type_shows' ),
-						'actor'     => get_page_by_path( $tag->slug, OBJECT, 'post_type_actors' ),
-						//'character' => get_page_by_path( $tag->slug, OBJECT, 'post_type_characters' ),
+						'show'  => get_page_by_path( $tag->slug, OBJECT, 'post_type_shows' ),
+						'actor' => get_page_by_path( $tag->slug, OBJECT, 'post_type_actors' ),
 					);
 
 					foreach ( $maybe as $type => $item ) {

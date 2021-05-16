@@ -10,6 +10,16 @@ if ( ! defined( 'WPINC' ) ) {
 
 class LWTV_Shows_Calendar {
 
+	/**
+	 * Check Show Name
+	 *
+	 * Since TV Maze sometimes uses different names than we do, we have to make
+	 * a related array that can handle two names.
+	 *
+	 * @param  string $showname Display Name of the show
+	 * @param  string $source   lwtv or tvmaze
+	 * @return string           The display nem
+	 */
 	public function check_name( $showname, $source ) {
 
 		// Default we're returning the name we were given.
@@ -18,6 +28,7 @@ class LWTV_Shows_Calendar {
 		// List of valid sources.
 		$valid_source = array( 'lwtv', 'tvmaze' );
 		$name_array   = array(
+			// TV MAZE NAME                       OUR NAME
 			'Charmed'                          => 'Charmed (2018)',
 			'Party of Five'                    => 'Party of Five (2020)',
 			'Shameless'                        => 'Shameless (US)',

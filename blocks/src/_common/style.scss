@@ -1,0 +1,52 @@
+/**
+ * #.# Common SCSS
+ *
+ * Can include things like variables and mixins
+ * that are used across the project.
+*/
+
+// Featured Images
+.post-type-post_type_characters .wp-block-lez-library-featured-image,
+.post-type-post_type_actors .wp-block-lez-library-featured-image {
+	float: left;
+	width: 350px;
+	margin-right: 2rem;
+	button.editor-post-featured-image__toggle {
+		height: 200px;
+	}
+}
+
+// Colors.
+$white: #fff;
+$black: #000;
+$lightgrey: #dedede;
+$medgrey: #999;
+$darkgrey: #222;
+$green: #5cb85c;
+$blue: #06c;
+$red: #c0392b;
+
+/* Theme color palette */
+
+$lwtv-ltgrey: #ebf5fa;
+$lwtv-grey: #f3f3f3;
+$lwtv-grey2: #d6d6d6;
+$lwtv-medgrey: #555;
+$lwtv-dkgrey: #333;
+$lwtv-bordergrey: rgba(0,0,0,.125);
+$lwtv-pink: #d1548e;
+$lwtv-purple: #8d329f;
+$lwtv-salmon: #f55a4e;
+$lwtv-gradient: linear-gradient(60deg, #ab47bc, #8e24aa);
+$lwtv-red: #dc3232;
+$lwtv-yellow: #f1c40f;
+$lwtv-gold: #FFD700;
+$lwtv-silver: #C0C0C0;
+$lwtv-bronze: #B87333;
+
+/* Bootstrap */
+$bs-red:     #dc3545 !default;
+$bs-orange:  #fd7e14 !default;
+$bs-yellow:  #ffc107 !default;
+$bs-green:   #28a745 !default;
+$bs-cyan:    #17a2b8 !default;
