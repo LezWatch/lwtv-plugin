@@ -28,14 +28,10 @@ Stored in `/admin/` -- Makes admin panels
 
 ### Affiliates
 
-Stored in `/affiliates/` -- Auto Adds in Affiliate Codes
+Stored in `/affiliates/` -- Auto Adds in Affiliate Codes. Currently requires AdRotate to display ads.
 
 * `/images/` - Images used by local 'ads'
 * `_main.php` - Determines which ad to show and when
-* `amazon.php` - Amazon basic ads.
-* `cbs.php` - CBS ads (ImpactRadius)
-* `fubutv.php` - FubuTV ads (ImpactRadius)
-* `local.php` - Local Ads (Yikes, DreamHost, FacetWP)
 * `ways-to-watch.php` - Affiliate links and prettyfication of services
 * `widget.php` - Widget code to display ads
 
@@ -62,6 +58,24 @@ _Javascript (`js`)_
 * `cmb2_ajax.js` - Ajaxified code for CMB2 and post edits
 * `jquery.tablesorter.js` - Allow for table sorting
 * `palette.js` - Colors for charts
+
+### Blocks (aka Gutenberg)
+
+Stored in `/blocks/`
+
+Blocks for Gutenberg. The file `_main.php` acts as an autoloader. If you're updating the CSS, you will need to rebuild the blocks. Read `/blocks/README.md` for more information or just tell Mika what to change.
+
+The source code is in `/src/` broken up by folder, with one special file
+
+* `calendar.php` - Calendar specific code
+* `serverside.php` - Server-side Renders: Run PHP code in JS blocks
+* `/_common/` - Common PHP, CSS, and JS code for all blocks
+* `/affiliate-grid/` - A bootstrap styled grid to show affiliate links
+* `/author-box/` - Author Boxes: Display author information
+* `/glossary/` - Glossary: Show a visual glossary of taxonomies with icons
+* `/grade/` - Grade: Give something a grade and an explanation
+* `/screener/` - Screeners: For reviews of shows that haven't aired yet
+* `/tvshow-calendar/` - TV Show Calendar: Lists all the shows on air
 
 ### Custom Post Types
 
@@ -131,23 +145,6 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - Re-run calculations for specific post content (actors & shows): `wp lwtv calc [actor|show|character] ID`
     - Compare data to WikiData: `wp lwtv wiki [actor] ID`
     - Find miss matched data: ex. `wp lwtv find queerchars`
-
-### Gutenberg
-
-Stored in `/gutenberg/`
-
-Blocks for Gutenberg. The file `_main.php` acts as an autoloader. If you're updating the CSS, you will need to rebuild the Gutenblocks. Read `/gutenberg/README.md` for more information.
-
-The source code is in `/src/` broken up by folder, with one special file
-
-* `serverside-render.php` - Server-side Renders: Run PHP code in JS blocks
-* `/author-box/` - Author Boxes: Display author information
-* `/cpt-meta/` - Custom Post Type Meta Data: _currently disabled_
-* `/glossary/` - Glossary: Show a visual glossary of taxonomies with icons
-* `/grade/` - Grade: Give something a grade and an explanation
-* `/screener/` - Screeners: For reviews of shows that haven't aired yet
-* `/statistics/` - Statistics: _currently disabled_
-* `/tvshow-calendar/` - TV Show Calendar: Lists all the shows on air
 
 ### Node Scripts
 
