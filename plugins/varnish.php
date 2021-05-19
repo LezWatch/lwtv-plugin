@@ -16,11 +16,19 @@ class LWTV_Varnish {
 	}
 
 	public function varnish_urls( $urls, $postid ) {
-		$myurls = array(
-			'https://lezwatchtv.com/characters/',
-			'https://lezwatchtv.com/actors/',
-			'https://lezwatchtv.com/shows/',
-		);
+
+		$myurls = array();
+
+		switch ( get_post_type( $postid ) ) {
+			case 'post_type_characters':
+				$myurls[] = 'https://lezwatchtv.com/characters/';
+				break;
+			case 'post_type_actors':
+				$myurls[] = 'https://lezwatchtv.com/actors/';
+				break;
+			case 'post_type_shows':
+				$myurls[] = 'https://lezwatchtv.com/shows/';
+		}
 
 		if ( ! empty( $myurls ) ) {
 			foreach ( $myurls as $url ) {
