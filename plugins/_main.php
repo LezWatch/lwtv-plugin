@@ -11,3 +11,4 @@ require_once 'facetwp.php';
 require_once 'gravity-forms.php';
 require_once 'imagify.php';
 require_once 'jetpack.php';
+require_once 'varnish.php';
