@@ -37,6 +37,7 @@ class LWTV_Shows_Calendar {
 			'Marvel\'s Agents of S.H.I.E.L.D.' => 'Agents of S.H.I.E.L.D.',
 			'Genera+ion'                       => 'Generation', // this is using the SLUG.
 			'Mythic Quest: Raven\'s Banquet'   => 'Mythic Quest',
+			'Marvel\'s M.O.D.O.K.'             => 'M.O.D.O.K.',
 		);
 
 		$search_array = $name_array;
