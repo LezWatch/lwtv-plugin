@@ -68,72 +68,75 @@ class LWTV_Ways_To_Watch {
 
 			// URL and name params based on host.
 			$url_array = array(
-				'adultswim'      => array(
+				'adultswim'       => array(
 					'name' => 'Adult Swim',
 				),
-				'amazon'         => array(
+				'amazon'          => array(
 					'url'   => $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20',
 					'extra' => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
 					'name'  => 'Amazon Prime TV',
 				),
-				'atresplayer'    => array(
+				'atresplayer'     => array(
 					'name' => 'ATRESPlayer',
 				),
-				'apple'          => array(
+				'apple'           => array(
 					'url'  => $clean_url . '?at=1010lMaT&ct=lwtv',
 					'name' => 'Apple TV+',
 				),
-				'bbcamerica'     => array(
+				'bbcamerica'      => array(
 					'name' => 'BBC America',
 				),
-				'bifltheseries'  => array(
+				'bifltheseries'   => array(
 					'name' => 'BIFL',
 				),
-				'cartoonnetwork' => array(
+				'cartoonnetwork'  => array(
 					'name' => 'Cartoon Network',
 				),
-				'cbs'            => array(
+				'cbs'             => array(
 					'url'   => 'https://paramountplus.qflm.net/c/1242493/1007327/3065',
 					'extra' => '<img height="0" width="0" src="https://paramountplus.qflm.net/i/1242493/1007327/3065" style="position:absolute;visibility:hidden;" border="0" />',
 					'name'  => 'Paramount+',
 				),
-				'cc'             => array(
+				'cc'              => array(
 					'name' => 'Comedy Central',
 				),
-				'cwtv'           => array(
+				'cwtv'            => array(
 					'name' => 'The CW',
 				),
-				'dcuniverse'     => array(
+				'dcuniverse'      => array(
 					'name' => 'DC Universe',
 				),
-				'disney'         => array(
+				'disney'          => array(
 					'name' => 'Disney+',
 				),
-				'hbomax'         => array(
+				'hallmarkchannel' => array(
+					'name' => 'Hallmark Channel',
+				),
+				'hbomax'          => array(
 					'name' => 'HBO Max',
 				),
-				'peacock'        => array(
+				'peacock'         => array(
 					'name' => 'Peacock TV (NBC)',
 				),
-				'roosterteeth'   => array(
+				'roosterteeth'    => array(
 					'name' => 'Roster Teeth',
 				),
-				'tellofilms'     => array(
+				'tellofilms'      => array(
 					'name' => 'Tello Films',
 				),
-				'tntdrama'       => array(
+				'tntdrama'        => array(
 					'name' => 'TNT Drama',
 				),
-				'youtube'        => array(
+				'youtube'         => array(
 					'name' => 'YouTube',
 				),
-				'tvnz'           => array(
+				'tvnz'            => array(
 					'name' => 'TVNZ',
 				),
-				'tv.line.me'     => array(
+				'tv.line.me'      => array(
 					'name' => 'LineTV',
 				),
-				'tv.youtube'     => array(
+				'tv.youtube'      => array(
 					'name' => 'YouTube TV',
 				),
 			);

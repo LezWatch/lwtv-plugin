@@ -43,6 +43,14 @@ class LWTV_Blocks {
 			true
 		);
 
+		wp_localize_script(
+			'lwtv-plugin-gutenberg-blocks',
+			'js_data',
+			array(
+				'affiliate_default_image_url' => plugins_url( 'affiliate-grid.png', __FILE__ ),
+			)
+		);
+
 		// Styles.
 		$editor_css = 'build/index.css';
 		wp_enqueue_style(
