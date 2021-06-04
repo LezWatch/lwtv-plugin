@@ -12,7 +12,7 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Varnish {
 
 	public function __construct() {
-		add_filter( 'vhp_purge_urls', array( $this, 'varnish_urls' ) );
+		add_filter( 'vhp_purge_urls', array( $this, 'varnish_urls' ), 10, 2 );
 	}
 
 	public function varnish_urls( $urls, $postid ) {
