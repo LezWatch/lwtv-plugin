@@ -94,13 +94,13 @@ class LWTV_List_JSON {
 				// Custom extra for type
 				switch ( $type ) {
 					case 'shows':
-						$post_options[ $post->ID ]['onair'] = get_post_meta( $show_id, 'lezshows_on_air', true );
+						$post_options[ $post->ID ]['onair'] = get_post_meta( $post->ID, 'lezshows_on_air', true );
 						break;
 					case 'actors':
-						$post_options[ $post->ID ]['queer'] = get_post_meta( $post->ID, 'lezactors_queer', true );
+						$post_options[ $post->ID ]['queer'] = ( get_post_meta( $post->ID, 'lezactors_queer', true ) ) ? 'yes' : 'no';
 						break;
 					case 'characters':
-						$post_options[ $post->ID ]['dead'] = ( has_term( 'dead', 'lez_cliches', $post->ID ) ) ? 'dead' : 'alive';
+						$post_options[ $post->ID ]['status'] = ( has_term( 'dead', 'lez_cliches', $post->ID ) ) ? 'dead' : 'alive';
 						break;
 				}
 			}

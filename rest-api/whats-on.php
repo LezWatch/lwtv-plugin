@@ -230,7 +230,7 @@ class LWTV_Whats_On_JSON {
 			$on_air = get_post_meta( $show_id, 'lezshows_on_air', true );
 
 			// We only want to do the rest of this if the show is on air.
-			if ( 'yes' === $onair ) {
+			if ( 'yes' === $on_air ) {
 				// Remove everything after a space-and parenthesis to compensate for
 				// 'charmed (2018)' situations but NOT 'thirtysomething(else)'
 				// can shows PLEASE stop being so clever? UGH.

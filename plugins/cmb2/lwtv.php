@@ -63,7 +63,6 @@ class LWTV_CMB2 {
 				'post_type'   => 'post',
 				'numberposts' => wp_count_posts( 'post' )->publish,
 				'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
-				'exclude'     => $the_id,
 			)
 		);
 
@@ -92,6 +91,9 @@ class LWTV_CMB2 {
 						break;
 				}
 
+				if ( $post->ID !== $the_id ) {
+					$post_options[ $post->ID ] = $post_title;
+				}
 			}
 		}
 
