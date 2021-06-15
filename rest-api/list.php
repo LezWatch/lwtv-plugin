@@ -70,19 +70,46 @@ class LWTV_List_JSON {
 	}
 
 	public function list( $type ) {
-		// Spit back an array of all ID/title/link?
-
 		// Get a list of all posts per $type
-		$queery = new WP_Query(
+		$posts = get_posts(
 			array(
 				'post_type'      => 'post_type_' . $type,
 				'posts_per_page' => ( 5 + wp_count_posts( 'post_type_' . $type )->publish ),
 				'post_status'    => 'publish',
-				'no_found_rows'  => true,
 			)
 		);
 
-		return $queery;
+		// Empty array
+		$post_options = array();
+
+		// If there are posts...
+		if ( $posts ) {
+			foreach ( $posts as $post ) {
+				// Base Array
+				$post_options[ $post->ID ] = array(
+					'title' => $post->post_title,
+					'url'   => get_the_permalink( $post->ID ),
+				);
+
+				// Custom extra for type
+				switch ( $type ) {
+					case 'shows':
+						$post_options[ $post->ID ]['onair'] = get_post_meta( $show_id, 'lezshows_on_air', true );
+						break;
+					case 'actors':
+						$post_options[ $post->ID ]['queer'] = get_post_meta( $post->ID, 'lezactors_queer', true );
+						break;
+					case 'characters':
+						$post_options[ $post->ID ]['dead'] = ( has_term( 'dead', 'lez_cliches', $post->ID ) ) ? 'dead' : 'alive';
+						break;
+				}
+			}
+		}
+
+		// Alphabetize
+		asort( $post_options );
+
+		return $post_options;
 
 	}
 
