@@ -73,15 +73,16 @@ class LWTV_List_JSON {
 		// Spit back an array of all ID/title/link?
 
 		// Get a list of all posts per $type
-		$return = ( new LWTV_CMB2() )->get_post_options(
+		$queery = new WP_Query(
 			array(
-				'post_type'   => 'post_type_' . $type,
-				'numberposts' => ( 50 + wp_count_posts( 'post_type_' . $type )->publish ),
-				'post_status' => array( 'publish' ),
+				'post_type'      => 'post_type_' . $type,
+				'posts_per_page' => ( 5 + wp_count_posts( 'post_type_' . $type )->publish ),
+				'post_status'    => 'publish',
+				'no_found_rows'  => true,
 			)
 		);
 
-		return $return;
+		return $queery;
 
 	}
 
