@@ -73,9 +73,6 @@ class LWTV_Affilliates {
 			$format = ( in_array( $format, self::$valid_formats, true ) ) ? esc_attr( $format ) : 'wide';
 
 			switch ( $format ) {
-				case 'banner':
-					$advert = adrotate_group( 1 );
-					break;
 				case 'text':
 					$advert = adrotate_group( 5 );
 					break;
