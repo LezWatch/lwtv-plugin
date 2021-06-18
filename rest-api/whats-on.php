@@ -243,7 +243,7 @@ class LWTV_Whats_On_JSON {
 				if ( ! is_wp_error( $details ) && is_array( $details ) && isset( $details['next'] ) ) {
 					// Return details:
 					$return = array(
-						'pretty'       => 'The next episode of "' . $show_name . '" ( ' . $details['next'] . ') will air on US/Eastern.',
+						'pretty'       => 'The next episode of "' . $show_name . '" is ' . $details['next'] . '.',
 						'next'         => $details['next'],
 						'next_summary' => $details['next_summary'],
 						'tvmaze'       => $details['tvmaze'],
