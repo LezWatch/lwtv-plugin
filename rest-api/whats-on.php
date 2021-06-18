@@ -212,7 +212,7 @@ class LWTV_Whats_On_JSON {
 			$return['pretty'] = 'There is no upcoming airing of this show in the next 30 days.';
 
 			// If we passed a show ID, try to flip it to a post-slug
-			// Pretty much so we can be lazy in other places.
+			// pretty much so we can be lazy in other places.
 			if ( is_numeric( $show ) ) {
 				$show_id   = $show;
 				$show_name = get_the_title( $show );
@@ -226,23 +226,29 @@ class LWTV_Whats_On_JSON {
 				}
 			}
 
-			// Remove everything after a space-and parenthesis to compensate for
-			// 'charmed (2018)' situations but NOT 'thirtysomething(else)'
-			// can shows PLEASE stop being so clever? UGH.
-			// Also remove accents, which TVMaze is having ish with.
-			$show_name = remove_accents( trim( current( explode( ' (', get_the_title( $show_id ) ) ) ) );
+			// Get the on-air status.
+			$on_air = get_post_meta( $show_id, 'lezshows_on_air', true );
 
-			// Get the details based on Show ID!
-			$details = self::get_show_details( $show_id, $show_name );
+			// We only want to do the rest of this if the show is on air.
+			if ( 'yes' === $on_air ) {
+				// Remove everything after a space-and parenthesis to compensate for
+				// 'charmed (2018)' situations but NOT 'thirtysomething(else)'
+				// can shows PLEASE stop being so clever? UGH.
+				// Also remove accents, which TVMaze is having ish with.
+				$show_name = remove_accents( trim( current( explode( ' (', get_the_title( $show_id ) ) ) ) );
 
-			if ( ! is_wp_error( $details ) && is_array( $details ) && isset( $details['next'] ) ) {
-				// Return details:
-				$return = array(
-					'pretty'       => 'The next episode of "' . $show_name . '" ( ' . $details['next'] . ') will air on US/Eastern.',
-					'next'         => $details['next'],
-					'next_summary' => $details['next_summary'],
-					'tvmaze'       => $details['tvmaze'],
-				);
+				// Get the details based on Show ID!
+				$details = self::get_show_details( $show_id, $show_name );
+
+				if ( ! is_wp_error( $details ) && is_array( $details ) && isset( $details['next'] ) ) {
+					// Return details:
+					$return = array(
+						'pretty'       => 'The next episode of "' . $show_name . '" ( ' . $details['next'] . ') will air on US/Eastern.',
+						'next'         => $details['next'],
+						'next_summary' => $details['next_summary'],
+						'tvmaze'       => $details['tvmaze'],
+					);
+				}
 			}
 		}
 
@@ -251,68 +257,90 @@ class LWTV_Whats_On_JSON {
 
 	public function get_show_details( $show_id, $show_name ) {
 
-		// Set default
-		$array = array();
+		$on_air = get_post_meta( $show_id, 'lezshows_on_air', true );
+		$array  = $on_air;
 
-		if ( get_post_meta( $show_id, 'lezshows_imdb', true ) ) {
-			// Use IMDB if we can.
-			$show_info = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . get_post_meta( $show_id, 'lezshows_imdb', true ) );
-		} else {
-			// Check the show namer just in case we have odd versions for TV Maze.
-			require_once dirname( __FILE__, 2 ) . '/cpts/shows/calendar-names.php';
-			$show_name = ( new LWTV_Shows_Calendar() )->check_name( $show_name, 'lwtv' );
+		// If the show isn't on-air, we short circuit and stop.
+		if ( 'yes' === $on_air ) {
 
-			// Search TV Maze API for show info:
-			$show_info = wp_remote_get( 'http://api.tvmaze.com/singlesearch/shows?q=' . $show_name );
-		}
+			$array = get_post_meta( $show_id, 'lezshows_tvmaze', true );
 
-		// If there's content, let's make it an array
-		$show_array = ( ! is_wp_error( $show_info ) && isset( $show_info['body'] ) ) ? json_decode( $show_info['body'], true ) : false;
+			// If the array isn't an array, time isn't set, or time is MORE than the
+			// 'next check', we check. Otherwise we can reuse what we have and save
+			// CPU.
+			if ( ! is_array( $array ) || ! isset( $array['time'] ) || time() >= $array['time'] ) {
 
-		// Just in case we still have nothing...
-		if ( false !== $show_array ) {
-			// Default Episode Arrays
-			$episodes_array = array();
+				// Set default
+				$array = array(
+					'time' => strtotime( 'tomorrow 01:00' ),
+					'name' => $show_name,
+					'url'  => get_the_permalink( $show_id ),
+				);
 
-			// Get the previous episode, if it exists:
-			$previous_episode = ( isset( $show_array['_links']['previousepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['previousepisode']['href'] ) : false;
+				if ( get_post_meta( $show_id, 'lezshows_imdb', true ) ) {
+					// Use IMDB if we can.
+					$show_info = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . get_post_meta( $show_id, 'lezshows_imdb', true ) );
+				} else {
+					// Check the show namer just in case we have odd versions for TV Maze.
+					require_once dirname( __FILE__, 2 ) . '/cpts/shows/calendar-names.php';
+					$show_name = ( new LWTV_Shows_Calendar() )->check_name( $show_name, 'lwtv' );
 
-			// If the previous episode URL has data, we use it as an array
-			$episodes_array['previous'] = ( false !== $previous_episode && isset( $previous_episode['body'] ) ) ? json_decode( $previous_episode['body'], true ) : false;
+					// Search TV Maze API for show info:
+					$show_info = wp_remote_get( 'http://api.tvmaze.com/singlesearch/shows?q=' . $show_name );
+				}
 
-			// Get the next episode if it exists.
-			$next_episode = ( isset( $show_array['_links']['nextepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['nextepisode']['href'] ) : false;
+				// If there's content, let's make it an array
+				$show_array = ( ! is_wp_error( $show_info ) && isset( $show_info['body'] ) ) ? json_decode( $show_info['body'], true ) : false;
 
-			// If the next episode URL has data, we use it as an array
-			$episodes_array['next'] = ( false !== $next_episode && isset( $next_episode['body'] ) ) ? json_decode( $next_episode['body'], true ) : false;
+				// Just in case we still have nothing...
+				if ( false !== $show_array ) {
+					// Default Episode Arrays
+					$episodes_array = array();
 
-			// Build out next episode:
-			// If there's a next episode and it has a title, we go!
-			// There are rare cases where episodes have no titles, and those tend to be
-			// errors.
-			if ( false !== $episodes_array['next'] && isset( $episodes_array['next']['name'] ) ) {
-				$next  = '"' . $episodes_array['next']['name'] . '"';
-				$next .= ( isset( $episodes_array['next']['season'] ) && isset( $episodes_array['next']['number'] ) ) ? ' (' . $episodes_array['next']['season'] . 'x' . $episodes_array['next']['number'] . ')' : '';
-				$next .= ( isset( $episodes_array['next']['airstamp'] ) ) ? ' on ' . self::convert_time( $episodes_array['next']['airstamp'] ) : '';
+					// Get the previous episode, if it exists:
+					$previous_episode = ( isset( $show_array['_links']['previousepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['previousepisode']['href'] ) : false;
 
-				// set final array
-				$array['next']         = $next;
-				$array['next_summary'] = ( isset( $episodes_array['next']['summary'] ) ) ? wp_filter_nohtml_kses( $episodes_array['next']['summary'] ) : 'TBD';
+					// If the previous episode URL has data, we use it as an array
+					$episodes_array['previous'] = ( false !== $previous_episode && isset( $previous_episode['body'] ) ) ? json_decode( $previous_episode['body'], true ) : false;
+
+					// Get the next episode if it exists.
+					$next_episode = ( isset( $show_array['_links']['nextepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['nextepisode']['href'] ) : false;
+
+					// If the next episode URL has data, we use it as an array
+					$episodes_array['next'] = ( false !== $next_episode && isset( $next_episode['body'] ) ) ? json_decode( $next_episode['body'], true ) : false;
+
+					// Build out next episode:
+					// If there's a next episode and it has a title, we go!
+					// There are rare cases where episodes have no titles, and those tend to be
+					// errors.
+					if ( false !== $episodes_array['next'] && isset( $episodes_array['next']['name'] ) ) {
+						$next  = '"' . $episodes_array['next']['name'] . '"';
+						$next .= ( isset( $episodes_array['next']['season'] ) && isset( $episodes_array['next']['number'] ) ) ? ' (' . $episodes_array['next']['season'] . 'x' . $episodes_array['next']['number'] . ')' : '';
+						$next .= ( isset( $episodes_array['next']['airstamp'] ) ) ? ' on ' . self::convert_time( $episodes_array['next']['airstamp'] ) : '';
+
+						// set final array
+						$array['next']         = $next;
+						$array['next_summary'] = ( isset( $episodes_array['next']['summary'] ) ) ? wp_filter_nohtml_kses( $episodes_array['next']['summary'] ) : 'TBD';
+					}
+
+					// Build out Previous episode:
+					// Same logic, no title, no listing.
+					if ( false !== $episodes_array['previous'] && isset( $episodes_array['previous']['name'] ) ) {
+						$previous  = '"' . $episodes_array['previous']['name'] . '"';
+						$previous .= ( isset( $episodes_array['previous']['season'] ) && isset( $episodes_array['previous']['number'] ) ) ? ' (' . $episodes_array['previous']['season'] . 'x' . $episodes_array['previous']['number'] . ')' : '';
+						$previous .= ( isset( $episodes_array['previous']['airstamp'] ) ) ? ' on ' . self::convert_time( $episodes_array['previous']['airstamp'] ) : '';
+
+						// set final array
+						$array['previous'] = $previous;
+					}
+
+					// Add in the TV maze link.
+					$array['tvmaze'] = ( isset( $show_array['url'] ) ) ? $show_array['url'] : 'https://tvmaze.com/';
+
+					// save array as transient for a day.
+					set_transient( $transient, $array, DAY_IN_SECONDS );
+				}
 			}
-
-			// Build out Previous episode:
-			// Same logic, no title, no listing.
-			if ( false !== $episodes_array['previous'] && isset( $episodes_array['previous']['name'] ) ) {
-				$previous  = '"' . $episodes_array['previous']['name'] . '"';
-				$previous .= ( isset( $episodes_array['previous']['season'] ) && isset( $episodes_array['previous']['number'] ) ) ? ' (' . $episodes_array['previous']['season'] . 'x' . $episodes_array['previous']['number'] . ')' : '';
-				$previous .= ( isset( $episodes_array['previous']['airstamp'] ) ) ? ' on ' . self::convert_time( $episodes_array['previous']['airstamp'] ) : '';
-
-				// set final array
-				$array['previous'] = $previous;
-			}
-
-			// Add in the TV maze link.
-			$array['tvmaze'] = ( isset( $show_array['url'] ) ) ? $show_array['url'] : 'https://tvmaze.com/';
 		}
 
 		return $array;

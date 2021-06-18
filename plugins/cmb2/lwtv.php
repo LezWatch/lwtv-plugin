@@ -78,18 +78,19 @@ class LWTV_CMB2 {
 						$post_title .= ' (QUEER IRL)';
 					}
 				}
-				// If the post is draft, let's flag it.
-				if ( 'draft' === get_post_status( $post->ID ) ) {
-					$post_title .= ' - DRAFT';
+
+				switch ( get_post_status( $post->ID ) ) {
+					case 'draft':
+						$post_title .= ' - DRAFT';
+						break;
+					case 'future':
+						$post_title .= ' - SCHEDULED';
+						break;
+					case 'private':
+						$post_title .= ' - PRIVATE';
+						break;
 				}
-				// If the post is scheduled, let's flag it.
-				if ( 'future' === get_post_status( $post->ID ) ) {
-					$post_title .= ' - SCHEDULED';
-				}
-				// If the post is private, we should flag that too
-				if ( 'private' === get_post_status( $post->ID ) ) {
-					$post_title .= ' - PRIVATE';
-				}
+
 				if ( $post->ID !== $the_id ) {
 					$post_options[ $post->ID ] = $post_title;
 				}
