@@ -61,6 +61,7 @@ class LWTV_Ways_To_Watch {
 				'disneyplusoriginals.disney' => 'disney',
 				'globoplay.globo'            => 'globo',
 				'peacocktv'                  => 'peacock',
+				'paramountplus'              => 'cbs',
 				'sho'                        => 'showtime',
 				'showtimeanytime'            => 'showtime',
 				'youtu.be'                   => 'youtube',
