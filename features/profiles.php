@@ -58,7 +58,19 @@ class LWTV_User_Profiles {
 
 	public function extra_profile_fields( $user ) {
 		?>
-		<h3>Extra Stuff</h3>
+		<style>
+		.yoast-settings {
+			display: none;
+		}
+		h2#yoast-seo-schema {
+			visibility: hidden;
+		}
+		h2#yoast-seo-schema:before {
+			visibility: visible;
+			content: 'LezWatch.TV Customizations';
+		}
+		</style>
+
 		<table class="form-table">
 
 			<?php
@@ -74,6 +86,13 @@ class LWTV_User_Profiles {
 				<?php
 			}
 			?>
+			<tr>
+				<th><label for="pronouns">Pronouns</label></th>
+				<td>
+					<input type="text" name="gender" id="gender" value="<?php echo esc_attr( get_the_author_meta( 'pronouns', $user->ID ) ); ?>" class="regular-text" /><br />
+					<span class="description">Preferred Pronouns</span>
+				</td>
+			</tr>
 			<tr>
 				<th><label for="gender">Gender</label></th>
 				<td>
@@ -101,6 +120,7 @@ class LWTV_User_Profiles {
 		update_user_meta( $user_id, 'jobrole', sanitize_text_field( $_POST['jobrole'] ) );
 		update_user_meta( $user_id, 'gender', sanitize_text_field( $_POST['gender'] ) );
 		update_user_meta( $user_id, 'sexuality', sanitize_text_field( $_POST['sexuality'] ) );
+		update_user_meta( $user_id, 'pronouns', sanitize_text_field( $_POST['pronouns'] ) );
 		// phpcs:enable
 	}
 }
