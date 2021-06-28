@@ -4,51 +4,29 @@
 
 const { Component, Fragment } = wp.element;
 const { __ } = wp.i18n;
-const { SelectControl, PanelBody } = wp.components;
+const { SelectControl, PanelBody, TextControl } = wp.components;
 const { InspectorControls } = wp.blockEditor;
 const { withSelect } = wp.data;
 
 import ServerSideRender from '@wordpress/server-side-render';
 
 class AuthorProfileBlock extends Component {
-
-	getAuthorsForSelect() {
-		const { authors } = this.props;
-		return authors.map( ( author ) => {
-
-			return {
-				label: author.name,
-				value: author.id,
-			};
-
-		} );
-	}
-
 	render() {
 
 		const { attributes, setAttributes, authors } = this.props;
 		const { users, format } = attributes;
 
-		const authorList = this.getAuthorsForSelect();
-
-		// Customize List
-		authorList.push( { label: '- Select User -', value: 0 } );
-		authorList.sort( function( a, b ) {
-			return a.value - b.value;
-		} );
-
 		const inspectorControls = (
 			<InspectorControls>
-				<PanelBody title={ 'Author Profile Settings' }>
-					<SelectControl
-						label={ 'Author ID' }
-						type="number"
+				<PanelBody title={ 'Team Member Settings' }>
+					<TextControl
+						label={ 'Username' }
+						help={ 'Username or ID of team member (i.e. liljimmi, ipstenu, saralance)' }
 						value={ users }
-						options={ authorList }
 						onChange={ ( value ) => setAttributes( { users: value } ) }
 					/>
 					<SelectControl
-						label={ 'Format' }
+						label={ 'Card Format' }
 						type="string"
 						value={ format }
 						options={ [
@@ -74,8 +52,4 @@ class AuthorProfileBlock extends Component {
 	}
 }
 
-export default withSelect( ( select ) => {
-	return {
-		authors: select( 'core' ).getAuthors(),
-	};
-} )( AuthorProfileBlock );
+export default AuthorProfileBlock;
