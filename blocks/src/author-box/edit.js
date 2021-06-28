@@ -4,9 +4,11 @@
 
 const { Component, Fragment } = wp.element;
 const { __ } = wp.i18n;
-const { SelectControl, PanelBody, ServerSideRender } = wp.components;
+const { SelectControl, PanelBody } = wp.components;
 const { InspectorControls } = wp.blockEditor;
 const { withSelect } = wp.data;
+
+import ServerSideRender from '@wordpress/server-side-render';
 
 class AuthorProfileBlock extends Component {
 
@@ -26,10 +28,12 @@ class AuthorProfileBlock extends Component {
 
 		const { attributes, setAttributes, authors } = this.props;
 		const { users, format } = attributes;
-		const obj = this.getAuthorsForSelect();
-		obj.push( { label: '- Select User -', value: 0 } );
 
-		obj.sort( function( a, b ) {
+		const authorList = this.getAuthorsForSelect();
+
+		// Customize List
+		authorList.push( { label: '- Select User -', value: 0 } );
+		authorList.sort( function( a, b ) {
 			return a.value - b.value;
 		} );
 
@@ -40,7 +44,7 @@ class AuthorProfileBlock extends Component {
 						label={ 'Author ID' }
 						type="number"
 						value={ users }
-						options={ obj }
+						options={ authorList }
 						onChange={ ( value ) => setAttributes( { users: value } ) }
 					/>
 					<SelectControl
@@ -57,12 +61,6 @@ class AuthorProfileBlock extends Component {
 				</PanelBody>
 			</InspectorControls>
 		);
-
-		function isAuthor( author ) {
-			return parseInt( author.id ) === parseInt( users );
-		}
-
-		const newAuthor = authors.find( isAuthor );
 
 		return (
 			<Fragment>
