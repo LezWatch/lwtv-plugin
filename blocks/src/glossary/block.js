@@ -8,7 +8,8 @@ import './editor.scss';
 const { registerBlockType } = wp.blocks;
 const { createElement, Fragment } = wp.element;
 const { InspectorControls } = wp.editor;
-const { ServerSideRender, TextControl, PanelBody, SelectControl } = wp.components;
+const { TextControl, PanelBody, SelectControl } = wp.components;
+import ServerSideRender from '@wordpress/server-side-render';
 
 registerBlockType( 'lez-library/glossary', {
 	title: 'Glossary',
