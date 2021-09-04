@@ -41,7 +41,7 @@ class LWTV_Ways_To_Watch {
 			}
 
 			// Remove TLDs from the end:
-			$gtldomain = array( '.com', '.co.nz', '.co.uk', '.ca', '.co', '.go', '.org' );
+			$gtldomain = array( '.com', '.co.nz', '.co.uk', '.ca', '.co', '.go', '.org', '.tv' );
 			foreach ( $gtldomain as $remove ) {
 				$count = strlen( $remove );
 				if ( substr( $hostname, -$count ) === $remove ) {
@@ -60,6 +60,8 @@ class LWTV_Ways_To_Watch {
 				'disneyplus'                 => 'disney',
 				'disneyplusoriginals.disney' => 'disney',
 				'globoplay.globo'            => 'globo',
+				'paus.tv'                    => 'paus',
+				'watch.paus'                 => 'paus',
 				'peacocktv'                  => 'peacock',
 				'paramountplus'              => 'cbs',
 				'sho'                        => 'showtime',
@@ -115,6 +117,9 @@ class LWTV_Ways_To_Watch {
 				),
 				'hbomax'          => array(
 					'name' => 'HBO Max',
+				),
+				'paus'            => array(
+					'name' => 'paus',
 				),
 				'peacock'         => array(
 					'name' => 'Peacock TV (NBC)',
