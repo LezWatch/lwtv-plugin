@@ -308,7 +308,7 @@ class LWTV_Whats_On_JSON {
 						$next_episode = ( isset( $show_array['_links']['nextepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['nextepisode']['href'] ) : false;
 
 						// If the next episode URL has data, we use it as an array
-						$episodes_array['next'] = ( false !== $next_episode && isset( $next_episode['body'] ) ) ? json_decode( $next_episode['body'], true ) : false;
+						$episodes_array['next'] = ( ! is_wp_error( $next_episode ) && false !== $next_episode && isset( $next_episode['body'] ) ) ? json_decode( $next_episode['body'], true ) : false;
 					}
 
 					// Build out next episode:
