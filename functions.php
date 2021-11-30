@@ -5,6 +5,7 @@
  * Description: All the base code for LezWatch.TV - If this isn't active, the site dies. An ugly death.
  * Version: 3.2
  * Author: LezWatch.TV
+ * Update URI: http://lezwatchtv.com
  *
  * @package LWTV_PLUGIN
 */
