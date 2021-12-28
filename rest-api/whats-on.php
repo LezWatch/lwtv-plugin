@@ -300,20 +300,22 @@ class LWTV_Whats_On_JSON {
 					// Get the previous episode, if it exists:
 					$previous_episode = ( isset( $show_array['_links']['previousepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['previousepisode']['href'] ) : false;
 
-					// If the previous episode URL has data, we use it as an array
-					$episodes_array['previous'] = ( false !== $previous_episode && isset( $previous_episode['body'] ) ) ? json_decode( $previous_episode['body'], true ) : false;
+					if ( ! is_wp_error( $previous_episode ) ) {
+						// If the previous episode URL has data, we use it as an array
+						$episodes_array['previous'] = ( false !== $previous_episode && isset( $previous_episode['body'] ) ) ? json_decode( $previous_episode['body'], true ) : false;
 
-					// Get the next episode if it exists.
-					$next_episode = ( isset( $show_array['_links']['nextepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['nextepisode']['href'] ) : false;
+						// Get the next episode if it exists.
+						$next_episode = ( isset( $show_array['_links']['nextepisode']['href'] ) ) ? wp_remote_get( $show_array['_links']['nextepisode']['href'] ) : false;
 
-					// If the next episode URL has data, we use it as an array
-					$episodes_array['next'] = ( false !== $next_episode && isset( $next_episode['body'] ) ) ? json_decode( $next_episode['body'], true ) : false;
+						// If the next episode URL has data, we use it as an array
+						$episodes_array['next'] = ( ! is_wp_error( $next_episode ) && false !== $next_episode && isset( $next_episode['body'] ) ) ? json_decode( $next_episode['body'], true ) : false;
+					}
 
 					// Build out next episode:
 					// If there's a next episode and it has a title, we go!
 					// There are rare cases where episodes have no titles, and those tend to be
 					// errors.
-					if ( false !== $episodes_array['next'] && isset( $episodes_array['next']['name'] ) ) {
+					if ( ! empty( $episodes_array ) && false !== $episodes_array['next'] && isset( $episodes_array['next']['name'] ) ) {
 						$next  = '"' . $episodes_array['next']['name'] . '"';
 						$next .= ( isset( $episodes_array['next']['season'] ) && isset( $episodes_array['next']['number'] ) ) ? ' (' . $episodes_array['next']['season'] . 'x' . $episodes_array['next']['number'] . ')' : '';
 						$next .= ( isset( $episodes_array['next']['airstamp'] ) ) ? ' on ' . self::convert_time( $episodes_array['next']['airstamp'] ) : '';
@@ -325,7 +327,7 @@ class LWTV_Whats_On_JSON {
 
 					// Build out Previous episode:
 					// Same logic, no title, no listing.
-					if ( false !== $episodes_array['previous'] && isset( $episodes_array['previous']['name'] ) ) {
+					if ( ! empty( $episodes_array ) && false !== $episodes_array['previous'] && isset( $episodes_array['previous']['name'] ) ) {
 						$previous  = '"' . $episodes_array['previous']['name'] . '"';
 						$previous .= ( isset( $episodes_array['previous']['season'] ) && isset( $episodes_array['previous']['number'] ) ) ? ' (' . $episodes_array['previous']['season'] . 'x' . $episodes_array['previous']['number'] . ')' : '';
 						$previous .= ( isset( $episodes_array['previous']['airstamp'] ) ) ? ' on ' . self::convert_time( $episodes_array['previous']['airstamp'] ) : '';
@@ -351,7 +353,7 @@ class LWTV_Whats_On_JSON {
 		$tvmaze_tz = new DateTimeZone( 'UTC' );
 		$dt        = new DateTime( $date, $tvmaze_tz );
 		$dt->setTimezone( $lwtv_tz );
-		$airtime = $dt->format( 'l d F, Y \a\t g:i A T' );
+		$airtime = $dt->format( 'l j F, Y \a\t g:i A T' );
 
 		return $airtime;
 	}

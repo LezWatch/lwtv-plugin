@@ -22,10 +22,11 @@ class LWTV_Ways_To_Watch {
 
 		// Parse each URL to figure out who it is...
 		foreach ( $affiliate_url as $url ) {
-			$parsed_url = wp_parse_url( $url );
-			$hostname   = $parsed_url['host'];
-			$clean_path = ( isset( $parsed_url['path'] ) ) ? $parsed_url['path'] : '';
-			$clean_url  = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $clean_path;
+			$parsed_url  = wp_parse_url( $url );
+			$hostname    = $parsed_url['host'];
+			$clean_path  = ( isset( $parsed_url['path'] ) ) ? $parsed_url['path'] : '';
+			$clean_query = ( isset( $parsed_url['query'] ) ) ? '/?' . $parsed_url['query'] : '';
+			$clean_url   = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $clean_path . $clean_query;
 
 			// While I'd love to use an array to trim this stuff, some
 			// people use really weird URLs so we have to hard code.
@@ -41,7 +42,7 @@ class LWTV_Ways_To_Watch {
 			}
 
 			// Remove TLDs from the end:
-			$gtldomain = array( '.com', '.co.nz', '.co.uk', '.ca', '.co', '.go', '.org' );
+			$gtldomain = array( '.com', '.co.nz', '.co.uk', '.ca', '.co', '.go', '.org', '.tv' );
 			foreach ( $gtldomain as $remove ) {
 				$count = strlen( $remove );
 				if ( substr( $hostname, -$count ) === $remove ) {
@@ -52,6 +53,7 @@ class LWTV_Ways_To_Watch {
 			// URLs that belong to someone else.
 			$host_array = array(
 				'7eer'                       => 'cbs',
+				'southpark.cc'               => 'cc',
 				'itunes'                     => 'apple',
 				'tv.apple'                   => 'apple',
 				'itunes.apple'               => 'apple',
@@ -60,6 +62,9 @@ class LWTV_Ways_To_Watch {
 				'disneyplus'                 => 'disney',
 				'disneyplusoriginals.disney' => 'disney',
 				'globoplay.globo'            => 'globo',
+				'lesflicksvod.vhx.tv'        => 'lesflicks',
+				'paus.tv'                    => 'paus',
+				'watch.paus'                 => 'paus',
 				'peacocktv'                  => 'peacock',
 				'paramountplus'              => 'cbs',
 				'sho'                        => 'showtime',
@@ -69,75 +74,93 @@ class LWTV_Ways_To_Watch {
 
 			// URL and name params based on host.
 			$url_array = array(
-				'adultswim'       => array(
+				'acorn.tv'            => array(
+					'name' => 'Acorn',
+				),
+				'adultswim'           => array(
 					'name' => 'Adult Swim',
 				),
-				'amazon'          => array(
+				'amazon'              => array(
 					'url'   => $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20',
 					'extra' => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
 					'name'  => 'Amazon Prime TV',
 				),
-				'atresplayer'     => array(
+				'atresplayer'         => array(
 					'name' => 'ATRESPlayer',
 				),
-				'apple'           => array(
+				'apple'               => array(
 					'url'  => $clean_url . '?at=1010lMaT&ct=lwtv',
 					'name' => 'Apple TV+',
 				),
-				'bbcamerica'      => array(
+				'bbcamerica'          => array(
 					'name' => 'BBC America',
 				),
-				'bifltheseries'   => array(
+				'bifltheseries'       => array(
 					'name' => 'BIFL',
 				),
-				'cartoonnetwork'  => array(
+				'cartoonnetwork'      => array(
 					'name' => 'Cartoon Network',
 				),
-				'cbs'             => array(
+				'cbs'                 => array(
 					'url'   => 'https://paramountplus.qflm.net/c/1242493/1007327/3065',
 					'extra' => '<img height="0" width="0" src="https://paramountplus.qflm.net/i/1242493/1007327/3065" style="position:absolute;visibility:hidden;" border="0" />',
 					'name'  => 'Paramount+',
 				),
-				'cc'              => array(
+				'cc'                  => array(
 					'name' => 'Comedy Central',
 				),
-				'cwtv'            => array(
+				'cwtv'                => array(
 					'name' => 'The CW',
 				),
-				'dcuniverse'      => array(
+				'dcuniverse'          => array(
 					'name' => 'DC Universe',
 				),
-				'disney'          => array(
+				'disney'              => array(
 					'name' => 'Disney+',
 				),
-				'hallmarkchannel' => array(
+				'hallmarkchannel'     => array(
 					'name' => 'Hallmark Channel',
 				),
-				'hbomax'          => array(
+				'hbomax'              => array(
 					'name' => 'HBO Max',
 				),
-				'peacock'         => array(
+				'lesflicksvod'        => array(
+					'name' => 'LesFlicks',
+				),
+				'paus'                => array(
+					'name' => 'paus',
+				),
+				'peacock'             => array(
 					'name' => 'Peacock TV (NBC)',
 				),
-				'roosterteeth'    => array(
+				'peepoodo.bobbypills' => array(
+					'name' => 'BobbyPills',
+				),
+				'reelwomensnetwork'   => array(
+					'name' => 'Reel Women’s Network',
+				),
+				'roosterteeth'        => array(
 					'name' => 'Roster Teeth',
 				),
-				'tellofilms'      => array(
+				'svtvnetwork'         => array(
+					'name' => 'SVtv',
+				),
+				'tellofilms'          => array(
 					'name' => 'Tello Films',
 				),
-				'tntdrama'        => array(
+				'tntdrama'            => array(
 					'name' => 'TNT Drama',
 				),
-				'youtube'         => array(
+				'youtube'             => array(
 					'name' => 'YouTube',
 				),
-				'tvnz'            => array(
+				'tvnz'                => array(
 					'name' => 'TVNZ',
 				),
-				'tv.line.me'      => array(
+				'tv.line.me'          => array(
 					'name' => 'LineTV',
 				),
-				'tv.youtube'      => array(
+				'tv.youtube'          => array(
 					'name' => 'YouTube TV',
 				),
 			);

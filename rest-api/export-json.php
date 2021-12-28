@@ -119,7 +119,7 @@ class LWTV_Export_JSON {
 	/*
 	 * export function
 	 */
-	public function export( $type = 'actor', $item = 'unknown', $tax, $term ) {
+	public function export( $type = 'actor', $item = 'unknown', $tax = '', $term = '' ) {
 
 		// Sanitize (the switch will check the type)
 		$type = sanitize_text_field( $type );
