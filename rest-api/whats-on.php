@@ -353,7 +353,7 @@ class LWTV_Whats_On_JSON {
 		$tvmaze_tz = new DateTimeZone( 'UTC' );
 		$dt        = new DateTime( $date, $tvmaze_tz );
 		$dt->setTimezone( $lwtv_tz );
-		$airtime = $dt->format( 'l d F, Y \a\t g:i A T' );
+		$airtime = $dt->format( 'l j F, Y \a\t g:i A T' );
 
 		return $airtime;
 	}
