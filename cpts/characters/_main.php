@@ -445,11 +445,15 @@ class LWTV_CPT_Characters {
 		 *                                  Maslany.
 		 *   - The Vanishing Xenaphobia  -- When set to under 200, Xena doesn't show
 		 *                                  on the Xena:WP show page
+		 *   - Just a Phase Samantha     -- By the time we hit 6000 characters, the math
+		 *                                  stopped working to show all the characters.
+		 *                                  Now it's set to 1/10th the number of chars.
 		 *
 		 * Calculate the max number of characters to list, based on the
-		 * previous count. Default/Minimum is 200 characters.
+		 * previous count. Default/Minimum is the number of characters divided by 10
 		 */
-		$count = ( isset( $havecharcount ) && $havecharcount >= '200' ) ? $havecharcount : '200';
+		$precount = wp_count_posts( post_type_characters )->publish;
+		$count    = ( isset( $havecharcount ) && $havecharcount >= intdiv( $precount, 10 ) ) ? $havecharcount : intdiv( $precount, 10 );
 
 		// Valid Roles:
 		$valid_roles = array( 'regular', 'recurring', 'guest' );
