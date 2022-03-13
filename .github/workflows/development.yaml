@@ -28,4 +28,10 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: ${{ secrets.LWTV_DEV_TARGET }}plugins/lwtv-plugin
-          EXCLUDE: "/.git/, /.github/"
+          EXCLUDE: "/.git/, /.github/, /node_scripts/"
+
+#  ~/clone/package.json ~/clone/package-lock.json 
+# ~/clone/phpcs.xml.dist ~/clone/composer.json 
+# ~/clone/gutenberg/package-lock.json ~/clone/gutenberg/package.json 
+# ~/clone/gutenberg/README.md ~/clone/gutenberg/.editorconfig 
+# ~/clone/gutenberg/.eslintignore ~/clone/gutenberg/.eslintrc.json
