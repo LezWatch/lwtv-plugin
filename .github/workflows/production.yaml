@@ -1,0 +1,31 @@
+name: 'Deploy Plugin to Development'
+
+on:
+  push:
+    branches: [ production ]
+
+jobs:
+  deploy-website:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do a git checkout including submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Verify Workspace
+        run: |
+          echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+      - name: Verify Folder
+        run: |
+          ls -lah ${GITHUB_WORKSPACE}
+
+      - name: Deploy to LezWatch.TV Dev Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.LWTV_SSH_KEY }}
+          ARGS: "-rlgoDzvc -i"
+          REMOTE_HOST: ${{ secrets.LWTV_HOST }}
+          REMOTE_USER: ${{ secrets.LWTV_USER }}
+          TARGET: ${{ secrets.LWTV_TARGET }}plugins/lwtv-plugin
+          EXCLUDE: "/.git/, /.github/"

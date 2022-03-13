@@ -309,7 +309,7 @@ Composer will move everything into the right place, even NPM files.
 
 ### Deployment
 
-Pushes to branches are automatically deployed via Codeship as follows:
+Pushes to branches are automatically deployed via Actions as follows:
 
 * Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site) (password required - Ask Mika)
 * Production: [lezwatchtv.com](https://lezwatchtv.com)
