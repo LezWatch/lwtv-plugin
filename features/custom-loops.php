@@ -45,7 +45,7 @@ class LWTV_Loops {
 
 		// If the actor is cis, they may not be queer
 		// Also 'undefined' isn't queer since we just don't know
-		$straight_genders = array( 'cis-man', 'cis-woman', 'cisgender', 'undefined' );
+		$straight_genders = array( 'cis-man', 'cis-woman', 'cisgender', 'undefined', 'unknown' );
 		$gender_terms     = get_the_terms( $the_id, 'lez_actor_gender', true );
 		if ( ! $gender_terms || is_wp_error( $gender_terms ) || has_term( $straight_genders, 'lez_actor_gender', $the_id ) ) {
 			$gender = 'no';

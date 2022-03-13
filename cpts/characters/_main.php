@@ -452,7 +452,7 @@ class LWTV_CPT_Characters {
 		 * Calculate the max number of characters to list, based on the
 		 * previous count. Default/Minimum is the number of characters divided by 10
 		 */
-		$precount = wp_count_posts( post_type_characters )->publish;
+		$precount = wp_count_posts( 'post_type_characters' )->publish;
 		$count    = ( isset( $havecharcount ) && $havecharcount >= intdiv( $precount, 10 ) ) ? $havecharcount : intdiv( $precount, 10 );
 
 		// Valid Roles:

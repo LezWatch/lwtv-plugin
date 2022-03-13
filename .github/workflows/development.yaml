@@ -1,0 +1,37 @@
+name: 'Deploy Plugin to Development'
+
+on:
+  push:
+    branches: [ development ]
+
+jobs:
+  deploy-website:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do a git checkout including submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Verify Workspace
+        run: |
+          echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+      - name: Verify Folder
+        run: |
+          ls -lah ${GITHUB_WORKSPACE}
+
+      - name: Deploy to LezWatch.TV Dev Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.LWTV_SSH_KEY }}
+          ARGS: "-rlgoDzvc -i"
+          REMOTE_HOST: ${{ secrets.LWTV_HOST }}
+          REMOTE_USER: ${{ secrets.LWTV_USER }}
+          TARGET: ${{ secrets.LWTV_DEV_TARGET }}plugins/lwtv-plugin
+          EXCLUDE: "/.git/, /.github/, /node_scripts/"
+
+#  ~/clone/package.json ~/clone/package-lock.json 
+# ~/clone/phpcs.xml.dist ~/clone/composer.json 
+# ~/clone/gutenberg/package-lock.json ~/clone/gutenberg/package.json 
+# ~/clone/gutenberg/README.md ~/clone/gutenberg/.editorconfig 
+# ~/clone/gutenberg/.eslintignore ~/clone/gutenberg/.eslintrc.json
