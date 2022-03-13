@@ -401,7 +401,7 @@ class LWTV_Shows_CMB2 {
 		$field_worthshowwelove = $cmb_mustsee->add_field(
 			array(
 				'name'    => 'Show We Love',
-				'desc'    => 'Above all else, this is a show everyone loves. Only use if you are a billion percent sure and have cleared it on Trello (or over drinks).',
+				'desc'    => 'This is a show we officially love. Only use if you\'ve cleared it with the Editorial Team.',
 				'id'      => $prefix . 'worthit_show_we_love',
 				'type'    => 'checkbox',
 				'default' => false,
