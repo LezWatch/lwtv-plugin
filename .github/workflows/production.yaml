@@ -1,4 +1,4 @@
-name: 'Deploy Plugin to Development'
+name: 'Deploy Plugin to Production'
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
         run: |
           ls -lah ${GITHUB_WORKSPACE}
 
-      - name: Deploy to LezWatch.TV Dev Server
+      - name: Deploy to LezWatch.TV Production Server
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.LWTV_SSH_KEY }}
@@ -29,3 +29,9 @@ jobs:
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: ${{ secrets.LWTV_TARGET }}plugins/lwtv-plugin
           EXCLUDE: "/.git/, /.github/"
+
+#  ~/clone/package.json ~/clone/package-lock.json 
+# ~/clone/phpcs.xml.dist ~/clone/composer.json 
+# ~/clone/gutenberg/package-lock.json ~/clone/gutenberg/package.json 
+# ~/clone/gutenberg/README.md ~/clone/gutenberg/.editorconfig 
+# ~/clone/gutenberg/.eslintignore ~/clone/gutenberg/.eslintrc.json
