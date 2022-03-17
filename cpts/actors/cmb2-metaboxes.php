@@ -114,7 +114,6 @@ class LWTV_Actors_CMB2 {
 				'priority'     => 'default',
 				'show_names'   => true, // Show field names on the left
 				'show_in_rest' => true,
-				'cmb_styles'   => false,
 			)
 		);
 		// Field: Actor Gender Idenity
@@ -141,6 +140,20 @@ class LWTV_Actors_CMB2 {
 				'default'          => 'unknown',
 				'show_option_none' => false,
 				'remove_default'   => 'true',
+			)
+		);
+		// Field: Actor Pronouns
+		$field_pronouns = $cmb_actorside->add_field(
+			array(
+				'name'              => 'Pronouns',
+				'desc'              => 'Pronouns (Optional)',
+				'id'                => $prefix . 'pronouns',
+				'taxonomy'          => 'lez_actor_pronouns',
+				'type'              => 'taxonomy_multicheck_inline',
+				'default'           => '',
+				'select_all_button' => false,
+				'show_option_none'  => false,
+				'remove_default'    => 'true',
 			)
 		);
 		// Field: Year of Birth
@@ -241,12 +254,14 @@ class LWTV_Actors_CMB2 {
 			$row4           = $grid_actorside->addRow();
 			$row5           = $grid_actorside->addRow();
 			$row6           = $grid_actorside->addRow();
+			$row7           = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
-			$row2->addColumns( array( $field_birth, $field_death ) );
-			$row3->addColumns( array( $field_imdb, $field_wiki ) );
-			$row4->addColumns( array( $field_home ) );
-			$row5->addColumns( array( $field_twitter, $field_instagram ) );
-			$row6->addColumns( array( $field_excerpt ) );
+			$row2->addColumns( array( $field_pronouns ) );
+			$row3->addColumns( array( $field_birth, $field_death ) );
+			$row4->addColumns( array( $field_imdb, $field_wiki ) );
+			$row5->addColumns( array( $field_home ) );
+			$row6->addColumns( array( $field_twitter, $field_instagram ) );
+			$row7->addColumns( array( $field_excerpt ) );
 		}
 	}
 
