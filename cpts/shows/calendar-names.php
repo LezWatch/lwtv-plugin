@@ -30,14 +30,15 @@ class LWTV_Shows_Calendar {
 		$name_array   = array(
 			// TV MAZE NAME                       OUR NAME
 			'Charmed'                          => 'Charmed (2018)',
-			'Party of Five'                    => 'Party of Five (2020)',
-			'Shameless'                        => 'Shameless (US)',
 			'DC\'s Legends of Tomorrow'        => 'Legends of Tomorrow',
+			'Genera+ion'                       => 'Generation', // this is using the SLUG.
 			'Marvel\'s Runaways'               => 'Runaways',
 			'Marvel\'s Agents of S.H.I.E.L.D.' => 'Agents of S.H.I.E.L.D.',
-			'Genera+ion'                       => 'Generation', // this is using the SLUG.
 			'Mythic Quest: Raven\'s Banquet'   => 'Mythic Quest',
 			'Marvel\'s M.O.D.O.K.'             => 'M.O.D.O.K.',
+			'Party of Five'                    => 'Party of Five (2020)',
+			'Queer as Folk'                    => 'Queer as Folk (2022)',
+			'Shameless'                        => 'Shameless (US)',
 		);
 
 		$search_array = $name_array;
