@@ -93,8 +93,8 @@ registerBlockType( 'lwtv/affiliate-item', {
         let returnImage = <img src={ imgUrl } class="card-img-top" alt={ name } />;
         let button = '';
         if ( url ) {
-            returnImage = <a href={ url } target="_new"><img src={ imgUrl } class="card-img-top" alt={ name } /></a>;
-            button = <a href={ url } target="_new" class="btn btn-primary">Shop { name }</a>;
+            returnImage = <a href={ url } target="_new" rel="noopener"><img src={ imgUrl } class="card-img-top" alt={ name } /></a>;
+            button = <a href={ url } target="_new" class="btn btn-primary" rel="noopener">Shop { name }</a>;
         }
 
         return (
