@@ -18,6 +18,7 @@ class LWTV_Shows_CMB2 {
 	public $ratings_array;
 	public $thumbs_array;
 	public $affiliates_array;
+	public $language_array;
 
 	public function __construct() {
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
@@ -41,6 +42,8 @@ class LWTV_Shows_CMB2 {
 			'No'  => 'No',
 			'TBD' => 'TBD',
 		);
+
+		$this->language_array = ( new LWTV_Languages() )->all_languages();
 
 	}
 
@@ -397,6 +400,16 @@ class LWTV_Shows_CMB2 {
 				),
 			)
 		);
+
+		// Must See Grid.
+		if ( ! is_admin() ) {
+			return;
+		} else {
+			$grid_ms2 = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_mustsee );
+			$rowms2   = $grid_ms2->addRow();
+			$rowms2->addColumns( array( $field_worththumb, $field_worthdetails ) );
+		}
+
 		// Field: Worth It - We Love This Shit.
 		$field_worthshowwelove = $cmb_mustsee->add_field(
 			array(
@@ -407,7 +420,7 @@ class LWTV_Shows_CMB2 {
 				'default' => false,
 			)
 		);
-		// Field: Worth It - Affiliate Links.
+		// Field: Worth It - Watch Online
 		$field_affiliateurl = $cmb_mustsee->add_field(
 			array(
 				'name'       => 'Watch Online Link(s)',
@@ -431,14 +444,45 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 
-		// Must See Grid.
-		if ( ! is_admin() ) {
-			return;
-		} else {
-			$grid_ms2 = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_mustsee );
-			$rowms2   = $grid_ms2->addRow();
-			$rowms2->addColumns( array( $field_worththumb, $field_worthdetails ) );
-		}
+
+		// Field Group: Show Name Information
+		$group_names = $cmb_mustsee->add_field(
+			array(
+				'id'         => $prefix . 'show_names',
+				'type'       => 'group',
+				'repeatable' => true,
+				'options'    => array(
+					'group_title'   => 'Alternative Name #{#}',
+					'add_button'    => 'Add Another Name',
+					'remove_button' => 'Remove Name',
+					'sortable'      => true,
+				),
+			)
+		);
+		// Field: Show Name
+		$field_shows = $cmb_mustsee->add_group_field(
+			$group_names,
+			array(
+				'name'             => 'Name',
+				'desc'             => 'Name( the show goes by in a language different from the title',
+				'id'               => $prefix . 'alt_show_name',
+				'type'             => 'text',
+				'show_option_none' => true,
+			)
+		);
+		// Field: Show Language
+		$field_chartype = $cmb_mustsee->add_group_field(
+			$group_names,
+			array(
+				'name'             => 'Language',
+				'desc'             => 'Language (select from dropdown)',
+				'id'               => 'type',
+				'type'             => 'select',
+				'show_option_none' => true,
+				'default'          => 'custom',
+				'options'          => $this->language_array,
+			)
+		);
 
 		// Metabox: Basic Show Details.
 		$cmb_showdetails = new_cmb2_box(

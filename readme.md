@@ -127,6 +127,7 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - `related_posts_by_tag()` - Related Posts by Tags.
 * `custom-roles.php` - Custom roles created for curation of content
 * `debug.php` - Debugging Tools for weird content.
+* `languages.php` - List of languages
 * `ics-parser.php` - Connection to the ICS Parser for calendar data.
 * `private-data.php` - Shows alert that a page is hidden if the post is set private.
 * `profiles.php` - Custom profile code
@@ -219,7 +220,6 @@ _Alexa Skills (`/alexa/`)_
 _Templates (`/templates/`)_
 
 * `export-json.php` - uses var query data to determine what to show.
-
 
 ### Statistics
 

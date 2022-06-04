@@ -67,6 +67,7 @@ class LWTV_Ways_To_Watch {
 				'watch.paus'                 => 'paus',
 				'peacocktv'                  => 'peacock',
 				'paramountplus'              => 'cbs',
+				'primevideo'                 => 'amazon',
 				'sho'                        => 'showtime',
 				'showtimeanytime'            => 'showtime',
 				'youtu.be'                   => 'youtube',
@@ -83,7 +84,7 @@ class LWTV_Ways_To_Watch {
 				'amazon'              => array(
 					'url'   => $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20',
 					'extra' => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
-					'name'  => 'Amazon Prime TV',
+					'name'  => 'Prime Video',
 				),
 				'atresplayer'         => array(
 					'name' => 'ATRESPlayer',
@@ -137,7 +138,7 @@ class LWTV_Ways_To_Watch {
 					'name' => 'BobbyPills',
 				),
 				'reelwomensnetwork'   => array(
-					'name' => 'Reel Women’s Network',
+					'name' => 'Reel Women\'s Network',
 				),
 				'roosterteeth'        => array(
 					'name' => 'Roster Teeth',
