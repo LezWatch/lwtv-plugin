@@ -42,7 +42,7 @@ class LWTV_Ways_To_Watch {
 			}
 
 			// Remove TLDs from the end:
-			$gtldomain = array( '.com', '.co.nz', '.co.uk', '.ca', '.co', '.go', '.org', '.tv' );
+			$gtldomain = array( '.com', '.co.nz', '.co.uk', '.ca', '.co', '.go', '.org', '.tv', '.globo' );
 			foreach ( $gtldomain as $remove ) {
 				$count = strlen( $remove );
 				if ( substr( $hostname, -$count ) === $remove ) {
@@ -62,6 +62,7 @@ class LWTV_Ways_To_Watch {
 				'disneyplus'                 => 'disney',
 				'disneyplusoriginals.disney' => 'disney',
 				'globoplay.globo'            => 'globo',
+				'gshow.globo'                => 'globo',
 				'lesflicksvod.vhx.tv'        => 'lesflicks',
 				'paus.tv'                    => 'paus',
 				'watch.paus'                 => 'paus',
