@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'lezwatch/lwtv-plugin',
-        'pretty_version' => 'dev-development',
-        'version' => 'dev-development',
-        'reference' => '2a2aa82a9aee38470be995a5f3cd115d53e3c281',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '33ad63b7948fe823fd1a503a065dcc6119fd110b',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -20,9 +20,9 @@
             'dev_requirement' => false,
         ),
         'lezwatch/lwtv-plugin' => array(
-            'pretty_version' => 'dev-development',
-            'version' => 'dev-development',
-            'reference' => '2a2aa82a9aee38470be995a5f3cd115d53e3c281',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '33ad63b7948fe823fd1a503a065dcc6119fd110b',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
