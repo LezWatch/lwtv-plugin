@@ -13,7 +13,7 @@
     "chart.js": "^3.5.0",
     "copyfiles": "^2.4.1",
     "chartjs-plugin-annotation": "^1.0.0-rc",
-    "download-git-repo": "^1.1.0",
+    "download-git-repo": "^3.0.2",
     "tablesorter": "^2.31.3"
   }
 }
