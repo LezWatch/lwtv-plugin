@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'lezwatch/lwtv-plugin',
-        'pretty_version' => 'dev-development',
-        'version' => 'dev-development',
-        'reference' => '2a2aa82a9aee38470be995a5f3cd115d53e3c281',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '192741be96b25aac504d68864cd59c60382faf9b',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,18 +11,18 @@
     ),
     'versions' => array(
         'johngrogg/ics-parser' => array(
-            'pretty_version' => 'v2.2.2',
-            'version' => '2.2.2.0',
-            'reference' => '69c80471a0a99142ebc72b21c2bc084e81a7c4f4',
+            'pretty_version' => 'v3.1.1',
+            'version' => '3.1.1.0',
+            'reference' => '8fd2099ed361cf1065d280e97b656726778b0779',
             'type' => 'library',
             'install_path' => __DIR__ . '/../johngrogg/ics-parser',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'lezwatch/lwtv-plugin' => array(
-            'pretty_version' => 'dev-development',
-            'version' => 'dev-development',
-            'reference' => '2a2aa82a9aee38470be995a5f3cd115d53e3c281',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '192741be96b25aac504d68864cd59c60382faf9b',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

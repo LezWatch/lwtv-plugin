@@ -44,7 +44,7 @@ use PHPUnit\Framework\TestCase;
  *   have been similarly commented out and annotated with a ticket number
  *   (if one exists).
  */
-class Rfc5545Examples extends TestCase
+class rfc5545RecurrenceExamplesTest extends TestCase
 {
     // phpcs:disable Generic.Arrays.DisallowLongArraySyntax
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
@@ -63,7 +63,7 @@ class Rfc5545Examples extends TestCase
         date_default_timezone_set($this->originalTimeZone);
     }
 
-    // Page 123, Test 1 :: Daily, 10 Occurences
+    // Page 123, Test 1 :: Daily, 10 Occurrences
     public function test_page123_test1()
     {
         $checks = array(

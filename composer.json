@@ -12,6 +12,6 @@
     ],
     "require": {
         "php": ">=7.3.0",
-        "johngrogg/ics-parser": "^2"
+        "johngrogg/ics-parser": "^3"
     }
 }
