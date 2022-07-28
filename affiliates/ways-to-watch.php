@@ -64,6 +64,7 @@ class LWTV_Ways_To_Watch {
 				'globoplay.globo'            => 'globo',
 				'gshow.globo'                => 'globo',
 				'lesflicksvod.vhx.tv'        => 'lesflicks',
+				'oprah'                      => 'own',
 				'paus.tv'                    => 'paus',
 				'watch.paus'                 => 'paus',
 				'peacocktv'                  => 'peacock',
