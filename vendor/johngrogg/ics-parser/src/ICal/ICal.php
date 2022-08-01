@@ -8,7 +8,7 @@
  *
  * @author  Jonathan Goode <https://github.com/u01jmg3>
  * @license https://opensource.org/licenses/mit-license.php MIT License
- * @version 3.1.1
+ * @version 3.2.0
  */
 
 namespace ICal;
@@ -209,6 +209,7 @@ class ICal
         'disableCharacterReplacement',
         'filterDaysAfter',
         'filterDaysBefore',
+        'httpUserAgent',
         'skipRecurrence',
     );
 
@@ -1020,7 +1021,7 @@ class ICal
                 $paramValue = array();
                 $multiValue = false;
                 // A parameter can have multiple values separated by a comma
-                while ($i + 1 < count($splitLine) && $splitLine[$i + 1] == ',') {
+                while ($i + 1 < count($splitLine) && $splitLine[$i + 1] === ',') {
                     $paramValue[] = $splitLine[$i];
                     $i += 2;
                     $multiValue = true;
@@ -1038,7 +1039,7 @@ class ICal
 
             // After a colon all tokens are concatenated (non-standard behaviour because the property can have multiple values
             // according to RFC5545)
-            if ($splitLine[$i] == ':') {
+            if ($splitLine[$i] === ':') {
                 $i++;
                 while ($i < count($splitLine)) {
                     $valueObj .= $splitLine[$i];
@@ -1050,7 +1051,7 @@ class ICal
         }
 
         // Object construction
-        if (count($paramObj) > 0) {
+        if ($paramObj !== []) {
             $object[1][0] = $valueObj;
             $object[1][1] = $paramObj;
         } else {
@@ -1304,7 +1305,7 @@ class ICal
 
             // Separate the RRULE stanzas, and explode the values that are lists.
             $rrules = array();
-            foreach (explode(';', $anEvent['RRULE']) as $s) {
+            foreach (array_filter(explode(';', $anEvent['RRULE'])) as $s) {
                 list($k, $v) = explode('=', $s);
                 if (in_array($k, array('BYSETPOS', 'BYDAY', 'BYMONTHDAY', 'BYMONTH', 'BYYEARDAY', 'BYWEEKNO'))) {
                     $rrules[$k] = explode(',', $v);
@@ -2354,9 +2355,9 @@ class ICal
     /**
      * Parses a duration and applies it to a date
      *
-     * @param  string $date
-     * @param  string $duration
-     * @param  string $format
+     * @param  string        $date
+     * @param  \DateInterval $duration
+     * @param  string        $format
      * @return integer|\DateTime
      */
     protected function parseDuration($date, $duration, $format = self::UNIX_FORMAT)
