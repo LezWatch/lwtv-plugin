@@ -27,7 +27,7 @@ jobs:
           ARGS: "-rlgoDzvc -i"
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
-          TARGET: ${{ secrets.LWTV_TARGET }}plugins/lwtv-plugin
+          TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}/wp-content/plugins/lwtv-plugin
           EXCLUDE: "/.git/, /.github/"
 
 #  ~/clone/package.json ~/clone/package-lock.json 
