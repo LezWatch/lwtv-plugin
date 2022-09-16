@@ -98,6 +98,9 @@ class LWTV_Ways_To_Watch {
 				'bbcamerica'          => array(
 					'name' => 'BBC America',
 				),
+				'bet.plus'            => array(
+					'name' => 'BET+',
+				),
 				'bifltheseries'       => array(
 					'name' => 'BIFL',
 				),
