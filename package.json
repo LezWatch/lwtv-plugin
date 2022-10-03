@@ -11,9 +11,10 @@
   "repository": "https://github.com/lezwatch/lwtv-plugin/",
   "dependencies": {
     "chart.js": "^3.9.0",
-    "chartjs-plugin-annotation": "^1.0.0-rc",
+    "chartjs-plugin-annotation": "^2.0.1",
     "copyfiles": "^2.4.1",
-    "download-git-repo": "^0.0.2",
+    "download-git-repo": "^3.0.2",
+    "git-clone": "^0.2.0",
     "tablesorter": "^2.31.3"
   }
 }
