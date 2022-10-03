@@ -42,7 +42,7 @@ class LWTV_Ways_To_Watch {
 			}
 
 			// Remove TLDs from the end:
-			$gtldomain = array( '.com', '.co.nz', '.co.uk', '.ca', '.co', '.fandom', '.go', '.org', '.tv', '.globo' );
+			$gtldomain = array( '.com', '.co.nz', '.co.uk', '.ca', '.cbc', '.co', '.fandom', '.go', '.org', '.tv', '.globo' );
 			foreach ( $gtldomain as $remove ) {
 				$count = strlen( $remove );
 				if ( substr( $hostname, -$count ) === $remove ) {
