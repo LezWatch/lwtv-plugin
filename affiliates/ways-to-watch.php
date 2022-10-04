@@ -33,7 +33,7 @@ class LWTV_Ways_To_Watch {
 			// It catches about 90% of people.
 
 			// Remove common subdomains from the beginning:
-			$subdomain = array( 'www.', 'play.', 'premium.', 'watch.' );
+			$subdomain = array( 'www.', 'play.', 'premium.', 'watch.', 'gshow.' );
 			foreach ( $subdomain as $remove ) {
 				$count = strlen( $remove );
 				if ( substr( $hostname, 0, $count ) === $remove ) {
@@ -63,6 +63,7 @@ class LWTV_Ways_To_Watch {
 				'disneyplusoriginals.disney' => 'disney',
 				'globoplay.globo'            => 'globo',
 				'gshow.globo'                => 'globo',
+				'lobo'                       => 'globo',
 				'lesflicksvod.vhx.tv'        => 'lesflicks',
 				'oprah'                      => 'own',
 				'paus.tv'                    => 'paus',
