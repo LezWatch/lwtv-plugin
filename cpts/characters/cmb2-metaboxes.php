@@ -37,27 +37,39 @@ class LWTV_Characters_CMB2 {
 	 * Create a list of all shows
 	 */
 	public function cmb2_get_shows_options() {
-		$return = ( new LWTV_CMB2() )->get_post_options(
-			array(
-				'post_type'   => 'post_type_shows',
-				'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
-				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-			)
-		);
+		// Set transient because this is getting large.
+		$transient = get_transient( 'lwtv_list_shows' );
+		if ( false === $transient || ! in_array( $post_id, $transient ) ) {
+			$transient = ( new LWTV_CMB2() )->get_post_options(
+				array(
+					'post_type'   => 'post_type_shows',
+					'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
+					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+				)
+			);
+			set_transient( 'lwtv_list_shows', $transient, 24 * HOUR_IN_SECONDS );
+		}
+		$return = $transient;
 		return $return;
 	}
 
 	/*
 	 * Create a list of all actors
 	 */
-	public function cmb2_get_actors_options() {
-		$return = ( new LWTV_CMB2() )->get_post_options(
-			array(
-				'post_type'   => 'post_type_actors',
-				'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
-				'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
-			)
-		);
+	public function cmb2_get_actors_options( $post_id ) {
+		// Set transient because this is very large.
+		$transient = get_transient( 'lwtv_list_actors' );
+		if ( false === $transient || ! in_array( $post_id, $transient ) ) {
+			$transient = ( new LWTV_CMB2() )->get_post_options(
+				array(
+					'post_type'   => 'post_type_actors',
+					'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
+					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+				)
+			);
+			set_transient( 'lwtv_list_actors', $transient, 24 * HOUR_IN_SECONDS );
+		}
+		$return = $transient;
 		return $return;
 	}
 
@@ -183,11 +195,11 @@ class LWTV_Characters_CMB2 {
 		$field_actors = $cmb_characters->add_field(
 			array(
 				'name'             => 'Actor Name',
-				'desc'             => 'Add the actor as a CPT first.',
+				'desc'             => 'Click to type in the actor.',
 				'id'               => $prefix . 'actor',
-				'type'             => 'select',
+				'type'             => 'pw_select',
 				'show_option_none' => true,
-				'default'          => 'custom',
+				'default'          => 'N/A (none)',
 				'options_cb'       => array( $this, 'cmb2_get_actors_options' ),
 				'repeatable'       => true,
 			)
@@ -212,8 +224,9 @@ class LWTV_Characters_CMB2 {
 			$group_shows,
 			array(
 				'name'             => 'TV Show',
+				'desc'             => 'Click to type in the TV show title.',
 				'id'               => 'show',
-				'type'             => 'select',
+				'type'             => 'pw_select',
 				'show_option_none' => true,
 				'default'          => 'custom',
 				'options_cb'       => array( $this, 'cmb2_get_shows_options' ),

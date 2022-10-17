@@ -92,7 +92,7 @@ class LWTV_Actors_CMB2 {
 
 			echo '<p>Please double check. WikiData is sometimes wrong about Social Media.</p>';
 
-			echo '<p>(Warning: This doesn\'t yet refresh on save.)</p>';
+			echo '<p>(Warning: This doesn\'t currently refresh on save.)</p>';
 			// To Do: A button here to rerun the check.
 		}
 	}

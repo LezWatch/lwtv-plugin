@@ -532,17 +532,19 @@ class LWTV_CPT_Characters {
 	 */
 	public function save_post_meta( $post_id ) {
 
+		// Prevent running on autosave.
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE || ( 'auto-draft' === get_post_status( $post_id ) ) ) {
+			return;
+		}
+
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
-		// Don't do this on auto-drafts or drafts.
-		if ( 'auto-draft' !== get_post_status( $post_id ) ) {
-			// Character scores
-			( new LWTV_Characters_Calculate() )->do_the_math( $post_id );
+		// Character scores
+		( new LWTV_Characters_Calculate() )->do_the_math( $post_id );
 
-			// Get a list of URLs to flush
-			$clear_urls = ( new LWTV_Cache() )->collect_urls_for_characters( $post_id );
-		}
+		// Get a list of URLs to flush
+		$clear_urls = ( new LWTV_Cache() )->collect_urls_for_characters( $post_id );
 
 		// Always Sync Taxonomies
 		( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );

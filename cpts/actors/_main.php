@@ -200,14 +200,16 @@ class LWTV_CPT_Actors {
 	 */
 	public function save_post_meta( $post_id ) {
 
+		// Prevent running on autosave.
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE || ( 'auto-draft' === get_post_status( $post_id ) ) ) {
+			return;
+		}
+
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 
-		// Don't do this on auto-drafts or drafts.
-		if ( 'auto-draft' !== get_post_status( $post_id ) ) {
-			// Do the math
-			( new LWTV_Actors_Calculate() )->do_the_math( $post_id );
-		}
+		// Do the math
+		( new LWTV_Actors_Calculate() )->do_the_math( $post_id );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );

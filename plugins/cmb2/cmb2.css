@@ -89,3 +89,7 @@
 body.post-type-post_type_shows .cmb2-text-url {
 	width: 90%;
 }
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+	min-width: 200px;
+}
