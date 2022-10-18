@@ -84,6 +84,7 @@ class LWTV_CMB2 {
 						$post_title .= ' - DRAFT';
 						break;
 					case 'future':
+					case 'pending':
 						$post_title .= ' - SCHEDULED';
 						break;
 					case 'private':
@@ -91,6 +92,8 @@ class LWTV_CMB2 {
 						break;
 				}
 
+				// If the post ID is listed, we exclude
+				// (useful for 'related shows' since we don't want to list a show on itself.)
 				if ( $post->ID !== $the_id ) {
 					$post_options[ $post->ID ] = $post_title;
 				}
