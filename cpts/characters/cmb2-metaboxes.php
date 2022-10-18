@@ -102,7 +102,7 @@ class LWTV_Characters_CMB2 {
 				'show_names'   => true, // Show field names on the left
 			)
 		);
-		// Field: Character Gender Idenity
+		// Field: Character Gender Identity
 		$field_gender = $cmb_char_grid->add_field(
 			array(
 				'name'             => 'Gender',
