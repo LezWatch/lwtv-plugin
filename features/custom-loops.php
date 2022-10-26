@@ -41,28 +41,49 @@ class LWTV_Loops {
 		// Defaults
 		$gender    = 'yes';
 		$sexuality = 'yes';
+		$pronouns  = 'yes';
 		$is_queer  = 'no';
 
-		// If the actor is cis, they may not be queer
-		// Also 'undefined' isn't queer since we just don't know
+		// If the actor is cis, they may not be queer,
+		// 'undefined' isn't queer since we just don't know.
 		$straight_genders = array( 'cis-man', 'cis-woman', 'cisgender', 'undefined', 'unknown' );
 		$gender_terms     = get_the_terms( $the_id, 'lez_actor_gender', true );
 		if ( ! $gender_terms || is_wp_error( $gender_terms ) || has_term( $straight_genders, 'lez_actor_gender', $the_id ) ) {
 			$gender = 'no';
 		}
 
-		// If the actor is heterosexual they may not be queer
+		// If the actor is heterosexual they may not be queer.
 		$straight_sexuality = array( 'heterosexual', 'unknown' );
 		$sexuality_terms    = get_the_terms( $the_id, 'lez_actor_sexuality', true );
 		if ( ! $sexuality_terms || is_wp_error( $sexuality_terms ) || has_term( $straight_sexuality, 'lez_actor_sexuality', $the_id ) ) {
 			$sexuality = 'no';
 		}
 
-		// If either the gender or sexuality is queer, we have a queerio!
-		if ( 'yes' === $sexuality || 'yes' === $gender ) {
+		// If the actor uses cis pronouns, they may not be queer,
+		// but only if they have ONE straight pronoun.
+		// (i.e. he/him AND she/her is queer).
+		$straight_pronouns = array( 'he-him', 'she-her' );
+		$pronoun_terms     = get_the_terms( $the_id, 'lez_actor_pronouns', true );
+		if ( ! $pronoun_terms || is_wp_error( $pronoun_terms ) ) {
+			$pronouns = 'no';
+		} elseif ( has_term( $straight_pronouns, 'lez_actor_pronouns', $the_id ) ) {
+			// At this point, we're probably NOT queer per pronouns, but we have a check:
+			$pronoun_terms_count = 0;
+			foreach ( $pronoun_terms as $a_pronoun ) {
+				$pronoun_terms_count++;
+			}
+			// If they have more than one pronoun choice, they're queer (i.e. he/him AND she/her is queer)
+			if ( 1 === $pronoun_terms_count ) {
+				$pronouns = 'no';
+			}
+		}
+
+		// If any of the options are a yes, we have a queerio!
+		if ( 'yes' === $sexuality || 'yes' === $pronouns || 'yes' === $gender ) {
 			$is_queer = 'yes';
 		}
 
+		// If we're private, we aren't queer no matter what to protect identities.
 		if ( 'private' === get_post_status( $the_id ) ) {
 			$is_queer = 'no';
 		}
