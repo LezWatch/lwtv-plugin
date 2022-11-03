@@ -2,7 +2,7 @@
 /**
  * Name: Cron
  * Description: Some custom jobs we schedule for cron things.
- * Version: 1.0
+ * Version: 1.5
  */
 
 if ( ! defined( 'WPINC' ) ) {
