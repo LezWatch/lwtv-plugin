@@ -56,7 +56,7 @@ class LWTV_CMB2 {
 	/**
 	 * Extra Get post options.
 	 */
-	public function get_post_options( $query_args, $the_id = 0 ) {
+	public function get_post_options( $query_args ) {
 
 		// Build arguments, based on data sent.
 		$args = wp_parse_args(
@@ -97,11 +97,7 @@ class LWTV_CMB2 {
 						break;
 				}
 
-				// If the post ID is listed, we exclude.
-				// useful for 'related shows' since we don't want to list a show on itself.
-				if ( $post->ID !== $the_id ) {
-					$post_options[ $post->ID ] = $post_title;
-				}
+				$post_options[ $post->ID ] = $post_title;
 			}
 		}
 

@@ -202,15 +202,17 @@ new LWTV_Functions();
 /*
  * Add-Ons.
  */
+require_once 'features/_main.php';  // This has to be at the top.
+
 require_once 'admin/_main.php';
 require_once 'affiliates/_main.php';
 require_once 'blocks/_main.php';
-require_once 'features/_main.php';
 require_once 'plugins/_main.php';
 require_once 'rest-api/_main.php';
 require_once 'statistics/_main.php';
 require_once 'this-year/_main.php';
-require_once 'cpts/_main.php';       // has to be at the end
+
+require_once 'cpts/_main.php';       // This has to be at the end.
 
 /*
  * Composer

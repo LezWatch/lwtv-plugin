@@ -43,7 +43,10 @@ class LWTV_Shows_CMB2 {
 			'TBD' => 'TBD',
 		);
 
-		$this->language_array = ( new LWTV_Languages() )->all_languages();
+		// Allow for multiple language names to be saved.
+		if ( class_exists( 'LWTV_Languages' ) ) {
+			$this->language_array = ( new LWTV_Languages() )->all_languages();
+		}
 
 	}
 
@@ -64,18 +67,22 @@ class LWTV_Shows_CMB2 {
 	 * Create a list of all shows
 	 */
 	public function cmb2_get_shows_options() {
-		$post_id   = ( false !== get_the_ID() ) ? get_the_ID() : 0;
+		$the_id    = ( false !== get_the_ID() ) ? get_the_ID() : 0;
 		$transient = get_transient( 'lwtv_list_shows' );
-		if ( false === $transient || ! in_array( $post_id, $transient ) ) {
+		if ( false === $transient ) {
 			$transient = ( new LWTV_CMB2() )->get_post_options(
 				array(
 					'post_type'   => 'post_type_shows',
 					'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
 					'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-				),
-				$post_id
+				)
 			);
 			set_transient( 'lwtv_list_shows', $transient, 24 * HOUR_IN_SECONDS );
+		}
+
+		// Remove THIS show because we use it for related posts
+		if ( is_array( $transient ) && 0 !== $the_id ) {
+			unset( $transient[ $the_id ] );
 		}
 
 		return $transient;
@@ -468,7 +475,7 @@ class LWTV_Shows_CMB2 {
 			$group_names,
 			array(
 				'name'             => 'Name',
-				'desc'             => 'Name( the show goes by in a language different from the title',
+				'desc'             => 'Optional: Use if the show has different names per language',
 				'id'               => $prefix . 'alt_show_name',
 				'type'             => 'text',
 				'show_option_none' => true,

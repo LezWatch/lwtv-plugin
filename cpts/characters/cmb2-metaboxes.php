@@ -39,7 +39,7 @@ class LWTV_Characters_CMB2 {
 	public function cmb2_get_shows_options() {
 		// Set transient because this is getting large.
 		$transient = get_transient( 'lwtv_list_shows' );
-		if ( false === $transient || ! in_array( $post_id, $transient ) ) {
+		if ( false === $transient ) {
 			$transient = ( new LWTV_CMB2() )->get_post_options(
 				array(
 					'post_type'   => 'post_type_shows',
@@ -56,10 +56,10 @@ class LWTV_Characters_CMB2 {
 	/*
 	 * Create a list of all actors
 	 */
-	public function cmb2_get_actors_options( $post_id ) {
+	public function cmb2_get_actors_options() {
 		// Set transient because this is very large.
 		$transient = get_transient( 'lwtv_list_actors' );
-		if ( false === $transient || ! in_array( $post_id, $transient ) ) {
+		if ( false === $transient ) {
 			$transient = ( new LWTV_CMB2() )->get_post_options(
 				array(
 					'post_type'   => 'post_type_actors',
