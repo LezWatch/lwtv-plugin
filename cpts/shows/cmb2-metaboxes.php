@@ -463,7 +463,7 @@ class LWTV_Shows_CMB2 {
 				'type'       => 'group',
 				'repeatable' => true,
 				'options'    => array(
-					'group_title'   => 'Alternative Name #{#}',
+					'group_title'   => 'Alternative Name #{#} (OPTIONAL)',
 					'add_button'    => 'Add Another Name',
 					'remove_button' => 'Remove Name',
 					'sortable'      => true,
@@ -475,7 +475,7 @@ class LWTV_Shows_CMB2 {
 			$group_names,
 			array(
 				'name'             => 'Name',
-				'desc'             => 'Optional: Use if the show has different names per language',
+				'desc'             => 'Use if the show has different names per language',
 				'id'               => $prefix . 'alt_show_name',
 				'type'             => 'text',
 				'show_option_none' => true,
