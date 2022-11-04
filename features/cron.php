@@ -196,7 +196,7 @@ SQL;
 
 		$list_actors = get_transient( 'lwtv_list_actors' );
 		if ( false === $list_actors ) {
-			$transient = ( new LWTV_CMB2() )->get_post_options(
+			$list_actors = ( new LWTV_CMB2() )->get_post_options(
 				array(
 					'post_type'   => 'post_type_actors',
 					'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
