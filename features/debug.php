@@ -515,8 +515,11 @@ class LWTV_Debug {
 					}
 				}
 
-				// If they're cartoons, they can have no actor.
-				if ( ! $check['actors'] && ! has_term( 'cartoon', 'lez_cliches' ) ) {
+				// If they're cartoons, or in the actorless array, they can have no actor.
+				$actorless_characters = array(
+					'81395', // Danny the street
+				);
+				if ( ! $check['actors'] && ! has_term( 'cartoon', 'lez_cliches' ) && ! in_array( $char_id, $actorless_characters ) ) {
 					$problems[] = 'No actors listed.';
 				}
 

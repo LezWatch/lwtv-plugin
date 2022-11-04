@@ -28,17 +28,19 @@ class LWTV_Shows_Calendar {
 		// List of valid sources.
 		$valid_source = array( 'lwtv', 'tvmaze' );
 		$name_array   = array(
-			// TV MAZE NAME                       OUR NAME
-			'Charmed'                          => 'Charmed (2018)',
-			'DC\'s Legends of Tomorrow'        => 'Legends of Tomorrow',
-			'Genera+ion'                       => 'Generation', // this is using the SLUG.
-			'Marvel\'s Runaways'               => 'Runaways',
-			'Marvel\'s Agents of S.H.I.E.L.D.' => 'Agents of S.H.I.E.L.D.',
-			'Mythic Quest: Raven\'s Banquet'   => 'Mythic Quest',
-			'Marvel\'s M.O.D.O.K.'             => 'M.O.D.O.K.',
-			'Party of Five'                    => 'Party of Five (2020)',
-			'Queer as Folk'                    => 'Queer as Folk (2022)',
-			'Shameless'                        => 'Shameless (US)',
+			// TV MAZE NAME                              => OUR NAME
+			'Charmed'                                    => 'Charmed (2018)',
+			'DC\'s Legends of Tomorrow'                  => 'Legends of Tomorrow',
+			'Genera+ion'                                 => 'Generation', // this is using the SLUG.
+			'Marvel\'s Runaways'                         => 'Runaways',
+			'Marvel\'s Agents of S.H.I.E.L.D.'           => 'Agents of S.H.I.E.L.D.',
+			'Mythic Quest: Raven\'s Banquet'             => 'Mythic Quest',
+			'Marvel\'s M.O.D.O.K.'                       => 'M.O.D.O.K.',
+			'Party of Five'                              => 'Party of Five (2020)',
+			'Pennyworth: The Origin of Batman\'s Butler' => 'Pennyworth',
+			'Queer as Folk'                              => 'Queer as Folk (2022)',
+			'Shameless'                                  => 'Shameless (US)',
+			'Ghosts'                                     => 'Ghosts (US)',
 		);
 
 		$search_array = $name_array;

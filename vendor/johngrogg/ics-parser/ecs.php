@@ -79,18 +79,19 @@ use PhpCsFixer\Fixer\Whitespace\SingleBlankLineAtEofFixer;
 use SlevomatCodingStandard\ControlStructures\AssignmentInConditionSniff;
 use SlevomatCodingStandard\Namespaces\AlphabeticallySortedUsesSniff;
 use SlevomatCodingStandard\Namespaces\UnusedUsesSniff;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Symplify\EasyCodingStandard\Configuration\Option;
+use Symplify\EasyCodingStandard\Config\ECSConfig;
+use Symplify\EasyCodingStandard\ValueObject\Option;
+use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
 
 // ecs check --fix .
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $parameters = $containerConfigurator->parameters();
+return static function (ECSConfig $ecsConfig): void {
+    // https://github.com/symplify/easy-coding-standard/blob/main/config/set/psr12.php
+    $ecsConfig->import(SetList::PSR_12);
+
+    $parameters = $ecsConfig->parameters();
 
     $parameters->set(Option::LINE_ENDING, "\n");
-
-    // https://github.com/symplify/easy-coding-standard/blob/master/config/set/psr12.php
-    $parameters->set(Option::SETS, array('psr12'));
 
     $parameters->set(Option::SKIP, array(
         'PhpCsFixer\Fixer\Basic\BracesFixer'                           => null,
@@ -106,7 +107,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         'PhpCsFixer\Fixer\ClassNotation\VisibilityRequiredFixer' => null,
     ));
 
-    $services = $containerConfigurator->services();
+    $services = $ecsConfig->services();
 
     $services->set(SpaceAfterNotSniff::class)
         ->property('spacing', 0);
@@ -116,6 +117,9 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $services->set(YodaStyleFixer::class)
         ->call('configure', array(array('equal' => false, 'identical' => false, 'less_and_greater' => false)));
+
+    $services->set(ListSyntaxFixer::class)
+        ->call('configure', [['syntax' => 'long']]);
 
     $services->set(BlankLineBeforeStatementFixer::class)
         ->call('configure', array(array('statements' => array('continue', 'declare', 'return', 'throw', 'try'))));
@@ -205,8 +209,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(SingleImportPerStatementFixer::class);
 
     $services->set(SingleLineAfterImportsFixer::class);
-
-    $services->set(ListSyntaxFixer::class);
 
     $services->set(NoLeadingNamespaceWhitespaceFixer::class);
 

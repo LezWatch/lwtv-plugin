@@ -204,8 +204,8 @@ class LWTV_OTD_JSON {
 				$return['hashtag'] = $hashtag;
 				break;
 			case 'show':
-				$return['loved'] = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
-				$return['score'] = number_format( (float) get_post_meta( $post_id, 'lezshows_the_score', true ), 2, '.', '' );
+				$return['loved']      = ( get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no';
+				$return['score']      = number_format( (float) get_post_meta( $post_id, 'lezshows_the_score', true ), 2, '.', '' );
 				$return['characters'] = get_post_meta( $post_id, 'lezshows_char_count', true );
 
 				// We need to do some crazy generation here
@@ -257,7 +257,7 @@ class LWTV_OTD_JSON {
 				$meta_query_array = array(
 					array(
 						'key'     => '_thumbnail_id',
-						'value'   => '949', // Mystery woman
+						'value'   => '79739', // Mystery woman
 						'compare' => '!=',
 					),
 					array(

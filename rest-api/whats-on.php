@@ -338,9 +338,6 @@ class LWTV_Whats_On_JSON {
 
 					// Add in the TV maze link.
 					$array['tvmaze'] = ( isset( $show_array['url'] ) ) ? $show_array['url'] : 'https://tvmaze.com/';
-
-					// save array as transient for a day.
-					set_transient( $transient, $array, DAY_IN_SECONDS );
 				}
 			}
 		}

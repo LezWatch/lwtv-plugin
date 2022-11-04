@@ -12,12 +12,18 @@ class RecurrencesTest extends TestCase
 
     private $originalTimeZone = null;
 
-    public function setUp()
+    /**
+     * @before
+     */
+    public function setUpFixtures()
     {
         $this->originalTimeZone = date_default_timezone_get();
     }
 
-    public function tearDown()
+    /**
+     * @after
+     */
+    public function tearDownFixtures()
     {
         date_default_timezone_set($this->originalTimeZone);
     }
@@ -72,7 +78,7 @@ class RecurrencesTest extends TestCase
             array(
                 'DTSTART;VALUE=DATE:20180701',
                 'DTEND;VALUE=DATE:20180702',
-                'RRULE:FREQ=MONTHLY;BYMONTHDAY=1;WKST=SU;COUNT=3',
+                'RRULE:FREQ=MONTHLY;WKST=SU;COUNT=3',
             ),
             3,
             $checks
@@ -429,6 +435,23 @@ class RecurrencesTest extends TestCase
         );
     }
 
+    public function testCountIsOne()
+    {
+        $checks = array(
+            array('index' => 0, 'dateString' => '20211201T090000', 'message' => '1st and only expected event: '),
+        );
+        $this->assertVEVENT(
+            'UTC',
+            array(
+                'DTSTART:20211201T090000',
+                'DTEND:20211201T100000',
+                'RRULE:FREQ=DAILY;COUNT=1',
+            ),
+            1,
+            $checks
+        );
+    }
+
     public function assertVEVENT($defaultTimezone, $veventParts, $count, $checks)
     {
         $options = $this->getOptions($defaultTimezone);
@@ -477,19 +500,20 @@ class RecurrencesTest extends TestCase
         $expectedTimeStamp = strtotime($expectedDateString);
 
         $this->assertEquals($expectedTimeStamp, $event->dtstart_array[2], $message . 'timestamp mismatch (expected ' . $expectedDateString . ' vs actual ' . $event->dtstart . ')');
-        $this->assertAttributeEquals($expectedDateString, 'dtstart', $event, $message . 'dtstart mismatch (timestamp is okay)');
+        $this->assertEquals($expectedDateString, $event->dtstart, $message . 'dtstart mismatch (timestamp is okay)');
     }
 
     public function getOptions($defaultTimezone)
     {
         $options = array(
-            'defaultSpan'                 => 2,                            // Default value
-            'defaultTimeZone'             => $defaultTimezone,             // Default value: UTC
-            'defaultWeekStart'            => 'MO',                         // Default value
-            'disableCharacterReplacement' => false,                        // Default value
-            'filterDaysAfter'             => null,                         // Default value
-            'filterDaysBefore'            => null,                         // Default value
-            'skipRecurrence'              => false,                        // Default value
+            'defaultSpan'                 => 2,                // Default value
+            'defaultTimeZone'             => $defaultTimezone, // Default value: UTC
+            'defaultWeekStart'            => 'MO',             // Default value
+            'disableCharacterReplacement' => false,            // Default value
+            'filterDaysAfter'             => null,             // Default value
+            'filterDaysBefore'            => null,             // Default value
+            'httpUserAgent'               => null,             // Default value
+            'skipRecurrence'              => false,            // Default value
         );
 
         return $options;

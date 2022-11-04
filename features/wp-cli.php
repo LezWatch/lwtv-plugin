@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) && ! defined( 'WP_CLI' ) ) {
  * $ wp lwtv find queerchars
  *
  */
-class WP_CLI_LWTV_Commands extends WP_CLI_Command {
+class WP_CLI_LWTV_Commands {
 
 	public function __construct() {
 		// phpcs:disable

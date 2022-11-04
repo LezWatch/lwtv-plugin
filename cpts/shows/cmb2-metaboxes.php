@@ -18,6 +18,7 @@ class LWTV_Shows_CMB2 {
 	public $ratings_array;
 	public $thumbs_array;
 	public $affiliates_array;
+	public $language_array;
 
 	public function __construct() {
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
@@ -42,6 +43,11 @@ class LWTV_Shows_CMB2 {
 			'TBD' => 'TBD',
 		);
 
+		// Allow for multiple language names to be saved.
+		if ( class_exists( 'LWTV_Languages' ) ) {
+			$this->language_array = ( new LWTV_Languages() )->all_languages();
+		}
+
 	}
 
 	/**
@@ -61,17 +67,25 @@ class LWTV_Shows_CMB2 {
 	 * Create a list of all shows
 	 */
 	public function cmb2_get_shows_options() {
-		$the_id = ( false !== get_the_ID() ) ? get_the_ID() : 0;
-		$return = ( new LWTV_CMB2() )->get_post_options(
-			array(
-				'post_type'   => 'post_type_shows',
-				'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
-				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-			),
-			$the_id
-		);
+		$the_id    = ( false !== get_the_ID() ) ? get_the_ID() : 0;
+		$transient = get_transient( 'lwtv_list_shows' );
+		if ( false === $transient ) {
+			$transient = ( new LWTV_CMB2() )->get_post_options(
+				array(
+					'post_type'   => 'post_type_shows',
+					'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
+					'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
+				)
+			);
+			set_transient( 'lwtv_list_shows', $transient, 24 * HOUR_IN_SECONDS );
+		}
 
-		return $return;
+		// Remove THIS show because we use it for related posts
+		if ( is_array( $transient ) && 0 !== $the_id ) {
+			unset( $transient[ $the_id ] );
+		}
+
+		return $transient;
 	}
 
 	/**
@@ -397,6 +411,16 @@ class LWTV_Shows_CMB2 {
 				),
 			)
 		);
+
+		// Must See Grid.
+		if ( ! is_admin() ) {
+			return;
+		} else {
+			$grid_ms2 = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_mustsee );
+			$rowms2   = $grid_ms2->addRow();
+			$rowms2->addColumns( array( $field_worththumb, $field_worthdetails ) );
+		}
+
 		// Field: Worth It - We Love This Shit.
 		$field_worthshowwelove = $cmb_mustsee->add_field(
 			array(
@@ -407,7 +431,7 @@ class LWTV_Shows_CMB2 {
 				'default' => false,
 			)
 		);
-		// Field: Worth It - Affiliate Links.
+		// Field: Worth It - Watch Online
 		$field_affiliateurl = $cmb_mustsee->add_field(
 			array(
 				'name'       => 'Watch Online Link(s)',
@@ -431,14 +455,45 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 
-		// Must See Grid.
-		if ( ! is_admin() ) {
-			return;
-		} else {
-			$grid_ms2 = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_mustsee );
-			$rowms2   = $grid_ms2->addRow();
-			$rowms2->addColumns( array( $field_worththumb, $field_worthdetails ) );
-		}
+
+		// Field Group: Show Name Information
+		$group_names = $cmb_mustsee->add_field(
+			array(
+				'id'         => $prefix . 'show_names',
+				'type'       => 'group',
+				'repeatable' => true,
+				'options'    => array(
+					'group_title'   => 'Alternative Name #{#} (OPTIONAL)',
+					'add_button'    => 'Add Another Name',
+					'remove_button' => 'Remove Name',
+					'sortable'      => true,
+				),
+			)
+		);
+		// Field: Show Name
+		$field_shows = $cmb_mustsee->add_group_field(
+			$group_names,
+			array(
+				'name'             => 'Name',
+				'desc'             => 'Use if the show has different names per language',
+				'id'               => $prefix . 'alt_show_name',
+				'type'             => 'text',
+				'show_option_none' => true,
+			)
+		);
+		// Field: Show Language
+		$field_chartype = $cmb_mustsee->add_group_field(
+			$group_names,
+			array(
+				'name'             => 'Language',
+				'desc'             => 'Language (select from dropdown)',
+				'id'               => 'type',
+				'type'             => 'select',
+				'show_option_none' => true,
+				'default'          => 'custom',
+				'options'          => $this->language_array,
+			)
+		);
 
 		// Metabox: Basic Show Details.
 		$cmb_showdetails = new_cmb2_box(

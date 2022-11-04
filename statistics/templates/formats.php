@@ -65,7 +65,7 @@ switch ( $showform ) {
 				<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
 				<?php
 				if ( 'all' !== $showform ) {
-					echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/nations/" role="button">Reset</a>';
+					echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/formats/" role="button">Reset</a>';
 				}
 				?>
 			</div>
@@ -82,11 +82,13 @@ switch ( $showform ) {
 	}
 
 	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl ) ) . '">OVERVIEW</a></li>';
-	foreach ( $valid_views as $the_view => $the_post_type ) {
-		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+	if ( 'all' !== $showform ) {
+		foreach ( $valid_views as $the_view => $the_post_type ) {
+			$active = ( $view === $the_view ) ? ' active' : '';
+			echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		}
 	}
-	?>
+?>
 </ul>
 
 <p>&nbsp;</p>

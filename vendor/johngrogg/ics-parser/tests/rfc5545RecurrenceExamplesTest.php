@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * The following tests are based on the event recurrence examples given
- * in the RFC5545 iCal specification (https://tools.ietf.org/html/rfc5545,
+ * in the RFC5545 iCal specification (https://datatracker.ietf.org/doc/html/rfc5545,
  * pages 123 to 132).
  *
  * Whilst this might not catch edge-cases, it does give a basic set of
@@ -44,7 +44,7 @@ use PHPUnit\Framework\TestCase;
  *   have been similarly commented out and annotated with a ticket number
  *   (if one exists).
  */
-class Rfc5545Examples extends TestCase
+class rfc5545RecurrenceExamplesTest extends TestCase
 {
     // phpcs:disable Generic.Arrays.DisallowLongArraySyntax
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
@@ -53,17 +53,23 @@ class Rfc5545Examples extends TestCase
 
     private $originalTimeZone = null;
 
-    public function setUp()
+    /**
+     * @before
+     */
+    public function setUpFixtures()
     {
         $this->originalTimeZone = date_default_timezone_get();
     }
 
-    public function tearDown()
+    /**
+     * @after
+     */
+    public function tearDownFixtures()
     {
         date_default_timezone_set($this->originalTimeZone);
     }
 
-    // Page 123, Test 1 :: Daily, 10 Occurences
+    // Page 123, Test 1 :: Daily, 10 Occurrences
     public function test_page123_test1()
     {
         $checks = array(
@@ -95,6 +101,25 @@ class Rfc5545Examples extends TestCase
             array(
                 'DTSTART;TZID=America/New_York:19970902T090000',
                 'RRULE:FREQ=DAILY;UNTIL=19971224T000000Z',
+            ),
+            113,
+            $checks
+        );
+    }
+
+    // Page 123, Test 3 :: Daily, until December 24th, with trailing semicolon
+    public function test_page123_test3()
+    {
+        $checks = array(
+            array('index' => 0, 'dateString' => '19970902T090000', 'message' => '1st occurrence: '),
+            array('index' => 1, 'dateString' => '19970903T090000', 'message' => '2nd occurrence: '),
+            array('index' => 2, 'dateString' => '19970904T090000', 'message' => '3rd occurrence: '),
+        );
+        $this->assertVEVENT(
+            'America/New_York',
+            array(
+                'DTSTART;TZID=America/New_York:19970902T090000',
+                'RRULE:FREQ=DAILY;UNTIL=19971224T000000Z;',
             ),
             113,
             $checks
@@ -979,7 +1004,7 @@ class Rfc5545Examples extends TestCase
         $expectedTimeStamp = strtotime($expectedDateString);
 
         $this->assertEquals($expectedTimeStamp, $event->dtstart_array[2], $message . 'timestamp mismatch (expected ' . $expectedDateString . ' vs actual ' . $event->dtstart . ')');
-        $this->assertAttributeEquals($expectedDateString, 'dtstart', $event, $message . 'dtstart mismatch (timestamp is okay)');
+        $this->assertEquals($expectedDateString, $event->dtstart, $message . 'dtstart mismatch (timestamp is okay)');
     }
 
     public function getOptions($defaultTimezone)
@@ -991,6 +1016,7 @@ class Rfc5545Examples extends TestCase
             'disableCharacterReplacement' => false,            // Default value
             'filterDaysAfter'             => null,             // Default value
             'filterDaysBefore'            => null,             // Default value
+            'httpUserAgent'               => null,             // Default value
             'skipRecurrence'              => false,            // Default value
         );
 

@@ -56,7 +56,9 @@ class LWTV_CMB2 {
 	/**
 	 * Extra Get post options.
 	 */
-	public function get_post_options( $query_args, $the_id = 0 ) {
+	public function get_post_options( $query_args ) {
+
+		// Build arguments, based on data sent.
 		$args = wp_parse_args(
 			$query_args,
 			array(
@@ -66,24 +68,28 @@ class LWTV_CMB2 {
 			)
 		);
 
+		// Get the posts
 		$posts = get_posts( $args );
 
+		// Sort the posts.
 		$post_options = array();
 		if ( $posts ) {
 			foreach ( $posts as $post ) {
 				$post_title = $post->post_title;
-				// If we're an actor, we should check for queerness
+				// If we're an actor, we should check for queerness.
 				if ( 'post_type_actors' === $query_args['post_type'] ) {
 					if ( get_post_meta( $post->ID, 'lezactors_queer', true ) ) {
 						$post_title .= ' (QUEER IRL)';
 					}
 				}
 
+				// Add extra based on status.
 				switch ( get_post_status( $post->ID ) ) {
 					case 'draft':
 						$post_title .= ' - DRAFT';
 						break;
 					case 'future':
+					case 'pending':
 						$post_title .= ' - SCHEDULED';
 						break;
 					case 'private':
@@ -91,22 +97,9 @@ class LWTV_CMB2 {
 						break;
 				}
 
-				if ( $post->ID !== $the_id ) {
-					$post_options[ $post->ID ] = $post_title;
-				}
+				$post_options[ $post->ID ] = $post_title;
 			}
 		}
-
-		// @codingStandardsIgnoreStart
-		// If we're a show, we want to sort and remove stopwords
-		if ( 'post_type_shows' === $query_args['post_type'] ) {
-			uasort( $post_options, function( $a, $b ) {
-				return strnatcasecmp( self::showshort( $a ), self::showshort( $b ) );
-			} );
-		} else {
-			asort( $post_options );
-		}
-		// @codingStandardsIgnoreEnd
 
 		return $post_options;
 	}
@@ -140,21 +133,6 @@ class LWTV_CMB2 {
 			}
 		}
 		return $postmeta_to_add;
-	}
-
-	/**
-	 * Trim things when we sort
-	 * @param  string $str Show title
-	 * @return string      Edited show title
-	 */
-	public function showshort( $str ) {
-		list( $first, $rest ) = explode( ' ', $str . ' ', 2 );
-		// the extra space is to prevent "undefined offset" notices on single-word titles.
-		$validarticles = array( 'a ', 'an ', 'lá ', 'la ', 'las ', 'les ', 'los ', 'el ', 'the ' );
-		if ( in_array( strtolower( $first ), $validarticles, true ) ) {
-			return $rest . ', ' . $first;
-		}
-		return $str;
 	}
 
 	/**

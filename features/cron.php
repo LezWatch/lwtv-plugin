@@ -2,7 +2,7 @@
 /**
  * Name: Cron
  * Description: Some custom jobs we schedule for cron things.
- * Version: 1.0
+ * Version: 1.5
  */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -39,9 +39,17 @@ class LWTV_Cron {
 			'/statistics/characters/',
 			'/statistics/shows/',
 			'/statistics/death/',
+			'/statistics/death/characters/',
+			'/statistics/death/shows/',
+			'/statistics/death/list/',
+			'/statistics/death/nations/',
+			'/statistics/death/stations/',
+			'/statistics/death/years/',
 			'/statistics/trends/',
 			'/statistics/nations/',
 			'/statistics/stations/',
+			'/this-year/',
+			'/this-year/' . gmdate( 'Y' ) . '/',
 			'/actors/',
 			'/characters/',
 			'/shows/',
@@ -80,6 +88,11 @@ class LWTV_Cron {
 		add_action( 'lwtv_tools_check_daily', array( $this, 'tools_check' ) );
 		if ( ! wp_next_scheduled( 'lwtv_tools_check_daily' ) ) {
 			wp_schedule_event( strtotime( '03:01:00' ), 'daily', 'lwtv_tools_check_daily' );
+		}
+
+		add_action( 'lwtv_lists_event_daily', array( $this, 'lists_daily' ) );
+		if ( ! wp_next_scheduled( 'lwtv_lists_event_daily' ) ) {
+			wp_schedule_event( strtotime( '04:01:00' ), 'daily', 'lwtv_lists_event_daily' );
 		}
 
 	}
@@ -160,9 +173,45 @@ SQL;
 	}
 
 	/**
+	 * Update Lists
+	 *
+	 * Update lists of shows and actors as transients to speed up queeries
+	 * and make them cacheable.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function lists_daily() {
+		$list_shows = get_transient( 'lwtv_list_shows' );
+		if ( false === $list_shows ) {
+			$list_shows = ( new LWTV_CMB2() )->get_post_options(
+				array(
+					'post_type'   => 'post_type_shows',
+					'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
+					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+				)
+			);
+			set_transient( 'lwtv_list_shows', $list_shows, 24 * HOUR_IN_SECONDS );
+		}
+
+		$list_actors = get_transient( 'lwtv_list_actors' );
+		if ( false === $list_actors ) {
+			$list_actors = ( new LWTV_CMB2() )->get_post_options(
+				array(
+					'post_type'   => 'post_type_actors',
+					'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
+					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+				)
+			);
+			set_transient( 'lwtv_list_actors', $list_actors, 24 * HOUR_IN_SECONDS );
+		}
+	}
+
+	/**
 	 * TV Maze Cron Job
 	 *
 	 * Saves the ICS data to a file so we're not overloading the API.
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -180,6 +229,7 @@ SQL;
 	 *
 	 * Run a different check every day to lower load.
 	 *
+	 * @access public
 	 * @return void
 	 */
 	public function tools_check() {

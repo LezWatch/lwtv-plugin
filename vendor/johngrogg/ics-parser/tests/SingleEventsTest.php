@@ -12,12 +12,18 @@ class SingleEventsTest extends TestCase
 
     private $originalTimeZone = null;
 
-    public function setUp()
+    /**
+     * @before
+     */
+    public function setUpFixtures()
     {
         $this->originalTimeZone = date_default_timezone_get();
     }
 
-    public function tearDown()
+    /**
+     * @after
+     */
+    public function tearDownFixtures()
     {
         date_default_timezone_set($this->originalTimeZone);
     }
@@ -118,6 +124,7 @@ class SingleEventsTest extends TestCase
             'disableCharacterReplacement' => false,            // Default value
             'filterDaysAfter'             => null,             // Default value
             'filterDaysBefore'            => null,             // Default value
+            'httpUserAgent'               => null,             // Default value
             'skipRecurrence'              => false,            // Default value
         );
 
@@ -469,10 +476,9 @@ class SingleEventsTest extends TestCase
             $event->dtstart_array[2],
             $message . 'timestamp mismatch (expected ' . $expectedDateString . ' vs actual ' . $event->dtstart . ')'
         );
-        $this->assertAttributeEquals(
+        $this->assertEquals(
             $expectedDateString,
-            'dtstart',
-            $event,
+            $event->dtstart,
             $message . 'dtstart mismatch (timestamp is okay)'
         );
     }
