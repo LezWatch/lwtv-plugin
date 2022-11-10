@@ -18,6 +18,8 @@ class LWTV_Characters_Calculate {
 
 	/**
 	 * Calculate the most recent death
+	 * This has to happen because Sara Lance.
+	 *
 	 * @param  int   $post_id
 	 * @return N/A   No return, just update
 	 */
@@ -40,6 +42,43 @@ class LWTV_Characters_Calculate {
 	}
 
 	/**
+	 * Update the related shows.
+	 * In order to reduce load, we only run this on saves.
+	 *
+	 * @param  int   $post_id
+	 * @return N/A   No return, just update show calculation
+	 */
+	public function shows( $post_id ) {
+		// Generate list of shows to purge
+		$shows = get_post_meta( $post_id, 'lezchars_show_group', true );
+		if ( ! empty( $shows ) ) {
+			foreach ( $shows as $show_id ) {
+				( new LWTV_Shows_Calculate() )->do_the_math( $show_id );
+			}
+		}
+	}
+
+	/**
+	 * Update the Actors.
+	 * In order to reduce load, we only run this on saves.
+	 *
+	 * @param  int   $post_id
+	 * @return N/A   No return, just update actor calculation
+	 */
+	public function actors( $post_id ) {
+		// Generate List of Actors
+		$actors = get_post_meta( $post_id, 'lezchars_actor', true );
+		if ( ! is_array( $actors ) ) {
+			$actors = array( get_post_meta( $post_id, 'lezchars_actor', true ) );
+		}
+		if ( ! empty( $actors ) ) {
+			foreach ( $actors as $actor_id ) {
+				( new LWTV_Actors_Calculate() )->do_the_math( $actor_id );
+			}
+		}
+	}
+
+	/**
 	 * Does the Math
 	 * @param  int $post_id Post ID of character
 	 * @return n/a
@@ -47,6 +86,12 @@ class LWTV_Characters_Calculate {
 	public function do_the_math( $post_id ) {
 		// Calculate Death
 		self::death( $post_id );
+
+		// Update shows
+		self::shows( $post_id );
+
+		// Update Actors
+		self::actors( $post_id );
 
 		// Trigger indexing to update facets.
 		FWP()->indexer->index( $post_id );
