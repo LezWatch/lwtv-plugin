@@ -26,7 +26,7 @@ class LWTV_Debug {
 			case 'instagram':
 				$trim = 30;
 				break;
-			case 'twiter':
+			case 'twitter':
 				$trim = 15;
 				break;
 			default:
