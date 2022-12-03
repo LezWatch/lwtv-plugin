@@ -24,9 +24,6 @@ class LWTV_FacetWP {
 		// Filter data before saving it
 		add_filter( 'facetwp_index_row', array( $this, 'facetwp_index_row' ), 10, 2 );
 
-		// Filter sort options to add our own
-		add_filter( 'facetwp_sort_options', array( $this, 'facetwp_sort_options' ), 10, 2 );
-
 		// Filter Facet output
 		add_filter( 'facetwp_facet_html', function( $output, $params ) {
 			if ( 'show_airdates' === $params['facet']['name'] ) {
@@ -246,7 +243,7 @@ class LWTV_FacetWP {
 			}
 			// Shows
 			// Saves one value for each show
-			// a:1:{i:0;a:2:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";}}
+			// a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
 			if ( 'char_shows' === $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];
 				foreach ( $values as $val ) {
@@ -258,15 +255,33 @@ class LWTV_FacetWP {
 				$params['facet_value'] = '';
 				return $params;
 			}
-			// User Roles
+			// Roles
 			// Saves one value for each show
-			// a:1:{i:0;a:2:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";}}
+			// a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
 			if ( 'char_roles' === $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];
 				foreach ( $values as $val ) {
-						$params['facet_value']         = $val['type'];
-						$params['facet_display_value'] = ucfirst( $val['type'] );
+						$params['facet_value']         = $val['show'];
+						$params['facet_display_value'] = get_the_title( $val['show'] );
 						$class->insert( $params );
+				}
+				// skip default indexing
+				$params['facet_value'] = '';
+				return $params;
+			}
+
+			// Years
+			// Saves one value for each year
+			// a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
+			// Years is a sub array of the array, because I was thinking clever and forgot what a metric PITA this is.
+			if ( 'char_years' === $params['facet_name'] ) {
+				$values = (array) $params['facet_value'];
+				foreach ( $values as $val ) {
+					foreach ( $val['appears'] as $year ) {
+						$params['facet_value']         = $year;
+						$params['facet_display_value'] = $year;
+					}
+					$class->insert( $params );
 				}
 				// skip default indexing
 				$params['facet_value'] = '';
@@ -275,169 +290,6 @@ class LWTV_FacetWP {
 		}
 
 		return $params;
-	}
-
-	/**
-	 * Filter Sort Options.
-	 *
-	 * @access public
-	 * @param mixed $options
-	 * @param mixed $params
-	 * @return void
-	 */
-	public function facetwp_sort_options( $options, $params ) {
-
-		// Labels
-		$options['default']['label']    = 'Default (Alphabetical)';
-		$options['title_asc']['label']  = 'Name (A-Z)';
-		$options['title_desc']['label'] = 'Name (Z-A)';
-
-		// Valid taxes
-		$char_taxonomies  = array( 'lez_cliches', 'lez_gender', 'lez_sexuality', 'lez_romantic' );
-		$show_taxonomies  = array( 'lez_tropes', 'lez_stations', 'lez_formats', 'lez_genres', 'lez_nations', 'lez_stars', 'lez_triggers', 'lez_intersections' );
-		$actor_taxonomies = array( 'lez_actor_gender', 'lez_actor_sexuality' );
-
-		// CHARACTERS
-		if ( is_post_type_archive( 'post_type_characters' ) || is_tax( $char_taxonomies ) ) {
-			$options['death_desc'] = array(
-				'label'      => 'Most Recent Death',
-				'query_args' => array(
-					'orderby'  => 'meta_value', // sort by numerical custom field
-					'meta_key' => 'lezchars_last_death', // required when sorting by custom fields
-					'order'    => 'DESC', // descending order
-				),
-			);
-			$options['death_asc']  = array(
-				'label'      => 'Oldest Death',
-				'query_args' => array(
-					'orderby'  => 'meta_value', // sort by numerical custom field
-					'meta_key' => 'lezchars_last_death', // required when sorting by custom fields
-					'order'    => 'ASC', // ascending order
-				),
-			);
-		}
-
-		// ACTORS
-		if ( is_post_type_archive( 'post_type_actors' ) || is_tax( $actor_taxonomies ) ) {
-			$options['birth_desc']  = array(
-				'label'      => 'Most Recent Birth',
-				'query_args' => array(
-					'orderby'  => 'meta_value', // sort by numerical custom field
-					'meta_key' => 'lezactors_birth', // required when sorting by custom fields
-					'order'    => 'DESC', // descending order
-				),
-			);
-			$options['birth_asc']   = array(
-				'label'      => 'Oldest Birth',
-				'query_args' => array(
-					'orderby'  => 'meta_value', // sort by numerical custom field
-					'meta_key' => 'lezactors_birth', // required when sorting by custom fields
-					'order'    => 'ASC', // ascending order
-				),
-			);
-			$options['death_desc']  = array(
-				'label'      => 'Most Recent Death',
-				'query_args' => array(
-					'orderby'  => 'meta_value', // sort by numerical custom field
-					'meta_key' => 'lezactors_death', // required when sorting by custom fields
-					'order'    => 'DESC', // descending order
-				),
-			);
-			$options['death_asc']   = array(
-				'label'      => 'Oldest Death',
-				'query_args' => array(
-					'orderby'  => 'meta_value', // sort by numerical custom field
-					'meta_key' => 'lezactors_death', // required when sorting by custom fields
-					'order'    => 'ASC', // ascending order
-				),
-			);
-			$options['most_chars']  = array(
-				'label'      => 'Number of Characters (Descending)',
-				'query_args' => array(
-					'orderby'  => 'meta_value_num post_title', // sort by numerical custom field
-					'meta_key' => 'lezactors_char_count', // required when sorting by custom fields
-					'order'    => 'DESC', // descending order
-				),
-			);
-			$options['least_chars'] = array(
-				'label'      => 'Number of Characters (Ascending)',
-				'query_args' => array(
-					'orderby'  => 'meta_value_num post_title', // sort by numerical custom field
-					'meta_key' => 'lezactors_char_count', // required when sorting by custom fields
-					'order'    => 'ASC', // ascending order
-				),
-			);
-			$options['most_dead']   = array(
-				'label'      => 'Number of Dead Characters (Descending)',
-				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
-					'meta_key' => 'lezactors_dead_count', // required when sorting by custom fields
-					'order'    => 'DESC', // descending order
-				),
-			);
-			$options['least_dead']  = array(
-				'label'      => 'Number of Dead Characters (Ascending)',
-				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
-					'meta_key' => 'lezactors_dead_count', // required when sorting by custom fields
-					'order'    => 'ASC', // ascending order
-				),
-			);
-		}
-
-		// SHOWS
-		if ( is_post_type_archive( 'post_type_shows' ) || is_tax( $show_taxonomies ) ) {
-			$options['most_queers']  = array(
-				'label'      => 'Number of Characters (Descending)',
-				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
-					'meta_key' => 'lezshows_char_count', // required when sorting by custom fields
-					'order'    => 'DESC', // descending order
-				),
-			);
-			$options['least_queers'] = array(
-				'label'      => 'Number of Characters (Ascending)',
-				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
-					'meta_key' => 'lezshows_char_count', // required when sorting by custom fields
-					'order'    => 'ASC', // ascending order
-				),
-			);
-			$options['most_dead']    = array(
-				'label'      => 'Number of Dead Characters (Descending)',
-				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
-					'meta_key' => 'lezshows_dead_count', // required when sorting by custom fields
-					'order'    => 'DESC', // descending order
-				),
-			);
-			$options['least_dead']   = array(
-				'label'      => 'Number of Dead Characters (Ascending)',
-				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
-					'meta_key' => 'lezshows_dead_count', // required when sorting by custom fields
-					'order'    => 'ASC', // ascending order
-				),
-			);
-			$options['high_score']   = array(
-				'label'      => 'Overall Score (Descending)',
-				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
-					'meta_key' => 'lezshows_the_score', // required when sorting by custom fields
-					'order'    => 'DESC', // descending order
-				),
-			);
-			$options['low_score']    = array(
-				'label'      => 'Overall Score (Ascending)',
-				'query_args' => array(
-					'orderby'  => 'meta_value_num', // sort by numerical custom field
-					'meta_key' => 'lezshows_the_score', // required when sorting by custom fields
-					'order'    => 'ASC', // ascending order
-				),
-			);
-		}
-
-		return $options;
 	}
 
 }
