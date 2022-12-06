@@ -9,9 +9,12 @@ const download = require('download-git-repo');
 var copyfiles = require('copyfiles');
 
 // FacetWP + CMB2
+// Forked now.
+/*
 download('WebDevStudios/facetwp-cmb2', 'plugins/facetwp/facetwp-cmb2/', function (err) {
   if (err) return console.log(err);
 });
+*/
 
 // CMB2 Grid Code
 download('origgami/cmb2-grid', 'plugins/cmb2/cmb2-grid/', function (err) {
