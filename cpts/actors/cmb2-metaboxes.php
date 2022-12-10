@@ -220,6 +220,17 @@ class LWTV_Actors_CMB2 {
 				),
 			)
 		);
+		// Field: Tumblr ID
+		$field_tumblr = $cmb_actorside->add_field(
+			array(
+				'name'       => 'Tumblr ID',
+				'id'         => $prefix . 'tumblr',
+				'type'       => 'text',
+				'attributes' => array(
+					'placeholder' => 'Ex: tiredandlonelymuse',
+				),
+			)
+		);
 		// Field: Instagram ID
 		$field_instagram = $cmb_actorside->add_field(
 			array(
@@ -260,7 +271,7 @@ class LWTV_Actors_CMB2 {
 			$row3->addColumns( array( $field_birth, $field_death ) );
 			$row4->addColumns( array( $field_imdb, $field_wiki ) );
 			$row5->addColumns( array( $field_home ) );
-			$row6->addColumns( array( $field_twitter, $field_instagram ) );
+			$row6->addColumns( array( $field_twitter, $field_tumblr, $field_instagram ) );
 			$row7->addColumns( array( $field_excerpt ) );
 		}
 	}
