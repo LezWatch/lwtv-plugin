@@ -179,7 +179,7 @@ class LWTV_Actors_CMB2 {
 		// Field: IMDb ID
 		$field_imdb = $cmb_actorside->add_field(
 			array(
-				'name'       => 'IMDb ID',
+				'name'       => 'IMDb',
 				'id'         => $prefix . 'imdb',
 				'type'       => 'text',
 				'attributes' => array(
@@ -212,7 +212,7 @@ class LWTV_Actors_CMB2 {
 		// Field: Twitter ID
 		$field_twitter = $cmb_actorside->add_field(
 			array(
-				'name'       => 'Twitter ID',
+				'name'       => 'Twitter',
 				'id'         => $prefix . 'twitter',
 				'type'       => 'text',
 				'attributes' => array(
@@ -223,18 +223,18 @@ class LWTV_Actors_CMB2 {
 		// Field: Tumblr ID
 		$field_tumblr = $cmb_actorside->add_field(
 			array(
-				'name'       => 'Tumblr ID',
+				'name'       => 'Tumblr',
 				'id'         => $prefix . 'tumblr',
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => 'Ex: tiredandlonelymuse',
+					'placeholder' => 'Ex: tiredandlonelymuse (tiredandlonelymuse.tumblr.com or tumblr.com/tiredandlonelymuse)',
 				),
 			)
 		);
 		// Field: Instagram ID
 		$field_instagram = $cmb_actorside->add_field(
 			array(
-				'name'       => 'Instagram ID',
+				'name'       => 'Instagram',
 				'id'         => $prefix . 'instagram',
 				'type'       => 'text',
 				'attributes' => array(
