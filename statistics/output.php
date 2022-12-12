@@ -563,13 +563,16 @@ class LWTV_Stats_Output {
 		// Strip hypens becuase ChartJS doesn't like it.
 		$data = str_replace( '-', '', $data );
 
-		// @codingStandardsIgnoreStart
-		// Reorder by item count
-		usort( $array, function( $a, $b ) {
-			return $a['count'] - $b['count'];
-		} );
-		// @codingStandardsIgnoreEnd
+		if ( ! in_array( $data, $show_zero ) ) {
+			// @codingStandardsIgnoreStart
+			// Reorder by item count
+			usort( $array, function( $a, $b ) {
+				return $a['count'] - $b['count'];
+			} );
+			// @codingStandardsIgnoreEnd
+		}
 		?>
+
 		<canvas id="pie<?php echo esc_attr( ucfirst( $data ) ); ?>" width="500px" height="500px"></canvas>
 
 		<script>
@@ -600,9 +603,9 @@ class LWTV_Stats_Output {
 					if ( in_array( $data, $show_zero ) ) {
 						?>
 						backgroundColor: [
-							'rgb(255, 99, 132)',
-							'rgb(54, 162, 235)',
-							'rgb(255, 205, 86)'
+							'#06c',
+							'#c0392b',
+							'#5cb85c'
 						],
 						<?php
 					} else {
@@ -633,6 +636,17 @@ class LWTV_Stats_Output {
 					},
 					plugins: {
 						legend: {
+							<?php
+							if ( in_array( $data, $show_zero ) ) {
+								?>
+								position: 'bottom',
+								<?php
+							} else {
+								?>
+								position: 'left',
+								<?php
+							}
+							?>
 							labels: {
 								boxWidth: 10,
 							}

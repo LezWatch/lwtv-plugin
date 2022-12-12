@@ -22,6 +22,7 @@ download('origgami/cmb2-grid', 'plugins/cmb2/cmb2-grid/', function (err) {
 // Move JS
 (async () => {
 	await cp('node_modules/chart.js/dist/chart.umd.js', 'assets/js/chart.js');
+	await cp('node_modules/chart.js/dist/chart.umd.js.map', 'assets/js/chart.umd.js.map');
 	await cp('node_modules/chartjs-plugin-annotation/dist/chartjs-plugin-annotation.min.js', 'assets/js/chartjs-plugin-annotation.min.js');
 	await cp('node_modules/tablesorter/dist/js/jquery.tablesorter.js', 'assets/js/jquery.tablesorter.js');
 	console.log('JS files have been moved...');
