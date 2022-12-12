@@ -40,19 +40,18 @@ class LWTV_Related_Posts {
 		if ( $related_post_loop->have_posts() ) {
 
 			// We get a max of 10 but we only want to show 5
-			$max_posts  = 5;
+			$max_posts  = 3;
 			$count_post = 0;
 
-			$the_related_posts = '<ul>';
+			$the_related_posts = '<div class="container"><div class="row">';
 			foreach ( $related_post_query as $related_post ) {
-				if ( $count_post < '5' ) {
-					$the_related_posts .= '<li><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a> &mdash; ' . get_the_date( get_option( 'date_format' ), $related_post ) . '</li>';
+				if ( $count_post < '3' ) {
+					$the_related_posts .= '<div class="col-sm">' . get_the_post_thumbnail( $related_post, 'medium' ) . '<br/><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a> &mdash; <em><small>' . get_the_date( get_option( 'date_format' ), $related_post ) . '</small></em></div>';
 					$count_post++;
 				}
 			}
-			$the_related_posts .= '</ul>';
+			$the_related_posts .= '</div></div>';
 		}
-
 		return $the_related_posts;
 	}
 
