@@ -261,8 +261,8 @@ class LWTV_FacetWP {
 			if ( 'char_roles' === $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];
 				foreach ( $values as $val ) {
-						$params['facet_value']         = $val['show'];
-						$params['facet_display_value'] = get_the_title( $val['show'] );
+						$params['facet_value']         = $val['type'];
+						$params['facet_display_value'] = get_the_title( $val['type'] );
 						$class->insert( $params );
 				}
 				// skip default indexing

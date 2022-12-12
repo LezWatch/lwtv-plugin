@@ -557,6 +557,9 @@ class LWTV_Stats_Output {
 				break;
 		}
 
+		// We show empty sets for these:
+		$show_zero = array( 'actor_char_dead', 'actor_char_roles' );
+
 		// Strip hypens becuase ChartJS doesn't like it.
 		$data = str_replace( '-', '', $data );
 
@@ -566,7 +569,6 @@ class LWTV_Stats_Output {
 			return $a['count'] - $b['count'];
 		} );
 		// @codingStandardsIgnoreEnd
-
 		?>
 		<canvas id="pie<?php echo esc_attr( ucfirst( $data ) ); ?>" width="500px" height="500px"></canvas>
 
@@ -575,7 +577,7 @@ class LWTV_Stats_Output {
 			var pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset = [
 				<?php
 				foreach ( $array as $item ) {
-					if ( 0 !== $item['count'] ) {
+					if ( 0 !== $item['count'] || in_array( $data, $show_zero ) ) {
 						echo '"' . (int) $item['count'] . '", ';
 					}
 				}
@@ -585,7 +587,7 @@ class LWTV_Stats_Output {
 				labels : [
 					<?php
 					foreach ( $array as $item ) {
-						if ( 0 !== $item['count'] ) {
+						if ( 0 !== $item['count'] || in_array( $data, $show_zero ) ) {
 							$name = ucfirst( str_replace( $fixname, '', $item['name'] ) );
 							echo '"' . wp_kses_post( $name ) . ' (' . (int) $item['count'] . ')", ';
 						}
@@ -594,7 +596,21 @@ class LWTV_Stats_Output {
 				],
 				datasets : [{
 					data : pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset,
-					backgroundColor: palette('tol-rainbow', pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset.length).map(function(hex) { return '#' + hex; }),
+					<?php
+					if ( in_array( $data, $show_zero ) ) {
+						?>
+						backgroundColor: [
+							'rgb(255, 99, 132)',
+							'rgb(54, 162, 235)',
+							'rgb(255, 205, 86)'
+						],
+						<?php
+					} else {
+						?>
+						backgroundColor: palette('tol-rainbow', pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset.length).map(function(hex) { return '#' + hex; }),
+						<?php
+					}
+					?>
 				}]
 			};
 
@@ -615,6 +631,13 @@ class LWTV_Stats_Output {
 							}
 						},
 					},
+					plugins: {
+						legend: {
+							labels: {
+								boxWidth: 10,
+							}
+						}
+					}
 				}
 			});
 		</script>

@@ -1,10 +1,11 @@
-Chart.plugins.register({
+Chart.register({
+	id: 'lezWatchTV',
 	beforeDraw: function (chart) {
 		if (chart.config.options.elements.center) {
 	//Get ctx from string
 	var ctx = chart.chart.ctx;
 
-			//Get options from the center object in options
+	//Get options from the center object in options
 	var centerConfig = chart.config.options.elements.center;
 	var fontStyle = centerConfig.fontStyle || 'Oswald';
 			var txt = centerConfig.text;
@@ -14,7 +15,7 @@ Chart.plugins.register({
 	//Start with a base font of 30px
 	ctx.font = "30px " + fontStyle;
 
-			//Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+	//Get the width of the string and also the width of the element minus 10 to give it 5px side padding
 	var stringWidth = ctx.measureText(txt).width;
 	var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
 

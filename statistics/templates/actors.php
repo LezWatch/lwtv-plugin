@@ -10,16 +10,16 @@ $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 ?>
 <h2>
-	<a href="/actors/">Total Actors</a></strong> (<?php echo ( new LWTV_Stats() )->generate( 'actors', 'total', 'count' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>)
+	<a href="/actors/">Total Actors</a> (<?php echo ( new LWTV_Stats() )->generate( 'actors', 'total', 'count' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>)
 </h2>
 
 <ul class="nav nav-tabs">
 	<?php
 	$baseurl = '/statistics/actors/';
-	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( $baseurl ) . '">OVERVIEW</a></li>';
+	echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_attr( $baseurl ) . '">OVERVIEW</a></li>';
 	foreach ( $valid_views as $the_view ) {
 		$active = ( $view === $the_view ) ? ' active' : '';
-		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( $baseurl . $the_view ) . '/">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
+		echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_attr( $baseurl . $the_view ) . '/">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 	}
 	?>
 </ul>
@@ -75,7 +75,7 @@ switch ( $view ) {
 						</thead>
 						<tbody>
 							<?php
-							$stations = get_terms(
+							$sexualities = get_terms(
 								'lez_actor_sexuality',
 								array(
 									'number'     => 5,
@@ -84,10 +84,10 @@ switch ( $view ) {
 									'order'      => 'DESC',
 								)
 							);
-							foreach ( $stations as $station ) {
+							foreach ( $sexualities as $sexuality ) {
 								echo '<tr>
-										<th scope="row"><a href="/sexuality/' . esc_url( $station->slug ) . '">' . esc_html( $station->name ) . '</a></th>
-										<td>' . (int) $station->count . '</td>
+										<th scope="row"><a href="/sexuality/' . esc_attr( $sexuality->slug ) . '">' . esc_html( $sexuality->name ) . '</a></th>
+										<td>' . (int) $sexuality->count . '</td>
 									</tr>';
 							}
 							?>
@@ -118,7 +118,7 @@ switch ( $view ) {
 							);
 							foreach ( $genders as $gender ) {
 								echo '<tr>
-										<th scope="row"><a href="/gender/' . esc_url( $gender->slug ) . '">' . esc_html( $gender->name ) . '</a></th>
+										<th scope="row"><a href="/gender/' . esc_attr( $gender->slug ) . '">' . esc_html( $gender->name ) . '</a></th>
 										<td>' . (int) $gender->count . '</td>
 									</tr>';
 							}

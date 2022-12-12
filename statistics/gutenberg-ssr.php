@@ -33,6 +33,29 @@ class LWTV_Stats_SSR {
 		return '<div class="lwtv-stats">' . $output . '</div>';
 	}
 
+	/*
+	 * Display statistics for actors/characters etc.
+	 *
+	 * Usage:
+	 *		[ministats posttype=[actor|show|character]]
+	 *
+	 * @since 1.0
+	 */
+	public function mini_stats( $atts ) {
+		$attributes = shortcode_atts(
+			array(
+				'posttype' => 'none',
+			),
+			$atts
+		);
+
+		$valid_postypes = array( 'post_type_actors', 'post_type_characters', 'post_type_shows' );
+		$this_posttype  = ( ! in_array( sanitize_text_field( $attributes['posttype'] ), $valid_postypes, true ) ) ? 'none' : sanitize_text_field( $attributes['posttype'] );
+
+		$output = self::get_include_contents( dirname( __FILE__ ) . '/templates/' . $this_posttype . '.php' );
+		return '<div class="lwtv-stats ' . $this_posttype . ' ">' . $output . '</div>';
+	}
+
 	public function get_include_contents( $filename ) {
 		if ( is_file( $filename ) ) {
 			ob_start();

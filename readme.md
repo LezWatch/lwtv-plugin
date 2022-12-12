@@ -292,20 +292,13 @@ In order to make maintenance easier, instead of checking everything all the time
 **NPM**
 * [ChartJS](https://github.com/chartjs/Chart.js/)
 * [TableSorter (Mottie Fork)](https://github.com/Mottie/tablesorter)
-
-**Composer**
-* [CMB2](https://github.com/WebDevStudios/CMB2)
 * [CMB2 Grid](https://github.com/origgami/CMB2-grid)
-* [CMB2 Field Select2](https://github.com/mustardBees/cmb-field-select2)
-* [FacetWP CMB2](https://github.com/WebDevStudios/facetwp-cmb2)
 
 #### Installation and Updating
 
-1. `npm update`
-2. `npm install`
-3. `composer update`
+`$ npm update && npm install && composer update`
 
-Composer will move everything into the right place, even NPM files.
+The scripts will install everything where they need to be.
 
 ### Deployment
 
