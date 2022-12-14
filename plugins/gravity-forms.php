@@ -15,4 +15,4 @@ class LWTV_Gravity_Forms {
 new LWTV_Gravity_Forms();
 
 // Include add-ons
-require_once 'gravity-forms/approvals.php';
+require_once 'gravity-forms/class-gf-approvals.php';

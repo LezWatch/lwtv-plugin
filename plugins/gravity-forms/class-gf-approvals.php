@@ -1,21 +1,35 @@
 <?php
+/**
+ * Gravity Forms Approvals, Mini Version
+ *
+ * Forked from https://wordpress.org/plugins/gravityformsapprovals/
+ * because it's no longer maintained, and is missing some important things.
+ *
+ * Version 1.0.0
+ */
 
 // Make sure Gravity Forms is active and already loaded.
 if ( ! class_exists( 'GFForms' ) ) {
 	die();
 }
 
+// If the other plugin is active, we deactivate.
+if ( defined( 'GF_APPROVALS_VERSION' ) && is_plugin_active( 'gravityformsapprovals/approvals.php' ) ) {
+	deactivate_plugins( 'gravityformsapprovals/approvals.php' );
+}
+
+
 // The Add-On Framework is not loaded by default.
 // Use the following function to load the appropriate files.
 GFForms::include_feed_addon_framework();
 
-class GF_Approvals extends GFFeedAddOn {
+class LWTV_GF_Approvals extends GFFeedAddOn {
 
 	// The following class variables are used by the Framework.
 	// They are defined in GFAddOn and should be overridden.
 
 	// The version number is used for example during add-on upgrades.
-	protected $_version = GF_APPROVALS_VERSION;
+	protected $_version = '1.0.0';
 
 	// The Framework will display an appropriate message on the plugins page if necessary
 	protected $_min_gravityforms_version = '2.4';
@@ -62,7 +76,7 @@ class GF_Approvals extends GFFeedAddOn {
 	public static function get_instance() {
 
 		if ( null === self::$_instance ) {
-			self::$_instance = new GF_Approvals();
+			self::$_instance = new LWTV_GF_Approvals();
 		}
 
 		return self::$_instance;
@@ -74,7 +88,6 @@ class GF_Approvals extends GFFeedAddOn {
 		add_action( 'gform_entry_detail_sidebar_before', array( $this, 'entry_detail_approval_box' ), 10, 2 );
 
 		add_filter( 'gform_notification_events', array( $this, 'add_notification_event' ) );
-
 		add_filter( 'gform_entries_field_value', array( $this, 'filter_gform_entries_field_value' ), 10, 4 );
 
 		if ( GFAPI::current_user_can_any( 'gravityforms_edit_entries' ) ) {
@@ -90,7 +103,7 @@ class GF_Approvals extends GFFeedAddOn {
 
 	//Registers the dashboard widget
 	public function dashboard_setup() {
-		wp_add_dashboard_widget( 'gf_approvals_dashboard', 'Forms Pending My Approval', array( $this, 'dashboard' ) );
+		wp_add_dashboard_widget( 'gf_approvals_dashboard', 'Forms Pending Approval', array( $this, 'dashboard' ) );
 	}
 
 	/**
@@ -207,14 +220,15 @@ class GF_Approvals extends GFFeedAddOn {
 	 * @return array The filtered entry meta array.
 	 */
 	public function get_entry_meta( $entry_meta, $form_id ) {
-		$feeds         = $this->get_feeds( $form_id );
+		$feeds        = $this->get_feeds( $form_id );
 		$has_approver = false;
 		foreach ( $feeds as $feed ) {
 			if ( ! $feed['is_active'] ) {
 				continue;
 			}
-			$approver = absint( $feed['meta']['approver'] );
 
+			// User ID of approver
+			$approver = absint( $feed['meta']['approver'] );
 			$user_info = get_user_by( 'id', $approver );
 
 			$display_name = $user_info ? $user_info->display_name : $approver;
@@ -241,7 +255,6 @@ class GF_Approvals extends GFFeedAddOn {
 					),
 				),
 			);
-
 			$has_approver = true;
 
 		}
@@ -298,12 +311,20 @@ class GF_Approvals extends GFFeedAddOn {
 		}
 
 		if ( isset( $_POST['gf_approvals_status'] ) && check_admin_referer( 'gf_approvals' ) ) {
-
 			$new_status = sanitize_text_field( $_POST['gf_approvals_status'] );
+
+			// Update Meta
 			gform_update_meta( $entry['id'], 'approval_status_' . $current_user->ID, $new_status );
+			gform_update_meta( $entry['id'], 'approval_date_' . $current_user->ID, gmdate() );
+			gform_update_meta( $entry['id'], 'approval_date', gmdate() );
+
 			$entry[ 'approval_status_' . $current_user->ID ] = $new_status;
-			$entry_approved = true;
+
+			// Base Info
+			$entry_approved = false;
 			$entry_rejected = false;
+			$approver_array = array();
+
 			foreach ( $this->get_feeds( $form['id'] ) as $feed ) {
 				if ( $feed['is_active'] && $this->is_feed_condition_met( $feed, $form, $entry ) ) {
 					// If anyone who is an approval approves or rejects, allow it.
@@ -311,14 +332,30 @@ class GF_Approvals extends GFFeedAddOn {
 					foreach ( $feed['meta']['approver'] as $approver ) {
 						if ( ! empty( $entry[ 'approval_status_' . $approver ] ) ) {
 							if ( 'approved' === $entry[ 'approval_status_' . $approver ] ) {
-								$entry_approved = true;
+								$approver_array[ $approver ]['approved'] = true;
 							} elseif ( 'approved' !== $entry[ 'approval_status_' . $approver ] ) {
-								$entry_approved = false;
+								$approver_array[ $approver ]['approved'] = false;
 							} elseif ( 'rejected' === $new_status ) {
-								$entry_rejected = true;
+								$approver_array[ $approver ]['rejected'] = true;
 							}
+
+							// Build array
+							$approver_array[ $approver ] = array(
+								'approved' => $entry_approved,
+								'rejected' => $entry_rejected,
+							);
 						}
 					}
+				}
+			}
+
+			foreach ( $approver_array as $approver ) {
+				if ( true === $approver['approved'] ) {
+					$entry_approved = true;
+				}
+
+				if ( true === $approver['rejected'] ) {
+					$entry_rejected = true;
 				}
 			}
 
@@ -339,6 +376,7 @@ class GF_Approvals extends GFFeedAddOn {
 				if ( class_exists( 'GFZapier' ) ) {
 					GFZapier::send_form_data_to_zapier( $entry, $form );
 				}
+
 				do_action( 'gform_approvals_entry_approved', $entry, $form );
 			}
 
@@ -347,22 +385,23 @@ class GF_Approvals extends GFFeedAddOn {
 				GFCommon::send_notification( $notification, $form, $entry );
 			}
 		}
-		$status       = 'Pending Approval';
+
+		$status       = 'Pending';
 		$approve_icon = '<i class="fa fa-check" style="color:green"></i>';
 		$reject_icon  = '<i class="fa fa-times" style="color:red"></i>';
 		if ( 'approved' === $entry['approval_status'] ) {
-			$status = $approve_icon . ' Approved';
+			$status = 'Approved ' . $approve_icon;
 		} elseif ( 'rejected' === $entry['approval_status'] ) {
-			$status = $reject_icon . ' Rejected';
+			$status = 'Rejected ' . $reject_icon;
 		}
 		?>
 		<div class="postbox">
-			<h3><?php echo esc_html( $status ); ?></h3>
+			<h3><?php echo 'Approval Status: ' . wp_kses_post( $status ); ?></h3>
 
 			<div style="padding:10px;">
 				<ul>
 					<?php
-					$has_been_approved = false;
+					$has_been_reviewed        = false;
 					$current_user_is_approver = false;
 					foreach ( $this->get_feeds( $form['id'] ) as $feed ) {
 						if ( $feed['is_active'] ) {
@@ -373,33 +412,43 @@ class GF_Approvals extends GFFeedAddOn {
 								if ( false === $status ) {
 									$status = 'pending';
 								} elseif ( 'pending' !== $status ) {
-									$has_been_approved = true;
+									$has_been_reviewed = true;
 								}
 								if ( false === $status || 'pending' === $status ) {
-									if ( $current_user->ID == $approver ) {
+									if ( $current_user->ID === $approver ) {
 										$current_user_is_approver = true;
 									}
 								}
-								echo '<li>' . esc_html( $user_info->display_name ) . ': ' . esc_html( $status ) . '</li>';
+
+								if ( $has_been_reviewed && 'pending' === $status ) {
+									$status = 'N/A';
+								} elseif ( $has_been_reviewed && 'pending' !== $status ) {
+									// For some reason this isn't always being set???
+									gform_update_meta( $entry['id'], 'approval_status', $status );
+									echo '<li>' . esc_html( ucfirst( $status ) ) . ' by ' . esc_html( $user_info->display_name ) . '</li>';
+								}
 
 							}
 						}
 					}
-					if ( $has_been_approved ) {
+
+					// We only need one person to approve.
+					if ( $has_been_reviewed ) {
 						add_action( 'gform_entrydetail_update_button', array( $this, 'remove_entrydetail_update_button' ), 10 );
 					}
 					?>
 				</ul>
 				<div>
 					<?php
-					if ( $current_user_is_approver ) {
+					// If we have not yet been approved, we'll want this:
+					if ( ! $has_been_reviewed ) {
 						?>
 							<?php wp_nonce_field( 'gf_approvals' );	?>
 							<button name="gf_approvals_status" value="approved" type="submit" class="button">
-								<?php echo $approve_icon; ?> Approve
+								<?php echo wp_kses_post( $approve_icon ); ?> Approve
 							</button>
 							<button name="gf_approvals_status" value="rejected" type="submit" class="button">
-								<?php echo $reject_icon; ?> Reject
+								<?php echo wp_kses_post( $reject_icon ); ?> Reject
 							</button>
 						<?php
 					}
@@ -472,13 +521,13 @@ class GF_Approvals extends GFFeedAddOn {
 			<?php
 		} else {
 			?>
-			<div>Hurray, inbox zero!'</div>
+			<div>All forms currently approved.</div>
 			<?php
 		}
 	}
 
 	public function remove_entrydetail_update_button( $button ) {
-		return 'This entry has been approved and can no longer be edited';
+		return 'This entry has been reviewed and can no longer be edited';
 	}
 
 	public function add_notification_event( $events ) {
@@ -487,7 +536,6 @@ class GF_Approvals extends GFFeedAddOn {
 	}
 
 	public function disable_registration( $is_disabled, $form, $entry, $fulfilled ) {
-
 		$feeds = $this->get_feeds( $form['id'] );
 		if ( empty( $feeds ) ) {
 			return false;
@@ -513,19 +561,19 @@ class GF_Approvals extends GFFeedAddOn {
 	public function filter_gform_entries_field_value( $value, $form_id, $field_id, $entry ) {
 		$translated_value = $value;
 		if ( 'approval_status' === $field_id ) {
-			switch ( $value ) {
-				case 'pending':
-					$translated_value = 'Pending';
-					break;
-				case 'approved':
-					$translated_value = 'Approved';
-					break;
-				case 'rejected':
-					$translated_value = 'Rejected';
-					break;
-			}
+			$translated_value = ucfirst( $value );
 		}
 		return $translated_value;
 	}
 
+}
+
+add_action( 'gform_loaded', 'lwtv_gf_approvals', 5 );
+
+function lwtv_gf_approvals() {
+	if ( ! method_exists( 'GFForms', 'include_feed_addon_framework' ) ) {
+		return;
+	}
+
+	GFAddOn::register( 'LWTV_GF_Approvals' );
 }

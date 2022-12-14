@@ -180,6 +180,9 @@ The file `_main.php` acts as an autoloader.
     - `/lwtv.php`
         - filter Data before it's saved to rename values (capitalization)
         - split actors and shows into separate entries, and add additional orderby params
+* `/gravity-forms/` - Gravity Forms Folder
+    - `approvals.php` - Approval Function
+    - `class-gf-approvals.php` - Backend code
 * `imagify.php`  - Imagify integration
     - prevents GIFs from being processed.
 * `jetpack.php`  - Jetpack integration

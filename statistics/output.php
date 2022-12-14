@@ -563,7 +563,7 @@ class LWTV_Stats_Output {
 		// Strip hypens becuase ChartJS doesn't like it.
 		$data = str_replace( '-', '', $data );
 
-		if ( ! in_array( $data, $show_zero ) ) {
+		if ( ! is_int( $data ) || ! in_array( $data, $show_zero ) ) {
 			// @codingStandardsIgnoreStart
 			// Reorder by item count
 			usort( $array, function( $a, $b ) {
