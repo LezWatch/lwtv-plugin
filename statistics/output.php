@@ -642,8 +642,9 @@ class LWTV_Stats_Output {
 								position: 'bottom',
 								<?php
 							} else {
+								// Everything else has a sidebar so we don't need both... Do we?
 								?>
-								position: 'left',
+								display: false,
 								<?php
 							}
 							?>
