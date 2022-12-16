@@ -227,7 +227,18 @@ class LWTV_Actors_CMB2 {
 				'id'         => $prefix . 'tumblr',
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => 'Ex: tiredandlonelymuse (tiredandlonelymuse.tumblr.com or tumblr.com/tiredandlonelymuse)',
+					'placeholder' => 'Ex: tiredandlonelymuse (from tiredandlonelymuse.tumblr.com or tumblr.com/tiredandlonelymuse)',
+				),
+			)
+		);
+		// Field: Mastodon URL
+		$field_tumblr = $cmb_actorside->add_field(
+			array(
+				'name'       => 'Mastodon',
+				'id'         => $prefix . 'mastodon',
+				'type'       => 'text',
+				'attributes' => array(
+					'placeholder' => 'Ex: https://mastodon.instance/username',
 				),
 			)
 		);
