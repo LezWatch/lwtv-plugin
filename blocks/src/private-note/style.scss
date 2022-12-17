@@ -1,0 +1,24 @@
+/**
+ * #.# Styles
+ *
+ * CSS for both Frontend+Backend.
+ */
+
+.wp-block-lez-library-private-note {
+	position: initial!important;
+	p {
+		margin: 1em!important;
+	}
+	p::before {
+		content: url( "./spy.svg" );
+		display: inline-block;
+		width: 16px; //only one size is alright, IE scales uniformly to fit it
+		color: #856404;
+		padding-right: 2px;
+	}
+	p::after {
+		content: " (This note is hidden to non-editors.)";
+		font-size: smaller;
+		font-style: italic;
+	}
+}
