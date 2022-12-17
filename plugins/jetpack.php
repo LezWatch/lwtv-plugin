@@ -17,9 +17,6 @@ if ( ! class_exists( 'Jetpack' ) ) {
 class LWTV_Jetpack {
 
 	public function __construct() {
-		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance' ) );
-		add_action( 'admin_head', array( $this, 'dashboard_glance_css' ) );
-
 		// Custom search
 		add_action( 'init', array( $this, 'init_jetpack_search_filters' ) );
 
