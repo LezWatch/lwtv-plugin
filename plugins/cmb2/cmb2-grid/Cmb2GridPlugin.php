@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CMB2 Grid
  * Plugin URI:  https://github.com/origgami/CMB2-grid
- * Description: A grid system for Wordpress CMB2 library that allows columns creation
+ * Description: A grid system for WordPress CMB2 library that allows columns creation
  * Version:     1.0.0
  * Author:      Origgami
  * Author URI:  http://origgami.com.br

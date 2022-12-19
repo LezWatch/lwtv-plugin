@@ -1,9 +1,13 @@
 <?php
 /* Fork of http://wordpress.org/extend/plugins/comment-probation/
- * Description: Puts a comment author "on probation," approving that comment, but not automatically approving future comments until one of their comments is approved without probation.
+ *
+ * Description: Puts a comment author "on probation," approving that comment, but not
+ * automatically approving future comments until one of their comments is approved
+ * without probation.
+ *
  * Author: Andrew Nacin, Mika Epstein
  *
- * Since Nacin's not updating this, we're going to take over.
+ * Forked to update for WP 6.0 and onward.
  */
 
 class Plugin_Comment_Probation {
@@ -47,7 +51,7 @@ class Plugin_Comment_Probation {
 			return;
 		}
 
-		if ( ! empty( $_POST['probation'] ) ) {
+		if ( ! empty( $_POST['probation'] ) ) { // phpcs:disable WordPress.Security.NonceVerification
 			update_comment_meta( $comment_id, self::META_KEY, '1' );
 		} else {
 			$commentdata = get_comment( $comment_id );
@@ -77,8 +81,7 @@ class Plugin_Comment_Probation {
 		}
 
 		// The only other situation is check_comment() returning true.
-		$comment_ids = $wpdb->get_col( $wpdb->prepare( "SELECT comment_ID FROM $wpdb->comments
-			WHERE comment_author = %s AND comment_author_email = %s AND comment_approved = '1'", $commentdata['comment_author'], $commentdata['comment_author_email'] ) );
+		$comment_ids = $wpdb->get_col( $wpdb->prepare( "SELECT comment_ID FROM $wpdb->comments WHERE comment_author = %s AND comment_author_email = %s AND comment_approved = '1'", $commentdata['comment_author'], $commentdata['comment_author_email'] ) );
 
 		// This shouldn't happen...
 		if ( ! $comment_ids ) {
@@ -86,8 +89,7 @@ class Plugin_Comment_Probation {
 		}
 
 		$comment_ids = implode( ', ', $comment_ids );
-		$commentmeta = $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM $wpdb->commentmeta
-			WHERE comment_id IN ($comment_ids) AND META_KEY = %s LIMIT 1", self::META_KEY ) );
+		$commentmeta = $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM $wpdb->commentmeta WHERE comment_id IN (%s) AND META_KEY = %s LIMIT 1", $comment_ids, self::META_KEY ) );
 
 		// This user is on probation. Tsk tsk.
 		if ( $commentmeta ) {

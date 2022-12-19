@@ -71,6 +71,18 @@ class LWTV_Functions {
 
 		// After Theme Setup...
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ), 11 );
+
+		// Block pingbacks
+		add_filter( 'xmlrpc_methods', array( $this, 'remove_xmlrpc_methods' ) );
+	}
+
+	/**
+	 * Remove pingbacks
+	 * https://blog.sonarsource.com/wordpress-core-unauthenticated-blind-ssrf/
+	 */
+	public function remove_xmlrpc_methods( $methods ) {
+		unset( $methods['pingback.ping'] );
+		return $methods;
 	}
 
 	/**

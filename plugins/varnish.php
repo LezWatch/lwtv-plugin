@@ -15,6 +15,11 @@ class LWTV_Varnish {
 		add_filter( 'vhp_purge_urls', array( $this, 'varnish_urls' ), 10, 2 );
 	}
 
+	/**
+	 * Varnish URLs
+	 *
+	 * Generate a list of special URLs per post type.
+	 */
 	public function varnish_urls( $urls, $postid ) {
 
 		$myurls = array();

@@ -88,9 +88,8 @@ if ( ! class_exists( '\Cmb2Grid\Cmb2GridPlugin' ) ) {
 				.cmb2GridRow .cmb-repeat-group-wrap{max-width:100% !important;}
 				.cmb2GridRow .cmb-group-title{margin:0 !important;}
 				.cmb2GridRow .cmb-repeat-group-wrap .cmb-row .cmbhandle, .cmb2GridRow .postbox-container .cmb-row .cmbhandle{right:0 !important}
-
-                .cmb2GridRow .cmb-type-group .cmb-remove-field-row{padding-bottom: 1.8em !important;padding-top: 1.8em !important;}
-                .cmb2GridRow .cmb-td.cmb-nested{padding-left: 15px;padding-right: 15px;}
+				.cmb2GridRow .cmb-type-group .cmb-remove-field-row{padding-bottom: 1.8em !important;padding-top: 1.8em !important;}
+				.cmb2GridRow .cmb-td.cmb-nested{padding-left: 15px;padding-right: 15px;}
 			</style>
 			<?php
 
@@ -120,5 +119,5 @@ if ( ! function_exists( '\Cmb2Grid\init' ) ) {
 		}
 	}
 }
-add_action( 'cmb2_init',  '\Cmb2Grid\init' );
+add_action( 'cmb2_init', '\Cmb2Grid\init' );
 

@@ -37,6 +37,7 @@ class LWTV_Jetpack {
 	 */
 	public function init_jetpack_search_filters() {
 		if ( class_exists( 'Jetpack_Search' ) ) {
+			// phpcs:disable
 			Jetpack_Search::instance()->set_filters( [
 				'Content Type' => [
 					'type'  => 'post_type',
@@ -53,6 +54,7 @@ class LWTV_Jetpack {
 					'count'    => 10,
 				],
 			] );
+			// phpcs:enable
 		}
 	}
 
@@ -101,7 +103,7 @@ class LWTV_Jetpack {
 
 		// Check if the comment author name matches an email we've banned
 		// You'd think we didn't have to do this but ...
-		if ( in_array( $form['comment_author'], $badlist ) ) {
+		if ( in_array( $form['comment_author'], $badlist, true ) ) {
 			return true;
 		}
 
