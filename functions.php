@@ -106,7 +106,7 @@ class LWTV_Functions {
 	}
 
 	/**
-	 * Disable WP from updating this plugin..
+	 * Disable WP from updating this plugin.
 	 *
 	 * @access public
 	 * @param mixed $return - array to return.
