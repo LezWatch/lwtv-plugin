@@ -101,6 +101,11 @@ class LWTV_CMB2 {
 			}
 		}
 
+		// Sort.
+		if ( is_array( $post_options ) ) {
+			asort( $post_options );
+		}
+
 		return $post_options;
 	}
 

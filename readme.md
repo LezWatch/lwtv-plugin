@@ -15,7 +15,7 @@ Further documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatc
 The main file `functions.php` calls all other needed files.
 
 Defines:
-* `LWTV_LIBRARY` - If the library files are found, this is set to true.
+
 * `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwise defined). Currently 1961.
 
 ### Admin Panels
@@ -39,23 +39,31 @@ Stored in `/affiliates/` -- Auto Adds in Affiliate Codes. Currently requires AdR
 
 Stored in `/assets/`
 
+* `symbolicons.php` - Symbolicons
+
 _CSS (`css`)_
 
+* `author-box.css` - CSS for the Author Box (will be moved eventually)
 * `lwtv-tools.css` - Style for the LWTV admin pages
+* `symbolicons-admin.css` - Symbolicons CSS
 * `theme.bootstrap_4.min.css` - Tablesorter CSS for Bootstrap themes
+* `wp-admin.css` - WP Admin CSS
 
 _Images (`images`)_
 
+* `diane-fuck-off.gif` - Diane flipping people off
+* `lezwatchtv.png` - login page icons
 * `rainbow.svg` - Logo for admin panel
 * `toaster.png` - A toaster icon (used when no featured image is found)
 * `unicorn.png` - Unicorn (used if a toaster cannot be loaded)
 
 _Javascript (`js`)_
 
-* `Chart.bundle.min.js` - Stat charts from [ChartJS](https://chartjs.org)
-* `Chart.plugin.js` - Custom add-ons for charts
+* `chart.js` - Stat charts from [ChartJS](https://chartjs.org)
+* `chart.umd.js.map` - Map for Charts (got renamed, movin' on)
 * `chartjs-plugin-annotation.min.js` - Annotations for ChartJS
 * `cmb2_ajax.js` - Ajaxified code for CMB2 and post edits
+* `facetwp-pagination.js` - Facet WP pagination
 * `jquery.tablesorter.js` - Allow for table sorting
 * `palette.js` - Colors for charts
 
@@ -65,16 +73,21 @@ Stored in `/blocks/`
 
 Blocks for Gutenberg. The file `_main.php` acts as an autoloader. If you're updating the CSS, you will need to rebuild the blocks. Read `/blocks/README.md` for more information or just tell Mika what to change.
 
-The source code is in `/src/` broken up by folder, with one special file
-
 * `calendar.php` - Calendar specific code
 * `serverside.php` - Server-side Renders: Run PHP code in JS blocks
+
+The source code is in `/src/` broken up by folder, with one special file
+
+* `index.js` - Master file to call everything else.
 * `/_common/` - Common PHP, CSS, and JS code for all blocks
 * `/affiliate-grid/` - A bootstrap styled grid to show affiliate links
 * `/author-box/` - Author Boxes: Display author information
+* `/featured-image/` - Featured Image: Shows the image inline, not just on the sidebar
 * `/glossary/` - Glossary: Show a visual glossary of taxonomies with icons
 * `/grade/` - Grade: Give something a grade and an explanation
+* `/private-note/` - Private Note: Shows something ONLY to logged in editors
 * `/screener/` - Screeners: For reviews of shows that haven't aired yet
+* `/spoiler/` - Spoiler: Warning for spoilers
 * `/tvshow-calendar/` - TV Show Calendar: Lists all the shows on air
 
 ### Custom Post Types
@@ -113,6 +126,7 @@ _Shows (`/shows/`)_
 Stored in `/features/` -- a collection of miscellaneous features.
 
 * `_main.php` - Calls all other files
+* `clickjacking.php` - Prevents Clickjacking (or at least people claiming it's an issue)
 * `cron.php` - Custom cron jobs to pre-cache high-traffic pages, and run regular jobs.
 * `custom-loops.php` - `class LWTV_Loops` - Custom arrays and WP_Query calls that are repeated in multiple places.
     - `is_actor_queer()` - Determine if actor is queer (yes/no)
@@ -126,8 +140,10 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - `post_meta_and_tax_query()` - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
     - `related_posts_by_tag()` - Related Posts by Tags.
 * `custom-roles.php` - Custom roles created for curation of content
+* `dashboard.php` - Custom column for featured images in posts lists and removal of self pings
 * `debug.php` - Debugging Tools for weird content.
-* `languages.php` - List of languages
+* `embeds.php` - Embeds DisneyABCPress videos, Gleam, GoFundMe, Indiegogo
+* `gutenslam.php` - make Block Editor stop being such a dillhole and forget preferences
 * `ics-parser.php` - Connection to the ICS Parser for calendar data.
 * `private-data.php` - Shows alert that a page is hidden if the post is set private.
 * `profiles.php` - Custom profile code
@@ -137,11 +153,21 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - Force search to be distinct and prevent duplicates
     - Pretty Permalinks for Search
 * `shortcodes.php` - Various shortcodes used on LezWatch.TV
+    - Badges: `[badge url=LINK class="class class" role="role"]TEXT[/badge]`
+    - Copyright Year: `[copyright year=(start year) text=(copyright text)]`
+    - Number of Posts: `[numposts data="posts" posttype="post type" term="term slug" taxonomy="taxonomy slug"]`
     - Display The first year we had queers: `[firstyear]`
     - Display This Month recap: `[thismonth]` or `[thismonth date="2017-01"]`
-    - Display screener information: `[screener title="Some Like It Hot" summary="A quirky black and white romcom" queer="2" worth="yes" trigger="low"]` (now a block)
-    - Display author information: `[author name="ipstenu"]` (now a block)
+	- Deprecated Shortcodes (remaining for backcompat):
+		* Display screener information: `[screener title="Some Like It Hot" summary="A quirky black and white romcom" queer="2" worth="yes" trigger="low"]` (now a block)
+		* Author Box:  `[author-box users=username]`
+		* Embed Gleam: `[gleam url="https://gleam.io/iR0GQ/gleam-demo-competition"]Gleam Demo Competition[/gleam]`
+		* Embed IndieGoGo: `[indiegogo url=URL]`
+		* Glossary: `[glossary taxonomy=TAXONOMY]`
+		* Spoilers: `[spoilers]` or `[spoilers warning="OMG SPIDERS!!!"]`
 * `sort-stopwords.php` - Filter post order by for shows to NOT include the/an/a when sorting.
+* `spammers.php` - Prevent Spammers from annoying us
+* `upgrades.php` - Handle upgrades of WP and everything included.
 * `wp-cli.php`- WP-CLI
     - Re-run calculations for specific post content (actors & shows): `wp lwtv calc [actor|show|character] ID`
     - Compare data to WikiData: `wp lwtv wiki [actor] ID`
@@ -170,6 +196,7 @@ The file `_main.php` acts as an autoloader.
     - `/cmb2.css` - Custom CSS
     - `/lwtv.php` - Special code for us -- Favourite shows for author profiles, Symbolicon support
     - Year Range: `/year-range.php` - 'date_year_range' custom field type
+* `comment_probation.php` - Fork of abandoned plugin
 * `/facet.php` -- Facet WP
     - calls other files
     - Only show pagination if there's more than one page
@@ -180,10 +207,17 @@ The file `_main.php` acts as an autoloader.
     - `/lwtv.php`
         - filter Data before it's saved to rename values (capitalization)
         - split actors and shows into separate entries, and add additional orderby params
+* `gravity-forms.php` - Protection from spammers via disallowed keys
+* `/gravity-forms/` - Gravity Forms Folder
+    - `class-gf-approvals.php` - Backend code
 * `imagify.php`  - Imagify integration
     - prevents GIFs from being processed.
 * `jetpack.php`  - Jetpack integration
     - Adds Post Type to sort.
+    - Show Feedback in "Right Now"
+    - Custom Icon for Feedback in "Right Now"
+    - Mark feedbacks as having been answered
+    - Protection from spammers via disallowed keys
 
 ### Rest API
 
@@ -292,20 +326,13 @@ In order to make maintenance easier, instead of checking everything all the time
 **NPM**
 * [ChartJS](https://github.com/chartjs/Chart.js/)
 * [TableSorter (Mottie Fork)](https://github.com/Mottie/tablesorter)
-
-**Composer**
-* [CMB2](https://github.com/WebDevStudios/CMB2)
 * [CMB2 Grid](https://github.com/origgami/CMB2-grid)
-* [CMB2 Field Select2](https://github.com/mustardBees/cmb-field-select2)
-* [FacetWP CMB2](https://github.com/WebDevStudios/facetwp-cmb2)
 
 #### Installation and Updating
 
-1. `npm update`
-2. `npm install`
-3. `composer update`
+`$ npm update && npm install && composer update`
 
-Composer will move everything into the right place, even NPM files.
+The scripts will install everything where they need to be.
 
 ### Deployment
 

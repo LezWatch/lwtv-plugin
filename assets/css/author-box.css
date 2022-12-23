@@ -1,0 +1,17 @@
+div.author-box-shortcode .avatar {
+	position: relative;
+	margin-right: 24px;
+	float: left;
+}
+
+div.author-box-shortcode section.author-box {
+	background-color: #f5f5f5;
+	overflow: hidden;
+	padding: 16px;
+	margin: 4px;
+	color: #666;
+}
+
+div.author-box-shortcode::after {
+	clear: both;
+}

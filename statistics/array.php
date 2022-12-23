@@ -1356,6 +1356,155 @@ class LWTV_Stats_Arrays {
 
 		return $array;
 	}
+
+	/** 
+	 * Stats for character roles per actor.
+	*/
+	public function actor_char_role( $type, $the_id ) {
+		// Default
+		$array     = array();
+		$post_type = 'post_type_' . $type;
+
+		$transient = 'actor_char_role_' . $the_id;
+		$array     = get_transient( $transient );
+		if ( false === $array ) {
+			$base_array     = array(
+				'regular'   => 0,
+				'recurring' => 0,
+				'guest'     => 0,
+			);
+			$characters     = array();
+			$charactersloop = new WP_Query(
+				array(
+					'post_type'              => 'post_type_characters',
+					'post_status'            => array( 'publish' ),
+					'orderby'                => 'title',
+					'order'                  => 'ASC',
+					'posts_per_page'         => '20',
+					'no_found_rows'          => true,
+					'update_post_term_cache' => true,
+					'meta_query'             => array(
+						array(
+							'key'     => 'lezchars_actor',
+							'value'   => $the_id,
+							'compare' => 'LIKE',
+						),
+					),
+				)
+			);
+			if ( $charactersloop->have_posts() ) {
+				while ( $charactersloop->have_posts() ) {
+					$charactersloop->the_post();
+					$char_id      = get_the_ID();
+					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
+					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
+						foreach ( $actors_array as $char_actor ) {
+							if ( $char_actor == $the_id ) { // phpcs:ignore WordPress.PHP.StrictComparisons
+								$shows = get_post_meta( $char_id, 'lezchars_show_group', true );
+								foreach ( $shows as $show ) {
+									$base_array[ $show['type'] ]++;
+								}
+							}
+						}
+					}
+				}
+				wp_reset_query();
+			}
+
+			foreach ( $base_array as $type => $count ) {
+				$array[ $type ] = array(
+					'count' => $count,
+					'name'  => $type,
+					'url'   => '',
+				);
+			}
+
+			// save array as transient for a reason.
+			set_transient( $transient, $array, DAY_IN_SECONDS );
+		}
+
+		return $array;
+
+	}
+
+
+	/** 
+	 * Stats for dead character per actor.
+	*/
+	public function actor_char_dead( $type, $the_id ) {
+		// Default
+		$array     = array();
+		$post_type = 'post_type_' . $type;
+
+		$transient = 'actor_char_dead_' . $the_id;
+		$array     = get_transient( $transient );
+		if ( false === $array ) {
+			$base_array     = array(
+				'alive' => array(
+					'count' => 0,
+					'name'  => 'alive',
+					'url'   => '',
+				),
+				'dead'  => array(
+					'count' => 0,
+					'name'  => 'dead',
+					'url'   => '',
+				),
+			);
+			$characters     = array();
+			$charactersloop = new WP_Query(
+				array(
+					'post_type'              => 'post_type_characters',
+					'post_status'            => array( 'publish' ),
+					'orderby'                => 'title',
+					'order'                  => 'ASC',
+					'posts_per_page'         => '20',
+					'no_found_rows'          => true,
+					'update_post_term_cache' => true,
+					'meta_query'             => array(
+						array(
+							'key'     => 'lezchars_actor',
+							'value'   => $the_id,
+							'compare' => 'LIKE',
+						),
+					),
+					'tax_query'              => array(
+						'taxonomy' => 'lez_cliches',
+						'terms'    => 'dead',
+						'field'    => 'slug',
+						'operator' => 'IN',
+					),
+				)
+			);
+			if ( $charactersloop->have_posts() ) {
+				while ( $charactersloop->have_posts() ) {
+					$charactersloop->the_post();
+					$char_id      = get_the_ID();
+					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
+					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
+						foreach ( $actors_array as $char_actor ) {
+							if ( $char_actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+								if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
+									$base_array[ 'dead' ][ 'count']++;
+								} else {
+									$base_array[ 'alive' ][ 'count']++;
+								}
+							}
+						}
+					}
+				}
+				wp_reset_query();
+			}
+
+			$array = $base_array;
+
+			// save array as transient for a reason.
+			//set_transient( $transient, $array, DAY_IN_SECONDS );
+		}
+
+		return $array;
+
+	}
 }
 
 new LWTV_Stats_Arrays();

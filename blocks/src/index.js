@@ -25,3 +25,19 @@ import './screener/block.js';
 
 // TV Shows Calendar (CGB originally)
 import './tvshow-calendar/block.js';
+
+// Featured Image
+import './featured-image/block.js';
+
+// Private Note
+import './private-note/block.js';
+
+// Spoiler
+import './spoiler/block.js';
+
+// Disable fullscreen editor
+const isFullscreenMode = wp.data.select( 'core/edit-post' ).isFeatureActive( 'fullscreenMode' );
+
+if ( isFullscreenMode ) {
+    wp.data.dispatch( 'core/edit-post' ).toggleFeature( 'fullscreenMode' );
+}

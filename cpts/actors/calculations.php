@@ -92,7 +92,7 @@ class LWTV_Actors_Calculate {
 			return;
 		}
 
-		// Empty return for now
+		// Empty return for now.
 		$output     = '';
 		$char_array = array();
 		$show_array = array();
@@ -103,7 +103,7 @@ class LWTV_Actors_Calculate {
 		if ( $loop->have_posts() ) {
 			while ( $loop->have_posts() ) {
 				$loop->the_post();
-				$char_id      = get_the_ID();
+				$char_id = get_the_ID();
 
 				// Get the array of actors per character
 				$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );

@@ -1,44 +1,35 @@
 /*
     This script runs all the various node post install things we need for LTWV.
 
-    1. Downloads FacetWP-CMB2 and CMB2 Grid Code
+    1. Downloads CMB2 Grid Code
     2. Copies other files into place
  */
 
 const download = require('download-git-repo');
-var copyfiles = require('copyfiles');
+const { cp } = require('@npmcli/fs');
 
-// FacetWP + CMB2
-download('WebDevStudios/facetwp-cmb2', 'plugins/facetwp/facetwp-cmb2/', function (err) {
-  if (err) return console.log(err);
-});
+// FacetWP + CMB2 -- Disabled b/c Forked now.
+// WebDevStudios/facetwp-cmb2
 
 // CMB2 Grid Code
 download('origgami/cmb2-grid', 'plugins/cmb2/cmb2-grid/', function (err) {
-  if (err) return console.log(err);
+	if (err) return console.log(err);
 });
 
 // CMB Field Select2 (Forked and not used.)
-//mustardbees/cmb-field-select2
+// mustardbees/cmb-field-select2
 
-// Javascript
-copyfiles(
-    [
-        "node_modules/chart.js/dist/chart.min.js",
-        "node_modules/chartjs-plugin-annotation/dist/chartjs-plugin-annotation.min.js",
-        "node_modules/tablesorter/dist/js/jquery.tablesorter.js",
-        "assets/js",
-    ],
-    { up: true },
-    function(err) { if (err) return console.log(err); }
-);
+// Move JS
+(async () => {
+	await cp('node_modules/chart.js/dist/chart.umd.js', 'assets/js/chart.js');
+	await cp('node_modules/chart.js/dist/chart.umd.js.map', 'assets/js/chart.umd.js.map');
+	await cp('node_modules/chartjs-plugin-annotation/dist/chartjs-plugin-annotation.min.js', 'assets/js/chartjs-plugin-annotation.min.js');
+	await cp('node_modules/tablesorter/dist/js/jquery.tablesorter.js', 'assets/js/jquery.tablesorter.js');
+	console.log('JS files have been moved...');
+})();
 
-// CSS
-copyfiles(
-    [
-        "node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css",
-        "assets/css",
-    ],
-    { up: true },
-    function(err) { if (err) return console.log(err); }
-);
+// Move CSS
+(async () => {
+	await cp('node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css', 'assets/css/theme.bootstrap_4.min.css');
+	console.log('CSS files have been moved...');
+})();

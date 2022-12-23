@@ -447,7 +447,7 @@ class LWTV_Shows_CMB2 {
 				'name'             => 'Similar Shows',
 				'desc'             => 'Shows we think people will also like (optional).',
 				'id'               => $prefix . 'similar_shows',
-				'type'             => 'select',
+				'type'             => 'pw_select',
 				'show_option_none' => true,
 				'default'          => 'custom',
 				'options_cb'       => array( $this, 'cmb2_get_shows_options' ),

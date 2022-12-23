@@ -47,9 +47,8 @@ class LWTV_Stats {
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );
 
-			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chart.min.js', array( 'jquery' ), '3.9.1', false );
-			wp_enqueue_script( 'chartjs-plugins', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/Chart.plugins.js', array( 'chartjs' ), '1.0.1', false );
-			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '1.0.2', false );
+			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chart.js', array( 'jquery' ), '4.0.1', false );
+			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.1.0', false );
 			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
 			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.31.3', false );
 			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css/theme.bootstrap_4.min.css', array(), '2.31.1', false );
@@ -76,6 +75,10 @@ class LWTV_Stats {
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showsTable").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 			}
+		} elseif ( 'post_type_actors' === get_post_type() ) {
+			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chart.js', array( 'jquery' ), '4.0.1', false );
+			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.1.0', false );
+			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
 		}
 	}
 
@@ -88,7 +91,7 @@ class LWTV_Stats {
 	 *
 	 * @return array
 	 */
-	public function generate( $subject, $data, $format ) {
+	public function generate( $subject, $data, $format, $post_id = false ) {
 		// Bail early if we're not an approved subject matter.
 		if ( ! in_array( $subject, array( 'characters', 'shows', 'actors' ), true ) ) {
 			return;
@@ -162,6 +165,14 @@ class LWTV_Stats {
 			case 'on-air':
 				// Custom call for on-air (show or character)
 				$array = ( new LWTV_Stats_Arrays() )->on_air( $post_type );
+				break;
+			case 'actor_char_roles':
+				// Custom call for character role breakdown per actor
+				$array = ( new LWTV_Stats_Arrays() )->actor_char_role( $post_type, $post_id );
+				break;
+			case 'actor_char_dead':
+				// Custom call for dead character breakdown per actor
+				$array = ( new LWTV_Stats_Arrays() )->actor_char_dead( $post_type, $post_id );
 				break;
 		}
 
