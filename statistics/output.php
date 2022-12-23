@@ -603,9 +603,9 @@ class LWTV_Stats_Output {
 					if ( in_array( $data, $show_zero ) ) {
 						?>
 						backgroundColor: [
+							'#5cb85c',
 							'#06c',
-							'#c0392b',
-							'#5cb85c'
+							'#c0392b'
 						],
 						<?php
 					} else {
