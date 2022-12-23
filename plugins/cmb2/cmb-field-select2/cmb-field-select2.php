@@ -288,9 +288,9 @@ if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
 		public function setup_admin_scripts() {
 			$asset_path = apply_filters( 'pw_cmb2_field_select2_asset_path', plugins_url( '', __FILE__  ) );
 
-			wp_register_script( 'select2', $asset_path . '/js/select2.min.js', array( 'jquery-ui-sortable' ), '4.0.7' );
+			wp_register_script( 'select2', $asset_path . '/js/select2.min.js', array( 'jquery-ui-sortable' ), '4.0.13' );
 			wp_enqueue_script( 'pw-select2-init', $asset_path . '/js/script.js', array( 'cmb2-scripts', 'select2' ), self::VERSION );
-			wp_register_style( 'select2', $asset_path . '/css/select2.min.css', array(), '4.0.7' );
+			wp_register_style( 'select2', $asset_path . '/css/select2.min.css', array(), '4.0.13' );
 			wp_enqueue_style( 'pw-select2-tweaks', $asset_path . '/css/style.css', array( 'select2' ), self::VERSION );
 		}
 
