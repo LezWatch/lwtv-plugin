@@ -8,10 +8,10 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
- * class LP_Find_Spammers
+ * class LWTV_Find_Spammers
  * @since 1.0
  */
-class LP_Find_Spammers {
+class LWTV_Find_Spammers {
 
 	/**
 	 * List of disallowed emails
@@ -76,4 +76,4 @@ class LP_Find_Spammers {
 
 }
 
-new LP_Find_Spammers();
+new LWTV_Find_Spammers();

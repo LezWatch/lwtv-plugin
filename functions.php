@@ -208,8 +208,8 @@ class LWTV_Functions {
 		$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
 		$square = get_template_directory_uri( '/images/square.svg' );
 
-		if ( defined( 'LP_SYMBOLICONS_PATH' ) && file_exists( LP_SYMBOLICONS_PATH . $svg ) ) {
-			$icon = LP_SYMBOLICONS_PATH . $svg;
+		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_PATH . $svg ) ) {
+			$icon = LWTV_SYMBOLICONS_PATH . $svg;
 		} elseif ( ! wp_style_is( 'fontawesome', 'enqueued' ) ) {
 			$icon = $square;
 		}

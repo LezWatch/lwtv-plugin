@@ -90,7 +90,7 @@ class LWTV_Jetpack {
 		}
 
 		$badlist    = array();
-		$disallowed = LP_Find_Spammers::list();
+		$disallowed = LWTV_Find_Spammers::list();
 
 		// Check the list for valid emails. Add the email _USERNAME_ to the list
 		foreach ( $disallowed as $spammer ) {
@@ -109,7 +109,7 @@ class LWTV_Jetpack {
 
 		// Check if the email username is one of the bad ones
 		// Get a true/falsy
-		$is_spammer = LP_Find_Spammers::is_spammer( $form['comment_author_email'] );
+		$is_spammer = LWTV_Find_Spammers::is_spammer( $form['comment_author_email'] );
 		if ( $is_spammer ) {
 			return true;
 		}

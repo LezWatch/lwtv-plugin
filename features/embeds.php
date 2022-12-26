@@ -10,7 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LP_Embeds {
+class LWTV_Embeds {
 
 	/**
 	 * Constructor
@@ -87,4 +87,4 @@ class LP_Embeds {
 
 }
 
-new LP_Embeds();
+new LWTV_Embeds();

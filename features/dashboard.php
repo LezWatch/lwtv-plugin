@@ -6,7 +6,7 @@
  * @package library
 */
 
-class LP_Dashboard {
+class LWTV_Dashboard {
 
 	/**
 	 * Constructor
@@ -106,4 +106,4 @@ class LP_Dashboard {
 
 }
 
-new LP_Dashboard();
+new LWTV_Dashboard();
