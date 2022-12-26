@@ -17,6 +17,13 @@ if ( ! defined( 'FIRST_LWTV_YEAR' ) ) {
 	define( 'FIRST_LWTV_YEAR', '1961' );
 }
 
+/*
+ * Load Symbolicons
+ */
+if ( ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
+	require_once 'assets/symbolicons.php';
+}
+
 /**
  * class LWTV_Functions
  *
@@ -214,7 +221,7 @@ class LWTV_Functions {
 			$icon = $square;
 		}
 
-		if ( isset( $icon ) ) {
+		if ( isset( $icon ) && ! LWTV_DEV_SITE ) {
 			// @codingStandardsIgnoreStart
 			$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
 			// @codingStandardsIgnoreEnd

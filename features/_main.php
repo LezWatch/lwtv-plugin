@@ -10,7 +10,7 @@ require_once 'custom-loops.php';   // Custom Loops
 require_once 'custom-roles.php';   // Custom Roles
 require_once 'dashboard.php';      // Dashboard Tools
 require_once 'debug.php';          // Debug tools
-require_once 'embed.php';          // Custom Embeds
+require_once 'embeds.php';         // Custom Embeds
 require_once 'gutenslam.php';      // Force Gutenberg to keep preferences
 require_once 'languages.php';      // Language Code (in progress)
 require_once 'private-data.php';   // Data Removal Code
