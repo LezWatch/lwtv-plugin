@@ -17,6 +17,13 @@ if ( ! defined( 'FIRST_LWTV_YEAR' ) ) {
 	define( 'FIRST_LWTV_YEAR', '1961' );
 }
 
+/*
+ * Load Symbolicons
+ */
+if ( ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
+	require_once 'assets/symbolicons.php';
+}
+
 /**
  * class LWTV_Functions
  *
@@ -208,13 +215,13 @@ class LWTV_Functions {
 		$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
 		$square = get_template_directory_uri( '/images/square.svg' );
 
-		if ( defined( 'LP_SYMBOLICONS_PATH' ) && file_exists( LP_SYMBOLICONS_PATH . $svg ) ) {
-			$icon = LP_SYMBOLICONS_PATH . $svg;
+		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_PATH . $svg ) ) {
+			$icon = LWTV_SYMBOLICONS_PATH . $svg;
 		} elseif ( ! wp_style_is( 'fontawesome', 'enqueued' ) ) {
 			$icon = $square;
 		}
 
-		if ( isset( $icon ) ) {
+		if ( isset( $icon ) && ! LWTV_DEV_SITE ) {
 			// @codingStandardsIgnoreStart
 			$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
 			// @codingStandardsIgnoreEnd

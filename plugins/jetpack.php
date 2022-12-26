@@ -90,7 +90,7 @@ class LWTV_Jetpack {
 		}
 
 		$badlist    = array();
-		$disallowed = LP_Find_Spammers::list();
+		$disallowed = LWTV_Find_Spammers::list();
 
 		// Check the list for valid emails. Add the email _USERNAME_ to the list
 		foreach ( $disallowed as $spammer ) {
@@ -109,7 +109,7 @@ class LWTV_Jetpack {
 
 		// Check if the email username is one of the bad ones
 		// Get a true/falsy
-		$is_spammer = LP_Find_Spammers::is_spammer( $form['comment_author_email'] );
+		$is_spammer = LWTV_Find_Spammers::is_spammer( $form['comment_author_email'] );
 		if ( $is_spammer ) {
 			return true;
 		}
@@ -119,3 +119,18 @@ class LWTV_Jetpack {
 }
 
 new LWTV_Jetpack();
+
+/**
+ * Remove Jetpack's External Media feature.
+ */
+add_action( 'enqueue_block_editor_assets',
+function () {
+$disable_external_media = <<<JS
+document.addEventListener( 'DOMContentLoaded', function() {
+wp.hooks.removeFilter( 'blocks.registerBlockType', 'external-media/individual-blocks' );
+wp.hooks.removeFilter( 'editor.MediaUpload', 'external-media/replace-media-upload' );
+} );
+JS;
+wp_add_inline_script( 'jetpack-blocks-editor', $disable_external_media );
+}
+);

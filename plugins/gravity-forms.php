@@ -43,7 +43,7 @@ class LWTV_Gravity_Forms {
 		// If the email is set ...
 		if ( isset( $email ) && is_email( $email ) ) {
 			// Check if they're a spammer.
-			$is_spammer = LP_Find_Spammers::is_spammer( $email );
+			$is_spammer = LWTV_Find_Spammers::is_spammer( $email );
 			if ( $is_spammer ) {
 				return true;
 			}

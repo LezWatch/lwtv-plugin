@@ -9,7 +9,7 @@
  * @package library
 */
 
-class LezWatch_Gutenslam {
+class LWTV_Gutenslam {
 
 	/**
 	 * Constructor
@@ -83,4 +83,4 @@ class LezWatch_Gutenslam {
 	}
 }
 
-new LezWatch_Gutenslam();
+new LWTV_Gutenslam();

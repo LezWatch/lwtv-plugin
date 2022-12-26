@@ -220,28 +220,6 @@ class LWTV_Actors_CMB2 {
 				),
 			)
 		);
-		// Field: Tumblr ID
-		$field_tumblr = $cmb_actorside->add_field(
-			array(
-				'name'       => 'Tumblr',
-				'id'         => $prefix . 'tumblr',
-				'type'       => 'text',
-				'attributes' => array(
-					'placeholder' => 'Ex: tiredandlonelymuse (from tiredandlonelymuse.tumblr.com or tumblr.com/tiredandlonelymuse)',
-				),
-			)
-		);
-		// Field: Mastodon URL
-		$field_tumblr = $cmb_actorside->add_field(
-			array(
-				'name'       => 'Mastodon',
-				'id'         => $prefix . 'mastodon',
-				'type'       => 'text',
-				'attributes' => array(
-					'placeholder' => 'Ex: https://mastodon.instance/username',
-				),
-			)
-		);
 		// Field: Instagram ID
 		$field_instagram = $cmb_actorside->add_field(
 			array(
@@ -250,6 +228,28 @@ class LWTV_Actors_CMB2 {
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: whododatlikedat',
+				),
+			)
+		);
+		// Field: Tumblr ID
+		$field_tumblr = $cmb_actorside->add_field(
+			array(
+				'name'       => 'Tumblr',
+				'id'         => $prefix . 'tumblr',
+				'type'       => 'text',
+				'attributes' => array(
+					'placeholder' => 'Ex: tiredandlonelymuse (remove .tumblr.com)',
+				),
+			)
+		);
+		// Field: Mastodon URL
+		$field_mastodon = $cmb_actorside->add_field(
+			array(
+				'name'       => 'Mastodon',
+				'id'         => $prefix . 'mastodon',
+				'type'       => 'text',
+				'attributes' => array(
+					'placeholder' => 'Ex: https://mastodon.instance/username',
 				),
 			)
 		);
@@ -277,13 +277,15 @@ class LWTV_Actors_CMB2 {
 			$row5           = $grid_actorside->addRow();
 			$row6           = $grid_actorside->addRow();
 			$row7           = $grid_actorside->addRow();
+			$row8           = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
 			$row2->addColumns( array( $field_pronouns ) );
 			$row3->addColumns( array( $field_birth, $field_death ) );
 			$row4->addColumns( array( $field_imdb, $field_wiki ) );
 			$row5->addColumns( array( $field_home ) );
-			$row6->addColumns( array( $field_twitter, $field_tumblr, $field_instagram ) );
-			$row7->addColumns( array( $field_excerpt ) );
+			$row6->addColumns( array( $field_twitter, $field_instagram ) );
+			$row7->addColumns( array( $field_tumblr, $field_mastodon ) );
+			$row8->addColumns( array( $field_excerpt ) );
 		}
 	}
 

@@ -16,15 +16,15 @@ if ( ! defined( 'WPINC' ) ) {
 
 $upload_dir = wp_upload_dir();
 
-if ( ! defined( 'LP_SYMBOLICONS_PATH' ) ) {
-	define( 'LP_SYMBOLICONS_PATH', $upload_dir['basedir'] . '/lezpress-icons/symbolicons/' );
+if ( ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
+	define( 'LWTV_SYMBOLICONS_PATH', $upload_dir['basedir'] . '/lezpress-icons/symbolicons/' );
 }
 
-if ( ! defined( 'LP_SYMBOLICONS_URL' ) ) {
-	define( 'LP_SYMBOLICONS_URL', $upload_dir['baseurl'] . '/lezpress-icons/symbolicons/' );
+if ( ! defined( 'LWTV_SYMBOLICONS_URL' ) ) {
+	define( 'LWTV_SYMBOLICONS_URL', $upload_dir['baseurl'] . '/lezpress-icons/symbolicons/' );
 }
 
-class LP_SymboliconsSettings {
+class LWTV_SymboliconsSettings {
 
 	protected static $version;
 
@@ -77,11 +77,11 @@ class LP_SymboliconsSettings {
 		), $atts );
 
 		// Default to the square if nothing is there
-		if ( ! file_exists( LP_SYMBOLICONS_PATH . $svg['file'] . '.svg' ) ) {
+		if ( ! file_exists( LWTV_SYMBOLICONS_PATH . $svg['file'] . '.svg' ) ) {
 			$svg['file'] = 'square';
 		}
 
-		$the_icon = '<span class="symbolicon" role="img" aria-label="' . sanitize_text_field( $svg['title'] ) . '" title="' . sanitize_text_field( $svg['title'] ) . '" class="svg-shortcode ' . sanitize_text_field( $svg['title'] ) . '">' . file_get_contents( LP_SYMBOLICONS_PATH . $svg['file'] . '.svg' ) . '</span>';
+		$the_icon = '<span class="symbolicon" role="img" aria-label="' . sanitize_text_field( $svg['title'] ) . '" title="' . sanitize_text_field( $svg['title'] ) . '" class="svg-shortcode ' . sanitize_text_field( $svg['title'] ) . '">' . file_get_contents( LWTV_SYMBOLICONS_PATH . $svg['file'] . '.svg' ) . '</span>';
 
 		if ( ! empty( $svg['url'] ) ) {
 			$iconpath = '<a href=' . esc_url( $svg['url'] ) . '> ' . $the_icon . ' </a>';
@@ -132,8 +132,8 @@ class LP_SymboliconsSettings {
 		<?php
 		echo '<p>The following are all the symbolicons you have to chose from and their file names. Let this help you be more better with your iconing.</p>';
 
-		foreach ( glob( LP_SYMBOLICONS_PATH . '*' ) as $filename ) {
-			$name = str_replace( LP_SYMBOLICONS_PATH, '', $filename );
+		foreach ( glob( LWTV_SYMBOLICONS_PATH . '*' ) as $filename ) {
+			$name = str_replace( LWTV_SYMBOLICONS_PATH, '', $filename );
 			$name = str_replace( '.svg', '', $name );
 			// @codingStandardsIgnoreStart
 			echo '<span class="cmb2-icon" role="img">' . file_get_contents( $filename ) . esc_html( $name ) . '</span>';
@@ -145,4 +145,4 @@ class LP_SymboliconsSettings {
 	}
 
 }
-new LP_SymboliconsSettings();
+new LWTV_SymboliconsSettings();

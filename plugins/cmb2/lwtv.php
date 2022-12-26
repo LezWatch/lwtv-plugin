@@ -34,8 +34,8 @@ class LWTV_CMB2 {
 		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_intersections' );
 
 		// If we don't have symbolicons, there's not a reason to register the taxonomy box...
-		if ( defined( 'LP_SYMBOLICONS_PATH' ) ) {
-			$this->symbolicon_path = LP_SYMBOLICONS_PATH;
+		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
+			$this->symbolicon_path = LWTV_SYMBOLICONS_PATH;
 			add_action( 'cmb2_admin_init', array( $this, 'register_taxonomy_metabox' ) );
 		}
 
@@ -170,12 +170,12 @@ class LWTV_CMB2 {
 	 */
 	public function register_taxonomy_metabox() {
 		$prefix         = 'lez_termsmeta_';
-		$imagepath      = LP_SYMBOLICONS_PATH;
+		$imagepath      = LWTV_SYMBOLICONS_PATH;
 		$icon_array     = array();
 		$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
 
 		foreach ( glob( $imagepath . '*' ) as $filename ) {
-			$filename                = str_replace( '.svg', '', str_replace( LP_SYMBOLICONS_PATH, '', $filename ) );
+			$filename                = str_replace( '.svg', '', str_replace( LWTV_SYMBOLICONS_PATH, '', $filename ) );
 			$icon_array[ $filename ] = $filename;
 		}
 
@@ -208,14 +208,14 @@ class LWTV_CMB2 {
 		$icon = $field->value;
 
 		// Bail early if empty
-		if ( empty( $icon ) || ! defined( 'LP_SYMBOLICONS_PATH' ) ) {
+		if ( empty( $icon ) || ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
 			return;
 		}
 
-		if ( ! file_exists( LP_SYMBOLICONS_PATH . $icon . '.svg' ) ) {
+		if ( ! file_exists( LWTV_SYMBOLICONS_PATH . $icon . '.svg' ) ) {
 			$content = 'N/A';
 		} else {
-			$filename = LP_SYMBOLICONS_URL . $icon . '.svg';
+			$filename = LWTV_SYMBOLICONS_URL . $icon . '.svg';
 			$content  = '<span class="cmb2-icon" role="img">' . file_get_contents( $filename ) . '</span>';
 		}
 
@@ -233,14 +233,14 @@ class LWTV_CMB2 {
 		$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
 
 		// Bail early if empty
-		if ( empty( $icon ) || ! defined( 'LP_SYMBOLICONS_PATH' ) ) {
+		if ( empty( $icon ) || ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
 			return;
 		}
 
-		if ( ! file_exists( LP_SYMBOLICONS_PATH . $icon . '.svg' ) ) {
+		if ( ! file_exists( LWTV_SYMBOLICONS_PATH . $icon . '.svg' ) ) {
 			$content = 'N/A';
 		} else {
-			$filename = LP_SYMBOLICONS_URL . $icon . '.svg';
+			$filename = LWTV_SYMBOLICONS_URL . $icon . '.svg';
 			$content  = '<span class="cmb2-icon" role="img">' . file_get_contents( $filename ) . '</span>';
 		}
 
