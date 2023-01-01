@@ -378,7 +378,7 @@ class LWTV_Debug {
 					}
 				}
 				if ( ! empty( $check['twits'] ) ) {
-					if ( self::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] && self::validate_imdb( $check['twits'] ) !== false ) {
+					if ( self::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
 						$problems[] = 'Twitter ID is invalid.';
 					}
 				}
