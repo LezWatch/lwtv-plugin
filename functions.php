@@ -221,7 +221,7 @@ class LWTV_Functions {
 			$icon = $square;
 		}
 
-		if ( isset( $icon ) && ! 'LWTV_DEV_SITE' ) {
+		if ( isset( $icon ) ) {
 			// @codingStandardsIgnoreStart
 			$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
 			// @codingStandardsIgnoreEnd
