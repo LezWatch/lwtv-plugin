@@ -191,7 +191,7 @@ The file `_main.php` acts as an autoloader.
     - calls other files
     - generates a CB2 formatted list of terms
 * `/cmb2/` - CMB2 add on libraries
-    - `/cmb-field-select2/` - CMB2 Field Type: Select2
+    - `/cmb-field-select2/` - CMB2 Field Type: Select2 (forked)
     - `/cmb2-grid/` - CMB2 Grid Display
     - `/cmb2.css` - Custom CSS
     - `/lwtv.php` - Special code for us -- Favourite shows for author profiles, Symbolicon support
