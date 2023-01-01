@@ -103,7 +103,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 
 	//Registers the dashboard widget
 	public function dashboard_setup() {
-		wp_add_dashboard_widget( 'gf_approvals_dashboard', 'Forms Pending Approval', array( $this, 'dashboard' ) );
+		wp_add_dashboard_widget( 'lwtv_gf_approvals_dashboard', 'Forms Pending Approval', array( $this, 'dashboard' ) );
 	}
 
 	/**
@@ -427,7 +427,6 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 									gform_update_meta( $entry['id'], 'approval_status', $status );
 									echo '<li>' . esc_html( ucfirst( $status ) ) . ' by ' . esc_html( $user_info->display_name ) . '</li>';
 								}
-
 							}
 						}
 					}
@@ -443,7 +442,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 					// If we have not yet been approved, we'll want this:
 					if ( ! $has_been_reviewed ) {
 						?>
-							<?php wp_nonce_field( 'gf_approvals' );	?>
+							<?php wp_nonce_field( 'gf_approvals' ); ?>
 							<button name="gf_approvals_status" value="approved" type="submit" class="button">
 								<?php echo wp_kses_post( $approve_icon ); ?> Approve
 							</button>

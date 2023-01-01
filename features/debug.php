@@ -258,16 +258,16 @@ class LWTV_Debug {
 
 					// Build the data
 					$wiki_queery = 'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' . $search_body['search']['0']['id'] . '&format=json';
-					$wiki_data  = wp_remote_get( $wiki_queery );
-					$wiki_array = json_decode( $wiki_data['body'], true );
+					$wiki_data   = wp_remote_get( $wiki_queery );
+					$wiki_array  = json_decode( $wiki_data['body'], true );
 
 					$wiki_actor = array_shift( $wiki_array['entities'] );
 					$wiki_link  = '';
 
 					// If there's a wikipedia URL, let's get details.
 					if ( '' !== $check_ours['wikipedia'] ) {
-						$parsed_wiki = parse_url( $check_ours['wikipedia'] );
-						$wiki_lang   = @array_shift( explode( '.', $parsed_wiki['host'] ) );
+						$parsed_wiki = wp_parse_url( $check_ours['wikipedia'] );
+						$wiki_lang   = array_shift( explode( '.', $parsed_wiki['host'] ) );
 
 						if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
 							$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['title'] );
@@ -357,13 +357,13 @@ class LWTV_Debug {
 				}
 
 				// -Wikipedia links should point to Wikipedia: "https://[language].wikipedia.org/" (props Jamie)
-				if ( ! empty( $check['wiki'] ) && strpos( $check['wiki'], 'wikipedia.org/' ) == false ) {
+				if ( ! empty( $check['wiki'] ) && strpos( $check['wiki'], 'wikipedia.org/' ) === false ) {
 					$problems[] = 'Wikipedia URL does not point to Wikipedia.';
 				}
 
 				// -IMDb IDs should be valid for the space they're in, e.g. "nm"
 				// and digits for people (props Jamie)
-				if ( ! empty( $check['imdb'] ) && self::validate_imdb( $check['imdb'] ) == false ) {
+				if ( ! empty( $check['imdb'] ) && self::validate_imdb( $check['imdb'] ) === false ) {
 					$problems[] = 'IMDb ID is invalid (ex: nm12345).';
 				}
 
@@ -516,10 +516,11 @@ class LWTV_Debug {
 				}
 
 				// If they're cartoons, or in the actorless array, they can have no actor.
+				// This really should be a checkbox or something...
 				$actorless_characters = array(
 					'81395', // Danny the street
 				);
-				if ( ! $check['actors'] && ! has_term( 'cartoon', 'lez_cliches' ) && ! in_array( $char_id, $actorless_characters ) ) {
+				if ( ! $check['actors'] && ! has_term( 'cartoon', 'lez_cliches' ) && ! in_array( $char_id, $actorless_characters, true ) ) {
 					$problems[] = 'No actors listed.';
 				}
 
