@@ -211,19 +211,6 @@ class LWTV_CPT_Actors {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 
-		// Build Actor Transient
-		$transient = get_transient( 'lwtv_list_actors' );
-		if ( false === $transient || ! in_array( $post_id, $transient ) ) {
-			$transient = ( new LWTV_CMB2() )->get_post_options(
-				array(
-					'post_type'   => 'post_type_actors',
-					'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
-					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
-				)
-			);
-			set_transient( 'lwtv_list_actors', $transient, 24 * HOUR_IN_SECONDS );
-		}
-
 		// Do the math
 		( new LWTV_Actors_Calculate() )->do_the_math( $post_id );
 
