@@ -444,9 +444,6 @@ class LWTV_Shows_Calculate {
 			$on_air = 'yes';
 		}
 		update_post_meta( $post_id, 'lezshows_on_air', $on_air );
-
-		// Trigger indexing to update facets.
-		FWP()->indexer->index( $post_id );
 	}
 }
 

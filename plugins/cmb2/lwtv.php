@@ -56,16 +56,15 @@ class LWTV_CMB2 {
 	/**
 	 * Extra Get post options.
 	 */
-	public function get_post_options( $query_args ) {
+	public function get_post_options( $post_type = 'post', $numberposts = '500' ) {
 
 		// Build arguments, based on data sent.
-		$args = wp_parse_args(
-			$query_args,
-			array(
-				'post_type'   => 'post',
-				'numberposts' => wp_count_posts( 'post' )->publish,
-				'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
-			)
+		$args = array(
+			'post_type'     => $post_type,
+			'numberposts'   => $numberposts,
+			'post_status'   => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+			'fields'        => 'ids',
+			'no_found_rows' => true,
 		);
 
 		// Get the posts
@@ -75,16 +74,16 @@ class LWTV_CMB2 {
 		$post_options = array();
 		if ( $posts ) {
 			foreach ( $posts as $post ) {
-				$post_title = $post->post_title;
+				$post_title = get_the_title( $post );
 				// If we're an actor, we should check for queerness.
-				if ( 'post_type_actors' === $query_args['post_type'] ) {
-					if ( get_post_meta( $post->ID, 'lezactors_queer', true ) ) {
+				if ( 'post_type_actors' === $post_type ) {
+					if ( get_post_meta( $post, 'lezactors_queer', true ) ) {
 						$post_title .= ' (QUEER IRL)';
 					}
 				}
 
 				// Add extra based on status.
-				switch ( get_post_status( $post->ID ) ) {
+				switch ( get_post_status( $post ) ) {
 					case 'draft':
 						$post_title .= ' - DRAFT';
 						break;
@@ -97,7 +96,7 @@ class LWTV_CMB2 {
 						break;
 				}
 
-				$post_options[ $post->ID ] = $post_title;
+				$post_options[ $post ] = $post_title;
 			}
 		}
 

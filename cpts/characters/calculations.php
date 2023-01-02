@@ -53,7 +53,9 @@ class LWTV_Characters_Calculate {
 		$shows = get_post_meta( $post_id, 'lezchars_show_group', true );
 		if ( ! empty( $shows ) ) {
 			foreach ( $shows as $show_id ) {
-				( new LWTV_Shows_Calculate() )->do_the_math( $show_id );
+				if ( isset( $show_id['show'] ) ) {
+					( new LWTV_Shows_Calculate() )->do_the_math( $show_id['show'] );
+				}
 			}
 		}
 	}
@@ -92,9 +94,6 @@ class LWTV_Characters_Calculate {
 
 		// Update Actors
 		self::actors( $post_id );
-
-		// Trigger indexing to update facets.
-		FWP()->indexer->index( $post_id );
 	}
 
 }

@@ -70,11 +70,14 @@ class LWTV_SymboliconsSettings {
 	 * @return SVG icon of awesomeness
 	 */
 	public function shortcode( $atts ) {
-		$svg = shortcode_atts( array(
-			'file'  => '',
-			'title' => '',
-			'url'   => '',
-		), $atts );
+		$svg = shortcode_atts(
+			array(
+				'file'  => '',
+				'title' => '',
+				'url'   => '',
+			),
+			$atts
+		);
 
 		// Default to the square if nothing is there
 		if ( ! file_exists( LWTV_SYMBOLICONS_PATH . $svg['file'] . '.svg' ) ) {

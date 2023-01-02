@@ -315,8 +315,8 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 
 			// Update Meta
 			gform_update_meta( $entry['id'], 'approval_status_' . $current_user->ID, $new_status );
-			gform_update_meta( $entry['id'], 'approval_date_' . $current_user->ID, gmdate() );
-			gform_update_meta( $entry['id'], 'approval_date', gmdate() );
+			gform_update_meta( $entry['id'], 'approval_date_' . $current_user->ID, time() );
+			gform_update_meta( $entry['id'], 'approval_date', time() );
 
 			$entry[ 'approval_status_' . $current_user->ID ] = $new_status;
 
@@ -329,7 +329,8 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 				if ( $feed['is_active'] && $this->is_feed_condition_met( $feed, $form, $entry ) ) {
 					// If anyone who is an approval approves or rejects, allow it.
 					// Source: https://wordpress.org/support/topic/multiple-approvers-fix/
-					foreach ( $feed['meta']['approver'] as $approver ) {
+					$all_approvers = ( ! is_array( $feed['meta']['approver'] ) ) ? array( $feed['meta']['approver'] ) : $feed['meta']['approver'];
+					foreach ( $all_approvers as $approver ) {
 						if ( ! empty( $entry[ 'approval_status_' . $approver ] ) ) {
 							if ( 'approved' === $entry[ 'approval_status_' . $approver ] ) {
 								$approver_array[ $approver ]['approved'] = true;
@@ -462,12 +463,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	 * Displays the Dashboard UI
 	 */
 	public static function dashboard() {
-		global $current_user;
 
-		$search_criteria['field_filters'][] = array(
-			'key'   => 'approval_status_' . $current_user->ID,
-			'value' => 'pending',
-		);
 		$search_criteria['field_filters'][] = array(
 			'key'   => 'approval_status',
 			'value' => 'pending',
@@ -475,13 +471,13 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 
 		$entries = GFAPI::get_entries( 0, $search_criteria );
 
-		if ( count( $entries ) > 0 ) {
+		if ( ! empty( $entries ) && count( $entries ) > 0 ) {
 			?>
 			<table class="widefat" cellspacing="0" style="border:0px;">
 				<thead>
 				<tr>
 					<td><i>Form</i></td>
-					<td><i>User</i></td>
+					<td><i>User/IP</i></td>
 					<td><i>Submission Date</i></td>
 				</tr>
 				</thead>
@@ -492,22 +488,26 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 					$form      = GFAPI::get_form( $entry['form_id'] );
 					$user      = get_user_by( 'id', (int) $entry['created_by'] );
 					$url_entry = sprintf( 'admin.php?page=gf_entries&view=entry&id=%d&lid=%d', $entry['form_id'], $entry['id'] );
-					$url_entry = esc_url( admin_url( $url_entry ) );
+					$url_entry = sanitize_url( admin_url( $url_entry ) );
 					?>
 					<tr>
 						<td>
 							<?php
-							echo '<a href="' . esc_url( $url_entry ) . '>' . esc_html( $form['title'] ) . '</a>';
+							echo '<a href="' . esc_url( $url_entry ) . '">' . esc_html( $form['title'] ) . '</a>';
 							?>
 						</td>
 						<td>
 							<?php
-							echo '<a href="' . esc_url( $url_entry ) . '>' . esc_html( $user->display_name ) . '</a>';
+							if ( 0 !== (int) $entry['created_by'] ) {
+								echo '<a href="' . esc_url( $url_entry ) . '">' . esc_html( $user->display_name ) . '</a>';
+							} else {
+								echo esc_html( $entry['ip'] );
+							}
 							?>
 						</td>
 						<td>
 							<?php
-							echo '<a href="' . esc_url( $url_entry ) . '>' . esc_html( $entry['date_created'] ) . '</a>';
+							echo '<a href="' . esc_url( $url_entry ) . '">' . esc_html( $entry['date_created'] ) . '</a>';
 							?>
 						</td>
 					</tr>

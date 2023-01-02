@@ -182,28 +182,16 @@ SQL;
 	 * @return void
 	 */
 	public function lists_daily() {
-		$list_shows = get_transient( 'lwtv_list_shows' );
-		if ( false === $list_shows ) {
-			$list_shows = ( new LWTV_CMB2() )->get_post_options(
-				array(
-					'post_type'   => 'post_type_shows',
-					'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
-					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
-				)
-			);
-			set_transient( 'lwtv_list_shows', $list_shows, 24 * HOUR_IN_SECONDS );
+		$count_shows = get_transient( 'lwtv_count_shows' );
+		if ( false === $count_shows ) {
+			$count_shows = 50 + wp_count_posts( 'post_type_shows' )->publish;
+			set_transient( 'lwtv_count_shows', $count_shows, 24 * HOUR_IN_SECONDS );
 		}
 
-		$list_actors = get_transient( 'lwtv_list_actors' );
-		if ( false === $list_actors ) {
-			$list_actors = ( new LWTV_CMB2() )->get_post_options(
-				array(
-					'post_type'   => 'post_type_actors',
-					'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
-					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
-				)
-			);
-			set_transient( 'lwtv_list_actors', $list_actors, 24 * HOUR_IN_SECONDS );
+		$count_actors = get_transient( 'lwtv_count_actors' );
+		if ( false === $count_actors ) {
+			$count_actors = 50 + wp_count_posts( 'post_type_actors' )->publish;
+			set_transient( 'lwtv_count_actors', $count_actors, 24 * HOUR_IN_SECONDS );
 		}
 	}
 
@@ -238,7 +226,7 @@ SQL;
 				$check = ( new LWTV_Debug() )->find_actors_problems();
 				break;
 			case 'Tue':
-				// Nothing yet.
+				FWP()->indexer->index(); // Ensure Faceting.
 				break;
 			case 'Wed':
 				$check = ( new LWTV_Debug() )->find_actors_no_chars();

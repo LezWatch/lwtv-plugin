@@ -68,16 +68,10 @@ class LWTV_Shows_CMB2 {
 	 */
 	public function cmb2_get_shows_options() {
 		$the_id    = ( false !== get_the_ID() ) ? get_the_ID() : 0;
-		$transient = get_transient( 'lwtv_list_shows' );
-		if ( false === $transient ) {
-			$transient = ( new LWTV_CMB2() )->get_post_options(
-				array(
-					'post_type'   => 'post_type_shows',
-					'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
-					'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-				)
-			);
-			set_transient( 'lwtv_list_shows', $transient, 24 * HOUR_IN_SECONDS );
+		$transient = get_transient( 'lwtv_count_shows' );
+		if ( false === $transient || ! is_array( $transient ) ) {
+			$transient = ( new LWTV_CMB2() )->get_post_options( 'post_type_shows', '-1' );
+			set_transient( 'lwtv_count_shows', $transient, 24 * HOUR_IN_SECONDS );
 		}
 
 		// Remove THIS show because we use it for related posts

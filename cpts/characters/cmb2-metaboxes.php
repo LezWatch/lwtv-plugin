@@ -37,19 +37,14 @@ class LWTV_Characters_CMB2 {
 	 * Create a list of all shows
 	 */
 	public function cmb2_get_shows_options() {
-		// Set transient because this is getting large.
-		$transient = get_transient( 'lwtv_list_shows' );
-		if ( false === $transient ) {
-			$transient = ( new LWTV_CMB2() )->get_post_options(
-				array(
-					'post_type'   => 'post_type_shows',
-					'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
-					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
-				)
-			);
-			set_transient( 'lwtv_list_shows', $transient, 24 * HOUR_IN_SECONDS );
+		$count_shows = get_transient( 'lwtv_count_shows' );
+		$count        = ( false === $count_shows || ! is_int( $count_shows ) ) ? '-1' : $count_shows + 50;
+		$return       = ( new LWTV_CMB2() )->get_post_options( 'post_type_shows', $count );
+
+		$list_shows = get_transient( 'lwtv_list_shows' );
+		if ( ( false === $list_shows ) || ! is_array( $list_shows ) ) {
+			set_transient( 'lwtv_list_actors', $return, 24 * HOUR_IN_SECONDS );
 		}
-		$return = $transient;
 		return $return;
 	}
 
@@ -57,19 +52,15 @@ class LWTV_Characters_CMB2 {
 	 * Create a list of all actors
 	 */
 	public function cmb2_get_actors_options() {
-		// Set transient because this is very large.
-		$transient = get_transient( 'lwtv_list_actors' );
-		if ( false === $transient ) {
-			$transient = ( new LWTV_CMB2() )->get_post_options(
-				array(
-					'post_type'   => 'post_type_actors',
-					'numberposts' => ( 50 + wp_count_posts( 'post_type_actors' )->publish ),
-					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
-				)
-			);
-			set_transient( 'lwtv_list_actors', $transient, 24 * HOUR_IN_SECONDS );
+		$count_actors = get_transient( 'lwtv_count_actors' );
+		$count        = ( false === $count_actors || ! is_int( $count_actors ) ) ? '-1' : $count_actors + 50;
+		$return       = ( new LWTV_CMB2() )->get_post_options( 'post_type_actors', $count );
+
+		$list_actors = get_transient( 'lwtv_list_actors' );
+		if ( ( false === $list_actors ) || ! is_array( $list_actors ) ) {
+			set_transient( 'lwtv_list_actors', $return, 24 * HOUR_IN_SECONDS );
 		}
-		$return = $transient;
+
 		return $return;
 	}
 

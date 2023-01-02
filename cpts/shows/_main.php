@@ -255,8 +255,11 @@ class LWTV_CPT_Shows {
 	 */
 	public function save_post_meta( $post_id, $post, $update ) {
 
+		$post_status = get_post_status( $post_id );
+		$post_array  = array( 'publish', 'private' );
+
 		// Prevent running on autosave.
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE || ( 'auto-draft' === get_post_status( $post_id ) ) ) {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! in_array( $post_status, $post_array ) ) {
 			return;
 		}
 
@@ -265,19 +268,6 @@ class LWTV_CPT_Shows {
 
 		// Save show scores
 		( new LWTV_Shows_Calculate() )->do_the_math( $post_id );
-
-		// Build Show Transient
-		$transient = get_transient( 'lwtv_list_shows' );
-		if ( false === $transient || ! in_array( $post_id, $transient ) ) {
-			$transient = ( new LWTV_CMB2() )->get_post_options(
-				array(
-					'post_type'   => 'post_type_shows',
-					'numberposts' => ( 50 + wp_count_posts( 'post_type_shows' )->publish ),
-					'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
-				)
-			);
-			set_transient( 'lwtv_list_shows', $transient, 24 * HOUR_IN_SECONDS );
-		}
 
 		// ALWAYS sync up data.
 		foreach ( self::$select2_taxonomies as $postmeta => $taxonomy ) {
