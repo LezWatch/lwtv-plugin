@@ -37,12 +37,11 @@ class LWTV_Characters_CMB2 {
 	 * Create a list of all shows
 	 */
 	public function cmb2_get_shows_options() {
-		$count  = ( false === get_transient( 'lwtv_list_shows' ) && ! is_int( get_transient( 'lwtv_list_shows' ) ) ) ? 5000 : get_transient( 'lwtv_list_shows' );
+		$count  = ( false === get_transient( 'lwtv_list_shows' ) || ! is_int( get_transient( 'lwtv_list_shows' ) ) ) ? 5000 : get_transient( 'lwtv_list_shows' );
 		$return = ( new LWTV_CMB2() )->get_post_options(
 			array(
 				'post_type'   => 'post_type_shows',
-				'numberposts' => 50 + $count,
-				'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+				'numberposts' => -1,
 			)
 		);
 
@@ -53,12 +52,11 @@ class LWTV_Characters_CMB2 {
 	 * Create a list of all actors
 	 */
 	public function cmb2_get_actors_options() {
-		$count  = ( false === get_transient( 'lwtv_list_actors' ) && ! is_int( get_transient( 'lwtv_list_actors' ) ) ) ? 5000 : get_transient( 'lwtv_list_actors' );
+		$count  = ( false === get_transient( 'lwtv_list_actors' ) || ! is_int( get_transient( 'lwtv_list_actors' ) ) ) ? 6000 : get_transient( 'lwtv_list_actors' );
 		$return = ( new LWTV_CMB2() )->get_post_options(
 			array(
 				'post_type'   => 'post_type_actors',
-				'numberposts' => 50 + $count,
-				'post_status' => array( 'publish', 'pending', 'draft', 'future', 'private' ),
+				'numberposts' => -1,
 			)
 		);
 
