@@ -255,8 +255,11 @@ class LWTV_CPT_Shows {
 	 */
 	public function save_post_meta( $post_id, $post, $update ) {
 
+		$post_status = get_post_status( $post_id );
+		$post_array  = array( 'publish', 'private' );
+
 		// Prevent running on autosave.
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE || ( 'auto-draft' === get_post_status( $post_id ) ) ) {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! in_array( $post_status, $post_array ) ) {
 			return;
 		}
 
