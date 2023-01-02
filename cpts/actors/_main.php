@@ -211,6 +211,18 @@ class LWTV_CPT_Actors {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 
+		// Add to the list of actors ONLY IF the transient exists.
+		$list_actors = get_transient( 'lwtv_list_actors' );
+		if ( is_array( $list_actors ) && ! in_array( $post_id, $list_actors ) ) {
+			$post_title = get_the_title( $post_id );
+			// If we're an actor, we should check for queerness.
+			if ( get_post_meta( $post, 'lezactors_queer', true ) ) {
+				$post_title .= ' (QUEER IRL)';
+			}
+			$list_actors[ $post_id ] = $post_title . ' - NEW';
+			set_transient( 'lwtv_list_actors', $list_actors, 24 * HOUR_IN_SECONDS );
+		}
+
 		// Do the math
 		( new LWTV_Actors_Calculate() )->do_the_math( $post_id );
 

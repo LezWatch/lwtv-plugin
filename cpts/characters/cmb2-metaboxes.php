@@ -38,14 +38,14 @@ class LWTV_Characters_CMB2 {
 	 */
 	public function cmb2_get_shows_options() {
 		$count_shows = get_transient( 'lwtv_count_shows' );
-		$count        = ( false === $count_shows || ! is_int( $count_shows ) ) ? '-1' : $count_shows + 50;
-		$return       = ( new LWTV_CMB2() )->get_post_options( 'post_type_shows', $count );
+		$count       = ( false === $count_shows || ! is_int( $count_shows ) ) ? '-1' : $count_shows + 50;
 
 		$list_shows = get_transient( 'lwtv_list_shows' );
 		if ( ( false === $list_shows ) || ! is_array( $list_shows ) ) {
-			set_transient( 'lwtv_list_actors', $return, 24 * HOUR_IN_SECONDS );
+			$list_shows = ( new LWTV_CMB2() )->get_post_options( 'post_type_shows', $count );
+			set_transient( 'lwtv_list_shows', $list_shows, 24 * HOUR_IN_SECONDS );
 		}
-		return $return;
+		return $list_shows;
 	}
 
 	/*
@@ -54,14 +54,14 @@ class LWTV_Characters_CMB2 {
 	public function cmb2_get_actors_options() {
 		$count_actors = get_transient( 'lwtv_count_actors' );
 		$count        = ( false === $count_actors || ! is_int( $count_actors ) ) ? '-1' : $count_actors + 50;
-		$return       = ( new LWTV_CMB2() )->get_post_options( 'post_type_actors', $count );
 
 		$list_actors = get_transient( 'lwtv_list_actors' );
 		if ( ( false === $list_actors ) || ! is_array( $list_actors ) ) {
-			set_transient( 'lwtv_list_actors', $return, 24 * HOUR_IN_SECONDS );
+			$list_actors = ( new LWTV_CMB2() )->get_post_options( 'post_type_actors', $count );
+			set_transient( 'lwtv_list_actors', $list_actors, 24 * HOUR_IN_SECONDS );
 		}
 
-		return $return;
+		return $list_actors;
 	}
 
 	/*
