@@ -172,7 +172,7 @@ class LWTV_Actors_Calculate {
 		update_post_meta( $post_id, 'lezactors_queer', $is_queer );
 
 		// Trigger indexing to update facets.
-		FWP()->indexer->index( $post_id );
+		// FWP()->indexer->index( $post_id );
 	}
 
 }

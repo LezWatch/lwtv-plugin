@@ -96,7 +96,7 @@ class LWTV_Characters_Calculate {
 		self::actors( $post_id );
 
 		// Trigger indexing to update facets.
-		FWP()->indexer->index( $post_id );
+		// FWP()->indexer->index( $post_id );
 	}
 
 }
