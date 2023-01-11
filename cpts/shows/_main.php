@@ -269,14 +269,6 @@ class LWTV_CPT_Shows {
 		// Save show scores
 		( new LWTV_Shows_Calculate() )->do_the_math( $post_id );
 
-		// Add to the list of actors ONLY IF the transient exists.
-		$list_shows = get_transient( 'lwtv_list_shows' );
-		if ( is_array( $list_shows ) && ! in_array( $post_id, $list_shows ) ) {
-			$post_title             = get_the_title( $post_id );
-			$list_shows[ $post_id ] = $post_title . ' - NEW';
-			set_transient( 'lwtv_list_shows', $list_shows, 24 * HOUR_IN_SECONDS );
-		}
-
 		// ALWAYS sync up data.
 		foreach ( self::$select2_taxonomies as $postmeta => $taxonomy ) {
 			( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
