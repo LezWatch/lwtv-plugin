@@ -93,3 +93,11 @@ body.post-type-post_type_shows .cmb2-text-url {
 .select2-container .select2-selection--single .select2-selection__rendered {
 	min-width: 200px;
 }
+
+div.post-titles-container input {
+	min-width: 300px;
+}
+
+.cmb2-post-search-button button {
+	margin-left: 10px;
+}

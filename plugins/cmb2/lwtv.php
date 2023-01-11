@@ -56,12 +56,12 @@ class LWTV_CMB2 {
 	/**
 	 * Extra Get post options.
 	 */
-	public function get_post_options( $post_type = 'post', $numberposts = '500' ) {
+	public function get_post_options( $post_type = 'post', $numberposts = 500 ) {
 
 		// Build arguments, based on data sent.
 		$args = array(
 			'post_type'     => $post_type,
-			'numberposts'   => $numberposts,
+			'numberposts'   => (int) $numberposts + 50,
 			'post_status'   => array( 'publish', 'pending', 'draft', 'future', 'private' ),
 			'fields'        => 'ids',
 			'no_found_rows' => true,

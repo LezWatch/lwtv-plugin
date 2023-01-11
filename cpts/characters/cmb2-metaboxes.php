@@ -34,37 +34,6 @@ class LWTV_Characters_CMB2 {
 	}
 
 	/*
-	 * Create a list of all shows
-	 */
-	public function cmb2_get_shows_options() {
-		$count_shows = get_transient( 'lwtv_count_shows' );
-		$count        = ( false === $count_shows || ! is_int( $count_shows ) ) ? '-1' : $count_shows + 50;
-		$return       = ( new LWTV_CMB2() )->get_post_options( 'post_type_shows', $count );
-
-		$list_shows = get_transient( 'lwtv_list_shows' );
-		if ( ( false === $list_shows ) || ! is_array( $list_shows ) ) {
-			set_transient( 'lwtv_list_actors', $return, 24 * HOUR_IN_SECONDS );
-		}
-		return $return;
-	}
-
-	/*
-	 * Create a list of all actors
-	 */
-	public function cmb2_get_actors_options() {
-		$count_actors = get_transient( 'lwtv_count_actors' );
-		$count        = ( false === $count_actors || ! is_int( $count_actors ) ) ? '-1' : $count_actors + 50;
-		$return       = ( new LWTV_CMB2() )->get_post_options( 'post_type_actors', $count );
-
-		$list_actors = get_transient( 'lwtv_list_actors' );
-		if ( ( false === $list_actors ) || ! is_array( $list_actors ) ) {
-			set_transient( 'lwtv_list_actors', $return, 24 * HOUR_IN_SECONDS );
-		}
-
-		return $return;
-	}
-
-	/*
 	 * CMB2 Metaboxes
 	 */
 	public function cmb2_metaboxes() {
@@ -185,14 +154,14 @@ class LWTV_Characters_CMB2 {
 		// Field: Actor Name(s)
 		$field_actors = $cmb_characters->add_field(
 			array(
-				'name'             => 'Actor Name',
-				'desc'             => 'Click to type in the actor.',
-				'id'               => $prefix . 'actor',
-				'type'             => 'pw_select',
-				'show_option_none' => true,
-				'default'          => 'N/A (none)',
-				'options_cb'       => array( $this, 'cmb2_get_actors_options' ),
-				'repeatable'       => true,
+				'name'            => 'Actor Name',
+				'id'              => $prefix . 'actor',
+				'desc'            => 'Click on the search icon to select the actor.',
+				'type'            => 'post_search_text', // This field type
+				'post_type'       => 'post_type_actors',
+				'select_type'     => 'radio',
+				'select_behavior' => 'replace',
+				'repeatable'      => true,
 			)
 		);
 
@@ -213,14 +182,14 @@ class LWTV_Characters_CMB2 {
 		// Field: Show Name
 		$field_shows = $cmb_characters->add_group_field(
 			$group_shows,
-			array(
-				'name'             => 'TV Show',
-				'desc'             => 'Click to type in the TV show title.',
-				'id'               => 'show',
-				'type'             => 'pw_select',
-				'show_option_none' => true,
-				'default'          => 'custom',
-				'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
+			array (
+				'name'            => 'TV Show',
+				'id'              => 'show',
+				'desc'            => 'Click on the search icon to select the show.',
+				'type'            => 'post_search_text', // This field type
+				'post_type'       => 'post_type_shows',
+				'select_type'     => 'radio',
+				'select_behavior' => 'replace',
 			)
 		);
 		// Field: Character Type

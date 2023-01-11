@@ -473,7 +473,7 @@ class LWTV_Debug {
 		// Default
 		$items = array();
 
-		// Get all the shows
+		// Get all the characters
 		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters' );
 
 		if ( $the_loop->have_posts() ) {
@@ -515,12 +515,8 @@ class LWTV_Debug {
 					}
 				}
 
-				// If they're cartoons, or in the actorless array, they can have no actor.
-				// This really should be a checkbox or something...
-				$actorless_characters = array(
-					'81395', // Danny the street
-				);
-				if ( ! $check['actors'] && ! has_term( 'cartoon', 'lez_cliches' ) && ! in_array( $char_id, $actorless_characters, true ) ) {
+				// Okay fine, now we use the NONE actor.
+				if ( ! $check['actors'] ) {
 					$problems[] = 'No actors listed.';
 				}
 
