@@ -54,6 +54,15 @@ class LWTV_Characters_Calculate {
 		if ( ! empty( $shows ) ) {
 			foreach ( $shows as $show_id ) {
 				if ( isset( $show_id['show'] ) ) {
+
+					// Add character to list for show
+					$characters = get_post_meta( $show_id['show'], 'lezshows_char_list', true );
+					if ( empty( $characters ) ) {
+						$characters = array();
+					}
+					$characters[] = $post_id;
+					update_post_meta( $show_id['show'], 'lezshows_char_list', $characters );
+
 					( new LWTV_Shows_Calculate() )->do_the_math( $show_id['show'] );
 				}
 			}
@@ -68,13 +77,35 @@ class LWTV_Characters_Calculate {
 	 * @return N/A   No return, just update actor calculation
 	 */
 	public function actors( $post_id ) {
-		// Generate List of Actors
+		// Array of Actors saved to post
 		$actors = get_post_meta( $post_id, 'lezchars_actor', true );
 		if ( ! is_array( $actors ) ) {
-			$actors = array( get_post_meta( $post_id, 'lezchars_actor', true ) );
+			$actors = array( $actors );
 		}
 		if ( ! empty( $actors ) ) {
 			foreach ( $actors as $actor_id ) {
+
+				// Add array of characters by ID to actor as post meta
+				$characters = get_post_meta( $actor_id, 'lezactors_char_list', true );
+				if ( empty( $characters ) ) {
+					$characters = array();
+				}
+
+				if ( ! is_array( $characters ) ) {
+					$characters = array( $characters );
+				}
+
+				// If the character isn't already in the array, we add it.
+				if ( ! in_array( $post_id, $characters ) ) {
+					$characters[] = $post_id;
+
+					// Remove Duplicates just in case.
+					array_unique( $characters );
+
+					// Update List of characters for the actor
+					update_post_meta( $actor_id, 'lezactors_char_list', $characters );
+				}
+
 				( new LWTV_Actors_Calculate() )->do_the_math( $actor_id );
 			}
 		}
