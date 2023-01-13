@@ -33,7 +33,7 @@ class LWTV_Related_Posts {
 			return;
 		}
 
-		$related_post_loop  = ( new LWTV_Loops() )->related_posts_by_tag( 'post', $slug );
+		$related_post_loop = ( new LWTV_Loops() )->related_posts_by_tag( 'post', $slug );
 
 		if ( $related_post_loop->have_posts() ) {
 			$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
@@ -41,7 +41,7 @@ class LWTV_Related_Posts {
 			wp_reset_query();
 		}
 
-		$the_related_posts  = '<em>Coming soon...</em>';
+		$the_related_posts = '<em>Coming soon...</em>';
 
 		if ( is_array( $related_post_query ) ) {
 

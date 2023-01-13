@@ -1370,7 +1370,7 @@ class LWTV_Stats_Arrays {
 		return $array;
 	}
 
-	/** 
+	/**
 	 * Stats for character roles per actor.
 	*/
 	public function actor_char_role( $type, $the_id ) {
@@ -1444,8 +1444,7 @@ class LWTV_Stats_Arrays {
 
 	}
 
-
-	/** 
+	/**
 	 * Stats for dead character per actor.
 	*/
 	public function actor_char_dead( $type, $the_id ) {
@@ -1507,9 +1506,9 @@ class LWTV_Stats_Arrays {
 						foreach ( $actors_array as $char_actor ) {
 							if ( $char_actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
 								if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-									$base_array[ 'dead' ][ 'count']++;
+									$base_array['dead']['count']++;
 								} else {
-									$base_array[ 'alive' ][ 'count']++;
+									$base_array['alive']['count']++;
 								}
 							}
 						}

@@ -21,7 +21,7 @@ class LWTV_Social_Media {
 
 	/** Add rel="me" to social menu items. */
 	public function add_rel_me( $items, $args ) {
-		if ( 'follow-us' == $args->menu->name ) {
+		if ( 'follow-us' === $args->menu->name ) {
 			foreach ( $items as $i ) {
 				$i->xfn .= ' me';
 			}

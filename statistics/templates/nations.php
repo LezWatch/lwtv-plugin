@@ -112,6 +112,7 @@ switch ( $country ) {
 
 		if ( '_all' === $country ) {
 			// Always show the same thing here.
+			$all_count = ( new LWTV_Stats() )->showcount( 'score', 'country', $nation->slug );
 			?>
 			<p>For more information on individual nations, please use the dropdown menu, or click on a nation listed below.</p>
 			<table id="nationsTable" class="tablesorter table table-striped table-hover">
@@ -131,7 +132,7 @@ switch ( $country ) {
 						<th scope="row"><a href="?country=' . esc_attr( $nation->slug ) . '">' . esc_html( $nation->name ) . '</a></th>
 						<td>' . (int) $nation->count . '</td>
 						<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
-						<td>' . (int) ( new LWTV_Stats() )->showcount( 'score', 'country', $nation->slug ) . '</td>
+						<td>' . (int) $all_count . '</td>
 					</tr>';
 				}
 				?>

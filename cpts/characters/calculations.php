@@ -61,7 +61,7 @@ class LWTV_Characters_Calculate {
 						$characters = array();
 					}
 					$characters[] = $post_id;
-					$characters = array_unique( $characters );
+					$characters   = array_unique( $characters );
 					update_post_meta( $show_id['show'], 'lezshows_char_list', $characters );
 
 					( new LWTV_Shows_Calculate() )->do_the_math( $show_id['show'] );
@@ -97,7 +97,7 @@ class LWTV_Characters_Calculate {
 				}
 
 				// If the character isn't already in the array, we add it.
-				if ( ! in_array( $post_id, $characters ) ) {
+				if ( ! in_array( $post_id, $characters, true ) ) {
 					$characters[] = $post_id;
 
 					// Remove Duplicates just in case.

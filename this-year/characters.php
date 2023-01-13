@@ -291,8 +291,8 @@ class LWTV_This_Year_Chars {
 	 * @return array             All the data you need.
 	 */
 	public function get_list( $thisyear, $count = false ) {
-		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
-		$loop          = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $thisyear, 'REGEXP' );
+		$thisyear = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
+		$loop     = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $thisyear, 'REGEXP' );
 
 		if ( $loop->have_posts() ) {
 			$queery = wp_list_pluck( $loop->posts, 'ID' );

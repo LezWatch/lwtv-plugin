@@ -193,9 +193,10 @@ The file `_main.php` acts as an autoloader.
 * `/cmb2/` - CMB2 add on libraries
     - `/cmb-field-select2/` - CMB2 Field Type: Select2 (forked)
     - `/cmb2-grid/` - CMB2 Grid Display
+    - `/cmb2-post-search-field/` - CMB2 Post Search (forked)
     - `/cmb2.css` - Custom CSS
     - `/lwtv.php` - Special code for us -- Favourite shows for author profiles, Symbolicon support
-    - Year Range: `/year-range.php` - 'date_year_range' custom field type
+    - `/year-range.php` - Year Range -- 'date_year_range' custom field type
 * `comment_probation.php` - Fork of abandoned plugin
 * `/facet.php` -- Facet WP
     - calls other files
@@ -209,15 +210,14 @@ The file `_main.php` acts as an autoloader.
         - split actors and shows into separate entries, and add additional orderby params
 * `gravity-forms.php` - Protection from spammers via disallowed keys
 * `/gravity-forms/` - Gravity Forms Folder
-    - `class-gf-approvals.php` - Backend code
-* `imagify.php`  - Imagify integration
-    - prevents GIFs from being processed.
+    - `class-gf-approvals.php` - Approval Code (forked from another plugin)
 * `jetpack.php`  - Jetpack integration
     - Adds Post Type to sort.
     - Show Feedback in "Right Now"
     - Custom Icon for Feedback in "Right Now"
     - Mark feedbacks as having been answered
     - Protection from spammers via disallowed keys
+* `varnish.php` - Generate a list of special URLs to flush per post type.
 
 ### Rest API
 
@@ -230,7 +230,9 @@ Stored in `/rest-api/` - These files generate the REST API output.
     - On This Day - "On this day, X died"
     - When Died - "X died on date Y"
 * `export-json.php` - Export content in JSON format. Mostly used for WikiData and Universities.
-* `imdb.php`- API to communicate with IMDb and generate information (used by Alexa)
+* `fresh.php` - Generates 'whats new' content
+* `imdb.php` - API to communicate with IMDb and generate information (used by Alexa)
+* `list.php` - Generates lists
 * `of-the-day.php` - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
 * `shows-like-this.php` - Similar shows.
 * `slack.php` - Beginning of code to report newly dead characters to Slack _(very buggy, currently disabled)_
@@ -269,7 +271,7 @@ Stored in `/statistics/` - These files generate everything for stats, from graph
     - `function dead_meta_tax()` - Generate array to parse taxonomy content as it relates to post metas (for dead characters)
     - `function meta()` - Generate array to parse post meta data
     - `function yes_no()` - Generates arrays for content that has Yes/No values (shows we love, on air)
-    - `function taxonomy_breakdowns()` - generates complex arrays of cross related data from multiple taxonomies to list 'all miniseres in the USA' (this one makes us cry)
+    - `function taxonomy_breakdowns()` - generates complex arrays of cross related data from multiple taxonomies to list 'all miniseries in the USA' (this one makes us cry)
     - `function dead_basic()` - Simple counts of all shows with dead, or all dead characters
     - `function dead_year()` - Simple counts of death by year (Sara Lance...)
     - `function on_air()` - Shows or characters on air per year
