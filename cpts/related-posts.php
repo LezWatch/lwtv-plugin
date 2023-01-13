@@ -34,10 +34,16 @@ class LWTV_Related_Posts {
 		}
 
 		$related_post_loop  = ( new LWTV_Loops() )->related_posts_by_tag( 'post', $slug );
-		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
-		$the_related_posts  = '<em>Coming soon...</em>';
 
 		if ( $related_post_loop->have_posts() ) {
+			$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
+			$related_post_query = array_unique( $related_post_query );
+			wp_reset_query();
+		}
+
+		$the_related_posts  = '<em>Coming soon...</em>';
+
+		if ( is_array( $related_post_query ) ) {
 
 			// We get a max of 10 but we only want to show 5
 			$max_posts  = 3;
@@ -71,7 +77,7 @@ class LWTV_Related_Posts {
 
 		$related_post_loop  = ( new LWTV_Loops() )->related_posts_by_tag( 'post', $slug );
 		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
-
+		$related_post_query = array_unique( $related_post_query );
 		return $related_post_query;
 	}
 

@@ -171,14 +171,20 @@ class LWTV_This_Year_Chars {
 	 * @return array             All the data you need.
 	 */
 	public function get_dead( $thisyear, $count = false ) {
-		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
-		$dead_loop  = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
-		$queery     = wp_list_pluck( $dead_loop->posts, 'ID' );
+		$return_array = array();
+		$thisyear     = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
+		$dead_loop    = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
+
+		if ( $dead_loop->have_posts() ) {
+			$queery = wp_list_pluck( $dead_loop->posts, 'ID' );
+			wp_reset_query();
+		}
+
 		$show_array = array();
 		$list_array = array();
 
 		// List all queers and the year they died
-		if ( $dead_loop->have_posts() ) {
+		if ( isset( $queery ) && is_array( $queery ) ) {
 			foreach ( $queery as $char ) {
 				$show_ids_raw = get_post_meta( $char, 'lezchars_show_group', true );
 				$show_title   = array();
@@ -260,17 +266,17 @@ class LWTV_This_Year_Chars {
 			ksort( $show_array );
 		}
 
-		wp_reset_query();
-
-		// if we counted, just kick that back.
-		if ( $count ) {
-			$return_array = count( $queery );
-		} else {
-			$return_array = array(
-				'count' => count( $queery ),
-				'list'  => $list_array,
-				'show'  => $show_array,
-			);
+		if ( isset( $queery ) ) {
+			// if we counted, just kick that back.
+			if ( $count ) {
+				$return_array = count( $queery );
+			} else {
+				$return_array = array(
+					'count' => count( $queery ),
+					'list'  => $list_array,
+					'show'  => $show_array,
+				);
+			}
 		}
 
 		return $return_array;
@@ -286,12 +292,17 @@ class LWTV_This_Year_Chars {
 	public function get_list( $thisyear, $count = false ) {
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$loop          = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $thisyear, 'REGEXP' );
-		$queery        = wp_list_pluck( $loop->posts, 'ID' );
+
+		if ( $loop->have_posts() ) {
+			$queery = wp_list_pluck( $loop->posts, 'ID' );
+			wp_reset_query();
+		}
+
 		$counted_chars = 0;
 		$show_array    = array();
 		$char_array    = array();
 
-		if ( $loop->have_posts() ) {
+		if ( is_array( $queery ) ) {
 			foreach ( $queery as $char ) {
 				$show_ids   = get_post_meta( $char, 'lezchars_show_group', true );
 				$show_title = array();
@@ -347,8 +358,6 @@ class LWTV_This_Year_Chars {
 				}
 			}
 		}
-
-		wp_reset_query();
 
 		// if we counted, just kick that back.
 		if ( $count ) {

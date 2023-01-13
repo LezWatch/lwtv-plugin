@@ -26,7 +26,7 @@ class LWTV_Actors_Calculate {
 		$type_array = array( 'count', 'none', 'dead' );
 
 		// If this isn't an actor post or a valid request, return nothing
-		if ( 'post_type_actors' !== get_post_type( $post_id ) || ! in_array( esc_attr( $type ), $type_array, true ) ) {
+		if ( 'post_type_actors' !== get_post_type( $post_id ) || ! in_array( $type, $type_array, true ) ) {
 			return;
 		}
 
@@ -42,6 +42,7 @@ class LWTV_Actors_Calculate {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 			}
 
+			$characters = array_unique( $characters );
 			update_post_meta( $post_id, 'lezactors_char_list', $characters );
 
 			// Reset to end
@@ -51,6 +52,8 @@ class LWTV_Actors_Calculate {
 		// Process character counts:
 		$queercount = 0;
 		$deadcount  = 0;
+
+		$characters = array_unique( $characters );
 
 		foreach ( $characters as $char_id ) {
 			$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );

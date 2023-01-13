@@ -111,7 +111,7 @@ class LWTV_Shows_Calculate {
 		$type_array = array( 'count', 'none', 'dead', 'queer-irl', 'score' );
 
 		// If this isn't one of the above types, return.
-		if ( ! in_array( esc_attr( $type ), $type_array, true ) ) {
+		if ( ! in_array( $type, $type_array, true ) ) {
 			return;
 		}
 
@@ -360,7 +360,7 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Get array of characters (by ID)
-		$characters = get_post_meta( $post_id, 'lezshows_char_list', true );
+		$characters = array_unique( get_post_meta( $post_id, 'lezshows_char_list', true ) );
 
 		// If the character list is empty, we must build it
 		if ( empty( $characters ) ) {
@@ -371,6 +371,7 @@ class LWTV_Shows_Calculate {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 			}
 
+			$characters = array_unique( $characters );
 			update_post_meta( $post_id, 'lezshows_char_list', $characters );
 
 			// Reset to end

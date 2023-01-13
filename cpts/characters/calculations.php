@@ -61,6 +61,7 @@ class LWTV_Characters_Calculate {
 						$characters = array();
 					}
 					$characters[] = $post_id;
+					$characters = array_unique( $characters );
 					update_post_meta( $show_id['show'], 'lezshows_char_list', $characters );
 
 					( new LWTV_Shows_Calculate() )->do_the_math( $show_id['show'] );
@@ -100,7 +101,7 @@ class LWTV_Characters_Calculate {
 					$characters[] = $post_id;
 
 					// Remove Duplicates just in case.
-					array_unique( $characters );
+					$characters = array_unique( $characters );
 
 					// Update List of characters for the actor
 					update_post_meta( $actor_id, 'lezactors_char_list', $characters );
