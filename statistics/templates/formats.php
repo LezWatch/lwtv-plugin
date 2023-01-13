@@ -88,7 +88,7 @@ switch ( $showform ) {
 			echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 		}
 	}
-?>
+	?>
 </ul>
 
 <p>&nbsp;</p>
@@ -111,6 +111,7 @@ switch ( $showform ) {
 
 		if ( '_all' === $showform ) {
 			if ( '_all' === $view ) {
+				$all_count = ( new LWTV_Stats() )->showcount( 'score', 'formats', $a_form->slug );
 				?>
 				<p>For more information on individual show formats, please use the dropdown menu, or click on a format type listed below.</p>
 				<table id="formatTable" class="tablesorter table table-striped table-hover">
@@ -130,7 +131,7 @@ switch ( $showform ) {
 							<th scope="row"><a href="?showform=' . esc_attr( $a_form->slug ) . '">' . esc_html( $a_form->name ) . '</a></th>
 							<td>' . (int) $a_form->count . '</td>
 							<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
-							<td>' . (int) ( new LWTV_Stats() )->showcount( 'score', 'formats', $a_form->slug ) . '</td>
+							<td>' . (int) $all_count . '</td>
 						</tr>';
 					}
 					?>
@@ -159,9 +160,10 @@ switch ( $showform ) {
 			$allshows   = ( new LWTV_Stats() )->showcount( 'total', 'formats', ltrim( $showform, '_' ) );
 			$showscore  = ( new LWTV_Stats() )->showcount( 'score', 'formats', ltrim( $showform, '_' ) );
 			$onairscore = ( new LWTV_Stats() )->showcount( 'onairscore', 'formats', ltrim( $showform, '_' ) );
+			$type_name  = ( ! str_ends_with( $showform_obj['name'], 's' ) ) ? $showform_obj['name'] . 's' : $showform_obj['name'];
 
 			if ( '_all' === $view ) {
-				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' ' . $showform_obj['name'] . 's are on air. The average score for all ' . $showform_obj['name'] . 's is ' . $showscore . ', and ' . $onairscore . ' for ' . $showform_obj['name'] . 's currently on air (out of a possible 100).</p>' );
+				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' ' . $type_name . ' are on air. The average score for all ' . $type_name . ' is ' . $showscore . ', and ' . $onairscore . ' for ' . $showform_obj['name'] . 's currently on air (out of a possible 100).</p>' );
 			}
 
 			( new LWTV_Stats() )->generate( $cpts_type, 'formats' . $showform . $view, $format );

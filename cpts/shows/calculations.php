@@ -111,7 +111,7 @@ class LWTV_Shows_Calculate {
 		$type_array = array( 'count', 'none', 'dead', 'queer-irl', 'score' );
 
 		// If this isn't one of the above types, return.
-		if ( ! in_array( esc_attr( $type ), $type_array, true ) ) {
+		if ( ! in_array( $type, $type_array, true ) ) {
 			return;
 		}
 
@@ -359,38 +359,47 @@ class LWTV_Shows_Calculate {
 			}
 		}
 
-		// Loop to get the list of characters
-		$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
+		// Get array of characters (by ID)
+		$characters = array_unique( get_post_meta( $post_id, 'lezshows_char_list', true ) );
 
-		// Store as array to defeat some stupid with counting and prevent querying the database too many times
-		if ( $charactersloop->have_posts() ) {
-			while ( $charactersloop->have_posts() ) {
+		// If the character list is empty, we must build it
+		if ( empty( $characters ) ) {
+			// Loop to get the list of characters
+			$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
 
-				$charactersloop->the_post();
-				$char_id     = get_the_ID();
-				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+			if ( $charactersloop->have_posts() ) {
+				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
+			}
 
-				if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
-					foreach ( $shows_array as $char_show ) {
-						// phpcs:ignore WordPress.PHP.StrictComparisons
-						if ( $char_show['show'] == $post_id ) {
-							// Bump the array for this role
-							$role_data[ $char_show['type'] ]++;
+			$characters = array_unique( $characters );
+			update_post_meta( $post_id, 'lezshows_char_list', $characters );
 
-							// Now we'll sort gender and stuff...
-							foreach ( $valid_taxes as $title => $taxonomy ) {
-								$this_term = get_the_terms( $char_id, $taxonomy, true );
-								if ( $this_term && ! is_wp_error( $this_term ) ) {
-									foreach ( $this_term as $term ) {
-										$tax_data[ $title ][ $term->slug ]++;
-									}
+			// Reset to end
+			wp_reset_query();
+		}
+
+		foreach ( $characters as $char_id ) {
+			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+			if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
+				foreach ( $shows_array as $char_show ) {
+					// phpcs:ignore WordPress.PHP.StrictComparisons
+					if ( $char_show['show'] == $post_id ) {
+						// Bump the array for this role
+						$role_data[ $char_show['type'] ]++;
+
+						// Now we'll sort gender and stuff...
+						foreach ( $valid_taxes as $title => $taxonomy ) {
+							$this_term = get_the_terms( $char_id, $taxonomy, true );
+							if ( $this_term && ! is_wp_error( $this_term ) ) {
+								foreach ( $this_term as $term ) {
+									$tax_data[ $title ][ $term->slug ]++;
 								}
 							}
 						}
 					}
 				}
 			}
-			wp_reset_query();
 		}
 
 		// Update the roles score

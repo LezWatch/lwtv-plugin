@@ -381,9 +381,12 @@ class LWTV_This_Year_Shows {
 		$shows_queery  = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
 
 		if ( $shows_queery->have_posts() ) {
-			while ( $shows_queery->have_posts() ) {
-				$shows_queery->the_post();
-				$show_id   = get_the_ID();
+			$shows_array = wp_list_pluck( $shows_queery->posts, 'ID' );
+			wp_reset_query();
+		}
+
+		if ( is_array( $shows_array ) ) {
+			foreach ( $shows_array as $show_id ) {
 				$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
 				$show_name = strtolower( $show_name );
 				$yes_count = false;
@@ -454,8 +457,6 @@ class LWTV_This_Year_Shows {
 				}
 			}
 		}
-
-		wp_reset_query();
 
 		// if we counted, just kick that back.
 		if ( $count ) {

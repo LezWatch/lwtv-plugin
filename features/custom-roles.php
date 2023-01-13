@@ -108,7 +108,7 @@ class LWTV_Roles {
 		global $current_user, $menu;
 		wp_get_current_user();
 
-		if ( in_array( 'data_editor', $current_user->roles ) ) {
+		if ( in_array( 'data_editor', $current_user->roles, true ) ) {
 			remove_menu_page( 'index.php' );                  //Dashboard
 			remove_menu_page( 'edit.php' );                   //Posts
 			remove_menu_page( 'edit.php?post_type=page' );    //Pages
@@ -133,13 +133,13 @@ class LWTV_Roles {
 		global $pagenow, $current_user;
 		wp_get_current_user();
 
-		if ( in_array( 'data_editor', $current_user->roles ) ) {
+		if ( in_array( 'data_editor', $current_user->roles, true ) ) {
 			$disallowed_pages = array( 'index.php', 'edit-comments.php', 'themes.php', 'tools.php', 'plugins.php', 'options-general.php' );
 			$allowed_cpts     = array( 'post_type_shows', 'post_type_actors', 'post_type_characters' );
 
 			# Check current admin page.
-			if ( in_array( $pagenow, $disallowed_pages ) || ( 'edit.php' === $pagenow && ( null === $_GET['post_type'] || ( isset( $_GET['post_type'] ) && ! in_array( $_GET['post_type'], $allowed_cpts ) ) ) ) ) {
-				wp_redirect( admin_url( '/admin.php?page=lwtv' ) );
+			if ( in_array( $pagenow, $disallowed_pages, true ) || ( 'edit.php' === $pagenow && ( null === $_GET['post_type'] || ( isset( $_GET['post_type'] ) && ! in_array( $_GET['post_type'], $allowed_cpts, true ) ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+				wp_safe_redirect( admin_url( '/admin.php?page=lwtv' ) );
 				exit;
 			}
 		}

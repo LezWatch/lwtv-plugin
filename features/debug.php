@@ -84,48 +84,47 @@ class LWTV_Debug {
 		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters' );
 
 		if ( $the_loop->have_posts() ) {
-			while ( $the_loop->have_posts() ) {
-				$the_loop->the_post();
-				$post     = get_post();
-				$problems = array();
+			$characters = wp_list_pluck( $the_loop->posts, 'ID' );
+			wp_reset_query();
+		}
 
-				// Get the actors...
-				$character_actors = get_post_meta( $post->ID, 'lezchars_actor', true );
+		foreach ( $characters as $character ) {
+			$problems = array();
 
-				if ( ! empty( $character_actors ) ) {
+			// Get the actors...
+			$character_actors = get_post_meta( $character, 'lezchars_actor', true );
 
-					// Get the defaults
-					$flagged_queer = ( has_term( 'queer-irl', 'lez_cliches' ) ) ? true : false;
-					$actor_queer   = false;
+			if ( ! empty( $character_actors ) ) {
 
-					if ( ! is_array( $character_actors ) ) {
-						$character_actors = array( get_post_meta( $post->ID, 'lezchars_actor', true ) );
-					}
+				// Get the defaults
+				$flagged_queer = ( has_term( 'queer-irl', 'lez_cliches', $character ) ) ? true : false;
+				$actor_queer   = false;
 
-					// If ANY actor is flagged as queer, we're queer.
-					foreach ( $character_actors as $actor ) {
-						$actor_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $actor ) || $actor_queer ) ? true : false;
-					}
-
-					if ( $actor_queer && ! $flagged_queer ) {
-						$problems[] = 'Missing Queer IRL tag';
-					}
-
-					if ( ! $actor_queer && $flagged_queer ) {
-						$problems[] = 'No actor is queer';
-					}
+				if ( ! is_array( $character_actors ) ) {
+					$character_actors = array( get_post_meta( $character, 'lezchars_actor', true ) );
 				}
 
-				if ( ! empty( $problems ) ) {
-					$items[] = array(
-						'url'     => get_permalink(),
-						'id'      => get_the_id(),
-						'problem' => implode( ' ', $problems ),
-					);
+				// If ANY actor is flagged as queer, we're queer.
+				foreach ( $character_actors as $actor ) {
+					$actor_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $actor ) || $actor_queer ) ? true : false;
+				}
+
+				if ( $actor_queer && ! $flagged_queer ) {
+					$problems[] = 'Missing Queer IRL tag';
+				}
+
+				if ( ! $actor_queer && $flagged_queer ) {
+					$problems[] = 'No actor is queer';
 				}
 			}
 
-			wp_reset_query();
+			if ( ! empty( $problems ) ) {
+				$items[] = array(
+					'url'     => get_permalink( $character ),
+					'id'      => $character,
+					'problem' => implode( ' ', $problems ),
+				);
+			}
 		}
 
 		// Save Transient
@@ -157,30 +156,29 @@ class LWTV_Debug {
 		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 
 		if ( $the_loop->have_posts() ) {
-			while ( $the_loop->have_posts() ) {
-				$the_loop->the_post();
-				$post     = get_post();
-				$actor_id = $post->ID;
-				$problems = array();
-
-				if ( ! has_post_thumbnail( $actor_id ) ) {
-					$problems[] = 'No image found.';
-				}
-
-				if ( empty( get_the_content() ) ) {
-					$problems[] = 'No biography found.';
-				}
-
-				// If we added any problems, loop and add.
-				if ( ! empty( $problems ) ) {
-					$items[] = array(
-						'url'     => get_permalink(),
-						'id'      => get_the_id(),
-						'problem' => implode( ' ', $problems ),
-					);
-				}
-			}
+			$actors = wp_list_pluck( $the_loop->posts, 'ID' );
 			wp_reset_query();
+		}
+
+		foreach ( $actors as $actor_id ) {
+			$problems = array();
+
+			if ( ! has_post_thumbnail( $actor_id ) ) {
+				$problems[] = 'No image found.';
+			}
+
+			if ( empty( get_the_content( '', false, $actor_id ) ) ) {
+				$problems[] = 'No biography found.';
+			}
+
+			// If we added any problems, loop and add.
+			if ( ! empty( $problems ) ) {
+				$items[] = array(
+					'url'     => get_permalink( $actor_id ),
+					'id'      => $actor_id,
+					'problem' => implode( ' ', $problems ),
+				);
+			}
 		}
 
 		// Save Transient
@@ -215,8 +213,7 @@ class LWTV_Debug {
 			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 
 			if ( $the_loop->have_posts() ) {
-				$post_ids = wp_list_pluck( $the_loop->posts, 'ID' );
-				$actors   = implode( ',', $post_ids );
+				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
 				wp_reset_query();
 			}
 		}
@@ -328,79 +325,78 @@ class LWTV_Debug {
 		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 
 		if ( $the_loop->have_posts() ) {
-			while ( $the_loop->have_posts() ) {
-				$the_loop->the_post();
-				$post     = get_post();
-				$actor_id = $post->ID;
-				$problems = array();
+			$actors = wp_list_pluck( $the_loop->posts, 'ID' );
+			wp_reset_query();
+		}
 
-				// What we can check for
-				$check = array(
-					'chars' => get_post_meta( $actor_id, 'lezactors_char_count', true ),
-					'birth' => get_post_meta( $actor_id, 'lezactors_birth', true ),
-					'death' => get_post_meta( $actor_id, 'lezactors_death', true ),
-					'wiki'  => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
-					'imdb'  => get_post_meta( $actor_id, 'lezactors_imdb', true ),
-					'insta' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
-					'twits' => get_post_meta( $actor_id, 'lezactors_twitter', true ),
-					'home'  => get_post_meta( $actor_id, 'lezactors_homepage', true ),
-				);
+		foreach ( $actors as $actor_id ) {
+			$problems = array();
 
-				if ( ! $check['chars'] || empty( $check['chars'] ) ) {
-					$problems[] = 'No characters listed.';
-				}
+			// What we can check for
+			$check = array(
+				'chars' => get_post_meta( $actor_id, 'lezactors_char_count', true ),
+				'birth' => get_post_meta( $actor_id, 'lezactors_birth', true ),
+				'death' => get_post_meta( $actor_id, 'lezactors_death', true ),
+				'wiki'  => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
+				'imdb'  => get_post_meta( $actor_id, 'lezactors_imdb', true ),
+				'insta' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
+				'twits' => get_post_meta( $actor_id, 'lezactors_twitter', true ),
+				'home'  => get_post_meta( $actor_id, 'lezactors_homepage', true ),
+			);
 
-				if ( ! empty( $check['death'] ) ) {
-					if ( empty( $check['birth'] ) ) {
-						$problems[] = 'Death date set without date of birth.';
-					}
-				}
+			if ( ! $check['chars'] || empty( $check['chars'] ) ) {
+				$problems[] = 'No characters listed.';
+			}
 
-				// -Wikipedia links should point to Wikipedia: "https://[language].wikipedia.org/" (props Jamie)
-				if ( ! empty( $check['wiki'] ) && strpos( $check['wiki'], 'wikipedia.org/' ) === false ) {
-					$problems[] = 'Wikipedia URL does not point to Wikipedia.';
-				}
-
-				// -IMDb IDs should be valid for the space they're in, e.g. "nm"
-				// and digits for people (props Jamie)
-				if ( ! empty( $check['imdb'] ) && self::validate_imdb( $check['imdb'] ) === false ) {
-					$problems[] = 'IMDb ID is invalid (ex: nm12345).';
-				}
-
-				// -Instagram and Twitter usernames should follow whatever the
-				// actual restrictions on those are  (props Jamie)
-				// -If Instagram or Twitter usernames are the same format as IMDb IDs,
-				// that's suspicious (props Jamie)
-				if ( ! empty( $check['insta'] ) ) {
-					// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
-					if ( self::sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] && self::validate_imdb( $check['insta'] ) !== false ) {
-						$problems[] = 'Instagram ID is invalid.';
-					}
-				}
-				if ( ! empty( $check['twits'] ) ) {
-					if ( self::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] && self::validate_imdb( $check['twits'] ) !== false ) {
-						$problems[] = 'Twitter ID is invalid.';
-					}
-				}
-
-				// -"Website" links should *not* point to Wikipedia, since that
-				// would make them Wikipedia links (props Jamie)
-				if ( ! empty( $check['home'] ) ) {
-					if ( strpos( $check['home'], 'wikipedia.org/' ) !== false ) {
-						$problems[] = 'Homepage points to Wikipedia.';
-					}
-				}
-
-				// If we added any problems, loop and add.
-				if ( ! empty( $problems ) ) {
-					$items[] = array(
-						'url'     => get_permalink(),
-						'id'      => get_the_id(),
-						'problem' => implode( ' ', $problems ),
-					);
+			if ( ! empty( $check['death'] ) ) {
+				if ( empty( $check['birth'] ) ) {
+					$problems[] = 'Death date set without date of birth.';
 				}
 			}
-			wp_reset_query();
+
+			// -Wikipedia links should point to Wikipedia: "https://[language].wikipedia.org/" (props Jamie)
+			if ( ! empty( $check['wiki'] ) && strpos( $check['wiki'], 'wikipedia.org/' ) === false ) {
+				$problems[] = 'Wikipedia URL does not point to Wikipedia.';
+			}
+
+			// -IMDb IDs should be valid for the space they're in, e.g. "nm"
+			// and digits for people (props Jamie)
+			if ( ! empty( $check['imdb'] ) && self::validate_imdb( $check['imdb'] ) === false ) {
+				$problems[] = 'IMDb ID is invalid (ex: nm12345).';
+			}
+
+			// -Instagram and Twitter usernames should follow whatever the
+			// actual restrictions on those are  (props Jamie)
+			// -If Instagram or Twitter usernames are the same format as IMDb IDs,
+			// that's suspicious (props Jamie)
+			if ( ! empty( $check['insta'] ) ) {
+				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
+				if ( self::sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] && self::validate_imdb( $check['insta'] ) !== false ) {
+					$problems[] = 'Instagram ID is invalid.';
+				}
+			}
+			if ( ! empty( $check['twits'] ) ) {
+				if ( self::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] && self::validate_imdb( $check['twits'] ) !== false ) {
+					$problems[] = 'Twitter ID is invalid.';
+				}
+			}
+
+			// -"Website" links should *not* point to Wikipedia, since that
+			// would make them Wikipedia links (props Jamie)
+			if ( ! empty( $check['home'] ) ) {
+				if ( strpos( $check['home'], 'wikipedia.org/' ) !== false ) {
+					$problems[] = 'Homepage points to Wikipedia.';
+				}
+			}
+
+			// If we added any problems, loop and add.
+			if ( ! empty( $problems ) ) {
+				$items[] = array(
+					'url'     => get_permalink( $actor_id ),
+					'id'      => $actor_id,
+					'problem' => implode( ' ', $problems ),
+				);
+			}
 		}
 
 		// Save Transient
@@ -420,53 +416,6 @@ class LWTV_Debug {
 	}
 
 	/**
-	 * Fix Actors
-	 *
-	 * Right now all it can do is fix actors who are listed as having 0 characters
-	 */
-	public function fix_actors_problems( $actors = 0 ) {
-
-		$items = 0;
-
-		if ( ! is_array( $actors ) ) {
-			$actors = array();
-			// Get all the actors
-			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
-
-			if ( $the_loop->have_posts() ) {
-				while ( $the_loop->have_posts() ) {
-					$the_loop->the_post();
-					$post     = get_post();
-					$actor_id = $post->ID;
-					$problems = array();
-
-					// Get the characters ...
-					$character_count = get_post_meta( $actor_id, 'lezactors_char_count', true );
-
-					// If there are no characters listed, let's try to fix
-					if ( ! $character_count || empty( $character_count ) ) {
-						$problems[] = 'character count';
-						$actors[]   = array(
-							'url'     => get_permalink(),
-							'id'      => get_the_id(),
-							'problem' => implode( ' ', $problems ),
-						);
-					}
-				}
-				wp_reset_query();
-			}
-		}
-
-		// For everyone in the list...
-		foreach ( $actors as $actor ) {
-			( new LWTV_Actors_Calculate() )->do_the_math( $actor['id'] );
-			$items++;
-		}
-
-		return $items;
-	}
-
-	/**
 	 * Find Characters with Problems
 	 */
 	public function find_characters_problems() {
@@ -477,59 +426,58 @@ class LWTV_Debug {
 		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters' );
 
 		if ( $the_loop->have_posts() ) {
-			while ( $the_loop->have_posts() ) {
-				$the_loop->the_post();
-				$post     = get_post();
-				$char_id  = $post->ID;
-				$problems = array();
+			$characters = wp_list_pluck( $the_loop->posts, 'ID' );
+			wp_reset_query();
+		}
 
-				// What we can check for
-				$check = array(
-					'cliche' => get_the_terms( $char_id, 'lez_cliches' ),
-					'death'  => get_post_meta( $char_id, 'lezchars_last_death', true ),
-					'shows'  => get_post_meta( $char_id, 'lezchars_show_group', true ),
-					'actors' => get_post_meta( $char_id, 'lezchars_actor', true ),
-				);
+		foreach ( $characters as $char_id ) {
+			$problems = array();
 
-				if ( ! $check['cliche'] || is_wp_error( $check['cliche'] ) ) {
-					$problems[] = 'No clichés.';
-				}
+			// What we can check for
+			$check = array(
+				'cliche' => get_the_terms( $char_id, 'lez_cliches' ),
+				'death'  => get_post_meta( $char_id, 'lezchars_last_death', true ),
+				'shows'  => get_post_meta( $char_id, 'lezchars_show_group', true ),
+				'actors' => get_post_meta( $char_id, 'lezchars_actor', true ),
+			);
 
-				if ( has_term( 'dead', 'lez_cliches' ) && empty( $check['death'] ) ) {
-					$problems[] = 'Dead but missing date.';
-				}
+			if ( ! $check['cliche'] || is_wp_error( $check['cliche'] ) ) {
+				$problems[] = 'No clichés.';
+			}
 
-				if ( ! $check['shows'] ) {
-					$problems[] = 'No shows listed.';
-				} else {
-					foreach ( $check['shows'] as $each_show ) {
-						if ( ! is_array( $each_show['appears'] ) ) {
-							$problems[] = 'No years on air set for ' . get_the_title( $each_show['show'] ) . '.';
-						}
-						if ( ! isset( $each_show['type'] ) || '' === $each_show['type'] ) {
-							$problems[] = 'No role set for' . get_the_title( $each_show['show'] ) . '.';
-						}
-						if ( ! isset( $each_show['show'] ) || '' === $each_show['show'] ) {
-							$problems[] = 'No show name set.';
-						}
+			if ( has_term( 'dead', 'lez_cliches' ) && empty( $check['death'] ) ) {
+				$problems[] = 'Dead but missing date.';
+			}
+
+			if ( ! $check['shows'] ) {
+				$problems[] = 'No shows listed.';
+			} else {
+				foreach ( $check['shows'] as $each_show ) {
+					if ( ! is_array( $each_show['appears'] ) ) {
+						$problems[] = 'No years on air set for ' . get_the_title( $each_show['show'] ) . '.';
+					}
+					if ( ! isset( $each_show['type'] ) || '' === $each_show['type'] ) {
+						$problems[] = 'No role set for' . get_the_title( $each_show['show'] ) . '.';
+					}
+					if ( ! isset( $each_show['show'] ) || '' === $each_show['show'] ) {
+						$problems[] = 'No show name set.';
 					}
 				}
-
-				// Okay fine, now we use the NONE actor.
-				if ( ! $check['actors'] ) {
-					$problems[] = 'No actors listed.';
-				}
-
-				// If we have problems, list them:
-				if ( ! empty( $problems ) ) {
-					$items[] = array(
-						'url'     => get_permalink(),
-						'id'      => get_the_id(),
-						'problem' => implode( ' ', $problems ),
-					);
-				}
 			}
-			wp_reset_query();
+
+			// Okay fine, now we use the NONE actor.
+			if ( ! $check['actors'] ) {
+				$problems[] = 'No actors listed.';
+			}
+
+			// If we have problems, list them:
+			if ( ! empty( $problems ) ) {
+				$items[] = array(
+					'url'     => get_permalink( $char_id ),
+					'id'      => $char_id,
+					'problem' => implode( ' ', $problems ),
+				);
+			}
 		}
 
 		// Save Transient
@@ -559,93 +507,92 @@ class LWTV_Debug {
 		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
 
 		if ( $the_loop->have_posts() ) {
-			while ( $the_loop->have_posts() ) {
-				$the_loop->the_post();
-				$post     = get_post();
-				$show_id  = $post->ID;
-				$problems = array();
-
-				// What we can check for
-				$check = array(
-					'chars'      => get_post_meta( $show_id, 'lezshows_char_count', true ),
-					'thumb'      => get_post_meta( $show_id, 'lezshows_worthit_rating', true ),
-					'screentime' => get_post_meta( $show_id, 'lezshows_screentime_rating', true ),
-					'details'    => get_post_meta( $show_id, 'lezshows_worthit_details', true ),
-					'realness'   => get_post_meta( $show_id, 'lezshows_realness_rating', true ),
-					'quality'    => get_post_meta( $show_id, 'lezshows_quality_rating', true ),
-					'rating'     => get_post_meta( $show_id, 'lezshows_screentime_rating', true ),
-					'airdates'   => get_post_meta( $show_id, 'lezshows_airdates', true ),
-					'imdb'       => get_post_meta( $show_id, 'lezshows_imdb', true ),
-					'stations'   => get_the_terms( $show_id, 'lez_stations' ),
-					'nations'    => get_the_terms( $show_id, 'lez_country' ),
-					'formats'    => get_the_terms( $show_id, 'lez_formats' ),
-					'genres'     => get_the_terms( $show_id, 'lez_genres' ),
-					'tropes'     => get_the_terms( $show_id, 'lez_tropes' ),
-				);
-
-				// If there's 0 screentime, it's okay there are no Characters
-				if ( ( ! $check['chars'] || empty( $check['chars'] ) ) && $check['screentime'] > 1 ) {
-					$problems[] = 'No characters listed.';
-				}
-
-				if ( ! array( $check['airdates'] ) ) {
-					$problems[] = 'No airdates.';
-				}
-
-				if ( empty( $check['thumb'] ) ) {
-					$problems[] = 'No worthit thumb.';
-				}
-
-				if ( empty( $check['details'] ) ) {
-					$problems[] = 'No worthit details.';
-				}
-
-				if ( ! is_numeric( $check['realness'] ) ) {
-					$problems[] = 'No realness rating.';
-				}
-
-				if ( ! is_numeric( $check['quality'] ) ) {
-					$problems[] = 'No quality rating.';
-				}
-
-				if ( ! is_numeric( $check['screentime'] ) ) {
-					$problems[] = 'No screentime rating.';
-				}
-
-				if ( ! empty( $check['imdb'] ) && self::validate_imdb( $check['imdb'] ) === false ) {
-					$problems[] = 'IMDb ID is invalid (ex: tt12345).';
-				}
-
-				if ( ! $check['stations'] || is_wp_error( $check['stations'] ) ) {
-					$problems[] = 'No stations.';
-				}
-
-				if ( ! $check['nations'] || is_wp_error( $check['nations'] ) ) {
-					$problems[] = 'No country.';
-				}
-
-				if ( ! $check['formats'] || is_wp_error( $check['formats'] ) ) {
-					$problems[] = 'No format.';
-				}
-
-				if ( ! $check['genres'] || is_wp_error( $check['genres'] ) ) {
-					$problems[] = 'No genres.';
-				}
-
-				if ( ! $check['tropes'] || is_wp_error( $check['tropes'] ) ) {
-					$problems[] = 'No tropes.';
-				}
-
-				// If we have problems, list them:
-				if ( ! empty( $problems ) ) {
-					$items[] = array(
-						'url'     => get_permalink(),
-						'id'      => get_the_id(),
-						'problem' => implode( ' ', $problems ),
-					);
-				}
-			}
+			$shows = wp_list_pluck( $the_loop->posts, 'ID' );
 			wp_reset_query();
+		}
+
+		foreach ( $shows as $show_id ) {
+			$problems = array();
+
+			// What we can check for
+			$check = array(
+				'chars'      => get_post_meta( $show_id, 'lezshows_char_count', true ),
+				'thumb'      => get_post_meta( $show_id, 'lezshows_worthit_rating', true ),
+				'screentime' => get_post_meta( $show_id, 'lezshows_screentime_rating', true ),
+				'details'    => get_post_meta( $show_id, 'lezshows_worthit_details', true ),
+				'realness'   => get_post_meta( $show_id, 'lezshows_realness_rating', true ),
+				'quality'    => get_post_meta( $show_id, 'lezshows_quality_rating', true ),
+				'rating'     => get_post_meta( $show_id, 'lezshows_screentime_rating', true ),
+				'airdates'   => get_post_meta( $show_id, 'lezshows_airdates', true ),
+				'imdb'       => get_post_meta( $show_id, 'lezshows_imdb', true ),
+				'stations'   => get_the_terms( $show_id, 'lez_stations' ),
+				'nations'    => get_the_terms( $show_id, 'lez_country' ),
+				'formats'    => get_the_terms( $show_id, 'lez_formats' ),
+				'genres'     => get_the_terms( $show_id, 'lez_genres' ),
+				'tropes'     => get_the_terms( $show_id, 'lez_tropes' ),
+			);
+
+			// If there's 0 screentime, it's okay there are no Characters
+			if ( ( ! $check['chars'] || empty( $check['chars'] ) ) && $check['screentime'] > 1 ) {
+				$problems[] = 'No characters listed.';
+			}
+
+			if ( ! array( $check['airdates'] ) ) {
+				$problems[] = 'No airdates.';
+			}
+
+			if ( empty( $check['thumb'] ) ) {
+				$problems[] = 'No worthit thumb.';
+			}
+
+			if ( empty( $check['details'] ) ) {
+				$problems[] = 'No worthit details.';
+			}
+
+			if ( ! is_numeric( $check['realness'] ) ) {
+				$problems[] = 'No realness rating.';
+			}
+
+			if ( ! is_numeric( $check['quality'] ) ) {
+				$problems[] = 'No quality rating.';
+			}
+
+			if ( ! is_numeric( $check['screentime'] ) ) {
+				$problems[] = 'No screentime rating.';
+			}
+
+			if ( ! empty( $check['imdb'] ) && self::validate_imdb( $check['imdb'] ) === false ) {
+				$problems[] = 'IMDb ID is invalid (ex: tt12345).';
+			}
+
+			if ( ! $check['stations'] || is_wp_error( $check['stations'] ) ) {
+				$problems[] = 'No stations.';
+			}
+
+			if ( ! $check['nations'] || is_wp_error( $check['nations'] ) ) {
+				$problems[] = 'No country.';
+			}
+
+			if ( ! $check['formats'] || is_wp_error( $check['formats'] ) ) {
+				$problems[] = 'No format.';
+			}
+
+			if ( ! $check['genres'] || is_wp_error( $check['genres'] ) ) {
+				$problems[] = 'No genres.';
+			}
+
+			if ( ! $check['tropes'] || is_wp_error( $check['tropes'] ) ) {
+				$problems[] = 'No tropes.';
+			}
+
+			// If we have problems, list them:
+			if ( ! empty( $problems ) ) {
+				$items[] = array(
+					'url'     => get_permalink( $show_id ),
+					'id'      => $show_id,
+					'problem' => implode( ' ', $problems ),
+				);
+			}
 		}
 
 		$items_intersection = self::find_intersection_problems();
@@ -681,25 +628,22 @@ class LWTV_Debug {
 		$disabled_shows_loop = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_intersections', 'slug', 'disabilities' );
 
 		if ( $disabled_shows_loop->have_posts() ) {
-			while ( $disabled_shows_loop->have_posts() ) {
-				$disabled_shows_loop->the_post();
-				$post    = get_post();
-				$show_id = $post->ID;
-
-				// Try to get the problems.
-				$problems = self::check_disabled_characters( $show_id );
-
-				// if there are problems, we put them in items.
-				if ( ! empty( $problems ) ) {
-					$items[] = array(
-						'url'     => get_permalink( $show_id ),
-						'id'      => $show_id,
-						'problem' => implode( ' ', $problems ),
-					);
-				}
-			}
-
+			$shows = wp_list_pluck( $disabled_shows_loop->posts, 'ID' );
 			wp_reset_query();
+		}
+
+		foreach ( $shows as $show_id ) {
+			// Try to get the problems.
+			$problems = self::check_disabled_characters( $show_id );
+
+			// if there are problems, we put them in items.
+			if ( ! empty( $problems ) ) {
+				$items[] = array(
+					'url'     => get_permalink( $show_id ),
+					'id'      => $show_id,
+					'problem' => implode( ' ', $problems ),
+				);
+			}
 		}
 
 		return $items;
@@ -712,26 +656,17 @@ class LWTV_Debug {
 	 */
 	public function check_disabled_characters( $show_id ) {
 		// Get all the queers for the show:
-		$character_loop = ( new LWTV_CPT_Characters() )->list_characters( $show_id, 'query' );
+		$characters = ( new LWTV_CPT_Characters() )->list_characters( $show_id, 'query' );
 
 		// Default has disabled
 		$has_disabled = false;
 		$problems     = array();
 
-		// Loop through all characters on each show
-		if ( $character_loop->have_posts() ) {
-			while ( $character_loop->have_posts() ) {
-				$character_loop->the_post();
-				$post    = get_post();
-				$char_id = $post->ID;
-
-				// If someone has disabled, we're good
-				if ( has_term( 'disabled', 'lez_cliches', $char_id ) ) {
-					$has_disabled = true;
-				}
+		foreach ( $characters as $character ) {
+			// If someone has disabled, we're good
+			if ( has_term( 'disabled', 'lez_cliches', $character ) ) {
+				$has_disabled = true;
 			}
-
-			wp_reset_query();
 		}
 
 		if ( ! $has_disabled ) {

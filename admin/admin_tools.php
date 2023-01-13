@@ -25,7 +25,6 @@ class LWTV_Admin_Tools {
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_admin_notices' ) );
-		add_action( 'admin_post_lwtv_tools_fix_actors', array( $this, 'fix_actors_problems' ) );
 		add_action( 'admin_post_lwtv_tools_wikidata_actors', array( $this, 'check_actors_wikidata' ) );
 
 		self::$tool_tabs = array(

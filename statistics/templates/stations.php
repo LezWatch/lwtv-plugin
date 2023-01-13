@@ -15,7 +15,7 @@ $valid_views = array(
 	'sexuality' => 'characters',
 	'gender'    => 'characters',
 	'tropes'    => 'shows',
-	// removed becuase there's not enough data yet.
+	// removed because there's not enough data yet.
 	// 'intersections' => 'shows',
 	'formats'   => 'shows',
 	'on-air'    => 'shows',
@@ -105,6 +105,7 @@ switch ( $station ) {
 
 		if ( '_all' === $station ) {
 			// Always show the same thing here.
+			$all_count = ( new LWTV_Stats() )->showcount( 'score', 'stations', $the_station->slug );
 			?>
 			<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
 			<table id="stationsTable" class="tablesorter table table-striped table-hover">
@@ -124,7 +125,7 @@ switch ( $station ) {
 								<th scope="row"><a href="?station=' . esc_attr( $the_station->slug ) . '">' . esc_html( $the_station->name ) . '</a></th>
 								<td>' . (int) $the_station->count . '</td>
 								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
-								<td>' . (int) ( new LWTV_Stats() )->showcount( 'score', 'stations', $the_station->slug ) . '</td>
+								<td>' . (int) $all_count . '</td>
 							</tr>';
 					}
 					?>

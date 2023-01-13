@@ -258,7 +258,7 @@ class LWTV_Actors_CMB2 {
 			array(
 				'name'      => 'Additional Notes',
 				'id'        => 'excerpt',
-				'desc'      => 'Enter any terms here that should be used for search. For example, if someone change their name, list their deadname here so it can be searched.',
+				'desc'      => 'Enter any terms here that should be used for search. For example, if someone changed their name, you would list their deadname here so it can be searched.',
 				'type'      => 'textarea',
 				'escape_cb' => false,
 				'default'   => get_post_field( 'post_excerpt' ),
