@@ -15,10 +15,11 @@ class LWTV_This_Year_Chars {
 	public function dead( $thisyear ) {
 		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$char_array = self::get_dead( $thisyear );
-		$list_array = $char_array['list'];
-		$show_array = $char_array['show'];
+		$count      = ( isset( $char_array['count'] ) ) ? $char_array['list'] : '0';
+		$list_array = ( isset( $char_array['list'] ) ) ? $char_array['list'] : '';
+		$show_array = ( isset( $char_array['show'] ) ) ? $char_array['show'] : '';
 		?>
-		<h2><a name="died"><?php echo (int) $char_array['count']; ?> Characters Died</a></h2>
+		<h2><a name="died"><?php echo (int) $count; ?> Characters Died</a></h2>
 
 		<p>&nbsp;</p>
 
