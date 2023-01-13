@@ -92,20 +92,9 @@ class LWTV_Characters_Calculate {
 					$characters = array();
 				}
 
-				if ( ! is_array( $characters ) ) {
-					$characters = array( $characters );
-				}
-
-				// If the character isn't already in the array, we add it.
-				if ( ! in_array( $post_id, $characters, true ) ) {
-					$characters[] = $post_id;
-
-					// Remove Duplicates just in case.
-					$characters = array_unique( $characters );
-
-					// Update List of characters for the actor
-					update_post_meta( $actor_id, 'lezactors_char_list', $characters );
-				}
+				$characters[] = $post_id;
+				$characters   = array_unique( $characters );
+				update_post_meta( $actor_id, 'lezactors_char_list', $characters );
 
 				( new LWTV_Actors_Calculate() )->do_the_math( $actor_id );
 			}
