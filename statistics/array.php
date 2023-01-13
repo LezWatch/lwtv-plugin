@@ -1527,7 +1527,7 @@ class LWTV_Stats_Arrays {
 			$array = $base_array;
 
 			// save array as transient for a reason.
-			//set_transient( $transient, $array, DAY_IN_SECONDS );
+			set_transient( $transient, $array, DAY_IN_SECONDS );
 		}
 
 		return $array;
