@@ -448,8 +448,6 @@ class LWTV_Shows_CMB2 {
 				'repeatable'       => true,
 			)
 		);
-
-
 		// Field Group: Show Name Information
 		$group_names = $cmb_mustsee->add_field(
 			array(

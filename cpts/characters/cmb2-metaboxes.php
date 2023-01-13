@@ -182,7 +182,7 @@ class LWTV_Characters_CMB2 {
 		// Field: Show Name
 		$field_shows = $cmb_characters->add_group_field(
 			$group_shows,
-			array (
+			array(
 				'name'            => 'TV Show',
 				'id'              => 'show',
 				'desc'            => 'Click on the search icon to select the show.',

@@ -81,7 +81,7 @@ class LWTV_Admin_Menu {
 	public function admin_enqueue_scripts( $hook ) {
 		// Load only on ?page=mypluginname
 		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv_tools' );
-		if ( in_array( $hook, $my_hooks ) ) {
+		if ( in_array( $hook, $my_hooks, true ) ) {
 				wp_enqueue_style( 'lwtv_tools_admin', plugins_url( 'assets/css/lwtv-tools.css', dirname( __FILE__ ) ), array(), '1.0.0' );
 		}
 	}

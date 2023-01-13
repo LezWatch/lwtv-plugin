@@ -291,9 +291,29 @@ class LWTV_CPT_Characters {
 	 * @return void
 	 */
 	public function list_characters( $show_id, $output = 'query' ) {
-		$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
-		$characters     = array();
-		$char_counts    = array(
+
+		// Get array of characters (by ID)
+		$characters = get_post_meta( $show_id, 'lezshows_char_list', true );
+
+		// If the character list is empty, we must build it
+		if ( empty( $characters ) ) {
+			// Loop to get the list of characters
+			$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+
+			if ( $charactersloop->have_posts() ) {
+				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
+			}
+
+			$characters = array_unique( $characters );
+			update_post_meta( $show_id, 'lezshows_char_list', $characters );
+
+			// Reset to end
+			wp_reset_query();
+		}
+
+		$characters = array_unique( $characters );
+
+		$char_counts = array(
 			'total' => 0,
 			'dead'  => 0,
 			'none'  => 0,
@@ -302,88 +322,63 @@ class LWTV_CPT_Characters {
 			'txirl' => 0,
 		);
 
-		// Store as array to defeat some stupid with counting and prevent querying the database too many times
-		if ( $charactersloop->have_posts() ) {
-			while ( $charactersloop->have_posts() ) {
-				$charactersloop->the_post();
-				$char_id     = get_the_ID();
-				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+		foreach ( $characters as $char_id ) {
+			// Get the list of shows.
+			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
-				// If the character is in this show, AND a published character
-				// we will pass the following data to the character template
-				// to determine what to display
-				if (
-					'' !== $shows_array &&
-					! empty( $shows_array ) &&
-					'publish' === get_post_status( $char_id )
-				) {
-					foreach ( $shows_array as $char_show ) {
-						if ( (int) $char_show['show'] === $show_id ) {
-							$characters[ $char_id ] = array(
-								'id'        => $char_id,
-								'title'     => get_the_title( $char_id ),
-								'url'       => get_the_permalink( $char_id ),
-								'content'   => get_the_content( $char_id ),
-								'shows'     => $shows_array,
-								'show_from' => $show_id,
-							);
+			// If the character is in this show, AND a published character
+			// we will pass the following data to the character template
+			// to determine what to display
+			if (
+				'' !== $shows_array &&
+				! empty( $shows_array ) &&
+				'publish' === get_post_status( $char_id )
+			) {
+				foreach ( $shows_array as $char_show ) {
+					if ( (int) $char_show['show'] === $show_id ) {
+						// Get a list of actors (we need this twice later)
+						$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
+						if ( ! is_array( $actors_ids ) ) {
+							$actors_ids = array( $actors_ids );
+						}
 
-							// Get a list of actors (we need this twice later)
-							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
-							if ( ! is_array( $actors_ids ) ) {
-								$actors_ids = array( get_post_meta( $char_id, 'lezchars_actor', true ) );
-							}
+						// Increase the count of characters
+						$char_counts['total']++;
 
-							// Increase the count of characters
-							$char_counts['total']++;
+						// Dead?
+						if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
+							$char_counts['dead']++;
+						}
+						// No cliches?
+						if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
+							$char_counts['none']++;
+						}
+						// The Tambour Takedown: Checking Queer IRL
+						// We don't award shows that have cast a cis/het actor in a queer
+						// role. To solve this, we grab the actor listed as PRIMARY ACTOR
+						// (i.e. the one listed first). If THEY are QIRL, the show gets points.
+						if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
+							$top_actor = reset( $actors_ids );
+							if ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $top_actor ) ) {
+								$char_counts['quirl']++;
+							}
+						}
 
-							// Dead?
-							if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-								$char_counts['dead']++;
-							}
-							// No cliches?
-							if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
-								$char_counts['none']++;
-							}
-							// The Tambour Takedown: Checking Queer IRL
-							// This is a little more complicated. We don't want to award
-							// points if a show has primarily cast a cis/het actor as a
-							// queer role. To solve this, we grab the actor listed as
-							// PRIMARY (i.e. the one listed first). If THEY are QIRL,
-							// the show gets the points.
-							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
-								$top_actor = reset( $actors_ids );
-								if ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $top_actor ) ) {
-									$char_counts['quirl']++;
-								}
-							}
-							// Is Trans?
-							$valid_trans_char = array( 'trans-man', 'trans-woman' );
-							if ( has_term( $valid_trans_char, 'lez_gender', $char_id ) ) {
-								$char_counts['trans']++;
-							}
+						// Is the character is not Cisgender ...
+						$valid_trans_char = array( 'cisgender', 'intersex', 'unknown' );
+						if ( ! has_term( $valid_trans_char, 'lez_gender', $char_id ) ) {
+							$char_counts['trans']++;
+						}
 
-							// Now to see if we have trans IRL...
-							foreach ( $actors_ids as $actor ) {
-								if ( 'yes' === ( new LWTV_Loops() )->is_actor_trans( $actor ) ) {
-									$char_counts['txirl']++;
-									// It's possible to have MORE trans actors than characters.
-								}
+						// If an actor is transgender, we get an extra bonus.
+						foreach ( $actors_ids as $actor ) {
+							if ( 'yes' === ( new LWTV_Loops() )->is_actor_trans( $actor ) ) {
+								$char_counts['txirl']++;
 							}
-						} else {
-							// If they're not published, or not in the show, we drop
-							// them from the array. This is because show 123 will false
-							// flag 1234 sometimes.
-							unset( $charactersloop->posts[ $char_id ] );
 						}
 					}
-				} else {
-					// If they're not published, or not in the show, we drop them from
-					// the array. This is because show 123 will false flag 1234 sometimes.
-					unset( $charactersloop->posts[ $char_id ] );
 				}
 			}
-			wp_reset_query();
 		}
 
 		switch ( $output ) {
@@ -408,8 +403,8 @@ class LWTV_CPT_Characters {
 				$return = $char_counts['txirl'];
 				break;
 			case 'query':
-				// WP Loop of characters
-				$return = $charactersloop;
+				// WP Array of all characters
+				$return = $characters;
 				break;
 			case 'count':
 				// Count of all characters on the show
@@ -452,8 +447,6 @@ class LWTV_CPT_Characters {
 		 * Calculate the max number of characters to list, based on the
 		 * previous count. Default/Minimum is the number of characters divided by 10
 		 */
-		$precount = wp_count_posts( 'post_type_characters' )->publish;
-		$count    = ( isset( $havecharcount ) && $havecharcount >= intdiv( $precount, 10 ) ) ? $havecharcount : intdiv( $precount, 10 );
 
 		// Valid Roles:
 		$valid_roles = array( 'regular', 'recurring', 'guest' );
@@ -463,64 +456,55 @@ class LWTV_CPT_Characters {
 			return;
 		}
 
-		// Prepare the ARRAY
-		$characters = array();
+		// Get array of characters (by ID)
+		$characters = get_post_meta( $show_id, 'lezshows_char_list', true );
 
-		$charactersloop = new WP_Query(
-			array(
-				'post_type'              => 'post_type_characters',
-				'post_status'            => array( 'publish' ),
-				'orderby'                => 'title',
-				'order'                  => 'ASC',
-				'posts_per_page'         => $count,
-				'no_found_rows'          => true,
-				'update_post_term_cache' => true,
-				'meta_query'             => array(
-					'relation' => 'AND',
-					array(
-						'key'     => 'lezchars_show_group',
-						'value'   => $role,
-						'compare' => 'LIKE',
-					),
-					array(
-						'key'     => 'lezchars_show_group',
-						'value'   => $show_id,
-						'compare' => 'REGEXP',
-					),
-				),
-			)
-		);
+		// If the character list is empty, we must build it
+		if ( empty( $characters ) ) {
+			// Loop to get the list of characters
+			$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
-		if ( $charactersloop->have_posts() ) {
-			while ( $charactersloop->have_posts() ) {
-				$charactersloop->the_post();
-				$char_id     = get_the_ID();
-				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+			if ( $charactersloop->have_posts() ) {
+				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
+			}
 
-				// If the character is in this show, AND a published character,
-				// AND has this role ON THIS SHOW we will pass the following
-				// data to the character template to determine what to display.
-				if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
-					foreach ( $shows_array as $char_show ) {
-						// Because of show IDs having SIMILAR numbers, we need to be a little more flex
-						// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
-						if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
-							$characters[ $char_id ] = array(
-								'id'        => $char_id,
-								'title'     => get_the_title( $char_id ),
-								'url'       => get_the_permalink( $char_id ),
-								'content'   => get_the_content( $char_id ),
-								'shows'     => $shows_array,
-								'show_from' => $show_id,
-								'role_from' => $role,
-							);
-						}
+			$characters = array_unique( $characters );
+			update_post_meta( $post_id, 'lezshows_char_list', $characters );
+
+			// Reset to end
+			wp_reset_query();
+		}
+
+		// Empty array to display later
+		$display    = array();
+		$characters = array_unique( $characters );
+
+		foreach ( $characters as $char_id ) {
+			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+			// If the character is in this show, AND a published character,
+			// AND has this role ON THIS SHOW we will pass the following
+			// data to the character template to determine what to display.
+			if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
+				foreach ( $shows_array as $char_show ) {
+					// Because of show IDs having SIMILAR numbers, we need to be a little more flex
+					// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
+					if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
+						$display[ $char_id ] = array(
+							'id'        => $char_id,
+							'title'     => get_the_title( $char_id ),
+							'url'       => get_the_permalink( $char_id ),
+							'content'   => get_the_content( $char_id ),
+							'shows'     => $shows_array,
+							'show_from' => $show_id,
+							'role_from' => $role,
+						);
 					}
 				}
 			}
-			wp_reset_query();
 		}
-		return $characters;
+
+		return $display;
 	}
 
 	/*
@@ -536,7 +520,7 @@ class LWTV_CPT_Characters {
 		$post_array  = array( 'publish', 'private' );
 
 		// Prevent running on autosave.
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! in_array( $post_status, $post_array ) ) {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! in_array( $post_status, $post_array, true ) ) {
 			return;
 		}
 

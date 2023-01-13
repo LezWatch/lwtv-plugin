@@ -1,7 +1,7 @@
 <?php
 /**
  * The template for displaying the mini stats section on Actor Pages
- * 
+ *
  * I don't like how it formats with the height...
  *
  * @package LezWatch.TV

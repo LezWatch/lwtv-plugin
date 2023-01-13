@@ -20,6 +20,7 @@ class LWTV_CPT_Post_Meta {
 
 		self::$all_post_metas = array(
 			// Meta Name                    => Post Type
+			// Actors
 			'lezactors_birth'               => 'post_type_actors',
 			'lezactors_death'               => 'post_type_actors',
 			'lezactors_imdb'                => 'post_type_actors',
@@ -28,9 +29,12 @@ class LWTV_CPT_Post_Meta {
 			'lezactors_twitter'             => 'post_type_actors',
 			'lezactors_tumblr'              => 'post_type_actors',
 			'lezactors_instagram'           => 'post_type_actors',
+			'lezactors_mastodon'            => 'post_type_actors',
+			// Characters
 			'lezchars_death_year'           => 'post_type_characters',
 			'lezchars_actor'                => 'post_type_characters',
 			'lezchars_show_group'           => 'post_type_characters',
+			// Shows
 			'lezshows_airdates'             => 'post_type_shows',
 			'lezshows_seasons'              => 'post_type_shows',
 			'lezshows_tvtype'               => 'post_type_shows',

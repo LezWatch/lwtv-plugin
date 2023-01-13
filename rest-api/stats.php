@@ -204,20 +204,20 @@ class LWTV_Stats_JSON {
 				$queery = ( new LWTV_Loops() )->post_type_query( 'post_type_actors', $page );
 
 				if ( $queery->have_posts() ) {
-					while ( $queery->have_posts() ) {
-						$queery->the_post();
-						$post                                      = get_post();
-						$stats_array[ get_the_title( $post->ID ) ] = array(
-							'id'         => $post->ID,
-							'characters' => get_post_meta( $post->ID, 'lezactors_char_count', true ),
-							'dead_chars' => get_post_meta( $post->ID, 'lezactors_dead_count', true ),
-							'gender'     => implode( ', ', wp_get_post_terms( $post->ID, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
-							'sexuality'  => implode( ', ', wp_get_post_terms( $post->ID, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-							'queer'      => ( new LWTV_Loops() )->is_actor_queer( $post->ID ),
-							'url'        => get_the_permalink( $post->ID ),
-						);
-					}
+					$actors = wp_list_pluck( $queery->posts, 'ID' );
 					wp_reset_query();
+				}
+
+				foreach ( $actors as $actor ) {
+					$stats_array[ get_the_title( $actor ) ] = array(
+						'id'         => $actor,
+						'characters' => get_post_meta( $actor, 'lezactors_char_count', true ),
+						'dead_chars' => get_post_meta( $actor, 'lezactors_dead_count', true ),
+						'gender'     => implode( ', ', wp_get_post_terms( $actor, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
+						'sexuality'  => implode( ', ', wp_get_post_terms( $actor, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
+						'queer'      => ( new LWTV_Loops() )->is_actor_queer( $actor ),
+						'url'        => get_the_permalink( $actor ),
+					);
 				}
 				break;
 			case 'simple':
@@ -275,47 +275,47 @@ class LWTV_Stats_JSON {
 			case 'complex':
 				$stats_array    = array();
 				$charactersloop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters', $page );
+
 				if ( $charactersloop->have_posts() ) {
-					while ( $charactersloop->have_posts() ) {
-						$charactersloop->the_post();
-
-						$post   = get_post();
-						$died   = get_post_meta( $post->ID, 'lezchars_death_year', true );
-						$died   = ( ! is_array( $died ) ) ? array( $died ) : $died;
-						$shows  = count( get_post_meta( $post->ID, 'lezchars_show_group', true ) );
-						$actors = count( get_post_meta( $post->ID, 'lezchars_actor', true ) );
-						$gender = implode(
-							', ',
-							wp_get_post_terms(
-								$post->ID,
-								'lez_gender',
-								array(
-									'fields' => 'names',
-								)
-							)
-						);
-						$sexual = implode(
-							', ',
-							wp_get_post_terms(
-								$post->ID,
-								'lez_sexuality',
-								array(
-									'fields' => 'names',
-								)
-							)
-						);
-
-						$stats_array[ get_the_title() ] = array(
-							'id'        => $post->ID,
-							'died'      => $died,
-							'actors'    => $actors,
-							'shows'     => $shows,
-							'gender'    => $gender,
-							'sexuality' => $sexual,
-							'url'       => get_the_permalink(),
-						);
-					}
+					$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 					wp_reset_query();
+				}
+
+				foreach ( $characters as $character ) {
+					$died   = get_post_meta( $character, 'lezchars_death_year', true );
+					$died   = ( ! is_array( $died ) ) ? array( $died ) : $died;
+					$shows  = count( get_post_meta( $character, 'lezchars_show_group', true ) );
+					$actors = count( get_post_meta( $character, 'lezchars_actor', true ) );
+					$gender = implode(
+						', ',
+						wp_get_post_terms(
+							$character,
+							'lez_gender',
+							array(
+								'fields' => 'names',
+							)
+						)
+					);
+					$sexual = implode(
+						', ',
+						wp_get_post_terms(
+							$character,
+							'lez_sexuality',
+							array(
+								'fields' => 'names',
+							)
+						)
+					);
+
+					$stats_array[ get_the_title() ] = array(
+						'id'        => $character,
+						'died'      => $died,
+						'actors'    => $actors,
+						'shows'     => $shows,
+						'gender'    => $gender,
+						'sexuality' => $sexual,
+						'url'       => get_the_permalink(),
+					);
 				}
 				break;
 			case 'simple':
@@ -449,27 +449,28 @@ class LWTV_Stats_JSON {
 				break;
 			case 'complex':
 				$showsloop = ( new LWTV_Loops() )->post_type_query( 'post_type_shows', $page );
-				if ( $showsloop->have_posts() ) {
-					while ( $showsloop->have_posts() ) {
-						$showsloop->the_post();
-						$post                                      = get_post();
-						$stats_array[ get_the_title( $post->ID ) ] = array(
-							'id'              => $post->ID,
-							'nations'         => implode( ', ', wp_get_post_terms( $post->ID, 'lez_country', array( 'fields' => 'names' ) ) ),
-							'stations'        => implode( ', ', wp_get_post_terms( $post->ID, 'lez_stations', array( 'fields' => 'names' ) ) ),
 
-							'worth_it'        => get_post_meta( $post->ID, 'lezshows_worthit_rating', true ),
-							'trigger'         => implode( ', ', wp_get_post_terms( $post->ID, 'lez_triggers', array( 'fields' => 'names' ) ) ),
-							'star'            => implode( ', ', wp_get_post_terms( $post->ID, 'lez_stars', array( 'fields' => 'names' ) ) ),
-							'loved'           => ( ( get_post_meta( $post->ID, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no' ),
-							'chars_total'     => get_post_meta( $post->ID, 'lezshows_char_count', true ),
-							'chars_dead'      => get_post_meta( $post->ID, 'lezshows_dead_count', true ),
-							'chars_sexuality' => get_post_meta( $post->ID, 'lezshows_char_sexuality', true ),
-							'chars_gender'    => get_post_meta( $post->ID, 'lezshows_char_gender', true ),
-							'url'             => get_the_permalink( $post->ID ),
-						);
-					}
+				if ( $showsloop->have_posts() ) {
+					$shows = wp_list_pluck( $showsloop->posts, 'ID' );
 					wp_reset_query();
+				}
+
+				foreach ( $shows as $show ) {
+					$stats_array[ get_the_title( $show ) ] = array(
+						'id'              => $show,
+						'nations'         => implode( ', ', wp_get_post_terms( $show, 'lez_country', array( 'fields' => 'names' ) ) ),
+						'stations'        => implode( ', ', wp_get_post_terms( $show, 'lez_stations', array( 'fields' => 'names' ) ) ),
+
+						'worth_it'        => get_post_meta( $show, 'lezshows_worthit_rating', true ),
+						'trigger'         => implode( ', ', wp_get_post_terms( $show, 'lez_triggers', array( 'fields' => 'names' ) ) ),
+						'star'            => implode( ', ', wp_get_post_terms( $show, 'lez_stars', array( 'fields' => 'names' ) ) ),
+						'loved'           => ( ( get_post_meta( $show, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no' ),
+						'chars_total'     => get_post_meta( $show, 'lezshows_char_count', true ),
+						'chars_dead'      => get_post_meta( $show, 'lezshows_dead_count', true ),
+						'chars_sexuality' => get_post_meta( $show, 'lezshows_char_sexuality', true ),
+						'chars_gender'    => get_post_meta( $show, 'lezshows_char_gender', true ),
+						'url'             => get_the_permalink( $show ),
+					);
 				}
 				break;
 			case 'simple':
@@ -648,56 +649,56 @@ class LWTV_Stats_JSON {
 			// Get the posts for this singular term (i.e. a specific station)
 			$queery = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
 
-			// If we have anyone assigned to this station/nation, let's process
 			if ( $queery->have_posts() ) {
-				foreach ( $queery->posts as $show ) {
+				$shows_queery = wp_list_pluck( $queery->posts, 'ID' );
+				wp_reset_query();
+			}
 
-					// Increase the show count
-					$shows++;
-					$dead       += get_post_meta( $show->ID, 'lezshows_dead_count', true );
-					$characters += get_post_meta( $show->ID, 'lezshows_char_count', true );
+			foreach ( $shows_queery as $show_id ) {
 
-					// Get the sub taxonomy counts based on post meta
+				// Increase the show count
+				$shows++;
+				$dead       += get_post_meta( $show_id, 'lezshows_dead_count', true );
+				$characters += get_post_meta( $show_id, 'lezshows_char_count', true );
+
+				// Get the sub taxonomy counts based on post meta
+				foreach ( $valid_subtaxes as $meta ) {
+					$char_data_array    = get_post_meta( $show_id, 'lezshows_char_' . $meta );
+					$char_data[ $meta ] = array_shift( $char_data_array );
+				}
+
+				// If we have a complex format, let's get ALL the data too!
+				if ( 'complex' === $format ) {
 					foreach ( $valid_subtaxes as $meta ) {
-						$char_data_array    = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
-						$char_data[ $meta ] = array_shift( $char_data_array );
-					}
-
-					// If we have a complex format, let's get ALL the data too!
-					if ( 'complex' === $format ) {
-						foreach ( $valid_subtaxes as $meta ) {
-							$char_data_array = get_post_meta( $show->ID, 'lezshows_char_' . $meta );
-							foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
-								$char_data[ $char_data_meta ] += $char_data_count;
-								unset( $char_data[ $meta ] );
-							}
-						}
-					}
-
-					// Build our return array
-					// Show Count
-					$return[ $slug ]['shows'] = $shows;
-
-					// Only run this if we're complex...
-					if ( 'complex' === $format ) {
-						$return[ $slug ]['onair']           = ( new LWTV_Stats() )->showcount( 'onair', $type, $slug );
-						$return[ $slug ]['avg_score']       = ( new LWTV_Stats() )->showcount( 'score', $type, $slug );
-						$return[ $slug ]['avg_onair_score'] = ( new LWTV_Stats() )->showcount( 'onairscore', $type, $slug );
-					}
-
-					// Character counts
-					$return[ $slug ]['characters'] = $characters;
-					$return[ $slug ]['dead']       = $dead;
-
-					// If we have a complex format, we need to add that data...
-					if ( 'complex' === $format ) {
-						foreach ( $char_data as $ctax_name => $ctax_count ) {
-							$return[ $slug ][ $ctax_name ] = $ctax_count;
+						$char_data_array = get_post_meta( $show_id, 'lezshows_char_' . $meta );
+						foreach ( array_shift( $char_data_array ) as $char_data_meta => $char_data_count ) {
+							$char_data[ $char_data_meta ] += $char_data_count;
+							unset( $char_data[ $meta ] );
 						}
 					}
 				}
 
-				wp_reset_query();
+				// Build our return array
+				// Show Count
+				$return[ $slug ]['shows'] = $shows;
+
+				// Only run this if we're complex...
+				if ( 'complex' === $format ) {
+					$return[ $slug ]['onair']           = ( new LWTV_Stats() )->showcount( 'onair', $type, $slug );
+					$return[ $slug ]['avg_score']       = ( new LWTV_Stats() )->showcount( 'score', $type, $slug );
+					$return[ $slug ]['avg_onair_score'] = ( new LWTV_Stats() )->showcount( 'onairscore', $type, $slug );
+				}
+
+				// Character counts
+				$return[ $slug ]['characters'] = $characters;
+				$return[ $slug ]['dead']       = $dead;
+
+				// If we have a complex format, we need to add that data...
+				if ( 'complex' === $format ) {
+					foreach ( $char_data as $ctax_name => $ctax_count ) {
+						$return[ $slug ][ $ctax_name ] = $ctax_count;
+					}
+				}
 			}
 		}
 

@@ -204,7 +204,7 @@ class LWTV_CPT_Actors {
 		$post_array  = array( 'publish', 'private' );
 
 		// Prevent running on autosave.
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! in_array( $post_status, $post_array ) ) {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! in_array( $post_status, $post_array, true ) ) {
 			return;
 		}
 

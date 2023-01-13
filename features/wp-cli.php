@@ -181,13 +181,9 @@ class WP_CLI_LWTV_Commands {
 				$items = ( new LWTV_Debug() )->find_queerchars();
 				break;
 			case 'nochars':
-				if ( $try_to_fix ) {
-					WP_CLI::log( 'Attempting to fix actors without characters ....' );
-					$items = ( new LWTV_Debug() )->fix_actors_no_chars();
-				} else {
-					WP_CLI::log( 'Searching all actors to ensure they have a character ....' );
-					$items = ( new LWTV_Debug() )->find_actors_no_chars();
-				}
+				WP_CLI::log( 'Searching all actors to ensure they have a character ....' );
+				$items = ( new LWTV_Debug() )->find_actors_no_chars();
+				break;
 		}
 
 		if ( empty( $items ) || ! is_array( $items ) ) {

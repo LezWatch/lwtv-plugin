@@ -193,6 +193,8 @@ class LWTV_Shows_Like_This {
 				$results = wp_list_pluck( $results, 'ID' );
 			}
 
+			$results = array_unique( $results );
+
 			// What MIGHT we be adding:
 			$handpicked  = ( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) ? wp_parse_id_list( get_post_meta( $post_id, 'lezshows_similar_shows', true ) ) : array();
 			$reciprocity = self::reciprocity( $post_id );
