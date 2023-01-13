@@ -1376,44 +1376,50 @@ class LWTV_Stats_Arrays {
 	public function actor_char_role( $type, $the_id ) {
 		// Default
 		$array     = array();
-		$post_type = 'post_type_' . $type;
+		$post_type = $type;
 
 		$transient = 'actor_char_role_' . $the_id;
 		$array     = get_transient( $transient );
-		if ( false === $array ) {
-			$base_array     = array(
+		if ( false === $array || empty( $array ) ) {
+			$base_array = array(
 				'regular'   => 0,
 				'recurring' => 0,
 				'guest'     => 0,
 			);
-			$characters     = array();
-			$charactersloop = new WP_Query(
-				array(
-					'post_type'              => 'post_type_characters',
-					'post_status'            => array( 'publish' ),
-					'orderby'                => 'title',
-					'order'                  => 'ASC',
-					'posts_per_page'         => '20',
-					'no_found_rows'          => true,
-					'update_post_term_cache' => true,
-					'meta_query'             => array(
-						array(
-							'key'     => 'lezchars_actor',
-							'value'   => $the_id,
-							'compare' => 'LIKE',
-						),
-					),
-				)
-			);
+			$characters = array();
 
-			if ( $charactersloop->have_posts() ) {
-				$char_array = wp_list_pluck( $charactersloop->posts, 'ID' );
-				wp_reset_query();
+			// Get array of characters (by ID)
+			$char_array = get_post_meta( $the_id, 'lezactors_char_list', true );
+
+			// If the character list is empty, we must build it
+			if ( empty( $char_array ) ) {
+				// Loop to get the list of characters
+				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+
+				if ( $charactersloop->have_posts() ) {
+					$char_array = wp_list_pluck( $charactersloop->posts, 'ID' );
+					wp_reset_query();
+				}
+				$char_array = array_unique( $char_array );
+
+				foreach ( $char_array as $char_id ) {
+					$actors = get_post_meta( $char_id, 'lezchars_actor', true );
+					if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
+						foreach ( $actors as $actor ) {
+							// We have to check because due to so many characters, we have some actor mis-matches.
+							if ( $actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+								$character_checked[] = $the_id;
+							}
+						}
+					}
+				}
+
+				$char_array = $character_checked;
+				update_post_meta( $the_id, 'lezactors_char_list', $char_array );
 			}
 
 			if ( is_array( $char_array ) ) {
 				foreach ( $char_array as $char_id ) {
-					$char_id      = get_the_ID();
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 						foreach ( $actors_array as $char_actor ) {
@@ -1450,11 +1456,12 @@ class LWTV_Stats_Arrays {
 	public function actor_char_dead( $type, $the_id ) {
 		// Default
 		$array     = array();
-		$post_type = 'post_type_' . $type;
+		$post_type = $type;
 
 		$transient = 'actor_char_dead_' . $the_id;
 		$array     = get_transient( $transient );
-		if ( false === $array ) {
+
+		if ( false === $array || empty( $array ) ) {
 			$base_array     = array(
 				'alive' => array(
 					'count' => 0,
@@ -1467,40 +1474,41 @@ class LWTV_Stats_Arrays {
 					'url'   => '',
 				),
 			);
-			$characters     = array();
-			$charactersloop = new WP_Query(
-				array(
-					'post_type'              => 'post_type_characters',
-					'post_status'            => array( 'publish' ),
-					'orderby'                => 'title',
-					'order'                  => 'ASC',
-					'posts_per_page'         => '20',
-					'no_found_rows'          => true,
-					'update_post_term_cache' => true,
-					'meta_query'             => array(
-						array(
-							'key'     => 'lezchars_actor',
-							'value'   => $the_id,
-							'compare' => 'LIKE',
-						),
-					),
-					'tax_query'              => array(
-						'taxonomy' => 'lez_cliches',
-						'terms'    => 'dead',
-						'field'    => 'slug',
-						'operator' => 'IN',
-					),
-				)
-			);
 
-			if ( $charactersloop->have_posts() ) {
-				$char_array = wp_list_pluck( $charactersloop->posts, 'ID' );
-				wp_reset_query();
+			$characters = array();
+
+			// Get array of characters (by ID)
+			$char_array = get_post_meta( $the_id, 'lezactors_char_list', true );
+
+			// If the character list is empty, we must build it
+			if ( empty( $char_array ) ) {
+				// Loop to get the list of characters
+				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+
+				if ( $charactersloop->have_posts() ) {
+					$char_array = wp_list_pluck( $charactersloop->posts, 'ID' );
+					wp_reset_query();
+				}
+				$char_array = array_unique( $char_array );
+
+				foreach ( $char_array as $char_id ) {
+					$actors = get_post_meta( $char_id, 'lezchars_actor', true );
+					if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
+						foreach ( $actors as $actor ) {
+							// We have to check because due to so many characters, we have some actor mis-matches.
+							if ( $actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+								$character_checked[] = $the_id;
+							}
+						}
+					}
+				}
+
+				$char_array = $character_checked;
+				update_post_meta( $the_id, 'lezactors_char_list', $char_array );
 			}
 
 			if ( is_array( $char_array ) ) {
 				foreach ( $char_array as $char_id ) {
-					$char_id      = get_the_ID();
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 						foreach ( $actors_array as $char_actor ) {

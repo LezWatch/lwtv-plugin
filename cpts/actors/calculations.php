@@ -17,7 +17,7 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Actors_Calculate {
 
 	/*
-	 * Count
+	 * Count all characters for an actor.
 	 *
 	 * @param int $post_id The post ID.
 	 */
@@ -35,18 +35,33 @@ class LWTV_Actors_Calculate {
 
 		// If the character list is empty, we must build it
 		if ( empty( $characters ) ) {
+			$character_checked = array();
+
 			// Loop to get the list of characters
 			$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
 
 			if ( $charactersloop->have_posts() ) {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 			}
-
-			$characters = array_unique( $characters );
-			update_post_meta( $post_id, 'lezactors_char_list', $characters );
-
 			// Reset to end
 			wp_reset_query();
+
+			$characters = array_unique( $characters );
+
+			foreach ( $characters as $char_id ) {
+				$actors = get_post_meta( $char_id, 'lezchars_actor', true );
+				if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
+					foreach ( $actors as $actor ) {
+						// We have to check because due to so many characters, we have some actor mis-matches.
+						if ( $actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+							$character_checked[] = $the_id;
+						}
+					}
+				}
+			}
+
+			update_post_meta( $post_id, 'lezactors_char_list', $character_checked );
+
 		}
 
 		// Process character counts:
