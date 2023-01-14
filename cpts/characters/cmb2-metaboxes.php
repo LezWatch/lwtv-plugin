@@ -154,14 +154,16 @@ class LWTV_Characters_CMB2 {
 		// Field: Actor Name(s)
 		$field_actors = $cmb_characters->add_field(
 			array(
-				'name'            => 'Actor Name',
-				'id'              => $prefix . 'actor',
-				'desc'            => 'Click on the search icon to select the actor.',
-				'type'            => 'post_search_text', // This field type
-				'post_type'       => 'post_type_actors',
-				'select_type'     => 'radio',
-				'select_behavior' => 'replace',
-				'repeatable'      => true,
+				'name'    => 'Actor Name(s)',
+				'id'      => $prefix . 'actor',
+				'desc'    => 'Drag actors from the left column to the right column to attach them to this page.<br />Rearrange the order of the posts in the right column by dragging and dropping.',
+				'type'    => 'custom_attached_posts',
+				'options' => array(
+					'query_args' => array(
+						'posts_per_page' => 5,
+						'post_type'      => 'post_type_actors',
+					), // override the get_posts args
+				),
 			)
 		);
 
