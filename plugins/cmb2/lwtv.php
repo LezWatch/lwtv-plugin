@@ -246,32 +246,6 @@ class LWTV_CMB2 {
 		return $content;
 	}
 
-	/*
-	 * Create a list of all shows
-	 */
-	public function cmb2_get_shows_options() {
-		$array  = array(
-			'post_type'   => 'post_type_shows',
-			'numberposts' => wp_count_posts( 'post_type_shows' )->publish,
-			'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-		);
-		$return = self::get_post_options( $array );
-		return $return;
-	}
-
-	/*
-	 * Create a list of all shows
-	 */
-	public function cmb2_get_actors_options() {
-		return self::get_post_options(
-			array(
-				'post_type'   => 'post_type_actors',
-				'numberposts' => wp_count_posts( 'post_type_actors' )->publish,
-				'post_status' => array( 'publish', 'pending', 'draft', 'future' ),
-			)
-		);
-	}
-
 	/**
 	 * favorite_shows_user_profile_metabox function.
 	 */
@@ -291,18 +265,17 @@ class LWTV_CMB2 {
 		);
 		$cmb_user->add_field(
 			array(
-				'name'             => 'Favorite Shows',
-				'desc'             => 'pick your favorite shows',
-				'id'               => $prefix . 'favourite_shows',
-				'type'             => 'select',
-				'show_option_none' => true,
-				'repeatable'       => true,
-				'text'             => array(
-					'add_row_text' => 'Add Another Favorite Show',
+				'name'     => 'Favorite Shows',
+				'desc'     => 'Drag a show from the left column to the right column to attach them to this page.<br />Rearrange the order in the right column by dragging and dropping.',
+				'id'       => $prefix . 'favourite_shows',
+				'type'     => 'custom_attached_posts',
+				'options'  => array(
+					'query_args' => array(
+						'posts_per_page' => 5,
+						'post_type'      => 'post_type_shows',
+					), // override the get_posts args
 				),
-				'default'          => 'custom',
-				'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
-				'on_front'         => true,
+				'on_front' => true,
 			)
 		);
 	}

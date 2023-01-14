@@ -32,6 +32,9 @@ class LWTV_CMB2_Addons {
 		require_once dirname( __FILE__ ) . '/cmb2/year-range.php';
 		/* Post Search Field */
 		require_once dirname( __FILE__ ) . '/cmb2/cmb2-post-search-field/cmb2_post_search_field.php';
+		/* Attached Posts */
+		require_once dirname( __FILE__ ) . '/cmb2/cmb2-attached-posts/cmb2-attached-posts-field.php';
+
 	}
 
 	/**

@@ -1,0 +1,34 @@
+{
+    "name": "cmb2/cmb2-attached-posts",
+    "description": "Custom field for CMB2 for creating post relationships.",
+    "license": "GPL-2.0+",
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Justin Sternberg",
+            "email": "justin@dsgnwrks.pro",
+            "homepage": "https://dsgnwrks.pro",
+            "role": "Developer"
+        },        
+        {
+            "name": "WebDevStudios",
+            "email": "contact@webdevstudios.com",
+            "homepage": "https://github.com/WebDevStudios",
+            "role": "Developer"
+        }
+    ],
+    "keywords": ["wordpress", "plugin", "metabox","post","relationship","attached"],
+    "homepage": "https://github.com/CMB2/CMB2",
+    "type": "wordpress-plugin",
+    "support": {
+        "issues": "https://github.com/CMB2/cmb2-attached-posts/issues",
+        "source": "https://github.com/CMB2/cmb2-attached-posts/"
+    },
+    "require": {
+        "php": ">5.2.4"
+    },
+    "suggest": {
+        "composer/installers": "~1.0"
+    }
+}

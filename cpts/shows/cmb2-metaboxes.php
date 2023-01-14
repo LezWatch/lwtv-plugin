@@ -438,16 +438,19 @@ class LWTV_Shows_CMB2 {
 		// Field: Similar Shows.
 		$field_similarshows = $cmb_mustsee->add_field(
 			array(
-				'name'             => 'Similar Shows',
-				'desc'             => 'Shows we think people will also like (optional).',
-				'id'               => $prefix . 'similar_shows',
-				'type'             => 'pw_select',
-				'show_option_none' => true,
-				'default'          => 'custom',
-				'options_cb'       => array( $this, 'cmb2_get_shows_options' ),
-				'repeatable'       => true,
+				'name'    => 'Similar Shows',
+				'desc'    => 'Drag shows from the left column to the right column to add them.<br />Use search to find the shows.',
+				'id'      => $prefix . 'similar_shows',
+				'type'    => 'custom_attached_posts',
+				'options' => array(
+					'query_args' => array(
+						'posts_per_page' => 5,
+						'post_type'      => 'post_type_shows',
+					), // override the get_posts args
+				),
 			)
 		);
+
 		// Field Group: Show Name Information
 		$group_names = $cmb_mustsee->add_field(
 			array(

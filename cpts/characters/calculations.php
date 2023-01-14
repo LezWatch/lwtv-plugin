@@ -107,6 +107,7 @@ class LWTV_Characters_Calculate {
 	 * @return n/a
 	 */
 	public function do_the_math( $post_id ) {
+
 		// Calculate Death
 		self::death( $post_id );
 
