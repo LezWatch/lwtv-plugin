@@ -304,17 +304,19 @@ class LWTV_CPT_Characters {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 			}
 
-			$characters = array_unique( $characters );
-			update_post_meta( $show_id, 'lezshows_char_list', $characters );
-
-			// Reset to end
 			wp_reset_query();
+
+			if ( is_array( $characters ) ) {
+				$characters = array_unique( $characters );
+			} else {
+				$characters = array( $characters );
+			}
+
+			update_post_meta( $show_id, 'lezshows_char_list', $characters );
 		}
 
-		$characters = array_unique( $characters );
-
 		$char_counts = array(
-			'total' => 0,
+			'total' => count( $characters ),
 			'dead'  => 0,
 			'none'  => 0,
 			'quirl' => 0,
@@ -322,58 +324,60 @@ class LWTV_CPT_Characters {
 			'txirl' => 0,
 		);
 
-		foreach ( $characters as $char_id ) {
-			// Get the list of shows.
-			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+		if ( ! empty( $characters ) ) {
+			foreach ( $characters as $char_id ) {
+				// Get the list of shows.
+				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
-			// If the character is in this show, AND a published character
-			// we will pass the following data to the character template
-			// to determine what to display
-			if (
-				'' !== $shows_array &&
-				! empty( $shows_array ) &&
-				'publish' === get_post_status( $char_id )
-			) {
-				foreach ( $shows_array as $char_show ) {
-					if ( (int) $char_show['show'] === $show_id ) {
-						// Get a list of actors (we need this twice later)
-						$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
-						if ( ! is_array( $actors_ids ) ) {
-							$actors_ids = array( $actors_ids );
-						}
-
-						// Increase the count of characters
-						$char_counts['total']++;
-
-						// Dead?
-						if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-							$char_counts['dead']++;
-						}
-						// No cliches?
-						if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
-							$char_counts['none']++;
-						}
-						// The Tambour Takedown: Checking Queer IRL
-						// We don't award shows that have cast a cis/het actor in a queer
-						// role. To solve this, we grab the actor listed as PRIMARY ACTOR
-						// (i.e. the one listed first). If THEY are QIRL, the show gets points.
-						if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
-							$top_actor = reset( $actors_ids );
-							if ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $top_actor ) ) {
-								$char_counts['quirl']++;
+				// If the character is in this show, AND a published character
+				// we will pass the following data to the character template
+				// to determine what to display
+				if (
+					'' !== $shows_array &&
+					! empty( $shows_array ) &&
+					'publish' === get_post_status( $char_id )
+				) {
+					foreach ( $shows_array as $char_show ) {
+						if ( (int) $char_show['show'] === $show_id ) {
+							// Get a list of actors (we need this twice later)
+							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
+							if ( ! is_array( $actors_ids ) ) {
+								$actors_ids = array( $actors_ids );
 							}
-						}
 
-						// Is the character is not Cisgender ...
-						$valid_trans_char = array( 'cisgender', 'intersex', 'unknown' );
-						if ( ! has_term( $valid_trans_char, 'lez_gender', $char_id ) ) {
-							$char_counts['trans']++;
-						}
+							// Increase the count of characters
+							$char_counts['total']++;
 
-						// If an actor is transgender, we get an extra bonus.
-						foreach ( $actors_ids as $actor ) {
-							if ( 'yes' === ( new LWTV_Loops() )->is_actor_trans( $actor ) ) {
-								$char_counts['txirl']++;
+							// Dead?
+							if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
+								$char_counts['dead']++;
+							}
+							// No cliches?
+							if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
+								$char_counts['none']++;
+							}
+							// The Tambour Takedown: Checking Queer IRL
+							// We don't award shows that have cast a cis/het actor in a queer
+							// role. To solve this, we grab the actor listed as PRIMARY ACTOR
+							// (i.e. the one listed first). If THEY are QIRL, the show gets points.
+							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
+								$top_actor = reset( $actors_ids );
+								if ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $top_actor ) ) {
+									$char_counts['quirl']++;
+								}
+							}
+
+							// Is the character is not Cisgender ...
+							$valid_trans_char = array( 'cisgender', 'intersex', 'unknown' );
+							if ( ! has_term( $valid_trans_char, 'lez_gender', $char_id ) ) {
+								$char_counts['trans']++;
+							}
+
+							// If an actor is transgender, we get an extra bonus.
+							foreach ( $actors_ids as $actor ) {
+								if ( 'yes' === ( new LWTV_Loops() )->is_actor_trans( $actor ) ) {
+									$char_counts['txirl']++;
+								}
 							}
 						}
 					}
@@ -516,11 +520,8 @@ class LWTV_CPT_Characters {
 	 */
 	public function save_post_meta( $post_id ) {
 
-		$post_status = get_post_status( $post_id );
-		$post_array  = array( 'publish', 'private' );
-
 		// Prevent running on autosave.
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! in_array( $post_status, $post_array, true ) ) {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ) {
 			return;
 		}
 

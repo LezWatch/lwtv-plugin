@@ -45,6 +45,8 @@ class LWTV_Cache {
 			$clean_urls[] = home_url();
 		}
 
+		$clean_urls = array_unique( $clean_urls );
+
 		return $clean_urls;
 	}
 

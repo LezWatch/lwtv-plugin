@@ -187,7 +187,7 @@ class LWTV_Characters_CMB2 {
 			array(
 				'name'            => 'TV Show',
 				'id'              => 'show',
-				'desc'            => 'Click on the search icon to select the show.',
+				'desc'            => 'Click on the search icon to select the show.<br />BUG! Additional shows won\'t display the name until AFTER save and refresh. Mika knows.',
 				'type'            => 'post_search_text', // This field type
 				'post_type'       => 'post_type_shows',
 				'select_type'     => 'radio',
