@@ -295,14 +295,6 @@ class LWTV_CPT_Characters {
 		// Get array of characters (by ID)
 		$characters = get_post_meta( $show_id, 'lezshows_char_list', true );
 
-		// If we're returning dead, then we can simplify
-		if ( 'dead' === $output ) {
-			$dead = get_post_meta( $show_id, 'lezshows_dead_list', true );
-		}
-		if ( ! isset( $dead ) || empty( $dead ) ) {
-			return $dead;
-		}
-
 		// If the character list is empty, we must build it
 		if ( ! isset( $characters ) || empty( $characters ) ) {
 			// Loop to get the list of characters
@@ -396,7 +388,12 @@ class LWTV_CPT_Characters {
 			}
 		}
 
+		if ( !isset( $new_characters ) ) {
+			$new_characters = $characters;
+		}
+
 		update_post_meta( $show_id, 'lezshows_char_list', $new_characters );
+		update_post_meta( $show_id, 'lezshows_dead_list', $char_counts['dead'] );
 
 		switch ( $output ) {
 			case 'dead':
@@ -425,7 +422,7 @@ class LWTV_CPT_Characters {
 				break;
 			case 'count':
 				// Count of all characters on the show
-				$return = $char_counts['total'];
+				$return = count( $new_characters );
 				break;
 		}
 

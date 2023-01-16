@@ -376,7 +376,6 @@ class LWTV_Shows_Calculate {
 			}
 
 			$characters = array_unique( $characters );
-			update_post_meta( $post_id, 'lezshows_char_list', $characters );
 
 			// Reset to end
 			wp_reset_query();
@@ -391,6 +390,7 @@ class LWTV_Shows_Calculate {
 					if ( $char_show['show'] == $post_id ) {
 						// Bump the array for this role
 						$role_data[ $char_show['type'] ]++;
+						$new_characters[] = $char_id;
 
 						// Now we'll sort gender and stuff...
 						foreach ( $valid_taxes as $title => $taxonomy ) {
@@ -407,6 +407,7 @@ class LWTV_Shows_Calculate {
 		}
 
 		// Update the roles score
+		update_post_meta( $post_id, 'lezshows_char_list', $new_characters );
 		update_post_meta( $post_id, 'lezshows_char_roles', $role_data );
 
 		// Update the taxonomies scores
