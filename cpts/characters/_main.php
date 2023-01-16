@@ -295,8 +295,16 @@ class LWTV_CPT_Characters {
 		// Get array of characters (by ID)
 		$characters = get_post_meta( $show_id, 'lezshows_char_list', true );
 
+		// If we're returning dead, then we can simplify
+		if ( 'dead' === $output ) {
+			$dead = get_post_meta( $show_id, 'lezshows_dead_list', true );
+		}
+		if ( ! isset( $dead ) || empty( $dead ) ) {
+			return $dead;
+		}
+
 		// If the character list is empty, we must build it
-		if ( empty( $characters ) ) {
+		if ( ! isset( $characters ) || empty( $characters ) ) {
 			// Loop to get the list of characters
 			$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
@@ -311,12 +319,10 @@ class LWTV_CPT_Characters {
 			} else {
 				$characters = array( $characters );
 			}
-
-			update_post_meta( $show_id, 'lezshows_char_list', $characters );
 		}
 
 		$char_counts = array(
-			'total' => count( $characters ),
+			'total' => 0,
 			'dead'  => 0,
 			'none'  => 0,
 			'quirl' => 0,
@@ -325,13 +331,14 @@ class LWTV_CPT_Characters {
 		);
 
 		if ( ! empty( $characters ) ) {
+			$new_characters = array();
 			foreach ( $characters as $char_id ) {
 				// Get the list of shows.
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
 				// If the character is in this show, AND a published character
 				// we will pass the following data to the character template
-				// to determine what to display
+				// to determine what to display.
 				if (
 					'' !== $shows_array &&
 					! empty( $shows_array ) &&
@@ -345,8 +352,12 @@ class LWTV_CPT_Characters {
 								$actors_ids = array( $actors_ids );
 							}
 
+							// The Queer Clone Calculations: The post query gets too many IDs
+							// So we don't **REALLY** count then via this method unless the show
+							// is there for the character.
 							// Increase the count of characters
 							$char_counts['total']++;
+							$new_characters[] = $char_id;
 
 							// Dead?
 							if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
@@ -385,6 +396,8 @@ class LWTV_CPT_Characters {
 			}
 		}
 
+		update_post_meta( $show_id, 'lezshows_char_list', $new_characters );
+
 		switch ( $output ) {
 			case 'dead':
 				// Count of dead characters
@@ -408,7 +421,7 @@ class LWTV_CPT_Characters {
 				break;
 			case 'query':
 				// WP Array of all characters
-				$return = $characters;
+				$return = $new_characters;
 				break;
 			case 'count':
 				// Count of all characters on the show

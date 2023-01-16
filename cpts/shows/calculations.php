@@ -116,7 +116,11 @@ class LWTV_Shows_Calculate {
 		}
 
 		// before we do the math, let's see if we have any characters:
-		$char_count = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'count' );
+		$char_count = get_post_meta( $post_id, 'lezshows_char_count', true );
+
+		if ( ! isset( $char_count ) || empty( $char_count ) ) {
+			$char_count = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'count' );
+		}
 
 		// No characters? It's a zero.
 		if ( 0 === $char_count ) {
