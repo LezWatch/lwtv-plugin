@@ -447,81 +447,84 @@ class LWTV_Stats_Arrays {
 				wp_reset_query();
 			}
 
-			foreach ( $all_shows as $show_id ) {
-				// This data is universal for every thing we process.
-				$shows++;
-				$dead       += get_post_meta( $show_id, 'lezshows_dead_count', true );
-				$characters += get_post_meta( $show_id, 'lezshows_char_count', true );
-				if ( has_term( 'dead-queers', 'lez_tropes', $show_id ) ) {
-					$dead_shows++;
-				}
-				// Get the data...
-				if ( 'all' !== $data_meta && 'stackedbar' !== $format ) {
-					// This is for when we show a specific taxonomy for a specific nation/station.
-					// Example: Sexuality for Argentina.
-					if ( in_array( $data_meta, $extra_subtaxes ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
-						// Get all the terms for this show.
-						$big_data_array = get_the_terms( $show_id, 'lez_' . $data_meta );
-						if ( ! empty( $big_data_array ) && ! is_wp_error( $big_data_array ) ) {
-							foreach ( $big_data_array as $big_data_item ) {
-								if ( in_array( $data_meta, $extra_subtaxes ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
-									if ( ! isset( $big_data[ $big_data_item->name ] ) ) {
-										$big_data[ $big_data_item->name ] = 0;
+			if ( is_array( $all_shows ) ) {
+				foreach ( $all_shows as $show_id ) {
+					// This data is universal for every thing we process.
+					$shows++;
+					$dead       += get_post_meta( $show_id, 'lezshows_dead_count', true );
+					$characters += get_post_meta( $show_id, 'lezshows_char_count', true );
+					if ( has_term( 'dead-queers', 'lez_tropes', $show_id ) ) {
+						$dead_shows++;
+					}
+					// Get the data...
+					if ( 'all' !== $data_meta && 'stackedbar' !== $format ) {
+						// This is for when we show a specific taxonomy for a specific nation/station.
+						// Example: Sexuality for Argentina.
+						if ( in_array( $data_meta, $extra_subtaxes ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+							// Get all the terms for this show.
+							$big_data_array = get_the_terms( $show_id, 'lez_' . $data_meta );
+							if ( ! empty( $big_data_array ) && ! is_wp_error( $big_data_array ) ) {
+								foreach ( $big_data_array as $big_data_item ) {
+									if ( in_array( $data_meta, $extra_subtaxes ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+										if ( ! isset( $big_data[ $big_data_item->name ] ) ) {
+											$big_data[ $big_data_item->name ] = 0;
+										}
+										$big_data[ $big_data_item->name ]++;
+									} else {
+										if ( ! isset( $big_data[ $big_data_item->slug ] ) ) {
+											$big_data[ $big_data_item->slug ] = 0;
+										}
+										$big_data[ $big_data_item->slug ]++;
 									}
-									$big_data[ $big_data_item->name ]++;
-								} else {
+								}
+							}
+						} else {
+							// Otherwise, we can grab the meta-data from each show.
+							$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $data_meta );
+							foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
+								if ( ! isset( $big_data[ $big_data_meta ] ) ) {
+									$big_data[ $big_data_meta ] = 0;
+								}
+								$big_data[ $big_data_meta ] += $big_data_count;
+							}
+						}
+					} elseif ( 'all' !== $data_meta && 'stackedbar' === $format ) {
+						if ( in_array( $data_meta, $extra_subtaxes ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+							// Get all the terms for this show.
+							$big_data_array = get_the_terms( $show_id, 'lez_' . $data_meta );
+							if ( ! empty( $big_data_array ) && ! is_wp_error( $big_data_array ) ) {
+								foreach ( $big_data_array as $big_data_item ) {
 									if ( ! isset( $big_data[ $big_data_item->slug ] ) ) {
 										$big_data[ $big_data_item->slug ] = 0;
 									}
 									$big_data[ $big_data_item->slug ]++;
 								}
 							}
-						}
-					} else {
-						// Otherwise, we can grab the meta-data from each show.
-						$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $data_meta );
-						foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
-							if ( ! isset( $big_data[ $big_data_meta ] ) ) {
-								$big_data[ $big_data_meta ] = 0;
-							}
-							$big_data[ $big_data_meta ] += $big_data_count;
-						}
-					}
-				} elseif ( 'all' !== $data_meta && 'stackedbar' === $format ) {
-					if ( in_array( $data_meta, $extra_subtaxes ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
-						// Get all the terms for this show.
-						$big_data_array = get_the_terms( $show_id, 'lez_' . $data_meta );
-						if ( ! empty( $big_data_array ) && ! is_wp_error( $big_data_array ) ) {
-							foreach ( $big_data_array as $big_data_item ) {
-								if ( ! isset( $big_data[ $big_data_item->slug ] ) ) {
-									$big_data[ $big_data_item->slug ] = 0;
+						} else {
+							// We can use the post meta.
+							$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $data_meta );
+							foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
+								if ( ! isset( $big_data[ $big_data_meta ] ) ) {
+									$big_data[ $big_data_meta ] = 0;
 								}
-								$big_data[ $big_data_item->slug ]++;
+								$big_data[ $big_data_meta ] += $big_data_count;
 							}
 						}
-					} else {
-						// We can use the post meta.
-						$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $data_meta );
-						foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
-							if ( ! isset( $big_data[ $big_data_meta ] ) ) {
-								$big_data[ $big_data_meta ] = 0;
+					} elseif ( 'all' === $data_meta && 'all' !== $data_term ) {
+						// If the data_meta is "all" then we are on the OVERVIEW tab for ONE nation/station.
+						foreach ( $main_subtaxes as $meta ) {
+							$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $meta );
+							foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
+								if ( ! isset( $big_data[ $big_data_meta ] ) ) {
+									$big_data[ $big_data_meta ] = 0;
+								}
+								$big_data[ $big_data_meta ] += $big_data_count;
 							}
-							$big_data[ $big_data_meta ] += $big_data_count;
-						}
-					}
-				} elseif ( 'all' === $data_meta && 'all' !== $data_term ) {
-					// If the data_meta is "all" then we are on the OVERVIEW tab for ONE nation/station.
-					foreach ( $main_subtaxes as $meta ) {
-						$big_data_array = get_post_meta( $show_id, 'lezshows_char_' . $meta );
-						foreach ( array_shift( $big_data_array ) as $big_data_meta => $big_data_count ) {
-							if ( ! isset( $big_data[ $big_data_meta ] ) ) {
-								$big_data[ $big_data_meta ] = 0;
-							}
-							$big_data[ $big_data_meta ] += $big_data_count;
 						}
 					}
 				}
 			}
+
 			// Determine what kind of array we need to show...
 			switch ( $format ) {
 				case 'barchart':
