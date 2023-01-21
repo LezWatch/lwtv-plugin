@@ -1,3 +1,7 @@
 #adminmenu .wp-menu-image img {
 	opacity: 1;
 }
+
+.gform_editor .gform_lwtvlocation input, .gform_editor .gform_lwtvlocation label {
+	opacity: .6;
+	}

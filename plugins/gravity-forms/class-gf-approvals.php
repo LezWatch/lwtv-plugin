@@ -39,7 +39,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	protected $_slug = 'lwtv-gf-approvals';
 
 	// Relative path to the plugin from the plugins folder.
-	protected $_path = 'lwtv-plugin/plugins/lwtv-gf-approvals/approvals.php';
+	protected $_path = 'lwtv-plugin/plugins/gravity-forms/class-gf-approvals.php';
 
 	// Full path the the plugin.
 	protected $_full_path = __FILE__;
@@ -228,7 +228,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 			}
 
 			// User ID of approver
-			$approver = absint( $feed['meta']['approver'] );
+			$approver  = absint( $feed['meta']['approver'] );
 			$user_info = get_user_by( 'id', $approver );
 
 			$display_name = $user_info ? $user_info->display_name : $approver;
@@ -255,6 +255,8 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 					),
 				),
 			);
+
+			// Set has approver.
 			$has_approver = true;
 
 		}
@@ -297,7 +299,15 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	 * @return string
 	 */
 	public function update_approval_status( $key, $entry, $form ) {
-		return 'pending';
+		// Default is pending
+		$return = 'pending';
+
+		// Auto Reject Spam
+		if ( isset( $entry['status'] ) && 'spam' === strtolower( $entry['status'] ) ) {
+			$return = 'rejected';
+		}
+
+		return $return;
 	}
 
 	/**
@@ -395,6 +405,8 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 		} elseif ( 'rejected' === $entry['approval_status'] ) {
 			$status = 'Rejected ' . $reject_icon;
 		}
+
+		// To Do: Add in Post Box for warning? IF the IP is from greece, flag as POSSIBLY BM.
 		?>
 		<div class="postbox">
 			<h3><?php echo 'Approval Status: ' . wp_kses_post( $status ); ?></h3>
@@ -464,6 +476,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	 */
 	public static function dashboard() {
 
+		$search_criteria['status']          = 'active'; // No Spam :)
 		$search_criteria['field_filters'][] = array(
 			'key'   => 'approval_status',
 			'value' => 'pending',
@@ -484,6 +497,8 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 
 				<tbody class="list:user user-list">
 				<?php
+
+				$get_ip = ( new LWTV_Gravity_Forms() )->check_ip_location( $entry['ip'] );
 				foreach ( $entries as $entry ) {
 					$form      = GFAPI::get_form( $entry['form_id'] );
 					$user      = get_user_by( 'id', (int) $entry['created_by'] );
@@ -499,10 +514,11 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 						<td>
 							<?php
 							if ( 0 !== (int) $entry['created_by'] ) {
-								echo '<a href="' . esc_url( $url_entry ) . '">' . esc_html( $user->display_name ) . '</a>';
+								echo esc_html( $user->display_name ) . ' ';
 							} else {
-								echo esc_html( $entry['ip'] );
+								echo 'Anonymous ';
 							}
+							echo '(' . esc_html( $get_ip ) . ')';
 							?>
 						</td>
 						<td>

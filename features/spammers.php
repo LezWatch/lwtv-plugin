@@ -44,7 +44,7 @@ class LWTV_Find_Spammers {
 	 * @param  string  $plugin        The plugin we're checking (default FALSE)
 	 * @return boolean                True/False spammer
 	 */
-	public static function is_spammer( $email_address ) {
+	public static function is_spammer( $to_check, $type = 'email' ) {
 
 		// Default assume good people.
 		$return = false;
@@ -52,23 +52,44 @@ class LWTV_Find_Spammers {
 		// Get disallowed keys & convert to array
 		$disallowed = self::list();
 
-		// Break apart email into parts
-		$emailparts = explode( '@', $email_address );
-		$username   = $emailparts[0];       // i.e. foobar
-		$domain     = '@' . $emailparts[1]; // i.e. @example.com
+		if ( 'email' === $type ) {
+			$email_address = $to_check;
 
-		// Remove all periods (i.e. foo.bar > foobar )
-		$clean_username = str_replace( '.', '', $username );
+			// Break apart email into parts
+			$emailparts = explode( '@', $email_address );
+			$username   = $emailparts[0];       // i.e. foobar
+			$domain     = '@' . $emailparts[1]; // i.e. @example.com
 
-		// Remove everything AFTER a + sign (i.e. foobar+spamavoid > foobar )
-		$clean_username = strstr( $clean_username, '+', true ) ? strstr( $clean_username, '+', true ) : $clean_username;
+			// Remove all periods (i.e. foo.bar > foobar )
+			$clean_username = str_replace( '.', '', $username );
 
-		// rebuild email now that it's clean.
-		$email = $clean_username . '@' . $emailparts[1];
+			// Remove everything AFTER a + sign (i.e. foobar+spamavoid > foobar )
+			$clean_username = strstr( $clean_username, '+', true ) ? strstr( $clean_username, '+', true ) : $clean_username;
 
-		// If the email OR the domain is an exact match in the array, then it's a spammer
-		if ( in_array( $email, $disallowed, true ) || in_array( $domain, $disallowed, true ) ) {
-			$return = true;
+			// rebuild email now that it's clean.
+			$email = $clean_username . '@' . $emailparts[1];
+
+			// If the email OR the domain is an exact match in the array, then it's a spammer
+			if ( in_array( $email, $disallowed, true ) || in_array( $domain, $disallowed, true ) ) {
+				$return = true;
+			}
+		}
+
+		if ( 'ip' === $type ) {
+			$ip      = $to_check;
+			$bad_ips = false;
+			foreach ( $disallowed as $nope ) {
+				if ( rest_is_ip_address( $nope ) ) {
+					if ( strpos( $ip, $nope ) !== false ) {
+						$bad_ips = true;
+					}
+				}
+			}
+
+			// If they're a bad IP, then they're a bad IP and we flag.
+			if ( $bad_ips ) {
+				$return = true;
+			}
 		}
 
 		return $return;
