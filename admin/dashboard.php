@@ -20,11 +20,11 @@ class LWTV_Tools_Dashboard {
 
 	public function custom_dashboard_widgets() {
 		if ( current_user_can( 'upload_files' ) ) {
-			wp_add_dashboard_widget( 'lwtv_tools_widget', 'LezWatch.TV Tools', array( $this, 'lwtv_tools_dashboard_content' ) );
+			wp_add_dashboard_widget( 'lwtv_data_check_widget', 'LezWatch.TV Tools', array( $this, 'lwtv_data_check_dashboard_content' ) );
 		}
 	}
 
-	public function lwtv_tools_dashboard_content() {
+	public function lwtv_data_check_dashboard_content() {
 		// Get Last Status
 		$options   = get_option( 'lwtv_debugger_status' );
 		$timestamp = $options['timestamp'];
@@ -55,7 +55,7 @@ class LWTV_Tools_Dashboard {
 				?>
 			</ul>
 
-			<a href="<?php echo esc_url_raw( admin_url( 'admin.php?page=lwtv_tools' ) ); ?>" class="button-secondary">Go to the Tools Dashboard</a>
+			<a href="<?php echo esc_url_raw( admin_url( 'admin.php?page=lwtv_data_check' ) ); ?>" class="button-secondary">Go to the Tools Dashboard</a>
 		</div>
 
 		<?php

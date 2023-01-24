@@ -10,17 +10,14 @@ class LWTV_Gravity_Forms {
 		// https://docs.gravityforms.com/gform_disable_view_counter/#1-disable-for-all-forms
 		add_filter( 'gform_disable_view_counter', '__return_true' );
 
-		// Check all Gravity Forms ... forms for jerks.
+		// Check all Gravity Forms ... forms for spammers.
 		add_action( 'gform_entry_is_spam', array( $this, 'gform_entry_is_spam' ), 10, 3 );
-
-		// Set some Defaults
-		add_action( 'gform_editor_js_set_default_values', array( $this, 'set_defaults' ) );
 
 		// Populate ip location
 		add_filter( 'gform_field_value_lwtvlocation', array( $this, 'populate_lwtvlocation' ) );
 
 		// Add Location to forms
-		add_filter( 'gform_entry_post_save', array( $this, 'gform_entry_post_save' ), 10, 2 );
+		add_filter( 'gform_entry_post_save', array( $this, 'gform_entry_post_save_ip' ), 10, 2 );
 	}
 
 	/**
@@ -42,7 +39,12 @@ class LWTV_Gravity_Forms {
 			return $is_spam;
 		}
 
-		$message = 'Failed internal spam checks';
+		$spam_message = 'Failed internal spam checks';
+		$bot_message  = 'Likely submitted by a bot or someone scripting.';
+		$vpn_message  = 'Submitted via a VPN. This may be harmless, but it\'s also how people evade bans.';
+		$is_spammer   = false;
+		$is_bot       = false;
+		$is_vpn       = false;
 
 		// Loop and find the email:
 		foreach ( $entry as $value => $key ) {
@@ -53,10 +55,22 @@ class LWTV_Gravity_Forms {
 			if ( rest_is_ip_address( $key ) ) {
 				$ip         = $key;
 				$is_spammer = LWTV_Find_Spammers::is_spammer( $ip, 'ip' );
+				$is_bot     = self::check_ip_location( $ip, 'hosting' );
+				$is_vpn     = self::check_ip_location( $ip, 'proxy' );
 			}
 		}
 
+		if ( false !== $is_bot ) {
+			$add_note = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $bot_message, 'warning', 'spam' );
+		}
+
+		if ( false !== $is_vpn ) {
+			$add_note = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $vpn_message, 'warning', 'spam' );
+		}
+
 		if ( $is_spammer ) {
+			$message = $spam_message;
+
 			if ( isset( $email ) ) {
 				$message .= ' - Email';
 			}
@@ -75,12 +89,12 @@ class LWTV_Gravity_Forms {
 	/**
 	 * Update forms on save. If there's an IP, we're going to add a note with this check.
 	 */
-	public function gform_entry_post_save( $entry, $form ) {
+	public function gform_entry_post_save_ip( $entry, $form ) {
 		if ( isset( $entry['ip'] ) ) {
 			$location = 'Submitted from ' . self::check_ip_location( $entry['ip'] );
 
 			// Update the entry
-			$result = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $location );
+			$result = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $location, 'tracking', 'location' );
 		}
 
 		return $entry;
@@ -89,55 +103,65 @@ class LWTV_Gravity_Forms {
 	/**
 	 * IP Checker
 	 */
-	public function check_ip_location( $ip ) {
-		$return = $ip;
+	public function check_ip_location( $ip, $format = 'full' ) {
+		$return    = $ip;
+		$localhost = array( '127.0.0.1', '::1', 'localhost' );
 
-		$api     = 'http://ip-api.com/json/' . $ip;
-		$request = wp_remote_get( $api );
+		if ( in_array( $ip, $localhost, true ) ) {
+			$return = 'localhost';
+		} else {
+			$api     = 'http://ip-api.com/json/' . $ip;
+			$request = wp_remote_get( $api );
 
-		if ( is_wp_error( $request ) ) {
-			return $ip; // Bail early
+			if ( is_wp_error( $request ) ) {
+				return $ip; // Bail early
+			}
+
+			$body = wp_remote_retrieve_body( $request );
+			$data = json_decode( $body );
+
+			switch ( $format ) {
+				case 'full':
+					// Return: US - Chicago
+					$return .= ( isset( $data->countryCode ) ) ? ' ' . $data->countryCode : ''; // phpcs:ignore
+					$return .= ( isset( $data->countryCode ) ) ? ' - ' . $data->city : ''; // phpcs:ignore
+					$return .= ( isset( $data->proxy ) && true === $data->proxy ) ? ' (VPN)' : ''; // phpcs:ignore
+					break;
+				case 'hosting':
+					$return = ( isset( $data->hosting ) && true === $data->hosting ) ? 'likely-bot' : ''; // phpcs:ignore
+					break;
+				case 'proxy':
+					$return .= ( isset( $data->proxy ) && true === $data->proxy ) ? 'is-vpn' : ''; // phpcs:ignore
+					break;
+			}
 		}
-
-		$body = wp_remote_retrieve_body( $request );
-		$data = json_decode( $body );
-
-		// Return: US - Chicago
-		$return = $data->countryCode . ' - ' . $data->city;
 
 		return $return;
 	}
 
 	/**
 	 * Get the IP and process it.
+	 *
+	 * To actually use this, though, you need a HIDDEN field, which has the following:
+	 *
+	 * 1. Set ALLOW FIELD TO BE POPULATED DYNAMICALLY
+	 * 2. Parameter Name == lwtvlocation
 	 */
 	public function populate_lwtvlocation( $value ) {
-
-		$ip  = rgar( $_SERVER, 'REMOTE_ADDR' );
+		$ip  = sanitize_text_field( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'] );
 		$ip  = apply_filters( 'gform_ip_address', $ip );
 		$ips = explode( ',', $ip );
 
 		$real_ip  = $ips[0];
-
-		$real_ip = '94.66.59.129';
 		$location = self::check_ip_location( $real_ip );
 
 		return $location;
-	}
-
-	public function set_defaults() {
-		?>
-		//this hook is fired in the middle of a switch statement,
-		//so we need to add a case for our new field type
-		case "lwtvlocation" :
-			field.label = "Location Tracker (Hidden)";
-		break;
-		<?php
 	}
 }
 
 new LWTV_Gravity_Forms();
 
 // Include add-ons
-require_once 'gravity-forms/class-field-location.php';
-require_once 'gravity-forms/class-gf-approvals.php';
+if ( method_exists( 'GFForms', 'include_feed_addon_framework' ) ) {
+	require_once 'gravity-forms/class-gf-approvals.php';
+}

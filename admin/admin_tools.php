@@ -1,6 +1,6 @@
 <?php
 /*
- * Tools for LezWatch.TV
+ * Data Sync Checks For LezWatch.TV
  *
  * @since 2.4
  */
@@ -10,7 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_Admin_Tools {
+class LWTV_Data_Validation_Checks {
 
 	/**
 	 * Local Variables
@@ -25,7 +25,7 @@ class LWTV_Admin_Tools {
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_admin_notices' ) );
-		add_action( 'admin_post_lwtv_tools_wikidata_actors', array( $this, 'check_actors_wikidata' ) );
+		add_action( 'admin_post_lwtv_data_check_wikidata_actors', array( $this, 'check_actors_wikidata' ) );
 
 		self::$tool_tabs = array(
 			'queer_checker'     => array(
@@ -49,7 +49,6 @@ class LWTV_Admin_Tools {
 				'desc' => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
 			),
 		);
-
 	}
 
 	/*
@@ -121,11 +120,11 @@ class LWTV_Admin_Tools {
 			<h1>Tools</h1>
 
 			<h2 class="nav-tab-wrapper">
-				<a href="?page=lwtv_tools" class="nav-tab <?php echo ( 'intro' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Introduction</a>
+				<a href="?page=lwtv_data_check" class="nav-tab <?php echo ( 'intro' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Introduction</a>
 				<?php
 				foreach ( self::$tool_tabs as $tab => $value ) {
 					$active = ( $tab === $active_tab ) ? 'nav-tab-active' : '';
-					echo '<a href="?page=lwtv_tools&tab=' . esc_attr( $tab ) . '" class="nav-tab ' . esc_attr( $active ) . '">' . esc_html( $value['name'] ) . '</a>';
+					echo '<a href="?page=lwtv_data_check&tab=' . esc_attr( $tab ) . '" class="nav-tab ' . esc_attr( $active ) . '">' . esc_html( $value['name'] ) . '</a>';
 				}
 				?>
 			</h2>
@@ -192,12 +191,12 @@ class LWTV_Admin_Tools {
 		?>
 
 		<div class="tab-block"><div class="lwtv-tools-container">
-			<h3>LezWatch.TV Tools</h3>
-			<p>Sometimes we need extra tools to do things here. If data gets out of sync or we update things incorrectly, the checkers can help identify those errors before people notice.</p>
+			<h3>LezWatch.TV Data Sync Checks</h3>
+			<p>If data gets out of sync or we update things incorrectly, these checkers can help identify those errors before people notice. They run on an automated cycle, each check once a week, to try and catch things early.</p>
 
-			<p>When visiting the individual tools, it will show you the status of the last run. To re-run the tool, press the 'Check Again' button at the bottom of the page.</p>
+			<p>When visiting the individual checker, it will show you the status of the last run. To re-run the tool, press the 'Check Again' button at the bottom of the page.</p>
 
-			<p>The tools were last run on <?php echo wp_kses_post( $last_run ); ?></p>
+			<p>The checks were last run on <?php echo wp_kses_post( $last_run ); ?></p>
 
 			<ul>
 				<?php
@@ -223,7 +222,7 @@ class LWTV_Admin_Tools {
 			<ul>
 				<?php
 				foreach ( self::$tool_tabs as $tab => $value ) {
-					echo '<li>&bull; <a href="?page=lwtv_tools&tab=' . esc_attr( $tab ) . '">' . esc_html( $value['name'] ) . '</a> - ' . esc_html( $value['desc'] ) . '</li>';
+					echo '<li>&bull; <a href="?page=lwtv_data_check&tab=' . esc_attr( $tab ) . '">' . esc_html( $value['name'] ) . '</a> - ' . esc_html( $value['desc'] ) . '</li>';
 				}
 				?>
 			</ul>
@@ -287,13 +286,12 @@ class LWTV_Admin_Tools {
 		}
 
 		?>
-		<form action="admin.php?page=lwtv_tools&tab=queer_checker" method="post">
+		<form action="admin.php?page=lwtv_data_check&tab=queer_checker" method="post">
 			<?php wp_nonce_field( 'run_queer_checker_clicked' ); ?>
 			<input type="hidden" value="true" name="rerun" />
 			<?php submit_button( 'Check Again' ); ?>
 		</form>
 		<?php
-
 	}
 
 	/**
@@ -350,7 +348,7 @@ class LWTV_Admin_Tools {
 		}
 
 		?>
-		<form action="admin.php?page=lwtv_tools&tab=actor_checker" method="post">
+		<form action="admin.php?page=lwtv_data_check&tab=actor_checker" method="post">
 			<?php wp_nonce_field( 'run_actor_checker_clicked' ); ?>
 			<input type="hidden" value="true" name="rerun" />
 			<?php submit_button( 'Check Again' ); ?>
@@ -385,7 +383,7 @@ class LWTV_Admin_Tools {
 			<p>Pick an actor you want to check:</p>
 
 			<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="POST">
-				<input type="hidden" name="action" value="lwtv_tools_wikidata_actors">
+				<input type="hidden" name="action" value="lwtv_data_check_wikidata_actors">
 				<select id="actor_id" name="actor">
 					<?php
 					foreach ( $items as $id => $name ) {
@@ -393,7 +391,7 @@ class LWTV_Admin_Tools {
 					}
 					?>
 				</select>
-				<?php wp_nonce_field( 'lwtv_tools_wikidata_actors', 'lwtv_tools_wikidata_actors_nonce', false ); ?>
+				<?php wp_nonce_field( 'lwtv_data_check_wikidata_actors', 'lwtv_data_check_wikidata_actors_nonce', false ); ?>
 				<input type="hidden" name="_wp_http_referer" value="<?php echo esc_url_raw( $redirect ); ?>">
 				<?php submit_button( 'Check' ); ?>
 			</form>
@@ -402,7 +400,6 @@ class LWTV_Admin_Tools {
 		</div>
 
 		<?php
-
 	}
 
 	/**
@@ -462,7 +459,7 @@ class LWTV_Admin_Tools {
 		}
 
 		?>
-		<form action="admin.php?page=lwtv_tools&tab=actor_empty" method="post">
+		<form action="admin.php?page=lwtv_data_check&tab=actor_empty" method="post">
 			<?php wp_nonce_field( 'run_actor_empty_clicked' ); ?>
 			<input type="hidden" value="true" name="rerun" />
 			<?php submit_button( 'Check Again' ); ?>
@@ -525,13 +522,12 @@ class LWTV_Admin_Tools {
 		}
 
 		?>
-		<form action="admin.php?page=lwtv_tools&tab=show_checker" method="post">
+		<form action="admin.php?page=lwtv_data_check&tab=show_checker" method="post">
 			<?php wp_nonce_field( 'run_show_checker_clicked' ); ?>
 			<input type="hidden" value="true" name="rerun" />
 			<?php submit_button( 'Check Again' ); ?>
 		</form>
 		<?php
-
 	}
 
 	/**
@@ -588,7 +584,7 @@ class LWTV_Admin_Tools {
 		}
 
 		?>
-		<form action="admin.php?page=lwtv_tools&tab=character_checker" method="post">
+		<form action="admin.php?page=lwtv_data_check&tab=character_checker" method="post">
 			<?php wp_nonce_field( 'run_character_checker_clicked' ); ?>
 			<input type="hidden" value="true" name="rerun" />
 			<?php submit_button( 'Check Again' ); ?>
@@ -597,4 +593,4 @@ class LWTV_Admin_Tools {
 	}
 }
 
-new LWTV_Admin_Tools();
+new LWTV_Data_Validation_Checks();

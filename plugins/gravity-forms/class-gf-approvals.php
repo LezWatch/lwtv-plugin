@@ -74,13 +74,11 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	private static $_instance = null;
 
 	public static function get_instance() {
-
 		if ( null === self::$_instance ) {
 			self::$_instance = new LWTV_GF_Approvals();
 		}
 
 		return self::$_instance;
-
 	}
 
 	public function init_admin() {
@@ -98,7 +96,6 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	public function init_frontend() {
 		parent::init_frontend();
 		add_filter( 'gform_disable_registration', array( $this, 'disable_registration' ), 10, 4 );
-		add_action( 'gform_after_submission', array( $this, 'after_submission' ), 9, 2 );
 	}
 
 	//Registers the dashboard widget
@@ -188,11 +185,9 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	 * @param $form
 	 */
 	public function process_feed( $feed, $entry, $form ) {
-
 		$approver = absint( $feed['meta']['approver'] );
 
 		gform_update_meta( $entry['id'], 'approval_status_' . $approver, 'pending' );
-
 	}
 
 	/**
@@ -203,14 +198,20 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	 *
 	 * label
 	 * - (string) The label for the entry meta
+	 *
 	 * is_numeric
 	 * - (boolean) Used for sorting
+	 *
 	 * is_default_column
-	 * - (boolean) Default columns appear in the entry list by default. Otherwise the user has to edit the columns and select the entry meta from the list.
+	 * - (boolean) Default columns appear in the entry list by default. Otherwise the user has to edit the
+	 *             columns and select the entry meta from the list.
+	 *
 	 * update_entry_meta_callback
 	 * - (string | array) The function that should be called when updating this entry meta value
+	 *
 	 * filter
-	 * - (array) An array containing the configuration for the filter used on the results pages, the entry list search and export entries page.
+	 * - (array) An array containing the configuration for the filter used on the results pages,
+	 *           the entry list search and export entries page.
 	 *           The array should contain one element: operators. e.g. 'operators' => array('is', 'isnot', '>', '<')
 	 *
 	 *
@@ -377,17 +378,6 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 			} elseif ( $entry_approved ) {
 				gform_update_meta( $entry['id'], 'approval_status', 'approved' );
 				$entry['approval_status'] = 'approved';
-
-				// Integration with the User Registration Add-On
-				if ( class_exists( 'GFUser' ) ) {
-					GFUser::gf_create_user( $entry, $form );
-				}
-
-				// Integration with the Zapier Add-On
-				if ( class_exists( 'GFZapier' ) ) {
-					GFZapier::send_form_data_to_zapier( $entry, $form );
-				}
-
 				do_action( 'gform_approvals_entry_approved', $entry, $form );
 			}
 
@@ -406,7 +396,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 			$status = 'Rejected ' . $reject_icon;
 		}
 
-		// To Do: Add in Post Box for warning? IF the IP is from greece, flag as POSSIBLY BM.
+		// To Do: Add in Post Box for warning?
 		?>
 		<div class="postbox">
 			<h3><?php echo 'Approval Status: ' . wp_kses_post( $status ); ?></h3>
@@ -565,14 +555,6 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 		}
 	}
 
-	public function after_submission( $entry, $form ) {
-
-		//check submitted values to decide if data should be should be stopped before sending to Zapier
-		if ( isset( $entry['approval_status'] ) && 'approved' !== $entry['approval_status'] ) {
-			remove_action( 'gform_after_submission', array( 'GFZapier', 'send_form_data_to_zapier' ) );
-		}
-	}
-
 	public function filter_gform_entries_field_value( $value, $form_id, $field_id, $entry ) {
 		$translated_value = $value;
 		if ( 'approval_status' === $field_id ) {
@@ -583,12 +565,4 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 
 }
 
-add_action( 'gform_loaded', 'lwtv_gf_approvals', 5 );
-
-function lwtv_gf_approvals() {
-	if ( ! method_exists( 'GFForms', 'include_feed_addon_framework' ) ) {
-		return;
-	}
-
-	GFAddOn::register( 'LWTV_GF_Approvals' );
-}
+GFAddOn::register( 'LWTV_GF_Approvals' );
