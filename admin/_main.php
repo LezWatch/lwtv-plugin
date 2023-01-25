@@ -37,19 +37,14 @@ class LWTV_Admin_Menu {
 
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 
-		if ( class_exists( 'LWTV_Admin_Tools' ) ) {
-			add_submenu_page( 'lwtv', 'Tools', 'Tools', 'upload_files', 'lwtv_tools', 'LWTV_Admin_Tools::settings_page' );
+		if ( class_exists( 'LWTV_Data_Validation_Checks' ) ) {
+			add_submenu_page( 'lwtv', 'Data Checker', 'Data Checker', 'upload_files', 'lwtv_data_check', 'LWTV_Data_Validation_Checks::settings_page' );
 		}
-
-		// Builds page would show the last few builds from Github with data from Codeship.
-		//add_submenu_page( 'lwtv', 'Builds', 'Builds', 'manage_options', 'lwtv_builds', array( $this, 'builds_page' ) );
 
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$submenu['lwtv'][] = array( 'Documentation', 'read', esc_url( 'https://docs.lezwatchtv.com/' ) );
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$submenu['lwtv'][] = array( 'Slack', 'read', esc_url( 'https://lezwatchtv.slack.com/' ) );
-		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
-		$submenu['lwtv'][] = array( 'Trello', 'manage_options', esc_url( 'https://trello.com/b/hpDs7bvy/lezwatchtv' ) );
 	}
 
 	/*
@@ -80,9 +75,9 @@ class LWTV_Admin_Menu {
 
 	public function admin_enqueue_scripts( $hook ) {
 		// Load only on ?page=mypluginname
-		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv_tools' );
+		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv_data_check' );
 		if ( in_array( $hook, $my_hooks, true ) ) {
-				wp_enqueue_style( 'lwtv_tools_admin', plugins_url( 'assets/css/lwtv-tools.css', dirname( __FILE__ ) ), array(), '1.0.0' );
+				wp_enqueue_style( 'lwtv_data_check_admin', plugins_url( 'assets/css/lwtv-tools.css', __DIR__ ), array(), '1.0.0' );
 		}
 	}
 }

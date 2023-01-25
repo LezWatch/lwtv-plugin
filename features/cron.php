@@ -85,9 +85,10 @@ class LWTV_Cron {
 			wp_schedule_event( time(), 'hourly', 'lwtv_tv_maze_hourly' );
 		}
 
-		add_action( 'lwtv_tools_check_daily', array( $this, 'tools_check' ) );
-		if ( ! wp_next_scheduled( 'lwtv_tools_check_daily' ) ) {
-			wp_schedule_event( strtotime( '03:01:00' ), 'daily', 'lwtv_tools_check_daily' );
+		// Check the tools
+		add_action( 'lwtv_tools', array( $this, 'tools_check' ) );
+		if ( ! wp_next_scheduled( 'lwtv_tools' ) ) {
+			wp_schedule_event( strtotime( '03:01:00' ), 'daily', 'lwtv_tools' );
 		}
 
 		add_action( 'lwtv_lists_event_daily', array( $this, 'lists_daily' ) );

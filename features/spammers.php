@@ -14,28 +14,37 @@ if ( ! defined( 'WPINC' ) ) {
 class LWTV_Find_Spammers {
 
 	/**
-	 * List of disallowed emails
+	 * List of disallowed Keys
 	 *
-	 * We omit anything that isn't an email address or has an @ in the string.
+	 * We check for emails, domains, and IPs.
 	 *
 	 * @return array the list
 	 */
-	public static function list() {
-		$disallowed_emails = array();
-		$disallowed_array  = explode( "\n", get_option( 'disallowed_keys' ) );
+	public static function list( $keys = 'disallowed_keys' ) {
+
+		// Preflight check:
+		$valid_keys = array( 'disallowed_keys', 'moderation_keys' );
+		$keys       = ( in_array( $keys, $valid_keys, true ) ) ? $keys : 'disallowed_keys';
+
+		// Time for the show!
+		$disallowed_keys  = array();
+		$disallowed_array = explode( "\n", get_option( $keys ) );
 
 		// Make a list of spammer emails and domains.
 		foreach ( $disallowed_array as $spammer ) {
 			if ( is_email( $spammer ) ) {
 				// This is an email address, so it's valid.
-				$disallowed_emails[] = $spammer;
+				$disallowed_keys[] = $spammer;
 			} elseif ( strpos( $spammer, '@' ) !== false ) {
 				// This contains an @ so it's probably a whole domain.
-				$disallowed_emails[] = $spammer;
+				$disallowed_keys[] = $spammer;
+			} elseif ( rest_is_ip_address( $spammer ) ) {
+				// IP adresses are also spammery people.
+				$disallowed_keys[] = $spammer;
 			}
 		}
 
-		return $disallowed_emails;
+		return $disallowed_keys;
 	}
 
 	/**
@@ -44,31 +53,52 @@ class LWTV_Find_Spammers {
 	 * @param  string  $plugin        The plugin we're checking (default FALSE)
 	 * @return boolean                True/False spammer
 	 */
-	public static function is_spammer( $email_address ) {
+	public static function is_spammer( $to_check, $type = 'email', $keys = 'disallowed_keys' ) {
 
 		// Default assume good people.
 		$return = false;
 
 		// Get disallowed keys & convert to array
-		$disallowed = self::list();
+		$disallowed = self::list( $keys );
 
-		// Break apart email into parts
-		$emailparts = explode( '@', $email_address );
-		$username   = $emailparts[0];       // i.e. foobar
-		$domain     = '@' . $emailparts[1]; // i.e. @example.com
+		if ( 'email' === $type ) {
+			$email_address = $to_check;
 
-		// Remove all periods (i.e. foo.bar > foobar )
-		$clean_username = str_replace( '.', '', $username );
+			// Break apart email into parts
+			$emailparts = explode( '@', $email_address );
+			$username   = $emailparts[0];       // i.e. foobar
+			$domain     = '@' . $emailparts[1]; // i.e. @example.com
 
-		// Remove everything AFTER a + sign (i.e. foobar+spamavoid > foobar )
-		$clean_username = strstr( $clean_username, '+', true ) ? strstr( $clean_username, '+', true ) : $clean_username;
+			// Remove all periods (i.e. foo.bar > foobar )
+			$clean_username = str_replace( '.', '', $username );
 
-		// rebuild email now that it's clean.
-		$email = $clean_username . '@' . $emailparts[1];
+			// Remove everything AFTER a + sign (i.e. foobar+spamavoid > foobar )
+			$clean_username = strstr( $clean_username, '+', true ) ? strstr( $clean_username, '+', true ) : $clean_username;
 
-		// If the email OR the domain is an exact match in the array, then it's a spammer
-		if ( in_array( $email, $disallowed, true ) || in_array( $domain, $disallowed, true ) ) {
-			$return = true;
+			// rebuild email now that it's clean.
+			$email = $clean_username . '@' . $emailparts[1];
+
+			// If the email OR the domain is an exact match in the array, then it's a spammer
+			if ( in_array( $email, $disallowed, true ) || in_array( $domain, $disallowed, true ) ) {
+				$return = true;
+			}
+		}
+
+		if ( 'ip' === $type ) {
+			$ip      = $to_check;
+			$bad_ips = false;
+			foreach ( $disallowed as $nope ) {
+				if ( rest_is_ip_address( $nope ) ) {
+					if ( ( strpos( $ip, $nope ) !== false ) || $ip === $nope ) {
+						$bad_ips = true;
+					}
+				}
+			}
+
+			// If they're a bad IP, then they're a bad IP and we flag.
+			if ( false !== $bad_ips ) {
+				$return = true;
+			}
 		}
 
 		return $return;

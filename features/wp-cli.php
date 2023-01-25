@@ -74,6 +74,8 @@ class WP_CLI_LWTV_Commands {
 		switch ( $post_calc ) {
 			case 'show':
 				// Rerun show calculations
+				delete_post_meta( $post_id, 'lezshows_char_count' );
+				delete_post_meta( $post_id, 'lezshows_dead_count' );
 				( new LWTV_Shows_Calculate() )->do_the_math( $post_id );
 				$chars = get_post_meta( $post_id, 'lezshows_char_count', true );
 				$dead  = get_post_meta( $post_id, 'lezshows_dead_count', true );
@@ -81,6 +83,8 @@ class WP_CLI_LWTV_Commands {
 				break;
 			case 'actor':
 				// Recount characters and flag queerness
+				delete_post_meta( $post_id, 'lezactors_char_count' );
+				delete_post_meta( $post_id, 'lezactors_dead_count' );
 				( new LWTV_Actors_Calculate() )->do_the_math( $post_id );
 				$queer = ( get_post_meta( $post_id, 'lezactors_queer', true ) ) ? 'Yes' : 'No';
 				$chars = get_post_meta( $post_id, 'lezactors_char_count', true );

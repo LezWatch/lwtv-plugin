@@ -39,7 +39,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	protected $_slug = 'lwtv-gf-approvals';
 
 	// Relative path to the plugin from the plugins folder.
-	protected $_path = 'lwtv-plugin/plugins/lwtv-gf-approvals/approvals.php';
+	protected $_path = 'lwtv-plugin/plugins/gravity-forms/class-gf-approvals.php';
 
 	// Full path the the plugin.
 	protected $_full_path = __FILE__;
@@ -74,13 +74,11 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	private static $_instance = null;
 
 	public static function get_instance() {
-
 		if ( null === self::$_instance ) {
 			self::$_instance = new LWTV_GF_Approvals();
 		}
 
 		return self::$_instance;
-
 	}
 
 	public function init_admin() {
@@ -98,7 +96,6 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	public function init_frontend() {
 		parent::init_frontend();
 		add_filter( 'gform_disable_registration', array( $this, 'disable_registration' ), 10, 4 );
-		add_action( 'gform_after_submission', array( $this, 'after_submission' ), 9, 2 );
 	}
 
 	//Registers the dashboard widget
@@ -188,11 +185,9 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	 * @param $form
 	 */
 	public function process_feed( $feed, $entry, $form ) {
-
 		$approver = absint( $feed['meta']['approver'] );
 
 		gform_update_meta( $entry['id'], 'approval_status_' . $approver, 'pending' );
-
 	}
 
 	/**
@@ -203,14 +198,20 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	 *
 	 * label
 	 * - (string) The label for the entry meta
+	 *
 	 * is_numeric
 	 * - (boolean) Used for sorting
+	 *
 	 * is_default_column
-	 * - (boolean) Default columns appear in the entry list by default. Otherwise the user has to edit the columns and select the entry meta from the list.
+	 * - (boolean) Default columns appear in the entry list by default. Otherwise the user has to edit the
+	 *             columns and select the entry meta from the list.
+	 *
 	 * update_entry_meta_callback
 	 * - (string | array) The function that should be called when updating this entry meta value
+	 *
 	 * filter
-	 * - (array) An array containing the configuration for the filter used on the results pages, the entry list search and export entries page.
+	 * - (array) An array containing the configuration for the filter used on the results pages,
+	 *           the entry list search and export entries page.
 	 *           The array should contain one element: operators. e.g. 'operators' => array('is', 'isnot', '>', '<')
 	 *
 	 *
@@ -228,7 +229,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 			}
 
 			// User ID of approver
-			$approver = absint( $feed['meta']['approver'] );
+			$approver  = absint( $feed['meta']['approver'] );
 			$user_info = get_user_by( 'id', $approver );
 
 			$display_name = $user_info ? $user_info->display_name : $approver;
@@ -255,6 +256,8 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 					),
 				),
 			);
+
+			// Set has approver.
 			$has_approver = true;
 
 		}
@@ -297,7 +300,15 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	 * @return string
 	 */
 	public function update_approval_status( $key, $entry, $form ) {
-		return 'pending';
+		// Default is pending
+		$return = 'pending';
+
+		// Auto Reject Spam
+		if ( isset( $entry['status'] ) && 'spam' === strtolower( $entry['status'] ) ) {
+			$return = 'rejected';
+		}
+
+		return $return;
 	}
 
 	/**
@@ -367,17 +378,6 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 			} elseif ( $entry_approved ) {
 				gform_update_meta( $entry['id'], 'approval_status', 'approved' );
 				$entry['approval_status'] = 'approved';
-
-				// Integration with the User Registration Add-On
-				if ( class_exists( 'GFUser' ) ) {
-					GFUser::gf_create_user( $entry, $form );
-				}
-
-				// Integration with the Zapier Add-On
-				if ( class_exists( 'GFZapier' ) ) {
-					GFZapier::send_form_data_to_zapier( $entry, $form );
-				}
-
 				do_action( 'gform_approvals_entry_approved', $entry, $form );
 			}
 
@@ -395,6 +395,8 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 		} elseif ( 'rejected' === $entry['approval_status'] ) {
 			$status = 'Rejected ' . $reject_icon;
 		}
+
+		// To Do: Add in Post Box for warning?
 		?>
 		<div class="postbox">
 			<h3><?php echo 'Approval Status: ' . wp_kses_post( $status ); ?></h3>
@@ -464,6 +466,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	 */
 	public static function dashboard() {
 
+		$search_criteria['status']          = 'active'; // No Spam :)
 		$search_criteria['field_filters'][] = array(
 			'key'   => 'approval_status',
 			'value' => 'pending',
@@ -484,6 +487,8 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 
 				<tbody class="list:user user-list">
 				<?php
+
+				$get_ip = ( new LWTV_Gravity_Forms() )->check_ip_location( $entry['ip'] );
 				foreach ( $entries as $entry ) {
 					$form      = GFAPI::get_form( $entry['form_id'] );
 					$user      = get_user_by( 'id', (int) $entry['created_by'] );
@@ -499,10 +504,11 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 						<td>
 							<?php
 							if ( 0 !== (int) $entry['created_by'] ) {
-								echo '<a href="' . esc_url( $url_entry ) . '">' . esc_html( $user->display_name ) . '</a>';
+								echo esc_html( $user->display_name ) . ' ';
 							} else {
-								echo esc_html( $entry['ip'] );
+								echo 'Anonymous ';
 							}
+							echo '(' . esc_html( $get_ip ) . ')';
 							?>
 						</td>
 						<td>
@@ -549,14 +555,6 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 		}
 	}
 
-	public function after_submission( $entry, $form ) {
-
-		//check submitted values to decide if data should be should be stopped before sending to Zapier
-		if ( isset( $entry['approval_status'] ) && 'approved' !== $entry['approval_status'] ) {
-			remove_action( 'gform_after_submission', array( 'GFZapier', 'send_form_data_to_zapier' ) );
-		}
-	}
-
 	public function filter_gform_entries_field_value( $value, $form_id, $field_id, $entry ) {
 		$translated_value = $value;
 		if ( 'approval_status' === $field_id ) {
@@ -567,12 +565,4 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 
 }
 
-add_action( 'gform_loaded', 'lwtv_gf_approvals', 5 );
-
-function lwtv_gf_approvals() {
-	if ( ! method_exists( 'GFForms', 'include_feed_addon_framework' ) ) {
-		return;
-	}
-
-	GFAddOn::register( 'LWTV_GF_Approvals' );
-}
+GFAddOn::register( 'LWTV_GF_Approvals' );

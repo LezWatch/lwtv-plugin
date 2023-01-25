@@ -149,7 +149,7 @@ class LWTV_Alexa_Shows {
 			wp_reset_postdata();
 		}
 
-		error_log( print_r( $return_array, true ) );
+		//error_log( print_r( $return_array, true ) );
 
 		if ( ! isset( $return_array ) || empty( $return_array ) ) {
 			return false;
