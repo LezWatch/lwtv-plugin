@@ -15,9 +15,6 @@ class LWTV_Gravity_Forms {
 
 		// Populate ip location
 		add_filter( 'gform_field_value_lwtvlocation', array( $this, 'populate_lwtvlocation' ) );
-
-		// Add Location to forms
-		add_filter( 'gform_entry_post_save', array( $this, 'gform_entry_post_save_ip' ), 10, 2 );
 	}
 
 	/**
@@ -40,64 +37,60 @@ class LWTV_Gravity_Forms {
 		}
 
 		$spam_message = 'Failed internal spam checks';
-		$bot_message  = 'Likely submitted by a bot or someone scripting.';
-		$vpn_message  = 'Submitted via a VPN. This may be harmless, but it\'s also how people evade bans.';
+		$warn_message = '';
 		$is_spammer   = false;
+		$is_moderated = false;
 		$is_bot       = false;
 		$is_vpn       = false;
 
 		// Loop and find the email:
 		foreach ( $entry as $value => $key ) {
-			if ( is_email( $key ) ) {
-				$email      = $key;
-				$is_spammer = LWTV_Find_Spammers::is_spammer( $email, 'email' );
+			if ( is_email( $key ) && ! $is_spammer ) {
+				$email        = $key;
+				$is_spammer   = LWTV_Find_Spammers::is_spammer( $email, 'email', 'disallowed_keys' );
+				$is_moderated = LWTV_Find_Spammers::is_spammer( $email, 'email', 'moderated_keys' );
 			}
-			if ( rest_is_ip_address( $key ) ) {
-				$ip         = $key;
-				$is_spammer = LWTV_Find_Spammers::is_spammer( $ip, 'ip' );
-				$is_bot     = self::check_ip_location( $ip, 'hosting' );
-				$is_vpn     = self::check_ip_location( $ip, 'proxy' );
+
+			if ( rest_is_ip_address( $key ) && ! $is_spammer ) {
+				$ip           = $key;
+				$is_spammer   = LWTV_Find_Spammers::is_spammer( $ip, 'ip', 'disallowed_keys' );
+				$is_moderated = LWTV_Find_Spammers::is_spammer( $ip, 'ip', 'moderated_keys' );
+				$is_bot       = self::check_ip_location( $ip, 'hosting' );
+				$is_vpn       = self::check_ip_location( $ip, 'proxy' );
 			}
 		}
 
-		if ( false !== $is_bot ) {
-			$add_note = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $bot_message, 'warning', 'spam' );
+		// If this was a bot...
+		if ( true === $is_bot ) {
+			$warn_message .= 'Likely submitted by a bot or someone scripting. ';
 		}
 
-		if ( false !== $is_vpn ) {
-			$add_note = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $vpn_message, 'warning', 'spam' );
+		// If a VPN...
+		if ( true === $is_vpn ) {
+			$warn_message .= 'Using a VPN. This may be harmless, but it\'s also how people evade bans. ';
 		}
 
+		// And if it's a spammer...
 		if ( $is_spammer ) {
 			$message = $spam_message;
 
 			if ( isset( $email ) ) {
-				$message .= ' - Email';
+				$message .= ' - Email ( ' . $email . ' )';
 			}
 			if ( isset( $ip ) ) {
-				$message .= ' - IP Address';
+				$message .= ' - IP Address ( ' . $ip . ' )';
 			}
 
 			$result = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $message, 'error', 'spam' );
 			return true;
+		} else {
+			if ( ! empty( $warn_message ) ) {
+				$add_note = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $warn_message, 'warning', 'spam' );
+			}
 		}
 
 		// If we got all the way down here, we're not spam!
 		return false;
-	}
-
-	/**
-	 * Update forms on save. If there's an IP, we're going to add a note with this check.
-	 */
-	public function gform_entry_post_save_ip( $entry, $form ) {
-		if ( isset( $entry['ip'] ) ) {
-			$location = 'Submitted from ' . self::check_ip_location( $entry['ip'] );
-
-			// Update the entry
-			$result = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $location, 'tracking', 'location' );
-		}
-
-		return $entry;
 	}
 
 	/**
@@ -125,13 +118,13 @@ class LWTV_Gravity_Forms {
 					// Return: US - Chicago
 					$return .= ( isset( $data->countryCode ) ) ? ' ' . $data->countryCode : ''; // phpcs:ignore
 					$return .= ( isset( $data->countryCode ) ) ? ' - ' . $data->city : ''; // phpcs:ignore
-					$return .= ( isset( $data->proxy ) && true === $data->proxy ) ? ' (VPN)' : ''; // phpcs:ignore
+					$return .= ( isset( $data->proxy ) && true === $data->proxy ) ? ' (VPN)' : '';
 					break;
 				case 'hosting':
-					$return = ( isset( $data->hosting ) && true === $data->hosting ) ? 'likely-bot' : ''; // phpcs:ignore
+					$return = ( isset( $data->hosting ) && true === $data->hosting ) ? true : false;
 					break;
 				case 'proxy':
-					$return .= ( isset( $data->proxy ) && true === $data->proxy ) ? 'is-vpn' : ''; // phpcs:ignore
+					$return .= ( isset( $data->proxy ) && true === $data->proxy ) ? true : false;
 					break;
 			}
 		}
