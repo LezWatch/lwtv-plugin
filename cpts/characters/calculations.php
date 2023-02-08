@@ -74,7 +74,7 @@ class LWTV_Characters_Calculate {
 	 * Update the Actors.
 	 * In order to reduce load, we only run this on saves.
 	 *
-	 * @param  int   $post_id
+	 * @param  int   $post_id, Post ID of character
 	 * @return N/A   No return, just update actor calculation
 	 */
 	public function actors( $post_id ) {
@@ -83,6 +83,28 @@ class LWTV_Characters_Calculate {
 		if ( ! is_array( $actors ) ) {
 			$actors = array( $actors );
 		}
+/*
+		if ( empty( $actors ) ) {
+			// Loop for all actors who have this character post ID in their "char list" meta:
+			$actor_loop = ( new LWTV_Loops() )->post_meta_query( 'post_type_actors', 'lezactors_char_list', $post_id, 'LIKE' );
+
+			// Extract the IDs
+			if ( $actor_loop->have_posts() ) {
+				$actor_ids = wp_list_pluck( $actor_loop->posts, 'ID' );
+			}
+
+			// Reset to end.
+			wp_reset_query();
+
+			// For each actor, double check since numbers and WP and like are weird.
+			foreach ( $actor_ids as $one_actor_id ) {
+				$char_array = get_post_meta( $one_actor_id, 'lezactors_char_list', true );
+				if ( in_array( $post_id, $char_array, TRUE ) ) {
+					$actors[] = $one_actor_id;
+				}
+			}
+		}
+*/
 		if ( ! empty( $actors ) ) {
 			foreach ( $actors as $actor_id ) {
 
