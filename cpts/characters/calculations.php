@@ -83,37 +83,18 @@ class LWTV_Characters_Calculate {
 		if ( ! is_array( $actors ) ) {
 			$actors = array( $actors );
 		}
-/*
-		if ( empty( $actors ) ) {
-			// Loop for all actors who have this character post ID in their "char list" meta:
-			$actor_loop = ( new LWTV_Loops() )->post_meta_query( 'post_type_actors', 'lezactors_char_list', $post_id, 'LIKE' );
 
-			// Extract the IDs
-			if ( $actor_loop->have_posts() ) {
-				$actor_ids = wp_list_pluck( $actor_loop->posts, 'ID' );
-			}
-
-			// Reset to end.
-			wp_reset_query();
-
-			// For each actor, double check since numbers and WP and like are weird.
-			foreach ( $actor_ids as $one_actor_id ) {
-				$char_array = get_post_meta( $one_actor_id, 'lezactors_char_list', true );
-				if ( in_array( $post_id, $char_array, TRUE ) ) {
-					$actors[] = $one_actor_id;
-				}
-			}
-		}
-*/
 		if ( ! empty( $actors ) ) {
 			foreach ( $actors as $actor_id ) {
 
-				// Add array of characters by ID to actor as post meta
+				// Get the list of characters from the actor as listed.
 				$characters = get_post_meta( $actor_id, 'lezactors_char_list', true );
 				if ( empty( $characters ) ) {
 					$characters = array();
 				}
 
+				// Add to array of characters by ID on CPT actor as post meta and
+				// sort to ensure no dupes.
 				$characters[] = $post_id;
 				$characters   = array_unique( $characters );
 				update_post_meta( $actor_id, 'lezactors_char_list', $characters );
