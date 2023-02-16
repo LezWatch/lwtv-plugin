@@ -249,7 +249,29 @@ class LWTV_Actors_CMB2 {
 				'id'         => $prefix . 'mastodon',
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => 'Ex: https://mastodon.instance/username',
+					'placeholder' => 'Ex: https://mastodon.instance/@username',
+				),
+			)
+		);
+		// Field: Facebook URL
+		$field_facebook = $cmb_actorside->add_field(
+			array(
+				'name'       => 'Facebook',
+				'id'         => $prefix . 'facebook',
+				'type'       => 'text',
+				'attributes' => array(
+					'placeholder' => 'Ex: https://facebook.com/username',
+				),
+			)
+		);
+		// Field: TikTok URL
+		$field_tiktok = $cmb_actorside->add_field(
+			array(
+				'name'       => 'TikTok',
+				'id'         => $prefix . 'tiktok',
+				'type'       => 'text',
+				'attributes' => array(
+					'placeholder' => 'Ex: @reesewitherspoon - WITH the @',
 				),
 			)
 		);
@@ -278,6 +300,7 @@ class LWTV_Actors_CMB2 {
 			$row6           = $grid_actorside->addRow();
 			$row7           = $grid_actorside->addRow();
 			$row8           = $grid_actorside->addRow();
+			$row9           = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
 			$row2->addColumns( array( $field_pronouns ) );
 			$row3->addColumns( array( $field_birth, $field_death ) );
@@ -285,7 +308,8 @@ class LWTV_Actors_CMB2 {
 			$row5->addColumns( array( $field_home ) );
 			$row6->addColumns( array( $field_twitter, $field_instagram ) );
 			$row7->addColumns( array( $field_tumblr, $field_mastodon ) );
-			$row8->addColumns( array( $field_excerpt ) );
+			$row8->addColumns( array( $field_facebook, $field_tiktok ) );
+			$row9->addColumns( array( $field_excerpt ) );
 		}
 	}
 

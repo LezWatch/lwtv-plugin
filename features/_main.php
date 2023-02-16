@@ -17,7 +17,6 @@ require_once 'private-data.php';   // Data Removal Code
 require_once 'profiles.php';       // User Profile Stuff
 require_once 'search.php';         // Search Features
 require_once 'shortcodes.php';     // Custom Shortcodes
-//require_once 'socials.php';         // Custom link code for socials -- UNUSED
 require_once 'sort-stopwords.php'; // Remove stopwords from sorting on archives
 require_once 'spammers.php';       // Catch and Kill Spammers
 require_once 'upgrades.php';       // Handle Upgrades

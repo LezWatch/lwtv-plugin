@@ -30,6 +30,8 @@ class LWTV_CPT_Post_Meta {
 			'lezactors_tumblr'              => 'post_type_actors',
 			'lezactors_instagram'           => 'post_type_actors',
 			'lezactors_mastodon'            => 'post_type_actors',
+			'lezactors_facebook'            => 'post_type_actors',
+			'lezactors_tiktok'              => 'post_type_actors',
 			'lezactors_char_list'           => 'post_type_actors',
 			// Characters
 			'lezchars_death_year'           => 'post_type_characters',
