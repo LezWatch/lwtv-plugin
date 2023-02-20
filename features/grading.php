@@ -39,7 +39,7 @@ class LWTV_Grading {
 			),
 			'tomato'   => array(
 				'image' => plugins_url( '/assets/images/scores/tomato-' . $fresh . '.svg', dirname( __FILE__ ) ),
-				'name'  => 'Rotten Tomatoes',
+				'name'  => 'Rotten Tomatoes Tomatometer',
 				'score' => $tomato,
 				'color' => self::color( $tomato ),
 				'bg'    => '#2a2c32',
@@ -47,7 +47,7 @@ class LWTV_Grading {
 			),
 			'tomato_u' => array(
 				'image' => plugins_url( '/assets/images/scores/tomato-audience.svg', dirname( __FILE__ ) ),
-				'name'  => 'Rotten Tomatoes (Audiences)',
+				'name'  => 'Rotten Tomatoes (Audience Score)',
 				'score' => $tomato_u,
 				'color' => self::color( $tomato_u ),
 				'bg'    => '#2a2c32',
