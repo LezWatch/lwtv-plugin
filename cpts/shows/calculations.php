@@ -451,7 +451,7 @@ class LWTV_Shows_Calculate {
 
 		$current['tmdb'] = array(
 			'score' => $score,
-			'url'   => 'https://themoviedb.org/' . $db_id,
+			'url'   => $url,
 		);
 
 		update_post_meta( $show_id, 'lezshows_3rd_scores', $current );

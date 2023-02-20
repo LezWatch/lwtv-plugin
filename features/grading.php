@@ -59,7 +59,7 @@ class LWTV_Grading {
 				'score' => $tmdb,
 				'color' => self::color( $tmdb ),
 				'bg'    => '#0d253f',
-				'url'   => 'https://themoviedb.com',
+				'url'   => 'https://themoviedb.org',
 			),
 			'tvmaze'   => array(
 				'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __FILE__ ) ),
