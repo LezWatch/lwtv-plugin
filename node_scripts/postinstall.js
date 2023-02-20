@@ -5,19 +5,11 @@
     2. Copies other files into place
  */
 
-const download = require('download-git-repo');
+const clone = require('git-clone');
 const { cp } = require('@npmcli/fs');
 
-// FacetWP + CMB2 -- Disabled b/c Forked now.
-// WebDevStudios/facetwp-cmb2
-
 // CMB2 Grid Code
-download('origgami/cmb2-grid', 'plugins/cmb2/cmb2-grid/', function (err) {
-	if (err) return console.log(err);
-});
-
-// CMB Field Select2 (Forked and not used.)
-// mustardbees/cmb-field-select2
+clone( 'https://github.com/origgami/cmb2-grid', 'plugins/cmb2/cmb2-grid/' );
 
 // Move JS
 (async () => {

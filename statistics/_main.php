@@ -47,7 +47,7 @@ class LWTV_Stats {
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );
 
-			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chart.js', array( 'jquery' ), '4.0.1', false );
+			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chart.js', array( 'jquery' ), '4.2.1', false );
 			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.1.0', false );
 			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
 			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.31.3', false );
