@@ -12,12 +12,13 @@ require_once 'dashboard.php';      // Dashboard Tools
 require_once 'debug.php';          // Debug tools
 require_once 'embeds.php';         // Custom Embeds
 require_once 'gutenslam.php';      // Force Gutenberg to keep preferences
+require_once 'grading.php';        // Show scores and grading from 3rd parties
 require_once 'languages.php';      // Language Code (in progress)
 require_once 'private-data.php';   // Data Removal Code
 require_once 'profiles.php';       // User Profile Stuff
 require_once 'search.php';         // Search Features
 require_once 'shortcodes.php';     // Custom Shortcodes
-require_once 'sort-stopwords.php'; // Remove stopwords from sorting on archives
+//require_once 'sort-stopwords.php'; // Remove stopwords from sorting on archives (BREAKS FACET)
 require_once 'spammers.php';       // Catch and Kill Spammers
 require_once 'upgrades.php';       // Handle Upgrades
 

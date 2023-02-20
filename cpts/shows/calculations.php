@@ -418,6 +418,85 @@ class LWTV_Shows_Calculate {
 	}
 
 	/**
+	 * Get the score from TMDB
+	 *
+	 * @param  int   $show_id - ID of the show being graded
+	 * @return n/a   Saves to DB.
+	*/
+	public function tmdb_score( $show_id ) {
+		$score   = 'TBD';
+		$url     = 'https://themoviedb.org/';
+		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
+		$current = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
+
+		// Make sure the API is defined
+		if ( defined( 'TMDB_API' ) && $imdb_id ) {
+			$response = wp_remote_get( 'https://api.themoviedb.org/3/find/' . $imdb_id . '?api_key=' . TMDB_API . '&external_source=imdb_id' );
+
+			// Check the response:
+			if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+				$body = json_decode( $response['body'], true ); // use the content
+
+				// If there's a status message, it's an error:
+				if ( ! isset( $body['status_message'] ) ) {
+					$score = ( isset( $body['tv_results'][0]['vote_average'] ) ) ? round( $body['tv_results'][0]['vote_average'] * 10 ) : 'TBD';
+					$url  .= ( isset( $body['tv_results'][0]['id'] ) ) ? $body['tv_results'][0]['id'] : '';
+				}
+			}
+		}
+
+		if ( ! is_array( $current ) ) {
+			$current = array();
+		}
+
+		$current['tmdb'] = array(
+			'score' => $score,
+			'url'   => 'https://themoviedb.org/' . $db_id,
+		);
+
+		update_post_meta( $show_id, 'lezshows_3rd_scores', $current );
+	}
+
+	/**
+	 * Get the score from TVMAZE
+	 *
+	 * @param  int   $show_id - ID of the show being graded
+	 * @return n/a   Update meta.
+	 */
+	public function tvmaze_score( $show_id ) {
+		$score   = 'TBD';
+		$url     = 'https://tvmaze.com/';
+		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
+		$current = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
+
+		if ( $imdb_id ) {
+			$response = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . $imdb_id );
+
+			// Check the response:
+			if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+				$body = json_decode( $response['body'], true ); // use the content
+
+				// TV Maze returns a null body sometimes.
+				if ( ! is_null( $body ) ) {
+					$url   = $body['url'];
+					$score = ( isset( $body['rating']['average'] ) && ! empty( $body['rating']['average'] ) ) ? round( $body['rating']['average'] * 10 ) : 'TBD';
+				}
+			}
+		}
+
+		if ( ! is_array( $current ) ) {
+			$current = array();
+		}
+
+		$current['tvmaze'] = array(
+			'score' => $score,
+			'url'   => $url,
+		);
+
+		update_post_meta( $show_id, 'lezshows_3rd_scores', $current );
+	}
+
+	/**
 	 * do_the_math function.
 	 *
 	 * This will update the following metakeys on save:
@@ -450,6 +529,10 @@ class LWTV_Shows_Calculate {
 
 		// Update the meta
 		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
+
+		// Update 3rd party scores
+		self::tmdb_score( $post_id );
+		self::tvmaze_score( $post_id );
 
 		// Cheat and update the show 'on-air' ness.
 		$on_air   = 'no';

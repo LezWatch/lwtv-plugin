@@ -39,23 +39,16 @@ class LWTV_FacetWP {
 			return $sources;
 		});
 
-		if ( is_admin() ) {
-			// Don't output <!--fwp-loop--> on admin pages
-			add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) {
-				return false;
-			}, 10, 2 );
-		} else {
-			// DO output on pages where the main-query is set to true anyway. Asshols
-			add_filter( 'facetwp_is_main_query', array( $this, 'facetwp_is_main_query' ), 10, 2 );
-		}
-
+		add_filter( 'facetwp_is_main_query', array( $this, 'facetwp_is_main_query' ), 10, 2 );
 	}
 
 	/**
 	 * Force Facet to show sometimes
 	 */
 	public function facetwp_is_main_query( $is_main_query, $query ) {
-		if ( isset( $query->query_vars['facetwp'] ) ) {
+		if ( is_admin() ) {
+			$is_main_query = false;
+		} elseif ( isset( $query->query_vars['facetwp'] ) ) {
 			$is_main_query = true;
 		}
 		return $is_main_query;
@@ -149,23 +142,6 @@ class LWTV_FacetWP {
 				$params_on_air['facet_display_value'] = ucfirst( $on_air );
 				$class->insert( $params_on_air );
 
-				// skip default indexing
-				$params['facet_value'] = '';
-				return $params;
-			}
-			// Shows by Gender, Sexuality, Romance
-			// If they have a count higher than 0, we flag them.
-			// This is just going to list if they have that gender. We're not using it yet. We might.
-			$show_char_array = array( 'show_char_gender', 'show_char_sexuality', 'show_char_romance' );
-			if ( in_array( $params['facet_name'], $show_char_array, true ) ) {
-				$values = (array) $params['facet_value'];
-				foreach ( $values as $title => $val ) {
-					if ( is_numeric( $val ) && $val > 0 ) {
-						$params['facet_value']         = $title;
-						$params['facet_display_value'] = ucfirst( $title );
-						$class->insert( $params );
-					}
-				}
 				// skip default indexing
 				$params['facet_value'] = '';
 				return $params;
