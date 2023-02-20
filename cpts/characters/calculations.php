@@ -74,7 +74,7 @@ class LWTV_Characters_Calculate {
 	 * Update the Actors.
 	 * In order to reduce load, we only run this on saves.
 	 *
-	 * @param  int   $post_id
+	 * @param  int   $post_id, Post ID of character
 	 * @return N/A   No return, just update actor calculation
 	 */
 	public function actors( $post_id ) {
@@ -83,15 +83,18 @@ class LWTV_Characters_Calculate {
 		if ( ! is_array( $actors ) ) {
 			$actors = array( $actors );
 		}
+
 		if ( ! empty( $actors ) ) {
 			foreach ( $actors as $actor_id ) {
 
-				// Add array of characters by ID to actor as post meta
+				// Get the list of characters from the actor as listed.
 				$characters = get_post_meta( $actor_id, 'lezactors_char_list', true );
 				if ( empty( $characters ) ) {
 					$characters = array();
 				}
 
+				// Add to array of characters by ID on CPT actor as post meta and
+				// sort to ensure no dupes.
 				$characters[] = $post_id;
 				$characters   = array_unique( $characters );
 				update_post_meta( $actor_id, 'lezactors_char_list', $characters );

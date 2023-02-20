@@ -98,7 +98,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 		add_filter( 'gform_disable_registration', array( $this, 'disable_registration' ), 10, 4 );
 	}
 
-	//Registers the dashboard widget
+	// Registers the dashboard widget
 	public function dashboard_setup() {
 		wp_add_dashboard_widget( 'lwtv_gf_approvals_dashboard', 'Forms Pending Approval', array( $this, 'dashboard' ) );
 	}

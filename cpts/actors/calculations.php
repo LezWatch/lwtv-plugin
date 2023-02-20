@@ -19,7 +19,7 @@ class LWTV_Actors_Calculate {
 	/*
 	 * Count all characters for an actor.
 	 *
-	 * @param int $post_id The post ID.
+	 * @param int $post_id The post ID of the actor.
 	 */
 	public function count( $post_id, $type = 'count' ) {
 

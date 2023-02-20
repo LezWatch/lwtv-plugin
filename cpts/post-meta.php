@@ -30,6 +30,9 @@ class LWTV_CPT_Post_Meta {
 			'lezactors_tumblr'              => 'post_type_actors',
 			'lezactors_instagram'           => 'post_type_actors',
 			'lezactors_mastodon'            => 'post_type_actors',
+			'lezactors_facebook'            => 'post_type_actors',
+			'lezactors_tiktok'              => 'post_type_actors',
+			'lezactors_char_list'           => 'post_type_actors',
 			// Characters
 			'lezchars_death_year'           => 'post_type_characters',
 			'lezchars_actor'                => 'post_type_characters',
@@ -42,6 +45,7 @@ class LWTV_CPT_Post_Meta {
 			'lezshows_worthit_rating'       => 'post_type_shows',
 			'lezshows_worthit_details'      => 'post_type_shows',
 			'lezshows_worthit_show_we_love' => 'post_type_shows',
+			'lezshows_3rd_scores'           => 'post_type_shows',
 			'lezshows_affiliate'            => 'post_type_shows',
 			'lezshows_similar_shows'        => 'post_type_shows',
 			'lezshows_ships'                => 'post_type_shows',

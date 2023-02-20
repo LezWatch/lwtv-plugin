@@ -13,7 +13,7 @@
     "@npmcli/fs": "^3.1.0",
     "chart.js": "^4.0.1",
     "chartjs-plugin-annotation": "^2.1.0",
-    "download-git-repo": "^3.0.2",
+    "git-clone": "^0.2.0",
     "postinstall": "*",
     "tablesorter": "^2.31.3"
   },
