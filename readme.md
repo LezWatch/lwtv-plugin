@@ -126,6 +126,8 @@ _Shows (`/shows/`)_
 Stored in `/features/` -- a collection of miscellaneous features.
 
 * `_main.php` - Calls all other files
+* `apis.php` - Calls to third party APIs
+    - `tvmaze_episodes()` - output of next ep for TV Maze
 * `clickjacking.php` - Prevents Clickjacking (or at least people claiming it's an issue)
 * `cron.php` - Custom cron jobs to pre-cache high-traffic pages, and run regular jobs.
 * `custom-loops.php` - `class LWTV_Loops` - Custom arrays and WP_Query calls that are repeated in multiple places.
@@ -143,16 +145,11 @@ Stored in `/features/` -- a collection of miscellaneous features.
 * `dashboard.php` - Custom column for featured images in posts lists and removal of self pings
 * `debug.php` - Debugging Tools for weird content.
 * `embeds.php` - Embeds DisneyABCPress videos, Gleam, GoFundMe, Indiegogo
-* `gutenslam.php` - make Block Editor stop being such a dillhole and forget preferences
+* `grading.php` - Build and format array for displaying show scores including 3rd parties.
 * `ics-parser.php` - Connection to the ICS Parser for calendar data.
 * `private-data.php` - Shows alert that a page is hidden if the post is set private.
 * `profiles.php` - Custom profile code
-* `search.php` - Extra Search Functions:
-    - Join posts and postmeta tables
-    - Modify Search Location to include custom fields
-    - Force search to be distinct and prevent duplicates
-    - Pretty Permalinks for Search
-* `shortcodes.php` - Various shortcodes used on LezWatch.TV
+* `shortcodes.php` - Various shortcodes - mostly deprecated, but some used by blocks.
     - Badges: `[badge url=LINK class="class class" role="role"]TEXT[/badge]`
     - Copyright Year: `[copyright year=(start year) text=(copyright text)]`
     - Number of Posts: `[numposts data="posts" posttype="post type" term="term slug" taxonomy="taxonomy slug"]`
@@ -165,7 +162,6 @@ Stored in `/features/` -- a collection of miscellaneous features.
 		* Embed IndieGoGo: `[indiegogo url=URL]`
 		* Glossary: `[glossary taxonomy=TAXONOMY]`
 		* Spoilers: `[spoilers]` or `[spoilers warning="OMG SPIDERS!!!"]`
-* `sort-stopwords.php` - Filter post order by for shows to NOT include the/an/a when sorting.
 * `spammers.php` - Prevent Spammers from annoying us
 * `upgrades.php` - Handle upgrades of WP and everything included.
 * `wp-cli.php`- WP-CLI
@@ -211,6 +207,7 @@ The file `_main.php` acts as an autoloader.
 * `gravity-forms.php` - Protection from spammers via disallowed keys
 * `/gravity-forms/` - Gravity Forms Folder
     - `class-gf-approvals.php` - Approval Code (forked from another plugin)
+* `gutenslam.php` - make Block Editor stop being such a dillhole and forget preferences
 * `jetpack.php`  - Jetpack integration
     - Adds Post Type to sort.
     - Show Feedback in "Right Now"

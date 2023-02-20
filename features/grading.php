@@ -24,11 +24,12 @@ class LWTV_Grading {
 		$tmdb     = ( isset( $external['tmdb']['score'] ) ) ? round( $external['tmdb']['score'] ) : 'TBD';
 		$tvmaze   = ( isset( $external['tvmaze']['score'] ) ) ? round( $external['tvmaze']['score'] ) : 'TBD';
 		$tomato   = ( isset( $external['tomato']['score'] ) ) ? round( $external['tomato']['score'] ) : 'TBD';
+		$tomato_u = ( isset( $external['tomato_u']['score'] ) ) ? round( $external['tomato_u']['score'] ) : 'TBD';
 		$fresh    = ( $tomato >= 60 ) ? 'fresh' : 'splat';
 
 		// Build Array
 		$scores = array(
-			'lwtv'   => array(
+			'lwtv'     => array(
 				'image' => plugins_url( '/assets/images/scores/lwtv.png', dirname( __FILE__ ) ),
 				'name'  => 'LezWatchTV',
 				'score' => $lwtv,
@@ -36,7 +37,7 @@ class LWTV_Grading {
 				'bg'    => '#d1548e',
 				'url'   => '/about/scoring-queer-shows/',
 			),
-			'tomato' => array(
+			'tomato'   => array(
 				'image' => plugins_url( '/assets/images/scores/tomato-' . $fresh . '.svg', dirname( __FILE__ ) ),
 				'name'  => 'Rotten Tomatoes',
 				'score' => $tomato,
@@ -44,7 +45,15 @@ class LWTV_Grading {
 				'bg'    => '#2a2c32',
 				'url'   => 'https://www.rottentomatoes.com',
 			),
-			'tmdb'   => array(
+			'tomato_u' => array(
+				'image' => plugins_url( '/assets/images/scores/tomato-audience.svg', dirname( __FILE__ ) ),
+				'name'  => 'Rotten Tomatoes (Audiences)',
+				'score' => $tomato_u,
+				'color' => self::color( $tomato_u ),
+				'bg'    => '#2a2c32',
+				'url'   => 'https://www.rottentomatoes.com',
+			),
+			'tmdb'     => array(
 				'image' => plugins_url( '/assets/images/scores/tmdb.svg', dirname( __FILE__ ) ),
 				'name'  => 'The Movie Database',
 				'score' => $tmdb,
@@ -52,7 +61,7 @@ class LWTV_Grading {
 				'bg'    => '#0d253f',
 				'url'   => 'https://themoviedb.com',
 			),
-			'tvmaze' => array(
+			'tvmaze'   => array(
 				'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __FILE__ ) ),
 				'name'  => 'TV Maze',
 				'score' => $tvmaze,
