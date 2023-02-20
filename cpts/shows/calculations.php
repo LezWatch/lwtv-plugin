@@ -440,7 +440,7 @@ class LWTV_Shows_Calculate {
 				// If there's a status message, it's an error:
 				if ( ! isset( $body['status_message'] ) ) {
 					$score = ( isset( $body['tv_results'][0]['vote_average'] ) ) ? round( $body['tv_results'][0]['vote_average'] * 10 ) : 'TBD';
-					$url  .= ( isset( $body['tv_results'][0]['id'] ) ) ? $body['tv_results'][0]['id'] : '';
+					$url  .= ( isset( $body['tv_results'][0]['id'] ) ) ? 'tv/' . $body['tv_results'][0]['id'] : '';
 				}
 			}
 		}

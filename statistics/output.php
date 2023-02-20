@@ -298,7 +298,13 @@ class LWTV_Stats_Output {
 		$bar_id    = ucfirst( $subject ) . $rand;
 		?>
 		<div id="container" style="width: 100%;">
-			<canvas id="bar<?php echo esc_attr( $bar_id ); ?>" width="700" height="<?php echo (int) $height; ?>"></canvas>
+			<canvas 
+				id="bar<?php echo esc_attr( $bar_id ); ?>" 
+				width="700" height="<?php echo (int) $height; ?>" 
+				aria-label="A Bar Chart for stats on <?php echo esc_html( $subject ); ?>" 
+			/>
+				<p>Your browser cannot display this Bar Chart for stats on <?php echo esc_html( $subject ); ?>.</p>
+			</canvas>
 		</div>
 
 		<script>
@@ -430,7 +436,13 @@ class LWTV_Stats_Output {
 		}
 		?>
 		<div id="container" style="width: 100%;">
-			<canvas id="barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?>" width="700" height="<?php echo (int) $height; ?>"></canvas>
+			<canvas 
+				id="barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?>" 
+				width="700" height="<?php echo (int) $height; ?>" 
+				aria-label="A Stacked Bar Chart for stats on <?php echo esc_html( $subject ); ?>" 
+			/>
+				<p>Your browser cannot display this Stacked Bar Chart for stats on <?php echo esc_html( $subject ); ?>.</p>
+			</canvas>
 		</div>
 
 		<?php
@@ -573,7 +585,13 @@ class LWTV_Stats_Output {
 		}
 		?>
 
-		<canvas id="pie<?php echo esc_attr( ucfirst( $data ) ); ?>" width="500px" height="500px"></canvas>
+		<canvas 
+			id="pie<?php echo esc_attr( ucfirst( $data ) ); ?>" 
+			width="500px" height="500px" 
+			aria-label="A piechart for stats on <?php echo esc_html( $subject ); ?>"
+		/>
+			<p>Your browser cannot display this piechart for stats on <?php echo esc_html( $subject ); ?>.</p>
+		</canvas>
 
 		<script>
 			// Piechart for stats
@@ -683,7 +701,13 @@ class LWTV_Stats_Output {
 		?>
 
 		<div id="container" style="width: 100%;">
-			<canvas id="trend<?php echo esc_attr( ucfirst( $cleandata ) ); ?>" width="700"></canvas>
+			<canvas 
+			id="trend<?php echo esc_attr( ucfirst( $cleandata ) ); ?>" 
+				width="700" 
+				aria-label="A trendline for stats on <?php echo esc_html( $subject ); ?>"
+			/>
+				<p>Your browser cannot display this trendline for stats on <?php echo esc_html( $subject ); ?>.</p>
+			</canvas>
 		</div>
 
 		<script>
