@@ -96,6 +96,50 @@ class LWTV_Grading {
 		return $return;
 	}
 
+	public function display( $scores ) {
+		// Early Check.
+		if ( ! is_array( $scores ) ) {
+			return;
+		}
+
+		foreach ( $scores as $score ) {
+			if ( isset( $score['score'] ) && 'TBD' !== strtoupper( $score['score'] ) ) {
+				?>
+				<a href="<?php echo esc_url( $score['url'] ); ?>" target="new">
+				<button 
+					aria-label="The <?php echo esc_html( $score['name'] ); ?> score is <?php echo esc_html( $score['score'] ); ?> out of 100" 
+					type="button" 
+					class="btn btn-light" style="background-color: <?php echo esc_html( $score['bg'] ); ?>; min-width: 100px;">
+					<center>
+						<img 
+							alt="Powered By <?php echo esc_html( $score['name'] ); ?>"
+							src="<?php echo esc_url( $score['image'] ); ?>" 
+							style="max-height: 36px;padding-bottom: 4px;"
+						/>
+					</center>
+					<svg 
+						viewBox="0 0 36 36"
+						aria-hidden="true"
+					>
+						<path
+							d="M18 2.0845
+							a 15.9155 15.9155 0 0 1 0 31.831
+							a 15.9155 15.9155 0 0 1 0 -31.831"
+							fill="#f3f3f3"
+							stroke-alignment="inner"
+							stroke="rgb( <?php echo esc_html( $score['color'] ); ?> )"
+							stroke-width="2.8"
+							stroke-dasharray="<?php echo esc_html( $score['score'] ); ?>, 100"
+						/>
+						<text x="10" y="23" class="percentage"><?php echo esc_html( $score['score'] ); ?></text><
+					</svg>
+				</button>
+				</a>
+				<?php
+			}
+		}
+	}
+
 }
 
 new LWTV_Grading();
