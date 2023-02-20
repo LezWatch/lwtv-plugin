@@ -272,7 +272,7 @@ class LWTV_Shortcodes {
 		$default = array(
 			'avatar'    => '<img src="http://0.gravatar.com/avatar/9c7ddb864b01d8e47ce3414c9bbf3008?s=64&d=mm&f=y&r=g">',
 			'name'      => 'Mystery Girl',
-			'bio'       => 'Yet another lesbian who slept with Shane. Or Sara Lance.',
+			'bio'       => 'Yet another queer who slept with Shane. Or Sara Lance.',
 			'title'     => '',
 			'postcount' => '',
 			'twitter'   => '',
@@ -320,6 +320,7 @@ class LWTV_Shortcodes {
 				'bio'       => $user->description,
 				'postcount' => $numposts,
 				'twitter'   => get_the_author_meta( 'twitter', $author_id ),
+				'mastodon'  => get_the_author_meta( 'mastodon', $author_id ),
 				'instagram' => get_the_author_meta( 'instagram', $author_id ),
 				'tumblr'    => get_the_author_meta( 'tumblr', $author_id ),
 				'website'   => get_the_author_meta( 'url', $author_id ),
@@ -332,8 +333,9 @@ class LWTV_Shortcodes {
 		$instagram = ( ! empty( $content['instagram'] ) ) ? '<a href="https://instagram.com/' . $content['instagram'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
 		$tumblr    = ( ! empty( $content['tumblr'] ) ) ? '<a href="' . $content['tumblr'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
 		$website   = ( ! empty( $content['website'] ) ) ? '<a href="' . $content['website'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'home.svg', 'fa-home' ) . '</a>' : false;
+		$tumblr    = ( ! empty( $content['mastodon'] ) ) ? '<a href="' . $content['mastodon'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
 
-		$social_array = array( $website, $twitter, $instagram, $tumblr );
+		$social_array = array( $website, $twitter, $instagram, $tumblr, $mastodon );
 		$social_array = array_filter( $social_array );
 
 		switch ( $format ) {

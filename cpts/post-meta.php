@@ -45,6 +45,7 @@ class LWTV_CPT_Post_Meta {
 			'lezshows_worthit_rating'       => 'post_type_shows',
 			'lezshows_worthit_details'      => 'post_type_shows',
 			'lezshows_worthit_show_we_love' => 'post_type_shows',
+			'lezshows_3rd_scores'           => 'post_type_shows',
 			'lezshows_affiliate'            => 'post_type_shows',
 			'lezshows_similar_shows'        => 'post_type_shows',
 			'lezshows_ships'                => 'post_type_shows',
