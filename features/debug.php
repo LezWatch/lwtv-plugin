@@ -20,7 +20,7 @@ class LWTV_Debug {
 	 */
 	public function sanitize_social( $string, $for ) {
 
-		$clean = preg_replace( '/[^a-zA-Z_.0-9]/', '', $string );
+		$clean = preg_replace( '/[^a-zA-Z_.0-9]/', '', trim( $string ) );
 
 		switch ( $for ) {
 			case 'instagram':
@@ -365,18 +365,23 @@ class LWTV_Debug {
 				$problems[] = 'IMDb ID is invalid (ex: nm12345).';
 			}
 
+			// Check for IMDb existing at all...
+			if ( empty( $check['imdb'] ) ) {
+				$problems[] = 'IMDb ID is not set.';
+			}
+
 			// -Instagram and Twitter usernames should follow whatever the
 			// actual restrictions on those are  (props Jamie)
 			// -If Instagram or Twitter usernames are the same format as IMDb IDs,
 			// that's suspicious (props Jamie)
 			if ( ! empty( $check['insta'] ) ) {
 				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
-				if ( self::sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] && self::validate_imdb( $check['insta'] ) !== false ) {
+				if ( self::sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
 					$problems[] = 'Instagram ID is invalid.';
 				}
 			}
 			if ( ! empty( $check['twits'] ) ) {
-				if ( self::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] && self::validate_imdb( $check['twits'] ) !== false ) {
+				if ( self::sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
 					$problems[] = 'Twitter ID is invalid.';
 				}
 			}
@@ -563,6 +568,10 @@ class LWTV_Debug {
 
 			if ( ! empty( $check['imdb'] ) && self::validate_imdb( $check['imdb'] ) === false ) {
 				$problems[] = 'IMDb ID is invalid (ex: tt12345).';
+			}
+
+			if ( empty( $check['imdb'] ) ) {
+				$problems[] = 'IMDb ID is not set.';
 			}
 
 			if ( ! $check['stations'] || is_wp_error( $check['stations'] ) ) {

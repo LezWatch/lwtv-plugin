@@ -127,7 +127,7 @@ class LWTV_Grading {
 		}
 
 		foreach ( $scores as $score ) {
-			if ( isset( $score['score'] ) && 'TBD' !== strtoupper( $score['score'] ) ) {
+			if ( isset( $score['score'] ) && 0 !== (int) $score['score'] && 'TBD' !== strtoupper( $score['score'] ) ) {
 				?>
 				<a href="<?php echo esc_url( $score['url'] ); ?>" target="new">
 				<button 
