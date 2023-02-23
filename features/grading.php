@@ -17,14 +17,29 @@ class LWTV_Grading {
 	public function all_scores( $show_id ) {
 
 		// Local scores
-		$lwtv = ( get_post_meta( $show_id, 'lezshows_the_score', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_the_score', true ) ) ) ? round( min( (int) get_post_meta( $show_id, 'lezshows_the_score', true ), 100 ) ) : 'TBD';
+		$lwtv = array(
+			'score' => ( get_post_meta( $show_id, 'lezshows_the_score', true ) && is_numeric( (int) get_post_meta( $show_id, 'lezshows_the_score', true ) ) ) ? round( min( (int) get_post_meta( $show_id, 'lezshows_the_score', true ), 100 ) ) : 'TBD',
+			'url'   => site_url( '/about/scoring-queer-shows/' ),
+		);
 
 		// External scores
 		$external = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
-		$tmdb     = ( isset( $external['tmdb']['score'] ) ) ? round( $external['tmdb']['score'] ) : 'TBD';
-		$tvmaze   = ( isset( $external['tvmaze']['score'] ) ) ? round( $external['tvmaze']['score'] ) : 'TBD';
-		$tomato   = ( isset( $external['tomato']['score'] ) ) ? round( $external['tomato']['score'] ) : 'TBD';
-		$tomato_u = ( isset( $external['tomato_u']['score'] ) ) ? round( $external['tomato_u']['score'] ) : 'TBD';
+		$tmdb     = array(
+			'score' => ( isset( $external['tmdb']['score'] ) ) ? round( $external['tmdb']['score'] ) : 'TBD',
+			'url'   => ( isset( $external['tmdb']['url'] ) ) ? $external['tmdb']['url'] : 'https://themoviedb.org',
+		);
+		$tvmaze   = array(
+			'score' => ( isset( $external['tvmaze']['score'] ) ) ? round( $external['tvmaze']['score'] ) : 'TBD',
+			'url'   => ( isset( $external['tvmaze']['url'] ) ) ? $external['tvmaze']['url'] : 'https://tvmaze.com',
+		);
+		$tomato   = array(
+			'score' => ( isset( $external['tomato']['score'] ) ) ? round( $external['tomato']['score'] ) : 'TBD',
+			'url'   => ( isset( $external['tomato']['url'] ) ) ? $external['tomato']['url'] : 'https://rottentomates.com',
+		);
+		$tomato_u = array(
+			'score' => ( isset( $external['tomato_u']['score'] ) ) ? round( $external['tomato_u']['score'] ) : 'TBD',
+			'url'   => ( isset( $external['tomato']['url'] ) ) ? $external['tomato']['url'] : 'https://rottentomates.com',
+		);
 		$fresh    = ( $tomato >= 60 ) ? 'fresh' : 'splat';
 
 		// Build Array
@@ -32,42 +47,42 @@ class LWTV_Grading {
 			'lwtv'     => array(
 				'image' => plugins_url( '/assets/images/scores/lwtv.png', dirname( __FILE__ ) ),
 				'name'  => 'LezWatchTV',
-				'score' => $lwtv,
-				'color' => self::color( $lwtv ),
+				'score' => $lwtv['score'],
+				'color' => self::color( $lwtv['score'] ),
 				'bg'    => '#d1548e',
-				'url'   => '/about/scoring-queer-shows/',
+				'url'   => $lwtv['url'],
 			),
 			'tomato'   => array(
 				'image' => plugins_url( '/assets/images/scores/tomato-' . $fresh . '.svg', dirname( __FILE__ ) ),
-				'name'  => 'Rotten Tomatoes',
-				'score' => $tomato,
-				'color' => self::color( $tomato ),
+				'name'  => 'Rotten Tomatoes Tomatometer',
+				'score' => $tomato['score'],
+				'color' => self::color( $tomato['score'] ),
 				'bg'    => '#2a2c32',
-				'url'   => 'https://www.rottentomatoes.com',
+				'url'   => $tomato['url'],
 			),
 			'tomato_u' => array(
 				'image' => plugins_url( '/assets/images/scores/tomato-audience.svg', dirname( __FILE__ ) ),
-				'name'  => 'Rotten Tomatoes (Audiences)',
-				'score' => $tomato_u,
-				'color' => self::color( $tomato_u ),
+				'name'  => 'Rotten Tomatoes (Audience Score)',
+				'score' => $tomato_u['score'],
+				'color' => self::color( $tomato_u['score'] ),
 				'bg'    => '#2a2c32',
-				'url'   => 'https://www.rottentomatoes.com',
+				'url'   => $tomato_u['url'],
 			),
 			'tmdb'     => array(
 				'image' => plugins_url( '/assets/images/scores/tmdb.svg', dirname( __FILE__ ) ),
 				'name'  => 'The Movie Database',
-				'score' => $tmdb,
-				'color' => self::color( $tmdb ),
+				'score' => $tmdb['score'],
+				'color' => self::color( $tmdb['score'] ),
 				'bg'    => '#0d253f',
-				'url'   => 'https://themoviedb.com',
+				'url'   => $tmdb['url'],
 			),
 			'tvmaze'   => array(
 				'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __FILE__ ) ),
 				'name'  => 'TV Maze',
-				'score' => $tvmaze,
-				'color' => self::color( $tvmaze ),
+				'score' => $tvmaze['score'],
+				'color' => self::color( $tvmaze['score'] ),
 				'bg'    => '#3c948b',
-				'url'   => $external['tmdb']['score'],
+				'url'   => $tvmaze['url'],
 			),
 		);
 
@@ -112,7 +127,7 @@ class LWTV_Grading {
 		}
 
 		foreach ( $scores as $score ) {
-			if ( isset( $score['score'] ) && 'TBD' !== strtoupper( $score['score'] ) ) {
+			if ( isset( $score['score'] ) && 0 !== (int) $score['score'] && 'TBD' !== strtoupper( $score['score'] ) ) {
 				?>
 				<a href="<?php echo esc_url( $score['url'] ); ?>" target="new">
 				<button 
