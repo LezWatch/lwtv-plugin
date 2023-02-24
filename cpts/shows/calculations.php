@@ -30,7 +30,7 @@ class LWTV_Shows_Calculate {
 		$realness   = min( (int) get_post_meta( $post_id, 'lezshows_realness_rating', true ), 5 );
 		$quality    = min( (int) get_post_meta( $post_id, 'lezshows_quality_rating', true ), 5 );
 		$screentime = min( (int) get_post_meta( $post_id, 'lezshows_screentime_rating', true ), 5 );
-		$score      = ( $realness + $quality + $screentime ) * 2;
+		$score      = ( $realness + $quality + $screentime ) * 3;
 
 		// Add in Thumb Score Rating: 10, 5, 0, -10
 		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
@@ -140,11 +140,14 @@ class LWTV_Shows_Calculate {
 				// Points: Regular = 5; Recurring = 2; Guests = 1
 				$char_score = ( count( $chars_regular ) * 5 ) + ( count( $chars_recurring ) * 2 ) + count( $chars_guest );
 
+				// TODO: Consider ratio-ing - if there are a lot of guests and no regulars, that's bad, but if your guests
+				// are closer in line to the number of regulars... Maybe 4 guests to 1 regular?
+
 				// Bonuses and Demerits
 				// Bonuses:  queer irl = 4pts; no cliches = 2pt; trans played by non-trans = 2pts
 				// Demerits: dead = -3pts; trans played by non-trans = -2pts
 				$queer_irl   = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'queer-irl' ) ) * 10 );
-				$no_cliches  = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'none' ) * 5 );
+				$no_cliches  = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'none' ) ) * 5 );
 				$the_dead    = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'dead' ) ) * -5 );
 				$trans_chars = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'trans' ) );
 				$trans_irl   = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'trans-irl' ) );
