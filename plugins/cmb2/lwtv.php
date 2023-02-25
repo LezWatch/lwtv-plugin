@@ -33,11 +33,8 @@ class LWTV_CMB2 {
 
 		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_intersections' );
 
-		// If we don't have symbolicons, there's not a reason to register the taxonomy box...
-		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
-			$this->symbolicon_path = LWTV_SYMBOLICONS_PATH;
-			add_action( 'cmb2_admin_init', array( $this, 'register_taxonomy_metabox' ) );
-		}
+		// Register metaboxes.
+		add_action( 'cmb2_admin_init', array( $this, 'register_taxonomy_metabox' ) );
 
 		// Add all filters and actions to show icons on tax list page
 		foreach ( $this->icon_taxonomies as $tax_name ) {
@@ -51,61 +48,6 @@ class LWTV_CMB2 {
 	 */
 	public function admin_init() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 10 );
-	}
-
-	/**
-	 * Extra Get post options.
-	 */
-	public function get_post_options( $post_type = 'post', $numberposts = 500 ) {
-
-		// Build arguments, based on data sent.
-		$args = array(
-			'post_type'     => $post_type,
-			'numberposts'   => (int) $numberposts + 50,
-			'post_status'   => array( 'publish', 'pending', 'draft', 'future', 'private' ),
-			'fields'        => 'ids',
-			'no_found_rows' => true,
-		);
-
-		// Get the posts
-		$posts = get_posts( $args );
-
-		// Sort the posts.
-		$post_options = array();
-		if ( $posts ) {
-			foreach ( $posts as $post ) {
-				$post_title = get_the_title( $post );
-				// If we're an actor, we should check for queerness.
-				if ( 'post_type_actors' === $post_type ) {
-					if ( get_post_meta( $post, 'lezactors_queer', true ) ) {
-						$post_title .= ' (QUEER IRL)';
-					}
-				}
-
-				// Add extra based on status.
-				switch ( get_post_status( $post ) ) {
-					case 'draft':
-						$post_title .= ' - DRAFT';
-						break;
-					case 'future':
-					case 'pending':
-						$post_title .= ' - SCHEDULED';
-						break;
-					case 'private':
-						$post_title .= ' - PRIVATE';
-						break;
-				}
-
-				$post_options[ $post ] = $post_title;
-			}
-		}
-
-		// Sort.
-		if ( is_array( $post_options ) ) {
-			asort( $post_options );
-		}
-
-		return $post_options;
 	}
 
 	/**
@@ -158,7 +100,6 @@ class LWTV_CMB2 {
 	 * Add metabox to custom taxonomies to show icon
 	 *
 	 * $this->icon_taxonomies       array of taxonomies to show icons on.
-	 * $this->symbolicon_path       location of Symbolicons
 	 *
 	 * register_taxonomy_metabox()  CMB2 mextabox code
 	 * before_field_icon()          Show an icon if that exists
@@ -168,38 +109,65 @@ class LWTV_CMB2 {
 	 * @return string - post content
 	 */
 	public function register_taxonomy_metabox() {
-		$prefix         = 'lez_termsmeta_';
-		$imagepath      = LWTV_SYMBOLICONS_PATH;
-		$icon_array     = array();
-		$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
+		$prefix = 'lez_termsmeta_';
 
-		foreach ( glob( $imagepath . '*' ) as $filename ) {
-			$filename                = str_replace( '.svg', '', str_replace( LWTV_SYMBOLICONS_PATH, '', $filename ) );
-			$icon_array[ $filename ] = $filename;
-		}
-
-		$cmb_term = new_cmb2_box(
+		$cmb_term_general = new_cmb2_box(
 			array(
-				'id'               => $prefix . 'edit',
-				'title'            => 'Category Metabox',
+				'id'               => $prefix . 'general',
+				'title'            => 'General Metabox',  // Does not display on Terms.
 				'object_types'     => array( 'term' ),
-				'taxonomies'       => $this->icon_taxonomies,
+				'taxonomies'       => array( 'post_tag' ),
 				'new_term_section' => true,
 			)
 		);
 
-		$cmb_term->add_field(
+		$cmb_term_general->add_field(
 			array(
-				'name'             => 'Icon',
-				'desc'             => 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href=' . $symbolicon_url . '>Symbolicons List</a>.',
-				'id'               => $prefix . 'icon',
-				'type'             => 'select',
-				'show_option_none' => true,
-				'default'          => 'custom',
-				'options'          => $icon_array,
-				'before_field'     => array( $this, 'before_field_icon' ),
+				'name'            => 'Related Actor/Show (Optional)',
+				'desc'            => 'If this tag relates to an actor or show, you can link them here.',
+				'id'              => $prefix . 'linked_post',
+				'type'            => 'post_search_text', // This field type
+				'post_type'       => array( 'post_type_shows', 'post_type_actors' ),
+				'select_type'     => 'radio',
+				'select_behavior' => 'replace',
+				'on_front'        => false,
 			)
 		);
+
+		// If we don't have symbolicons, there's not a reason to register the taxonomy box...
+		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
+			$imagepath      = LWTV_SYMBOLICONS_PATH;
+			$icon_array     = array();
+			$symbolicon_url = admin_url( 'themes.php?page=symbolicons' );
+
+			foreach ( glob( $imagepath . '*' ) as $filename ) {
+				$filename                = str_replace( '.svg', '', str_replace( LWTV_SYMBOLICONS_PATH, '', $filename ) );
+				$icon_array[ $filename ] = $filename;
+			}
+
+			$cmb_term_symbolicons = new_cmb2_box(
+				array(
+					'id'               => $prefix . 'edit',
+					'title'            => 'Symbolicon Metabox', // Does not display on Terms.
+					'object_types'     => array( 'term' ),
+					'taxonomies'       => $this->icon_taxonomies,
+					'new_term_section' => true,
+				)
+			);
+
+			$cmb_term_symbolicons->add_field(
+				array(
+					'name'             => 'Custom Icon',
+					'desc'             => 'Select the icon you want to use. Once saved, it will show on the left.<br />If you need help visualizing, check out the <a href=' . $symbolicon_url . '>Symbolicons List</a>.',
+					'id'               => $prefix . 'icon',
+					'type'             => 'select',
+					'show_option_none' => true,
+					'default'          => 'custom',
+					'options'          => $icon_array,
+					'before_field'     => array( $this, 'before_field_icon' ),
+				)
+			);
+		}
 	}
 
 	// Add before field icon display

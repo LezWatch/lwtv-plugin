@@ -134,14 +134,23 @@ class LWTV_Related_Posts {
 			// Bail early if no tags or it's not an array.
 			if ( $post_tags ) {
 				foreach ( $post_tags as $tag ) {
-					$maybe = array(
-						'show'  => get_page_by_path( $tag->slug, OBJECT, 'post_type_shows' ),
-						'actor' => get_page_by_path( $tag->slug, OBJECT, 'post_type_actors' ),
-					);
 
-					foreach ( $maybe as $type => $item ) {
-						if ( $item && $item->post_name === $tag->slug ) {
-							$related[ $type ] .= '<li>' . $icons[ $type ] . '<a href="/' . $type . '/' . $tag->slug . '">' . ucwords( $tag->name ) . '</a></li>';
+					$linked_post = get_term_meta( $tag->term_id, 'lez_termsmeta_linked_post', true );
+
+					if ( ! empty( $linked_post ) ) {
+						// If we have a linked post, we will trust it.
+						$type = rtrim( str_replace( 'post_type_', '', get_post_type( $linked_post ) ), 's' );
+						$related[ $type ] .= '<li>' . $icons[ $type ] . '<a href="' . get_permalink( $linked_post ) . '">' . get_the_title( $linked_post ) . '</a></li>';
+					} else {
+						// There's no post linked, so we're going to do it the hard way:
+						$maybe = array(
+							'show'  => get_page_by_path( $tag->slug, OBJECT, 'post_type_shows' ),
+							'actor' => get_page_by_path( $tag->slug, OBJECT, 'post_type_actors' ),
+						);
+						foreach ( $maybe as $type => $item ) {
+							if ( $item && $item->post_name === $tag->slug ) {
+								$related[ $type ] .= '<li>' . $icons[ $type ] . '<a href="/' . $type . '/' . $tag->slug . '">' . ucwords( $tag->name ) . '</a></li>';
+							}
 						}
 					}
 				}
@@ -161,6 +170,7 @@ class LWTV_Related_Posts {
 
 		return $content;
 	}
+
 }
 
 new LWTV_Related_Posts();
