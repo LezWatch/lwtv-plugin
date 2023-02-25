@@ -432,8 +432,18 @@ class LWTV_Shows_Calculate {
 		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
 		$current = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
 
+		// Only call their service once a day.
+		$tz        = new DateTimeZone( 'America/New_York' );
+		$today     = new DateTime( 'today', $tz );
+		$transient = get_transient( 'lwtv_3rd_scores_tmdb' );
+		if ( false === $transient ) {
+			$transient = $today;
+			set_transient( 'lwtv_3rd_scores_tmdb', $transient, 24 * HOUR_IN_SECONDS );
+		}
+		$recheck = ( $today > $transient ) ? true : false;
+
 		// Make sure the API is defined
-		if ( defined( 'TMDB_API' ) && $imdb_id ) {
+		if ( defined( 'TMDB_API' ) && $imdb_id && $recheck ) {
 			$response = wp_remote_get( 'https://api.themoviedb.org/3/find/' . $imdb_id . '?api_key=' . TMDB_API . '&external_source=imdb_id' );
 
 			// Check the response:
@@ -471,6 +481,16 @@ class LWTV_Shows_Calculate {
 		$url     = 'https://tvmaze.com/';
 		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
 		$current = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
+
+		// Only call their service once a day.
+		$tz        = new DateTimeZone( 'America/New_York' );
+		$today     = new DateTime( 'today', $tz );
+		$transient = get_transient( 'lwtv_3rd_scores_tvmaze' );
+		if ( false === $transient ) {
+			$transient = $today;
+			set_transient( 'lwtv_3rd_scores_tvmaze', $transient, 24 * HOUR_IN_SECONDS );
+		}
+		$recheck = ( $today > $transient ) ? true : false;
 
 		if ( $imdb_id ) {
 			$response = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . $imdb_id );

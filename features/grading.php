@@ -162,6 +162,22 @@ class LWTV_Grading {
 				<?php
 			}
 		}
+
+		// If you're logged in and can edit posts, you can refresh the scores.
+		if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
+			$post_id = get_the_ID();
+			if ( wp_verify_nonce( $_POST['_wpnonce'], 'lwtv-update-scores' ) ) {
+				// Do the save
+				( new LWTV_Shows_Calculate() )->do_the_math( $post_id );
+			}
+
+			?>
+			<form id="update_scores" name="update_scores" method="post">
+				<center><p><br /><input type="submit" value="Refresh Scores" tabindex="6" id="submit" name="submit" /></p></center>
+				<?php wp_nonce_field( 'lwtv-update-scores' ); ?>
+			</form>
+			<?php
+		}
 	}
 
 }
