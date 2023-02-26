@@ -9,8 +9,8 @@ class LWTV_This_Year_Chars {
 
 	/**
 	 * Output the dead
-	 * @param  [type] $thisyear [description]
-	 * @return [type]           [description]
+	 * @param  int  $thisyear Year to look for
+	 * @return void (echos output)
 	 */
 	public function dead( $thisyear ) {
 		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
@@ -89,8 +89,8 @@ class LWTV_This_Year_Chars {
 	 * List of characters for the year.
 	 *
 	 * @access public
-	 * @param mixed $thisyear
-	 * @return void
+	 * @param  int  $thisyear
+	 * @return void (echoes results)
 	 */
 	public function list( $thisyear ) {
 		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
@@ -285,6 +285,35 @@ class LWTV_This_Year_Chars {
 	}
 
 	/**
+	 * Chart of characters for the year.
+	 *
+	 * @access public
+	 * @param mixed  $thisyear
+	 * @param string $format
+	 * @return void
+	 */
+	public function chart( $thisyear, $format = 'sexuality' ) {
+		// Defaults:
+		$thisyear     = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
+		$valid_format = array( 'gender', 'sexuality ' );
+		$format       = ( in_array( $format, $valid_format ) ) ? $format : 'sexuality';
+
+		// Get array:
+		$loop_array = self::get_list( $thisyear );
+		$char_array = $loop_array['list'];
+
+		// If the data isn't empty, we go!
+		if ( ! empty( $char_array ) ) {
+			( new LWTV_Stats() )->generate( 'characters', $format . '_year', 'piechart', '', $char_array );
+		}
+
+		echo '<pre>';
+		//print_r( $char_array );
+		echo '</pre>';
+
+	}
+
+	/**
 	 * Get a list of the characters for a year
 	 * @param  int     $thisyear The year
 	 * @param  boolean $count    Just a count?
@@ -354,6 +383,7 @@ class LWTV_This_Year_Chars {
 					$char_array[ $char_slug ] = array(
 						'name'  => get_the_title( $char ),
 						'url'   => get_the_permalink( $char ),
+						'id'    => $char,
 						'shows' => $show_info,
 					);
 				}

@@ -75,7 +75,7 @@ class LWTV_Stats {
 					wp_add_inline_script( 'tablesorter', 'jQuery(document).ready(function($){ $("#showsTable").tablesorter({ theme : "bootstrap", }); });' );
 					break;
 			}
-		} elseif ( 'post_type_actors' === get_post_type() ) {
+		} elseif ( 'post_type_actors' === get_post_type() || is_page( array( 'this-year' ) ) ) {
 			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chart.js', array( 'jquery' ), '4.0.1', false );
 			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.1.0', false );
 			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
@@ -91,7 +91,7 @@ class LWTV_Stats {
 	 *
 	 * @return array
 	 */
-	public function generate( $subject, $data, $format, $post_id = false ) {
+	public function generate( $subject, $data, $format, $post_id = false, $custom_array = array() ) {
 		// Bail early if we're not an approved subject matter.
 		if ( ! in_array( $subject, array( 'characters', 'shows', 'actors' ), true ) ) {
 			return;
@@ -173,6 +173,11 @@ class LWTV_Stats {
 			case 'actor_char_dead':
 				// Custom call for dead character breakdown per actor
 				$array = ( new LWTV_Stats_Arrays() )->actor_char_dead( $post_type, $post_id );
+				break;
+			case 'sexuality_year':
+			case 'gender_year':
+				// Custom call for years.
+				$array = ( new LWTV_Stats_Arrays() )->this_year( $data, $custom_array );
 				break;
 		}
 

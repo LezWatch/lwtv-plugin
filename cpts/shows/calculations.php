@@ -427,20 +427,21 @@ class LWTV_Shows_Calculate {
 	 * @return n/a   Saves to DB.
 	*/
 	public function tmdb_score( $show_id ) {
+
 		$score   = 'TBD';
 		$url     = 'https://themoviedb.org/';
 		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
 		$current = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
+		$recheck = false;
 
 		// Only call their service once a day.
-		$tz        = new DateTimeZone( 'America/New_York' );
-		$today     = new DateTime( 'today', $tz );
-		$transient = get_transient( 'lwtv_3rd_scores_tmdb' );
+		$transient = get_transient( 'lwtv_3rd_scores_tmdb_' . $show_id );
 		if ( false === $transient ) {
-			$transient = $today;
-			set_transient( 'lwtv_3rd_scores_tmdb', $transient, 24 * HOUR_IN_SECONDS );
+			$recheck = true;
+		} else {
+			$score   = $transient;
+			$recheck = ( 'TBD' !== $score ) ? false : true;
 		}
-		$recheck = ( $today > $transient ) ? true : false;
 
 		// Make sure the API is defined
 		if ( defined( 'TMDB_API' ) && $imdb_id && $recheck ) {
@@ -456,6 +457,9 @@ class LWTV_Shows_Calculate {
 					$url  .= ( isset( $body['tv_results'][0]['id'] ) ) ? 'tv/' . $body['tv_results'][0]['id'] : '';
 				}
 			}
+
+			// Set transient and don't re-check until tomorrow.
+			set_transient( 'lwtv_3rd_scores_tmdb_' . $show_id, $score, 24 * HOUR_IN_SECONDS );
 		}
 
 		if ( ! is_array( $current ) ) {
@@ -481,18 +485,18 @@ class LWTV_Shows_Calculate {
 		$url     = 'https://tvmaze.com/';
 		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
 		$current = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
+		$recheck = false;
 
 		// Only call their service once a day.
-		$tz        = new DateTimeZone( 'America/New_York' );
-		$today     = new DateTime( 'today', $tz );
-		$transient = get_transient( 'lwtv_3rd_scores_tvmaze' );
+		$transient = get_transient( 'lwtv_3rd_scores_tvmaze_' . $show_id );
 		if ( false === $transient ) {
-			$transient = $today;
-			set_transient( 'lwtv_3rd_scores_tvmaze', $transient, 24 * HOUR_IN_SECONDS );
+			$recheck = true;
+		} else {
+			$score   = $transient;
+			$recheck = ( 'TBD' !== $score ) ? false : true;
 		}
-		$recheck = ( $today > $transient ) ? true : false;
 
-		if ( $imdb_id ) {
+		if ( $imdb_id && $recheck ) {
 			$response = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . $imdb_id );
 
 			// Check the response:
@@ -505,6 +509,9 @@ class LWTV_Shows_Calculate {
 					$score = ( isset( $body['rating']['average'] ) && ! empty( $body['rating']['average'] ) ) ? round( $body['rating']['average'] * 10 ) : 'TBD';
 				}
 			}
+
+			// Set transient and don't re-check until tomorrow.
+			set_transient( 'lwtv_3rd_scores_tvmaze_' . $show_id, $score, 24 * HOUR_IN_SECONDS );
 		}
 
 		if ( ! is_array( $current ) ) {
