@@ -166,9 +166,12 @@ class LWTV_Grading {
 		// If you're logged in and can edit posts, you can refresh the scores.
 		if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
 			$post_id = get_the_ID();
-			if ( wp_verify_nonce( $_POST['_wpnonce'], 'lwtv-update-scores' ) ) {
+			if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'lwtv-update-scores' ) ) {
 				// Do the save
 				( new LWTV_Shows_Calculate() )->do_the_math( $post_id );
+				sleep( 5 );
+				wp_safe_redirect( get_the_permalink( $post_id ) );
+				exit;
 			}
 
 			?>
