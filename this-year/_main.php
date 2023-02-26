@@ -94,6 +94,30 @@ class LWTV_This_Year {
 					</div>
 				</div>
 			</div>
+
+			<div class="row">
+				<div class="col col-sm-6">
+					<div class="card text-center">
+						<h3 class="card-header alert-success">Character Sexuality</h3>
+						<div class="card-body bg-light">
+							<div>
+								<?php ( new LWTV_This_Year_Chars() )->chart( $thisyear, 'sexuality' ); ?>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col col-sm-6">
+					<div class="card text-center">
+						<h3 class="card-header alert-success">Character Gender</h3>
+						<div class="card-body bg-light">
+							<div>
+								<?php ( new LWTV_This_Year_Chars() )->chart( $thisyear, 'gender' ); ?>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div class="row">
 				<div class="col">
 					<div class="card text-center">

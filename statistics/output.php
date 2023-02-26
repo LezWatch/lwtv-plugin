@@ -572,6 +572,9 @@ class LWTV_Stats_Output {
 		// We show empty sets for these:
 		$show_zero = array( 'actor_char_dead', 'actor_char_roles' );
 
+		// Top Bar
+		$show_top = array( 'gender_year', 'sexuality_year' );
+
 		// Strip hypens becuase ChartJS doesn't like it.
 		$data = str_replace( '-', '', $data );
 
@@ -658,6 +661,10 @@ class LWTV_Stats_Output {
 							if ( in_array( $data, $show_zero ) ) {
 								?>
 								position: 'bottom',
+								<?php
+							} elseif ( in_array( $data, $show_top ) ) {
+								?>
+								position: 'top',
 								<?php
 							} else {
 								// Everything else has a sidebar so we don't need both... Do we?
