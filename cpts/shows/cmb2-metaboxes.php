@@ -64,25 +64,6 @@ class LWTV_Shows_CMB2 {
 	}
 
 	/**
-	 * Create a list of all shows
-	 */
-	public function cmb2_get_shows_options() {
-		$the_id    = ( false !== get_the_ID() ) ? get_the_ID() : 0;
-		$transient = get_transient( 'lwtv_count_shows' );
-		if ( false === $transient || ! is_array( $transient ) ) {
-			$transient = ( new LWTV_CMB2() )->get_post_options( 'post_type_shows', '-1' );
-			set_transient( 'lwtv_count_shows', $transient, 24 * HOUR_IN_SECONDS );
-		}
-
-		// Remove THIS show because we use it for related posts
-		if ( is_array( $transient ) && 0 !== $the_id ) {
-			unset( $transient[ $the_id ] );
-		}
-
-		return $transient;
-	}
-
-	/**
 	 * Create a list of all genres that the show has
 	 */
 	public function cmb2_get_genres_options() {

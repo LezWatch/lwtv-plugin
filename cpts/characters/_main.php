@@ -483,7 +483,7 @@ class LWTV_CPT_Characters {
 			}
 
 			$characters = array_unique( $characters );
-			update_post_meta( $post_id, 'lezshows_char_list', $characters );
+			update_post_meta( $show_id, 'lezshows_char_list', $characters );
 
 			// Reset to end
 			wp_reset_query();

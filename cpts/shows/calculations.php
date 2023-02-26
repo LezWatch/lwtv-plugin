@@ -30,7 +30,7 @@ class LWTV_Shows_Calculate {
 		$realness   = min( (int) get_post_meta( $post_id, 'lezshows_realness_rating', true ), 5 );
 		$quality    = min( (int) get_post_meta( $post_id, 'lezshows_quality_rating', true ), 5 );
 		$screentime = min( (int) get_post_meta( $post_id, 'lezshows_screentime_rating', true ), 5 );
-		$score      = ( $realness + $quality + $screentime ) * 2;
+		$score      = ( $realness + $quality + $screentime ) * 3;
 
 		// Add in Thumb Score Rating: 10, 5, 0, -10
 		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
@@ -140,11 +140,14 @@ class LWTV_Shows_Calculate {
 				// Points: Regular = 5; Recurring = 2; Guests = 1
 				$char_score = ( count( $chars_regular ) * 5 ) + ( count( $chars_recurring ) * 2 ) + count( $chars_guest );
 
+				// TODO: Consider ratio-ing - if there are a lot of guests and no regulars, that's bad, but if your guests
+				// are closer in line to the number of regulars... Maybe 4 guests to 1 regular?
+
 				// Bonuses and Demerits
 				// Bonuses:  queer irl = 4pts; no cliches = 2pt; trans played by non-trans = 2pts
 				// Demerits: dead = -3pts; trans played by non-trans = -2pts
 				$queer_irl   = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'queer-irl' ) ) * 10 );
-				$no_cliches  = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'none' ) * 5 );
+				$no_cliches  = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'none' ) ) * 5 );
 				$the_dead    = ( max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'dead' ) ) * -5 );
 				$trans_chars = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'trans' ) );
 				$trans_irl   = max( 0, ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'trans-irl' ) );
@@ -429,8 +432,18 @@ class LWTV_Shows_Calculate {
 		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
 		$current = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
 
+		// Only call their service once a day.
+		$tz        = new DateTimeZone( 'America/New_York' );
+		$today     = new DateTime( 'today', $tz );
+		$transient = get_transient( 'lwtv_3rd_scores_tmdb' );
+		if ( false === $transient ) {
+			$transient = $today;
+			set_transient( 'lwtv_3rd_scores_tmdb', $transient, 24 * HOUR_IN_SECONDS );
+		}
+		$recheck = ( $today > $transient ) ? true : false;
+
 		// Make sure the API is defined
-		if ( defined( 'TMDB_API' ) && $imdb_id ) {
+		if ( defined( 'TMDB_API' ) && $imdb_id && $recheck ) {
 			$response = wp_remote_get( 'https://api.themoviedb.org/3/find/' . $imdb_id . '?api_key=' . TMDB_API . '&external_source=imdb_id' );
 
 			// Check the response:
@@ -468,6 +481,16 @@ class LWTV_Shows_Calculate {
 		$url     = 'https://tvmaze.com/';
 		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
 		$current = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
+
+		// Only call their service once a day.
+		$tz        = new DateTimeZone( 'America/New_York' );
+		$today     = new DateTime( 'today', $tz );
+		$transient = get_transient( 'lwtv_3rd_scores_tvmaze' );
+		if ( false === $transient ) {
+			$transient = $today;
+			set_transient( 'lwtv_3rd_scores_tvmaze', $transient, 24 * HOUR_IN_SECONDS );
+		}
+		$recheck = ( $today > $transient ) ? true : false;
 
 		if ( $imdb_id ) {
 			$response = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . $imdb_id );
