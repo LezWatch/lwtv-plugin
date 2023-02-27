@@ -570,8 +570,10 @@ class LWTV_Debug {
 				$problems[] = 'IMDb ID is invalid (ex: tt12345).';
 			}
 
-			if ( empty( $check['imdb'] ) ) {
-				$problems[] = 'IMDb ID is not set.';
+			if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
+				if ( empty( $check['imdb'] ) ) {
+					$problems[] = 'IMDb ID is not set.';
+				}
 			}
 
 			if ( ! $check['stations'] || is_wp_error( $check['stations'] ) ) {
