@@ -574,6 +574,7 @@ class LWTV_Stats_Output {
 
 		// Top Bar
 		$show_top = array( 'gender_year', 'sexuality_year' );
+		$data_top = substr( $data, 0, -5 );
 
 		// Strip hypens becuase ChartJS doesn't like it.
 		$data = str_replace( '-', '', $data );
@@ -658,11 +659,11 @@ class LWTV_Stats_Output {
 					plugins: {
 						legend: {
 							<?php
-							if ( in_array( $data, $show_zero ) ) {
+							if ( in_array( $data, $show_zero, true ) ) {
 								?>
 								position: 'bottom',
 								<?php
-							} elseif ( in_array( $data, $show_top ) ) {
+							} elseif ( in_array( $data_top, $show_top, true ) ) {
 								?>
 								position: 'top',
 								<?php

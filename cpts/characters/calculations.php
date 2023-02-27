@@ -99,6 +99,7 @@ class LWTV_Characters_Calculate {
 				$characters   = array_unique( $characters );
 				update_post_meta( $actor_id, 'lezactors_char_list', $characters );
 
+				// Do the math for actors:
 				( new LWTV_Actors_Calculate() )->do_the_math( $actor_id );
 			}
 		}

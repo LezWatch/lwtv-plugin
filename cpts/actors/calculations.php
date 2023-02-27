@@ -23,7 +23,8 @@ class LWTV_Actors_Calculate {
 	 */
 	public function count( $post_id, $type = 'count' ) {
 
-		$type_array = array( 'count', 'none', 'dead' );
+		$type_array        = array( 'count', 'none', 'dead' );
+		$character_checked = array();
 
 		// If this isn't an actor post or a valid request, return nothing
 		if ( 'post_type_actors' !== get_post_type( $post_id ) || ! in_array( $type, $type_array, true ) ) {
@@ -34,12 +35,12 @@ class LWTV_Actors_Calculate {
 		$characters = get_post_meta( $post_id, 'lezactors_char_list', true );
 
 		// If the character list is empty, we must build it
-		if ( empty( $characters ) ) {
-			$character_checked = array();
+		if ( empty( $characters ) || 0 === count( $characters ) ) {
 
-			// Loop to get the list of characters
+			// Loop to get the list of characters:
 			$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
 
+			// We only need the IDs:
 			if ( $charactersloop->have_posts() ) {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 			}
@@ -47,22 +48,23 @@ class LWTV_Actors_Calculate {
 			wp_reset_query();
 
 			$characters = array_unique( $characters );
+		}
 
-			foreach ( $characters as $char_id ) {
-				$actors = get_post_meta( $char_id, 'lezchars_actor', true );
-				if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
-					foreach ( $actors as $actor ) {
-						// We have to check because due to so many characters, we have some actor mis-matches.
-						if ( $actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
-							$character_checked[] = $the_id;
-						}
+		// Check all characters:
+		foreach ( $characters as $char_id ) {
+			$actors = get_post_meta( $char_id, 'lezchars_actor', true );
+			if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
+				foreach ( $actors as $actor ) {
+					// We have to check because due to so many characters, we have some actor mis-matches.
+					if ( $actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+						$character_checked[] = $the_id;
 					}
 				}
 			}
-
-			update_post_meta( $post_id, 'lezactors_char_list', $character_checked );
-
 		}
+
+		// Update post meta:
+		update_post_meta( $post_id, 'lezactors_char_list', $character_checked );
 
 		// Process character counts:
 		$queercount = 0;
@@ -115,12 +117,14 @@ class LWTV_Actors_Calculate {
 	 */
 	public function do_the_math( $post_id ) {
 
-		// Update counts
-		update_post_meta( $post_id, 'lezactors_char_count', self::count( $post_id, 'count' ) );
-		update_post_meta( $post_id, 'lezactors_dead_count', self::count( $post_id, 'dead' ) );
+		// Calculate meta:
+		$all_chars  = self::count( $post_id, 'count' );
+		$dead_chars = self::count( $post_id, 'dead' );
+		$is_queer   = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $post_id ) ) ? true : false;
 
-		// Is Queer?
-		$is_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $post_id ) ) ? true : false;
+		// Update Meta:
+		update_post_meta( $post_id, 'lezactors_char_count', $all_chars );
+		update_post_meta( $post_id, 'lezactors_dead_count', $dead_chars );
 		update_post_meta( $post_id, 'lezactors_queer', $is_queer );
 	}
 
