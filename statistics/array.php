@@ -1541,7 +1541,7 @@ class LWTV_Stats_Arrays {
 
 		// loop through array and rebuild into format for charts.
 		$transient = 'this_year_' . $data;
-		//$array     = get_transient( $transient );
+		$array     = get_transient( $transient );
 		$taxonomy  = str_replace( '_year', '', $data );
 
 		// If the array is empty, we want to rebuild it.
