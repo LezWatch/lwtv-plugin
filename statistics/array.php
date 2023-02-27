@@ -1537,12 +1537,17 @@ class LWTV_Stats_Arrays {
 		return $array;
 	}
 
+	/**
+	 * Stats for This Year
+	 * 
+	 * @param string $data  
+	 */
 	public function this_year( $data, $year_array = array() ) {
 
 		// loop through array and rebuild into format for charts.
 		$transient = 'this_year_' . $data;
 		$array     = get_transient( $transient );
-		$taxonomy  = str_replace( '_year', '', $data );
+		$taxonomy  = substr( $data, 0, -10 );      // Remove _year_XXXX from the end.
 
 		// If the array is empty, we want to rebuild it.
 		if ( false === $array || empty( $array ) ) {

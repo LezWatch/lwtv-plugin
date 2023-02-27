@@ -304,12 +304,8 @@ class LWTV_This_Year_Chars {
 
 		// If the data isn't empty, we go!
 		if ( ! empty( $char_array ) ) {
-			( new LWTV_Stats() )->generate( 'characters', $format . '_year', 'piechart', '', $char_array );
+			( new LWTV_Stats() )->generate( 'characters', $format . '_year_' . $thisyear, 'piechart', '', $char_array );
 		}
-
-		echo '<pre>';
-		//print_r( $char_array );
-		echo '</pre>';
 
 	}
 

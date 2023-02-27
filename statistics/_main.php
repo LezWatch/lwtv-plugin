@@ -174,11 +174,19 @@ class LWTV_Stats {
 				// Custom call for dead character breakdown per actor
 				$array = ( new LWTV_Stats_Arrays() )->actor_char_dead( $post_type, $post_id );
 				break;
-			case 'sexuality_year':
-			case 'gender_year':
-				// Custom call for years.
+		}
+
+		// Custom call for years. We check if the value ends with a year and is between
+		// FIRST_LWTV_YEAR and this year.
+		// Then we check if the data is of the two subsets we want:
+		$maybe_year = substr( $data, -4 );
+
+		if ( $maybe_year <= gmdate( 'Y' ) && $maybe_year >= FIRST_LWTV_YEAR ) {
+			$years_array = array( 'sexuality_year', 'gender_year' );
+			$maybe_case  = substr( $data, 0, -5 );
+			if ( in_array( $maybe_case, $years_array, true ) ) {
 				$array = ( new LWTV_Stats_Arrays() )->this_year( $data, $custom_array );
-				break;
+			}
 		}
 
 		// Custom call for Deep Dive Data
