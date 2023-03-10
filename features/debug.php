@@ -256,6 +256,9 @@ class LWTV_Debug {
 					// Build the data
 					$wiki_queery = 'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' . $search_body['search']['0']['id'] . '&format=json';
 					$wiki_data   = wp_remote_get( $wiki_queery );
+					if ( is_wp_error( $wiki_data ) ) {
+						return;
+					}
 					$wiki_array  = json_decode( $wiki_data['body'], true );
 
 					$wiki_actor = array_shift( $wiki_array['entities'] );
