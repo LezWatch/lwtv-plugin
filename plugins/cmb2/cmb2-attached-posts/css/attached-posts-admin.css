@@ -38,6 +38,10 @@
 	width: 100%;
 }
 
+.cmb-type-custom-attached-posts .connected.has-reached-limit {
+	cursor: default!important;
+}
+
 .cmb-type-custom-attached-posts .retrieved.connected {
 	height: 100%;
 }

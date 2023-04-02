@@ -156,12 +156,16 @@ class WDS_CMB2_Attached_Posts_Field {
 		$has_thumbnail = $this->field->options( 'show_thumbnails' ) ? ' has-thumbnails' : '';
 		$hide_selected = $this->field->options( 'hide_selected' ) ? ' hide-selected' : '';
 
+		// Check if we have a max limit AND if we reached it.
+		$has_max_limit = ( $this->field->attributes( 'data-max-items' ) ) ? (int) $this->field->attributes( 'data-max-items' ) : false;
+		$reached_limit = ( false !== $has_max_limit && count( $attached ) === $has_max_limit ) ? ' has-reached-limit' : '';
+
 		if ( $filter_boxes ) {
 			// phpcs:ignore
 			printf( $filter_boxes, 'available-search' );
 		}
 
-		echo '<ul class="retrieved connected' . esc_attr( $has_thumbnail ) . esc_attr( $hide_selected ) . '">';
+		echo '<ul class="retrieved connected' . esc_attr( $reached_limit ) . esc_attr( $has_thumbnail ) . esc_attr( $hide_selected ) . '">';
 
 		// Loop through our posts as list items
 		$this->display_retrieved( $objects, $attached );
@@ -306,6 +310,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return void
 	 */
 	public function list_item( $object, $li_class, $icon_class = 'dashicons-plus' ) {
+
 		echo '<li 
 			data-id="' . esc_attr( $this->get_id( $object ) ) . '" 
 			class="' . esc_attr( $li_class ) . '" target="_blank">'
