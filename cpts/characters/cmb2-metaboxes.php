@@ -187,7 +187,7 @@ class LWTV_Characters_CMB2 {
 			array(
 				'name'       => 'TV Show',
 				'id'         => 'show',
-				'desc'       => 'Select one show. (NB: On older posts, even if you pick two, only the first will show up)',
+				'desc'       => 'Select one show.',
 				'type'       => 'custom_attached_posts', // This field type
 				'post_type'  => 'post_type_shows',
 				'options'    => array(

@@ -388,7 +388,7 @@ class LWTV_CPT_Characters {
 			}
 		}
 
-		if ( !isset( $new_characters ) ) {
+		if ( ! isset( $new_characters ) ) {
 			$new_characters = $characters;
 		}
 
