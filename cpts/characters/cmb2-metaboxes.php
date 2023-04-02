@@ -185,13 +185,21 @@ class LWTV_Characters_CMB2 {
 		$field_shows = $cmb_characters->add_group_field(
 			$group_shows,
 			array(
-				'name'            => 'TV Show',
-				'id'              => 'show',
-				'desc'            => 'Click on the search icon to select the show.<br />BUG! Additional shows won\'t display the name until AFTER save and refresh. Mika knows.',
-				'type'            => 'post_search_text', // This field type
-				'post_type'       => 'post_type_shows',
-				'select_type'     => 'radio',
-				'select_behavior' => 'replace',
+				'name'       => 'TV Show',
+				'id'         => 'show',
+				'desc'       => 'Select one show. (NB: On older posts, even if you pick two, only the first will show up)',
+				'type'       => 'custom_attached_posts', // This field type
+				'post_type'  => 'post_type_shows',
+				'options'    => array(
+					'query_args' => array(
+						'filter_boxes'   => true,
+						'posts_per_page' => 5,
+						'post_type'      => 'post_type_shows',
+					), // override the get_posts args
+				),
+				'attributes' => array(
+					'data-max-items' => 1,
+				),
 			)
 		);
 		// Field: Character Type
