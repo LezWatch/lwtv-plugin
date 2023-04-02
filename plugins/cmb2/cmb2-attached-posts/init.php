@@ -551,6 +551,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return void
 	 */
 	public function ajax_find_posts() {
+		// @codingStandardsIgnoreStart
 		if (
 			defined( 'DOING_AJAX' )
 			&& DOING_AJAX
@@ -565,6 +566,7 @@ class WDS_CMB2_Attached_Posts_Field {
 				add_action( 'pre_get_posts', array( $this, 'modify_query' ) );
 			}
 		}
+		// @codingStandardsIgnoreEnd
 	}
 
 	/**
@@ -577,6 +579,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return void
 	 */
 	public function modify_query( $query ) {
+		// @codingStandardsIgnoreStart
 		$is_users = 'pre_get_users' === current_filter();
 
 		if ( $is_users ) {
@@ -602,6 +605,7 @@ class WDS_CMB2_Attached_Posts_Field {
 		}
 
 		$this->maybe_callback( $query, $_POST );
+		// @codingStandardsIgnoreEnd
 	}
 
 	/**
@@ -629,9 +633,11 @@ class WDS_CMB2_Attached_Posts_Field {
 			$field = $cmb->get_field( $field, $group );
 		}
 
+		// @codingStandardsIgnoreStart
 		if ( $field && ( $cb = $field->maybe_callback( 'attached_posts_search_query_cb' ) ) ) {
 			call_user_func( $cb, $query, $field, $this );
 		}
+		// @codingStandardsIgnoreEnd
 	}
 
 	/**
