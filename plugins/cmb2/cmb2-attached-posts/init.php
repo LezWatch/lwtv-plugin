@@ -194,7 +194,7 @@ class WDS_CMB2_Attached_Posts_Field {
 		// Open our attached posts list
 		echo '<div class="attached-wrap column-wrap">';
 		// translators: %s is the post content.
-		echo '<h4 class="attached-posts-section">' . esc_html( sprintf( __( 'Attached %s', 'cmb' ), $post_type_labels ) ) . '<span class="attached-posts-remaining"> (<span class="attached-posts-remaining-number"></span> remaining)</span></span></h4>';
+		echo '<h4 class="attached-posts-section">' . esc_html( sprintf( __( 'Attached %s', 'cmb' ), $post_type_labels ) ) . '<span class="attached-posts-remaining hidden"> (<span class="attached-posts-remaining-number"></span> remaining)</span></span></h4>';
 
 		if ( $filter_boxes ) {
 			// phpcs:ignore
@@ -381,7 +381,7 @@ class WDS_CMB2_Attached_Posts_Field {
 		}
 
 		$post_type_obj = get_post_type_object( $object->post_type );
-		$label = isset( $post_type_obj->labels->singular_name ) ? $post_type_obj->labels->singular_name : $post_type_obj->label;
+		$label         = isset( $post_type_obj->labels->singular_name ) ? $post_type_obj->labels->singular_name : $post_type_obj->label;
 
 		return apply_filters( 'cmb2_attached_posts_field_label', ' &mdash; <span class="object-label">' . $label . '</span> ', $label, $object );
 	}
@@ -452,7 +452,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	}
 
 	/**
-	 * Peforms a get_posts or get_users query.
+	 * Performs a get_posts or get_users query.
 	 *
 	 * @since  1.2.4
 	 *
@@ -476,7 +476,7 @@ class WDS_CMB2_Attached_Posts_Field {
 			// Windows
 			$content_dir = str_replace( '/', DIRECTORY_SEPARATOR, WP_CONTENT_DIR );
 			$content_url = str_replace( $content_dir, WP_CONTENT_URL, $dir );
-			$url = str_replace( DIRECTORY_SEPARATOR, '/', $content_url );
+			$url         = str_replace( DIRECTORY_SEPARATOR, '/', $content_url );
 
 		} else {
 			$url = str_replace(

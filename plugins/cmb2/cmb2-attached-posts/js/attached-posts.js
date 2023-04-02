@@ -27,8 +27,8 @@ window.CMBAP = window.CMBAP || {};
 	// Make sure we cannot attach more posts than we would like.
 	app.updateReadOnly = function ($wrap) {
 
-		// If we have exceeded our limit, then ensure the user cannot attach more items.
-		// If we haven't, make sure the user can attach items.
+		// IF we have exceeded our limit, then ensure the user cannot attach more items.
+		// ELSE, make sure the user can attach items.
 		if (app._hasExceeded($wrap)) {
 			// Also ensure items aren't draggable
 			// @see https://stackoverflow.com/questions/1324044/how-do-i-disable-a-jquery-ui-draggable
@@ -47,9 +47,11 @@ window.CMBAP = window.CMBAP || {};
 		var $remainingLabel = $wrap.find('.attached-posts-remaining');
 		var $remainingNumberLabel = $remainingLabel.find('.attached-posts-remaining-number');
 		var remainingNumber = 0;
+
 		if (typeof maxItems !== "undefined") {
 			// How many can we add?
 			remainingNumber = maxItems - currentNumberItems;
+
 			// Show the label and update the number inside
 			$remainingLabel.removeClass("hidden");
 			$remainingNumberLabel.html(remainingNumber);
