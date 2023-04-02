@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: CMB2 Field Type: Attached Posts
+ * Plugin Name: FORKED -- CMB2 Field Type: Attached Posts
  * Plugin URI: https://github.com/WebDevStudios/cmb2-attached-posts
  * Description: Attached posts field type for CMB2.
- * Version: 1.2.7
+ * Version: 2.0
  * Author: WebDevStudios
  * Author URI: http://webdevstudios.com
  * License: GPLv2+
@@ -26,6 +26,8 @@
 
 /**
  * Copyright (c) 2016 WebDevStudios (email : contact@webdevstudios.com)
+ *
+ * Forked with many fixes by LezWatch.TV - 2023
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2 or, at
@@ -155,5 +157,5 @@ if ( ! class_exists( 'WDS_CMB2_Attached_Posts_Field_127', false ) ) {
 	}
 
 	// Kick it off.
-	new WDS_CMB2_Attached_Posts_Field_127;
+	new WDS_CMB2_Attached_Posts_Field_127();
 }

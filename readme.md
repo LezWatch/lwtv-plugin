@@ -339,11 +339,3 @@ Pushes to branches are automatically deployed via Actions as follows:
 
 * Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site) (password required - Ask Mika)
 * Production: [lezwatchtv.com](https://lezwatchtv.com)
-
-## Notes
-
-Possible API integrations...
-
-* Get a list of seasons: http://api.tvmaze.com/shows/1/seasons
-* TV Detail: https://developers.themoviedb.org/3/tv/get-tv-details
-* Find by IMDB: https://developers.themoviedb.org/3/find/find-by-id

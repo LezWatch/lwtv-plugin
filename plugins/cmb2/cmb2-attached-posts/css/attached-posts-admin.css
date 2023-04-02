@@ -32,10 +32,18 @@
 .cmb-type-custom-attached-posts .connected {
 	background: #F4F4F4;
 	cursor: pointer;
-	height: 300px;
+	min-height: 180px;
 	overflow-y: scroll;
 	padding: 0;
 	width: 100%;
+}
+
+.cmb-type-custom-attached-posts .connected.has-reached-limit {
+	cursor: default!important;
+}
+
+.cmb-type-custom-attached-posts .retrieved.connected {
+	height: 100%;
 }
 
 .cmb-type-custom-attached-posts .has-thumbnails.connected {

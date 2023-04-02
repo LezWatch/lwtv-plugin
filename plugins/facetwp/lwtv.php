@@ -203,9 +203,8 @@ class LWTV_FacetWP {
 
 		// Characters
 		if ( 'post_type_characters' === get_post_type( $params['post_id'] ) ) {
-			// Actors
-			// Saves one value for each actor
-			// a:1:{i:0;s:13:"Rachel Bilson";}
+			// Sorting Actors - Saves one value for each actor
+			// EXAMPLE: a:1:{i:0;s:13:"Rachel Bilson";}
 			if ( 'char_actors' === $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];
 				foreach ( $values as $val ) {
@@ -217,15 +216,16 @@ class LWTV_FacetWP {
 				$params['facet_value'] = '';
 				return $params;
 			}
-			// Shows
-			// Saves one value for each show
-			// a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
+			// Sorting Shows - Saves one value for each show
+			// EXAMPLE: a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
 			if ( 'char_shows' === $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];
 				foreach ( $values as $val ) {
+					if ( isset( $val['show'] ) ) {
 						$params['facet_value']         = $val['show'];
 						$params['facet_display_value'] = get_the_title( $val['show'] );
 						$class->insert( $params );
+					}
 				}
 				// skip default indexing
 				$params['facet_value'] = '';
