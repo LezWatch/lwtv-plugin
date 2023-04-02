@@ -256,6 +256,9 @@ class LWTV_Debug {
 					// Build the data
 					$wiki_queery = 'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' . $search_body['search']['0']['id'] . '&format=json';
 					$wiki_data   = wp_remote_get( $wiki_queery );
+					if ( is_wp_error( $wiki_data ) ) {
+						return;
+					}
 					$wiki_array  = json_decode( $wiki_data['body'], true );
 
 					$wiki_actor = array_shift( $wiki_array['entities'] );
@@ -264,7 +267,8 @@ class LWTV_Debug {
 					// If there's a wikipedia URL, let's get details.
 					if ( '' !== $check_ours['wikipedia'] ) {
 						$parsed_wiki = wp_parse_url( $check_ours['wikipedia'] );
-						$wiki_lang   = array_shift( explode( '.', $parsed_wiki['host'] ) );
+						$parsed_url  = explode( '.', $parsed_wiki['host'] );
+						$wiki_lang   = $parsed_wiki['host'][0];
 
 						if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {
 							$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ]['title'] );

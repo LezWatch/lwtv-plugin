@@ -56,8 +56,8 @@ class LWTV_Actors_Calculate {
 			if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
 				foreach ( $actors as $actor ) {
 					// We have to check because due to so many characters, we have some actor mis-matches.
-					if ( $actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
-						$character_checked[] = $the_id;
+					if ( $actor == $post_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+						$character_checked[] = $char_id;
 					}
 				}
 			}

@@ -45,6 +45,12 @@ class LWTV_Gravity_Forms {
 
 		// Loop and find the email:
 		foreach ( $entry as $value => $key ) {
+
+			// If it's empty, we're just going to return.
+			if ( is_null( $key ) ) {
+				return false;
+			}
+
 			if ( is_email( $key ) && ! $is_spammer ) {
 				$email        = $key;
 				$is_spammer   = LWTV_Find_Spammers::is_spammer( $email, 'email', 'disallowed_keys' );
@@ -52,7 +58,7 @@ class LWTV_Gravity_Forms {
 			}
 
 			if ( rest_is_ip_address( $key ) && ! $is_spammer ) {
-				$ip           = $key;
+				$ip           = (string) $key;
 				$is_spammer   = LWTV_Find_Spammers::is_spammer( $ip, 'ip', 'disallowed_keys' );
 				$is_moderated = LWTV_Find_Spammers::is_spammer( $ip, 'ip', 'moderated_keys' );
 				$is_bot       = self::check_ip_location( $ip, 'hosting' );
