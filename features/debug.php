@@ -462,6 +462,11 @@ class LWTV_Debug {
 				$problems[] = 'No shows listed.';
 			} else {
 				foreach ( $check['shows'] as $each_show ) {
+					// Remove the Array.
+					if ( is_array( $each_show['show'] ) ) {
+						$each_show['show'] = $each_show['show'][0];
+					}
+
 					if ( ! is_array( $each_show['appears'] ) ) {
 						$problems[] = 'No years on air set for ' . get_the_title( $each_show['show'] ) . '.';
 					}

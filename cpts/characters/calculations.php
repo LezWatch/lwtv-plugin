@@ -55,6 +55,11 @@ class LWTV_Characters_Calculate {
 			foreach ( $shows as $show_id ) {
 				if ( isset( $show_id['show'] ) ) {
 
+					// Remove the Array.
+					if ( is_array( $show_id['show'] ) ) {
+						$show_id['show'] = $show_id['show'][0];
+					}
+
 					// Add character to list for show
 					$characters = get_post_meta( $show_id['show'], 'lezshows_char_list', true );
 					if ( empty( $characters ) ) {

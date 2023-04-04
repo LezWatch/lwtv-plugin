@@ -234,6 +234,13 @@ class LWTV_CPT_Characters {
 
 			if ( '' !== $shows_ids && ! is_null( $shows_ids ) ) {
 				foreach ( $shows_ids as $each_show ) {
+
+					// De-Array.
+					if ( is_array( $each_show['show'] ) ) {
+						$each_show['show'] = $each_show['show'][0];
+					}
+
+					// Get titles.
 					if ( isset( $each_show['show'] ) ) {
 						array_push( $shows_titles, get_the_title( $each_show['show'] ) );
 					}
@@ -501,8 +508,9 @@ class LWTV_CPT_Characters {
 			if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
 				foreach ( $shows_array as $char_show ) {
 
+					// Remove the Array if it's there.
 					if ( is_array( $char_show['show'] ) ) {
-						$char_show['show'] = reset( $char_show['show'] );
+						$char_show['show'] = $char_show['show'][0];
 					}
 
 					// Because of show IDs having SIMILAR numbers, we need to be a little more flex

@@ -333,6 +333,11 @@ class LWTV_This_Year_Chars {
 				$show_ids   = get_post_meta( $char, 'lezchars_show_group', true );
 				$show_title = array();
 				foreach ( $show_ids as $each_show ) {
+					// If it's an array, de-array it.
+					if ( is_array( $each_show['show'] ) ) {
+						$each_show['show'] = reset( $each_show['show'] );
+					}
+
 					// Make sure this show is in the year
 					if ( array_key_exists( 'appears', $each_show ) && in_array( $thisyear, $each_show['appears'], true ) ) {
 						$counted_chars++;

@@ -303,7 +303,6 @@ class LWTV_Stats {
 	 * @return array        [total number, on-air, total score, on-air score]
 	 */
 	public function showcount( $type, $tax, $term ) {
-
 		$queery = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
 		$return = 0;
 

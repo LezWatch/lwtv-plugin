@@ -390,6 +390,8 @@ class LWTV_Shows_Calculate {
 
 			if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
 				foreach ( $shows_array as $char_show ) {
+
+					// Remove the array if it's there.
 					if ( is_array( $char_show['show'] ) ) {
 						$char_show['show'] = $char_show['show'][0];
 					}
