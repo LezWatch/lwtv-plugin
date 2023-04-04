@@ -192,7 +192,6 @@ class LWTV_Characters_CMB2 {
 				'post_type'  => 'post_type_shows',
 				'options'    => array(
 					'query_args' => array(
-						'filter_boxes'   => true,
 						'posts_per_page' => 5,
 						'post_type'      => 'post_type_shows',
 					), // override the get_posts args

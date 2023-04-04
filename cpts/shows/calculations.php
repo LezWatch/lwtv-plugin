@@ -384,11 +384,16 @@ class LWTV_Shows_Calculate {
 			wp_reset_query();
 		}
 
+		$new_characters = array();
 		foreach ( $characters as $char_id ) {
 			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
 			if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
 				foreach ( $shows_array as $char_show ) {
+					if ( is_array( $char_show['show'] ) ) {
+						$char_show['show'] = $char_show['show'][0];
+					}
+
 					// phpcs:ignore WordPress.PHP.StrictComparisons
 					if ( $char_show['show'] == $post_id ) {
 						// Bump the array for this role

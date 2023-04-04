@@ -306,14 +306,11 @@ class LWTV_CPT_Characters {
 
 			wp_reset_query();
 
-			if ( is_array( $characters ) ) {
-				$characters = array_unique( $characters );
-			} else {
-				$characters = array( $characters );
-			}
+			$characters = ( is_array( $characters ) ) ? array_unique( $characters ) : array( $characters );
 		}
 
-		$char_counts = array(
+		$new_characters = array();
+		$char_counts    = array(
 			'total' => 0,
 			'dead'  => 0,
 			'none'  => 0,
@@ -323,7 +320,7 @@ class LWTV_CPT_Characters {
 		);
 
 		if ( ! empty( $characters ) ) {
-			$new_characters = array();
+
 			foreach ( $characters as $char_id ) {
 				// Get the list of shows.
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
@@ -337,7 +334,10 @@ class LWTV_CPT_Characters {
 					'publish' === get_post_status( $char_id )
 				) {
 					foreach ( $shows_array as $char_show ) {
-						if ( (int) $char_show['show'] === $show_id ) {
+						if ( is_array( $char_show['show'] ) ) {
+							$char_show['show'] = $char_show['show'][0];
+						}
+						if ( $char_show['show'] == $show_id ) {
 							// Get a list of actors (we need this twice later)
 							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
 							if ( ! is_array( $actors_ids ) ) {
@@ -388,7 +388,7 @@ class LWTV_CPT_Characters {
 			}
 		}
 
-		if ( ! isset( $new_characters ) ) {
+		if ( empty( $new_characters ) ) {
 			$new_characters = $characters;
 		}
 
@@ -482,7 +482,7 @@ class LWTV_CPT_Characters {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 			}
 
-			$characters = array_unique( $characters );
+			$characters = ( ! is_array( $characters ) ) ? array() : array_unique( $characters );
 			update_post_meta( $show_id, 'lezshows_char_list', $characters );
 
 			// Reset to end
@@ -491,7 +491,6 @@ class LWTV_CPT_Characters {
 
 		// Empty array to display later
 		$display    = array();
-		$characters = array_unique( $characters );
 
 		foreach ( $characters as $char_id ) {
 			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
@@ -501,6 +500,11 @@ class LWTV_CPT_Characters {
 			// data to the character template to determine what to display.
 			if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
 				foreach ( $shows_array as $char_show ) {
+
+					if ( is_array( $char_show['show'] ) ) {
+						$char_show['show'] = reset( $char_show['show'] );
+					}
+
 					// Because of show IDs having SIMILAR numbers, we need to be a little more flex
 					// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
 					if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
@@ -537,6 +541,18 @@ class LWTV_CPT_Characters {
 
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
+
+		// Fix Shows - you only get one!
+		$all_shows = get_post_meta( $post_id, 'lezchars_show_group', true );
+		$new_shows = array();
+		foreach ( $all_shows as $each_show ) {
+			// If it's an array, de-array it.
+			if ( is_array( $each_show['show'] ) ) {
+				$each_show['show'] = reset( $each_show['show'] );
+			}
+			$new_shows[] = $each_show;
+		}
+		update_post_meta( $post_id, 'lezchars_show_group', $new_shows );
 
 		// Character scores
 		( new LWTV_Characters_Calculate() )->do_the_math( $post_id );

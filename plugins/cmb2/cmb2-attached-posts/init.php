@@ -83,6 +83,7 @@ class WDS_CMB2_Attached_Posts_Field {
 				array(
 					'post_type'      => 'post',
 					'posts_per_page' => 100,
+					'post_status'    => array( 'publish', 'pending', 'draft', 'future', 'private', 'inherit' ),
 				)
 			);
 
@@ -591,8 +592,8 @@ class WDS_CMB2_Attached_Posts_Field {
 			// This is not working until we fix the user query bit.
 			return;
 		} else {
-			$types = sanitize_text_string( $_POST['search_types'] );
-			$types = is_array( $types ) ? array_map( 'sanitize_text_string', $types ) : sanitize_text_string( $types );
+			$types = $_POST['search_types'];
+			$types = is_array( $types ) ? array_map( 'esc_attr', $types ) : esc_attr( $types );
 			$query->set( 'post_type', $types );
 		}
 
