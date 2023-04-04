@@ -50,6 +50,11 @@ class LWTV_CPT_Char_Columns {
 		if ( '' !== $character_show_ids ) {
 			foreach ( $character_show_ids as $each_show ) {
 
+				// Remove the Array.
+				if ( is_array( $each_show['show'] ) ) {
+					$each_show['show'] = $each_show['show'][0];
+				}
+
 				$show = get_the_title( $each_show['show'] );
 				$role = ( isset( $each_show['type'] ) ) ? ucfirst( $each_show['type'] ) : 'ERROR';
 

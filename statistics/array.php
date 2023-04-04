@@ -1155,7 +1155,7 @@ class LWTV_Stats_Arrays {
 
 						if ( '' !== $shows_array ) {
 
-							foreach ( $shows_array as $each_show ) {
+							foreach ( $shows_array as $char_show ) {
 								if ( 'guest' === $char_show['type'] ) {
 									$guest['alive']++;
 									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {

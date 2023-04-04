@@ -156,6 +156,11 @@ class LWTV_BYQ_JSON {
 				$all_shows = get_post_meta( $dead_char->ID, 'lezchars_show_group', true );
 				$show_ids  = array();
 				foreach ( $all_shows as $show ) {
+					// Remove the Array.
+					if ( is_array( $show['show'] ) ) {
+						$show['show'] = $show['show'][0];
+					}
+
 					$show_ids[] = $show['show'];
 				}
 
@@ -407,6 +412,11 @@ class LWTV_BYQ_JSON {
 					$shows_all = get_post_meta( get_the_ID(), 'lezchars_show_group', true );
 					$shows     = '';
 					foreach ( $shows_all as $show ) {
+						// Remove the Array.
+						if ( is_array( $show['show'] ) ) {
+							$show['show'] = $show['show'][0];
+						}
+
 						$shows .= get_the_title( $show['show'] ) . ', ';
 					}
 					$shows = rtrim( $shows, ', ' );

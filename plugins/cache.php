@@ -21,6 +21,13 @@ class LWTV_Cache {
 		$shows = get_post_meta( $post_id, 'lezchars_show_group', true );
 		if ( ! empty( $shows ) ) {
 			foreach ( $shows as $show ) {
+
+				// Remove the Array.
+				if ( is_array( $show['show'] ) ) {
+					$show['show'] = $show['show'][0];
+				}
+
+				// If the show is live, we'll flush it.
 				if ( isset( $show['show'] ) && 'publish' === get_post_status( $show['show'] ) ) {
 					$clean_urls[] = get_permalink( $show['show'] );
 				}

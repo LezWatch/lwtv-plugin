@@ -367,6 +367,11 @@ class LWTV_Export_JSON {
 			$shows_full  = get_post_meta( $character, 'lezchars_show_group', true );
 			$shows_array = array();
 			foreach ( $shows_full as $show ) {
+				// Remove the Array.
+				if ( is_array( $show['show'] ) ) {
+					$show['show'] = $show['show'][0];
+				}
+
 				$appears = implode( ';', $show['appears'] );
 				$shows_array[] = get_the_title( $show['show'] ) . ' - ' . $show['type'] . ' (' . $appears . ')';
 			}
@@ -552,6 +557,11 @@ class LWTV_Export_JSON {
 			$all_shows = get_post_meta( $page->ID, 'lezchars_show_group', true );
 			if ( '' !== $all_shows ) {
 				foreach ( $all_shows as $a_show ) {
+					// Remove the Array.
+					if ( is_array( $a_show['show'] ) ) {
+						$a_show['show'] = $a_show['show'][0];
+					}
+
 					$the_shows[] = '\'' . get_the_title( $a_show['show'] ) . '\'';
 				}
 
