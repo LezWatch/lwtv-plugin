@@ -58,7 +58,7 @@ class LWTV_CPT_Show_Columns {
 				$output = ucfirst( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) );
 				break;
 			case 'shows-queercount':
-				$output = get_post_meta( $post_id, 'lezshows_char_count', true );
+				$output = count( get_post_meta( $post_id, 'lezshows_char_list', true ) );
 				break;
 			default:
 				$output = '';
