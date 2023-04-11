@@ -167,7 +167,13 @@ class LWTV_Grading {
 		if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
 			$post_id = get_the_ID();
 			if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'lwtv-update-scores' ) ) {
-				// Do the save
+				// First we want to nuke a couple settings.
+				delete_post_meta( $post_id, 'lezshows_char_list' );
+				delete_post_meta( $post_id, 'lezshows_char_count' );
+				delete_post_meta( $post_id, 'lezshows_dead_list' );
+				delete_post_meta( $post_id, 'lezshows_dead_count' );
+
+				// Do the save.
 				( new LWTV_Shows_Calculate() )->do_the_math( $post_id );
 				sleep( 5 );
 				wp_safe_redirect( get_the_permalink( $post_id ) );
