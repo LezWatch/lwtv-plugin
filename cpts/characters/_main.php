@@ -316,8 +316,9 @@ class LWTV_CPT_Characters {
 			$characters = ( is_array( $characters ) ) ? array_unique( $characters ) : array( $characters );
 		}
 
-		$new_characters = array();
-		$char_counts    = array(
+		$new_characters  = array();
+		$dead_characters = array();
+		$char_counts     = array(
 			'total' => 0,
 			'dead'  => 0,
 			'none'  => 0,
@@ -361,6 +362,7 @@ class LWTV_CPT_Characters {
 							// Dead?
 							if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
 								$char_counts['dead']++;
+								$dead_characters[] = $char_id;
 							}
 							// No cliches?
 							if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
@@ -400,7 +402,9 @@ class LWTV_CPT_Characters {
 		}
 
 		update_post_meta( $show_id, 'lezshows_char_list', $new_characters );
-		update_post_meta( $show_id, 'lezshows_dead_list', $char_counts['dead'] );
+		update_post_meta( $show_id, 'lezshows_char_count', count( $new_characters ) );
+		update_post_meta( $show_id, 'lezshows_dead_list', $dead_characters );
+		update_post_meta( $show_id, 'lezshows_dead_count', $char_counts['dead'] );
 
 		switch ( $output ) {
 			case 'dead':
@@ -497,7 +501,7 @@ class LWTV_CPT_Characters {
 		}
 
 		// Empty array to display later
-		$display    = array();
+		$display = array();
 
 		foreach ( $characters as $char_id ) {
 			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
