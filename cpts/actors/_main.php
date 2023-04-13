@@ -41,6 +41,7 @@ class LWTV_CPT_Actors {
 				'name'   => 'sexuality',
 				'plural' => 'sexualities',
 			),
+			'lez_actor_romantic'  => array( 'name' => 'romantic orientation' ),
 			'lez_actor_pronouns'  => array( 'name' => 'pronoun' ),
 		);
 
