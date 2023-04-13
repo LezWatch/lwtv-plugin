@@ -40,7 +40,7 @@ class LWTV_Functions {
 	 * @return void
 	 */
 	public function __construct() {
-		self::$version = '3.3';
+		self::$version = '4.0';
 		add_filter( 'http_request_args', array( $this, 'disable_wp_update' ), 10, 2 );
 		add_filter( 'attachment_fields_to_edit', array( $this, 'add_attachment_attribution' ), 10000, 2 );
 		add_action( 'edit_attachment', array( $this, 'save_attachment_attribution' ) );
@@ -288,6 +288,8 @@ class LWTV_Functions {
 
 	/*
 	 * Login Errors
+	 *
+	 * If you put in the wrong password, Diane flips you off.
 	 */
 	public function login_errors( $error ) {
 		$diane = '<br /><img src="' . plugins_url( 'assets/images/diane-fuck-off.gif', __FILE__ ) . '" />';
@@ -296,7 +298,7 @@ class LWTV_Functions {
 	}
 
 	/**
-	 * Damn it Google, GO AWAY
+	 * Damn it Google, GO AWAY from our dev sites!
 	 * Since: 2.1.4
 	 */
 	public function add_meta_tags() {
@@ -318,7 +320,7 @@ class LWTV_Functions {
 	/**
 	 * Extend login sessions
 	 * @param  int    $expire Current expire length (3 days)
-	 * @return int            New time
+	 * @return int            New time (1 year)
 	 */
 	public function extend_login_session( $expire ) {
 		// Set login session limit in seconds
