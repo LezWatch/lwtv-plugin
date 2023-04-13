@@ -24,10 +24,6 @@ class LWTV_CMB2_Addons {
 		require_once dirname( __FILE__ ) . '/cmb2/lwtv.php';
 		/* CMB2 Grid */
 		require_once dirname( __FILE__ ) . '/cmb2/cmb2-grid/Cmb2GridPluginLoad.php';
-		/* Select2 */
-		if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
-			require_once dirname( __FILE__ ) . '/cmb2/cmb-field-select2/cmb-field-select2.php';
-		}
 		/* Date Year Range */
 		require_once dirname( __FILE__ ) . '/cmb2/year-range.php';
 		/* Attached Posts */
