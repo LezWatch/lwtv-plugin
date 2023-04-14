@@ -479,14 +479,15 @@ class LWTV_Shows_CMB2 {
 		// Field: Similar Shows.
 		$field_similarshows = $cmb_e_watch->add_field(
 			array(
-				'name'    => 'Similar Shows',
-				'desc'    => 'Drag shows from the left column to the right column to add them.<br />Use search to find the shows.',
-				'id'      => $prefix . 'similar_shows',
-				'type'    => 'custom_attached_posts',
-				'options' => array(
+				'name'       => 'Similar Shows',
+				'desc'       => 'Drag shows from the left column to the right column to add them.<br />Use search to find the shows.',
+				'id'         => $prefix . 'similar_shows',
+				'type'       => 'custom_attached_posts',
+				'options'    => array(
 					'query_args' => array(
 						'posts_per_page' => 5,
 						'post_type'      => 'post_type_shows',
+						'post__not_in'   => isset( $_GET['post'] ) ? array( absint( $_GET['post'] ) ) : false, // phpcs:ignore WordPress.Security.NonceVerification
 					), // override the get_posts args
 				),
 				'attributes' => array(
