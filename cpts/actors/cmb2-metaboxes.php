@@ -158,10 +158,16 @@ class LWTV_Actors_CMB2 {
 		// Field: Queer override Checkbox
 		$field_queer_override = $cmb_actorside->add_field(
 			array(
-				'name' => 'Queer Override',
-				'desc' => 'Is an actor queer but its not showing up? Check this IF YOU ARE SURE.',
-				'id'   => $prefix . 'queer_override',
-				'type' => 'checkbox',
+				'name'    => 'Queer Override',
+				'desc'    => 'Allow manual intervention to force someone to be marked as queer or not.',
+				'id'      => $prefix . 'queer_override',
+				'type'    => 'select',
+				'default' => 'undefined',
+				'options' => array(
+					'undefined' => 'Unknown (Default)',
+					'is_queer'  => 'Is Queer',
+					'not_queer' => 'Is NOT Queer',
+				),
 			)
 		);
 		// Field: Actor Pronouns

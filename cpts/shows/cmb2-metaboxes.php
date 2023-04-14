@@ -387,7 +387,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 
-		// Must See Grid.
+		// Must See Grid 2.
 		if ( ! is_admin() ) {
 			return;
 		} else {
@@ -404,6 +404,15 @@ class LWTV_Shows_CMB2 {
 				'id'      => $prefix . 'worthit_show_we_love',
 				'type'    => 'checkbox',
 				'default' => false,
+			)
+		);
+		// Field: Death Override
+		$field_byq_override = $cmb_mustsee->add_field(
+			array(
+				'name' => 'BYQ Override',
+				'desc' => 'Allow manual intervention to NOT treat BYQ as a negative. Only use if you\'ve cleared it with the Editorial Team.',
+				'id'   => $prefix . 'byq_override',
+				'type' => 'checkbox',
 			)
 		);
 		// Field: Worth It - Watch Online

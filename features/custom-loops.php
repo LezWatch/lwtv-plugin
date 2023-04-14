@@ -44,15 +44,17 @@ class LWTV_Loops {
 			return;
 		}
 
-		// Check the override. If it's set true, we return true always.
+		// Check the override.
 		$override = get_post_meta( $the_id, 'lezactors_queer_override', true );
-		if ( isset( $override ) && ! empty( $override ) && 'on' === $override ) {
-			return 'yes';
+		if ( isset( $override ) && ! empty( $override ) && 'undefined' !== $override ) {
+			$is_queer = ( 'is_queer' === $override ) ? 'yes' : 'no';
+			return $is_queer;
 		}
 
 		// If we're private, we aren't queer no matter what to protect identities.
 		if ( 'private' === get_post_status( $the_id ) ) {
-			return 'no';
+			$is_queer = 'no';
+			return $is_queer;
 		}
 
 		/**

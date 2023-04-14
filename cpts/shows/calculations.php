@@ -217,6 +217,12 @@ class LWTV_Shows_Calculate {
 		$count_tropes = ( $tropes ) ? count( $tropes ) : 0;
 		$has_dead     = ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) ? true : false;
 
+		// Death Override Checker.
+		$override = get_post_meta( $post_id, 'lezshows_byq_override', true );
+		if ( isset( $override ) && ! empty( $override ) && 'yes' === $override ) {
+			$has_dead = false;
+		}
+
 		// Good tropes are always good.
 		// Maybe tropes are only good IF there isn't Queer-for-Ratings
 		$good_tropes  = array( 'happy-ending', 'everyones-queer' );
