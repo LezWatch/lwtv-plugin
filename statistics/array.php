@@ -1466,7 +1466,7 @@ class LWTV_Stats_Arrays {
 		$array     = get_transient( $transient );
 
 		if ( false === $array || empty( $array ) ) {
-			$base_array     = array(
+			$base_array = array(
 				'alive' => array(
 					'count' => 0,
 					'name'  => 'alive',
