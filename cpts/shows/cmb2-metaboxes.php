@@ -135,10 +135,10 @@ class LWTV_Shows_CMB2 {
 		// @codingStandardsIgnoreEnd.
 
 		// Metabox Group: Summary.
-		$cmb_excerpt = new_cmb2_box(
+		$cmb_a_excerpt = new_cmb2_box(
 			array(
 				'id'           => 'show_summary_metabox',
-				'title'        => 'Summary',
+				'title'        => 'Show Summary',
 				'object_types' => array( 'post_type_shows' ),
 				'context'      => 'normal',
 				'priority'     => 'high',
@@ -148,7 +148,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Excerpt.
-		$field_excerpt = $cmb_excerpt->add_field(
+		$field_excerpt = $cmb_a_excerpt->add_field(
 			array(
 				'name'      => 'Excerpt',
 				'id'        => 'excerpt',
@@ -159,11 +159,11 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 
-		// Metabox Group: Must See.
-		$cmb_mustsee = new_cmb2_box(
+		// METABOX GROUP: Must See.
+		$cmb_b_details = new_cmb2_box(
 			array(
 				'id'           => 'show_details_metabox',
-				'title'        => 'TV Show Details',
+				'title'        => 'Basic Show Details',
 				'object_types' => array( 'post_type_shows' ),
 				'context'      => 'normal',
 				'priority'     => 'high',
@@ -173,7 +173,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Air Dates.
-		$field_airdates = $cmb_mustsee->add_field(
+		$field_airdates = $cmb_b_details->add_field(
 			array(
 				'name'    => 'Air Dates',
 				'id'      => $prefix . 'airdates',
@@ -196,7 +196,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Number of Seasons.
-		$field_seasons = $cmb_mustsee->add_field(
+		$field_seasons = $cmb_b_details->add_field(
 			array(
 				'name'            => 'Seasons Aired',
 				'id'              => $prefix . 'seasons',
@@ -210,7 +210,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Stations.
-		$field_stations = $cmb_mustsee->add_field(
+		$field_stations = $cmb_b_details->add_field(
 			array(
 				'name'              => 'TV Station(s)',
 				'id'                => $prefix . 'tvstations',
@@ -227,7 +227,7 @@ class LWTV_Shows_CMB2 {
 		);
 
 		// Field: Nations.
-		$field_nations = $cmb_mustsee->add_field(
+		$field_nations = $cmb_b_details->add_field(
 			array(
 				'name'              => 'Country of Origin',
 				'id'                => $prefix . 'tvnations',
@@ -243,7 +243,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Format.
-		$field_format = $cmb_mustsee->add_field(
+		$field_format = $cmb_b_details->add_field(
 			array(
 				'name'             => 'Media Format',
 				'id'               => $prefix . 'tvtype',
@@ -255,7 +255,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: IMDb ID.
-		$field_imdb = $cmb_mustsee->add_field(
+		$field_imdb = $cmb_b_details->add_field(
 			array(
 				'name'       => 'IMDb ID',
 				'id'         => $prefix . 'imdb',
@@ -266,7 +266,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Genre.
-		$field_genre = $cmb_mustsee->add_field(
+		$field_genre = $cmb_b_details->add_field(
 			array(
 				'name'              => 'Genre',
 				'id'                => $prefix . 'tvgenre',
@@ -282,7 +282,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Genre Primary.
-		$field_genre_primary = $cmb_mustsee->add_field(
+		$field_genre_primary = $cmb_b_details->add_field(
 			array(
 				'name'             => 'Primary Genre',
 				'id'               => $prefix . 'tvgenre_primary',
@@ -294,7 +294,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Stars.
-		$field_stars = $cmb_mustsee->add_field(
+		$field_stars = $cmb_b_details->add_field(
 			array(
 				'name'             => 'Show Stars',
 				'desc'             => 'Gold is by/for queers, No Stars is normal TV',
@@ -306,7 +306,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Trigger Warning.
-		$field_trigger = $cmb_mustsee->add_field(
+		$field_trigger = $cmb_b_details->add_field(
 			array(
 				'name'             => 'Warning?',
 				'desc'             => 'Trigger Warnings',
@@ -318,7 +318,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Intersectionality.
-		$field_intersectional = $cmb_mustsee->add_field(
+		$field_intersectional = $cmb_b_details->add_field(
 			array(
 				'name'              => 'Intersectionality',
 				'id'                => $prefix . 'intersectional',
@@ -334,7 +334,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Tropes.
-		$field_tropes = $cmb_mustsee->add_field(
+		$field_tropes = $cmb_b_details->add_field(
 			array(
 				'name'              => 'Trope Plots',
 				'id'                => $prefix . 'tropes',
@@ -349,36 +349,52 @@ class LWTV_Shows_CMB2 {
 				),
 			)
 		);
-		// Must See Grid.
+		// Details Grid.
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_ms = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_mustsee );
-			$row1ms  = $grid_ms->addRow();
-			$row2ms  = $grid_ms->addRow();
-			$row3ms  = $grid_ms->addRow();
-			$row4ms  = $grid_ms->addRow();
-			$row5ms  = $grid_ms->addRow();
-			$row1ms->addColumns( array( $field_airdates, $field_seasons ) );
-			$row2ms->addColumns( array( $field_stations, $field_nations ) );
-			$row3ms->addColumns( array( $field_format, $field_imdb ) );
-			$row4ms->addColumns( array( $field_genre, $field_genre_primary ) );
-			$row5ms->addColumns( array( $field_stars, $field_trigger ) );
+			$grid_b_deet = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_b_details );
+			$row1_b_deet = $grid_b_deet->addRow();
+			$row2_b_deet = $grid_b_deet->addRow();
+			$row3_b_deet = $grid_b_deet->addRow();
+			$row4_b_deet = $grid_b_deet->addRow();
+			$row5_b_deet = $grid_b_deet->addRow();
+			$row1_b_deet->addColumns( array( $field_airdates, $field_seasons ) );
+			$row2_b_deet->addColumns( array( $field_stations, $field_nations ) );
+			$row3_b_deet->addColumns( array( $field_format, $field_imdb ) );
+			$row4_b_deet->addColumns( array( $field_genre, $field_genre_primary ) );
+			$row5_b_deet->addColumns( array( $field_stars, $field_trigger ) );
 		}
-		// Field: Worth It?
-		$field_worththumb = $cmb_mustsee->add_field(
+
+		// METABOX GROUP: Worth Id.
+		$cmb_c_worth = new_cmb2_box(
 			array(
-				'name'    => 'Worth It?',
+				'id'           => 'show_worth_metabox',
+				'title'        => 'Worth Watching Details',
+				'object_types' => array( 'post_type_shows' ),
+				'context'      => 'normal',
+				'priority'     => 'high',
+				'show_in_rest' => true,
+				'show_names'   => true, // Show field names on the left.
+				'cmb_styles'   => false,
+			)
+		);
+
+		// Field: Worth It?
+		$field_worththumb = $cmb_c_worth->add_field(
+			array(
+				'name'    => 'Worth Watching?',
 				'id'      => $prefix . 'worthit_rating',
-				'desc'    => 'Is the show worth watching?',
-				'type'    => 'radio_inline',
+				'desc'    => 'Is this show worth watching?',
+				'type'    => 'select',
+				'default' => 'TBD',
 				'options' => $this->thumbs_array,
 			)
 		);
 		// Field: Worth It Details.
-		$field_worthdetails = $cmb_mustsee->add_field(
+		$field_worthdetails = $cmb_c_worth->add_field(
 			array(
-				'name'       => 'Worth It Details',
+				'name'       => 'Details on Why',
 				'id'         => $prefix . 'worthit_details',
 				'type'       => 'textarea_small',
 				'attributes' => array(
@@ -387,46 +403,81 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 
-		// Must See Grid 2.
+		// GRID: Worth It
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_ms2 = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_mustsee );
-			$rowms2   = $grid_ms2->addRow();
-			$rowms2->addColumns( array( $field_worththumb, $field_worthdetails ) );
+			$grid_c_worth = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_c_worth );
+			$row_c_worth  = $grid_c_worth->addRow();
+			$row_c_worth->addColumns( array( $field_worththumb, $field_worthdetails ) );
 		}
 
+		// METABOX GROUP: Editorial Section
+		$cmb_d_editorial = new_cmb2_box(
+			array(
+				'id'           => $prefix . 'editorial',
+				'title'        => 'Editorial Section - Only use with Staff Approval!',
+				'object_types' => array( 'post_type_shows' ),
+				'context'      => 'normal',
+				'priority'     => 'high',
+				'show_in_rest' => true,
+				'show_names'   => true, // Show field names on the left.
+				'cmb_styles'   => false,
+			)
+		);
 		// Field: Worth It - We Love This Shit.
-		$field_worthshowwelove = $cmb_mustsee->add_field(
+		$field_worthshowwelove = $cmb_d_editorial->add_field(
 			array(
 				'name'    => 'Show We Love',
-				'desc'    => 'This is a show we officially love. Only use if you\'ve cleared it with the Editorial Team.',
+				'desc'    => 'This is a show we officially love.',
 				'id'      => $prefix . 'worthit_show_we_love',
 				'type'    => 'checkbox',
 				'default' => false,
 			)
 		);
 		// Field: Death Override
-		$field_byq_override = $cmb_mustsee->add_field(
+		$field_byq_override = $cmb_d_editorial->add_field(
 			array(
 				'name' => 'BYQ Override',
-				'desc' => 'Allow manual intervention to NOT treat BYQ as a negative. Only use if you\'ve cleared it with the Editorial Team.',
+				'desc' => 'Do NOT treat BYQ as a negative.',
 				'id'   => $prefix . 'byq_override',
 				'type' => 'checkbox',
 			)
 		);
-		// Field: Worth It - Watch Online
-		$field_affiliateurl = $cmb_mustsee->add_field(
+		// GRID: Editorial Details
+		if ( ! is_admin() ) {
+			return;
+		} else {
+			$grid_d_edit = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_d_editorial );
+			$row_d_edit  = $grid_d_edit->addRow();
+			$row_d_edit->addColumns( array( $field_worthshowwelove, $field_byq_override ) );
+		}
+
+		// METABOX GROUP: Watch
+		$cmb_e_watch = new_cmb2_box(
+			array(
+				'id'           => $prefix . 'editorial',
+				'title'        => 'Watching Details',
+				'object_types' => array( 'post_type_shows' ),
+				'context'      => 'normal',
+				'priority'     => 'high',
+				'show_in_rest' => true,
+				'show_names'   => true, // Show field names on the left.
+				'cmb_styles'   => false,
+			)
+		);
+		// Field: Watch Online
+		$field_affiliateurl = $cmb_e_watch->add_field(
 			array(
 				'name'       => 'Watch Online Link(s)',
-				'desc'       => 'Paste in a direct link. Amazon, Apple, and CBS links will be auto-converted to affiliate links.',
+				'desc'       => 'Paste in a direct link. Links are auto-converted to affiliate links.',
 				'id'         => $prefix . 'affiliate',
 				'type'       => 'text_url',
 				'repeatable' => true,
 			)
 		);
 		// Field: Similar Shows.
-		$field_similarshows = $cmb_mustsee->add_field(
+		$field_similarshows = $cmb_e_watch->add_field(
 			array(
 				'name'    => 'Similar Shows',
 				'desc'    => 'Drag shows from the left column to the right column to add them.<br />Use search to find the shows.',
@@ -438,11 +489,14 @@ class LWTV_Shows_CMB2 {
 						'post_type'      => 'post_type_shows',
 					), // override the get_posts args
 				),
+				'attributes' => array(
+					'data-max-items' => 6,
+				),
 			)
 		);
 
 		// Field Group: Show Name Information
-		$group_names = $cmb_mustsee->add_field(
+		$group_names = $cmb_e_watch->add_field(
 			array(
 				'id'         => $prefix . 'show_names',
 				'type'       => 'group',
@@ -456,7 +510,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Name
-		$field_shows = $cmb_mustsee->add_group_field(
+		$field_shows = $cmb_e_watch->add_group_field(
 			$group_names,
 			array(
 				'name'             => 'Name',
@@ -467,7 +521,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Language
-		$field_chartype = $cmb_mustsee->add_group_field(
+		$field_chartype = $cmb_e_watch->add_group_field(
 			$group_names,
 			array(
 				'name'             => 'Language',
@@ -480,8 +534,8 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 
-		// Metabox: Basic Show Details.
-		$cmb_showdetails = new_cmb2_box(
+		// Metabox: 'Ships and Plots
+		$cmb_f_shiplots = new_cmb2_box(
 			array(
 				'id'           => 'shows_metabox',
 				'title'        => 'Plots and Relationship Details',
@@ -492,7 +546,7 @@ class LWTV_Shows_CMB2 {
 				'show_names'   => true, // Show field names on the left.
 			)
 		);
-		$field_ships     = $cmb_showdetails->add_field(
+		$field_ships    = $cmb_f_shiplots->add_field(
 			array(
 				'name'       => '#Ships',
 				'id'         => $prefix . 'ships',
@@ -503,7 +557,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Queer Timeline.
-		$field_timeline = $cmb_showdetails->add_field(
+		$field_timeline = $cmb_f_shiplots->add_field(
 			array(
 				'name'       => 'Queer Timeline',
 				'id'         => $prefix . 'plots',
@@ -519,7 +573,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Notable Episodes.
-		$field_episodes = $cmb_showdetails->add_field(
+		$field_episodes = $cmb_f_shiplots->add_field(
 			array(
 				'name'       => 'Notable Episodes',
 				'id'         => $prefix . 'episodes',
@@ -538,13 +592,13 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_sd = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_showdetails );
-			$rowsd   = $grid_sd->addRow();
-			$rowsd->addColumns( array( $field_timeline, $field_episodes ) );
+			$grid_f_plot = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_f_shiplots );
+			$rows_f_plot = $grid_f_plot->addRow();
+			$rows_f_plot->addColumns( array( $field_timeline, $field_episodes ) );
 		}
 
 		// Metabox: Ratings.
-		$cmb_ratings = new_cmb2_box(
+		$cmb_g_ratings = new_cmb2_box(
 			array(
 				'id'           => 'ratings_metabox',
 				'title'        => 'Relativistic Ratings',
@@ -557,7 +611,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Realness Rating.
-		$field_rating_real = $cmb_ratings->add_field(
+		$field_rating_real = $cmb_g_ratings->add_field(
 			array(
 				'name'    => 'Realness Rating',
 				'id'      => $prefix . 'realness_rating',
@@ -567,7 +621,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Realness Details.
-		$field_detail_real = $cmb_ratings->add_field(
+		$field_detail_real = $cmb_g_ratings->add_field(
 			array(
 				'name'       => 'Realness Details',
 				'id'         => $prefix . 'realness_details',
@@ -583,7 +637,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Quality Rating.
-		$field_rating_quality = $cmb_ratings->add_field(
+		$field_rating_quality = $cmb_g_ratings->add_field(
 			array(
 				'name'    => 'Quality Rating',
 				'id'      => $prefix . 'quality_rating',
@@ -593,7 +647,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Quality Details.
-		$field_detail_quality = $cmb_ratings->add_field(
+		$field_detail_quality = $cmb_g_ratings->add_field(
 			array(
 				'name'       => 'Quality Details',
 				'id'         => $prefix . 'quality_details',
@@ -609,7 +663,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Screentime Rating.
-		$field_rating_screen = $cmb_ratings->add_field(
+		$field_rating_screen = $cmb_g_ratings->add_field(
 			array(
 				'name'    => 'Screentime Rating',
 				'id'      => $prefix . 'screentime_rating',
@@ -619,7 +673,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Screentime Details.
-		$field_detail_screen = $cmb_ratings->add_field(
+		$field_detail_screen = $cmb_g_ratings->add_field(
 			array(
 				'name'       => 'Screentime Details',
 				'id'         => $prefix . 'screentime_details',
@@ -638,13 +692,13 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_rate = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_ratings );
-			$row1      = $grid_rate->addRow();
-			$row2      = $grid_rate->addRow();
-			$row3      = $grid_rate->addRow();
-			$row2->addColumns( array( $field_rating_quality, $field_detail_quality ) );
-			$row1->addColumns( array( $field_rating_real, $field_detail_real ) );
-			$row3->addColumns( array( $field_rating_screen, $field_detail_screen ) );
+			$grid_g_rate = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_g_ratings );
+			$rows1_g_rate = $grid_g_rate->addRow();
+			$rows2_g_rate = $grid_g_rate->addRow();
+			$rows3_g_rate = $grid_g_rate->addRow();
+			$rows1_g_rate->addColumns( array( $field_rating_quality, $field_detail_quality ) );
+			$rows2_g_rate->addColumns( array( $field_rating_real, $field_detail_real ) );
+			$rows3_g_rate->addColumns( array( $field_rating_screen, $field_detail_screen ) );
 		}
 	}
 }
