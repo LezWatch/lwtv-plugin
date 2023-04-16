@@ -416,13 +416,17 @@ class LWTV_Shows_CMB2 {
 		$cmb_d_editorial = new_cmb2_box(
 			array(
 				'id'           => $prefix . 'editorial',
-				'title'        => 'Editorial Section - Only use with Staff Approval!',
+				'title'        => 'Editorial Section - STAFF ONLY (non admins can\'t see this)',
 				'object_types' => array( 'post_type_shows' ),
 				'context'      => 'normal',
 				'priority'     => 'high',
 				'show_in_rest' => true,
 				'show_names'   => true, // Show field names on the left.
 				'cmb_styles'   => false,
+				'show_on'      => array(
+					'key'   => 'role',
+					'value' => 'administrator',
+				),
 			)
 		);
 		// Field: Worth It - We Love This Shit.
