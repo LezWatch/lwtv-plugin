@@ -172,6 +172,7 @@ class LWTV_Grading {
 				delete_post_meta( $post_id, 'lezshows_char_count' );
 				delete_post_meta( $post_id, 'lezshows_dead_list' );
 				delete_post_meta( $post_id, 'lezshows_dead_count' );
+				delete_post_meta( $post_id, 'lezshows_the_score' );
 
 				// Now do the save.
 				( new LWTV_Shows_Calculate() )->do_the_math( $post_id );

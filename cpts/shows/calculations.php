@@ -116,7 +116,9 @@ class LWTV_Shows_Calculate {
 		}
 
 		// before we do the math, let's see if we have any characters:
-		$char_count = count( get_post_meta( $post_id, 'lezshows_char_list', true ) ) ;
+		$raw_char_count = get_post_meta( $post_id, 'lezshows_char_list', true );
+		$raw_char_count = ( ! is_array( $raw_char_count ) ) ? array( $raw_char_count ) : $raw_char_count;
+		$char_count     = count( $raw_char_count );
 
 		if ( ! isset( $char_count ) || empty( $char_count ) ) {
 			$char_count = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'count' );
@@ -216,6 +218,7 @@ class LWTV_Shows_Calculate {
 		$tropes       = wp_get_post_terms( $post_id, 'lez_tropes', true );
 		$count_tropes = ( $tropes ) ? count( $tropes ) : 0;
 		$has_dead     = ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) ? true : false;
+		$has_happyend = ( has_term( 'happy-ending', 'lez_tropes', $post_id ) ) ? true : false;
 
 		// Death Override Checker.
 		$override = get_post_meta( $post_id, 'lezshows_byq_override', true );
@@ -301,9 +304,13 @@ class LWTV_Shows_Calculate {
 		// Sanity Check: Below 0?
 		$score = ( $score < 0 ) ? 0 : $score;
 
-		// If there are any Dead Queers: remove one-third of the score
-		if ( 0 !== $score && $has_dead ) {
+		// Death Deductions
+		if ( 0 !== $score && $has_dead && ! $has_happyend ) {
+			// If there are dead WITHOUT happy-ending, drop by a third.
 			$score = ( $score * .66 );
+		} elseif ( 0 !== $score && $has_dead && $has_happyend ) {
+			// If there are dead WITH happy-ending, drop by a quarter
+			$score = ( $score * .75 );
 		}
 
 		// Sanity Check: Still above 100?
