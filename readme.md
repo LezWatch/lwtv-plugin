@@ -183,25 +183,24 @@ The file `_main.php` acts as an autoloader.
 
 * `cache.php` - Custom Cache specific to DreamPress hosting
     - Generates data used by Proxy Cache Purge and WP Rocket to know what to flush.
-* `/cmb2.php` - Integration with CMB2
+* `cmb2.php` - Integration with CMB2
     - calls other files
     - generates a CB2 formatted list of terms
 * `/cmb2/` - CMB2 add on libraries
-    - `/cmb-field-select2/` - CMB2 Field Type: Select2 (forked)
-    - `/cmb2-grid/` - CMB2 Grid Display
-    - `/cmb2-post-search-field/` - CMB2 Post Search (forked)
-    - `/cmb2.css` - Custom CSS
-    - `/lwtv.php` - Special code for us -- Favourite shows for author profiles, Symbolicon support
-    - `/year-range.php` - Year Range -- 'date_year_range' custom field type
+    - `cmb2-attached-posts/` - CMB2 attached posts (HEAVILY forked)
+    - `cmb2-grid/` - CMB2 Grid Display
+    - `cmb2.css` - Custom CSS
+    - `lwtv.php` - Special code for us -- Favorite shows for author profiles, Symbolicon support
+    - `year-range.php` - Year Range -- 'date_year_range' custom field type
 * `comment_probation.php` - Fork of abandoned plugin
-* `/facet.php` -- Facet WP
+* `facetwp.php` -- Facet WP
     - calls other files
     - Only show pagination if there's more than one page
     - Reset Shortcode
 * `/facetwp/` - FacetWP Folder
     - `/facetwp-cmb2/` - FacetWP Integration with CMB2
     - `facet.js` - Pagination Scrolling and Refresh Warning
-    - `/lwtv.php`
+    - `lwtv.php`
         - filter Data before it's saved to rename values (capitalization)
         - split actors and shows into separate entries, and add additional orderby params
 * `gravity-forms.php` - Protection from spammers via disallowed keys
@@ -215,6 +214,7 @@ The file `_main.php` acts as an autoloader.
     - Mark feedbacks as having been answered
     - Protection from spammers via disallowed keys
 * `varnish.php` - Generate a list of special URLs to flush per post type.
+* `yoast.php` - Custom Yoast controls
 
 ### Rest API
 

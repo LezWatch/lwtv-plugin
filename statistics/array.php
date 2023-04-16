@@ -1466,7 +1466,7 @@ class LWTV_Stats_Arrays {
 		$array     = get_transient( $transient );
 
 		if ( false === $array || empty( $array ) ) {
-			$base_array     = array(
+			$base_array = array(
 				'alive' => array(
 					'count' => 0,
 					'name'  => 'alive',
@@ -1491,8 +1491,9 @@ class LWTV_Stats_Arrays {
 
 				if ( $charactersloop->have_posts() ) {
 					$char_array = wp_list_pluck( $charactersloop->posts, 'ID' );
-					wp_reset_query();
 				}
+				wp_reset_query();
+
 				$char_array = array_unique( $char_array );
 
 				foreach ( $char_array as $char_id ) {

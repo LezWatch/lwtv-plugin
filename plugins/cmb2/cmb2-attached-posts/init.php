@@ -367,9 +367,27 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return string         The object title.
 	 */
 	public function get_title( $object ) {
-		return $this->field->options( 'query_users' )
-			? $object->data->display_name
-			: get_the_title( $object );
+		// Initial Title
+		$title = $this->field->options( 'query_users' ) ? $object->data->display_name : get_the_title( $object );
+
+		// We might have additional data.
+		$additional = array();
+
+		$status = get_post_status( $object );
+		if ( false !== $status && 'publish' !== $status ) {
+			$additional[] = $status;
+		}
+
+		$is_queer = get_post_meta( $object->ID, 'lezactors_queer', true );
+		if ( ! empty( $is_queer ) && $is_queer ) {
+			$additional[] = 'queer';
+		}
+
+		if ( ! empty( $additional ) ) {
+			$title .= ' (' . implode( ' - ', $additional ) . ')';
+		}
+
+		return $title;
 	}
 
 	/**

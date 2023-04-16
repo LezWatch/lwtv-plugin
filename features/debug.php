@@ -546,6 +546,12 @@ class LWTV_Debug {
 				'tropes'     => get_the_terms( $show_id, 'lez_tropes' ),
 			);
 
+			$list_count = count( get_post_meta( $post_id, 'lezshows_char_list', true ) );
+			if ( $check['chars'] !== $list_count ) {
+				$check['chars'] = $list_count;
+				update_post_meta( $post_id, 'lezshows_char_count', $list_count );
+			}
+
 			// If there's 0 screentime, it's okay there are no Characters
 			if ( ( ! $check['chars'] || empty( $check['chars'] ) ) && $check['screentime'] > 1 ) {
 				$problems[] = 'No characters listed.';

@@ -142,6 +142,34 @@ class LWTV_Actors_CMB2 {
 				'remove_default'   => 'true',
 			)
 		);
+		// Field: Actor Romantic Orientation
+		$field_romantic = $cmb_actorside->add_field(
+			array(
+				'name'             => 'Romantic Nature',
+				'desc'             => 'AKA affectional orientation',
+				'id'               => $prefix . 'romantic',
+				'taxonomy'         => 'lez_actor_romantic',
+				'type'             => 'taxonomy_select',
+				'default'          => 'unknown',
+				'show_option_none' => false,
+				'remove_default'   => 'true',
+			)
+		);
+		// Field: Queer override Checkbox
+		$field_queer_override = $cmb_actorside->add_field(
+			array(
+				'name'    => 'Queer Override',
+				'desc'    => 'Allow manual intervention to force someone to be marked as queer or not.',
+				'id'      => $prefix . 'queer_override',
+				'type'    => 'select',
+				'default' => 'undefined',
+				'options' => array(
+					'undefined' => 'Unknown (Default)',
+					'is_queer'  => 'Is Queer',
+					'not_queer' => 'Is NOT Queer',
+				),
+			)
+		);
 		// Field: Actor Pronouns
 		$field_pronouns = $cmb_actorside->add_field(
 			array(
@@ -301,15 +329,17 @@ class LWTV_Actors_CMB2 {
 			$row7           = $grid_actorside->addRow();
 			$row8           = $grid_actorside->addRow();
 			$row9           = $grid_actorside->addRow();
+			$row10          = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
-			$row2->addColumns( array( $field_pronouns ) );
-			$row3->addColumns( array( $field_birth, $field_death ) );
-			$row4->addColumns( array( $field_imdb, $field_wiki ) );
-			$row5->addColumns( array( $field_home ) );
-			$row6->addColumns( array( $field_twitter, $field_instagram ) );
-			$row7->addColumns( array( $field_tumblr, $field_mastodon ) );
-			$row8->addColumns( array( $field_facebook, $field_tiktok ) );
-			$row9->addColumns( array( $field_excerpt ) );
+			$row2->addColumns( array( $field_romantic, $field_queer_override ) );
+			$row3->addColumns( array( $field_pronouns ) );
+			$row4->addColumns( array( $field_birth, $field_death ) );
+			$row5->addColumns( array( $field_imdb, $field_wiki ) );
+			$row6->addColumns( array( $field_home ) );
+			$row7->addColumns( array( $field_twitter, $field_instagram ) );
+			$row8->addColumns( array( $field_tumblr, $field_mastodon ) );
+			$row9->addColumns( array( $field_facebook, $field_tiktok ) );
+			$row10->addColumns( array( $field_excerpt ) );
 		}
 	}
 

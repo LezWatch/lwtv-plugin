@@ -16,7 +16,7 @@ class LWTV_Data_Validation_Checks {
 	 * Local Variables
 	 */
 	protected $page_id = null;        // page ID
-	protected static $tool_tabs;       // all tabs
+	protected static $tool_tabs;      // all tabs
 
 	/*
 	 * Construct

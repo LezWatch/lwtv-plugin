@@ -41,6 +41,11 @@ class LWTV_Admin_Menu {
 			add_submenu_page( 'lwtv', 'Data Checker', 'Data Checker', 'upload_files', 'lwtv_data_check', 'LWTV_Data_Validation_Checks::settings_page' );
 		}
 
+		// Only admins can access this part:
+		if ( class_exists( 'LWTV_Exclusion_Checks' ) && current_user_can( 'activate_plugins' ) ) {
+			add_submenu_page( 'lwtv', 'Exclusion Checker', 'Exclusion Checker', 'activate_plugins', 'lwtv_exclusion_check', 'LWTV_Exclusion_Checks::settings_page' );
+		}
+
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$submenu['lwtv'][] = array( 'Documentation', 'read', esc_url( 'https://docs.lezwatchtv.com/' ) );
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
@@ -86,3 +91,4 @@ new LWTV_Admin_Menu();
 
 require_once 'admin_tools.php';
 require_once 'dashboard.php';
+require_once 'exclusions.php';
