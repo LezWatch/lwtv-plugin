@@ -150,9 +150,7 @@ class LWTV_Actors_CMB2 {
 				'id'               => $prefix . 'romantic',
 				'taxonomy'         => 'lez_actor_romantic',
 				'type'             => 'taxonomy_select',
-				'default'          => 'unknown',
-				'show_option_none' => false,
-				'remove_default'   => 'true',
+				'show_option_none' => 'No Selection (default)',
 			)
 		);
 		// Field: Queer override Checkbox
@@ -164,7 +162,7 @@ class LWTV_Actors_CMB2 {
 				'type'    => 'select',
 				'default' => 'undefined',
 				'options' => array(
-					'undefined' => 'Unknown (Default)',
+					'undefined' => 'No Selection (Default)',
 					'is_queer'  => 'Is Queer',
 					'not_queer' => 'Is NOT Queer',
 				),
