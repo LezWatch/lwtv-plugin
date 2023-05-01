@@ -3,7 +3,7 @@
         'name' => 'lezwatch/lwtv-plugin',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '5e1cddb66407885b92a836b4dbdb32f507d78bb6',
+        'reference' => '535566dbe8083ce4613ce20afba6c8418528d235',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -22,7 +22,7 @@
         'lezwatch/lwtv-plugin' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '5e1cddb66407885b92a836b4dbdb32f507d78bb6',
+            'reference' => '535566dbe8083ce4613ce20afba6c8418528d235',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
