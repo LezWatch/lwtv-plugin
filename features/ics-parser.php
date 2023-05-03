@@ -64,7 +64,7 @@ class LWTV_ICS_Parser {
 	 */
 	public function generate_by_date( $url, $when, $date = false ) {
 		$ical = new ICal();
-		$ical->initUrl( esc_url( $url ) );
+		$ical->initUrl( $url );
 
 		// Timezone
 		$tz = new DateTimeZone( 'America/New_York' );
