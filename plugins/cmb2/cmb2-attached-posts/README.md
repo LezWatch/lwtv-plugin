@@ -10,9 +10,11 @@ The post IDs are saved in an array, which can be rearranged by dragging and drop
 Follow the example in [`example-field-setup.php`](https://github.com/WebDevStudios/cmb2-attached-posts/blob/master/example-field-setup.php) for a demonstration. The example assumes you have both CMB2 and this extension in your mu-plugins directory. If you're using CMB2 installed as a plugin, remove [lines 6-9 of the example](https://github.com/WebDevStudios/cmb2-attached-posts/blob/master/example-field-setup.php#L6-L9).
 
 ## Customization
+
 The example demonstrates how to modify the `get_posts` query args, and allows you to toggle the thumbnails display as well as a filter search input.
 
 ## Usage
+
 You can retrieve the meta data using the following:
 
 ```php

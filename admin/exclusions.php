@@ -84,9 +84,14 @@ class LWTV_Exclusion_Checks {
 					$override = get_post_meta( $item, 'lezactors_queer_override', true );
 					break;
 				case 'death':
-					$override = ucfirst ( get_post_meta( $item, 'lezshows_byq_override', true ) );
+					$override = ucfirst( get_post_meta( $item, 'lezshows_byq_override', true ) );
 					break;
 			};
+
+			// If override is empty, we keep going.
+			if ( empty( $override ) ) {
+				continue;
+			}
 
 			echo '
 			<tr class="' . esc_attr( $class ) . '">
@@ -206,7 +211,7 @@ class LWTV_Exclusion_Checks {
 			<div class="lwtv-tools-table">
 				<table class="widefat fixed" cellspacing="0">
 					<thead><tr>
-						<th id="character" class="manage-column column-character" scope="col">Character</th>
+						<th id="show" class="manage-column column-show" scope="col">Show</th>
 						<th id="problem" class="manage-column column-problem" scope="col">Setting</th>
 					</tr></thead>
 
