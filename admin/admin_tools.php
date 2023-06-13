@@ -237,7 +237,7 @@ class LWTV_Data_Validation_Checks {
 	 */
 	public static function tab_queer_checker() {
 
-		$items = get_transient( 'lwtv_debug_queercheck' );
+		$items = LWTV_Transients::get_transient( 'lwtv_debug_queercheck' );
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_queer_checker_clicked' ) ) || false === $items ) {
@@ -299,7 +299,7 @@ class LWTV_Data_Validation_Checks {
 	 */
 	public static function tab_actor_checker() {
 
-		$items = get_transient( 'lwtv_debug_actor_problems' );
+		$items = LWTV_Transients::get_transient( 'lwtv_debug_actor_problems' );
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_checker_clicked' ) ) || false === $items ) {
@@ -407,7 +407,7 @@ class LWTV_Data_Validation_Checks {
 	 */
 	public static function tab_actor_empty() {
 
-		$items = get_transient( 'lwtv_debug_actor_empty' );
+		$items = LWTV_Transients::get_transient( 'lwtv_debug_actor_empty' );
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_empty_clicked' ) ) || false === $items ) {
@@ -472,7 +472,7 @@ class LWTV_Data_Validation_Checks {
 	 */
 	public static function tab_show_checker() {
 
-		$items = get_transient( 'lwtv_debug_show_problems' );
+		$items = LWTV_Transients::get_transient( 'lwtv_debug_show_problems' );
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_checker_clicked' ) ) || false === $items ) {
@@ -535,7 +535,7 @@ class LWTV_Data_Validation_Checks {
 	 */
 	public static function tab_character_checker() {
 
-		$items = get_transient( 'lwtv_debug_character_problems' );
+		$items = LWTV_Transients::get_transient( 'lwtv_debug_character_problems' );
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_character_checker_clicked' ) ) || false === $items ) {

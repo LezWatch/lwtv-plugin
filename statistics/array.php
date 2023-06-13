@@ -22,7 +22,7 @@ class LWTV_Stats_Arrays {
 	public function taxonomy( $post_type, $taxonomy, $terms = '', $operator = 'IN' ) {
 
 		$transient = 'taxonomy_' . $taxonomy . '_' . $terms;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
@@ -88,7 +88,7 @@ class LWTV_Stats_Arrays {
 	 */
 	public function dead_list( $format = 'array' ) {
 		$transient = 'dead_list_' . $format;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array     = array();
@@ -175,7 +175,7 @@ class LWTV_Stats_Arrays {
 	public function dead_role() {
 
 		$transient = 'dead_role_stats';
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array        = array();
@@ -247,7 +247,7 @@ class LWTV_Stats_Arrays {
 	public function dead_meta_tax( $post_type, $meta_array, $key, $taxonomy = 'lez_cliches', $field = 'dead' ) {
 
 		$transient = 'dead_meta_tax_' . $post_type . '_' . $taxonomy . '_' . $field;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array = array();
@@ -284,7 +284,7 @@ class LWTV_Stats_Arrays {
 	public function meta( $post_type, $meta_array, $key, $data, $compare = '=' ) {
 
 		$transient = 'stats_meta_' . $key;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
@@ -681,7 +681,7 @@ class LWTV_Stats_Arrays {
 	public function dead_year() {
 
 		$transient = 'dead_year_stats';
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
@@ -732,7 +732,7 @@ class LWTV_Stats_Arrays {
 
 		$transient = 'on_air_stats_' . $post_type;
 		$transient = ( false !== $minor ) ? $transient . '_' . $minor : $transient;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
@@ -829,7 +829,7 @@ class LWTV_Stats_Arrays {
 	public function dead_shows( $format ) {
 
 		$transient = 'dead_shows_' . $format;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
@@ -941,7 +941,7 @@ class LWTV_Stats_Arrays {
 		}
 
 		$transient = 'dead_complex_taxonomy_lez_' . $type;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array    = array();
@@ -999,7 +999,7 @@ class LWTV_Stats_Arrays {
 	public function scores( $post_type ) {
 
 		$transient = 'scores_' . $post_type;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
@@ -1039,7 +1039,7 @@ class LWTV_Stats_Arrays {
 	public function actor_chars( $type = 'characters' ) {
 
 		$transient = 'actor_chars_' . $type;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
@@ -1107,7 +1107,7 @@ class LWTV_Stats_Arrays {
 	public function show_roles( $type = 'dead' ) {
 
 		$transient = 'show_roles_' . $type;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array = array();
@@ -1289,7 +1289,7 @@ class LWTV_Stats_Arrays {
 		$do_count  = ( isset( $count ) && 0 !== $count ) ? 'yes' : 'no';
 
 		$transient = 'complex_taxonomy_' . $data . '_' . $type . '_' . $do_count;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array = array();
@@ -1383,7 +1383,7 @@ class LWTV_Stats_Arrays {
 		$post_type = $type;
 
 		$transient = 'actor_char_role_' . $the_id;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 		if ( false === $array || empty( $array ) ) {
 			$base_array = array(
 				'regular'   => 0,
@@ -1463,7 +1463,7 @@ class LWTV_Stats_Arrays {
 		$post_type = $type;
 
 		$transient = 'actor_char_dead_' . $the_id;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 
 		if ( false === $array || empty( $array ) ) {
 			$base_array = array(
@@ -1547,7 +1547,7 @@ class LWTV_Stats_Arrays {
 
 		// loop through array and rebuild into format for charts.
 		$transient = 'this_year_' . $data;
-		$array     = get_transient( $transient );
+		$array     = LWTV_Transients::get_transient( $transient );
 		$taxonomy  = substr( $data, 0, -10 );      // Remove _year_XXXX from the end.
 
 		// If the array is empty, we want to rebuild it.

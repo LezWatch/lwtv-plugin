@@ -242,7 +242,7 @@ class LWTV_Grading {
 		$recheck = false;
 
 		// Only call their service once a day.
-		$transient = get_transient( 'lwtv_3rd_scores_tmdb_' . $show_id );
+		$transient = LWTV_Transients::get_transient( 'lwtv_3rd_scores_tmdb_' . $show_id );
 		if ( false === $transient ) {
 			$recheck = true;
 		} else {
@@ -295,7 +295,7 @@ class LWTV_Grading {
 		$recheck = false;
 
 		// Only call their service once a day.
-		$transient = get_transient( 'lwtv_3rd_scores_tvmaze_' . $show_id );
+		$transient = LWTV_Transients::get_transient( 'lwtv_3rd_scores_tvmaze_' . $show_id );
 		if ( false === $transient ) {
 			$recheck = true;
 		} else {
@@ -346,7 +346,7 @@ class LWTV_Grading {
 		$recheck = false;
 
 		// Only call their service once a day.
-		$transient = get_transient( 'lwtv_3rd_scores_imdb_api_' . $show_id );
+		$transient = LWTV_Transients::get_transient( 'lwtv_3rd_scores_imdb_api_' . $show_id );
 		if ( false === $transient ) {
 			$recheck = true;
 		} else {

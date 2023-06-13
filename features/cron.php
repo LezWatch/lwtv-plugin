@@ -116,7 +116,7 @@ class LWTV_Cron {
 
 		global $wpdb;
 
-		$missed_transient = get_transient( 'lwtv_missed_schedule' );
+		$missed_transient = LWTV_Transients::get_transient( 'lwtv_missed_schedule' );
 		if ( false === ( $missed_transient ) ) {
 			// If there's no transient, set it for 15 minutes
 			$checktime = ( HOUR_IN_SECONDS / 4 );
@@ -183,13 +183,13 @@ SQL;
 	 * @return void
 	 */
 	public function lists_daily() {
-		$count_shows = get_transient( 'lwtv_count_shows' );
+		$count_shows = LWTV_Transients::get_transient( 'lwtv_count_shows' );
 		if ( false === $count_shows ) {
 			$count_shows = wp_count_posts( 'post_type_shows' )->publish;
 			set_transient( 'lwtv_count_shows', $count_shows, 24 * HOUR_IN_SECONDS );
 		}
 
-		$count_actors = get_transient( 'lwtv_count_actors' );
+		$count_actors = LWTV_Transients::get_transient( 'lwtv_count_actors' );
 		if ( false === $count_actors ) {
 			$count_actors = wp_count_posts( 'post_type_actors' )->publish;
 			set_transient( 'lwtv_count_actors', $count_actors, 24 * HOUR_IN_SECONDS );
