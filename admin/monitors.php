@@ -83,6 +83,8 @@ class LWTV_Monitor_Checks {
 			$status    = '<strong>Last updated:</strong> ' . gmdate( 'F d Y H:i:s.', $file_time );
 		}
 
+		// ToDo: If there has been more than 48 hours without an update, make some noise.
+
 		echo wp_kses_post( $status );
 	}
 
