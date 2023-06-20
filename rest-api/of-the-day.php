@@ -261,13 +261,19 @@ class LWTV_OTD_JSON {
 				$meta_query_array = array(
 					array(
 						'key'     => '_thumbnail_id',
-						'value'   => '79739', // Mystery woman
+						'value'   => '79739', // Don't show if there's no image OR the image is Mystery woman.
 						'compare' => '!=',
 					),
 					array(
 						'key'     => 'lezchars_show_group',
-						'value'   => 're', // REgulars or REcurring, but not guest.
+						'value'   => 're', // Only show REgulars or REcurring, but not guest.
 						'compare' => 'LIKE',
+					),
+					array(
+						'key'     => 'lezchars_cliches',
+						'field'   => 'slug',
+						'terms'   => array( 'conditional-queerness', 'phase' ), // Don't show conditionally queers, or just-a-phasers.
+						'compare' => 'NOT IN',
 					),
 				);
 				$tax_query_array  = self::character_awareness( $date );

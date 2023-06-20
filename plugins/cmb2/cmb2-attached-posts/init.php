@@ -311,7 +311,6 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return void
 	 */
 	public function list_item( $object, $li_class, $icon_class = 'dashicons-plus' ) {
-
 		echo '<li 
 			data-id="' . esc_attr( $this->get_id( $object ) ) . '" 
 			class="' . esc_attr( $li_class ) . '" target="_blank">'
@@ -354,7 +353,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return int            The object ID.
 	 */
 	public function get_id( $object ) {
-		return $object->ID;
+		return isset( $object->ID ) ? $object->ID : false;
 	}
 
 	/**
@@ -368,26 +367,10 @@ class WDS_CMB2_Attached_Posts_Field {
 	 */
 	public function get_title( $object ) {
 		// Initial Title
-		$title = $this->field->options( 'query_users' ) ? $object->data->display_name : get_the_title( $object );
+		$title      = $this->field->options( 'query_users' ) ? $object->data->display_name : get_the_title( $object );
+		$additional = $this->add_additional( $this->get_id( $object ) );
 
-		// We might have additional data.
-		$additional = array();
-
-		$status = get_post_status( $object );
-		if ( false !== $status && 'publish' !== $status ) {
-			$additional[] = $status;
-		}
-
-		$is_queer = get_post_meta( $object->ID, 'lezactors_queer', true );
-		if ( ! empty( $is_queer ) && $is_queer ) {
-			$additional[] = 'queer';
-		}
-
-		if ( ! empty( $additional ) ) {
-			$title .= ' (' . implode( ' - ', $additional ) . ')';
-		}
-
-		return $title;
+		return $title . $additional;
 	}
 
 	/**
@@ -472,7 +455,7 @@ class WDS_CMB2_Attached_Posts_Field {
 			}
 		}
 
-		return $attached_objects;
+		return apply_filters( 'cmb2_attached_posts_objects', $attached_objects, $args );
 	}
 
 	/**
@@ -737,11 +720,15 @@ class WDS_CMB2_Attached_Posts_Field {
 
 			$return .= '<ol>';
 			foreach ( (array) $posts as $id => $post ) {
+
+				$title      = $post['title'];
+				$additional = $this->add_additional( $this->get_id( $id ) );
+
 				$return .= sprintf(
 					'<li id="attached-%d"><a href="%s">%s</a></li>',
 					$id,
 					$post['edit_link'],
-					$post['title']
+					$title . $additional
 				);
 			}
 			$return .= '</ol>';
@@ -751,6 +738,30 @@ class WDS_CMB2_Attached_Posts_Field {
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Add Additional
+	 *
+	 * We have custom data we want to add to the title.
+	 */
+	public function add_additional( $id ) {
+		$new_title  = '';
+		$additional = array();
+		$status     = get_post_status( $id );
+		$is_queer   = get_post_meta( $id, 'lezactors_queer', true );
+
+		if ( false !== $status && 'publish' !== $status ) {
+			$additional[] = 'draft';
+		}
+
+		if ( ! empty( $is_queer ) && $is_queer ) {
+			$additional[] = 'queer';
+		}
+
+		$new_title = ( ! empty( $additional ) ) ? ' (' . implode( ' - ', $additional ) . ')' : '';
+
+		return $new_title;
 	}
 }
 WDS_CMB2_Attached_Posts_Field::get_instance();

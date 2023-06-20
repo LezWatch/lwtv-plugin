@@ -66,7 +66,7 @@ class LWTV_Loops {
 		 * Queerness is conditional, though. If someone is a trans man who is heterosexual,
 		 * then they're queer. This is why, at the end, if ANY of the possible flags are
 		 * set YES, then they are queer.
-		 * 
+		 *
 		 * This is why there's an override.
 		 */
 
@@ -112,7 +112,7 @@ class LWTV_Loops {
 
 		// Romantic Orientation: Are they NOT queer because of romantic orientation?
 		$straight_romantics = array( 'heteroromantic' );
-		$romantic_terms        = get_the_terms( $the_id, 'lez_actor_romantic', true );
+		$romantic_terms     = get_the_terms( $the_id, 'lez_actor_romantic', true );
 		if ( ! $romantic_terms || is_wp_error( $romantic_terms ) ) {
 			$check['romantic'] = 'no';
 		} elseif ( has_term( $straight_romantics, 'lez_actor_romantic', $the_id ) ) {

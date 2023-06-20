@@ -17,16 +17,17 @@ if ( ! class_exists( 'Jetpack' ) ) {
 class LWTV_Jetpack {
 
 	public function __construct() {
-		// Custom search
+		// Custom search.
 		add_action( 'init', array( $this, 'init_jetpack_search_filters' ) );
+
+		// Jetpack extra images.
+		add_action( 'admin_init', array( $this, 'jetpack_external_images' ) );
 
 		// Disable jetpack sharing counts to not phone home to Facebook.
 		add_filter( 'jetpack_sharing_counts', '__return_false' );
 
-		// This will be added in an upcoming version of Jetpack
-		if ( ! method_exists( 'Grunion_Contact_Form_Plugin', 'is_spam_blocklist' ) ) {
-			add_filter( 'jetpack_contact_form_is_spam', array( $this, 'jetpack_spammers' ), 11, 2 );
-		}
+		// Integrate spam checkers with Jetpack.
+		add_filter( 'jetpack_contact_form_is_spam', array( $this, 'jetpack_spammers' ), 11, 2 );
 		add_filter( 'jetpack_contact_form_is_spam', array( $this, 'jetpack_harassment' ), 11, 2 );
 
 	}
@@ -116,21 +117,38 @@ class LWTV_Jetpack {
 
 		return false;
 	}
+
+	/**
+	 * Remove Jetpack's External Media feature.
+	 *
+	 * Removes for non-posts because we don't want it for actors/etc.
+	 */
+	public function jetpack_external_images() {
+		global $pagenow, $post;
+
+		$no_images_for = array( 'post_type_shows', 'post_type_players', 'post_type_actors' );
+
+		if ( 'post.php' === $pagenow && isset( $_GET['post'] ) ) {
+
+			$post_type = get_post_type( $_GET['post'] );
+
+			if ( in_array( $post_type, $no_images_for ) ) {
+				add_action(
+					'enqueue_block_editor_assets',
+					function () {
+						$disable_external_media = <<<JS
+							document.addEventListener( 'DOMContentLoaded', function() {
+							wp.hooks.removeFilter( 'blocks.registerBlockType', 'external-media/individual-blocks' );
+							wp.hooks.removeFilter( 'editor.MediaUpload', 'external-media/replace-media-upload' );
+							} );
+						JS;
+						wp_add_inline_script( 'jetpack-blocks-editor', $disable_external_media );
+					}
+				);
+			}
+		}
+	}
 }
 
 new LWTV_Jetpack();
 
-/**
- * Remove Jetpack's External Media feature.
- */
-add_action( 'enqueue_block_editor_assets',
-function () {
-$disable_external_media = <<<JS
-document.addEventListener( 'DOMContentLoaded', function() {
-wp.hooks.removeFilter( 'blocks.registerBlockType', 'external-media/individual-blocks' );
-wp.hooks.removeFilter( 'editor.MediaUpload', 'external-media/replace-media-upload' );
-} );
-JS;
-wp_add_inline_script( 'jetpack-blocks-editor', $disable_external_media );
-}
-);

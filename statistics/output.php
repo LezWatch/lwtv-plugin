@@ -587,6 +587,23 @@ class LWTV_Stats_Output {
 			} );
 			// @codingStandardsIgnoreEnd
 		}
+
+		$check_count = 0;
+		foreach ( $array as $item ) {
+			if ( 0 !== $item['count'] ) {
+				$check_count = $check_count + (int) $item['count'];
+			}
+
+			if ( in_array( $data, $show_zero ) ) {
+				$check_count++;
+			}
+		}
+
+		if ( 0 === $check_count ) {
+			echo '<p><em>Coming Soon</em></p>';
+			return;
+		}
+
 		?>
 
 		<canvas 

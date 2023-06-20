@@ -18,6 +18,7 @@ require_once 'private-data.php';   // Data Removal Code
 require_once 'profiles.php';       // User Profile Stuff
 require_once 'shortcodes.php';     // Custom Shortcodes
 require_once 'spammers.php';       // Catch and Kill Spammers
+require_once 'transients.php';     // Transients overridden
 require_once 'upgrades.php';       // Handle Upgrades
 
 /**

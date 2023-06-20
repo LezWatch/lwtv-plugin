@@ -33,6 +33,18 @@ class WP_CLI_LWTV_Commands {
 		// phpcs:enable
 	}
 
+	public function tvmaze( $args, $assoc_args ) {
+		$upload_dir = wp_upload_dir();
+		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
+		$response   = wp_remote_get( TV_MAZE );
+		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+			file_put_contents( $ics_file, $response['body'] );
+			WP_CLI::success( 'TVMaze updated successfully.' );
+		} else {
+			WP_CLI::error( 'TVMaze is not able to be updated.' );
+		}
+	}
+
 	/**
 	 * Re-run calculations for specific post content.
 	 *
@@ -183,10 +195,6 @@ class WP_CLI_LWTV_Commands {
 			case 'queerchars':
 				WP_CLI::log( 'Searching all characters for associated actor queerness ...' );
 				$items = ( new LWTV_Debug() )->find_queerchars();
-				break;
-			case 'nochars':
-				WP_CLI::log( 'Searching all actors to ensure they have a character ....' );
-				$items = ( new LWTV_Debug() )->find_actors_no_chars();
 				break;
 		}
 

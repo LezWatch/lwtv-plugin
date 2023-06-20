@@ -84,9 +84,14 @@ class LWTV_Exclusion_Checks {
 					$override = get_post_meta( $item, 'lezactors_queer_override', true );
 					break;
 				case 'death':
-					$override = ucfirst ( get_post_meta( $item, 'lezshows_byq_override', true ) );
+					$override = ucfirst( get_post_meta( $item, 'lezshows_byq_override', true ) );
 					break;
 			};
+
+			// If override is empty, we keep going.
+			if ( empty( $override ) || 'undefined' === $override ) {
+				continue;
+			}
 
 			echo '
 			<tr class="' . esc_attr( $class ) . '">
@@ -131,12 +136,7 @@ class LWTV_Exclusion_Checks {
 	 * Output the results of queer checking...
 	 */
 	public static function tab_queer_checker() {
-		$queery_loop  = ( new LWTV_Loops() )->post_meta_query( 'post_type_actors', 'lezactors_queer_override', '', 'EXISTS' );
-
-		if ( $queery_loop->have_posts() ) {
-			$queery = wp_list_pluck( $queery_loop->posts, 'ID' );
-		}
-		wp_reset_query();
+		$queery = self::queery_loop( 'post_type_actors', 'lezactors_queer_override' );
 
 		if ( empty( $queery ) || ! is_array( $queery ) ) {
 			?>
@@ -178,12 +178,7 @@ class LWTV_Exclusion_Checks {
 	 * Output the results of BYQ checking...
 	 */
 	public static function tab_byq_checker() {
-		$queery_loop  = ( new LWTV_Loops() )->post_meta_query( 'post_type_shows', 'lezshows_byq_override', '', 'EXISTS' );
-
-		if ( $queery_loop->have_posts() ) {
-			$queery = wp_list_pluck( $queery_loop->posts, 'ID' );
-		}
-		wp_reset_query();
+		$queery = self::queery_loop( 'post_type_shows', 'lezshows_byq_override' );
 
 		if ( empty( $queery ) || ! is_array( $queery ) ) {
 			?>
@@ -206,7 +201,7 @@ class LWTV_Exclusion_Checks {
 			<div class="lwtv-tools-table">
 				<table class="widefat fixed" cellspacing="0">
 					<thead><tr>
-						<th id="character" class="manage-column column-character" scope="col">Character</th>
+						<th id="show" class="manage-column column-show" scope="col">Show</th>
 						<th id="problem" class="manage-column column-problem" scope="col">Setting</th>
 					</tr></thead>
 
@@ -220,6 +215,29 @@ class LWTV_Exclusion_Checks {
 			<?php
 		}
 	}
+
+	/**
+	 * Loop through the results and remove posts that aren't undefined.
+	 */
+	public static function queery_loop( $post_type, $meta ) {
+		$queery_loop = ( new LWTV_Loops() )->post_meta_query( $post_type, $meta, '', 'EXISTS' );
+		$queery      = array();
+
+		if ( $queery_loop->have_posts() ) {
+			while ( $queery_loop->have_posts() ) {
+				$queery_loop->the_post();
+				$override = get_post_meta( get_the_ID(), $meta, true );
+				if ( 'undefined' !== $override ) {
+					$queery[] = get_the_ID();
+				}
+			}
+		}
+		wp_reset_postdata();
+		wp_reset_query();
+
+		return $queery;
+	}
+
 
 }
 

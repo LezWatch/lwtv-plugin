@@ -116,7 +116,7 @@ class LWTV_Cron {
 
 		global $wpdb;
 
-		$missed_transient = get_transient( 'lwtv_missed_schedule' );
+		$missed_transient = LWTV_Transients::get_transient( 'lwtv_missed_schedule' );
 		if ( false === ( $missed_transient ) ) {
 			// If there's no transient, set it for 15 minutes
 			$checktime = ( HOUR_IN_SECONDS / 4 );
@@ -183,13 +183,13 @@ SQL;
 	 * @return void
 	 */
 	public function lists_daily() {
-		$count_shows = get_transient( 'lwtv_count_shows' );
+		$count_shows = LWTV_Transients::get_transient( 'lwtv_count_shows' );
 		if ( false === $count_shows ) {
 			$count_shows = wp_count_posts( 'post_type_shows' )->publish;
 			set_transient( 'lwtv_count_shows', $count_shows, 24 * HOUR_IN_SECONDS );
 		}
 
-		$count_actors = get_transient( 'lwtv_count_actors' );
+		$count_actors = LWTV_Transients::get_transient( 'lwtv_count_actors' );
 		if ( false === $count_actors ) {
 			$count_actors = wp_count_posts( 'post_type_actors' )->publish;
 			set_transient( 'lwtv_count_actors', $count_actors, 24 * HOUR_IN_SECONDS );
@@ -207,7 +207,7 @@ SQL;
 	public function tv_maze_cron() {
 		$upload_dir = wp_upload_dir();
 		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
-		$response   = wp_remote_get( 'TV_MAZE' );
+		$response   = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
 			file_put_contents( $ics_file, $response['body'] );
 		}
@@ -230,7 +230,7 @@ SQL;
 				FWP()->indexer->index(); // Ensure Faceting.
 				break;
 			case 'Wed':
-				$check = ( new LWTV_Debug() )->find_actors_no_chars();
+				//$check = ( new LWTV_Debug() )->find_actors_no_chars();
 				break;
 			case 'Thu':
 				$check = ( new LWTV_Debug() )->find_actors_empty();

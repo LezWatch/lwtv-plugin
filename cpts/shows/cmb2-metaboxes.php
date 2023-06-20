@@ -391,7 +391,7 @@ class LWTV_Shows_CMB2 {
 				'options' => $this->thumbs_array,
 			)
 		);
-		// Field: Worth It Details.
+		// Field: Worth Wit Details.
 		$field_worthdetails = $cmb_c_worth->add_field(
 			array(
 				'name'       => 'Details on Why',
@@ -460,7 +460,7 @@ class LWTV_Shows_CMB2 {
 		// METABOX GROUP: Watch
 		$cmb_e_watch = new_cmb2_box(
 			array(
-				'id'           => $prefix . 'editorial',
+				'id'           => $prefix . 'watchdeets',
 				'title'        => 'Watching Details',
 				'object_types' => array( 'post_type_shows' ),
 				'context'      => 'normal',
@@ -499,7 +499,6 @@ class LWTV_Shows_CMB2 {
 				),
 			)
 		);
-
 		// Field Group: Show Name Information
 		$group_names = $cmb_e_watch->add_field(
 			array(
@@ -538,8 +537,9 @@ class LWTV_Shows_CMB2 {
 				'options'          => $this->language_array,
 			)
 		);
+		// NO GRID NEEDED
 
-		// Metabox: 'Ships and Plots
+		// GROUP: 'Ships and Plots
 		$cmb_f_shiplots = new_cmb2_box(
 			array(
 				'id'           => 'shows_metabox',

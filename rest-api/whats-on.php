@@ -119,7 +119,7 @@ class LWTV_Whats_On_JSON {
 		$when       = ( ! in_array( $when, array( 'today', 'tomorrow' ), true ) ) ? 'today' : $when;
 		$lwtv_tz    = new DateTimeZone( 'America/New_York' );
 
-		$missed_transient = get_transient( 'lwtv_missed_schedule' );
+		$missed_transient = LWTV_Transients::get_transient( 'lwtv_missed_schedule' );
 
 		require_once dirname( __DIR__, 1 ) . '/features/ics-parser.php';
 		$upload_dir = wp_upload_dir();
