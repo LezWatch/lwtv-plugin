@@ -40,14 +40,14 @@ class LWTV_Functions {
 	 * @return void
 	 */
 	public function __construct() {
-		self::$version = '4.0';
+		self::$version = '4.1';
 		add_filter( 'http_request_args', array( $this, 'disable_wp_update' ), 10, 2 );
 		add_filter( 'attachment_fields_to_edit', array( $this, 'add_attachment_attribution' ), 10000, 2 );
 		add_action( 'edit_attachment', array( $this, 'save_attachment_attribution' ) );
 		add_action( 'pre_current_active_plugins', array( $this, 'hide_lwtv_plugin' ) );
 		add_filter( 'avatar_defaults', array( $this, 'default_avatar' ) );
 
-		// Disable check for 'is your admin password legit'.
+		// Disable check for 'is your admin stuff legit'.
 		// https://make.wordpress.org/core/2019/10/17/wordpress-5-3-admin-email-verification-screen/
 		add_filter( 'admin_email_check_interval', '__return_false' );
 
@@ -210,7 +210,7 @@ class LWTV_Functions {
 	 * @param string $fontawesome (default: 'fa-square')
 	 * @return icon
 	 */
-	public function symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square' ) {
+	public function symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square', $class = 'symbolicon' ) {
 
 		$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
 		$square = get_template_directory_uri( '/images/square.svg' );
@@ -223,7 +223,7 @@ class LWTV_Functions {
 
 		if ( isset( $icon ) ) {
 			// @codingStandardsIgnoreStart
-			$return = '<span class="symbolicon" role="img">' . file_get_contents( $icon ) . '</span>';
+			$return = '<span class="' . $class . '" role="img">' . file_get_contents( $icon ) . '</span>';
 			// @codingStandardsIgnoreEnd
 		}
 

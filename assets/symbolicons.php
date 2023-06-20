@@ -113,23 +113,6 @@ class LWTV_SymboliconsSettings {
 		?>
 		<div class="wrap">
 
-		<style>
-			span.cmb2-icon {
-				width: 80px;
-				display: inline-block;
-				vertical-align: top;
-				margin: 10px;
-				word-wrap: break-word;
-			}
-			span.cmb2-icon svg {
-				width: 75px;
-				height: 75px;
-			}
-			span.cmb2-icon svg * {
-				fill: #444!important;
-			}
-		</style>
-
 		<h2>Symbolicons</h2>
 
 		<?php
