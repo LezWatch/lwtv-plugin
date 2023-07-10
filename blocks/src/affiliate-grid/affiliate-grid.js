@@ -1,7 +1,5 @@
 import { registerBlockType } from '@wordpress/blocks';
 
-import classnames from 'classnames';
-
 const { Fragment } = wp.element;
 const { InnerBlocks, InspectorControls } = wp.blockEditor;
 const { PanelBody, Button } = wp.components;
