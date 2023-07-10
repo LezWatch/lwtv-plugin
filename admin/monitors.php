@@ -86,7 +86,7 @@ class LWTV_Monitor_Checks {
 			$status .= '<em>ERROR! The TVMaze calendar file is missing! Tell Mika.<em>';
 		} else {
 			$file_time  = filemtime( $filename );
-			$time_since = human_time_diff( $file_time, current_time( 'U' ) );
+			$time_since = human_time_diff( $file_time, strtotime( time() ) );
 
 			// If the time is less than 24 hours, we're good.
 			// If it's under 48 hours, it's a warning.
@@ -111,7 +111,7 @@ class LWTV_Monitor_Checks {
 				);
 			}
 
-			$status = '<p><strong>Last updated:</strong> ' . $time_since . ' ago.</p>';
+			$status = '<p><strong>Last updated:</strong> ' . wp_date( 'D, d M Y H:i:s', $file_time, new DateTimeZone( 'America/Los_Angeles' ) ) . ' (' . $time_since . ' ago).</p>';
 		}
 
 		$return = array(
