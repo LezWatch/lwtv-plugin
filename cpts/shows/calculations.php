@@ -454,6 +454,12 @@ class LWTV_Shows_Calculate {
 	 */
 	public function do_the_math( $post_id ) {
 
+		// Delete the data.
+		$delete_array = array( 'lezshows_char_list', 'lezshows_char_count', 'lezshows_dead_list', 'lezshows_dead_count', 'lezshows_the_score' );
+		foreach ( $delete_array as $delete_meta ) {
+			delete_post_meta( $post_id, $delete_meta );
+		}
+
 		// Get the ratings
 		$score_show_rating = self::show_score( $post_id );
 		$score_show_tropes = self::show_tropes_score( $post_id );
@@ -471,7 +477,7 @@ class LWTV_Shows_Calculate {
 		$calculate = ( $calculate > 100 ) ? 100 : $calculate;
 		$calculate = ( $calculate < 0 ) ? 0 : $calculate;
 
-		// Update the meta
+		// Update the score meta. The rest are done.
 		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
 
 		// Update 3rd party scores

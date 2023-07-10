@@ -117,7 +117,7 @@ class LWTV_Data_Validation_Checks {
 		?>
 		<div class="wrap">
 
-			<h1>Tools</h1>
+			<h1>Validation Checks</h1>
 
 			<h2 class="nav-tab-wrapper">
 				<a href="?page=lwtv_data_check" class="nav-tab <?php echo ( 'intro' === $active_tab ) ? 'nav-tab-active' : ''; ?>">Introduction</a>
@@ -191,7 +191,7 @@ class LWTV_Data_Validation_Checks {
 		?>
 
 		<div class="tab-block"><div class="lwtv-tools-container">
-			<h3>LezWatch.TV Data Sync Checks</h3>
+			<h3>LezWatch.TV Data Validation Checks</h3>
 			<p>If data gets out of sync or we update things incorrectly, these checkers can help identify those errors before people notice. They run on an automated cycle, each check once a week, to try and catch things early.</p>
 
 			<p>When visiting the individual checker, it will show you the status of the last run. To re-run the tool, press the 'Check Again' button at the bottom of the page.</p>

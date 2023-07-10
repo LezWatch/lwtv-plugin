@@ -112,7 +112,6 @@ class LWTV_Exclusion_Checks {
 	 */
 	public static function tab_introduction() {
 		?>
-
 		<div class="tab-block"><div class="lwtv-tools-container">
 			<h3>LezWatch.TV Exclusion Checks</h3>
 			<p>There are times when we override certain settings because automation only goes so far. However to keep ourselves honest, we have to track those things.</p>
