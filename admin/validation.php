@@ -163,7 +163,15 @@ class LWTV_Data_Validation_Checks {
 	public static function table_content( $items ) {
 		$number = 1;
 		foreach ( $items as $item ) {
-			$class = ( 0 === $number % 2 ) ? '' : 'alternate';
+			$class     = ( 0 === $number % 2 ) ? '' : 'alternate';
+			$timestamp = get_post_timestamp( (int) $item['id'], 'modified' );
+			$time_diff = human_time_diff( $timestamp, current_time( 'timestamp' ) );
+			if ( ! $timestamp ) {
+				$time = 'Unknown';
+			} else {
+				$time = date_i18n( get_option( 'date_format' ), $timestamp );
+			}
+
 			echo '
 			<tr class="' . esc_attr( $class ) . '">
 				<td><strong><a href="' . esc_url( get_edit_post_link( (int) $item['id'] ) ) . '" target="_new">' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '</a></strong>
@@ -172,6 +180,7 @@ class LWTV_Data_Validation_Checks {
 				| </span><span class="view"><a href="' . esc_url( get_permalink( (int) $item['id'] ) ) . '" rel="bookmark" aria-label="View ' . wp_kses_post( get_the_title( (int) $item['id'] ) ) . '">View</a></span></div>
 				</td>
 				<td>' . wp_kses_post( $item['problem'] ) . '</td>
+				<td>' . esc_html( $time ) . '<br/>(' . esc_html( $time_diff ) . ' ago)</td>
 			</tr>
 			';
 			$number++;
@@ -273,6 +282,7 @@ class LWTV_Data_Validation_Checks {
 					<thead><tr>
 						<th id="character" class="manage-column column-character" scope="col">Character</th>
 						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+						<th id="date" class="manage-column column-date" scope="col">Last Updated</th>
 					</tr></thead>
 
 					<tbody>
@@ -335,6 +345,7 @@ class LWTV_Data_Validation_Checks {
 					<thead><tr>
 						<th id="character" class="manage-column column-character" scope="col">Actor</th>
 						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+						<th id="date" class="manage-column column-date" scope="col">Last Updated</th>
 					</tr></thead>
 
 					<tbody>
@@ -446,6 +457,7 @@ class LWTV_Data_Validation_Checks {
 					<thead><tr>
 						<th id="character" class="manage-column column-character" scope="col">Actor</th>
 						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+						<th id="date" class="manage-column column-date" scope="col">Last Updated</th>
 					</tr></thead>
 
 					<tbody>
@@ -509,6 +521,7 @@ class LWTV_Data_Validation_Checks {
 					<thead><tr>
 						<th id="character" class="manage-column column-character" scope="col">Show</th>
 						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+						<th id="date" class="manage-column column-date" scope="col">Last Updated</th>
 					</tr></thead>
 
 					<tbody>
@@ -571,6 +584,7 @@ class LWTV_Data_Validation_Checks {
 					<thead><tr>
 						<th id="character" class="manage-column column-character" scope="col">Character</th>
 						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+						<th id="date" class="manage-column column-date" scope="col">Last Updated</th>
 					</tr></thead>
 
 					<tbody>
