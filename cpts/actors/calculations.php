@@ -47,6 +47,7 @@ class LWTV_Actors_Calculate {
 			// Reset to end
 			wp_reset_query();
 
+			$characters = ( ! is_array( $characters ) ) ? array( $characters ) : $characters;
 			$characters = array_unique( $characters );
 		}
 
