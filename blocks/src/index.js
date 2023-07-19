@@ -5,7 +5,7 @@
  * Webpack to compile them.
  */
 
-// Common CSS
+// Common CSS and JS
 import './_common/index.js';
 
 // Affiliate Grid Box
@@ -28,6 +28,9 @@ import './tvshow-calendar/block.js';
 
 // Featured Image
 import './featured-image/block.js';
+
+// Pre-Publish Checks
+import './pre-publish/block.js';
 
 // Private Note
 import './private-note/block.js';
