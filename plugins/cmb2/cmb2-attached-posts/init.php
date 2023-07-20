@@ -176,23 +176,17 @@ class WDS_CMB2_Attached_Posts_Field {
 
 		// @todo make User search work.
 		if ( ! $query_users ) {
-			$findtxt = $field_type->_text( 'find_text', __( 'Search' ) );
+			// Set defaults.
+			$search_txt = $field_type->_text( 'find_text', __( 'Search' ) );
+			$find_txt = __( 'Find Posts and Pages' );
 
-			switch( $args['post_type'] ) {
-				case 'post_type_actors':
-					$find_txt = 'Find Actor(s)';
-					break;
-				case 'post_type_shows':
-					$find_txt = 'Find Show(s)';
-					break;
-				case 'post_type_characters':
-					$find_txt = 'Find Character(s)';
-					break;
-				default:
-					$find_txt = 'Find Posts or Pages';
-					break;
+			// if the post type value isn't an array, let the post type decide what it is.
+			if ( ! is_array( $args['post_type'] ) ) {
+				$post_type_obj = get_post_type_object( $args['post_type'] );
+				$find_txt      = $post_type_obj->labels->search_items;
 			}
 
+			// Build JS.
 			$js_data = wp_json_encode(
 				array(
 					'queryUsers' => $query_users,
@@ -206,7 +200,7 @@ class WDS_CMB2_Attached_Posts_Field {
 				)
 			);
 
-			echo '<p><button type="button" class="button cmb2-attached-posts-search-button" data-search=\'' . esc_js( $js_data ) . '\'>' . esc_html( $findtxt ) . ' <span title="' . esc_attr( $findtxt ) . '" class="dashicons dashicons-search"></span></button></p>';
+			echo '<p><button type="button" class="button cmb2-attached-posts-search-button" data-search=\'' . esc_js( $js_data ) . '\'>' . esc_html( $search_txt ) . ' <span title="' . esc_attr( $search_txt ) . '" class="dashicons dashicons-search"></span></button></p>';
 		}
 
 		echo '</div><!-- .retrieved-wrap -->';
@@ -381,9 +375,10 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return string         The object title.
 	 */
 	public function get_title( $object ) {
+		$post = get_post( $object );
 		// Initial Title
-		$title      = $this->field->options( 'query_users' ) ? $object->data->display_name : get_the_title( $object );
-		$additional = $this->add_additional( $this->get_id( $object ) );
+		$title = $this->field->options( 'query_users' ) ? $object->data->display_name : get_the_title( $post->ID );
+		$title = apply_filters( 'cmb2_attached_posts_filter_title', $post->ID, $title );
 
 		return $title . $additional;
 	}
@@ -736,14 +731,13 @@ class WDS_CMB2_Attached_Posts_Field {
 			$return .= '<ol>';
 			foreach ( (array) $posts as $id => $post ) {
 
-				$title      = $post['title'];
-				$additional = $this->add_additional( $this->get_id( $id ) );
+				$title = apply_filters( 'cmb2_attached_posts_filter_title', $id, $post['title'] );
 
 				$return .= sprintf(
 					'<li id="attached-%d"><a href="%s">%s</a></li>',
 					$id,
 					$post['edit_link'],
-					$title . $additional
+					$title
 				);
 			}
 			$return .= '</ol>';
@@ -755,28 +749,5 @@ class WDS_CMB2_Attached_Posts_Field {
 		return $return;
 	}
 
-	/**
-	 * Add Additional
-	 *
-	 * We have custom data we want to add to the title.
-	 */
-	public function add_additional( $id ) {
-		$new_title  = '';
-		$additional = array();
-		$status     = get_post_status( $id );
-		$is_queer   = get_post_meta( $id, 'lezactors_queer', true );
-
-		if ( false !== $status && 'publish' !== $status ) {
-			$additional[] = 'draft';
-		}
-
-		if ( ! empty( $is_queer ) && $is_queer ) {
-			$additional[] = 'queer';
-		}
-
-		$new_title = ( ! empty( $additional ) ) ? ' (' . implode( ' - ', $additional ) . ')' : '';
-
-		return $new_title;
-	}
 }
 WDS_CMB2_Attached_Posts_Field::get_instance();
