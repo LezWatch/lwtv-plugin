@@ -178,13 +178,28 @@ class WDS_CMB2_Attached_Posts_Field {
 		if ( ! $query_users ) {
 			$findtxt = $field_type->_text( 'find_text', __( 'Search' ) );
 
+			switch( $args['post_type'] ) {
+				case 'post_type_actors':
+					$find_txt = 'Find Actor(s)';
+					break;
+				case 'post_type_shows':
+					$find_txt = 'Find Show(s)';
+					break;
+				case 'post_type_characters':
+					$find_txt = 'Find Character(s)';
+					break;
+				default:
+					$find_txt = 'Find Posts or Pages';
+					break;
+			}
+
 			$js_data = wp_json_encode(
 				array(
 					'queryUsers' => $query_users,
 					'types'      => $query_users ? 'user' : (array) $args['post_type'],
 					'cmbId'      => $this->field->cmb_id,
 					'errortxt'   => esc_attr( $field_type->_text( 'error_text', __( 'An error has occurred. Please reload the page and try again.' ) ) ),
-					'findtxt'    => esc_attr( $field_type->_text( 'find_text', __( 'Find Posts or Pages' ) ) ),
+					'findtxt'    => esc_attr( $field_type->_text( 'find_text', $find_txt ) ),
 					'groupId'    => $this->field->group ? $this->field->group->id() : false,
 					'fieldId'    => $this->field->_id(),
 					'exclude'    => isset( $args['post__not_in'] ) ? $args['post__not_in'] : array(),
@@ -640,11 +655,11 @@ class WDS_CMB2_Attached_Posts_Field {
 			$field = $cmb->get_field( $field, $group );
 		}
 
-		// @codingStandardsIgnoreStart
-		if ( $field && ( $cb = $field->maybe_callback( 'attached_posts_search_query_cb' ) ) ) {
+		$cb = $field->maybe_callback( 'attached_posts_search_query_cb' );
+		if ( $field && $cb ) {
 			call_user_func( $cb, $query, $field, $this );
 		}
-		// @codingStandardsIgnoreEnd
+
 	}
 
 	/**
