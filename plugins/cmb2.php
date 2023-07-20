@@ -36,6 +36,13 @@ class LWTV_CMB2_Addons {
 		// Filter to allow show_on to limit by role
 		add_filter( 'cmb2_show_on', array( $this, 'cmb_show_meta_to_chosen_roles' ), 10, 2 );
 
+		// Filter attached posts titles.
+		add_filter( 'cmb2_attached_posts_title_filter', array( $this, 'cmb_filter_title_attached_posts' ), 10, 2 );
+		// Filter allowed Post Statues.
+		add_filter( 'cmb2_attached_posts_status_filter', array( $this, 'cmb_filter_post_status_attached_posts' ), 10, 2 );
+		// Filter allowed Post Statues.
+		add_filter( 'cmb2_attached_posts_per_page_filter', array( $this, 'cmb_filter_post_perpage_attached_posts' ), 10, 2 );
+
 	}
 
 	/**
@@ -153,6 +160,50 @@ class LWTV_CMB2_Addons {
 		return false;
 	}
 
+	/**
+	 * Filter to edit post title.
+	 *
+	 * For CMB2-Attached-Posts
+	 */
+	public function cmb_filter_title_attached_posts( $post_id, $post_title ) {
+		$additional = array();
+		$status     = get_post_status( $post_id );
+		$is_queer   = get_post_meta( $post_id, 'lezactors_queer', true );
+
+		if ( false !== $status && 'publish' !== $status ) {
+			$additional[] = 'draft';
+		}
+
+		if ( ! empty( $is_queer ) && $is_queer ) {
+			$additional[] = 'queer';
+		}
+
+		if ( ! empty( $additional ) ) {
+			$post_title .= ' (' . implode( ', ', $additional ) . ')';
+		}
+
+		return $post_title;
+	}
+
+	/**
+	 * Filter to change allowed post statues.
+	 *
+	 * For CMB2-Attached-Posts
+	 */
+	public function cmb_filter_post_status_attached_posts( $post_status ) {
+		$post_status = array( 'publish', 'pending', 'draft', 'future', 'private', 'inherit' );
+
+		return $post_status;
+	}
+
+	/**
+	 * Filter to search over 100 pages (we have a lot!)
+	 *
+	 * For CMB2-Attached-Posts
+	 */
+	public function cmb_filter_post_perpage_attached_posts( $number ) {
+		return 100;
+	}
 
 }
 

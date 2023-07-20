@@ -156,7 +156,7 @@ class LWTV_Characters_CMB2 {
 			array(
 				'name'    => 'Actor Name(s)',
 				'id'      => $prefix . 'actor',
-				'desc'    => 'Drag actors from the left column to the right column to attach them to this page.<br />Rearrange the order of the posts in the right column by dragging and dropping.',
+				'desc'    => 'Drag actors from the left column to the right column to attach them to this page. You can rearrange the order of the posts in the right column by dragging and dropping. The most recent actor should be on top (so \'Caity Lotz\' for Sara Lance).',
 				'type'    => 'custom_attached_posts',
 				'options' => array(
 					'query_args' => array(
@@ -187,7 +187,7 @@ class LWTV_Characters_CMB2 {
 			array(
 				'name'       => 'TV Show',
 				'id'         => 'show',
-				'desc'       => 'Select one show.',
+				'desc'       => 'Select one show. If there are additional shows, scroll down and use the \'Add Another Show\' button.',
 				'type'       => 'custom_attached_posts', // This field type
 				'post_type'  => 'post_type_shows',
 				'options'    => array(

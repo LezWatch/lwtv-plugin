@@ -25,25 +25,25 @@ class LWTV_Grading {
 		// External scores
 		$external = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
 		$tmdb     = array(
-			'score' => ( isset( $external['tmdb']['score'] ) ) ? round( $external['tmdb']['score'] ) : 'TBD',
+			'score' => ( isset( $external['tmdb']['score'] ) ) ? round( (int) $external['tmdb']['score'] ) : 'TBD',
 			'url'   => ( isset( $external['tmdb']['url'] ) ) ? $external['tmdb']['url'] : 'https://themoviedb.org',
 		);
 		$tvmaze   = array(
-			'score' => ( isset( $external['tvmaze']['score'] ) ) ? round( $external['tvmaze']['score'] ) : 'TBD',
+			'score' => ( isset( $external['tvmaze']['score'] ) ) ? round( (int) $external['tvmaze']['score'] ) : 'TBD',
 			'url'   => ( isset( $external['tvmaze']['url'] ) ) ? $external['tvmaze']['url'] : 'https://tvmaze.com',
 		);
 /*
 		$tomato   = array(
-			'score' => ( isset( $external['tomatoes']['score'] ) ) ? round( $external['tomatoes']['score'] ) : 'TBD',
+			'score' => ( isset( $external['tomatoes']['score'] ) ) ? round( (int) $external['tomatoes']['score'] ) : 'TBD',
 			'url'   => ( isset( $external['tomatoes']['url'] ) ) ? $external['tomatoes']['url'] : 'https://rottentomates.com',
 		);
 		$tomato_u = array(
-			'score' => ( isset( $external['tomato_u']['score'] ) ) ? round( $external['tomato_u']['score'] ) : 'TBD',
+			'score' => ( isset( $external['tomato_u']['score'] ) ) ? round( (int) $external['tomato_u']['score'] ) : 'TBD',
 			'url'   => ( isset( $external['tomato']['url'] ) ) ? $external['tomato']['url'] : 'https://rottentomates.com',
 		);
 		$fresh    = ( $tomato >= 60 ) ? 'fresh' : 'splat';
 		$imdb     = array(
-			'score' => ( isset( $external['imdb']['score'] ) ) ? round( $external['imdb']['score'] ) : 'TBD',
+			'score' => ( isset( $external['imdb']['score'] ) ) ? round( (int) $external['imdb']['score'] ) : 'TBD',
 			'url'   => ( isset( $external['imdb']['url'] ) ) ? $external['imdb']['url'] : 'https://imdb.com',
 		);
 */
@@ -58,11 +58,28 @@ class LWTV_Grading {
 				'bg'    => '#d1548e',
 				'url'   => $lwtv['url'],
 			),
+			'tmdb'     => array(
+				'image' => plugins_url( '/assets/images/scores/tmdb.svg', dirname( __FILE__ ) ),
+				'name'  => 'The Movie Database',
+				'score' => $tmdb['score'],
+				'color' => self::color( $tmdb['score'] ),
+				'bg'    => '#0d253f',
+				'url'   => $tmdb['url'],
+			),
+			'tvmaze'   => array(
+				'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __FILE__ ) ),
+				'name'  => 'TV Maze',
+				'score' => $tvmaze['score'],
+				'color' => self::color( $tvmaze['score'] ),
+				'bg'    => '#3c948b',
+				'url'   => $tvmaze['url'],
+			),
+/*
 			'imdb'     => array(
 				'image' => plugins_url( '/assets/images/scores/imdb.png', dirname( __FILE__ ) ),
 				'name'  => 'IMDb',
 				'score' => $imdb['score'],
-				'alt_s' => ( $imdb['score'] / 10 ),
+				'alt_s' => ( (int) $imdb['score'] / 10 ),
 				'color' => self::color( $imdb['score'] ),
 				'bg'    => '#000000',
 				'url'   => $imdb['url'],
@@ -83,22 +100,7 @@ class LWTV_Grading {
 				'bg'    => '#2a2c32',
 				'url'   => $tomato_u['url'],
 			),
-			'tmdb'     => array(
-				'image' => plugins_url( '/assets/images/scores/tmdb.svg', dirname( __FILE__ ) ),
-				'name'  => 'The Movie Database',
-				'score' => $tmdb['score'],
-				'color' => self::color( $tmdb['score'] ),
-				'bg'    => '#0d253f',
-				'url'   => $tmdb['url'],
-			),
-			'tvmaze'   => array(
-				'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __FILE__ ) ),
-				'name'  => 'TV Maze',
-				'score' => $tvmaze['score'],
-				'color' => self::color( $tvmaze['score'] ),
-				'bg'    => '#3c948b',
-				'url'   => $tvmaze['url'],
-			),
+*/
 		);
 
 		return $scores;
