@@ -186,7 +186,7 @@ class LWTV_Characters_CMB2 {
 			$group_shows,
 			array(
 				'name'       => 'TV Show',
-				'id'         => 'show',
+				'id'         => $prefix . 'show_item',
 				'desc'       => 'Select one show.',
 				'type'       => 'custom_attached_posts', // This field type
 				'post_type'  => 'post_type_shows',
