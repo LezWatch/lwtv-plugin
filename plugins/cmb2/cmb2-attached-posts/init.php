@@ -74,6 +74,7 @@ class WDS_CMB2_Attached_Posts_Field {
 
 		$query_args  = (array) $this->field->options( 'query_args' );
 		$query_users = $this->field->options( 'query_users' );
+		$post_status = array( 'publish' );
 
 		if ( ! $query_users ) {
 
@@ -82,8 +83,8 @@ class WDS_CMB2_Attached_Posts_Field {
 				$query_args,
 				array(
 					'post_type'      => 'post',
-					'posts_per_page' => 100,
-					'post_status'    => array( 'publish', 'pending', 'draft', 'future', 'private', 'inherit' ),
+					'posts_per_page' => apply_filters( 'cmb2_attached_posts_per_page_filter', 50 ),
+					'post_status'    => apply_filters( 'cmb2_attached_posts_status_filter', $post_status ),
 				)
 			);
 
@@ -320,14 +321,17 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return void
 	 */
 	public function list_item( $object, $li_class, $icon_class = 'dashicons-plus' ) {
-		echo '<li 
-			data-id="' . esc_attr( $this->get_id( $object ) ) . '" 
-			class="' . esc_attr( $li_class ) . '" target="_blank">'
-			. esc_html( $this->get_thumb( $object ) ) . '
-			<a title="Edit" href="' . esc_url( $this->get_edit_link( $object ) ) . '">'
-			. esc_html( $this->get_title( $object ) ) . '</a>
-			' . esc_html( $this->get_object_label( $object ) ) . '<span class="dashicons '
-			. esc_attr( $icon_class ) . ' add-remove"></span></li>';
+		// Build our list item
+		printf(
+			'<li data-id="%1$d" class="%2$s" target="_blank">%3$s<a title="' . esc_html( __( 'Edit' ) ) . '" href="%4$s">%5$s</a>%6$s<span class="dashicons %7$s add-remove"></span></li>',
+			esc_attr( $this->get_id( $object ) ),
+			esc_attr( $li_class ),
+			esc_html( $this->get_thumb( $object ) ),
+			esc_url( $this->get_edit_link( $object ) ),
+			esc_html( $this->get_title( $object ) ),
+			esc_html( $this->get_object_label( $object ) ),
+			esc_attr( $icon_class )
+		);
 	}
 
 	/**
@@ -359,7 +363,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @param  mixed  $object Post or User
 	 *
-	 * @return int            The object ID.
+	 * @return int    The object ID.
 	 */
 	public function get_id( $object ) {
 		return isset( $object->ID ) ? $object->ID : false;
@@ -378,7 +382,7 @@ class WDS_CMB2_Attached_Posts_Field {
 		$post = get_post( $object );
 		// Initial Title
 		$title = $this->field->options( 'query_users' ) ? $object->data->display_name : get_the_title( $post->ID );
-		$title = apply_filters( 'cmb2_attached_posts_filter_title', $post->ID, $title );
+		$title = apply_filters( 'cmb2_attached_posts_title_filter', $post->ID, $title );
 
 		return $title . $additional;
 	}
@@ -731,7 +735,7 @@ class WDS_CMB2_Attached_Posts_Field {
 			$return .= '<ol>';
 			foreach ( (array) $posts as $id => $post ) {
 
-				$title = apply_filters( 'cmb2_attached_posts_filter_title', $id, $post['title'] );
+				$title = apply_filters( 'cmb2_attached_posts_title_filter', $id, $post['title'] );
 
 				$return .= sprintf(
 					'<li id="attached-%d"><a href="%s">%s</a></li>',

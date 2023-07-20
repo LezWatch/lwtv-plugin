@@ -37,7 +37,12 @@ class LWTV_CMB2_Addons {
 		add_filter( 'cmb2_show_on', array( $this, 'cmb_show_meta_to_chosen_roles' ), 10, 2 );
 
 		// Filter attached posts titles.
-		add_filter( 'cmb2_attached_posts_filter_title', array( $this, 'cmb_filter_title_attached_posts' ), 10, 2 );
+		add_filter( 'cmb2_attached_posts_title_filter', array( $this, 'cmb_filter_title_attached_posts' ), 10, 2 );
+		// Filter allowed Post Statues.
+		add_filter( 'cmb2_attached_posts_status_filter', array( $this, 'cmb_filter_post_status_attached_posts' ), 10, 2 );
+		// Filter allowed Post Statues.
+		add_filter( 'cmb2_attached_posts_per_page_filter', array( $this, 'cmb_filter_post_perpage_attached_posts' ), 10, 2 );
+
 	}
 
 	/**
@@ -180,6 +185,25 @@ class LWTV_CMB2_Addons {
 		return $post_title;
 	}
 
+	/**
+	 * Filter to change allowed post statues.
+	 *
+	 * For CMB2-Attached-Posts
+	 */
+	public function cmb_filter_post_status_attached_posts( $post_status ) {
+		$post_status = array( 'publish', 'pending', 'draft', 'future', 'private', 'inherit' );
+
+		return $post_status;
+	}
+
+	/**
+	 * Filter to search over 100 pages (we have a lot!)
+	 *
+	 * For CMB2-Attached-Posts
+	 */
+	public function cmb_filter_post_perpage_attached_posts( $number ) {
+		return 100;
+	}
 
 }
 
