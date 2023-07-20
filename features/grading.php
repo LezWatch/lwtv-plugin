@@ -58,11 +58,28 @@ class LWTV_Grading {
 				'bg'    => '#d1548e',
 				'url'   => $lwtv['url'],
 			),
+			'tmdb'     => array(
+				'image' => plugins_url( '/assets/images/scores/tmdb.svg', dirname( __FILE__ ) ),
+				'name'  => 'The Movie Database',
+				'score' => $tmdb['score'],
+				'color' => self::color( $tmdb['score'] ),
+				'bg'    => '#0d253f',
+				'url'   => $tmdb['url'],
+			),
+			'tvmaze'   => array(
+				'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __FILE__ ) ),
+				'name'  => 'TV Maze',
+				'score' => $tvmaze['score'],
+				'color' => self::color( $tvmaze['score'] ),
+				'bg'    => '#3c948b',
+				'url'   => $tvmaze['url'],
+			),
+/*
 			'imdb'     => array(
 				'image' => plugins_url( '/assets/images/scores/imdb.png', dirname( __FILE__ ) ),
 				'name'  => 'IMDb',
 				'score' => $imdb['score'],
-				'alt_s' => ( $imdb['score'] / 10 ),
+				'alt_s' => ( (int) $imdb['score'] / 10 ),
 				'color' => self::color( $imdb['score'] ),
 				'bg'    => '#000000',
 				'url'   => $imdb['url'],
@@ -83,22 +100,7 @@ class LWTV_Grading {
 				'bg'    => '#2a2c32',
 				'url'   => $tomato_u['url'],
 			),
-			'tmdb'     => array(
-				'image' => plugins_url( '/assets/images/scores/tmdb.svg', dirname( __FILE__ ) ),
-				'name'  => 'The Movie Database',
-				'score' => $tmdb['score'],
-				'color' => self::color( $tmdb['score'] ),
-				'bg'    => '#0d253f',
-				'url'   => $tmdb['url'],
-			),
-			'tvmaze'   => array(
-				'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __FILE__ ) ),
-				'name'  => 'TV Maze',
-				'score' => $tvmaze['score'],
-				'color' => self::color( $tvmaze['score'] ),
-				'bg'    => '#3c948b',
-				'url'   => $tvmaze['url'],
-			),
+*/
 		);
 
 		return $scores;
