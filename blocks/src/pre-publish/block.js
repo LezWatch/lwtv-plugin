@@ -20,12 +20,11 @@ const PrePublishCheckList = () => {
 	const [metaExcerptMessage, setMetaExcerptMessage] = useState('');
 	
 	// The useSelect hook is better for retrieving data from the store.
-	const { featuredImageID, metaExcerpt } = useSelect((select) => {
+	const { featuredImageID, metaExcerpt, currentExcerpt } = useSelect((select) => {
 		return {
-			featuredImageID:
-				select('core/editor').getEditedPostAttribute('featured_media'),
-			metaExcerpt:
-				select( 'core/editor' ).getEditedPostAttribute( 'excerpt' ),
+			featuredImageID: select('core/editor').getEditedPostAttribute('featured_media'),
+			metaExcerpt: select( 'core/editor' ).getEditedPostAttribute( 'excerpt' ),
+			currentExcerpt : post ? post.excerpt.rendered : '',
 		};
 	});
 
@@ -36,8 +35,10 @@ const PrePublishCheckList = () => {
 	useEffect(() => {
 		let lockPost = false;
 
-		// Check if the excerpt exists.
-		if (metaExcerpt === 0) {
+		// Check if the excerpt exists AND it's not the same as the custom.
+		// Since Gutenberg always picks up the auto-generated, we want to be sure
+		// they're different. If they're NOT, then it's custom and set and safe.
+		if (metaExcerpt === 0 && currentExcerpt !== metaExcerpt) {
 			lockPost = true;
 			setMetaExcerptMessage('Not Set');
 		} else {
