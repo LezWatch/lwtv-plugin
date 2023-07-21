@@ -32,25 +32,10 @@ class LWTV_Grading {
 			'score' => ( isset( $external['tvmaze']['score'] ) ) ? round( (int) $external['tvmaze']['score'] ) : 'TBD',
 			'url'   => ( isset( $external['tvmaze']['url'] ) ) ? $external['tvmaze']['url'] : 'https://tvmaze.com',
 		);
-/*
-		$tomato   = array(
-			'score' => ( isset( $external['tomatoes']['score'] ) ) ? round( (int) $external['tomatoes']['score'] ) : 'TBD',
-			'url'   => ( isset( $external['tomatoes']['url'] ) ) ? $external['tomatoes']['url'] : 'https://rottentomates.com',
-		);
-		$tomato_u = array(
-			'score' => ( isset( $external['tomato_u']['score'] ) ) ? round( (int) $external['tomato_u']['score'] ) : 'TBD',
-			'url'   => ( isset( $external['tomato']['url'] ) ) ? $external['tomato']['url'] : 'https://rottentomates.com',
-		);
-		$fresh    = ( $tomato >= 60 ) ? 'fresh' : 'splat';
-		$imdb     = array(
-			'score' => ( isset( $external['imdb']['score'] ) ) ? round( (int) $external['imdb']['score'] ) : 'TBD',
-			'url'   => ( isset( $external['imdb']['url'] ) ) ? $external['imdb']['url'] : 'https://imdb.com',
-		);
-*/
 
 		// Build Array
 		$scores = array(
-			'lwtv'     => array(
+			'lwtv'   => array(
 				'image' => plugins_url( '/assets/images/scores/lwtv.png', dirname( __FILE__ ) ),
 				'name'  => 'LezWatchTV',
 				'score' => $lwtv['score'],
@@ -58,7 +43,7 @@ class LWTV_Grading {
 				'bg'    => '#d1548e',
 				'url'   => $lwtv['url'],
 			),
-			'tmdb'     => array(
+			'tmdb'   => array(
 				'image' => plugins_url( '/assets/images/scores/tmdb.svg', dirname( __FILE__ ) ),
 				'name'  => 'The Movie Database',
 				'score' => $tmdb['score'],
@@ -66,7 +51,7 @@ class LWTV_Grading {
 				'bg'    => '#0d253f',
 				'url'   => $tmdb['url'],
 			),
-			'tvmaze'   => array(
+			'tvmaze' => array(
 				'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __FILE__ ) ),
 				'name'  => 'TV Maze',
 				'score' => $tvmaze['score'],
@@ -74,33 +59,6 @@ class LWTV_Grading {
 				'bg'    => '#3c948b',
 				'url'   => $tvmaze['url'],
 			),
-/*
-			'imdb'     => array(
-				'image' => plugins_url( '/assets/images/scores/imdb.png', dirname( __FILE__ ) ),
-				'name'  => 'IMDb',
-				'score' => $imdb['score'],
-				'alt_s' => ( (int) $imdb['score'] / 10 ),
-				'color' => self::color( $imdb['score'] ),
-				'bg'    => '#000000',
-				'url'   => $imdb['url'],
-			),
-			'tomatoes' => array(
-				'image' => plugins_url( '/assets/images/scores/tomato-' . $fresh . '.svg', dirname( __FILE__ ) ),
-				'name'  => 'Rotten Tomatoes Tomatometer',
-				'score' => $tomato['score'],
-				'color' => self::color( $tomato['score'] ),
-				'bg'    => '#2a2c32',
-				'url'   => $tomato['url'],
-			),
-			'tomato_u' => array(
-				'image' => plugins_url( '/assets/images/scores/tomato-audience.svg', dirname( __FILE__ ) ),
-				'name'  => 'Rotten Tomatoes (Audience Score)',
-				'score' => $tomato_u['score'],
-				'color' => self::color( $tomato_u['score'] ),
-				'bg'    => '#2a2c32',
-				'url'   => $tomato_u['url'],
-			),
-*/
 		);
 
 		return $scores;
@@ -217,8 +175,6 @@ class LWTV_Grading {
 	public function update_scores( $post_id ) {
 		self::api_tmdb( $post_id );
 		self::api_tvmaze( $post_id );
-		// Not running this yet until I confirm legality.
-		//self::api_imdb_api( $post_id );
 	}
 
 	/**
@@ -323,76 +279,6 @@ class LWTV_Grading {
 			'score' => $score,
 			'url'   => $url,
 		);
-
-		update_post_meta( $show_id, 'lezshows_3rd_scores', $current );
-	}
-
-	public function api_imdb_api( $show_id ) {
-
-		// If the API key is not defined, we stop.
-		if ( ! defined( 'IMDB_API' ) ) {
-			return;
-		}
-		$score   = 'TBD';
-		$url     = 'https://imdb-api.com/';
-		$imdb_id = get_post_meta( $show_id, 'lezshows_imdb', true );
-		$current = get_post_meta( $show_id, 'lezshows_3rd_scores', true );
-		$recheck = false;
-
-		// Only call their service once a day.
-		$transient = LWTV_Transients::get_transient( 'lwtv_3rd_scores_imdb_api_' . $show_id );
-		if ( false === $transient ) {
-			$recheck = true;
-		} else {
-			$score   = $transient;
-			$recheck = ( 'TBD' !== $score ) ? false : true;
-		}
-
-		if ( $imdb_id && $recheck ) {
-			$response = wp_remote_get( 'https://imdb-api.com/API/Ratings/' . IMDB_API . '/' . $imdb_id );
-		}
-
-		// Check the response:
-		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-			$body = json_decode( $response['body'], true ); // use the content
-
-			// Just in case the API is null...
-			if ( ! empty( $body ) ) {
-				$score = array(
-					'imdb'         => array(
-						'score' => ( isset( $body['imDb'] ) && ! empty( $body['imDb'] ) ) ? round( $body['imDb'] * 10 ) : 'TBD',
-						'url'   => 'https://imdb.com/title/' . $imdb_id,
-					),
-					'metacritic'   => array(
-						'score' => ( isset( $body['metacritic'] ) && ! empty( $body['metacritic'] ) ) ? $body['metacritic'] : 'TBD',
-						'url'   => 'https://metacritic.com/tv/' . get_post_field( 'post_name', $post_id ),
-					),
-					'tomatoes'     => array(
-						'score' => ( isset( $body['rottenTomatoes'] ) && ! empty( $body['rottenTomatoes'] ) ) ? $body['rottenTomatoes'] : 'TBD',
-						'url'   => 'https://www.rottentomatoes.com/tv/' . get_post_field( 'post_name', $post_id ),
-					),
-					'filmaffinity' => array(
-						'score' => ( isset( $body['filmAffinity'] ) && ! empty( $body['filmAffinity'] ) ) ? $body['filmAffinity'] : 'TBD',
-						'url'   => 'https://www.filmaffinity.com/',
-					),
-				);
-			}
-		}
-
-		// Set transient and don't re-check until tomorrow.
-		set_transient( 'lwtv_3rd_scores_imdb_api_' . $show_id, $score, 24 * HOUR_IN_SECONDS );
-
-		if ( ! is_array( $current ) ) {
-			$current = array();
-		}
-
-		// Add the new sources:
-		foreach ( $score as $source => $scores ) {
-			$current[ $source ] = array(
-				'score' => $scores['score'],
-				'url'   => $scores['url'],
-			);
-		}
 
 		update_post_meta( $show_id, 'lezshows_3rd_scores', $current );
 	}
