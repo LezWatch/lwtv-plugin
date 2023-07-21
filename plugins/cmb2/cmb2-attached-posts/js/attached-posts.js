@@ -99,7 +99,7 @@ window.CMBAP = window.CMBAP || {};
 	app.makeDroppable = function() {
 		app.$.attachedPosts.droppable({
 			accept: '.retrieved li',
-			drop: function(evt, ui) {
+			drop: function( evt, ui ) {
 				app.buildItems( ui.draggable );
 			}
 		}).sortable({

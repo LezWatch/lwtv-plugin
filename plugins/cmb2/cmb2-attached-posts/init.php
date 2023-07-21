@@ -74,6 +74,7 @@ class WDS_CMB2_Attached_Posts_Field {
 
 		$query_args  = (array) $this->field->options( 'query_args' );
 		$query_users = $this->field->options( 'query_users' );
+		$post_status = array( 'publish' );
 
 		if ( ! $query_users ) {
 
@@ -82,8 +83,8 @@ class WDS_CMB2_Attached_Posts_Field {
 				$query_args,
 				array(
 					'post_type'      => 'post',
-					'posts_per_page' => 100,
-					'post_status'    => array( 'publish', 'pending', 'draft', 'future', 'private', 'inherit' ),
+					'posts_per_page' => apply_filters( 'cmb2_attached_posts_per_page_filter', 50 ),
+					'post_status'    => apply_filters( 'cmb2_attached_posts_status_filter', $post_status ),
 				)
 			);
 
@@ -176,22 +177,31 @@ class WDS_CMB2_Attached_Posts_Field {
 
 		// @todo make User search work.
 		if ( ! $query_users ) {
-			$findtxt = $field_type->_text( 'find_text', __( 'Search' ) );
+			// Set defaults.
+			$search_txt = $field_type->_text( 'find_text', __( 'Search' ) );
+			$find_txt = __( 'Find Posts and Pages' );
 
+			// if the post type value isn't an array, let the post type decide what it is.
+			if ( ! is_array( $args['post_type'] ) ) {
+				$post_type_obj = get_post_type_object( $args['post_type'] );
+				$find_txt      = $post_type_obj->labels->search_items;
+			}
+
+			// Build JS.
 			$js_data = wp_json_encode(
 				array(
 					'queryUsers' => $query_users,
 					'types'      => $query_users ? 'user' : (array) $args['post_type'],
 					'cmbId'      => $this->field->cmb_id,
 					'errortxt'   => esc_attr( $field_type->_text( 'error_text', __( 'An error has occurred. Please reload the page and try again.' ) ) ),
-					'findtxt'    => esc_attr( $field_type->_text( 'find_text', __( 'Find Posts or Pages' ) ) ),
+					'findtxt'    => esc_attr( $field_type->_text( 'find_text', $find_txt ) ),
 					'groupId'    => $this->field->group ? $this->field->group->id() : false,
 					'fieldId'    => $this->field->_id(),
 					'exclude'    => isset( $args['post__not_in'] ) ? $args['post__not_in'] : array(),
 				)
 			);
 
-			echo '<p><button type="button" class="button cmb2-attached-posts-search-button" data-search=\'' . esc_js( $js_data ) . '\'>' . esc_html( $findtxt ) . ' <span title="' . esc_attr( $findtxt ) . '" class="dashicons dashicons-search"></span></button></p>';
+			echo '<p><button type="button" class="button cmb2-attached-posts-search-button" data-search=\'' . esc_js( $js_data ) . '\'>' . esc_html( $search_txt ) . ' <span title="' . esc_attr( $search_txt ) . '" class="dashicons dashicons-search"></span></button></p>';
 		}
 
 		echo '</div><!-- .retrieved-wrap -->';
@@ -311,14 +321,17 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return void
 	 */
 	public function list_item( $object, $li_class, $icon_class = 'dashicons-plus' ) {
-		echo '<li 
-			data-id="' . esc_attr( $this->get_id( $object ) ) . '" 
-			class="' . esc_attr( $li_class ) . '" target="_blank">'
-			. esc_html( $this->get_thumb( $object ) ) . '
-			<a title="Edit" href="' . esc_url( $this->get_edit_link( $object ) ) . '">'
-			. esc_html( $this->get_title( $object ) ) . '</a>
-			' . esc_html( $this->get_object_label( $object ) ) . '<span class="dashicons '
-			. esc_attr( $icon_class ) . ' add-remove"></span></li>';
+		// Build our list item
+		printf(
+			'<li data-id="%1$d" class="%2$s" target="_blank">%3$s<a title="' . esc_html( __( 'Edit' ) ) . '" href="%4$s">%5$s</a>%6$s<span class="dashicons %7$s add-remove"></span></li>',
+			esc_attr( $this->get_id( $object ) ),
+			esc_attr( $li_class ),
+			esc_html( $this->get_thumb( $object ) ),
+			esc_url( $this->get_edit_link( $object ) ),
+			esc_html( $this->get_title( $object ) ),
+			esc_html( $this->get_object_label( $object ) ),
+			esc_attr( $icon_class )
+		);
 	}
 
 	/**
@@ -350,7 +363,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @param  mixed  $object Post or User
 	 *
-	 * @return int            The object ID.
+	 * @return int    The object ID.
 	 */
 	public function get_id( $object ) {
 		return isset( $object->ID ) ? $object->ID : false;
@@ -366,11 +379,12 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return string         The object title.
 	 */
 	public function get_title( $object ) {
+		$post = get_post( $object );
 		// Initial Title
-		$title      = $this->field->options( 'query_users' ) ? $object->data->display_name : get_the_title( $object );
-		$additional = $this->add_additional( $this->get_id( $object ) );
+		$title = $this->field->options( 'query_users' ) ? $object->data->display_name : get_the_title( $post->ID );
+		$title = apply_filters( 'cmb2_attached_posts_title_filter', $post->ID, $title );
 
-		return $title . $additional;
+		return $title;
 	}
 
 	/**
@@ -640,11 +654,11 @@ class WDS_CMB2_Attached_Posts_Field {
 			$field = $cmb->get_field( $field, $group );
 		}
 
-		// @codingStandardsIgnoreStart
-		if ( $field && ( $cb = $field->maybe_callback( 'attached_posts_search_query_cb' ) ) ) {
+		$cb = $field->maybe_callback( 'attached_posts_search_query_cb' );
+		if ( $field && $cb ) {
 			call_user_func( $cb, $query, $field, $this );
 		}
-		// @codingStandardsIgnoreEnd
+
 	}
 
 	/**
@@ -721,14 +735,13 @@ class WDS_CMB2_Attached_Posts_Field {
 			$return .= '<ol>';
 			foreach ( (array) $posts as $id => $post ) {
 
-				$title      = $post['title'];
-				$additional = $this->add_additional( $this->get_id( $id ) );
+				$title = apply_filters( 'cmb2_attached_posts_title_filter', $id, $post['title'] );
 
 				$return .= sprintf(
 					'<li id="attached-%d"><a href="%s">%s</a></li>',
 					$id,
 					$post['edit_link'],
-					$title . $additional
+					$title
 				);
 			}
 			$return .= '</ol>';
@@ -740,28 +753,5 @@ class WDS_CMB2_Attached_Posts_Field {
 		return $return;
 	}
 
-	/**
-	 * Add Additional
-	 *
-	 * We have custom data we want to add to the title.
-	 */
-	public function add_additional( $id ) {
-		$new_title  = '';
-		$additional = array();
-		$status     = get_post_status( $id );
-		$is_queer   = get_post_meta( $id, 'lezactors_queer', true );
-
-		if ( false !== $status && 'publish' !== $status ) {
-			$additional[] = 'draft';
-		}
-
-		if ( ! empty( $is_queer ) && $is_queer ) {
-			$additional[] = 'queer';
-		}
-
-		$new_title = ( ! empty( $additional ) ) ? ' (' . implode( ' - ', $additional ) . ')' : '';
-
-		return $new_title;
-	}
 }
 WDS_CMB2_Attached_Posts_Field::get_instance();
