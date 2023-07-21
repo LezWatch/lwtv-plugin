@@ -117,10 +117,15 @@ class LWTV_Shows_Calculate {
 
 		// before we do the math, let's see if we have any characters:
 		$raw_char_count = get_post_meta( $post_id, 'lezshows_char_list', true );
-		$raw_char_count = ( ! is_array( $raw_char_count ) ) ? array( $raw_char_count ) : $raw_char_count;
-		$char_count     = count( $raw_char_count );
 
-		if ( ! isset( $char_count ) || empty( $char_count ) ) {
+		if ( ! empty( $raw_char_count ) ) {
+			$raw_char_count = ( ! is_array( $raw_char_count ) ) ? array( $raw_char_count ) : $raw_char_count;
+			$char_count     = count( $raw_char_count );
+		}
+
+		// If there is no char_count, re-run the whole check.
+		// Also check if 1, since sometimes that means the array is broken.
+		if ( ! isset( $char_count ) || empty( $char_count ) || 1 === $char_count ) {
 			$char_count = ( new LWTV_CPT_Characters() )->list_characters( $post_id, 'count' );
 		}
 

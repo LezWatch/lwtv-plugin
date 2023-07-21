@@ -35,7 +35,7 @@ class LWTV_Grading {
 
 		// Build Array
 		$scores = array(
-			'lwtv'     => array(
+			'lwtv'   => array(
 				'image' => plugins_url( '/assets/images/scores/lwtv.png', dirname( __FILE__ ) ),
 				'name'  => 'LezWatchTV',
 				'score' => $lwtv['score'],
@@ -43,7 +43,7 @@ class LWTV_Grading {
 				'bg'    => '#d1548e',
 				'url'   => $lwtv['url'],
 			),
-			'tmdb'     => array(
+			'tmdb'   => array(
 				'image' => plugins_url( '/assets/images/scores/tmdb.svg', dirname( __FILE__ ) ),
 				'name'  => 'The Movie Database',
 				'score' => $tmdb['score'],
@@ -51,7 +51,7 @@ class LWTV_Grading {
 				'bg'    => '#0d253f',
 				'url'   => $tmdb['url'],
 			),
-			'tvmaze'   => array(
+			'tvmaze' => array(
 				'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __FILE__ ) ),
 				'name'  => 'TV Maze',
 				'score' => $tvmaze['score'],
@@ -175,8 +175,6 @@ class LWTV_Grading {
 	public function update_scores( $post_id ) {
 		self::api_tmdb( $post_id );
 		self::api_tvmaze( $post_id );
-		// Not running this yet until I confirm legality.
-		//self::api_imdb_api( $post_id );
 	}
 
 	/**
