@@ -19,6 +19,10 @@ registerBlockType( 'lwtv/grade', {
 	],
 	customClassName: false,
 	className: true,
+	supports: {
+		html: false,
+		align: [ "wide", "full" ]
+	},
 	attributes: {
 		summary: {
 			type: 'string',
@@ -66,7 +70,7 @@ registerBlockType( 'lwtv/grade', {
 						/>
 					</PanelBody>
 				</InspectorControls>
-				<div className={ `${ className } bd-callout show-grade` }>
+				<div className={ `${ className } bd-callout show-grade wp-block` }>
 					<div class="show-grade grade">{ grade }</div>
 					<div class="show-grade body">
 						<RichText
