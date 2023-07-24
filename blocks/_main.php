@@ -116,14 +116,6 @@ class LWTV_Blocks {
 				);
 			}
 		}
-
-		wp_localize_script(
-			'lwtv-plugin-gutenberg-blocks',
-			'js_data',
-			array(
-				'affiliate_default_image_url' => plugins_url( 'assets/images/affiliate-grid.png', dirname( __FILE__ ) ),
-			)
-		);
 	}
 
 }
