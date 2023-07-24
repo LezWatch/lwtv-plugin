@@ -10,7 +10,6 @@
 	"supports": {
 		"multiple": false,
 		"reusable": false
-
 	},
 	"editorScript": "file:./block.js"
 }

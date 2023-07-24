@@ -1,10 +1,9 @@
 
 const { PostFeaturedImage } = wp.editor;
 
-export default function Edit( props ) {
-	const { className } = props;
+export default function Edit() {
 	return (
-		<div className={ `${ className } wp-block` }>
+		<div className={ `wp-block` }>
 			<PostFeaturedImage />
 		</div>
 	);
