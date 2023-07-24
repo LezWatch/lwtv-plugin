@@ -8,11 +8,17 @@ These are Gutenberg Blocks specific to LezWatch.TV Only
 
 ## Development Notes
 
-The source code is located in folders within `/src/` - that's where most (if not all) of your work will happen.
+The source code is located in folders within `/src/` - that's where most (if not all) of your work will happen. Each new block gets a folder and in each folder there must be a `block.json` file that stores all the metadata. Read [Metadata in block.json](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/) if this is your first rodeo.
+
+The blocks will automagically build anytime anyone runs `npm run build` from the main folder. You can also run `npm run build` from the `blocks` folder.
 
 When built, the new code will deploy to the `/build/` folder.
 
 The overall code is called from the `/blocks/src/blocks.php` file.
+
+### ServerSideRendering
+
+Due to a weird quirk in ServerSideRender, you can't (yet) use a `block.json` file
 
 ### Notes
 

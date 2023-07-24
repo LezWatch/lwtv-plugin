@@ -8,17 +8,31 @@ jobs:
   deploy-website:
     runs-on: ubuntu-latest
     steps:
-      - name: Do a git checkout including submodules
-        uses: actions/checkout@v3
-        with:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
           submodules: true
 
-      - name: Verify Workspace
-        run: |
-          echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
-      - name: Verify Folder
-        run: |
-          ls -lah ${GITHUB_WORKSPACE}
+    - name: Verify Workspace
+      run: |
+        echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+
+    - name: Verify Folder
+      run: |
+        ls -lah ${GITHUB_WORKSPACE}
+
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+
+    - name: Setup PHP and Composer
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
+        tools: composer:v2
+
 
       - name: Deploy to LezWatch.TV Production Server
         uses: easingthemes/ssh-deploy@main
