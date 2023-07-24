@@ -279,10 +279,9 @@ class LWTV_Shortcodes {
 			'fav_shows' => '',
 		);
 
-		// If it's not a user ID, let's convert.
-		if ( ! is_numeric( $attributes['users'] ) ) {
+		if ( isset( $attributes['users'] ) && ! is_numeric( $attributes['users'] ) ) {
 			$get_user  = get_user_by( 'login', $attributes['users'] );
-			$author_id = $get_user->ID;
+			$author_id = isset( $get_user->ID ) ? $get_user->ID : 0;
 		} else {
 			$author_id = isset( $attributes['users'] ) ? absint( $attributes['users'] ) : 0;
 		}
@@ -333,7 +332,7 @@ class LWTV_Shortcodes {
 		$instagram = ( ! empty( $content['instagram'] ) ) ? '<a href="https://instagram.com/' . $content['instagram'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
 		$tumblr    = ( ! empty( $content['tumblr'] ) ) ? '<a href="' . $content['tumblr'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
 		$website   = ( ! empty( $content['website'] ) ) ? '<a href="' . $content['website'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'home.svg', 'fa-home' ) . '</a>' : false;
-		$tumblr    = ( ! empty( $content['mastodon'] ) ) ? '<a href="' . $content['mastodon'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
+		$mastodon  = ( ! empty( $content['mastodon'] ) ) ? '<a href="' . $content['mastodon'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
 
 		$social_array = array( $website, $twitter, $instagram, $tumblr, $mastodon );
 		$social_array = array_filter( $social_array );
