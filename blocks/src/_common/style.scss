@@ -1,3 +1,12 @@
+/** Code Blocks **/
+
+body.post-type-post_type_characters .wp-block-post-featured-image,
+body.post-type-post_type_actors .wp-block-post-featured-image {
+	float: left;
+	width: 350px;
+	margin-right: 2rem;
+}
+
 /**
  * #.# Common SCSS
  *

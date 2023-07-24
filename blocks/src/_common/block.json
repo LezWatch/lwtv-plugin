@@ -9,5 +9,6 @@
 	"description": "Common code for Gutenberg, nothing is shown.",
 	"supports": {
 		"inserter": false
-	}
+	},
+	"editorScript": "file:./block.js"
 }

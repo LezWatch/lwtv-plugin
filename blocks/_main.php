@@ -19,7 +19,6 @@ class LWTV_Blocks {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'action_register_blocks' ) );
-
 		add_filter( 'block_categories_all', array( $this, 'action_add_block_category' ), 10, 2 );
 
 		// Enqueues.
