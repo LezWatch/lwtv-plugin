@@ -3,17 +3,15 @@
  */
 
 const { Component, Fragment } = wp.element;
-const { __ } = wp.i18n;
 const { SelectControl, PanelBody, TextControl } = wp.components;
 const { InspectorControls } = wp.blockEditor;
-const { withSelect } = wp.data;
 
 import ServerSideRender from '@wordpress/server-side-render';
 
 class AuthorProfileBlock extends Component {
 	render() {
 
-		const { attributes, setAttributes, authors } = this.props;
+		const { attributes, setAttributes } = this.props;
 		const { users, format } = attributes;
 
 		const inspectorControls = (

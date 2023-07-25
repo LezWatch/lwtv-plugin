@@ -6,9 +6,9 @@
 import './editor.scss';
 
 const { registerBlockType } = wp.blocks;
-const { createElement, Fragment } = wp.element;
+const { Fragment } = wp.element;
 const { InspectorControls } = wp.editor;
-const { TextControl, PanelBody, SelectControl } = wp.components;
+const { PanelBody, SelectControl } = wp.components;
 import ServerSideRender from '@wordpress/server-side-render';
 
 registerBlockType( 'lez-library/glossary', {
@@ -24,7 +24,8 @@ registerBlockType( 'lez-library/glossary', {
 
 	edit: props => {
 
-		const { attributes: { placeholder }, setAttributes } = props;
+		const { attributes, setAttributes } = this.props;
+		const { taxonomy } = attributes;
 
 		return (
 			<Fragment>
@@ -32,7 +33,7 @@ registerBlockType( 'lez-library/glossary', {
 					<PanelBody title={ 'Glossary Block Settings' }>
 						<SelectControl
 							label={ 'Taxonomy' }
-							value={ props.attributes.taxonomy }
+							value={ taxonomy }
 							options={ [
 								{ label: 'Choose a taxonomy...', value: null },
 								{ label: 'Clichés', value: 'lez_cliches' },
@@ -41,7 +42,7 @@ registerBlockType( 'lez-library/glossary', {
 								{ label: 'Genres', value: 'lez_genres' },
 								{ label: 'Intersections', value: 'lez_intersections' },
 							] }
-							onChange={ ( value ) => props.setAttributes( { taxonomy: value } ) }
+							onChange={ ( value ) => setAttributes( { taxonomy: value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>

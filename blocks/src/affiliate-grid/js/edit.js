@@ -5,7 +5,7 @@ export default function Edit( props ) {
 
 	const { className } = props;
 
-	if ( className ==- undefined ) {
+	if ( className === undefined ) {
 		className = 'wp-block';
 	}
 

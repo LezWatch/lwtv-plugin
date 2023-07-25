@@ -1,15 +1,10 @@
 /*
     This script runs all the various node post install things we need for LTWV.
 
-    1. Downloads CMB2 Grid Code
-    2. Copies other files into place
+    * Copies files into place
  */
 
-const clone = require('git-clone');
 const { cp } = require('@npmcli/fs');
-
-// CMB2 Grid Code
-clone( 'https://github.com/origgami/cmb2-grid', 'plugins/cmb2/cmb2-grid/' );
 
 // Move JS
 (async () => {
