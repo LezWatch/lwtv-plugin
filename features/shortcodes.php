@@ -275,7 +275,6 @@ class LWTV_Shortcodes {
 			'bio'       => 'Yet another queer who slept with Shane. Or Sara Lance.',
 			'title'     => '',
 			'postcount' => '',
-			'twitter'   => '',
 			'fav_shows' => '',
 		);
 
