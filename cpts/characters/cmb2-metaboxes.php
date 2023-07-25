@@ -167,6 +167,48 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 
+		// Field Group: Alternate Character Images
+		$group_alt_images = $cmb_characters->add_field(
+			array(
+				'id'         => $prefix . 'character_image_group',
+				'type'       => 'group',
+				'repeatable' => true,
+				'options'    => array(
+					'group_title'   => 'Alternate Images',
+					'add_button'    => 'Add Another Image',
+					'remove_button' => 'Remove Image',
+					'sortable'      => true,
+				),
+			)
+		);
+		// Field: Source Name
+		$field_alt_single_image = $cmb_characters->add_group_field(
+			$group_alt_images,
+			array(
+				'name' => 'From ...',
+				'desc' => 'Where is the image from (i.e. "Crossover", "Flashback", "Cartoon", "Live Action" etc...)',
+				'id'   => 'alt_image_text',
+				'type' => 'text_small',
+			)
+		);
+		// Field: Image
+		$field_alt_single_image = $cmb_characters->add_group_field(
+			$group_alt_images,
+			array(
+				'name'         => 'Image File',
+				'desc'         => 'Upload an alternate image for this character.',
+				'id'           => 'alt_image_file',
+				'type'         => 'file',
+				'options'      => array(
+					'url' => false,
+				),
+				'text'         => array(
+					'add_upload_file_text' => 'Add Image',
+				),
+				'preview_size' => array( 50, 50 ),
+			)
+		);
+
 		// Field Group: Character Show information
 		$group_shows = $cmb_characters->add_field(
 			array(
