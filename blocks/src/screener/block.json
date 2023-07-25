@@ -1,0 +1,41 @@
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 2,
+	"name": "lwtv/screener",
+	"version": "1.0",
+	"title": "Screener Reviews",
+	"category": "lezwatch",
+	"icon": "video-alt",
+	"description": "Screener Reviews.",
+	"keywords": [ "affiliates" ],
+	"editorScript": "file:./block.js",
+	"supports": {
+		"customClassName": false
+	},
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": "Show Title"
+		},
+		"summary": {
+			"type": "string",
+			"default": "This show is wonderful because..."
+		},
+		"queer": {
+			"type": "string",
+			"default": "3"
+		},
+		"worthit": {
+			"type": "string",
+			"default": "meh"
+		},
+		"star": {
+			"type": "string",
+			"default": "none"
+		},
+		"trigger": {
+			"type": "string",
+			"default": "none"
+		}
+	}
+}

@@ -3,7 +3,7 @@ const { InnerBlocks } = wp.blockEditor;
 export default function Save( props ) {
 	const { attributes: { className } } = props;
 
-	if ( className ==- undefined ) {
+	if ( className === undefined ) {
 		className = 'wp-block';
 	}
 

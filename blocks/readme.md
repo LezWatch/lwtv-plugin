@@ -22,7 +22,10 @@ The source code is located in folders within `/src/` - that's where most (if not
 
 The blocks will automagically build anytime anyone runs `npm run build` from the main folder. You can also run `npm run build` from the `blocks` folder.
 
-When built, the new code will deploy to the `/build/` folder. The overall code is called from the `/blocks/src/blocks.php` file.
+All JS and CSS from blocks defined in `blocks/*/block.json` get pushed to the `blocks/build/` folder via the build process. PHP scans this directory and registers blocks in `php/class-blocks.php`. The overall code is called from the `/blocks/src/blocks.php` file.
+
+The subfolders are _NOT_ stored in Git, because they're not needed to be. We run the build via actions 
+
 
 ### Getting Started
 
