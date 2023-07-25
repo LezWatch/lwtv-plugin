@@ -1,5 +1,5 @@
-const { createElement } = wp.element;
-const { RichText } = wp.blockEditor;
+import { RichText } from '@wordpress/block-editor';
+import { createElement } from '@wordpress/element';
 
 export default function Save( props ) {
 	const content = props.attributes.content;

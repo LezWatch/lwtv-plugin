@@ -5,11 +5,11 @@
 //  Import CSS.
 import './editor.scss';
 
-const { registerBlockType } = wp.blocks;
-const { Fragment } = wp.element;
-const { InspectorControls } = wp.editor;
-const { PanelBody, SelectControl } = wp.components;
-import ServerSideRender from '@wordpress/server-side-render';
+import { registerBlockType } from '@wordpress/blocks';
+import { Fragment } from '@wordpress/element';
+import { InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, SelectControl } from '@wordpress/components';
+import { ServerSideRender } from '@wordpress/server-side-render';
 
 registerBlockType( 'lez-library/glossary', {
 	title: 'Glossary',

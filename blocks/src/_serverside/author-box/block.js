@@ -6,7 +6,7 @@
 import './style.scss';
 import './editor.scss';
 
-const { registerBlockType } = wp.blocks;
+import { registerBlockType } from '@wordpress/blocks';
 
 // Edit as it's own file
 import edit from './edit';

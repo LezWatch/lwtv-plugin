@@ -1,6 +1,6 @@
-const { Fragment } = wp.element;
-const { InspectorControls, MediaUpload, RichText } = wp.blockEditor;
-const { PanelBody, TextControl } = wp.components;
+import { Fragment } from '@wordpress/element';
+import { InspectorControls, MediaUpload, RichText } from '@wordpress/block-editor';
+import { PanelBody, TextControl } from '@wordpress/components';
 
 export default function Edit( { attributes, setAttributes, className } ) {
 

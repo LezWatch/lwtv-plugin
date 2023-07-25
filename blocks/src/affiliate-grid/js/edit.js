@@ -1,5 +1,5 @@
-const { Fragment } = wp.element;
-const { InnerBlocks } = wp.blockEditor;
+import { Fragment } from '@wordpress/element';
+import { InnerBlocks } from '@wordpress/block-editor';
 
 export default function Edit( props ) {
 

@@ -12,7 +12,7 @@ import Save from './js/save';
 import './css/style.scss';
 import './css/editor.scss';
 
-const { registerBlockType } = wp.blocks;
+import { registerBlockType } from '@wordpress/blocks';
 
 var withImageSize = function() {
 	return 'large';

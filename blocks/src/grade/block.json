@@ -2,23 +2,27 @@
 {
 	"$schema": "https://json.schemastore.org/block.json",
 	"apiVersion": 2,
-	"name": "lez-library/spoilers",
+	"name": "lwtv/grade",
 	"version": "1.0",
-	"title": "Spoiler Warning",
+	"title": "Grade",
 	"category": "lezwatch",
 	"icon": "video-alt",
 	"description": "Uh uh uh, no spoilers, sweetie.",
-	"keywords": [ "spoiler", "warning" ],
+	"keywords": [ "grade", "review" ],
 	"editorScript": "file:./block.js",
 	"supports": {
-		"customClassName": false
+		"customClassName": false,
+		"html": false,
+		"align": [ "wide", "full" ]
 	},
 	"attributes": {
-		"content": {
+		"summary": {
 			"type": "string",
-			"default": "Warning: This post contains spoilers!",
-			"selector": "div",
-			"source": "html"
+			"default": "I give this grade because..."
+		},
+		"grade": {
+			"type": "string",
+			"default": "C"
 		}
 	}
 }

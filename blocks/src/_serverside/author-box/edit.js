@@ -2,9 +2,9 @@
  * External dependencies
  */
 
-const { Component, Fragment } = wp.element;
-const { SelectControl, PanelBody, TextControl } = wp.components;
-const { InspectorControls } = wp.blockEditor;
+import { Component, Fragment } from '@wordpress/element';
+import { SelectControl, PanelBody, TextControl } from '@wordpress/components';
+import { InspectorControls } from '@wordpress/block-editor';
 
 import ServerSideRender from '@wordpress/server-side-render';
 

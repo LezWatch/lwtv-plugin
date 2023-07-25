@@ -1,5 +1,5 @@
 
-const { PostFeaturedImage } = wp.editor;
+import { PostFeaturedImage } from '@wordpress/block-editor';
 
 export default function Edit() {
 	return (

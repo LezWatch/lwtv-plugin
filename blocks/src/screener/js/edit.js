@@ -1,6 +1,5 @@
-
-const { Fragment } = wp.element;
-const { RichText, PlainText } = wp.blockEditor;
+import { Fragment } from '@wordpress/element';
+import { RichText, PlainText } from '@wordpress/block-editor';
 
 export default function Edit( props ) {
 

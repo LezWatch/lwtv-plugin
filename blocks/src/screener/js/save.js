@@ -1,5 +1,5 @@
-const { Fragment } = wp.blockEditor;
-const { RichText } = wp.blockEditor;
+import { Fragment } from '@wordpress/element';
+import { RichText } from '@wordpress/block-editor';
 
 // Internal Components
 import DisplayQueer from './components/display-queer';

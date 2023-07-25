@@ -5,8 +5,7 @@
 //  Import CSS.
 import './editor.scss';
 
-const { Fragment } = wp.element;
-const { registerBlockType } = wp.blocks;
+import { registerBlockType } from '@wordpress/blocks';
 import ServerSideRender from '@wordpress/server-side-render';
 
 // Register block
