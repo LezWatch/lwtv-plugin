@@ -37,7 +37,7 @@ export default function Edit( props ) {
 
 	return(
 		<Fragment>
-		<div className={ `${ className } wp-block lwtv-screener bd-callout screener-shortcode` }>
+		<div className={ 'wp-block lwtv-screener bd-callout screener-shortcode' }>
 			<h5>Screener Review On ...&nbsp;
 				<PlainText
 					tagName='em'
