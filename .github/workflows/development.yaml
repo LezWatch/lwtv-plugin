@@ -6,7 +6,7 @@ on:
       - 'development'
 
 jobs:
-  deploy-website:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Do a git checkout including submodules
