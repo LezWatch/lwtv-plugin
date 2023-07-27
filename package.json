@@ -8,8 +8,8 @@
 	],
 	"scripts": {
 		"build": "npm-run-all build:*",
-		"build:workspaces": "npm run build --workspaces",
-		"postinstall": "(cd blocks && npm install) && (node ./node_scripts/postinstall.js)"
+		"build:workspaces": "npm install --workspaces && npm run build --workspaces",
+		"postinstall": "node ./node_scripts/postinstall.js"
 	},
 	"author": "LezWatch.TV",
 	"license": "GPL-2.0",

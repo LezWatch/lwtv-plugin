@@ -20,3 +20,4 @@ const { cp } = require('@npmcli/fs');
 	await cp('node_modules/tablesorter/dist/css/theme.bootstrap_4.min.css', 'assets/css/theme.bootstrap_4.min.css');
 	console.log('CSS files have been moved...');
 })();
+
