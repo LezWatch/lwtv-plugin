@@ -2,12 +2,15 @@ name: 'Deploy Plugin to Development'
 
 on:
   push:
-    branches: [ development ]
+    branches:
+      - 'development'
 
 jobs:
-  deploy-website:
+  build:
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
+
       - name: Do a git checkout including submodules
         uses: actions/checkout@v3
         with:
@@ -16,9 +19,28 @@ jobs:
       - name: Verify Workspace
         run: |
           echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+
       - name: Verify Folder
         run: |
           ls -lah ${GITHUB_WORKSPACE}
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Setup PHP and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build it
+        run: npm run build
 
       - name: Deploy to LezWatch.TV Dev Server
         uses: easingthemes/ssh-deploy@main
@@ -29,9 +51,3 @@ jobs:
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/plugins/lwtv-plugin
           EXCLUDE: "/.git/, /.github/, /node_scripts/"
-
-#  ~/clone/package.json ~/clone/package-lock.json 
-# ~/clone/phpcs.xml.dist ~/clone/composer.json 
-# ~/clone/gutenberg/package-lock.json ~/clone/gutenberg/package.json 
-# ~/clone/gutenberg/README.md ~/clone/gutenberg/.editorconfig 
-# ~/clone/gutenberg/.eslintignore ~/clone/gutenberg/.eslintrc.json

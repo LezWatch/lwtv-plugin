@@ -546,10 +546,18 @@ class LWTV_Debug {
 				'tropes'     => get_the_terms( $show_id, 'lez_tropes' ),
 			);
 
-			$list_count = count( get_post_meta( $post_id, 'lezshows_char_list', true ) );
+			// Check if there are characters.
+			$charshowlist = get_post_meta( $show_id, 'lezshows_char_list', true );
+
+			if ( false === $charshowlist ) {
+				$list_count = max( 0, LWTV_Shows_Calculate::count_queers( $show_id, 'count' ) );
+			} else {
+				$list_count = count( $charshowlist );
+			}
+
 			if ( $check['chars'] !== $list_count ) {
 				$check['chars'] = $list_count;
-				update_post_meta( $post_id, 'lezshows_char_count', $list_count );
+				update_post_meta( $show_id, 'lezshows_char_count', $list_count );
 			}
 
 			// If there's 0 screentime, it's okay there are no Characters

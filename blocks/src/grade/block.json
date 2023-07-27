@@ -1,0 +1,28 @@
+
+{
+	"$schema": "https://json.schemastore.org/block.json",
+	"apiVersion": 2,
+	"name": "lwtv/grade",
+	"version": "1.0",
+	"title": "Grade",
+	"category": "lezwatch",
+	"icon": "video-alt",
+	"description": "Uh uh uh, no spoilers, sweetie.",
+	"keywords": [ "grade", "review" ],
+	"editorScript": "file:./block.js",
+	"supports": {
+		"customClassName": false,
+		"html": false,
+		"align": [ "wide", "full" ]
+	},
+	"attributes": {
+		"summary": {
+			"type": "string",
+			"default": "I give this grade because..."
+		},
+		"grade": {
+			"type": "string",
+			"default": "C"
+		}
+	}
+}

@@ -40,7 +40,7 @@ class LWTV_CMB2_Addons {
 		add_filter( 'cmb2_attached_posts_title_filter', array( $this, 'cmb_filter_title_attached_posts' ), 10, 2 );
 		// Filter allowed Post Statues.
 		add_filter( 'cmb2_attached_posts_status_filter', array( $this, 'cmb_filter_post_status_attached_posts' ), 10, 2 );
-		// Filter allowed Post Statues.
+		// Filter allowed Post perpage for search.
 		add_filter( 'cmb2_attached_posts_per_page_filter', array( $this, 'cmb_filter_post_perpage_attached_posts' ), 10, 2 );
 
 	}
@@ -165,21 +165,21 @@ class LWTV_CMB2_Addons {
 	 *
 	 * For CMB2-Attached-Posts
 	 */
-	public function cmb_filter_title_attached_posts( $post_id, $post_title ) {
+	public function cmb_filter_title_attached_posts( $post_title, $post_id ) {
 		$additional = array();
 		$status     = get_post_status( $post_id );
 		$is_queer   = get_post_meta( $post_id, 'lezactors_queer', true );
 
-		if ( false !== $status && 'publish' !== $status ) {
-			$additional[] = 'draft';
+		if ( false !== $status && 'publish' !== $status && ! str_contains( $post_title, 'is_draft' ) ) {
+			$additional[] = 'is_draft';
 		}
 
-		if ( ! empty( $is_queer ) && $is_queer ) {
-			$additional[] = 'queer';
+		if ( ! empty( $is_queer ) && $is_queer && ! str_contains( $post_title, 'is_queer' ) ) {
+			$additional[] = 'is_queer';
 		}
 
 		if ( ! empty( $additional ) ) {
-			$post_title .= ' (' . implode( ', ', $additional ) . ')';
+			$post_title .= ' (' . implode( ', ', array_unique( $additional, SORT_REGULAR ) ) . ')';
 		}
 
 		return $post_title;

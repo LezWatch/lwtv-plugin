@@ -32,8 +32,8 @@ Stored in `/affiliates/` -- Auto Adds in Affiliate Codes. Currently requires AdR
 
 * `/images/` - Images used by local 'ads'
 * `_main.php` - Determines which ad to show and when
-* `ways-to-watch.php` - Affiliate links and prettyfication of services
-* `widget.php` - Widget code to display ads
+* `ways-to-watch.php` - Affiliate links and pretty-fication of services
+* `widget.php` - Widget code to display ads (currently disabled)
 
 ### Assets
 
@@ -76,19 +76,7 @@ Blocks for Gutenberg. The file `_main.php` acts as an autoloader. If you're upda
 * `calendar.php` - Calendar specific code
 * `serverside.php` - Server-side Renders: Run PHP code in JS blocks
 
-The source code is in `/src/` broken up by folder, with one special file
-
-* `index.js` - Master file to call everything else.
-* `/_common/` - Common PHP, CSS, and JS code for all blocks
-* `/affiliate-grid/` - A bootstrap styled grid to show affiliate links
-* `/author-box/` - Author Boxes: Display author information
-* `/featured-image/` - Featured Image: Shows the image inline, not just on the sidebar
-* `/glossary/` - Glossary: Show a visual glossary of taxonomies with icons
-* `/grade/` - Grade: Give something a grade and an explanation
-* `/private-note/` - Private Note: Shows something ONLY to logged in editors
-* `/screener/` - Screeners: For reviews of shows that haven't aired yet
-* `/spoiler/` - Spoiler: Warning for spoilers
-* `/tvshow-calendar/` - TV Show Calendar: Lists all the shows on air
+The source code is in `/src/` broken up by folder, with one special file, fully documented in `/blocks/README.md` 
 
 ### Custom Post Types
 
