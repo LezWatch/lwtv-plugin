@@ -1,3 +1,4 @@
+import { Fragment } from '@wordpress/element';
 
 // Figure out Worth Display
 export default function DisplayWorth( { score } ) {

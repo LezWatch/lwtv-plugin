@@ -1,3 +1,5 @@
+import { Fragment } from '@wordpress/element';
+
 // Display queer
 export default function DisplayQueer( { score } ) {
 	return (

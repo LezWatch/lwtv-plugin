@@ -1,11 +1,9 @@
 import { RichText } from '@wordpress/block-editor';
 import { createElement } from '@wordpress/element';
 
-
 export default function Edit( props ) {
 	const { attributes: className, focus, setFocus } = props;
 	const { content } = props.attributes;
-
 
 	function onChangeSpoiler( newContent ) {
 		props.setAttributes( { content: newContent } );
@@ -24,7 +22,7 @@ export default function Edit( props ) {
 	);
 
 	return createElement(
-		'div', { className: 'wp-block lwtv-spoilers alert alert-danger' },
+		'div', { className: 'wp-block-lez-library-spoilers alert alert-danger' },
 		editSpoiler
 	);
 }

@@ -8,18 +8,6 @@ body.post-type-post_type_actors .wp-block-post-featured-image {
 	margin-right: 2rem;
 }
 
-// Undefined wrapper.
-.editor-styles-wrapper .undefined {
-	margin-left: auto;
-	margin-right: auto;
-}
-
-html :where(.undefined) {
-	margin-bottom: 28px;
-	margin-top: 28px;
-	max-width: 840px;
-}
-
 /**
  * #.# Common SCSS
  *

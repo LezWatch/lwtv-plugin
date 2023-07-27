@@ -1,3 +1,4 @@
+import { Fragment } from '@wordpress/element';
 
 // Figure out Trigger Display
 export default function DisplayTrigger( { score } ) {

@@ -1,5 +1,4 @@
-
-import { PostFeaturedImage } from '@wordpress/block-editor';
+import { PostFeaturedImage } from '@wordpress/editor';
 
 export default function Edit() {
 	return (

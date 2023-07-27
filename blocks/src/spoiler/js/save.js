@@ -5,7 +5,7 @@ export default function Save( props ) {
 	const content = props.attributes.content;
 
 	const container = createElement(
-		'div', { className: 'alert alert-danger' },
+		'div', { className: 'wp-block-lez-library-spoilers alert alert-danger' },
 		React.createElement( RichText.Content, { value: content })
 	);
 	return container;
