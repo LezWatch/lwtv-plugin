@@ -109,7 +109,7 @@ class LWTV_CPT_Characters {
 			'item_updated'             => 'Character updated.',
 		);
 		$template = array(
-			array( 'lez-library/featured-image' ),
+			array( 'core/post-featured-image' ),
 			array(
 				'core/paragraph',
 				array( 'placeholder' => 'Everything we need to know about this character' ),

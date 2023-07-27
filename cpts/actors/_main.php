@@ -116,7 +116,7 @@ class LWTV_CPT_Actors {
 			'item_updated'             => 'Actor updated.',
 		);
 		$template = array(
-			array( 'lez-library/featured-image' ),
+			array( 'core/post-featured-image' ),
 			array(
 				'core/paragraph',
 				array( 'placeholder' => 'Everything we need to know about this actor.' ),
