@@ -6,17 +6,7 @@ Thank you for helping out making the world just a little bit more queer.
 - [ ] There is a description of your changes
 - [ ] Initial pull request targets the `development` branch
 
-For help writing a kick-ass commit message, please follow the 7 steps:
-
-1. Separate subject from body with a blank line
-2. Limit the subject line to 50 characters
-3. Capitalize the subject line
-4. Do not end the subject line with a period
-5. Use the imperative mood in the subject line
-6. Use the body to explain what and why vs. how
-7. Include a ticket number whenever one exists
-
-Example:
+Example of a great PR:
 
 > Make sure Sara Lance's deaths don't break output
 >

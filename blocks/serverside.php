@@ -12,14 +12,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class LWTV_ServerSideRendering {
 
+	protected static $directory;
+
 	public function __construct() {
+		self::$directory = dirname( __FILE__ );
+
+		// Register SSR blocks.
 		// author-box
 		register_block_type(
 			'lwtv/author-box',
 			array(
 				'attributes'      => array(
-					'users'  => array( 'type' => 'string' ),
-					'format' => array( 'type' => 'string' ),
+					'api_version' => 3,
+					'users'       => array( 'type' => 'string' ),
+					'format'      => array( 'type' => 'string' ),
 				),
 				'render_callback' => array( 'LWTV_Shortcodes', 'author_box' ),
 			)
@@ -29,7 +35,10 @@ class LWTV_ServerSideRendering {
 		register_block_type(
 			'lez-library/glossary',
 			array(
-				'attributes'      => array( 'taxonomy' => array( 'type' => 'string' ) ),
+				'attributes'      => array(
+					'api_version' => 3,
+					'taxonomy'    => array( 'type' => 'string' ),
+				),
 				'render_callback' => array( 'LWTV_Shortcodes', 'glossary' ),
 			)
 		);
@@ -38,6 +47,9 @@ class LWTV_ServerSideRendering {
 		register_block_type(
 			'lwtv/tvshow-calendar',
 			array(
+				'attributes'      => array(
+					'api_version' => 3,
+				),
 				'render_callback' => array( $this, 'render_tvshow_calendar' ),
 			)
 		);
@@ -46,6 +58,9 @@ class LWTV_ServerSideRendering {
 		register_block_type(
 			'lez-library/private-note',
 			array(
+				'attributes'      => array(
+					'api_version' => 3,
+				),
 				'render_callback' => array( $this, 'render_private_blocks' ),
 			)
 		);

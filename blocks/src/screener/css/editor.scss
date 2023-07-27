@@ -1,0 +1,108 @@
+/**
+ * #.# Editor Styles
+ *
+ * CSS for just Backend enqueued after style.scss
+ * which makes it higher in priority.
+ */
+
+$lwtv-bordergrey: rgba(0,0,0,.125);
+$lwtv-pink: #d1548e;
+$white: #fff;
+$black: #000;
+$lightgrey: #dedede;
+$medgrey: #999;
+$darkgrey: #222;
+$green: #5cb85c;
+$blue: #06c;
+$red: #c0392b;
+
+/* Bootstrap */
+$bs-red:	 #dc3545 !default;
+$bs-orange:  #fd7e14 !default;
+$bs-yellow:  #ffc107 !default;
+$bs-green:   #28a745 !default;
+$bs-cyan:	#17a2b8 !default;
+
+.lwtv-screener {
+	padding: 1.25rem;
+	margin-top: 1.25rem;
+	margin-bottom: 1.25rem;
+	border: 1px solid $lwtv-bordergrey;
+	border-left-width: .25rem;
+	border-radius: .25rem;
+	border-left-color: $lwtv-pink;
+
+	h5 {
+		font-family: Oswald,sans-serif;
+		font-weight: 400;
+		line-height: 1.1;
+		font-size: 1.25rem;
+		margin-bottom: 1rem;
+		background-color: $lightgrey;
+		padding: 5px;
+
+		.block-editor-plain-text {
+			width: 50%!important;
+			vertical-align: middle!important;
+			color: $darkgrey;
+			font-style: italic;
+			display: inline;
+		}
+	}
+
+	select {
+		appearance: menulist;
+	}
+
+	.btn {
+		margin-right: 10px;
+		display: inline-flex;
+	}
+
+	.btn-dark, .btn-anti {
+		color: $white;
+		background-color: $darkgrey;
+		border-color: $darkgrey;
+	}
+
+	.btn-none {
+		color: $black;
+		background-color: $lightgrey;
+		border-color: $lightgrey;
+	}
+
+	.btn-info, .btn-meh, .btn-gold, .btn-silver, .btn-bronze, .btn-low {
+		color: $white;
+		background-color: $bs-cyan;
+		border-color: $bs-cyan;
+	}
+
+	.btn-no, .btn-high {
+		color: $white;
+		background-color: $bs-red;
+		border-color: $bs-red;
+	}
+
+	.btn-medium {
+		color: $white;
+		background-color: $bs-yellow;
+		border-color: $bs-yellow;
+	}
+
+	.btn-yes {
+		color: $white;
+		background-color: $bs-green;
+		border-color: $bs-green;
+	}
+
+	.btn-tbd {
+		color: $white;
+		background-color: $blue;
+		border-color: $blue;
+	}
+
+	.btn form {
+		display: inline;
+		padding-left: .5rem;
+	}
+}

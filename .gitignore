@@ -4,3 +4,4 @@
 *node_downloads/
 /npm-debug.log
 composer.lock
+/blocks/build/*

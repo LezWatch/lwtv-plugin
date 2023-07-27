@@ -1,20 +1,19 @@
+/** Code Blocks **/
+
+// Featured Images
+body.post-type-post_type_characters .wp-block-post-featured-image,
+body.post-type-post_type_actors .wp-block-post-featured-image {
+	float: left;
+	width: 350px;
+	margin-right: 2rem;
+}
+
 /**
  * #.# Common SCSS
  *
  * Can include things like variables and mixins
  * that are used across the project.
 */
-
-// Featured Images
-.post-type-post_type_characters .wp-block-lez-library-featured-image,
-.post-type-post_type_actors .wp-block-lez-library-featured-image {
-	float: left;
-	width: 350px;
-	margin-right: 2rem;
-	button.editor-post-featured-image__toggle {
-		height: 200px;
-	}
-}
 
 // Colors.
 $white: #fff;
