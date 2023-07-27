@@ -2,8 +2,8 @@ name: 'Deploy Plugin to Development'
 
 on:
   push:
-    branches: 
-      - development
+    branches:
+      - 'development'
 
 jobs:
   deploy-website:
