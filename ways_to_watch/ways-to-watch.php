@@ -3,15 +3,13 @@
  * Name: Ways to Watch
  * Description: Edit 'ways to watch' on the fly, based on networks and links
  *
- * Links:
- * https://appleservices-console.partnerize.com/v2/overview/overview
- * https://affiliate.itunes.apple.com/resources/documentation/basic_affiliate_link_guidelines_for_the_phg_network/
  */
 
-
 class LWTV_Ways_To_Watch {
+
 	/**
 	 * Call Custom Affiliate Links
+	 *
 	 * This is used by shows to figure out where people can watch things
 	 * There's some juggling for certain sites
 	 */
@@ -187,7 +185,7 @@ class LWTV_Ways_To_Watch {
 
 			// Crazy failsafe
 			if ( empty( $name ) ) {
-				$name = 'Watch';
+				$name = 'Watch Online';
 			}
 
 			// Set URL based on slug in url_array
@@ -206,3 +204,5 @@ class LWTV_Ways_To_Watch {
 		return $output;
 	}
 }
+
+new LWTV_Ways_To_Watch();

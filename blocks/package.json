@@ -18,6 +18,9 @@
 		"@wordpress/i18n": "^4.37.0"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^26.8.0"
+		"@wordpress/eslint-plugin": "^14.11.0",
+		"@wordpress/scripts": "^26.9.0",
+		"prettier": "^3.0.0",
+		"typescript": "^5.1.6"
 	}
 }

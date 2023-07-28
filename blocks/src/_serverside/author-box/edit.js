@@ -10,18 +10,20 @@ import ServerSideRender from '@wordpress/server-side-render';
 
 class AuthorProfileBlock extends Component {
 	render() {
-
 		const { attributes, setAttributes } = this.props;
 		const { users, format } = attributes;
-
 		const inspectorControls = (
 			<InspectorControls>
 				<PanelBody title={ 'Team Member Settings' }>
 					<TextControl
 						label={ 'Username' }
-						help={ 'Username or ID of team member (i.e. liljimmi, ipstenu, saralance)' }
+						help={
+							'Username or ID of team member (i.e. liljimmi, ipstenu, saralance)'
+						}
 						value={ users }
-						onChange={ ( value ) => setAttributes( { users: value } ) }
+						onChange={ ( value ) =>
+							setAttributes( { users: value } )
+						}
 					/>
 					<SelectControl
 						label={ 'Card Format' }
@@ -32,7 +34,9 @@ class AuthorProfileBlock extends Component {
 							{ label: 'Compact', value: 'compact' },
 							{ label: 'Thumbnail', value: 'thumbnail' },
 						] }
-						onChange={ ( value ) => setAttributes( { format: value } ) }
+						onChange={ ( value ) =>
+							setAttributes( { format: value } )
+						}
 					/>
 				</PanelBody>
 			</InspectorControls>
@@ -42,7 +46,7 @@ class AuthorProfileBlock extends Component {
 			<Fragment>
 				{ inspectorControls }
 				<ServerSideRender
-					block='lwtv/author-box'
+					block="lwtv/author-box"
 					attributes={ attributes }
 				/>
 			</Fragment>

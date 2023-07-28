@@ -13,9 +13,7 @@ import './css/editor.scss';
 
 import { registerBlockType } from '@wordpress/blocks';
 
-registerBlockType( metadata.name,
-	{
-		edit: Edit,
-		save: Save,
-	}
-);
+registerBlockType( metadata.name, {
+	edit: Edit,
+	save: Save,
+} );

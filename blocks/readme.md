@@ -8,8 +8,6 @@ These are Gutenberg Blocks specific to LezWatch.TV!
 
 * `_common` - common JS/CSS snippets
 * `_serverside` - Serverside rendering (aka PHP in Gutenberg)
-* `affiliate-grid` - Wrapper for the affiliate grid block
-* `affiliate-item` - Individual item for the affiliate grid block (does not work outside the grid)
 * `featured-image` - Block used by actors/characters/shows to show where the featured image goes, has no impact on display.
 * `grade` - A simple 'grade' block to allow for custom 'scores' for a review
 * `pre-publish` - A backend only 'block' that checks for requirements before you're allowed to post.

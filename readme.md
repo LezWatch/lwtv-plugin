@@ -26,15 +26,6 @@ Stored in `/admin/` -- Makes admin panels
 * `admin_tools.php` - UX for checkers
 * `dashboard.php` - Powers wp-admin dashboard code
 
-### Affiliates
-
-Stored in `/affiliates/` -- Auto Adds in Affiliate Codes. Currently requires AdRotate to display ads.
-
-* `/images/` - Images used by local 'ads'
-* `_main.php` - Determines which ad to show and when
-* `ways-to-watch.php` - Affiliate links and pretty-fication of services
-* `widget.php` - Widget code to display ads (currently disabled)
-
 ### Assets
 
 Stored in `/assets/`
@@ -301,6 +292,15 @@ Stored in `/vendor/` - this has to be included for things to function properly. 
 * `/johngrogg/ics-parser` - ICS parser code (for TV calendar)
 * `/nesbot/carbon/` - Required by ICS Parser
 * `/symfony/` - Required by ICS parser
+
+### Ways to Watch
+
+Stored in `/ways_to_watch/` -- Code to customize Ways to Watch links and add affiliate data, or alter display names.
+
+* `/images/` - Images used by local 'ads'
+* `_main.php` - Loader file.
+* `global.php` - All global data, such as header/meta and content regex.
+* `ways-to-watch.php` - Affiliate links and pretty-fication of services
 
 ## Development
 

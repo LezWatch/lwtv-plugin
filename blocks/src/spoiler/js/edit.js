@@ -9,20 +9,18 @@ export default function Edit( props ) {
 		props.setAttributes( { content: newContent } );
 	}
 
-	const editSpoiler = createElement(
-		RichText,
-		{
-			tagName: 'div',
-			className: className,
-			onChange: onChangeSpoiler,
-			value: content,
-			focus: focus,
-			onFocus: setFocus,
-		}
-	);
+	const editSpoiler = createElement( RichText, {
+		tagName: 'div',
+		className,
+		onChange: onChangeSpoiler,
+		value: content,
+		focus,
+		onFocus: setFocus,
+	} );
 
 	return createElement(
-		'div', { className: 'wp-block-lez-library-spoilers alert alert-danger' },
+		'div',
+		{ className: 'wp-block-lez-library-spoilers alert alert-danger' },
 		editSpoiler
 	);
 }

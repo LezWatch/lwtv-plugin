@@ -9,7 +9,11 @@
 	"scripts": {
 		"build": "npm-run-all build:*",
 		"build:workspaces": "npm install --workspaces && npm run build --workspaces",
-		"postinstall": "node ./node_scripts/postinstall.js"
+		"lint": "npm-run-all lint:*",
+		"lint:js": "npm run lint:js --workspaces",
+		"lint:css": "npm run lint:css --workspaces",
+		"postinstall": "node ./node_scripts/postinstall.js",
+		"prepare": "husky install"
 	},
 	"author": "LezWatch.TV",
 	"license": "GPL-2.0",
@@ -24,6 +28,7 @@
 		"npm-run-all": "^4.1.5"
 	},
 	"devDependencies": {
-		"@types/node": "^18.11.13"
+		"@types/node": "^18.11.13",
+		"husky": "^8.0.0"
 	}
 }
