@@ -1,4 +1,4 @@
-export default function SVG() {
+export default function Spoiler() {
 	return (
 		<svg
 			aria-hidden="true"
