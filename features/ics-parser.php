@@ -11,6 +11,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+// Include iCal parser
+require_once 'ICal/ICal.php';
+
 use ICal\ICal;
 
 /**
