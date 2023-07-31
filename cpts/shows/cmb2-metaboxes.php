@@ -697,7 +697,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_g_rate = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_g_ratings );
+			$grid_g_rate  = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_g_ratings );
 			$rows1_g_rate = $grid_g_rate->addRow();
 			$rows2_g_rate = $grid_g_rate->addRow();
 			$rows3_g_rate = $grid_g_rate->addRow();

@@ -55,7 +55,7 @@ class LWTV_Monitor_Checks {
 									$class = ( 0 === ( $row_count % 2 ) ) ? 'alternate' : '';
 									echo '<tr class="' . esc_attr( $class ) . '" />';
 										echo '<td>' . wp_kses_post( $row['description'] ) . '</td>';
-										// phpcs:ignore
+										// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 										echo '<td><div class="monitor"><div class="monitor icon">' . $row['icon'] . '</div><div class="monitor status">' . wp_kses_post( $row['status'] ) . '</div></td>';
 									echo '</tr>';
 									$row_count++;

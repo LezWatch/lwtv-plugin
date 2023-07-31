@@ -296,7 +296,7 @@ class LWTV_This_Year_Chars {
 		// Defaults:
 		$thisyear     = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$valid_format = array( 'gender', 'sexuality ' );
-		$format       = ( in_array( $format, $valid_format ) ) ? $format : 'sexuality';
+		$format       = ( in_array( $format, $valid_format, true ) ) ? $format : 'sexuality';
 
 		// Get array:
 		$loop_array = self::get_list( $thisyear );

@@ -259,7 +259,7 @@ class LWTV_Debug {
 					if ( is_wp_error( $wiki_data ) ) {
 						return;
 					}
-					$wiki_array  = json_decode( $wiki_data['body'], true );
+					$wiki_array = json_decode( $wiki_data['body'], true );
 
 					$wiki_actor = array_shift( $wiki_array['entities'] );
 					$wiki_link  = '';

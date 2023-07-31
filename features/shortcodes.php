@@ -553,6 +553,7 @@ class LWTV_Shortcodes {
 			return;
 		}
 
+		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 		return sprintf( '<a class="e-gleam" href="%s" rel="nofollow">%s</a><script src="//js.gleam.io/e.js" async="true"></script>', esc_url( $attributes['url'] ), do_shortcode( $content ) );
 	}
 

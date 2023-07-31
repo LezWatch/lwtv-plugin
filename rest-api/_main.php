@@ -8,9 +8,7 @@
 require_once 'alexa-skills.php';
 require_once 'bury-your-queers.php';
 require_once 'export-json.php';
-//require_once 'fresh.php'; // In Progress
 require_once 'imdb.php';
-//require_once 'list.php'; // Unused -- it's too long and slow.
 require_once 'of-the-day.php';
 require_once 'shows-like-this.php';
 require_once 'stats.php';

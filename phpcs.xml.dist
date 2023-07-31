@@ -1,29 +1,59 @@
 <?xml version="1.0"?>
 <ruleset name="LezWatch.TV Coding Standards">
-    <description>A custom ruleset to take in account both WordPress and Lesbian standards.</description>
+	<description>A custom ruleset to take in account both WordPress and Lesbian standards.</description>
 
-    <!--
-        Prevent errors caused by WordPress Coding Standards not supporting PHP 8.0+.
-        See https://github.com/WordPress/WordPress-Coding-Standards/issues/2035
-        This can be removed once WPCS is updated. But without this, PHP 8 suuuucks.
-    -->
-    <ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
+	<!--
+		Prevent errors caused by WordPress Coding Standards not supporting PHP 8.0+.
+		See https://github.com/WordPress/WordPress-Coding-Standards/issues/2035
+		This can be removed once WPCS is updated. But without this, PHP 8 suuuucks.
+	-->
+	<ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
+	<ini name="memory_limit" value="256M"/>
 
-    <rule ref="WordPress-Extra">
-        <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
-        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
-        <exclude name="WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query" />
-        <exclude name="WordPress.WP.I18n.NonSingularStringLiteralSingle" />
-        <exclude name="WordPress.WP.I18n.NonSingularStringLiteralPlural" />
-        <exclude name="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode" />
-        <exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
-        <exclude name="WordPress.PHP.DevelopmentFunctions.error_log_trigger_error" />
-        <exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_get_contents" />
-    </rule>
+	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
+	<file>.</file>
 
-    <rule ref="WordPress.Security.EscapeOutput">
-        <properties>
-            <property name="customAutoEscapedFunctions" value="LWTV_Functions,symbolicons" type="array" />
-        </properties>
-    </rule>
+	<arg name="extensions" value="php" />
+	<arg name="colors" />
+	<arg value="s" /><!-- Show sniff codes in all reports. -->
+	<arg value="p" /><!-- Show progress. -->
+
+	<rule ref="WordPress-Extra">
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+		<exclude name="WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query" />
+		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralSingle" />
+		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralPlural" />
+		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode" />
+		<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
+		<exclude name="WordPress.PHP.DevelopmentFunctions.error_log_trigger_error" />
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_get_contents" />
+		<exclude name="WordPress.WP.DeprecatedFunctions.sanitize_urlFound" />
+		<exclude name="WordPress.PHP.DisallowShortTernary.Found" />
+	</rule>
+
+	<rule ref="WordPress.Security.EscapeOutput">
+		<properties>
+			<property name="customAutoEscapedFunctions" value="LWTV_Functions,symbolicons" type="array" />
+		</properties>
+	</rule>
+
+	<rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
+	<exclude-pattern>class-gf-approvals.php</exclude-pattern>
+	</rule>
+
+	<!-- Node and Vendor -->
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+
+	<!-- Blocks -->
+	<exclude-pattern>*/blocks/build/*</exclude-pattern>
+
+	<!-- CMB2 Extensions - not written by us. -->
+	<exclude-pattern>*/cmb2-grid/*</exclude-pattern>
+	<exclude-pattern>*/cmb2-attached-posts/*</exclude-pattern>
+	<exclude-pattern>*/cmb-field-select2/*</exclude-pattern>
+	
+	<!-- External Libraries -->
+	<exclude-pattern>*/ICal/*</exclude-pattern>
 </ruleset>

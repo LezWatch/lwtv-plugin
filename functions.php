@@ -8,7 +8,7 @@
  * Update URI: http://lezwatchtv.com
  *
  * @package LWTV_PLUGIN
-*/
+ */
 
 /*
  * Define the first year
@@ -25,12 +25,17 @@ if ( ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
 }
 
 /**
- * class LWTV_Functions
+ * Class LWTV_Functions
  *
  * The background functions for the site, independent of the theme.
  */
 class LWTV_Functions {
 
+	/**
+	 * Version of code.
+	 *
+	 * @var string $version
+	 */
 	protected static $version;
 
 	/**
@@ -48,23 +53,23 @@ class LWTV_Functions {
 		add_filter( 'avatar_defaults', array( $this, 'default_avatar' ) );
 
 		// Disable check for 'is your admin stuff legit'.
-		// https://make.wordpress.org/core/2019/10/17/wordpress-5-3-admin-email-verification-screen/
+		// https://make.wordpress.org/core/2019/10/17/wordpress-5-3-admin-email-verification-screen/ .
 		add_filter( 'admin_email_check_interval', '__return_false' );
 
-		// Disable email update alerts for themes and plugins
+		// Disable email update alerts for themes and plugins.
 		add_filter( 'auto_plugin_update_send_email', '__return_false' );
 		add_filter( 'auto_theme_update_send_email', '__return_false' );
 
-		// Extend the cookies
+		// Extend the cookies.
 		add_filter( 'auth_cookie_expiration', array( $this, 'extend_login_session' ) );
 
-		// Force close comments on media
+		// Force close comments on media.
 		add_filter( 'comments_open', array( $this, 'filter_media_comment_status' ), 10, 2 );
 
-		// Enqueue scripts
+		// Enqueue scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
-		// Login Page Changes
+		// Login Page Changes.
 		add_action( 'login_enqueue_scripts', array( $this, 'login_logos' ) );
 		add_filter( 'login_headerurl', array( $this, 'login_headerurl' ) );
 		add_filter( 'login_headertext', array( $this, 'login_headertitle' ) );
@@ -79,13 +84,15 @@ class LWTV_Functions {
 		// After Theme Setup...
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ), 11 );
 
-		// Block pingbacks
+		// Block pingbacks.
 		add_filter( 'xmlrpc_methods', array( $this, 'remove_xmlrpc_methods' ) );
 	}
 
 	/**
-	 * Remove pingbacks
+	 * Remove pingbacks.
 	 * https://blog.sonarsource.com/wordpress-core-unauthenticated-blind-ssrf/
+	 *
+	 * @param array $methods XMLRPC methods.
 	 */
 	public function remove_xmlrpc_methods( $methods ) {
 		unset( $methods['pingback.ping'] );
@@ -117,7 +124,7 @@ class LWTV_Functions {
 	 *
 	 * @access public
 	 * @param mixed $return - array to return.
-	 * @param mixed $url    - URL from which checks come and need to be blocked (i.e. wp.org)
+	 * @param mixed $url    - URL from which checks come and need to be blocked (i.e. wp.org).
 	 * @return array        - $return
 	 */
 	public function disable_wp_update( $return, $url ) {
@@ -137,7 +144,7 @@ class LWTV_Functions {
 	 * Forked from Yoast SEO
 	 *
 	 * @access public
-	 * @param bool $base64 (default: true) - Use SVG, true/false?
+	 * @param bool   $base64 (default: true) - Use SVG, true/false.
 	 * @param string $icon_color - What color to use.
 	 * @return string
 	 */
@@ -182,15 +189,17 @@ class LWTV_Functions {
 	 */
 	public function save_attachment_attribution( $attachment_id ) {
 		if ( isset( $_REQUEST['attachments'][ $attachment_id ]['lwtv_attribution'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			$lwtv_attribution = $_REQUEST['attachments'][ $attachment_id ]['lwtv_attribution']; // phpcs:ignore WordPress.Security.NonceVerification
+			$lwtv_attribution = sanitize_text_field( wp_unslash( $_REQUEST['attachments'][ $attachment_id ]['lwtv_attribution'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 			update_post_meta( $attachment_id, 'lwtv_attribution', $lwtv_attribution );
 		}
 	}
 
 	/**
 	 * Adding new options for default avatar
-	 * @param  array $defaults
-	 * @return array $defaults
+	 *
+	 * @param  array $defaults  Default Avatar data.
+	 *
+	 * @return array $defaults  Updated defaults.
 	 */
 	public function default_avatar( $defaults ) {
 		$toaster              = plugins_url( 'assets/images/toaster.png', __FILE__ );
@@ -201,13 +210,14 @@ class LWTV_Functions {
 	}
 
 	/**
-	 * Symbolicons Output
+	 * Symbolicons Output.
 	 *
 	 * Echos the default outputtable symbolicon, based on the SVG and FA icon passed to it.
 	 *
 	 * @access public
-	 * @param string $svg (default: 'square.svg')
-	 * @param string $fontawesome (default: 'fa-square')
+	 * @param string $svg         (default: 'square.svg') - SVG name.
+	 * @param string $fontawesome (default: 'fa-square')  - Font-Awesome icon name.
+	 * @param string $class       (default: 'symbolicon') - SVG styling class name.
 	 * @return icon
 	 */
 	public function symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square', $class = 'symbolicon' ) {
@@ -231,10 +241,11 @@ class LWTV_Functions {
 	}
 
 	/**
-	 * Validate date format/
-	 * @param  [type] $date   [description]
-	 * @param  string $format [description]
-	 * @return [type]         [description]
+	 * Validate date format.
+	 *
+	 * @param  string $date   Date String.
+	 * @param  string $format Format to output.
+	 * @return string         Updated date format.
 	 */
 	public function validate_date( $date, $format = 'Y-m-d' ) {
 		$d = DateTime::createFromFormat( $format, $date );
@@ -244,20 +255,21 @@ class LWTV_Functions {
 
 	/**
 	 * After Theme Setup
+	 *
+	 * Source: https://make.wordpress.org/core/2021/06/14/introducing-the-template-editor-in-wordpress-5-8/
 	 */
 	public function after_setup_theme() {
-		//https://make.wordpress.org/core/2021/06/14/introducing-the-template-editor-in-wordpress-5-8/
 		remove_theme_support( 'block-templates' );
 	}
 
-	/*
+	/**
 	 * Admin CSS
 	 */
 	public function admin_enqueue_scripts() {
 		wp_enqueue_style( 'admin-styles', plugins_url( 'assets/css/wp-admin.css', __FILE__ ), array(), self::$version );
 	}
 
-	/*
+	/**
 	 * Login Logos
 	 */
 	public function login_logos() {
@@ -272,24 +284,27 @@ class LWTV_Functions {
 		<?php
 	}
 
-	/*
+	/**
 	 * Login URL
 	 */
 	public function login_headerurl() {
 		return home_url();
 	}
 
-	/*
+	/**
 	 * Login Title
 	 */
 	public function login_headertitle() {
 		return get_bloginfo( 'name' );
 	}
 
-	/*
+	/**
 	 * Login Errors
 	 *
 	 * If you put in the wrong password, Diane flips you off.
+	 *
+	 * @param  string $error Existing Error.
+	 * @return string $error Updated Error.
 	 */
 	public function login_errors( $error ) {
 		$diane = '<br /><img src="' . plugins_url( 'assets/images/diane-fuck-off.gif', __FILE__ ) . '" />';
@@ -308,6 +323,11 @@ class LWTV_Functions {
 	/**
 	 * Disable comments on media files.
 	 * Since: 1.0.0
+	 *
+	 * @param bool $open    TrueFalse if the comments are open.
+	 * @param int  $post_id Post ID.
+	 *
+	 * @return boolean  Open or Closed.
 	 */
 	public function filter_media_comment_status( $open, $post_id ) {
 		$post = get_post( $post_id );
@@ -319,11 +339,12 @@ class LWTV_Functions {
 
 	/**
 	 * Extend login sessions
-	 * @param  int    $expire Current expire length (3 days)
+	 *
+	 * @param  int $expire Current expire length (3 days).
 	 * @return int            New time (1 year)
 	 */
 	public function extend_login_session( $expire ) {
-		// Set login session limit in seconds
+		// Set login session limit in seconds.
 		return YEAR_IN_SECONDS;
 	}
 
@@ -335,14 +356,14 @@ new LWTV_Functions();
  */
 require_once 'features/_main.php';     // General Features: This MUST be at the top.
 
-require_once 'admin/_main.php';         // Admin Settings
-require_once 'ways_to_watch/_main.php'; // Ways to Watch
-require_once 'assets/symbolicons.php';  // Symbolicons/Font Icons
-require_once 'blocks/_main.php';        // Custom Blocks
-require_once 'plugins/_main.php';       // Tweaks for Plugins
-require_once 'rest-api/_main.php';      // Our Rest API
-require_once 'statistics/_main.php';    // Stats
-require_once 'this-year/_main.php';     // This Year
+require_once 'admin/_main.php';         // Admin Settings.
+require_once 'ways_to_watch/_main.php'; // Ways to Watch.
+require_once 'assets/symbolicons.php';  // Symbolicons/Font Icons.
+require_once 'blocks/_main.php';        // Custom Blocks.
+require_once 'plugins/_main.php';       // Tweaks for Plugins.
+require_once 'rest-api/_main.php';      // Our Rest API.
+require_once 'statistics/_main.php';    // Stats.
+require_once 'this-year/_main.php';     // This Year.
 
 require_once 'cpts/_main.php';         // Custom Post Types: This MUST be at the end.
 

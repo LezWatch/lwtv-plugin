@@ -26,8 +26,8 @@ class LWTV_Alexa_Flash_Brief {
 	public function flash_briefing() {
 		// Arguments
 		$queery_args = array(
-			'numberposts' => '10',
-			'no_found_rows'  => true,
+			'numberposts'   => '10',
+			'no_found_rows' => true,
 		);
 
 		// The Queery

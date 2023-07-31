@@ -38,6 +38,7 @@ class WP_CLI_LWTV_Commands {
 		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
 		$response   = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );
 			WP_CLI::success( 'TVMaze updated successfully.' );
 		} else {

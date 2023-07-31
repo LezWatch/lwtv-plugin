@@ -102,8 +102,14 @@ class LWTV_This_Year_JSON {
 	public function this_year( $type, $year ) {
 
 		// Remove <!--fwp-loop--> from output
-		// phpcs:ignore
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+		add_filter(
+			'facetwp_is_main_query',
+			function( $is_main_query, $query ) {
+				return false;
+			},
+			10,
+			2
+		);
 
 		$year  = ( isset( $year ) ) ? (int) $year : gmdate( 'Y' );
 		$array = array();

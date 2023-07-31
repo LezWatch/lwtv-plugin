@@ -209,6 +209,7 @@ SQL;
 		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
 		$response   = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );
 		}
 	}
@@ -230,7 +231,8 @@ SQL;
 				FWP()->indexer->index(); // Ensure Faceting.
 				break;
 			case 'Wed':
-				//$check = ( new LWTV_Debug() )->find_actors_no_chars();
+				// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+				// $check = ( new LWTV_Debug() )->find_actors_no_chars();
 				break;
 			case 'Thu':
 				$check = ( new LWTV_Debug() )->find_actors_empty();

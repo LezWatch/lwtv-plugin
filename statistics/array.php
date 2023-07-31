@@ -1540,8 +1540,8 @@ class LWTV_Stats_Arrays {
 
 	/**
 	 * Stats for This Year
-	 * 
-	 * @param string $data  
+	 *
+	 * @param string $data
 	 */
 	public function this_year( $data, $year_array = array() ) {
 

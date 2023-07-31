@@ -25,19 +25,27 @@ class LWTV_FacetWP {
 		add_filter( 'facetwp_index_row', array( $this, 'facetwp_index_row' ), 10, 2 );
 
 		// Filter Facet output
-		add_filter( 'facetwp_facet_html', function( $output, $params ) {
-			if ( 'show_airdates' === $params['facet']['name'] ) {
-				$output = str_replace( 'Min', 'First Year', $output );
-				$output = str_replace( 'Max', 'Last Year', $output );
-			}
-			return $output;
-		}, 10, 2 );
+		add_filter(
+			'facetwp_facet_html',
+			function( $output, $params ) {
+				if ( 'show_airdates' === $params['facet']['name'] ) {
+					$output = str_replace( 'Min', 'First Year', $output );
+					$output = str_replace( 'Max', 'Last Year', $output );
+				}
+				return $output;
+			},
+			10,
+			2,
+		);
 
 		// Adding a weird filter...
-		add_filter( 'facetwp_facet_sources', function( $sources ) {
-			$sources['custom_fields']['choices']['cf/lwtv_data'] = 'lwtv_data';
-			return $sources;
-		});
+		add_filter(
+			'facetwp_facet_sources',
+			function( $sources ) {
+				$sources['custom_fields']['choices']['cf/lwtv_data'] = 'lwtv_data';
+				return $sources;
+			}
+		);
 
 		add_filter( 'facetwp_is_main_query', array( $this, 'facetwp_is_main_query' ), 10, 2 );
 	}
@@ -132,6 +140,7 @@ class LWTV_FacetWP {
 				$params_on_air = $params;
 				$on_air        = 'no';
 				$on_air_meta   = get_post_meta( $params['post_id'], 'lezshows_on_air', true );
+				// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 				if ( isset( $on_air_meta ) && in_array( $on_air_meta, array( 'yes', 'no' ) ) ) {
 					$on_air = $on_air_meta;
 				} elseif ( 'current' === lcfirst( $end ) || $end > gmdate( 'Y' ) ) {
@@ -231,8 +240,7 @@ class LWTV_FacetWP {
 				$params['facet_value'] = '';
 				return $params;
 			}
-			// Roles
-			// Saves one value for each show
+			// Sorting Roles - Saves one value for each show.
 			// a:1:{i:0;a:3:{s:4:"show";s:3:"655";s:4:"type";s:9:"recurring";s:7:"appears";a:1:{i:0;s:4:"2017";}}}
 			if ( 'char_roles' === $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];

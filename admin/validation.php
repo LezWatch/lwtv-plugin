@@ -165,6 +165,7 @@ class LWTV_Data_Validation_Checks {
 		foreach ( $items as $item ) {
 			$class     = ( 0 === $number % 2 ) ? '' : 'alternate';
 			$timestamp = get_post_timestamp( (int) $item['id'], 'modified' );
+			// phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
 			$time_diff = human_time_diff( $timestamp, current_time( 'timestamp' ) );
 			if ( ! $timestamp ) {
 				$time = 'Unknown';

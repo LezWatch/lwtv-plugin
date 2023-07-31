@@ -78,8 +78,8 @@ class LWTV_Alexa_Skills {
 
 		// Values
 		$value = array(
-			'date'     => ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false,
-			'actor'    => ( isset( $request['request']['intent']['slots']['actor']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['actor']['value'] ) : '',
+			'date'      => ( isset( $request['request']['intent']['slots']['Date']['value'] ) ) ? $request['request']['intent']['slots']['Date']['value'] : false,
+			'actor'     => ( isset( $request['request']['intent']['slots']['actor']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['actor']['value'] ) : '',
 			'character' => ( isset( $request['request']['intent']['slots']['character']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['character']['value'] ) : '',
 			'show'      => ( isset( $request['request']['intent']['slots']['show']['value'] ) ) ? sanitize_text_field( $request['request']['intent']['slots']['show']['value'] ) : '',
 		);
@@ -94,7 +94,7 @@ class LWTV_Alexa_Skills {
 					'status' => 400,
 				),
 			);
-			$error = new WP_REST_Response( $response );
+			$error    = new WP_REST_Response( $response );
 			$error->set_status( 400 );
 			return $error;
 		}

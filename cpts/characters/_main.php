@@ -345,6 +345,7 @@ class LWTV_CPT_Characters {
 						if ( is_array( $char_show['show'] ) ) {
 							$char_show['show'] = $char_show['show'][0];
 						}
+						// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
 						if ( $char_show['show'] == $show_id ) {
 							// Get a list of actors (we need this twice later)
 							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );

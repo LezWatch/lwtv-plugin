@@ -246,8 +246,14 @@ class LWTV_Export_JSON {
 	public function export_full( $item, $tax, $term ) {
 
 		// Remove <!--fwp-loop--> from output
-		// phpcs:ignore
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+		add_filter(
+			'facetwp_is_main_query',
+			function( $is_main_query, $query ) {
+				return false;
+			},
+			10,
+			2
+		);
 
 		// Prep Return
 		$response_array = array();
@@ -324,7 +330,7 @@ class LWTV_Export_JSON {
 	 * @return array
 	 */
 	public function get_full_list_characters( $group, $term ) {
-		$the_loop   = ( new LWTV_Loops() )->tax_query( 'post_type_characters', 'lez_' . $group, 'slug', $term );
+		$the_loop = ( new LWTV_Loops() )->tax_query( 'post_type_characters', 'lez_' . $group, 'slug', $term );
 
 		if ( $the_loop->have_posts() ) {
 			$characters_list = wp_list_pluck( $the_loop->posts, 'ID' );
@@ -372,7 +378,7 @@ class LWTV_Export_JSON {
 					$show['show'] = $show['show'][0];
 				}
 
-				$appears = implode( ';', $show['appears'] );
+				$appears       = implode( ';', $show['appears'] );
 				$shows_array[] = get_the_title( $show['show'] ) . ' - ' . $show['type'] . ' (' . $appears . ')';
 			}
 			$shows_clean = implode( '; ', $shows_array );
@@ -439,19 +445,19 @@ class LWTV_Export_JSON {
 
 			// Basic data
 			$return = array(
-				'uid'         => $page->ID,
-				'id'          => $page->post_name,
-				'name'        => $page->post_title,
+				'uid'  => $page->ID,
+				'id'   => $page->post_name,
+				'name' => $page->post_title,
 			);
 
 			// Show Formats
-			$format_terms = get_the_terms( $page->ID, 'lez_formats', true );
+			$format_terms    = get_the_terms( $page->ID, 'lez_formats', true );
 			$data['formats'] = ( $format_terms && ! is_wp_error( $format_terms ) ) ? join( ', ', wp_list_pluck( $format_terms, 'name' ) ) : '';
 
 			// Nations
 			$data['nations'] = '';
-			$nation_terms = get_the_terms( $page->ID, 'lez_country', true );
-			$nation_array = ( $nation_terms && ! is_wp_error( $nation_terms ) ) ? wp_list_pluck( $nation_terms, 'name' ) : '';
+			$nation_terms    = get_the_terms( $page->ID, 'lez_country', true );
+			$nation_array    = ( $nation_terms && ! is_wp_error( $nation_terms ) ) ? wp_list_pluck( $nation_terms, 'name' ) : '';
 			if ( is_array( $nation_array ) ) {
 				if ( count( $nation_array ) > 1 && 'wiki' === $format ) {
 					$last_element = array_pop( $nation_array );
@@ -461,7 +467,7 @@ class LWTV_Export_JSON {
 			}
 
 			// Stations
-			$station_terms = get_the_terms( $page->ID, 'lez_stations', true );
+			$station_terms    = get_the_terms( $page->ID, 'lez_stations', true );
 			$data['stations'] = ( $station_terms && ! is_wp_error( $station_terms ) ) ? join( ', ', wp_list_pluck( $station_terms, 'name' ) ) : '';
 
 			// Airdates
@@ -534,15 +540,15 @@ class LWTV_Export_JSON {
 
 			// Basic Data we always need
 			$return = array(
-				'uid'         => $page->ID,
-				'id'          => $page->post_name,
-				'name'        => $page->post_title,
+				'uid'  => $page->ID,
+				'id'   => $page->post_name,
+				'name' => $page->post_title,
 			);
 
 			$data = array();
 
 			// Sexuality
-			$sexuality_terms = get_the_terms( $page->ID, 'lez_sexuality', true );
+			$sexuality_terms   = get_the_terms( $page->ID, 'lez_sexuality', true );
 			$data['sexuality'] = ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) ? join( ', ', wp_list_pluck( $sexuality_terms, 'name' ) ) : '';
 
 			// Gender
@@ -649,21 +655,21 @@ class LWTV_Export_JSON {
 			$data = array();
 
 			// Sexuality
-			$sexuality_terms = get_the_terms( $page->ID, 'lez_actor_sexuality', true );
+			$sexuality_terms   = get_the_terms( $page->ID, 'lez_actor_sexuality', true );
 			$data['sexuality'] = ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) ? join( ', ', wp_list_pluck( $sexuality_terms, 'name' ) ) : '';
 
 			// Gender
-			$gender_terms = get_the_terms( $page->ID, 'lez_actor_gender', true );
+			$gender_terms   = get_the_terms( $page->ID, 'lez_actor_gender', true );
 			$data['gender'] = ( $gender_terms && ! is_wp_error( $gender_terms ) ) ? join( ', ', wp_list_pluck( $gender_terms, 'name' ) ) : '';
 
 			// Born
 			if ( get_post_meta( $page->ID, 'lezactors_birth', true ) ) {
-				$get_birth    = new DateTime( get_post_meta( $page->ID, 'lezactors_birth', true ) );
+				$get_birth = new DateTime( get_post_meta( $page->ID, 'lezactors_birth', true ) );
 			}
 
 			// Died
 			if ( get_post_meta( $page->ID, 'lezactors_death', true ) ) {
-				$get_dead    = new DateTime( get_post_meta( $page->ID, 'lezactors_death', true ) );
+				$get_dead = new DateTime( get_post_meta( $page->ID, 'lezactors_death', true ) );
 			}
 
 			// Homepage
@@ -682,9 +688,9 @@ class LWTV_Export_JSON {
 			$data['instagram'] = ( get_post_meta( $page->ID, 'lezactors_instagram', true ) ) ? 'https://instagram.com/' . get_post_meta( $page->ID, 'lezactors_instagram', true ) : '';
 
 			$return = array(
-				'uid'         => $page->ID,
-				'id'          => $page->post_name,
-				'name'        => $page->post_title,
+				'uid'  => $page->ID,
+				'id'   => $page->post_name,
+				'name' => $page->post_title,
 			);
 
 			switch ( $format ) {

@@ -163,7 +163,6 @@ class WDS_CMB2_Attached_Posts_Field {
 		$reached_limit = ( false !== $has_max_limit && count( $attached ) === $has_max_limit ) ? ' has-reached-limit' : '';
 
 		if ( $filter_boxes ) {
-			// phpcs:ignore
 			printf( $filter_boxes, 'available-search' );
 		}
 
@@ -212,7 +211,6 @@ class WDS_CMB2_Attached_Posts_Field {
 		echo '<h4 class="attached-posts-section">' . esc_html( sprintf( __( 'Attached %s', 'cmb' ), $post_type_labels ) ) . '<span class="attached-posts-remaining hidden"> (<span class="attached-posts-remaining-number"></span> remaining)</span></span></h4>';
 
 		if ( $filter_boxes ) {
-			// phpcs:ignore
 			printf( $filter_boxes, 'attached-search' );
 		}
 
@@ -225,7 +223,6 @@ class WDS_CMB2_Attached_Posts_Field {
 		echo '</ul><!-- #attached -->';
 		echo '</div><!-- .attached-wrap -->';
 
-		// phpcs:ignore
 		echo $field_type->input(
 			array(
 				'type'  => 'hidden',

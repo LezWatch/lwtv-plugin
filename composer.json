@@ -6,7 +6,7 @@
     "wordpress",
     "plugin"
   ],
-  "license": "GPLv3",
+  "license": "GPL-3.0-or-later",
   "prefer-stable": true,
   "minimum-stability": "dev",
   "authors": [
@@ -23,6 +23,9 @@
     "preferred-install": "dist",
     "platform": {
       "php": "8.0"
+    },
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
     }
   },
   "require": {
@@ -30,9 +33,12 @@
     "johngrogg/ics-parser": "^3"
   },
   "require-dev": {
-    "wp-coding-standards/wpcs": "^2.3"
+    "wp-coding-standards/wpcs": "^2.3",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
   },
   "scripts": {
+    "lint": "phpcs",
+    "lint-fix": "phpcbf",
     "post-update-cmd": [
       "cp -r ./vendor/johngrogg/ics-parser/src/ICal/ ./features/ICal/"
     ]

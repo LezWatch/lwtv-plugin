@@ -83,9 +83,9 @@ class Plugin_Comment_Probation {
 		// The only other situation is check_comment() returning true.
 		$comment_ids = $wpdb->get_col( $wpdb->prepare( "SELECT comment_ID FROM $wpdb->comments WHERE comment_author = %s AND comment_author_email = %s AND comment_approved = '1'", $commentdata['comment_author'], $commentdata['comment_author_email'] ) );
 
-		// This shouldn't happen...
+		// This shouldn't happen. Alt would be to return $approved, but that isn't right.
 		if ( ! $comment_ids ) {
-			return 0; // or return $approved?
+			return 0;
 		}
 
 		$comment_ids = implode( ', ', $comment_ids );

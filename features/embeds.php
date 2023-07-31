@@ -55,7 +55,8 @@ class LWTV_Embeds {
 	 * @since 1.3.2
 	 */
 	public function gleam_embed_handler( $matches, $attr, $url, $rawattr ) {
-		$url   = esc_url( $matches[0] );
+		$url = esc_url( $matches[0] );
+		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 		$embed = sprintf( '<a class="e-gleam" href="%1$s" rel="nofollow">%1$s</a><script src="//js.gleam.io/e.js" async="true"></script>', $url );
 		return apply_filters( 'gleam_embed', $embed, $matches, $attr, $url, $rawattr );
 	}
@@ -81,6 +82,7 @@ class LWTV_Embeds {
 		$url   = esc_url( $matches[0] );
 		$parse = wp_parse_url( $url );
 		$id    = isset( $parse['path'] ) ? ltrim( $parse['path'], '/' ) : '12345';
+		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 		$embed = sprintf( '<iframe class="gfm-media-widget" image="1" coinfo="1" width="100%%" height="100%%" frameborder="0" id="%1$s"></iframe><script src="//funds.gofundme.com/js/5.0/media-widget.js"></script>', $id );
 		return apply_filters( 'gofundme_embed', $embed, $matches, $attr, $url, $rawattr );
 	}

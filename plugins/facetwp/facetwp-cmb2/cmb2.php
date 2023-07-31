@@ -110,7 +110,8 @@ class FacetWP_Integration_CMB2 {
 		 * @param bool $debugging Whether to enable debugging. Defaults to false./
 		 */
 		if ( apply_filters( 'facetwp_cmb2_debugging', false ) ) {
-			error_log( "Param info: " . print_r( $params, true ) . PHP_EOL, 3, WP_CONTENT_DIR . '/facet.log' );
+			// phpcs:ignore
+			error_log( 'Param info: ' . print_r( $params, true ) . PHP_EOL, 3, WP_CONTENT_DIR . '/facet.log' );
 		}
 
 		// Split up the facet source
@@ -150,6 +151,7 @@ class FacetWP_Integration_CMB2 {
 		 * @param array $fields Array of field types that do not need to be indexed.
 		 */
 		$skip_index = apply_filters( 'facetwp_cmb2_skip_index', array( 'title', 'group' ) );
+		// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 		if ( in_array( $field->type(), $skip_index ) ) {
 			return true;
 		}
@@ -180,13 +182,13 @@ class FacetWP_Integration_CMB2 {
 		 * @param bool $skip Whether to skip indexing WYSIWYG fields.
 		 */
 		$skip_index_wysiwyg = apply_filters( 'facetwp_cmb2_skip_index_wysiwyg', true );
-		if ( 'wysiwyg' == $field_type && $skip_index_wysiwyg ) {
+		if ( 'wysiwyg' === $field_type && $skip_index_wysiwyg ) {
 			return false;
 		}
 
 		// Checkboxes are either on or off. Only index the "on" value.
-		if ( 'checkbox' == $field_type ) {
-			if ( 'on' == $field->value() ) {
+		if ( 'checkbox' === $field_type ) {
+			if ( 'on' === $field->value() ) {
 				$this->index_field( $field, $defaults );
 			} else {
 				return true;
@@ -301,6 +303,7 @@ class FacetWP_Integration_CMB2 {
 			'text_datetime_timestamp_timezone',
 		);
 
+		// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 		if ( in_array( $field_type, $exception ) ) {
 			return false;
 		}
@@ -324,29 +327,29 @@ class FacetWP_Integration_CMB2 {
 	 * @return bool Whether to continue with the normal indexing.
 	 */
 	public function time_date_indexing( $filter, $field, $defaults ) {
-		$date_format = 'Y-m-d';
+		$date_format     = 'Y-m-d';
 		$extended_format = "{$date_format} H:i:s";
-		$index = array(
+		$index           = array(
 			'facet_display_value' => $field->args( 'name' ),
 		);
 
 		// Check for special field types
-		if ( 'text_data' == $field->type() ) {
-			$index['facet_value'] = date( $date_format, strtotime( $field->value() ) );
+		if ( 'text_data' === $field->type() ) {
+			$index['facet_value'] = gmdate( $date_format, strtotime( $field->value() ) );
 			$this->index_row( $index, $defaults );
 
 			return false;
-		} elseif ( 'text_date_timestamp' == $field->type() ) {
-			$index['facet_value'] = date( $date_format, $field->value() );
+		} elseif ( 'text_date_timestamp' === $field->type() ) {
+			$index['facet_value'] = gmdate( $date_format, $field->value() );
 			$this->index_row( $index, $defaults );
 
 			return false;
-		} elseif ( 'text_datetime_timestamp' == $field->type() ) {
-			$index['facet_value'] = date( $extended_format, $field->value() );
+		} elseif ( 'text_datetime_timestamp' === $field->type() ) {
+			$index['facet_value'] = gmdate( $extended_format, $field->value() );
 			$this->index_row( $index, $defaults );
 
 			return false;
-		} elseif ( 'text_datetime_timestamp_timezone' == $field->type() ) {
+		} elseif ( 'text_datetime_timestamp_timezone' === $field->type() ) {
 			$value = maybe_unserialize( $field->value() );
 			if ( $value instanceof DateTime ) {
 				$index['facet_value'] = $value->format( $extended_format );
@@ -371,7 +374,7 @@ class FacetWP_Integration_CMB2 {
 			return $return;
 		}
 
-		$boxes  = CMB2_Boxes::get_all();
+		$boxes = CMB2_Boxes::get_all();
 		foreach ( $boxes as $cmb ) {
 			// Secret override method to skip indexing a metabox's fields
 			if ( $cmb->prop( 'no_facetwp_index', false ) ) {
@@ -405,7 +408,7 @@ class FacetWP_Integration_CMB2 {
 				 * @param bool $skip_hidden_fields Whether to skip indexing hidden fields.
 				 */
 				$skip_hidden_fields = apply_filters( 'facetwp_cmb2_skip_hidden_fields', true );
-				if ( $skip_hidden_fields && 'hidden' == $field['type'] ) {
+				if ( $skip_hidden_fields && 'hidden' === $field['type'] ) {
 					continue;
 				}
 

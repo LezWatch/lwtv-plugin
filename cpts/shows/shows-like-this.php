@@ -59,6 +59,7 @@ class LWTV_Shows_Like_This {
 
 				// If we have a primary, then we default to JUST that.
 				if ( false !== $primary ) {
+					// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 					$primary_key = array_search( $primary, $terms_array );
 					if ( false !== $primary_key ) {
 						unset( $terms_array[ $primary_key ] );
