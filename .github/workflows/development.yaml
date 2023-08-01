@@ -50,4 +50,4 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/plugins/lwtv-plugin
-          EXCLUDE: "/.git/, /.github/, /node_scripts/"
+          EXCLUDE: "/.git/, /.github/, /.husky/, /.vscode/, /node_scripts/, .editorignore, .gitignore, .npmrc, .nvmrc, composer.json, package-lock.json, package.json, phpcs.xml.dist"

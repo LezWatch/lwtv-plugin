@@ -306,14 +306,22 @@ Stored in `/ways_to_watch/` -- Code to customize Ways to Watch links and add aff
 
 Update code like you normally would. If you don't want to push it anywhere, make a local branch. Always remember, merge to **development** first and check on the (private) dev server. If that works, do a pull request from development to **production** to automatically update.
 
+* `$ npm install` - Install all the things.
+* `$ npm update` - Updates all the things.
+* `$ npm run build` - Builds all the things for production.
+
+All commits are linted via eslint and phpcs, to ensure nothing breaks when we push the code, as the build process runs via the Github Actions. The `vendor` and `node_module` files are not synced to Github anymore (as of 2023-August) to minimize the amount of files stored on the servers.
+
 ### Libraries
 
-In order to make maintenance easier, instead of checking everything all the time, we use NPM and composer for the following included libraries:
+JS and PHP libraries are included via NPM and Composer. WordPress plugins that have been forked are now included in the main code and managed by us to prevent breakage.
 
 **NPM**
 * [ChartJS](https://github.com/chartjs/Chart.js/)
 * [TableSorter (Mottie Fork)](https://github.com/Mottie/tablesorter)
-* [CMB2 Grid](https://github.com/origgami/CMB2-grid)
+
+**Composer**
+* [ICal Parser](https://github.com/u01jmg3/ics-parser)
 
 #### Installation and Updating
 
