@@ -16,8 +16,8 @@ import Icon from '../_common/svg/grade';
 
 import { registerBlockType } from '@wordpress/blocks';
 
-registerBlockType( metadata.name, {
+registerBlockType(metadata.name, {
 	icon: Icon,
 	edit: Edit,
 	save: Save,
-} );
+});

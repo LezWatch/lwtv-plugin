@@ -12,7 +12,7 @@ import edit from './edit';
 import Icon from '../../_common/svg/team-member';
 
 // Register block
-registerBlockType( 'lwtv/author-box', {
+registerBlockType('lwtv/author-box', {
 	title: 'Team Member',
 	icon: Icon,
 	category: 'lezwatch',
@@ -31,4 +31,4 @@ registerBlockType( 'lwtv/author-box', {
 		// Rendering in PHP
 		return null;
 	},
-} );
+});

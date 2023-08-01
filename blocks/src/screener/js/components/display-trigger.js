@@ -2,10 +2,10 @@ import { Fragment } from '@wordpress/element';
 import Warning from './svg/warning';
 
 // Figure out Trigger Display
-export default function DisplayTrigger( { score } ) {
+export default function DisplayTrigger({ score }) {
 	let color;
 
-	switch ( score ) {
+	switch (score) {
 		case 'high':
 			color = 'danger';
 			break;
@@ -16,7 +16,7 @@ export default function DisplayTrigger( { score } ) {
 			color = 'info';
 	}
 
-	if ( 'none' !== score ) {
+	if ('none' !== score) {
 		return (
 			<Fragment>
 				<span
@@ -24,13 +24,13 @@ export default function DisplayTrigger( { score } ) {
 					aria-label="Warning - This show contains triggers"
 					title="Warning - This show contains triggers"
 				>
-					<button type="button" className={ `btn btn-${ color }` }>
+					<button type="button" className={`btn btn-${color}`}>
 						<span
 							role="img"
-							className={ `screener screener-warn ${ color }` }
+							className={`screener screener-warn ${color}`}
 						>
 							<span className="symbolicon" role="img">
-								{ Warning }
+								{Warning}
 							</span>
 						</span>
 					</button>

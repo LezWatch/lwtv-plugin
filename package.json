@@ -11,19 +11,21 @@
     "build:workspaces": "npm run build --workspaces",
     "lint": "npm-run-all lint:*",
     "lint:css": "npm run lint:css --workspaces",
+    "lint:js": "npm run lint:js --workspaces",
     "lint:phpcs": "composer lint",
     "start": "npm-run-all start:*",
     "start:blocks": "npm run start --workspaces",
     "preinstall": "composer install",
     "postinstall": "( node ./node_scripts/postinstall.js ) && ( cd ./blocks && npm install --ignore-scripts )",
     "prepare": "husky install",
-    "clean": "rm -rf node_modules plugins/vendor"
+    "clean": "rm -rf node_modules vendor blocks/node_modules"
   },
   "author": "LezWatch.TV",
   "license": "GPL-2.0",
   "repository": "https://github.com/lezwatch/lwtv-plugin/",
   "dependencies": {
     "@npmcli/fs": "^3.1.0",
+    "@wordpress/scripts": "^26.9.0",
     "chart.js": "^4.0.1",
     "chartjs-plugin-annotation": "^2.1.0",
     "npm-run-all": "^4.1.5",
@@ -32,6 +34,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.11.13",
+    "eslint-plugin-prettier": "^5.0.0",
     "husky": "^8.0.0"
   }
 }

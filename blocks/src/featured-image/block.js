@@ -24,8 +24,8 @@ wp.hooks.addFilter(
 	withImageSize
 );
 
-registerBlockType( metadata.name, {
+registerBlockType(metadata.name, {
 	icon: Icon,
 	edit: Edit,
 	save: Save,
-} );
+});

@@ -38,77 +38,73 @@ const iconSuccess = (
 // Build it!
 const PrePublishCheckList = () => {
 	// Featured Image
-	const [ featuredImageMessage, setFeaturedImageMessage ] = useState( '' );
+	const [featuredImageMessage, setFeaturedImageMessage] = useState('');
 	// Post Meta
-	const [ postExcerptMessage, setPostExcerptMessage ] = useState( '' );
+	const [postExcerptMessage, setPostExcerptMessage] = useState('');
 
 	// Get the current settings
-	const { featuredImage, postExcerpt, postContent } = useSelect(
-		( select ) => {
-			return {
-				featuredImage:
-					select( 'core/editor' ).getEditedPostAttribute(
-						'featured_media'
-					),
-				postExcerpt:
-					select( 'core/editor' ).getEditedPostAttribute( 'excerpt' ),
-				postContent:
-					select( 'core/editor' ).getEditedPostAttribute( 'content' ),
-			};
-		}
-	);
+	const { featuredImage, postExcerpt, postContent } = useSelect((select) => {
+		return {
+			featuredImage:
+				select('core/editor').getEditedPostAttribute('featured_media'),
+			postExcerpt:
+				select('core/editor').getEditedPostAttribute('excerpt'),
+			postContent:
+				select('core/editor').getEditedPostAttribute('content'),
+		};
+	});
 
 	// Get the post lock status and save status.
-	const { lockPostSaving, unlockPostSaving } = useDispatch( 'core/editor' );
+	const { lockPostSaving, unlockPostSaving } = useDispatch('core/editor');
 
 	let styleClass = 'pre-publish-success';
 
 	// Put all the logic in the useEffect hook.
-	useEffect( () => {
+	useEffect(() => {
 		let lockPost = false;
-		setPostExcerptMessage( iconSuccess );
-		setFeaturedImageMessage( iconSuccess );
+		setPostExcerptMessage(iconSuccess);
+		setFeaturedImageMessage(iconSuccess);
 
 		// Check the excerpt. Does it exist and is it customized?
-		const truncatedPostExcerpt = postExcerpt.slice( 0, 50 );
-		const truncatedPostContent = postContent.slice( 0, 50 );
+		const truncatedPostExcerpt = postExcerpt.slice(0, 50);
+		const truncatedPostContent = postContent.slice(0, 50);
 		if (
 			postExcerpt === 0 ||
-			truncatedPostContent.indexOf( truncatedPostExcerpt ) === 0
+			truncatedPostContent.indexOf(truncatedPostExcerpt) === 0
 		) {
 			lockPost = true;
-			setPostExcerptMessage( iconFail );
+			setPostExcerptMessage(iconFail);
 		}
 
 		// Check the featured image
-		if ( featuredImage === 0 ) {
+		if (featuredImage === 0) {
 			lockPost = true;
-			setFeaturedImageMessage( iconFail );
+			setFeaturedImageMessage(iconFail);
 		}
 
-		if ( lockPost === true ) {
+		if (lockPost === true) {
 			styleClass = 'pre-publish-fail';
 			lockPostSaving();
 		} else {
 			unlockPostSaving();
 		}
-	}, [ postExcerpt, featuredImage, postContent ] );
+	}, [postExcerpt, featuredImage, postContent]);
 
 	return (
 		<PluginPrePublishPanel
-			title={ 'LWTV Publish Checklist' }
-			className={ styleClass }
-			initialOpen={ true }
-			icon={ 'info-outline' }
+			title={'LWTV Publish Checklist'}
+			className={styleClass}
+			initialOpen={true}
+			icon={'info-outline'}
 		>
 			<p>
-				<b>Custom Excerpt:</b> { postExcerptMessage }
+				<b>Custom Excerpt:</b> {postExcerptMessage}
 			</p>
 			<p>
-				<b>Featured Image:</b> { featuredImageMessage }
+				<b>Featured Image:</b> {featuredImageMessage}
 			</p>
 		</PluginPrePublishPanel>
 	);
 };
 
-registerPlugin( metadata.name, { render: PrePublishCheckList } );
+registerPlugin(metadata.name, { render: PrePublishCheckList });

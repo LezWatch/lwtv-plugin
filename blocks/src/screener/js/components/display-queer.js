@@ -1,7 +1,7 @@
 import { Fragment } from '@wordpress/element';
 
 // Display queer
-export default function DisplayQueer( { score } ) {
+export default function DisplayQueer({ score }) {
 	return (
 		<Fragment>
 			<span
@@ -11,7 +11,7 @@ export default function DisplayQueer( { score } ) {
 				data-original-title="How good is this show for queers?"
 			>
 				<button type="button" className="btn btn-dark">
-					Queer Score: { `${ score }` }
+					Queer Score: {`${score}`}
 				</button>
 			</span>
 		</Fragment>

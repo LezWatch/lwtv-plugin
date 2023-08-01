@@ -12,7 +12,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl } from '@wordpress/components';
 import { ServerSideRender } from '@wordpress/server-side-render';
 
-registerBlockType( 'lez-library/glossary', {
+registerBlockType('lez-library/glossary', {
 	title: 'Glossary',
 	icon: Icon,
 	category: 'lezwatch',
@@ -22,18 +22,18 @@ registerBlockType( 'lez-library/glossary', {
 			type: 'string',
 		},
 	},
-	edit: ( props ) => {
+	edit: (props) => {
 		const { attributes, setAttributes } = this.props;
 		const { taxonomy } = attributes;
 
 		return (
 			<Fragment>
 				<InspectorControls>
-					<PanelBody title={ 'Glossary Block Settings' }>
+					<PanelBody title={'Glossary Block Settings'}>
 						<SelectControl
-							label={ 'Taxonomy' }
-							value={ taxonomy }
-							options={ [
+							label={'Taxonomy'}
+							value={taxonomy}
+							options={[
 								{
 									label: 'Choose a taxonomy...',
 									value: null,
@@ -58,16 +58,16 @@ registerBlockType( 'lez-library/glossary', {
 									label: 'Intersections',
 									value: 'lez_intersections',
 								},
-							] }
-							onChange={ ( value ) =>
-								setAttributes( { taxonomy: value } )
+							]}
+							onChange={(value) =>
+								setAttributes({ taxonomy: value })
 							}
 						/>
 					</PanelBody>
 				</InspectorControls>
 				<ServerSideRender
 					block="lez-library/glossary"
-					attributes={ props.attributes }
+					attributes={props.attributes}
 				/>
 			</Fragment>
 		);
@@ -76,4 +76,4 @@ registerBlockType( 'lez-library/glossary', {
 		// Rendering in PHP
 		return null;
 	},
-} );
+});

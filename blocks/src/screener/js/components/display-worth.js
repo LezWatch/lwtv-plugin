@@ -1,12 +1,12 @@
 import { Fragment } from '@wordpress/element';
 
 // Figure out Worth Display
-export default function DisplayWorth( { score } ) {
+export default function DisplayWorth({ score }) {
 	let color = 'info';
 	let icon;
 	let svgID = 'meh';
 
-	switch ( score ) {
+	switch (score) {
 		case 'yes':
 			color = 'success';
 			svgID = 'thumbs-up';
@@ -30,30 +30,30 @@ export default function DisplayWorth( { score } ) {
 				'M12,0A12,12,0,1,0,24,12,12,12,0,0,0,12,0ZM7.5,8A1.5,1.5,0,1,1,6,9.5,1.5,1.5,0,0,1,7.5,8ZM17,17H7a1,1,0,0,1,0-2H17a1,1,0,0,1,0,2Zm-.5-6A1.5,1.5,0,1,1,18,9.5,1.5,1.5,0,0,1,16.5,11Z';
 	}
 
-	const svgTitle = <title>{ svgID }</title>;
+	const svgTitle = <title>{svgID}</title>;
 
 	return (
 		<Fragment>
 			<span
 				data-toggle="tooltip"
-				aria-label={ `Is this show worth watching? ${ score }` }
+				aria-label={`Is this show worth watching? ${score}`}
 				title=""
-				data-original-title={ `Is this show worth watching? ${ score }` }
+				data-original-title={`Is this show worth watching? ${score}`}
 			>
-				<button type="button" className={ `btn btn-${ color }` }>
+				<button type="button" className={`btn btn-${color}`}>
 					Worth It?&nbsp;
 					<span
 						role="img"
-						className={ `screener screener-worthit ${ score }` }
+						className={`screener screener-worthit ${score}`}
 					>
 						<span className="symbolicon" role="img">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								viewBox="0 0 24 24"
-								id={ svgID }
+								id={svgID}
 							>
-								{ svgTitle }
-								<path d={ icon } />
+								{svgTitle}
+								<path d={icon} />
 							</svg>
 						</span>
 					</span>

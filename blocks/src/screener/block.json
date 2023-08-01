@@ -7,7 +7,7 @@
 	"category": "lezwatch",
 	"icon": "video-alt",
 	"description": "Screener Reviews.",
-	"keywords": [ "screeners", "reviews" ],
+	"keywords": ["screeners", "reviews"],
 	"editorScript": "file:./block.js",
 	"supports": {
 		"customClassName": false

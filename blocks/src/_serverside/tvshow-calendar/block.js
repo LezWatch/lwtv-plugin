@@ -10,11 +10,11 @@ import { registerBlockType } from '@wordpress/blocks';
 import ServerSideRender from '@wordpress/server-side-render';
 
 // Register block
-registerBlockType( 'lwtv/tvshow-calendar', {
+registerBlockType('lwtv/tvshow-calendar', {
 	title: 'TV Shows Calendar',
 	icon: Icon,
 	category: 'lezwatch',
-	keywords: [ 'calendar', 'tv shows' ],
+	keywords: ['calendar', 'tv shows'],
 	className: false,
 	edit() {
 		return <ServerSideRender block="lwtv/tvshow-calendar" />;
@@ -23,4 +23,4 @@ registerBlockType( 'lwtv/tvshow-calendar', {
 		// This is a display only block. No saving.
 		return null;
 	},
-} );
+});

@@ -15,8 +15,8 @@ import './css/editor.scss';
 
 import { registerBlockType } from '@wordpress/blocks';
 
-registerBlockType( metadata.name, {
+registerBlockType(metadata.name, {
 	icon: Icon,
 	edit: Edit,
 	save: Save,
-} );
+});

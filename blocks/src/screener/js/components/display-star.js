@@ -2,10 +2,10 @@ import Star from './svg/star';
 import { Fragment } from '@wordpress/element';
 
 // Figure out Trigger Display
-export default function DisplayStar( { score } ) {
+export default function DisplayStar({ score }) {
 	let color;
 
-	switch ( score ) {
+	switch (score) {
 		case 'anti':
 			color = 'danger';
 			break;
@@ -19,22 +19,22 @@ export default function DisplayStar( { score } ) {
 			color = 'gold';
 	}
 
-	if ( 'none' !== score ) {
+	if ('none' !== score) {
 		return (
 			<Fragment>
 				<span
 					data-toggle="tooltip"
-					aria-label={ `${ score } Star Show` }
+					aria-label={`${score} Star Show`}
 					title=""
-					data-original-title={ `${ score } Star Show` }
+					data-original-title={`${score} Star Show`}
 				>
 					<button type="button" className="btn btn-info">
 						<span
 							role="img"
-							className={ `screener screener-star ${ color }` }
+							className={`screener screener-star ${color}`}
 						>
 							<span className="symbolicon" role="img">
-								{ Star }
+								{Star}
 							</span>
 						</span>
 					</button>
