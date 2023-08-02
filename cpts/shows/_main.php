@@ -9,7 +9,6 @@
 require_once 'calculations.php';
 require_once 'cmb2-metaboxes.php';
 require_once 'custom-columns.php';
-require_once 'jetpack.php';
 require_once 'shows-like-this.php';
 
 /**
