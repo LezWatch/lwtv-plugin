@@ -577,7 +577,7 @@ class LWTV_CPT_Characters {
 		( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
 
 		// Always update Wikidata
-		( new LWTV_Debug() )->check_actors_wikidata( $post_id );
+		( new LWTV_Debug_Actors() )->check_actors_wikidata( $post_id );
 
 		// If we've got a list of URLs, then flush.
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {

@@ -162,7 +162,7 @@ class WP_CLI_LWTV_Commands {
 		// i.e. run the calculations
 		switch ( $post_type ) {
 			case 'actor':
-				$items = ( new LWTV_Debug() )->check_actors_wikidata( $post_id );
+				$items = ( new LWTV_Debug_Actors() )->check_actors_wikidata( $post_id );
 				break;
 		}
 
@@ -211,7 +211,7 @@ class WP_CLI_LWTV_Commands {
 		switch ( $find ) {
 			case 'queerchars':
 				WP_CLI::log( 'Searching all characters for associated actor queerness ...' );
-				$items = ( new LWTV_Debug() )->find_queerchars();
+				$items = ( new LWTV_Debug_Queers() )->find_queerchars();
 				break;
 		}
 

@@ -49,7 +49,7 @@ class LWTV_Actors_CMB2 {
 		if ( ! isset( $post->ID ) || 'draft' === get_post_status( $post->ID ) || 'auto-draft' === get_post_status( $post->ID ) || '' === get_the_title( $post->ID ) ) {
 			$wikidata = 'auto-draft';
 		} else {
-			( new LWTV_Debug() )->check_actors_wikidata( $post->ID );
+			( new LWTV_Debug_Actors() )->check_actors_wikidata( $post->ID );
 			$wikidata = get_post_meta( $post->ID, '_lezactors_wikidata' );
 		}
 

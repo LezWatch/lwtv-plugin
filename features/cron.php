@@ -232,7 +232,7 @@ SQL;
 				break;
 			case 'Wed':
 				// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-				// $check = ( new LWTV_Debug() )->find_actors_no_chars();
+				// $check = ( new LWTV_Debug_Actors() )->find_actors_no_chars();
 				break;
 			case 'Thu':
 				$check = ( new LWTV_Debug_Actors() )->find_actors_empty();

@@ -251,7 +251,7 @@ class LWTV_Data_Validation_Checks {
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_queer_checker_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug() )->find_queerchars();
+			$items = ( new LWTV_Debug_Queers() )->find_queerchars();
 		}
 
 		// Get the last run time.
@@ -314,7 +314,7 @@ class LWTV_Data_Validation_Checks {
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_checker_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug() )->find_actors_problems();
+			$items = ( new LWTV_Debug_Actors() )->find_actors_problems();
 		}
 
 		// Get the last run time.
@@ -376,7 +376,7 @@ class LWTV_Data_Validation_Checks {
 	public static function tab_actor_wiki() {
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = ( new LWTV_Debug() )->list_actors_wikidata();
+		$items    = ( new LWTV_Debug_Actors() )->list_actors_wikidata();
 
 		/*
 			Instead of looping through all, let's do something else.
@@ -423,7 +423,7 @@ class LWTV_Data_Validation_Checks {
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_empty_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug() )->find_actors_empty();
+			$items = ( new LWTV_Debug_Actors() )->find_actors_empty();
 		}
 
 		// Get the last run time.
@@ -489,7 +489,7 @@ class LWTV_Data_Validation_Checks {
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_checker_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug() )->find_shows_problems();
+			$items = ( new LWTV_Debug_Shows() )->find_shows_problems();
 		}
 
 		// Get the last run time.
@@ -553,7 +553,7 @@ class LWTV_Data_Validation_Checks {
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_character_checker_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug() )->find_characters_problems();
+			$items = ( new LWTV_Debug_Characters() )->find_characters_problems();
 		}
 
 		// Get the last run time.
