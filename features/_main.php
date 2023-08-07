@@ -11,7 +11,6 @@ require_once 'custom-loops.php';                 // Custom Loops
 require_once 'custom-roles.php';                 // Custom Roles
 require_once 'dashboard.php';                    // Dashboard Tools
 require_once 'dashboard-posts-in-progress.php';  // Dashboard: Posts In Progress
-require_once 'debug.php';                        // Debug tools
 require_once 'embeds.php';                       // Custom Embeds
 require_once 'grading.php';                      // Show scores and grading from 3rd parties
 require_once 'languages.php';                    // Language Code (in progress)

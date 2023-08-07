@@ -225,7 +225,7 @@ SQL;
 	public function tools_check() {
 		switch ( gmdate( 'D' ) ) {
 			case 'Mon':
-				$check = ( new LWTV_Debug() )->find_actors_problems();
+				$check = ( new LWTV_Debug_Actors() )->find_actors_problems();
 				break;
 			case 'Tue':
 				FWP()->indexer->index(); // Ensure Faceting.
@@ -235,16 +235,16 @@ SQL;
 				// $check = ( new LWTV_Debug() )->find_actors_no_chars();
 				break;
 			case 'Thu':
-				$check = ( new LWTV_Debug() )->find_actors_empty();
+				$check = ( new LWTV_Debug_Actors() )->find_actors_empty();
 				break;
 			case 'Fri':
-				$check = ( new LWTV_Debug() )->find_queerchars();
+				$check = ( new LWTV_Debug_Queers() )->find_queerchars();
 				break;
 			case 'Sat':
-				$check = ( new LWTV_Debug() )->find_shows_problems();
+				$check = ( new LWTV_Debug_Shows() )->find_shows_problems();
 				break;
 			case 'Sun':
-				$check = ( new LWTV_Debug() )->find_characters_problems();
+				$check = ( new LWTV_Debug_Characters() )->find_characters_problems();
 				break;
 		}
 	}
