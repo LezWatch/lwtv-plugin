@@ -20,18 +20,30 @@ class LWTV_Debug {
 	 */
 	public function sanitize_social( $string, $for ) {
 
-		$clean = preg_replace( '/[^a-zA-Z_.0-9]/', '', trim( $string ) );
+		// Defaults.
+		$trim  = 10;
+		$regex = '/[^a-zA-Z_.0-9]/';
 
 		switch ( $for ) {
 			case 'instagram':
-				$trim = 30;
+				// ex: https://instagram.com/lezwatchtv
+				$string = str_replace( 'https://instagram.com/', $string );
+				$trim   = 30;
 				break;
 			case 'twitter':
-				$trim = 15;
+				// ex: https://twitter.com/lezwatchtv
+				$string = str_replace( 'https://twitter.com/', $string );
+				$trim   = 15;
 				break;
-			default:
-				$trim = 10;
+			case 'mastodon':
+				// ex: https://mstdn.social/@lezwatchtv
+				$regex = '/[^a-zA-Z_.0-9:\/@]/';
+				$trim  = 2000;
+				break;
 		}
+
+		// Remove all illegal characters.
+		$clean = preg_replace( $regex, '', trim( $string ) );
 
 		$clean = substr( $clean, 0, $trim );
 
@@ -40,8 +52,8 @@ class LWTV_Debug {
 
 	/**
 	 * Clean up the WikiDate
-	 * @param  string $date Wikiformated date: +1968-07-07T00:00:00Z
-	 * @return string      LezWatch formated date: 1968-07-07
+	 * @param  string $date Wiki formatted date: +1968-07-07T00:00:00Z
+	 * @return string      LezWatch formatted date: 1968-07-07
 	 */
 	public function format_wikidate( $date ) {
 		$clean = trim( substr( $date, 0, strpos( $date, 'T' ) ), '+' );

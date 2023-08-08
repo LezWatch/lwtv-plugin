@@ -152,6 +152,7 @@ class LWTV_Data_Validation_Checks {
 						break;
 					default:
 						self::tab_introduction();
+						break;
 				}
 				?>
 			</div>
@@ -164,13 +165,14 @@ class LWTV_Data_Validation_Checks {
 		$number = 1;
 		foreach ( $items as $item ) {
 			$class     = ( 0 === $number % 2 ) ? '' : 'alternate';
-			$timestamp = get_post_timestamp( (int) $item['id'], 'modified' );
-			// phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
-			$time_diff = human_time_diff( $timestamp, current_time( 'timestamp' ) );
-			if ( ! $timestamp ) {
-				$time = 'Unknown';
+			$modified  = get_post_timestamp( (int) $item['id'], 'modified' );
+			$current   = current_datetime()->format( 'U' );
+			$time_diff = 'unknown time';
+			if ( ! $modified ) {
+				$time      = 'Unknown';
+				$time_diff = human_time_diff( $modified, $current );
 			} else {
-				$time = date_i18n( get_option( 'date_format' ), $timestamp );
+				$time = date_i18n( get_option( 'date_format' ), $modified );
 			}
 
 			echo '

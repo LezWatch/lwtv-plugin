@@ -44,17 +44,18 @@ class LWTV_Debug_Shows {
 				'formats'    => get_the_terms( $show_id, 'lez_formats' ),
 				'genres'     => get_the_terms( $show_id, 'lez_genres' ),
 				'tropes'     => get_the_terms( $show_id, 'lez_tropes' ),
+				'duplicate'  => get_post_field( 'post_name', $show_id ),
 			);
 
 			// Check if there are characters.
 			$charshowlist = get_post_meta( $show_id, 'lezshows_char_list', true );
-
 			if ( false === $charshowlist ) {
 				$list_count = max( 0, LWTV_Shows_Calculate::count_queers( $show_id, 'count' ) );
 			} else {
 				$list_count = count( $charshowlist );
 			}
 
+			// If the check is fewer than the calculate, update it since we're here.
 			if ( $check['chars'] !== $list_count ) {
 				$check['chars'] = $list_count;
 				update_post_meta( $show_id, 'lezshows_char_count', $list_count );
@@ -65,58 +66,88 @@ class LWTV_Debug_Shows {
 				$problems[] = 'No characters listed.';
 			}
 
+			// Make sure there are airdates.
 			if ( ! array( $check['airdates'] ) ) {
 				$problems[] = 'No airdates.';
 			}
 
+			// If there's no Worthit, set it to TBD.
 			if ( empty( $check['thumb'] ) ) {
-				$problems[] = 'No worthit thumb.';
+				update_post_meta( $show_id, 'lezshows_worthit_rating', 'TBD' );
 			}
 
+			// Check Worthit details.
 			if ( empty( $check['details'] ) ) {
 				$problems[] = 'No worthit details.';
 			}
 
+			// Check Realness details.
 			if ( ! is_numeric( $check['realness'] ) ) {
 				$problems[] = 'No realness rating.';
 			}
 
+			// Check Quality details.
 			if ( ! is_numeric( $check['quality'] ) ) {
 				$problems[] = 'No quality rating.';
 			}
 
+			// Check Screentime details.
 			if ( ! is_numeric( $check['screentime'] ) ) {
 				$problems[] = 'No screentime rating.';
 			}
 
+			// Make sure at least ONE TV Station exists.
+			if ( ! $check['stations'] || is_wp_error( $check['stations'] ) ) {
+				$problems[] = 'No stations.';
+			}
+
+			// Make sure a nation/country was selected.
+			if ( ! $check['nations'] || is_wp_error( $check['nations'] ) ) {
+				$problems[] = 'No country.';
+			}
+
+			// Validate IMDb ID.
 			if ( ! empty( $check['imdb'] ) && ( new LWTV_Debug() )->validate_imdb( $check['imdb'] ) === false ) {
 				$problems[] = 'IMDb ID is invalid (ex: tt12345).';
 			}
 
+			// Unless it's a webseries, make sure there is an IMDb ID.
+			// Maybe also skip weirder shows?
 			if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
 				if ( empty( $check['imdb'] ) ) {
 					$problems[] = 'IMDb ID is not set.';
 				}
 			}
 
-			if ( ! $check['stations'] || is_wp_error( $check['stations'] ) ) {
-				$problems[] = 'No stations.';
-			}
-
-			if ( ! $check['nations'] || is_wp_error( $check['nations'] ) ) {
-				$problems[] = 'No country.';
-			}
-
+			// This should be impossible, but confirm there is a show-format.
 			if ( ! $check['formats'] || is_wp_error( $check['formats'] ) ) {
 				$problems[] = 'No format.';
 			}
 
+			// Make sure there are genres.
 			if ( ! $check['genres'] || is_wp_error( $check['genres'] ) ) {
 				$problems[] = 'No genres.';
 			}
 
+			// If there are no tropes, add NONE.
 			if ( ! $check['tropes'] || is_wp_error( $check['tropes'] ) ) {
-				$problems[] = 'No tropes.';
+				$term = get_term_by( 'name', 'none', 'lez_tropes' );
+				wp_set_object_terms( $show_id, $term->ID, 'lez_tropes', true );
+			}
+
+			// - Duplicate Show check - shouldn't end in -[NUMBER].
+			$permalink_array = explode( '-', $check['duplicate'] );
+			$ends_with       = end( $permalink_array );
+			// If it ends in a number, we have to check.
+			if ( is_numeric( $ends_with ) ) {
+				// See if an existing page without the -NUMBER exists (someone could rename themselves with numbers...).
+				$possible = get_page_by_path( str_replace( '-' . $ends_with, '', $check['duplicate'] ), OBJECT, 'post_type_shows' );
+				if ( false !== $possible ) {
+					$pos_imdb = get_post_meta( $possible->ID, 'lezshows_imdb', true );
+					if ( isset( $pos_imdb ) && $pos_imdb === $check['imdb'] ) {
+						$problems[] = 'Likely Dupe - Another Show has this name AND the same IMDb data.';
+					}
+				}
 			}
 
 			// If we have problems, list them:

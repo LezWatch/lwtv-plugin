@@ -36,8 +36,10 @@ class LWTV_Debug_Characters {
 				'actors' => get_post_meta( $char_id, 'lezchars_actor', true ),
 			);
 
+			// If there's no Cliche, we add 'None'
 			if ( ! $check['cliche'] || is_wp_error( $check['cliche'] ) ) {
-				$problems[] = 'No clichés.';
+				$term = get_term_by( 'name', 'none', 'lez_cliches' );
+				wp_set_object_terms( $show_id, $term->ID, 'lez_cliches', true );
 			}
 
 			if ( has_term( 'dead', 'lez_cliches' ) && empty( $check['death'] ) ) {
@@ -52,7 +54,6 @@ class LWTV_Debug_Characters {
 					if ( is_array( $each_show['show'] ) ) {
 						$each_show['show'] = $each_show['show'][0];
 					}
-
 					if ( ! is_array( $each_show['appears'] ) ) {
 						$problems[] = 'No years on air set for ' . get_the_title( $each_show['show'] ) . '.';
 					}
@@ -110,9 +111,10 @@ class LWTV_Debug_Characters {
 		$problems     = array();
 
 		foreach ( $characters as $character ) {
-			// If someone has disabled, we're good
+			// If someone has disabled, we're good.
 			if ( has_term( 'disabled', 'lez_cliches', $character ) ) {
 				$has_disabled = true;
+				break;
 			}
 		}
 

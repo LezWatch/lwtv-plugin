@@ -10,7 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 class LWTV_Debug_Actors {
 
-		/**
+	/**
 	 * Find Actors with problems.
 	 */
 	public function find_actors_problems() {
@@ -62,7 +62,7 @@ class LWTV_Debug_Actors {
 			// - IMDb IDs should be valid for the space they're in, e.g. "nm"
 			// and digits for people (props Jamie)
 			if ( ! empty( $check['imdb'] ) && ( new LWTV_Debug() )->validate_imdb( $check['imdb'] ) === false ) {
-				$problems[] = 'IMDb ID is invalid (ex: nm12345).';
+				$problems[] = 'IMDb ID is invalid (ex: nm12345) -- ' . $check['imdb'];
 			}
 
 			// Check for IMDb existing at all...
@@ -77,12 +77,20 @@ class LWTV_Debug_Actors {
 			if ( ! empty( $check['insta'] ) ) {
 				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
 				if ( ( new LWTV_Debug() )->sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
-					$problems[] = 'Instagram ID is invalid.';
+					if ( false === ( new LWTV_Debug() )->validate_imdb( $check['insta'] ) ) {
+						update_post_meta( $actor_id, 'lezactors_instagram', $check['twits'] );
+					} else {
+						$problems[] = 'Instagram ID is invalid -- ' . $check['insta'];
+					}
 				}
 			}
 			if ( ! empty( $check['twits'] ) ) {
 				if ( ( new LWTV_Debug() )->sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
-					$problems[] = 'Twitter ID is invalid.';
+					if ( false === ( new LWTV_Debug() )->validate_imdb( $check['twits'] ) ) {
+						update_post_meta( $actor_id, 'lezactors_twitter', $check['twits'] );
+					} else {
+						$problems[] = 'Twitter ID is invalid -- ' . $check['twits'];
+					}
 				}
 			}
 
@@ -90,7 +98,17 @@ class LWTV_Debug_Actors {
 			// would make them Wikipedia links (props Jamie)
 			if ( ! empty( $check['home'] ) ) {
 				if ( strpos( $check['home'], 'wikipedia.org/' ) !== false ) {
-					$problems[] = 'Homepage points to Wikipedia.';
+					if ( empty( $check['wiki'] ) ) {
+						// If there is no wiki set, move homepage to wiki and clear home page.
+						update_post_meta( $actor_id, 'lezactors_wikipedia', $check['wiki'] );
+						delete_post_meta( $actor_id, 'lezactors_homepage' );
+					} elseif ( $check['wiki'] === $check['home'] ) {
+						// If wiki === home page, delete home page.
+						delete_post_meta( $actor_id, 'lezactors_homepage' );
+					} else {
+						// record problem
+						$problems[] = 'Homepage points to Wikipedia - ' . sanitize_url( $check['home'] );
+					}
 				}
 			}
 
@@ -100,11 +118,12 @@ class LWTV_Debug_Actors {
 			// If it ends in a number, we have to check.
 			if ( is_numeric( $ends_with ) ) {
 				// See if an existing page without the -NUMBER exists (someone could rename themselves with numbers...).
-				$possible = get_page_by_path( str_replace( '-' . $ends_with, '', $check['dupes'] ), OBJECT, 'actor' );
+				$possible = get_page_by_path( str_replace( '-' . $ends_with, '', $check['dupes'] ), OBJECT, 'post_type_actor' );
 				if ( false !== $possible ) {
+					// make sure the name doesn't have a year in parens!
 					$pos_imdb = get_post_meta( $possible->ID, 'lezactors_imdb', true );
 					if ( isset( $pos_imdb ) && $pos_imdb === $check['imdb'] ) {
-						$problems[] = 'Likely Dupe - Another Actor page with this name contains the same IMDb data.';
+						$problems[] = 'Duplicate? Another Actor page with this name contains the same IMDb data - ' . sanitize_url( $possible->url );
 					}
 				}
 			}
@@ -226,14 +245,29 @@ class LWTV_Debug_Actors {
 					'wikipedia' => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
 					'instagram' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
 					'twitter'   => get_post_meta( $actor_id, 'lezactors_twitter', true ),
+					'facebook'  => str_replace( 'https://facebook.com/', '', get_post_meta( $actor_id, 'lezactors_facebook', true ) ),
 					'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
 				);
 
 				$permalink = basename( get_permalink( $actor_id ) );
+				$language  = 'en';
 
-				// Search for the actor:
-				$search_name   = str_replace( ' ', '%20', get_the_title( $actor_id ) );
-				$search_queery = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' . $search_name . '&language=en&format=json';
+				// Search for the actor, using the Q-ID if it's set.
+				$wikidata_id = get_post_meta( $actor_id, 'lezactors_wikidata', true );
+				if ( ! empty( $wikidata_id ) ) {
+					$search_name = $wikidata_id;
+				} else {
+					$search_name = str_replace( ' ', '%20', get_the_title( $actor_id ) );
+				}
+
+				// Pick language based on existing WikiPedia link.
+				if ( ! empty( $check_ours['wikipedia'] ) ) {
+					$wikiurl  = wp_parse_url( $check_ours['wikipedia'] );
+					$wikihost = explode( '.', $wikiurl['host'] );
+					$language = $wikihost[0];
+				}
+
+				$search_queery = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' . $search_name . '&language=' . $language . '&format=json';
 				$search_data   = wp_remote_get( $search_queery );
 
 				// Check for errors.
@@ -278,6 +312,7 @@ class LWTV_Debug_Actors {
 						'imdb'      => ( isset( $wiki_actor['claims']['P345'] ) ) ? $wiki_actor['claims']['P345'][0]['mainsnak']['datavalue']['value'] : '',
 						'instagram' => ( isset( $wiki_actor['claims']['P2003'] ) ) ? $wiki_actor['claims']['P2003'][0]['mainsnak']['datavalue']['value'] : '',
 						'twitter'   => ( isset( $wiki_actor['claims']['P2002'] ) ) ? $wiki_actor['claims']['P2002'][0]['mainsnak']['datavalue']['value'] : '',
+						'facebook'  => ( isset( $wiki_actor['claims']['P2013'] ) ) ? $wiki_actor['claims']['P2013'][0]['mainsnak']['datavalue']['value'] : '',
 						'website'   => ( isset( $wiki_actor['claims']['P856'] ) ) ? $wiki_actor['claims']['P856'][0]['mainsnak']['datavalue']['value'] : '',
 					);
 

@@ -301,6 +301,17 @@ class LWTV_Actors_CMB2 {
 				),
 			)
 		);
+		// Field: WikiData QID
+		$field_wikidata = $cmb_actorside->add_field(
+			array(
+				'name'       => 'WikiData ID',
+				'id'         => $prefix . 'wikidata',
+				'type'       => 'text',
+				'attributes' => array(
+					'placeholder' => 'Ex: Q2933359 - use to override the search',
+				),
+			)
+		);
 		// Field: Excerpt
 		$field_excerpt = $cmb_actorside->add_field(
 			array(
@@ -328,6 +339,7 @@ class LWTV_Actors_CMB2 {
 			$row8           = $grid_actorside->addRow();
 			$row9           = $grid_actorside->addRow();
 			$row10          = $grid_actorside->addRow();
+			$row11          = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
 			$row2->addColumns( array( $field_romantic, $field_queer_override ) );
 			$row3->addColumns( array( $field_pronouns ) );
@@ -337,7 +349,8 @@ class LWTV_Actors_CMB2 {
 			$row7->addColumns( array( $field_twitter, $field_instagram ) );
 			$row8->addColumns( array( $field_tumblr, $field_mastodon ) );
 			$row9->addColumns( array( $field_facebook, $field_tiktok ) );
-			$row10->addColumns( array( $field_excerpt ) );
+			$row10->addColumns( array( $field_wikidata ) );
+			$row11->addColumns( array( $field_excerpt ) );
 		}
 	}
 
