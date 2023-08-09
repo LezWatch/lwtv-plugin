@@ -317,23 +317,34 @@ class LWTV_Shortcodes {
 				'title'     => get_the_author_meta( 'jobrole', $author_id ),
 				'bio'       => $user->description,
 				'postcount' => $numposts,
-				'twitter'   => get_the_author_meta( 'twitter', $author_id ),
+				'bluesky'   => get_the_author_meta( 'bluesky', $author_id ),
 				'mastodon'  => get_the_author_meta( 'mastodon', $author_id ),
 				'instagram' => get_the_author_meta( 'instagram', $author_id ),
+				'tiktok'    => get_the_author_meta( 'tiktok', $author_id ),
 				'tumblr'    => get_the_author_meta( 'tumblr', $author_id ),
+				'twitter'   => get_the_author_meta( 'twitter', $author_id ),
 				'website'   => get_the_author_meta( 'url', $author_id ),
 				'fav_shows' => $fav_shows,
 			);
 		}
 
+		// Confirm the ones with HTTPS have HTTPS:
+		$urls_not_names = array( 'bluesky', 'tumblr', 'mastodon', 'website', 'tiktok' );
+		foreach ( $urls_not_names as $url_name ) {
+			if ( ! str_contains( $content[ $url_name ], 'http' ) ) {
+				$content[ $url_name ] = 'https://' . $content[ $url_name ];
+			}
+		}
+
 		// Get all the stupid social...
-		$twitter   = ( ! empty( $content['twitter'] ) ) ? '<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'twitter.svg', 'fa-twitter' ) . '</a>' : false;
+		$bluesky   = ( ! empty( $content['bluesky'] ) ) ? '<a href="' . $content['bluesky'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'bluesky.svg', 'fa-instagram' ) . '</a>' : false;
 		$instagram = ( ! empty( $content['instagram'] ) ) ? '<a href="https://instagram.com/' . $content['instagram'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
+		$twitter   = ( ! empty( $content['twitter'] ) ) ? '<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'twitter.svg', 'fa-twitter' ) . '</a>' : false;
 		$tumblr    = ( ! empty( $content['tumblr'] ) ) ? '<a href="' . $content['tumblr'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
 		$website   = ( ! empty( $content['website'] ) ) ? '<a href="' . $content['website'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'home.svg', 'fa-home' ) . '</a>' : false;
 		$mastodon  = ( ! empty( $content['mastodon'] ) ) ? '<a href="' . $content['mastodon'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
 
-		$social_array = array( $website, $twitter, $instagram, $tumblr, $mastodon );
+		$social_array = array( $website, $twitter, $instagram, $tumblr, $bluesky, $mastodon );
 		$social_array = array_filter( $social_array );
 
 		switch ( $format ) {

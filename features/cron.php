@@ -223,28 +223,28 @@ SQL;
 	 * @return void
 	 */
 	public function tools_check() {
+		FWP()->indexer->index(); // Ensure Faceting.
 		switch ( gmdate( 'D' ) ) {
 			case 'Mon':
 				$check = ( new LWTV_Debug_Actors() )->find_actors_problems();
 				break;
 			case 'Tue':
-				FWP()->indexer->index(); // Ensure Faceting.
+				$check = ( new LWTV_Debug_Actors() )->find_actors_no_imdb();
 				break;
 			case 'Wed':
-				// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-				// $check = ( new LWTV_Debug_Actors() )->find_actors_no_chars();
-				break;
-			case 'Thu':
 				$check = ( new LWTV_Debug_Actors() )->find_actors_empty();
 				break;
-			case 'Fri':
+			case 'Thu':
 				$check = ( new LWTV_Debug_Queers() )->find_queerchars();
+				break;
+			case 'Fri':
+				$check = ( new LWTV_Debug_Characters() )->find_characters_problems();
 				break;
 			case 'Sat':
 				$check = ( new LWTV_Debug_Shows() )->find_shows_problems();
 				break;
 			case 'Sun':
-				$check = ( new LWTV_Debug_Characters() )->find_characters_problems();
+				$check = ( new LWTV_Debug_Shows() )->find_shows_no_imdb();
 				break;
 		}
 	}

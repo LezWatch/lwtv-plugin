@@ -38,7 +38,6 @@ class LWTV_Debug_Shows {
 				'quality'    => get_post_meta( $show_id, 'lezshows_quality_rating', true ),
 				'rating'     => get_post_meta( $show_id, 'lezshows_screentime_rating', true ),
 				'airdates'   => get_post_meta( $show_id, 'lezshows_airdates', true ),
-				'imdb'       => get_post_meta( $show_id, 'lezshows_imdb', true ),
 				'stations'   => get_the_terms( $show_id, 'lez_stations' ),
 				'nations'    => get_the_terms( $show_id, 'lez_country' ),
 				'formats'    => get_the_terms( $show_id, 'lez_formats' ),
@@ -104,19 +103,6 @@ class LWTV_Debug_Shows {
 			// Make sure a nation/country was selected.
 			if ( ! $check['nations'] || is_wp_error( $check['nations'] ) ) {
 				$problems[] = 'No country.';
-			}
-
-			// Validate IMDb ID.
-			if ( ! empty( $check['imdb'] ) && ( new LWTV_Debug() )->validate_imdb( $check['imdb'] ) === false ) {
-				$problems[] = 'IMDb ID is invalid (ex: tt12345).';
-			}
-
-			// Unless it's a webseries, make sure there is an IMDb ID.
-			// Maybe also skip weirder shows?
-			if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
-				if ( empty( $check['imdb'] ) ) {
-					$problems[] = 'IMDb ID is not set.';
-				}
 			}
 
 			// This should be impossible, but confirm there is a show-format.
@@ -202,6 +188,54 @@ class LWTV_Debug_Shows {
 			$problems = self::check_disabled_characters( $show_id );
 
 			// if there are problems, we put them in items.
+			if ( ! empty( $problems ) ) {
+				$items[] = array(
+					'url'     => get_permalink( $show_id ),
+					'id'      => $show_id,
+					'problem' => implode( ' ', $problems ),
+				);
+			}
+		}
+
+		return $items;
+	}
+
+
+	/**
+	 * Find all shows without IMDb Settings.
+	 *
+	 * @return array $problems - array of problems. Can be empty.
+	 */
+	public function find_shows_no_imdb() {
+		// Default
+		$items = array();
+
+		// Get all the Shows
+		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
+
+		if ( $the_loop->have_posts() ) {
+			$shows = wp_list_pluck( $the_loop->posts, 'ID' );
+			wp_reset_query();
+		}
+
+		foreach ( $shows as $show_id ) {
+
+			$problems = array();
+
+			$imdb = get_post_meta( $show_id, 'lezshows_imdb', true );
+
+			if ( empty( $imdb ) ) {
+				// Check for IMDb existing at all, unless it's a webseries
+				if ( ! has_term( 'web-series', 'lez_formats', $show_id ) ) {
+					$problems[] = 'IMDb ID is not set.';
+				}
+			} elseif ( ( new LWTV_Debug() )->validate_imdb( $imdb ) === false ) {
+				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
+				// and digits for people (props Jamie).
+				$problems[] = 'IMDb ID is invalid (ex: tt12345) -- ' . $imdb;
+			}
+
+			// If we added any problems, loop and add.
 			if ( ! empty( $problems ) ) {
 				$items[] = array(
 					'url'     => get_permalink( $show_id ),

@@ -25,18 +25,15 @@ class LWTV_Debug {
 		$regex = '/[^a-zA-Z_.0-9]/';
 
 		switch ( $for ) {
-			case 'instagram':
-				// ex: https://instagram.com/lezwatchtv
-				$string = str_replace( 'https://instagram.com/', $string );
+			case 'instagram': // ex: https://instagram.com/lezwatchtv
+				$string = str_replace( 'https://instagram.com/', '', $string );
 				$trim   = 30;
 				break;
-			case 'twitter':
-				// ex: https://twitter.com/lezwatchtv
-				$string = str_replace( 'https://twitter.com/', $string );
+			case 'twitter': // ex: https://twitter.com/lezwatchtv
+				$string = str_replace( 'https://twitter.com/', '', $string );
 				$trim   = 15;
 				break;
-			case 'mastodon':
-				// ex: https://mstdn.social/@lezwatchtv
+			case 'mastodon': // ex: https://mstdn.social/@lezwatchtv
 				$regex = '/[^a-zA-Z_.0-9:\/@]/';
 				$trim  = 2000;
 				break;
@@ -65,16 +62,25 @@ class LWTV_Debug {
 	 * @param  string  $string IMDB ID
 	 * @return boolean         true/false
 	 */
-	public function validate_imdb( $string ) {
+	public function validate_imdb( $string, $type = 'show' ) {
 
+		// Defaults
 		$result = true;
+		$type   = ( ! in_array( $type, array( 'show', 'actor' ), true ) ) ? 'show' : $type;
 
-		// IMDB looks like tt123456 or nm12356
-		if ( substr( $string, 0, 2 ) === 'nm' || substr( $string, 0, 2 ) === 'tt' ) {
-			if ( ! is_numeric( substr( $string, 2 ) ) ) {
-				$result = false;
-			}
-		} else {
+		switch ( $type ) {
+			case 'show':
+				$substr = 'tt';
+				break;
+			case 'actor':
+				$substr = 'nm';
+				break;
+		}
+
+		if ( ! isset( $substr ) ) {
+			$result = false;
+		} elseif ( substr( $string, 0, 2 ) === $substr && ! is_numeric( substr( $string, 2 ) ) ) {
+			// IMDB looks like tt123456 or nm12356
 			$result = false;
 		}
 
