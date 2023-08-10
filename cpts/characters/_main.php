@@ -93,7 +93,7 @@ class LWTV_CPT_Characters {
 			'not_found_in_trash'       => 'No Characters found in Trash',
 			'update_item'              => 'Update Character',
 			'featured_image'           => 'Character Image',
-			'set_featured_image'       => 'Set Character Image (Min. 350 x 412)',
+			'set_featured_image'       => 'Set Character Image (recommended 350 x 412)',
 			'remove_featured_image'    => 'Remove Character Image',
 			'use_featured_image'       => 'Use as Character Image',
 			'archives'                 => 'Character archives',
@@ -109,7 +109,7 @@ class LWTV_CPT_Characters {
 			'item_updated'             => 'Character updated.',
 		);
 		$template = array(
-			array( 'core/post-featured-image' ),
+			array( 'lez-library/featured-image' ),
 			array(
 				'core/paragraph',
 				array( 'placeholder' => 'Everything we need to know about this character' ),

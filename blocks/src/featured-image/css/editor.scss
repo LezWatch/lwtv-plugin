@@ -3,15 +3,20 @@
 	position: relative;
 }
 
-body.post-type-post_type_characters .editor-post-featured-image,
-body.post-type-post_type_actors .editor-post-featured-image {
-	float: left;
-	width: 350px;
-	margin-right: 2rem;
+body.post-type-post_type_characters,
+body.post-type-post_type_actors {
 
-	button.editor-post-featured-image__toggle {
-		height: 200px;
+	.editor-post-featured-image {
+		float: left;
+		width: 350px;
+		margin-right: 2rem;
 	}
+}
+
+button.editor-post-featured-image__preview,
+button.editor-post-featured-image__toggle {
+	min-height: 400px;
+	max-height: 100%;
 }
 
 .editor-post-featured-image button.is-button.is-default {
