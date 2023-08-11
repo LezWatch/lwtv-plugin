@@ -243,6 +243,19 @@ class LWTV_Debug_Actors {
 			}
 		}
 
+		// Save Transient
+		set_transient( 'lwtv_debug_actor_imdb', $items, WEEK_IN_SECONDS );
+
+		// Update Options
+		$option               = get_option( 'lwtv_debugger_status' );
+		$option['actor_imdb'] = array(
+			'name'  => 'Actors without IMDb',
+			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
+			'last'  => time(),
+		);
+		$option['timestamp']  = time();
+		update_option( 'lwtv_debugger_status', $option );
+
 		return $items;
 	}
 

@@ -245,6 +245,19 @@ class LWTV_Debug_Shows {
 			}
 		}
 
+		// Save Transient
+		set_transient( 'lwtv_debug_show_imdb', $items, WEEK_IN_SECONDS );
+
+		// Update Options
+		$option              = get_option( 'lwtv_debugger_status' );
+		$option['show_imdb'] = array(
+			'name'  => 'Shows without IMDb',
+			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
+			'last'  => time(),
+		);
+		$option['timestamp'] = time();
+		update_option( 'lwtv_debugger_status', $option );
+
 		return $items;
 	}
 
