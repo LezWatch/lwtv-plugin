@@ -152,7 +152,7 @@ class LWTV_CMB2_Addons {
 
 		foreach ( $user->roles as $role ) {
 			// Does user have role.. check if array
-			if ( is_array( $roles ) && in_array( $role, $roles ) ) {
+			if ( is_array( $roles ) && in_array( $role, $roles, true ) ) {
 				return true;
 			}
 		}

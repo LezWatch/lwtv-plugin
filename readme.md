@@ -10,7 +10,72 @@ The code was written by Tracy Levesque and Mika Epstein, with assistance from [Y
 
 Further documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatchtv.com)
 
+- Uses Node to install and manage components, as well as to build final versions of Blocks.
+- Uses Composer for adding project dependencies.
+- Includes automated build and deploy pipelines to servers using Github actions
+
+## Requirements
+
+- PHP 8.1 or higher
+- [Composer](https://getcomposer.org)
+- [Node.js](https://nodejs.org) version 16+
+
+It's recommended to use [Homebrew](https://brew.sh) on macOS or [Chocolatey](https://chocolatey.org) for Windows to install the project dependencies.
+
+### Code Editor and Git Client
+
+This repository includes a list of suggested extensions for the [Visual Studio Code editor](https://code.visualstudio.com) and Xdebug support in the `.vscode` directory.
+
+A user-friendly Git client such as [GitHub Desktop](https://desktop.github.com) or [Tower](https://www.git-tower.com/mac) enables smaller commits and simplifies merge conflict resolution.
+
+## Setup 🛠
+
+1. Clone this repository: `git clone git@github.com:lezwatch/lwtv-plugin`
+2. Move into the project directory: `cd lwtv-plugin`
+3. Install the project dependencies: `npm install`
+4. Run an initial build: `npm run build`
+
+## Contributing
+
+All code must pass through the `development` branch which is kept up tp date. As such, any pull requests should be made to **development**, which will push the code automatically to our development server for testing.
+
+1. Using the `development` branch as base, create a new branch with a descriptive name like `fixing-charts` or `fix/chartjs421` or `feature/latest-posts` . Commit your work to that branch until it's ready for full testing
+2. Open [a pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request) from your feature branch to the `development` branch.
+3. If you are not a main developer, your pull request will be reviewed before it can be merged. If there are issues or changes needed, you may be asked to do so, or they may be done for you.
+4. When the code passes review, it will be merged into the `development` branch and can be tested on the dev server.
+5. Once the code passes tests, the `development` branch will be merged into `production` and the job is done!
+
+To install and update:
+
+* `$ npm install` - Install all the things.
+* `$ npm update` - Updates all the things.
+* `$ npm run build` - Builds all the things for production.
+
+All commits are linted automatically on commit via eslint and phpcs, to ensure nothing breaks when we push the code.
+
+### Libraries
+
+JS and PHP libraries are included via NPM and Composer. WordPress plugins that have been forked are now included in the main code and managed by us to prevent breakage.
+
+The `vendor` and `node_module` files are not synced to Github anymore (as of 2023-August) to minimize the amount of files stored on the servers, and the following libraries have their required code moved via Composer and npm's post-install process:
+
+**NPM**
+* [ChartJS](https://github.com/chartjs/Chart.js/)
+* [TableSorter (Mottie Fork)](https://github.com/Mottie/tablesorter)
+
+**Composer**
+* [ICal Parser](https://github.com/u01jmg3/ics-parser)
+
+### Deployment
+
+Pushes to branches are automatically deployed via Github Actions as follows:
+
+* Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site) (password required - Ask Mika)
+* Production: [lezwatchtv.com](https://lezwatchtv.com)
+
 ## Features
+
+The follow is a description of all the files in the code and more or less what they do.
 
 The main file `functions.php` calls all other needed files.
 
@@ -25,15 +90,6 @@ Stored in `/admin/` -- Makes admin panels
 * `_main.php` - Loader file and mapping
 * `admin_tools.php` - UX for checkers
 * `dashboard.php` - Powers wp-admin dashboard code
-
-### Affiliates
-
-Stored in `/affiliates/` -- Auto Adds in Affiliate Codes. Currently requires AdRotate to display ads.
-
-* `/images/` - Images used by local 'ads'
-* `_main.php` - Determines which ad to show and when
-* `ways-to-watch.php` - Affiliate links and pretty-fication of services
-* `widget.php` - Widget code to display ads (currently disabled)
 
 ### Assets
 
@@ -56,6 +112,7 @@ _Images (`images`)_
 * `rainbow.svg` - Logo for admin panel
 * `toaster.png` - A toaster icon (used when no featured image is found)
 * `unicorn.png` - Unicorn (used if a toaster cannot be loaded)
+* `/scores/` - Logos and images used for show grades
 
 _Javascript (`js`)_
 
@@ -113,6 +170,7 @@ _Shows (`/shows/`)_
 
 Stored in `/features/` -- a collection of miscellaneous features.
 
+* `/ICal` - Subfolder for the ICal Parser Library
 * `_main.php` - Calls all other files
 * `apis.php` - Calls to third party APIs
     - `tvmaze_episodes()` - output of next ep for TV Maze
@@ -131,10 +189,12 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - `related_posts_by_tag()` - Related Posts by Tags.
 * `custom-roles.php` - Custom roles created for curation of content
 * `dashboard.php` - Custom column for featured images in posts lists and removal of self pings
+* `dashboard-posts-in-progress.php` - Forked version of a plugin to show in progress posts
 * `debug.php` - Debugging Tools for weird content.
 * `embeds.php` - Embeds DisneyABCPress videos, Gleam, GoFundMe, Indiegogo
 * `grading.php` - Build and format array for displaying show scores including 3rd parties.
 * `ics-parser.php` - Connection to the ICS Parser for calendar data.
+* `languages.php` - Support for multiple languages in a dropdown (used by Shows for alt show names)
 * `private-data.php` - Shows alert that a page is hidden if the post is set private.
 * `profiles.php` - Custom profile code
 * `shortcodes.php` - Various shortcodes - mostly deprecated, but some used by blocks.
@@ -156,6 +216,7 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - Re-run calculations for specific post content (actors & shows): `wp lwtv calc [actor|show|character] ID`
     - Compare data to WikiData: `wp lwtv wiki [actor] ID`
     - Find miss matched data: ex. `wp lwtv find queerchars`
+    - Rebuild TVMaze ics file: `wp lwtv tvmaze`
 
 ### Node Scripts
 
@@ -165,16 +226,17 @@ Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules
 
 ### Plugin Addons
 
-Stored in `/plugins/`
+Stored in `/plugins/` - all files are used to enhance other plugins installed on the site.
 
 The file `_main.php` acts as an autoloader.
 
 * `cache.php` - Custom Cache specific to DreamPress hosting
-    - Generates data used by Proxy Cache Purge and WP Rocket to know what to flush.
+    - Generates data used by Proxy Cache Purge to know what to flush.
 * `cmb2.php` - Integration with CMB2
     - calls other files
     - generates a CB2 formatted list of terms
 * `/cmb2/` - CMB2 add on libraries
+    - `cmb2-field-select2/` - Updated version of field select 2.
     - `cmb2-attached-posts/` - CMB2 attached posts (HEAVILY forked)
     - `cmb2-grid/` - CMB2 Grid Display
     - `cmb2.css` - Custom CSS
@@ -186,7 +248,7 @@ The file `_main.php` acts as an autoloader.
     - Only show pagination if there's more than one page
     - Reset Shortcode
 * `/facetwp/` - FacetWP Folder
-    - `/facetwp-cmb2/` - FacetWP Integration with CMB2
+    - `/facetwp-cmb2/` - FacetWP Integration with CMB2 (forked)
     - `facet.js` - Pagination Scrolling and Refresh Warning
     - `lwtv.php`
         - filter Data before it's saved to rename values (capitalization)
@@ -220,7 +282,6 @@ Stored in `/rest-api/` - These files generate the REST API output.
 * `list.php` - Generates lists
 * `of-the-day.php` - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
 * `shows-like-this.php` - Similar shows.
-* `slack.php` - Beginning of code to report newly dead characters to Slack _(very buggy, currently disabled)_
 * `stats.php` - JSON API version of the stats (mostly)
 * `this-year.php` - Outputs simplified lists of what happened in a given year.
 * `what-happened.php` - Outputs data based on what happened in a given year, year-month, or specific day.
@@ -292,38 +353,28 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 * `query_vars.php` - customize query variables
 * `shows.php` - all data on shows per year
 
-### Vendor Files
+### Ways to Watch
 
-Stored in `/vendor/` - this has to be included for things to function properly. Everything is loaded by `autoload.php`. This is all autogenerated by Composer.
+Stored in `/ways_to_watch/` -- Code to customize Ways to Watch links and add affiliate data, or alter display names.
 
-* `/bin/` - temp holder for composer
-* `/composer/` - composer library and auto loader
-* `/johngrogg/ics-parser` - ICS parser code (for TV calendar)
-* `/nesbot/carbon/` - Required by ICS Parser
-* `/symfony/` - Required by ICS parser
+* `/images/` - Images used by local promotions.
+* `_main.php` - Loader file.
+* `deprecated.php` - Code from the former ads system, removed and will eventually be revamped.
+* `global.php` - All global data, such as header/meta and content regex.
+* `ways-to-watch.php` - Affiliate links and pretty-fication of services
 
-## Development
+## Developer Features
 
-Update code like you normally would. If you don't want to push it anywhere, make a local branch. Always remember, merge to **development** first and check on the (private) dev server. If that works, do a pull request from development to **production** to automatically update.
+The following folders/files are for use by Developers. They are not pushed to the dev nor production servers.
 
-### Libraries
-
-In order to make maintenance easier, instead of checking everything all the time, we use NPM and composer for the following included libraries:
-
-**NPM**
-* [ChartJS](https://github.com/chartjs/Chart.js/)
-* [TableSorter (Mottie Fork)](https://github.com/Mottie/tablesorter)
-* [CMB2 Grid](https://github.com/origgami/CMB2-grid)
-
-#### Installation and Updating
-
-`$ npm update && npm install && composer update`
-
-The scripts will install everything where they need to be.
-
-### Deployment
-
-Pushes to branches are automatically deployed via Actions as follows:
-
-* Development: [lezwatchtvcom.stage.site](https://lezwatchtvcom.stage.site) (password required - Ask Mika)
-* Production: [lezwatchtv.com](https://lezwatchtv.com)
+* `./.github/` - all Github specific files such as workflows, dependabot, and pull request templates
+* `/.husky/` - all Husky commands
+* `/.vscode/` - default VSCode settings
+* `.editorconfig` - Basic editor configuration
+* `.gitignore` - Files and folders to be exempt from Git syncs
+* `.npmrc` - NPM configuration requirements
+* `.nvmrc` - NVM version control
+* `composer.json` - Composer settings, includes all libraries used
+* `package-lock.json` - Saved package.json data
+* `package.json` - NPM configuration, commands, and libraries used
+* `phpcs.xml.dist` - PHPCS configuration

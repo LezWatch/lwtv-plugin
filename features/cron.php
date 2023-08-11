@@ -209,6 +209,7 @@ SQL;
 		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
 		$response   = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );
 		}
 	}
@@ -222,27 +223,28 @@ SQL;
 	 * @return void
 	 */
 	public function tools_check() {
+		FWP()->indexer->index(); // Ensure Faceting.
 		switch ( gmdate( 'D' ) ) {
 			case 'Mon':
-				$check = ( new LWTV_Debug() )->find_actors_problems();
+				$check = ( new LWTV_Debug_Actors() )->find_actors_problems();
 				break;
 			case 'Tue':
-				FWP()->indexer->index(); // Ensure Faceting.
+				$check = ( new LWTV_Debug_Actors() )->find_actors_no_imdb();
 				break;
 			case 'Wed':
-				//$check = ( new LWTV_Debug() )->find_actors_no_chars();
+				$check = ( new LWTV_Debug_Actors() )->find_actors_empty();
 				break;
 			case 'Thu':
-				$check = ( new LWTV_Debug() )->find_actors_empty();
+				$check = ( new LWTV_Debug_Queers() )->find_queerchars();
 				break;
 			case 'Fri':
-				$check = ( new LWTV_Debug() )->find_queerchars();
+				$check = ( new LWTV_Debug_Characters() )->find_characters_problems();
 				break;
 			case 'Sat':
-				$check = ( new LWTV_Debug() )->find_shows_problems();
+				$check = ( new LWTV_Debug_Shows() )->find_shows_problems();
 				break;
 			case 'Sun':
-				$check = ( new LWTV_Debug() )->find_characters_problems();
+				$check = ( new LWTV_Debug_Shows() )->find_shows_no_imdb();
 				break;
 		}
 	}

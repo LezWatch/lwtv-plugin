@@ -34,6 +34,7 @@ class LWTV_CPT_Post_Meta {
 			'lezactors_tiktok'              => 'post_type_actors',
 			'lezactors_char_list'           => 'post_type_actors',
 			'lezactors_queer_override'      => 'post_type_actors',
+			'lezactors_wikidata'            => 'post_type_actors',
 			// Characters
 			'lezchars_death_year'           => 'post_type_characters',
 			'lezchars_actor'                => 'post_type_characters',
@@ -47,7 +48,7 @@ class LWTV_CPT_Post_Meta {
 			'lezshows_worthit_details'      => 'post_type_shows',
 			'lezshows_worthit_show_we_love' => 'post_type_shows',
 			'lezshows_3rd_scores'           => 'post_type_shows',
-			'lezshows_affiliate'            => 'post_type_shows',
+			'lezshows_affiliate'            => 'post_type_shows',  // These are all the Ways to watch URLs, I know it's badly named.
 			'lezshows_similar_shows'        => 'post_type_shows',
 			'lezshows_ships'                => 'post_type_shows',
 			'lezshows_plots'                => 'post_type_shows',

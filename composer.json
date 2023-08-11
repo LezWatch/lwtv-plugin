@@ -1,17 +1,46 @@
 {
-    "name": "lezwatch/lwtv-plugin",
-    "description": "LezWatch.TV Plugin",
-    "type": "wordpress-plugin",
-    "keywords": ["wordpress","plugin"],
-    "license": "GPLv3",
-    "authors": [
-        {
-            "name": "LezWatch.TV",
-            "email": "contact@lezwatchtv.com"
-        }
-    ],
-    "require": {
-        "php": ">=7.3.0",
-        "johngrogg/ics-parser": "^3"
+  "name": "lezwatch/lwtv-plugin",
+  "description": "LezWatch.TV Plugin",
+  "type": "wordpress-plugin",
+  "keywords": [
+    "wordpress",
+    "plugin"
+  ],
+  "license": "GPL-3.0-or-later",
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "LezWatch.TV",
+      "email": "contact@lezwatchtv.com"
+    },
+    {
+      "name": "Mika A. Epstein",
+      "email": "mika@lezwatchtv.com"
     }
+  ],
+  "config": {
+    "preferred-install": "dist",
+    "platform": {
+      "php": "8.0"
+    },
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "require": {
+    "php": ">=8.0",
+    "johngrogg/ics-parser": "^3"
+  },
+  "require-dev": {
+    "wp-coding-standards/wpcs": "^2.3",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+  },
+  "scripts": {
+    "lint": "phpcs",
+    "lint-fix": "phpcbf",
+    "post-update-cmd": [
+      "cp -r ./vendor/johngrogg/ics-parser/src/ICal/ ./features/ICal/"
+    ]
+  }
 }

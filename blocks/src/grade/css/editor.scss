@@ -5,36 +5,45 @@
  * which makes it higher in priority.
  */
 
-$lwtv-bordergrey: rgba(0,0,0,.125);
+$lwtv-bordergrey: rgba(0, 0, 0, 0.125);
 $lwtv-pink: #d1548e;
 
 .bd-callout.show-grade {
 	border: 1px solid $lwtv-bordergrey;
-	border-left-width: .25rem;
-	border-radius: .25rem;
+	border-left-width: 0.25rem;
+	border-radius: 0.25rem;
 	border-left-color: $lwtv-pink;
 	max-width: 840px;
+
+	div {
+		display: block;
+	}
 }
 
 .show-grade {
+	overflow: auto;
+
 	.body {
-		margin-top: 0px!important;
+		margin-top: 0 !important;
 		vertical-align: top;
 
 		p {
-			margin: 10px 10px 0px 0px!important;
+			margin: 0.625rem 0.625rem 0 0 !important;
 		}
 	}
+
 	.grade {
 		color: #0c5460;
 		background-color: #d1ecf1;
 		padding: 0.75rem 1.25rem;
-		margin: 0px 15px 0px 0px!important;
+		margin: 0 15px 0 0 !important;
 		border: 1px solid #bee5eb;
 		border-radius: 0.25rem;
-        font-size: 3rem;
-        font-weight: 700;
-        min-width: 75px;
-        text-align: center;
+		font-size: 3rem;
+		font-weight: 700;
+		max-width: 75px;
+		min-width: 50px;
+		text-align: center;
+		float: left;
 	}
 }

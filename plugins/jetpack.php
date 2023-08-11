@@ -128,11 +128,13 @@ class LWTV_Jetpack {
 
 		$no_images_for = array( 'post_type_shows', 'post_type_players', 'post_type_actors' );
 
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( 'post.php' === $pagenow && isset( $_GET['post'] ) ) {
 
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$post_type = get_post_type( $_GET['post'] );
 
-			if ( in_array( $post_type, $no_images_for ) ) {
+			if ( in_array( $post_type, $no_images_for, true ) ) {
 				add_action(
 					'enqueue_block_editor_assets',
 					function () {

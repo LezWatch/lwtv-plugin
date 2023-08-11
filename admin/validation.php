@@ -40,6 +40,10 @@ class LWTV_Data_Validation_Checks {
 				'name' => 'Incomplete Actors',
 				'desc' => 'Actors that have not yet been updated since the Great Migration.',
 			),
+			'actor_imdb'        => array(
+				'name' => 'Actors missing IMDb',
+				'desc' => 'Actors who have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
+			),
 			'character_checker' => array(
 				'name' => 'Character Checker',
 				'desc' => 'Checks that all information for characters appears correct, like if they have a show and years-on-air added.',
@@ -47,6 +51,10 @@ class LWTV_Data_Validation_Checks {
 			'show_checker'      => array(
 				'name' => 'Show Checker',
 				'desc' => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
+			),
+			'show_imdb'         => array(
+				'name' => 'Shows missing IMDb',
+				'desc' => 'Shows that have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
 			),
 		);
 	}
@@ -144,14 +152,21 @@ class LWTV_Data_Validation_Checks {
 					case 'actor_empty':
 						self::tab_actor_empty();
 						break;
+					case 'actor_imdb':
+						self::tab_actor_imdb();
+						break;
 					case 'character_checker':
 						self::tab_character_checker();
 						break;
 					case 'show_checker':
 						self::tab_show_checker();
 						break;
+					case 'show_imdb':
+						self::tab_show_imdb();
+						break;
 					default:
 						self::tab_introduction();
+						break;
 				}
 				?>
 			</div>
@@ -164,12 +179,14 @@ class LWTV_Data_Validation_Checks {
 		$number = 1;
 		foreach ( $items as $item ) {
 			$class     = ( 0 === $number % 2 ) ? '' : 'alternate';
-			$timestamp = get_post_timestamp( (int) $item['id'], 'modified' );
-			$time_diff = human_time_diff( $timestamp, current_time( 'timestamp' ) );
-			if ( ! $timestamp ) {
-				$time = 'Unknown';
+			$modified  = get_post_timestamp( (int) $item['id'], 'modified' );
+			$current   = current_datetime()->format( 'U' );
+			$time_diff = 'unknown time';
+			if ( ! $modified ) {
+				$time      = 'Unknown';
+				$time_diff = human_time_diff( $modified, $current );
 			} else {
-				$time = date_i18n( get_option( 'date_format' ), $timestamp );
+				$time = date_i18n( get_option( 'date_format' ), $modified );
 			}
 
 			echo '
@@ -250,7 +267,7 @@ class LWTV_Data_Validation_Checks {
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_queer_checker_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug() )->find_queerchars();
+			$items = ( new LWTV_Debug_Queers() )->find_queerchars();
 		}
 
 		// Get the last run time.
@@ -313,7 +330,7 @@ class LWTV_Data_Validation_Checks {
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_checker_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug() )->find_actors_problems();
+			$items = ( new LWTV_Debug_Actors() )->find_actors_problems();
 		}
 
 		// Get the last run time.
@@ -375,7 +392,7 @@ class LWTV_Data_Validation_Checks {
 	public static function tab_actor_wiki() {
 		$redirect = rawurlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
 		$redirect = rawurlencode( $_SERVER['REQUEST_URI'] );
-		$items    = ( new LWTV_Debug() )->list_actors_wikidata();
+		$items    = ( new LWTV_Debug_Actors() )->list_actors_wikidata();
 
 		/*
 			Instead of looping through all, let's do something else.
@@ -422,7 +439,7 @@ class LWTV_Data_Validation_Checks {
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_empty_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug() )->find_actors_empty();
+			$items = ( new LWTV_Debug_Actors() )->find_actors_empty();
 		}
 
 		// Get the last run time.
@@ -480,6 +497,72 @@ class LWTV_Data_Validation_Checks {
 	}
 
 	/**
+	 * Output the results of actors without data ...
+	 */
+	public static function tab_actor_imdb() {
+
+		$items = LWTV_Transients::get_transient( 'lwtv_debug_actor_imdb' );
+
+		// Check whether the button has been pressed AND also check the nonce
+		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_imdb_clicked' ) ) || false === $items ) {
+			$items = ( new LWTV_Debug_Actors() )->find_actors_no_imdb();
+		}
+
+		// Get the last run time.
+		$last_run_time = self::last_run( 'actor_imdb' );
+		$last_run_echo = '<p>The IMDb actor checker was last run on ' . $last_run_time . '</p>';
+
+		// Convert to JSON
+		$json_it = wp_json_encode( $items );
+
+		if ( empty( $items ) || ! is_array( $items ) ) {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>All actors have at an IMDb entry.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
+				</div>
+			</div>
+			<?php
+		} else {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
+				<div id="lwtv-tools-alerts">
+					<p>The following actor(s) have invalid IMDb data or do not have IMDb data at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
+				</div>
+			</div>
+
+			<div class="lwtv-tools-table">
+				<table class="widefat fixed" cellspacing="0">
+					<thead><tr>
+						<th id="character" class="manage-column column-character" scope="col">Actor</th>
+						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+						<th id="date" class="manage-column column-date" scope="col">Last Updated</th>
+					</tr></thead>
+
+					<tbody>
+						<?php
+						self::table_content( $items );
+						?>
+					</tbody>
+				</table>
+			</div>
+			<?php
+		}
+
+		?>
+		<form action="admin.php?page=lwtv_data_check&tab=actor_imdb" method="post">
+			<?php wp_nonce_field( 'run_actor_imdb_clicked' ); ?>
+			<input type="hidden" value="true" name="rerun" />
+			<?php submit_button( 'Check Again' ); ?>
+		</form>
+		<?php
+	}
+
+	/**
 	 * Output the results of Show checking...
 	 */
 	public static function tab_show_checker() {
@@ -488,7 +571,7 @@ class LWTV_Data_Validation_Checks {
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_checker_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug() )->find_shows_problems();
+			$items = ( new LWTV_Debug_Shows() )->find_shows_problems();
 		}
 
 		// Get the last run time.
@@ -544,6 +627,72 @@ class LWTV_Data_Validation_Checks {
 	}
 
 	/**
+	 * Output the results of shows without IMDb data ...
+	 */
+	public static function tab_show_imdb() {
+
+		$items = LWTV_Transients::get_transient( 'lwtv_debug_show_imdb' );
+
+		// Check whether the button has been pressed AND also check the nonce
+		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_imdb_clicked' ) ) || false === $items ) {
+			$items = ( new LWTV_Debug_Shows() )->find_shows_no_imdb();
+		}
+
+		// Get the last run time.
+		$last_run_time = self::last_run( 'show_imdb' );
+		$last_run_echo = '<p>The IMDb show checker was last run on ' . $last_run_time . '</p>';
+
+		// Convert to JSON
+		$json_it = wp_json_encode( $items );
+
+		if ( empty( $items ) || ! is_array( $items ) ) {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>All actors have at an IMDb entry.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
+				</div>
+			</div>
+			<?php
+		} else {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
+				<div id="lwtv-tools-alerts">
+					<p>The following show(s) have invalid IMDb data or do not have IMDb data at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
+				</div>
+			</div>
+
+			<div class="lwtv-tools-table">
+				<table class="widefat fixed" cellspacing="0">
+					<thead><tr>
+						<th id="character" class="manage-column column-character" scope="col">Show</th>
+						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+						<th id="date" class="manage-column column-date" scope="col">Last Updated</th>
+					</tr></thead>
+
+					<tbody>
+						<?php
+						self::table_content( $items );
+						?>
+					</tbody>
+				</table>
+			</div>
+			<?php
+		}
+
+		?>
+		<form action="admin.php?page=lwtv_data_check&tab=show_imdb" method="post">
+			<?php wp_nonce_field( 'run_show_imdb_clicked' ); ?>
+			<input type="hidden" value="true" name="rerun" />
+			<?php submit_button( 'Check Again' ); ?>
+		</form>
+		<?php
+	}
+
+	/**
 	 * Output the results of character checking...
 	 */
 	public static function tab_character_checker() {
@@ -552,7 +701,7 @@ class LWTV_Data_Validation_Checks {
 
 		// Check whether the button has been pressed AND also check the nonce
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_character_checker_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug() )->find_characters_problems();
+			$items = ( new LWTV_Debug_Characters() )->find_characters_problems();
 		}
 
 		// Get the last run time.

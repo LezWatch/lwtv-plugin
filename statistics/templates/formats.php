@@ -85,7 +85,6 @@ switch ( $showform ) {
 	if ( 'all' !== $showform ) {
 		foreach ( $valid_views as $the_view => $the_post_type ) {
 			$active = ( $view === $the_view ) ? ' active' : '';
-			error_log( $the_post_type );
 			echo '<li class="nav-item"><a class="nav-link' . esc_attr( $active ) . '" href="' . esc_url( add_query_arg( $query_arg, $baseurl . $the_view . '/' ) ) . '">' . esc_html( strtoupper( str_replace( '-', ' ', $the_view ) ) ) . '</a></li>';
 		}
 	}

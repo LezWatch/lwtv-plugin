@@ -61,6 +61,7 @@ class LWTV_Admin_Menu {
 	 */
 	public function settings_page() {
 		// Get the active tab for later
+		// phpcs:ignore WordPress.Security.NonceVerification
 		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'intro';
 
 		?>
@@ -81,16 +82,16 @@ class LWTV_Admin_Menu {
 				<ul>
 				<?php
 				if ( class_exists( 'LWTV_Data_Validation_Checks' ) ) {
-					echo '<li><a href="' . admin_url( 'admin.php?page=lwtv_data_check' ) . '">Data Validation</a></li>';
+					echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=lwtv_data_check' ) ) . '">Data Validation</a></li>';
 				}
 
 				if ( class_exists( 'LWTV_Monitor_Checks' ) ) {
-					echo '<li><a href="' . admin_url( 'admin.php?page=lwtv_monitor_check' ) . '">Monitor Status</a></li>';
+					echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=lwtv_monitor_check' ) ) . '">Monitor Status</a></li>';
 				}
 
 				// Only admins can access this part:
 				if ( class_exists( 'LWTV_Exclusion_Checks' ) && current_user_can( 'activate_plugins' ) ) {
-					echo '<li><a href="' . admin_url( 'admin.php?page=lwtv_exclusion_check' ) . '">Exclusion Checker</a></li>';
+					echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=lwtv_exclusion_check' ) ) . '">Exclusion Checker</a></li>';
 				}
 				?>
 				</ul>

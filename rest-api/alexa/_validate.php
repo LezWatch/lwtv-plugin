@@ -30,7 +30,7 @@ class LWTV_Alexa_Validate {
 
 		// Validate proper format of Amazon provided certificate chain url
 		$valid_uri = self::key_chain_uri( $chain_url );
-		if ( 1 != $valid_uri ) {
+		if ( 1 !== $valid_uri ) {
 			$fail_valid_uri = array(
 				'success' => 0,
 				'message' => $valid_uri,
@@ -40,7 +40,7 @@ class LWTV_Alexa_Validate {
 
 		// Validate certificate signature
 		$valid_cert = self::cert_and_sig( $request, $chain_url, $signature );
-		if ( 1 != $valid_cert ) {
+		if ( 1 !== $valid_cert ) {
 			$fail_valid_cert = array(
 				'success' => 0,
 				'message' => $valid_cert,
@@ -70,10 +70,10 @@ class LWTV_Alexa_Validate {
 	*/
 	public function key_chain_uri( $keychain_uri ) {
 
-		$uri_parts = parse_url( $keychain_uri );
+		$uri_parts = wp_parse_url( $keychain_uri );
 
 		// If the host is not amazon, fail.
-		if ( strcasecmp( $uri_parts['host'], 's3.amazonaws.com' ) != 0 ) {
+		if ( strcasecmp( $uri_parts['host'], 's3.amazonaws.com' ) !== 0 ) {
 			return ( 'The host for the Certificate provided in the header is invalid' );
 		}
 
@@ -83,12 +83,12 @@ class LWTV_Alexa_Validate {
 		}
 
 		// If it's not HTTPS, we fail.
-		if ( strcasecmp( $uri_parts['scheme'], 'https' ) != 0 ) {
+		if ( strcasecmp( $uri_parts['scheme'], 'https' ) !== 0 ) {
 			return ( 'The URL is using an unsupported scheme. Should be https' );
 		}
 
 		// If the port is wrong, we fail.
-		if ( array_key_exists( 'port', $uri_parts ) && '443' != $uri_parts['port'] ) {
+		if ( array_key_exists( 'port', $uri_parts ) && '443' !== $uri_parts['port'] ) {
 			return ( 'The URL is using an unsupported https port' );
 		}
 
@@ -106,6 +106,7 @@ class LWTV_Alexa_Validate {
 		// If we haven't received a certificate with this URL before,
 		// store it as a cached copy
 		if ( ! file_exists( $md5pem ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
 			file_put_contents( $md5pem, file_get_contents( $chain_url ) );
 		}
 
@@ -113,10 +114,11 @@ class LWTV_Alexa_Validate {
 		$pem = file_get_contents( $md5pem );
 
 		// Validate certificate chain and signature
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 		$ssl_check = openssl_verify( $request->get_body(), base64_decode( $signature ), $pem, 'sha1' );
 
 		// Verify SSL
-		if ( 1 != $ssl_check ) {
+		if ( 1 !== $ssl_check ) {
 			return( openssl_error_string() );
 		}
 

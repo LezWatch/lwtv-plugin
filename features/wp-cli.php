@@ -33,11 +33,22 @@ class WP_CLI_LWTV_Commands {
 		// phpcs:enable
 	}
 
+	/**
+	 * Regenerate the TV Maze ICS file
+	 *
+	 * ## Examples
+	 *
+	 *    wp lwtv tvmaze
+	 *
+	 * @param array $args       Arguments passed to command (currently unused)
+	 * @param array $assoc_args Associate arguments (currently unused)
+	 */
 	public function tvmaze( $args, $assoc_args ) {
 		$upload_dir = wp_upload_dir();
 		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
 		$response   = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );
 			WP_CLI::success( 'TVMaze updated successfully.' );
 		} else {
@@ -53,7 +64,9 @@ class WP_CLI_LWTV_Commands {
 	 *    wp lwtv calc actor ID
 	 *    wp lwtv calc show ID
 	 *
-	*/
+	 * @param array $args       Arguments passed to command (ie 'actor' or 'show')
+	 * @param array $assoc_args Associate arguments (ie 'format')
+	 */
 	public function calc( $args, $assoc_args ) {
 
 		// Valid things to calculate:
@@ -76,7 +89,7 @@ class WP_CLI_LWTV_Commands {
 		$post_calc = sanitize_text_field( $args[0] );
 		$post_id   = (int) $args[1];
 
-		// Last sanitity check: Is the post ID a member of THIS post type...
+		// Last sanity check: Is the post ID a member of THIS post type...
 		if ( get_post_type( $post_id ) !== 'post_type_' . $post_calc . 's' ) {
 			WP_CLI::error( 'You can only calculate ' . $post_type . 's on ' . $post_type . ' pages.' );
 		}
@@ -115,7 +128,9 @@ class WP_CLI_LWTV_Commands {
 	 *
 	 *    wp lwtv wiki actor ID
 	 *
-	*/
+	 * @param array $args       Arguments passed to command (ie. 'actor', post ID)
+	 * @param array $assoc_args Associate arguments (ie. formatting)
+	 */
 	public function wiki( $args, $assoc_args ) {
 
 		// Valid things to calculate:
@@ -147,7 +162,7 @@ class WP_CLI_LWTV_Commands {
 		// i.e. run the calculations
 		switch ( $post_type ) {
 			case 'actor':
-				$items = ( new LWTV_Debug() )->check_actors_wikidata( $post_id );
+				$items = ( new LWTV_Debug_Actors() )->check_actors_wikidata( $post_id );
 				break;
 		}
 
@@ -168,7 +183,9 @@ class WP_CLI_LWTV_Commands {
 	 *
 	 *    wp lwtv find queerchars
 	 *
-	*/
+	 * @param array $args       Arguments passed to command (i.e. 'queerchars')
+	 * @param array $assoc_args Associate arguments (ie formatting)
+	 */
 	public function find( $args, $assoc_args ) {
 
 		// Valid things to find...
@@ -194,7 +211,7 @@ class WP_CLI_LWTV_Commands {
 		switch ( $find ) {
 			case 'queerchars':
 				WP_CLI::log( 'Searching all characters for associated actor queerness ...' );
-				$items = ( new LWTV_Debug() )->find_queerchars();
+				$items = ( new LWTV_Debug_Queers() )->find_queerchars();
 				break;
 		}
 

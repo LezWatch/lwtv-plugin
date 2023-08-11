@@ -192,7 +192,7 @@ class LWTV_Alexa_Who {
 					case 'shows':
 						$search_array = self::search_shows( get_the_ID() );
 						// We also need the content which is easier to get here.
-						$search_array['content']    = wp_strip_all_tags( get_the_excerpt(), true );
+						$search_array['content'] = wp_strip_all_tags( get_the_excerpt(), true );
 						break;
 				}
 				$search_array['name']         = get_the_title();
@@ -221,17 +221,17 @@ class LWTV_Alexa_Who {
 			$death = new DateTime( get_post_meta( $post_id, 'lezactors_death', true ) );
 			$end   = new DateTime( get_post_meta( $post_id, 'lezactors_death', true ) );
 		} else {
-			$death  = false;
+			$death = false;
 			$end   = new DateTime();
 		}
 
-		$start  = ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) ? new DateTime( get_post_meta( $post_id, 'lezactors_birth', true ) ) : false;
+		$start = ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) ? new DateTime( get_post_meta( $post_id, 'lezactors_birth', true ) ) : false;
 
 		// If we have a birthdate, let's parse.
 		if ( isset( $start ) && false !== $start ) {
 			$age_is = $start->diff( $end );
-			$born = $start->format( 'm F, Y' );
-			$age  = $age_is->format( '%Y years old' );
+			$born   = $start->format( 'm F, Y' );
+			$age    = $age_is->format( '%Y years old' );
 		}
 
 		// If we have a death date, we'll use it.
@@ -340,7 +340,7 @@ class LWTV_Alexa_Who {
 			}
 		}
 
-		$nation = array();
+		$nation       = array();
 		$nation_terms = get_the_terms( $post_id, 'lez_country', true );
 		if ( $nation_terms && ! is_wp_error( $nation_terms ) ) {
 			foreach ( $nation_terms as $nation_term ) {
@@ -357,7 +357,7 @@ class LWTV_Alexa_Who {
 			}
 		}
 
-		$station = array();
+		$station       = array();
 		$station_terms = get_the_terms( $post_id, 'lez_stations', true );
 		if ( $station_terms && ! is_wp_error( $station_terms ) ) {
 			foreach ( $station_terms as $station_term ) {

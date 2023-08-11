@@ -1,4 +1,3 @@
-
 /**
  * BLOCK: Common JS/CSS.
  *

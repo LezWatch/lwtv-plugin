@@ -452,7 +452,7 @@ class LWTV_Stats_Output {
 			shuffle( $colors_tolra );
 		$color_count = 0;
 		foreach ( $datasets as $label ) {
-			$name                  = ( 'undefined' === $label ) ? 'nundefined' : str_replace( [ '-', '-', '-' ], '', $label );
+			$name                  = ( 'undefined' === $label ) ? 'nundefined' : str_replace( array( '-', '-', '-' ), '', $label );
 			$colors_array[ $name ] = '#' . $colors_tolra[ $color_count ];
 			$color_count++;
 		}
@@ -476,7 +476,7 @@ class LWTV_Stats_Output {
 			datasets: [
 			<?php
 			foreach ( $datasets as $label ) {
-				$color = ( 'undefined' === $label ) ? 'nundefined' : str_replace( [ '-', '-', '-' ], '', $label );
+				$color = ( 'undefined' === $label ) ? 'nundefined' : str_replace( array( '-', '-', '-' ), '', $label );
 				?>
 				{
 					borderWidth: 1,
@@ -579,7 +579,7 @@ class LWTV_Stats_Output {
 		// Strip hypens becuase ChartJS doesn't like it.
 		$data = str_replace( '-', '', $data );
 
-		if ( ! is_int( $data ) || ! in_array( $data, $show_zero ) ) {
+		if ( ! is_int( $data ) || ! in_array( $data, $show_zero, true ) ) {
 			// @codingStandardsIgnoreStart
 			// Reorder by item count
 			usort( $array, function( $a, $b ) {
@@ -594,7 +594,7 @@ class LWTV_Stats_Output {
 				$check_count = $check_count + (int) $item['count'];
 			}
 
-			if ( in_array( $data, $show_zero ) ) {
+			if ( in_array( $data, $show_zero, true ) ) {
 				$check_count++;
 			}
 		}
@@ -619,7 +619,7 @@ class LWTV_Stats_Output {
 			var pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset = [
 				<?php
 				foreach ( $array as $item ) {
-					if ( 0 !== $item['count'] || in_array( $data, $show_zero ) ) {
+					if ( 0 !== $item['count'] || in_array( $data, $show_zero, true ) ) {
 						echo '"' . (int) $item['count'] . '", ';
 					}
 				}
@@ -629,7 +629,7 @@ class LWTV_Stats_Output {
 				labels : [
 					<?php
 					foreach ( $array as $item ) {
-						if ( 0 !== $item['count'] || in_array( $data, $show_zero ) ) {
+						if ( 0 !== $item['count'] || in_array( $data, $show_zero, true ) ) {
 							$name = ucfirst( str_replace( $fixname, '', $item['name'] ) );
 							echo '"' . wp_kses_post( $name ) . ' (' . (int) $item['count'] . ')", ';
 						}
@@ -639,7 +639,7 @@ class LWTV_Stats_Output {
 				datasets : [{
 					data : pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset,
 					<?php
-					if ( in_array( $data, $show_zero ) ) {
+					if ( in_array( $data, $show_zero, true ) ) {
 						?>
 						backgroundColor: [
 							'#5cb85c',

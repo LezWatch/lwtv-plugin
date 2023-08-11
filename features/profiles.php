@@ -51,11 +51,16 @@ class LWTV_User_Profiles {
 	}
 
 	public function user_contactmethods() {
-		$profile_fields['tumblr']    = 'Tumblr URL';
-		$profile_fields['mastodon']  = 'Mastodon URL';
-		$profile_fields['tiktok']    = 'TikTok URL';
-		$profile_fields['instagram'] = 'Instagram URL';
-		return $profile_fields;
+		// Add moar contact methods and reorder:
+		$methods['twitter']   = 'Twitter username (without @ so "mytwitter")';
+		$methods['facebook']  = 'Facebook profile URL';
+		$methods['instagram'] = 'Instagram profile URL';
+		$methods['tumblr']    = 'Tumblr profile URL (ex. https://my-site.tumblr.com )';
+		$methods['tiktok']    = 'TikTok URL (ex. https://tiktok.com/@myname)';
+		$methods['mastodon']  = 'Mastodon URL (ex. https://mastodon.site/@myname )';
+		$methods['bluesky']   = 'BlueSky (ex. https://bsky.app/profile/myname.bsky.social )';
+
+		return $methods;
 	}
 
 	public function extra_profile_fields( $user ) {

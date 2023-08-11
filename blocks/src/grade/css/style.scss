@@ -1,15 +1,17 @@
 .show-grade {
-    overflow: auto;
-    .body {
-        margin-top: 10px;
-    }
-    .grade {
-        float: left;
-        font-size: 3rem;
-        font-weight: 700;
-        padding: 0 10px 5px;
-        margin: 0 15px 0 0;
-        min-width: 75px;
-        text-align: center;
-  }
+	overflow: auto;
+
+	.body {
+		margin-top: 10px;
+	}
+
+	.grade {
+		float: left;
+		font-size: 3rem;
+		font-weight: 700;
+		padding: 0 10px 5px;
+		margin: 0 15px 0 0;
+		min-width: 75px;
+		text-align: center;
+	}
 }

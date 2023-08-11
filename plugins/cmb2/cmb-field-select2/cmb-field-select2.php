@@ -52,12 +52,14 @@ if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
 				$field_type_object->type = new CMB2_Type_Select( $field_type_object );
 			}
 
+			// @codingStandardsIgnoreStart
 			echo $field_type_object->select( array(
 				'class'            => 'pw_select2 pw_select',
 				'desc'             => $field_type_object->_desc( true ),
 				'options'          => '<option></option>' . $field_type_object->concat_items(),
 				'data-placeholder' => $field->args( 'attributes', 'placeholder' ) ? $field->args( 'attributes', 'placeholder' ) : $field->args( 'description' ),
 			) );
+			// @codingStandardsIgnoreEnd
 		}
 
 		/**
@@ -70,19 +72,22 @@ if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
 				$field_type_object->type = new CMB2_Type_Select( $field_type_object );
 			}
 
-			$a = $field_type_object->parse_args( 'pw_multiselect', array(
-				'multiple'         => 'multiple',
-				'style'            => 'width: 99%',
-				'class'            => 'pw_select2 pw_multiselect',
-				'name'             => $field_type_object->_name() . '[]',
-				'id'               => $field_type_object->_id(),
-				'desc'             => $field_type_object->_desc( true ),
-				'options'          => $this->get_pw_multiselect_options( $field_escaped_value, $field_type_object ),
-				'data-placeholder' => $field->args( 'attributes', 'placeholder' ) ? $field->args( 'attributes', 'placeholder' ) : $field->args( 'description' ),
-			) );
+			$a = $field_type_object->parse_args(
+				'pw_multiselect',
+				array(
+					'multiple'         => 'multiple',
+					'style'            => 'width: 99%',
+					'class'            => 'pw_select2 pw_multiselect',
+					'name'             => $field_type_object->_name() . '[]',
+					'id'               => $field_type_object->_id(),
+					'desc'             => $field_type_object->_desc( true ),
+					'options'          => $this->get_pw_multiselect_options( $field_escaped_value, $field_type_object ),
+					'data-placeholder' => $field->args( 'attributes', 'placeholder' ) ? $field->args( 'attributes', 'placeholder' ) : $field->args( 'description' ),
+				)
+			);
 
 			$attrs = $field_type_object->concat_attrs( $a, array( 'desc', 'options' ) );
-			echo sprintf( '<select%s>%s</select>%s', $attrs, $a['options'], $a['desc'] );
+			echo sprintf( '<select%s>%s</select>%s', esc_attr( $attrs ), esc_html( $a['options'] ), esc_html( $a['desc'] ) );
 		}
 
 		/**
@@ -112,20 +117,23 @@ if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
 			$all_terms               = $field_type_object->type->get_terms();
 			$object_terms            = $field_type_object->type->get_object_terms();
 
-			$a = $field_type_object->parse_args( 'pw_multiselect_taxonomy', array(
-				'multiple'         => 'multiple',
-				'style'            => 'width: 99%',
-				'class'            => 'pw_select2 pw_multiselect',
-				'name'             => $field_type_object->_name() . '[]',
-				'id'               => $field_type_object->_id(),
-				'desc'             => $field_type_object->_desc( true ),
-				'options'          => $this->get_pw_multiselect_taxonomy_options( $object_terms, $all_terms, $field_type_object ),
-				'data-placeholder' => $field->args( 'attributes', 'placeholder' ) ? $field->args( 'attributes', 'placeholder' ) : $field->args( 'description' ),
-			) );
+			$a = $field_type_object->parse_args(
+				'pw_multiselect_taxonomy',
+				array(
+					'multiple'         => 'multiple',
+					'style'            => 'width: 99%',
+					'class'            => 'pw_select2 pw_multiselect',
+					'name'             => $field_type_object->_name() . '[]',
+					'id'               => $field_type_object->_id(),
+					'desc'             => $field_type_object->_desc( true ),
+					'options'          => $this->get_pw_multiselect_taxonomy_options( $object_terms, $all_terms, $field_type_object ),
+					'data-placeholder' => $field->args( 'attributes', 'placeholder' ) ? $field->args( 'attributes', 'placeholder' ) : $field->args( 'description' ),
+				)
+			);
 
 			$attrs = $field_type_object->concat_attrs( $a, array( 'desc', 'options' ) );
 
-			echo sprintf( '<select%s>%s</select>%s', $attrs, $a['options'], $a['desc'] );
+			echo sprintf( '<select%s>%s</select>%s', esc_attr( $attrs ), esc_html( $a['options'] ), esc_html( $a['desc'] ) );
 		}
 
 		/**
@@ -171,10 +179,10 @@ if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
 		 * @author Eran Galperin
 		 * @link http://link.from.pw/1Waji4l
 		 */
-		public function sort_array_by_array( array $array, array $orderArray ) {
+		public function sort_array_by_array( array $array, array $order_array ) {
 			$ordered = array();
 
-			foreach ( $orderArray as $key ) {
+			foreach ( $order_array as $key ) {
 				if ( array_key_exists( $key, $array ) ) {
 					$ordered[ $key ] = $array[ $key ];
 					unset( $array[ $key ] );
@@ -203,20 +211,24 @@ if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
 			foreach ( $object_terms as $term ) {
 				$selected[ $term->slug ] = $term->name;
 
-				$options .= $field_type_object->select_option( array(
-					'label'   => $term->name,
-					'value'   => $term->slug,
-					'checked' => true,
-				) );
+				$options .= $field_type_object->select_option(
+					array(
+						'label'   => $term->name,
+						'value'   => $term->slug,
+						'checked' => true,
+					)
+				);
 			}
 
 			foreach ( $all_terms as $term ) {
-				if ( ! array_key_exists( $selected[ $term->slug] ) ) {
-					$options .= $field_type_object->select_option( array(
-						'label'   => $term->name,
-						'value'   => $term->slug,
-						'checked' => false,
-					) );
+				if ( ! array_key_exists( $selected[ $term->slug ] ) ) {
+					$options .= $field_type_object->select_option(
+						array(
+							'label'   => $term->name,
+							'value'   => $term->slug,
+							'checked' => false,
+						)
+					);
 				}
 			}
 
@@ -267,7 +279,7 @@ if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
 			}
 
 			foreach ( $meta_value as $key => $val ) {
-				$meta_value[$key] = array_map( 'esc_attr', $val );
+				$meta_value[ $key ] = array_map( 'esc_attr', $val );
 			}
 
 			return $meta_value;
@@ -286,7 +298,7 @@ if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
 		 * Enqueue scripts and styles
 		 */
 		public function setup_admin_scripts() {
-			$asset_path = apply_filters( 'pw_cmb2_field_select2_asset_path', plugins_url( '', __FILE__  ) );
+			$asset_path = apply_filters( 'pw_cmb2_field_select2_asset_path', plugins_url( '', __FILE__ ) );
 
 			wp_register_script( 'select2', $asset_path . '/js/select2.min.js', array( 'jquery-ui-sortable' ), '4.0.13' );
 			wp_enqueue_script( 'pw-select2-init', $asset_path . '/js/script.js', array( 'cmb2-scripts', 'select2' ), self::VERSION );

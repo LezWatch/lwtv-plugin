@@ -9,7 +9,6 @@
 require_once 'calculations.php';
 require_once 'cmb2-metaboxes.php';
 require_once 'custom-columns.php';
-require_once 'jetpack.php';
 require_once 'shows-like-this.php';
 
 /**
@@ -150,7 +149,7 @@ class LWTV_CPT_Shows {
 			'not_found_in_trash'       => 'No TV Shows found in Trash',
 			'update_item'              => 'Update TV Show',
 			'featured_image'           => 'TV Show Image',
-			'set_featured_image'       => 'Set TV Show Image (1200 x 675)',
+			'set_featured_image'       => 'Set TV Show Image (recommended 1200 x 675)',
 			'remove_featured_image'    => 'Remove TV Show Image',
 			'use_featured_image'       => 'Use as TV Show Image',
 			'archives'                 => 'TV Show Archives',

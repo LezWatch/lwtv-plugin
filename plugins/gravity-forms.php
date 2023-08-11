@@ -122,8 +122,8 @@ class LWTV_Gravity_Forms {
 			switch ( $format ) {
 				case 'full':
 					// Return: US - Chicago
-					$return .= ( isset( $data->countryCode ) ) ? ' ' . $data->countryCode : ''; // phpcs:ignore
-					$return .= ( isset( $data->countryCode ) ) ? ' - ' . $data->city : ''; // phpcs:ignore
+					$return .= ( isset( $data->countryCode ) ) ? ' ' . $data->countryCode : ''; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$return .= ( isset( $data->countryCode ) ) ? ' - ' . $data->city : ''; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 					$return .= ( isset( $data->proxy ) && true === $data->proxy ) ? ' (VPN)' : '';
 					break;
 				case 'hosting':

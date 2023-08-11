@@ -79,7 +79,7 @@ class LWTV_Alexa_Shows {
 		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
 		// @codingStandardsIgnoreEnd
 
-		$args  = array(
+		$args       = array(
 			'post_type'      => 'post_type_shows',
 			'post_status'    => 'publish',
 			'posts_per_page' => 40,
@@ -148,8 +148,6 @@ class LWTV_Alexa_Shows {
 			}
 			wp_reset_postdata();
 		}
-
-		//error_log( print_r( $return_array, true ) );
 
 		if ( ! isset( $return_array ) || empty( $return_array ) ) {
 			return false;

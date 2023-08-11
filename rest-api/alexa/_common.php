@@ -34,13 +34,19 @@ class LWTV_Alexa_Common {
 		}
 
 		// Remove <!--fwp-loop--> from output
-		// phpcs:ignore
-		add_filter( 'facetwp_is_main_query', function( $is_main_query, $query ) { return false; }, 10, 2 );
+		add_filter(
+			'facetwp_is_main_query',
+			function( $is_main_query, $query ) {
+				return false;
+			},
+			10,
+			2
+		);
 
 		// Use SQL to find possible name matches, since WP_Query doesn't use "LIKE"
 		// for post titles.
 		// Ignoring warnings because this is a safe check.
-		// phpcs:ignore
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$possible_ids = $wpdb->get_col( "select ID from $wpdb->posts where post_title LIKE '%" . $name . "%' " );
 
 		if ( $possible_ids ) {

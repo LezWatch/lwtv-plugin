@@ -93,7 +93,7 @@ class LWTV_CPT_Characters {
 			'not_found_in_trash'       => 'No Characters found in Trash',
 			'update_item'              => 'Update Character',
 			'featured_image'           => 'Character Image',
-			'set_featured_image'       => 'Set Character Image (Min. 350 x 412)',
+			'set_featured_image'       => 'Set Character Image (recommended 350 x 412)',
 			'remove_featured_image'    => 'Remove Character Image',
 			'use_featured_image'       => 'Use as Character Image',
 			'archives'                 => 'Character archives',
@@ -345,6 +345,7 @@ class LWTV_CPT_Characters {
 						if ( is_array( $char_show['show'] ) ) {
 							$char_show['show'] = $char_show['show'][0];
 						}
+						// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
 						if ( $char_show['show'] == $show_id ) {
 							// Get a list of actors (we need this twice later)
 							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
@@ -576,7 +577,7 @@ class LWTV_CPT_Characters {
 		( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
 
 		// Always update Wikidata
-		( new LWTV_Debug() )->check_actors_wikidata( $post_id );
+		( new LWTV_Debug_Actors() )->check_actors_wikidata( $post_id );
 
 		// If we've got a list of URLs, then flush.
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {

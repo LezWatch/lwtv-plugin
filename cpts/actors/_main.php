@@ -100,7 +100,7 @@ class LWTV_CPT_Actors {
 			'not_found_in_trash'       => 'No Actors found in Trash',
 			'update_item'              => 'Update Actor',
 			'featured_image'           => 'Actor Image',
-			'set_featured_image'       => 'Set Actor Image (Min. 350 x 412)',
+			'set_featured_image'       => 'Set Actor Image (recommended 350 x 412)',
 			'remove_featured_image'    => 'Remove Actor Image',
 			'use_featured_image'       => 'Use as Actor Image',
 			'archives'                 => 'Actor archives',

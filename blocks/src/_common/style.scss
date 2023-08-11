@@ -1,13 +1,3 @@
-/** Code Blocks **/
-
-// Featured Images
-body.post-type-post_type_characters .wp-block-post-featured-image,
-body.post-type-post_type_actors .wp-block-post-featured-image {
-	float: left;
-	width: 350px;
-	margin-right: 2rem;
-}
-
 /**
  * #.# Common SCSS
  *
@@ -32,16 +22,16 @@ $lwtv-grey: #f3f3f3;
 $lwtv-grey2: #d6d6d6;
 $lwtv-medgrey: #555;
 $lwtv-dkgrey: #333;
-$lwtv-bordergrey: rgba(0,0,0,.125);
+$lwtv-bordergrey: rgba(0, 0, 0, 0.125);
 $lwtv-pink: #d1548e;
 $lwtv-purple: #8d329f;
 $lwtv-salmon: #f55a4e;
 $lwtv-gradient: linear-gradient(60deg, #ab47bc, #8e24aa);
 $lwtv-red: #dc3232;
 $lwtv-yellow: #f1c40f;
-$lwtv-gold: #FFD700;
-$lwtv-silver: #C0C0C0;
-$lwtv-bronze: #B87333;
+$lwtv-gold: #ffd700;
+$lwtv-silver: #c0c0c0;
+$lwtv-bronze: #b87333;
 
 /* Bootstrap */
 $bs-red:     #dc3545 !default;

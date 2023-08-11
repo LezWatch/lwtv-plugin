@@ -1,4 +1,3 @@
-
 {
 	"$schema": "https://json.schemastore.org/block.json",
 	"apiVersion": 2,
@@ -8,12 +7,12 @@
 	"category": "lezwatch",
 	"icon": "video-alt",
 	"description": "Uh uh uh, no spoilers, sweetie.",
-	"keywords": [ "grade", "review" ],
+	"keywords": ["grade", "review"],
 	"editorScript": "file:./block.js",
 	"supports": {
 		"customClassName": false,
 		"html": false,
-		"align": [ "wide", "full" ]
+		"align": ["wide", "full"]
 	},
 	"attributes": {
 		"summary": {

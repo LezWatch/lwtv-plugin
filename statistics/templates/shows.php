@@ -7,8 +7,8 @@
 
 
 $valid_views = array( 'formats', 'tropes', 'genres', 'intersectionality', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
-$sent_view       = get_query_var( 'view', 'overview' );
-$view            = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
+$sent_view   = get_query_var( 'view', 'overview' );
+$view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 
 ?>
 <h2>

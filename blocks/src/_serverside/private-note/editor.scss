@@ -1,22 +1,25 @@
 .wp-block-lez-library-private-note {
 	color: #856404;
-	background-color:#fff3cd;
+	background-color: #fff3cd;
 	border-color: #ffeeba;
 	position: relative;
 	padding: 0.75rem 1.25rem;
 	margin-bottom: 2rem;
 	border: 1px solid transparent;
 	border-radius: 0.25rem;
+
 	p {
-		margin-top: 12px!important;
+		margin-top: 12px !important;
 	}
+
 	p::after {
 		content: " (This note is hidden to non-editors.)";
 		font-size: smaller;
 		font-style: italic;
 	}
+
 	p::before {
-		content: url( "./spy.svg" );
+		content: url(./spy.svg);
 		display: inline-block;
 		width: 16px; //only one size is alright, IE scales uniformly to fit it
 		color: #856404;

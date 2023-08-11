@@ -33,11 +33,14 @@ jobs:
       - name: Setup PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: '8.1'
           tools: composer:v2
 
       - name: Install dependencies
         run: npm install
+
+      - name: Lint
+        run: npm run lint
 
       - name: Build it
         run: npm run build
@@ -50,4 +53,4 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/plugins/lwtv-plugin
-          EXCLUDE: "/.git/, /.github/, /node_scripts/"
+          EXCLUDE: "/.git/, /.github/, /.husky/, /.vscode/, /node_scripts/, /node_modules/, /vendor/, .editorconfig, .gitignore, .npmrc, .nvmrc, composer.json, package-lock.json, package.json, phpcs.xml.dist, /blocks/node_modules/, /blocks/.editorconfig, /blocks/.gitignore, /blocks/package-lock.json, /blocks/package.json"
