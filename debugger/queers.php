@@ -35,19 +35,19 @@ class LWTV_Debug_Queers {
 			// Get the actors...
 			$character_actors = get_post_meta( $character, 'lezchars_actor', true );
 
-			if ( ! empty( $character_actors ) ) {
-
+			if ( ! empty( $character_actors ) && is_array( $character_actors ) ) {
 				// Get the defaults
 				$flagged_queer = ( has_term( 'queer-irl', 'lez_cliches', $character ) ) ? true : false;
 				$actor_queer   = false;
 
-				if ( ! is_array( $character_actors ) ) {
-					$character_actors = array( get_post_meta( $character, 'lezchars_actor', true ) );
-				}
-
 				// If ANY actor is flagged as queer, we're queer.
 				foreach ( $character_actors as $actor ) {
-					$actor_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $actor ) || $actor_queer ) ? true : false;
+					$actor_queer = ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $actor ) ) ? true : false;
+
+					// If queer, we're done!
+					if ( $actor_queer ) {
+						break;
+					}
 				}
 
 				if ( $actor_queer && ! $flagged_queer ) {
@@ -57,13 +57,15 @@ class LWTV_Debug_Queers {
 				if ( ! $actor_queer && $flagged_queer ) {
 					$problems[] = 'No actor is queer';
 				}
+			} else {
+				$problems[] = 'No actors listed for this character';
 			}
 
 			if ( ! empty( $problems ) ) {
 				$items[] = array(
 					'url'     => get_permalink( $character ),
 					'id'      => $character,
-					'problem' => implode( ' ', $problems ),
+					'problem' => implode( '</br>', $problems ),
 				);
 			}
 		}

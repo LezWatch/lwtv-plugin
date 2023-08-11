@@ -76,7 +76,7 @@ class LWTV_Debug_Characters {
 				$items[] = array(
 					'url'     => get_permalink( $char_id ),
 					'id'      => $char_id,
-					'problem' => implode( ' ', $problems ),
+					'problem' => implode( '</br>', $problems ),
 				);
 			}
 		}

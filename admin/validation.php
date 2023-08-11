@@ -180,13 +180,14 @@ class LWTV_Data_Validation_Checks {
 		foreach ( $items as $item ) {
 			$class     = ( 0 === $number % 2 ) ? '' : 'alternate';
 			$modified  = get_post_timestamp( (int) $item['id'], 'modified' );
+			$published = get_post_timestamp( (int) $item['id'], 'date' );
 			$current   = current_datetime()->format( 'U' );
-			$time_diff = 'unknown time';
-			if ( ! $modified ) {
-				$time      = 'Unknown';
+			$time_diff = 'never modified';
+			if ( ! empty( $modified ) ) {
+				$time      = date_i18n( get_option( 'date_format' ), $modified );
 				$time_diff = human_time_diff( $modified, $current );
 			} else {
-				$time = date_i18n( get_option( 'date_format' ), $modified );
+				$time = date_i18n( get_option( 'date_format' ), $published );
 			}
 
 			echo '
