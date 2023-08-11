@@ -228,7 +228,7 @@ class LWTV_Debug_Actors {
 			if ( empty( $imdb ) ) {
 				// Check for IMDb existing at all...
 				$problems[] = 'IMDb ID is not set.';
-			} elseif ( ( new LWTV_Debug() )->validate_imdb( $imdb ) === false ) {
+			} elseif ( ( new LWTV_Debug() )->validate_imdb( $imdb, 'actor' ) === false ) {
 				// - IMDb IDs should be valid for the space they're in, e.g. "nm"
 				// and digits for people (props Jamie).
 				$problems[] = 'IMDb ID is invalid (ex: nm12345) -- ' . $imdb;
