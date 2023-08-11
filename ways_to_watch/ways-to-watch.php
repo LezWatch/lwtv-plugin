@@ -13,7 +13,7 @@ class LWTV_Ways_To_Watch {
 	 * This is used by shows to figure out where people can watch things
 	 * There's some juggling for certain sites
 	 */
-	public function affiliate_link( $id ) {
+	public function ways_to_watch( $id ) {
 
 		$affiliate_url = get_post_meta( $id, 'lezshows_affiliate', true );
 		$links         = array();
