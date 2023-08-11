@@ -41,7 +41,7 @@ class LWTV_Debug_Actors {
 				'insta' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
 				'twits' => get_post_meta( $actor_id, 'lezactors_twitter', true ),
 				'home'  => get_post_meta( $actor_id, 'lezactors_homepage', true ),
-				'dupe'  => get_post_field( 'post_name', $actor_id ),
+				'dupes' => get_post_field( 'post_name', $actor_id ),
 			);
 
 			// - Confirm there are characters listed.
@@ -68,20 +68,20 @@ class LWTV_Debug_Actors {
 			if ( ! empty( $check['insta'] ) ) {
 				// Limit - 30 symbols. Username must contains only letters, numbers, periods and underscores.
 				if ( ( new LWTV_Debug() )->sanitize_social( $check['insta'], 'instagram' ) !== $check['insta'] ) {
-					if ( false === ( new LWTV_Debug() )->validate_imdb( $check['insta'] ) ) {
-						update_post_meta( $actor_id, 'lezactors_instagram', $check['twits'] );
-					} else {
-						$problems[] = 'Instagram ID is invalid -- ' . $check['insta'];
-					}
+					$problems[] = 'Instagram ID is invalid -- ' . $check['insta'];
+				} elseif ( ( new LWTV_Debug() )->validate_imdb( $check['insta'], 'actor' ) ) {
+					// If instagram is IMDb, then it's wrong.
+					delete_post_meta( $actor_id, 'lezactors_instagram' );
+					$problems[] = 'Instagram ID was set as IMDb and has been removed - ' . $check['insta'];
 				}
 			}
 			if ( ! empty( $check['twits'] ) ) {
 				if ( ( new LWTV_Debug() )->sanitize_social( $check['twits'], 'twitter' ) !== $check['twits'] ) {
-					if ( false === ( new LWTV_Debug() )->validate_imdb( $check['twits'] ) ) {
-						update_post_meta( $actor_id, 'lezactors_twitter', $check['twits'] );
-					} else {
-						$problems[] = 'Twitter ID is invalid -- ' . $check['twits'];
-					}
+					$problems[] = 'Twitter ID is invalid -- ' . $check['insta'];
+				} elseif ( ( new LWTV_Debug() )->validate_imdb( $check['twits'], 'actor' ) ) {
+					// If Twitter is IMDb, then it's wrong.
+					delete_post_meta( $actor_id, 'lezactors_twitter' );
+					$problems[] = 'Twitter ID was set as IMDb and has been removed - ' . $check['twits'];
 				}
 			}
 
@@ -104,13 +104,14 @@ class LWTV_Debug_Actors {
 			}
 
 			// - Duplicate Actor check - shouldn't end in -[NUMBER].
+
 			$permalink_array = explode( '-', $check['dupes'] );
 			$ends_with       = end( $permalink_array );
 			// If it ends in a number, we have to check.
 			if ( is_numeric( $ends_with ) ) {
 				// See if an existing page without the -NUMBER exists (someone could rename themselves with numbers...).
 				$possible = get_page_by_path( str_replace( '-' . $ends_with, '', $check['dupes'] ), OBJECT, 'post_type_actor' );
-				if ( false !== $possible ) {
+				if ( is_object( $possible ) && false !== $possible ) {
 					// make sure the name doesn't have a year in parens!
 					$pos_imdb = get_post_meta( $possible->ID, 'lezactors_imdb', true );
 					if ( isset( $pos_imdb ) && $pos_imdb === $check['imdb'] ) {
@@ -124,7 +125,7 @@ class LWTV_Debug_Actors {
 				$items[] = array(
 					'url'     => get_permalink( $actor_id ),
 					'id'      => $actor_id,
-					'problem' => implode( ' ', $problems ),
+					'problem' => implode( '</br>', $problems ),
 				);
 			}
 		}
@@ -179,7 +180,7 @@ class LWTV_Debug_Actors {
 				$items[] = array(
 					'url'     => get_permalink( $actor_id ),
 					'id'      => $actor_id,
-					'problem' => implode( ' ', $problems ),
+					'problem' => implode( '</br>', $problems ),
 				);
 			}
 		}
@@ -238,10 +239,23 @@ class LWTV_Debug_Actors {
 				$items[] = array(
 					'url'     => get_permalink( $actor_id ),
 					'id'      => $actor_id,
-					'problem' => implode( ' ', $problems ),
+					'problem' => implode( '</br>', $problems ),
 				);
 			}
 		}
+
+		// Save Transient
+		set_transient( 'lwtv_debug_actor_imdb', $items, WEEK_IN_SECONDS );
+
+		// Update Options
+		$option               = get_option( 'lwtv_debugger_status' );
+		$option['actor_imdb'] = array(
+			'name'  => 'Actors without IMDb',
+			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
+			'last'  => time(),
+		);
+		$option['timestamp']  = time();
+		update_option( 'lwtv_debugger_status', $option );
 
 		return $items;
 	}

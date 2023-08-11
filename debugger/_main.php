@@ -75,12 +75,13 @@ class LWTV_Debug {
 			case 'actor':
 				$substr = 'nm';
 				break;
+			default:
+				$substr = 'tt';
+				break;
 		}
 
-		if ( ! isset( $substr ) ) {
-			$result = false;
-		} elseif ( substr( $string, 0, 2 ) === $substr && ! is_numeric( substr( $string, 2 ) ) ) {
-			// IMDB looks like tt123456 or nm12356
+		// IMDB looks like tt123456 or nm12356
+		if ( substr( $string, 0, 2 ) !== $substr || ! is_numeric( substr( $string, 2 ) ) ) {
 			$result = false;
 		}
 

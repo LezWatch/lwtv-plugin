@@ -111,13 +111,11 @@ class LWTV_DashboardPostsInProgress {
 		);
 		$pending_posts_array =& $pendings_query->posts;
 
-		echo '<div id="draft-posts" class="activity-block">';
+		echo '<div id="published-posts" class="activity-block">';
 		if ( $draft_posts_array && is_array( $draft_posts_array ) ) {
 			$list = array();
 
-			echo '<h3>';
-				esc_html_e( 'Drafts', 'lwtv-plugin' );
-			echo '</h3>';
+			echo '<h3>Drafts <span class="view-all">(<a href="' . esc_url( admin_url( 'edit.php?post_status=draft' ) ) . '">View all draft posts</a>)</span></h3>';
 
 			foreach ( $draft_posts_array as $draft ) {
 				// Default Data
@@ -137,39 +135,32 @@ class LWTV_DashboardPostsInProgress {
 				// Content if applicable
 				$the_content = wp_trim_words( $draft->post_content, 10 );
 				if ( $the_content ) {
-					$item .= '<p>' . $the_content . '</p>';
+					$item .= '<br/>' . $the_content;
 				}
+
 				$list[] = $item;
 			}
+
+			echo '</ul>';
 			?>
 
-			<p class="view-all"><a href="<?php echo esc_url( admin_url( 'edit.php?post_status=draft' ) ); ?>">
-				<?php
-				// Translators: %s = post type (i.e. posts, pages, etc)
-				echo esc_html( sprintf( __( 'View all draft %s', 'lwtv-plugin' ), lcfirst( $post_type_name ) ) );
-				?>
-			</a></p>
-
 			<ul>
-				<li>
-					<?php
-					foreach ( $list as $item ) {
-						echo '<li>' . wp_kses_post( $item ) . '</li>';
-					}
-					?>
-				</li>
+				<?php
+				$list = array_filter( $list );
+				foreach ( $list as $item ) {
+					echo '<li>' . wp_kses_post( $item ) . '</li>';
+				}
+				?>
 			</ul>
 
 			<?php
 		}
 		echo '</div>';
 
-		echo '<div id="pending-posts" class="activity-block">';
+		echo '<div id="published-posts" class="activity-block">';
 		if ( $pending_posts_array && is_array( $pending_posts_array ) ) {
 
-			echo '<h3>';
-			esc_html_e( 'Pending Review', 'lwtv-plugin' );
-			echo '</h3>';
+			echo '<h3>Pending Review <span class="view-all">(<a href="' . esc_url( admin_url( 'edit.php?post_status=pending' ) ) . '">View all pending posts</a>)</span></h3>';
 
 			$list = array();
 
@@ -197,21 +188,12 @@ class LWTV_DashboardPostsInProgress {
 			}
 			?>
 
-			<p class="view-all"><a href="<?php echo esc_url( admin_url( 'edit.php?post_status=pending' ) ); ?>">
-				<?php
-				// Translators: %s = post type (i.e. posts, pages, etc)
-				echo esc_html( sprintf( __( 'View all pending %s', 'lwtv-plugin' ), lcfirst( $post_type_name ) ) );
-				?>
-			</a></p>
-
 			<ul>
-				<li>
-					<?php
-					foreach ( $list as $item ) {
-						echo '<li>' . wp_kses_post( $item ) . '</li>';
-					}
-					?>
-				</li>
+				<?php
+				foreach ( $list as $item ) {
+					echo '<li>' . wp_kses_post( $item ) . '</li>';
+				}
+				?>
 			</ul>
 
 			<?php

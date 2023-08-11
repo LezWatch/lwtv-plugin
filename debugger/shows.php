@@ -44,24 +44,12 @@ class LWTV_Debug_Shows {
 				'genres'     => get_the_terms( $show_id, 'lez_genres' ),
 				'tropes'     => get_the_terms( $show_id, 'lez_tropes' ),
 				'duplicate'  => get_post_field( 'post_name', $show_id ),
+				'imdb'       => get_post_meta( $show_id, 'lezshows_imdb', true ),
 			);
 
-			// Check if there are characters.
+			// Check if there are characters. -- Trying to auto-fix crashes :(
 			$charshowlist = get_post_meta( $show_id, 'lezshows_char_list', true );
-			if ( false === $charshowlist ) {
-				$list_count = max( 0, LWTV_Shows_Calculate::count_queers( $show_id, 'count' ) );
-			} else {
-				$list_count = count( $charshowlist );
-			}
-
-			// If the check is fewer than the calculate, update it since we're here.
-			if ( $check['chars'] !== $list_count ) {
-				$check['chars'] = $list_count;
-				update_post_meta( $show_id, 'lezshows_char_count', $list_count );
-			}
-
-			// If there's 0 screentime, it's okay there are no Characters
-			if ( ( ! $check['chars'] || empty( $check['chars'] ) ) && $check['screentime'] > 1 ) {
+			if ( ( false === $charshowlist || ! $check['chars'] || empty( $check['chars'] ) ) && $check['screentime'] > 1 ) {
 				$problems[] = 'No characters listed.';
 			}
 
@@ -128,10 +116,14 @@ class LWTV_Debug_Shows {
 			if ( is_numeric( $ends_with ) ) {
 				// See if an existing page without the -NUMBER exists (someone could rename themselves with numbers...).
 				$possible = get_page_by_path( str_replace( '-' . $ends_with, '', $check['duplicate'] ), OBJECT, 'post_type_shows' );
-				if ( false !== $possible ) {
-					$pos_imdb = get_post_meta( $possible->ID, 'lezshows_imdb', true );
-					if ( isset( $pos_imdb ) && $pos_imdb === $check['imdb'] ) {
-						$problems[] = 'Likely Dupe - Another Show has this name AND the same IMDb data.';
+				if ( is_object( $possible ) && false !== $possible ) {
+					// The 90210 Loop
+					// Make sure we didn't find ourselves (because some shows are number-named...)
+					if ( $possible->ID !== $show_id ) {
+						$pos_imdb = get_post_meta( $possible->ID, 'lezshows_imdb', true );
+						if ( isset( $pos_imdb ) && $pos_imdb === $check['imdb'] ) {
+							$problems[] = 'Likely Dupe - Another Show has this name AND the same IMDb data.';
+						}
 					}
 				}
 			}
@@ -141,7 +133,7 @@ class LWTV_Debug_Shows {
 				$items[] = array(
 					'url'     => get_permalink( $show_id ),
 					'id'      => $show_id,
-					'problem' => implode( ' ', $problems ),
+					'problem' => implode( '</br>', $problems ),
 				);
 			}
 		}
@@ -185,14 +177,14 @@ class LWTV_Debug_Shows {
 
 		foreach ( $shows as $show_id ) {
 			// Try to get the problems.
-			$problems = self::check_disabled_characters( $show_id );
+			$problems = ( new LWTV_Debug_Characters() )->check_disabled_characters( $show_id );
 
 			// if there are problems, we put them in items.
 			if ( ! empty( $problems ) ) {
 				$items[] = array(
 					'url'     => get_permalink( $show_id ),
 					'id'      => $show_id,
-					'problem' => implode( ' ', $problems ),
+					'problem' => implode( '</br>', $problems ),
 				);
 			}
 		}
@@ -240,10 +232,23 @@ class LWTV_Debug_Shows {
 				$items[] = array(
 					'url'     => get_permalink( $show_id ),
 					'id'      => $show_id,
-					'problem' => implode( ' ', $problems ),
+					'problem' => implode( '</br>', $problems ),
 				);
 			}
 		}
+
+		// Save Transient
+		set_transient( 'lwtv_debug_show_imdb', $items, WEEK_IN_SECONDS );
+
+		// Update Options
+		$option              = get_option( 'lwtv_debugger_status' );
+		$option['show_imdb'] = array(
+			'name'  => 'Shows without IMDb',
+			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
+			'last'  => time(),
+		);
+		$option['timestamp'] = time();
+		update_option( 'lwtv_debugger_status', $option );
 
 		return $items;
 	}
