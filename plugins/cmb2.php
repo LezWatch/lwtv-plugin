@@ -170,12 +170,12 @@ class LWTV_CMB2_Addons {
 		$status     = get_post_status( $post_id );
 		$is_queer   = get_post_meta( $post_id, 'lezactors_queer', true );
 
-		if ( false !== $status && 'publish' !== $status && ! str_contains( $post_title, 'is_draft' ) ) {
-			$additional[] = 'is_draft';
+		if ( false !== $status && 'publish' !== $status && ! str_contains( $post_title, 'Draft' ) ) {
+			$additional[] = 'Draft';
 		}
 
-		if ( ! empty( $is_queer ) && $is_queer && ! str_contains( $post_title, 'is_queer' ) ) {
-			$additional[] = 'is_queer';
+		if ( ! empty( $is_queer ) && $is_queer && ! str_contains( $post_title, 'Queer' ) ) {
+			$additional[] = 'Queer';
 		}
 
 		if ( ! empty( $additional ) ) {
