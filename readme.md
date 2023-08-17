@@ -88,8 +88,10 @@ Defines:
 Stored in `/admin/` -- Makes admin panels
 
 * `_main.php` - Loader file and mapping
-* `admin_tools.php` - UX for checkers
 * `dashboard.php` - Powers wp-admin dashboard code
+* `exclusions.php` - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
+* `monitors.php` - Services monitored (runs daily)
+* `validation.php` - Data consistency checks (runs weekly)
 
 ### Assets
 
@@ -213,8 +215,8 @@ Stored in `/features/` -- a collection of miscellaneous features.
 * `spammers.php` - Prevent Spammers from annoying us
 * `upgrades.php` - Handle upgrades of WP and everything included.
 * `wp-cli.php`- WP-CLI
-    - Re-run calculations for specific post content (actors & shows): `wp lwtv calc [actor|show|character] ID`
-    - Compare data to WikiData: `wp lwtv wiki [actor] ID`
+    - Re-run calculations for specific post content (actors & shows): `wp lwtv calc [actor|show|character] PostID`
+    - Compare data to WikiData: `wp lwtv wiki [actor] PostID`
     - Find miss matched data: ex. `wp lwtv find queerchars`
     - Rebuild TVMaze ics file: `wp lwtv tvmaze`
 
@@ -312,7 +314,7 @@ Stored in `/statistics/` - These files generate everything for stats, from graph
     - `function showcount()` - Slices shows into smaller chunks (i.e 'all shows in Australia') and can output raw counts, on-air counts, scores, or on-air scores.
 * `array.php` -  Arrays: `class LWTV_Stats_Arrays`
     - `function taxonomy()` - Generate array to parse taxonomy content
-    - `functions dead_taxonomy()` - Generate Taxonomy Array for dead characters
+    - `function dead_taxonomy()` - Generate Taxonomy Array for dead characters
     - `function dead_role()` - Array for dead characters by role (regular, etc)
     - `function dead_meta_tax()` - Generate array to parse taxonomy content as it relates to post metas (for dead characters)
     - `function meta()` - Generate array to parse post meta data
