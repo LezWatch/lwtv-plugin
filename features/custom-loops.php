@@ -119,7 +119,7 @@ class LWTV_Loops {
 			$check['pronouns'] = 'no';
 		}
 
-		// If any of the options are a yes, we have a queerio!
+		// If ANY of the options are a yes, we have a queerio!
 		foreach ( $check as $to_check ) {
 			if ( 'yes' === $to_check ) {
 				$is_queer = 'yes';

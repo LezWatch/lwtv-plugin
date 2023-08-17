@@ -234,7 +234,8 @@ class LWTV_Characters_CMB2 {
 				'post_type'  => 'post_type_shows',
 				'options'    => array(
 					'query_args' => array(
-						'posts_per_page' => 5,
+						'filter_boxes'   => true,
+						'posts_per_page' => 2,
 						'post_type'      => 'post_type_shows',
 					), // override the get_posts args
 				),
@@ -263,7 +264,7 @@ class LWTV_Characters_CMB2 {
 				'name'              => 'Years Appears',
 				'desc'              => 'Add what years the character appears on this show.',
 				'id'                => 'appears',
-				'type'              => 'multicheck_inline',
+				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
 				'options'           => $this->years_array,

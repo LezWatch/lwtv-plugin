@@ -11,21 +11,20 @@
 }
 
 .cmb2-id-lezchars-show-group .cmb-inline li {
-    width: 80px;
+	width: 80px;
 }
 
 #notes_metabox p.cmb2-metabox-description {
-    padding-bottom: 0px!important;
+	padding-bottom: 0px!important;
 }
 
 #notes_metabox .cmb-th label:after {
-    border-bottom: 0px!important;
-    padding-top: 0px!important;
+	border-bottom: 0px!important;
+	padding-top: 0px!important;
 }
 
 #notes_metabox .cmb-th {
-    /* width: 50%!important; */
-    float: left!important;
+	float: left!important;
 }
 
 #notes_metabox .cmb-td {
@@ -100,4 +99,8 @@ div.post-titles-container input {
 
 .cmb2-post-search-button button {
 	margin-left: 10px;
+}
+
+div#lezchars_show_group_repeat .cmb-type-custom-attached-posts .connected {
+	min-height: 110px;
 }
