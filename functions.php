@@ -368,8 +368,3 @@ require_once 'this-year/_main.php';     // This Year.
 require_once 'ways_to_watch/_main.php'; // Ways to Watch.
 
 require_once 'cpts/_main.php';         // Custom Post Types: This MUST be at the end.
-
-/*
- * Composer
- */
-require_once 'vendor/autoload.php';
