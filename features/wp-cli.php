@@ -227,6 +227,38 @@ class WP_CLI_LWTV_Commands {
 		WP_CLI::success( 'Search complete.' );
 	}
 
+	/**
+	 * Set "Of the Day" for the day.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    wp lwtv otd [char|show]
+	 *
+	 * @param array $args       Arguments passed to command (i.e. 'show' or 'char')
+	 * @param array $assoc_args Associate arguments (ie formatting)
+	 */
+	public function otd( $args, $assoc_args ) {
+		// Valid things to find...
+		$valid_otd = array( 'character', 'show' );
+		$format    = ( isset( $assoc_args['format'] ) ) ? $assoc_args['format'] : 'table';
+
+		// What are we of-the-daying?
+		if ( ! empty( $args ) ) {
+			list( $otd ) = $args;
+		}
+
+		// Check for valid arguments and post types
+		if ( empty( $otd ) || ! in_array( $otd, $valid_otd, true ) ) {
+			WP_CLI::error( 'You must provide a valid type of item to set for "Of the Day": ' . implode( ', ', $valid_otd ) );
+		}
+
+		// Set it!
+		$setit = ( new LWTV_Of_The_Day() )->set_of_the_day( $otd );
+
+		WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set.' );
+
+	}
+
 }
 
 WP_CLI::add_command( 'lwtv', 'WP_CLI_LWTV_Commands' );

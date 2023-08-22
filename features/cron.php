@@ -53,7 +53,6 @@ class LWTV_Cron {
 			'/actors/',
 			'/characters/',
 			'/shows/',
-			'/show/the-l-word/',
 			'/',
 		);
 
@@ -80,9 +79,10 @@ class LWTV_Cron {
 			wp_schedule_event( strtotime( '06:01:00' ), 'daily', 'lwtv_cache_event_daily' );
 		}
 
+		// Update TVMaze
 		add_action( 'lwtv_tv_maze_hourly', array( $this, 'tv_maze_cron' ) );
 		if ( ! wp_next_scheduled( 'lwtv_tv_maze_hourly' ) ) {
-			wp_schedule_event( time(), 'hourly', 'lwtv_tv_maze_hourly' );
+			wp_schedule_event( time(), 'daily', 'lwtv_tv_maze_hourly' );
 		}
 
 		// Check the tools
@@ -91,11 +91,17 @@ class LWTV_Cron {
 			wp_schedule_event( strtotime( '03:01:00' ), 'daily', 'lwtv_tools' );
 		}
 
-		add_action( 'lwtv_lists_event_daily', array( $this, 'lists_daily' ) );
-		if ( ! wp_next_scheduled( 'lwtv_lists_event_daily' ) ) {
-			wp_schedule_event( strtotime( '04:01:00' ), 'daily', 'lwtv_lists_event_daily' );
+		// Update Of The Day: Shows
+		add_action( 'lwtv_of_the_day', array( $this, 'of_the_day' ) );
+		if ( ! wp_next_scheduled( 'lwtv_of_the_day' ) ) {
+			wp_schedule_event( strtotime( '09:01:00' ), 'daily', 'lwtv_of_the_day', 'show' );
 		}
 
+		// Update Of The Day: Chars
+		add_action( 'lwtv_of_the_day', array( $this, 'of_the_day' ) );
+		if ( ! wp_next_scheduled( 'lwtv_of_the_day' ) ) {
+			wp_schedule_event( strtotime( '13:01:00' ), 'daily', 'lwtv_of_the_day', 'char' );
+		}
 	}
 
 	/**
@@ -247,6 +253,13 @@ SQL;
 				$check = ( new LWTV_Debug_Shows() )->find_shows_no_imdb();
 				break;
 		}
+	}
+
+	/**
+	 * Set the show/character of the day.
+	 */
+	public function of_the_day( $type ) {
+		( new LWTV_Of_The_Day() )->set_of_the_day( $type );
 	}
 
 }

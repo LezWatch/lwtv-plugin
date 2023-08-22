@@ -132,7 +132,7 @@ class LWTV_Alexa_Skills {
 					}
 					break;
 				case 'CharOTD':
-					$data   = ( new LWTV_OTD_JSON() )->character_show( $value['date'], 'character' );
+					$data   = ( new LWTV_Of_The_Day() )->character_show( $value['date'], 'character' );
 					$name   = $data['name'];
 					$show   = $data['shows'];
 					$output = 'The LezWatch T. V. character of the day is ' . $name . ' from ' . $show . '.';
