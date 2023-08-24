@@ -328,7 +328,7 @@ class LWTV_This_Year_Chars {
 		$show_array    = array();
 		$char_array    = array();
 
-		if ( is_array( $queery ) ) {
+		if ( isset( $queery ) && is_array( $queery ) ) {
 			foreach ( $queery as $char ) {
 				$show_ids   = get_post_meta( $char, 'lezchars_show_group', true );
 				$show_title = array();

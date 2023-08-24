@@ -43,7 +43,7 @@ class LWTV_Related_Posts {
 
 		$the_related_posts = '<em>Coming soon...</em>';
 
-		if ( is_array( $related_post_query ) ) {
+		if ( isset( $related_post_query ) && is_array( $related_post_query ) ) {
 
 			// We get a max of 10 but we only want to show 3
 			$max_posts  = 3;
