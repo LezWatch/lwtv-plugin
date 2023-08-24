@@ -360,6 +360,7 @@ require_once 'admin/_main.php';         // Admin Settings.
 require_once 'assets/symbolicons.php';  // Symbolicons/Font Icons.
 require_once 'blocks/_main.php';        // Custom Blocks.
 require_once 'debugger/_main.php';      // Debugger and data fixers.
+require_once 'of-the-day/_main.php';    // Of the Day RSS code
 require_once 'plugins/_main.php';       // Tweaks for Plugins.
 require_once 'rest-api/_main.php';      // Our Rest API.
 require_once 'statistics/_main.php';    // Stats.
@@ -367,8 +368,3 @@ require_once 'this-year/_main.php';     // This Year.
 require_once 'ways_to_watch/_main.php'; // Ways to Watch.
 
 require_once 'cpts/_main.php';         // Custom Post Types: This MUST be at the end.
-
-/*
- * Composer
- */
-require_once 'vendor/autoload.php';

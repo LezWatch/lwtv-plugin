@@ -207,6 +207,7 @@ class LWTV_BYQ_JSON {
 	 * @return array with last dead character data
 	 */
 	public function last_death() {
+		$return = '';
 		// Get all our dead queers
 		$dead_chars_loop  = ( new LWTV_Loops() )->tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
@@ -216,10 +217,11 @@ class LWTV_BYQ_JSON {
 		$last_death = array_shift( $last_death );
 
 		// Calculate the difference between then and now
-		$diff                = abs( time() - $last_death['died'] );
-		$last_death['since'] = $diff;
-
-		$return = $last_death;
+		if ( ! is_null( $last_death['died'] ) ) {
+			$diff                = abs( time() - $last_death['died'] );
+			$last_death['since'] = $diff;
+			$return              = $last_death;
+		}
 
 		return $return;
 	}

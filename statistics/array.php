@@ -193,15 +193,17 @@ class LWTV_Stats_Arrays {
 
 			foreach ( $dead_chars as $dead_id ) {
 				$all_shows = get_post_meta( $dead_id, 'lezchars_show_group', true );
-				foreach ( $all_shows as $each_show ) {
-					if ( 'regular' === $each_show['type'] ) {
-						$by_role['regular']++;
-					}
-					if ( 'guest' === $each_show['type'] ) {
-						$by_role['guest']++;
-					}
-					if ( 'recurring' === $each_show['type'] ) {
-						$by_role['recurring']++;
+				if ( is_array( $all_shows ) ) {
+					foreach ( $all_shows as $each_show ) {
+						if ( 'regular' === $each_show['type'] ) {
+							$by_role['regular']++;
+						}
+						if ( 'guest' === $each_show['type'] ) {
+							$by_role['guest']++;
+						}
+						if ( 'recurring' === $each_show['type'] ) {
+							$by_role['recurring']++;
+						}
 					}
 				}
 			}
@@ -447,7 +449,7 @@ class LWTV_Stats_Arrays {
 				wp_reset_query();
 			}
 
-			if ( is_array( $all_shows ) ) {
+			if ( isset( $all_shows ) && is_array( $all_shows ) ) {
 				foreach ( $all_shows as $show_id ) {
 					// This data is universal for every thing we process.
 					$shows++;

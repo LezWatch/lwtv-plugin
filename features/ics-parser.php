@@ -13,6 +13,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 // Include iCal parser
 require_once 'ICal/ICal.php';
+require_once 'ICal/Event.php';
 
 use ICal\ICal;
 
