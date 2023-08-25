@@ -378,6 +378,9 @@ class LWTV_Debug_Actors {
 					} elseif ( '' === $check_wiki[ $item ] ) {
 						$result = 'n/a';
 					} else {
+						if ( 'facebook' === $item ) {
+							$check_wiki[ $item ] = 'https://facebook.com/' . $check_wiki[ $item ];
+						}
 						$result = array(
 							'ours'     => $data,
 							'wikidata' => $check_wiki[ $item ],
