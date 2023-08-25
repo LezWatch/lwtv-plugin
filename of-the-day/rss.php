@@ -42,9 +42,9 @@ class LWTV_Of_The_Day_RSS {
 
 		$table = $wpdb->prefix . 'lwtv_otd';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$table_data = $wpdb->get_results( "SELECT * FROM {$table} order by id desc limit 1" );
+		$table_data = $wpdb->get_results( "SELECT * FROM {$table} order by id desc limit 1", ARRAY_A );
 
-		return $table_data->post_datetime;
+		return $table_data[0]['post_datetime'];
 	}
 
 	/**
