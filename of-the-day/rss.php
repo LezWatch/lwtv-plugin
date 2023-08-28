@@ -58,6 +58,15 @@ class LWTV_Of_The_Day_RSS {
 	}
 
 	/**
+	 * Return the current version of WP.
+	 */
+	public function return_wp_version() {
+		global $wp_version;
+
+		return $wp_version;
+	}
+
+	/**
 	 * Customize RSS title.
 	 */
 	public function rss_title() {
@@ -107,11 +116,11 @@ class LWTV_Of_The_Day_RSS {
 		foreach ( $table_data as $use_data ) {
 			?>
 			<item>
-				<title><?php echo esc_html( ucfirst( $use_data->post_type ) ); ?> of the Day: <?php echo esc_html( get_the_title( $use_data->post_id ) ); ?></title>
-				<link><?php echo esc_url( get_permalink( $use_data->post_id ) ); ?></link>
+				<title><?php echo esc_html( ucfirst( $use_data->posts_type ) ); ?> of the Day: <?php echo esc_html( get_the_title( $use_data->posts_id ) ); ?></title>
+				<link><?php echo esc_url( get_permalink( $use_data->posts_id ) ); ?></link>
 				<pubDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', $use_data->post_datetime ) ); ?></pubDate>
 				<dc:creator>LezWatch.TV</dc:creator>
-				<guid isPermaLink="false"><?php the_guid( $use_data->post_id ); ?></guid>
+				<guid isPermaLink="false"><?php the_guid( $use_data->posts_id ); ?></guid>
 				<description><![CDATA[<?php echo wp_kses_post( $use_data->content ); ?>]]></description>
 				<content:encoded><![CDATA[<?php echo wp_kses_post( $use_data->content ); ?>]]></content:encoded>
 				<?php do_action( 'rss2_item' ); ?>

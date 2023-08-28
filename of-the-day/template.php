@@ -26,7 +26,14 @@ echo '<?xml version="1.0" encoding="' . esc_attr( get_option( 'blog_charset' ) )
 	<language>en-US</language>
 	<sy:updatePeriod><?php echo esc_html( apply_filters( 'rss_update_period', 'hourly' ) ); ?></sy:updatePeriod>
 	<sy:updateFrequency><?php echo esc_html( apply_filters( 'rss_update_frequency', '1' ) ); ?></sy:updateFrequency>
-	<?php do_action( 'rss2_head' ); ?>
+	<generator>https://wordpress.org/?v=<?php echo floatval( ( new LWTV_Of_The_Day_RSS() )->return_wp_version() ); ?></generator>
+	<image>
+		<url><?php echo esc_url( get_option( 'jetpack_site_icon_url' ) ); ?></url>
+		<title>LezWatch.TV Of The Day - Feed</title>
+		<link><?php echo esc_url( get_site_url() ); ?>/feed/otd/</link>
+		<width>32</width>
+		<height>32</height>
+	</image> 
 	<?php
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	( new LWTV_Of_The_Day_RSS() )->rss_feed();
