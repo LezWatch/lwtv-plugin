@@ -50,7 +50,7 @@ class LWTV_Of_The_Day {
 
 		foreach ( $types as $a_type ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$queery = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$table}` WHERE post_type = %s AND created = %s", $a_type, $date ) );
+			$queery = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$table}` WHERE posts_type = %s AND created = %s", $a_type, $date ) );
 
 			// If there's NO entry, we can make one.
 			if ( 0 === $queery || empty( $queery ) ) {
