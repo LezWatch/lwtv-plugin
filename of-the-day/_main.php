@@ -230,12 +230,17 @@ class LWTV_Of_The_Day {
 				if ( '' !== $all_shows && ! empty( $shows_value ) ) {
 					$show_titles = array();
 					foreach ( $all_shows as $each_show ) {
-						// Remove the Array.
+						// Remove the nested Array.
 						if ( is_array( $each_show['show'] ) ) {
 							$each_show['show'] = $each_show['show'][0];
 						}
 						array_push( $show_titles, get_the_title( $each_show['show'] ) );
 					}
+				}
+
+				// This shouldn't happen but it did.
+				if ( '#HelloWorld' === $hashtag ) {
+					$hashtag = '';
 				}
 
 				$return['status']  = ( has_term( 'dead', 'lez_cliches', $post_id ) ) ? 'dead' : 'alive';
