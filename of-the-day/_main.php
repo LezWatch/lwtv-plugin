@@ -21,8 +21,8 @@ class LWTV_Of_The_Day {
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			post_datetime datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 			created date DEFAULT '0000-00-00' NOT NULL,
-			post_id smallint(5) NOT NULL,
-			post_type text NOT NULL,
+			posts_id bigint(20) NOT NULL,
+			posts_type text NOT NULL,
 			content text NOT NULL,
 			UNIQUE KEY id (id)
 		) $charset_collate;";
@@ -50,7 +50,7 @@ class LWTV_Of_The_Day {
 
 		foreach ( $types as $a_type ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$queery = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$table}` WHERE post_type = %s AND created = %s", $a_type, $date ) );
+			$queery = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM `{$table}` WHERE posts_type = %s AND created = %s", $a_type, $date ) );
 
 			// If there's NO entry, we can make one.
 			if ( 0 === $queery || empty( $queery ) ) {
@@ -72,7 +72,6 @@ class LWTV_Of_The_Day {
 		$table = $wpdb->prefix . 'lwtv_otd';
 
 		// table: UID | DATE | POST ID | TYPE | CONTENT
-		$post_id = $data['id'];
 		$date    = current_time( 'Y-m-d' );
 		$content = 'The LezWatch.TV ' . $type . ' of the day is';
 
@@ -93,8 +92,8 @@ class LWTV_Of_The_Day {
 		$array = array(
 			'created'       => $date,
 			'post_datetime' => current_time( 'mysql' ),
-			'post_id'       => $post_id,
-			'post_type'     => $type,
+			'posts_id'      => (int) $data['pid'],
+			'posts_type'    => $type,
 			'content'       => $content,
 		);
 
@@ -205,6 +204,7 @@ class LWTV_Of_The_Day {
 		// Build the Base Array:
 		$return = array(
 			'id'    => $post_id,
+			'pid'   => $post_id,
 			'name'  => get_the_title( $post_id ),
 			'url'   => get_the_permalink( $post_id ),
 			'image' => $image,
@@ -230,12 +230,17 @@ class LWTV_Of_The_Day {
 				if ( '' !== $all_shows && ! empty( $shows_value ) ) {
 					$show_titles = array();
 					foreach ( $all_shows as $each_show ) {
-						// Remove the Array.
+						// Remove the nested Array.
 						if ( is_array( $each_show['show'] ) ) {
 							$each_show['show'] = $each_show['show'][0];
 						}
 						array_push( $show_titles, get_the_title( $each_show['show'] ) );
 					}
+				}
+
+				// This shouldn't happen but it did.
+				if ( '#HelloWorld' === $hashtag ) {
+					$hashtag = '';
 				}
 
 				$return['status']  = ( has_term( 'dead', 'lez_cliches', $post_id ) ) ? 'dead' : 'alive';

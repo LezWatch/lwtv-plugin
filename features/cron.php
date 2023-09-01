@@ -92,15 +92,15 @@ class LWTV_Cron {
 		}
 
 		// Update Of The Day: Shows
-		add_action( 'lwtv_of_the_day', array( $this, 'of_the_day' ) );
-		if ( ! wp_next_scheduled( 'lwtv_of_the_day' ) ) {
-			wp_schedule_event( strtotime( '09:01:00' ), 'daily', 'lwtv_of_the_day', 'show' );
+		add_action( 'lwtv_show_of_the_day', array( $this, 'show_of_the_day' ) );
+		if ( ! wp_next_scheduled( 'lwtv_show_of_the_day' ) ) {
+			wp_schedule_event( strtotime( '09:01:00' ), 'daily', 'lwtv_show_of_the_day' );
 		}
 
 		// Update Of The Day: Chars
-		add_action( 'lwtv_of_the_day', array( $this, 'of_the_day' ) );
-		if ( ! wp_next_scheduled( 'lwtv_of_the_day' ) ) {
-			wp_schedule_event( strtotime( '13:01:00' ), 'daily', 'lwtv_of_the_day', 'char' );
+		add_action( 'lwtv_char_of_the_day', array( $this, 'char_of_the_day' ) );
+		if ( ! wp_next_scheduled( 'lwtv_char_of_the_day' ) ) {
+			wp_schedule_event( strtotime( '13:01:00' ), 'daily', 'lwtv_char_of_the_day' );
 		}
 	}
 
@@ -256,10 +256,17 @@ SQL;
 	}
 
 	/**
-	 * Set the show/character of the day.
+	 * Set the show of the day.
 	 */
-	public function of_the_day( $type ) {
-		( new LWTV_Of_The_Day() )->set_of_the_day( $type );
+	public function show_of_the_day() {
+		( new LWTV_Of_The_Day() )->set_of_the_day( 'show' );
+	}
+
+	/**
+	 * Set the character of the day.
+	 */
+	public function char_of_the_day() {
+		( new LWTV_Of_The_Day() )->set_of_the_day( 'character' );
 	}
 
 }
