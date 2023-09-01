@@ -762,6 +762,7 @@ class LWTV_Stats_Arrays {
 					case 'post_type_shows':
 						$year_queery = 0;
 						$show_queery = ( false === $data ) ? ( new LWTV_Loops() )->post_type_query( 'post_type_shows' ) : $data;
+						$allshows    = array();
 
 						if ( $show_queery->have_posts() ) {
 							$allshows = wp_list_pluck( $show_queery->posts, 'ID' );

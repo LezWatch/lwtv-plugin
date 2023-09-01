@@ -134,7 +134,8 @@ class LWTV_SSR_Calendar {
 		$today = new DateTime( 'today', $tz );
 
 		// Query Variables.
-		$date_query = ( isset( $_GET['tvdate'] ) && ( $_GET['tvdate'] !== $today->format( 'Y-m-d' ) ) ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today'; // phpcs:ignore WordPress.Security.NonceVerification
+		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today'; // phpcs:ignore WordPress.Security.NonceVerification
+		$date_query = ( ( strtotime( $get_tvdate ) !== false ) && ( $get_tvdate !== $today->format( 'Y-m-d' ) ) ) ? $get_tvdate : 'today';
 
 		// Get the dates
 		$start_datetime = self::start_datetime( $date_query, $tz );
@@ -153,7 +154,7 @@ class LWTV_SSR_Calendar {
 
 			if ( $end_datetime > $today ) {
 				// End date is in the future
-				$return .= '<p>We only project the calendar 2-4 weeks in advance. Future planned airings are subject to change without notice.<p>';
+				$return .= '<p>We only project the calendar 2-4 weeks in advance. Future planned airings are subject to change without notice.</p>';
 			} else {
 				// It's the past
 				$return .= '<p>We don\'t keep historical calendar records, so you won\'t be able to retrieve listings from long ago. Sorry.</p>';
