@@ -42,7 +42,7 @@ class LWTV_User_Profiles {
 			'user',
 			'lez_user_favourite_shows',
 			array(
-				'get_callback' => function( $user, $field_name, $request ) {
+				'get_callback' => function ( $user, $field_name, $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 					return get_user_meta( $user['id'], $field_name, true );
 				},
 				'schema'       => null,
@@ -81,7 +81,7 @@ class LWTV_User_Profiles {
 		<table class="form-table">
 
 			<?php
-			if ( current_user_can( 'administrator' ) ) {
+			if ( current_user_can( 'update_core' ) ) {
 				?>
 				<tr>
 					<th><label for="jobrole">Job Role</label></th>

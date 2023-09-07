@@ -55,7 +55,7 @@ class LWTV_SymboliconsSettings {
 	 * admin_enqueue_scripts
 	 */
 	public function admin_enqueue_scripts() {
-		wp_register_style( 'symbolicons-admin', plugins_url( 'assets/css/symbolicons-admin.css', dirname( __FILE__ ) ), array(), self::$version );
+		wp_register_style( 'symbolicons-admin', plugins_url( 'assets/css/symbolicons-admin.css', __DIR__ ), array(), self::$version );
 	}
 
 	/*
@@ -129,6 +129,6 @@ class LWTV_SymboliconsSettings {
 		</div>
 		<?php
 	}
-
 }
+
 new LWTV_SymboliconsSettings();

@@ -27,7 +27,12 @@ $sent_format   = get_query_var( 'format', 'bar' );
 $format        = ( ! in_array( $sent_format, $valid_formats, true ) ) ? 'bar' : $sent_format;
 
 // Count
-$showforms   = get_terms( 'lez_formats', array( 'hide_empty' => 0 ) );
+$showforms   = get_terms(
+	array(
+		'taxonomy'   => 'lez_formats',
+		'hide_empty' => 0,
+	)
+);
 $count       = wp_count_terms( 'lez_formats' );
 $shows_count = ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' );
 

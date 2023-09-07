@@ -152,7 +152,6 @@ SQL;
 			}
 			wp_publish_post( $the_id );
 		}
-
 	}
 
 	/**
@@ -215,7 +214,7 @@ SQL;
 		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
 		$response   = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );
 		}
 	}
@@ -268,7 +267,6 @@ SQL;
 	public function char_of_the_day() {
 		( new LWTV_Of_The_Day() )->set_of_the_day( 'character' );
 	}
-
 }
 
 new LWTV_Cron();

@@ -24,7 +24,12 @@ $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' : $sent_view;
 
 // Count
-$all_stations = get_terms( 'lez_stations', array( 'hide_empty' => 0 ) );
+$all_stations = get_terms(
+	array(
+		'taxonomy'   => 'lez_stations',
+		'hide_empty' => 0,
+	)
+);
 $count        = wp_count_terms( 'lez_stations' );
 $shows_count  = ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' );
 

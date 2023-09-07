@@ -86,7 +86,6 @@ class LWTV_Embeds {
 		$embed = sprintf( '<iframe class="gfm-media-widget" image="1" coinfo="1" width="100%%" height="100%%" frameborder="0" id="%1$s"></iframe><script src="//funds.gofundme.com/js/5.0/media-widget.js"></script>', $id );
 		return apply_filters( 'gofundme_embed', $embed, $matches, $attr, $url, $rawattr );
 	}
-
 }
 
 new LWTV_Embeds();

@@ -252,7 +252,7 @@ class LWTV_CMB2_DYR {
 	 * The following snippets are required for allowing the date_year_range field
 	 * to work as a repeatable field, or in a repeatable group
 	 */
-
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function jt_cmb2_sanitize_date_year_range( $check, $meta_value, $object_id, $field_args, $sanitizer ) {
 
 		// if not repeatable, bail out.
@@ -267,6 +267,7 @@ class LWTV_CMB2_DYR {
 		return array_filter( $meta_value );
 	}
 
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function jt_cmb2_esc_date_year_range( $check, $meta_value, $field_args, $field_object ) {
 
 		// if not repeatable, bail out.

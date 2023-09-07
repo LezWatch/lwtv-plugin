@@ -37,6 +37,7 @@ class Plugin_Comment_Probation {
 		add_action( 'gettext', array( $this, 'gettext' ), 10, 3 );
 	}
 
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function gettext( $translated, $original, $domain ) {
 		if ( 'Comment author must have a previously approved comment' !== $original ) {
 			return $translated;
@@ -104,6 +105,7 @@ class Plugin_Comment_Probation {
 		update_comment_meta( $comment_id, self::META_KEY, '1' );
 	}
 
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function comment_row_actions( $actions, $comment ) {
 		if ( ! isset( $actions['approve'] ) ) {
 			return $actions;
@@ -118,7 +120,6 @@ class Plugin_Comment_Probation {
 
 		return $actions;
 	}
-
 }
 
 new Plugin_Comment_Probation();

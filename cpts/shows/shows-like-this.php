@@ -84,6 +84,7 @@ class LWTV_Shows_Like_This {
 		return $return;
 	}
 
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function meta_query( $meta_query, $post_id, $taxonomies, $args ) {
 
 		if ( 'post_type_shows' === get_post_type( $post_id ) ) {
@@ -157,7 +158,7 @@ class LWTV_Shows_Like_This {
 				if ( 'publish' === get_post_status( $this_show_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
 					foreach ( $shows_array as $related_show ) {
 						// Because of show IDs having SIMILAR numbers, we need to be a little more flex
-						// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
+						// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 						if ( $related_show == $post_id ) {
 							$reciprocity[] = $this_show_id;
 						}

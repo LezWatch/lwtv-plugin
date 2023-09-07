@@ -96,8 +96,8 @@ class LWTV_Alexa_Validate {
 	}
 
 	/*
-		Validate that the certificate and signature are valid
-	*/
+	 * Validate that the certificate and signature are valid
+	 */
 	public function cert_and_sig( $request, $chain_url, $signature ) {
 
 		$md5pem      = get_temp_dir() . md5( $chain_url ) . '.pem';
@@ -106,7 +106,7 @@ class LWTV_Alexa_Validate {
 		// If we haven't received a certificate with this URL before,
 		// store it as a cached copy
 		if ( ! file_exists( $md5pem ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $md5pem, file_get_contents( $chain_url ) );
 		}
 
@@ -146,7 +146,6 @@ class LWTV_Alexa_Validate {
 
 		return 1;
 	}
-
 }
 
 new LWTV_Alexa_Validate();

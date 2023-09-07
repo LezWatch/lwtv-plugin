@@ -83,7 +83,7 @@ class LWTV_SSR_Calendar {
 		$show_name   = $name;
 
 		// Call the namer to try and sort out different names.
-		require_once dirname( __FILE__, 2 ) . '/cpts/shows/calendar-names.php';
+		require_once dirname( __DIR__ ) . '/cpts/shows/calendar-names.php';
 		$name = ( new LWTV_Shows_Calendar() )->check_name( $name, 'tvmaze' );
 
 		// Find the show based on the LezWatch name
@@ -218,7 +218,6 @@ class LWTV_SSR_Calendar {
 
 		return '<div class="lwtv-calendar-block">' . $return . '</div>';
 	}
-
 }
 
 new LWTV_SSR_Calendar();

@@ -89,10 +89,8 @@ class LWTV_Gravity_Forms {
 
 			$result = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $message, 'error', 'spam' );
 			return true;
-		} else {
-			if ( ! empty( $warn_message ) ) {
-				$add_note = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $warn_message, 'warning', 'spam' );
-			}
+		} elseif ( ! empty( $warn_message ) ) {
+			$add_note = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $warn_message, 'warning', 'spam' );
 		}
 
 		// If we got all the way down here, we're not spam!
@@ -146,6 +144,7 @@ class LWTV_Gravity_Forms {
 	 * 1. Set ALLOW FIELD TO BE POPULATED DYNAMICALLY
 	 * 2. Parameter Name == lwtvlocation
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	public function populate_lwtvlocation( $value ) {
 		$ip  = sanitize_text_field( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'] );
 		$ip  = apply_filters( 'gform_ip_address', $ip );

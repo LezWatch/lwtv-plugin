@@ -32,15 +32,14 @@
     "php": ">=8.0",
     "johngrogg/ics-parser": "^3"
   },
-  "require-dev": {
-    "wp-coding-standards/wpcs": "^2.3",
-    "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
-  },
   "scripts": {
     "lint": "phpcs",
     "lint-fix": "phpcbf",
     "post-update-cmd": [
       "cp -r ./vendor/johngrogg/ics-parser/src/ICal/ ./features/ICal/"
     ]
+  },
+  "require-dev": {
+    "wp-coding-standards/wpcs": "^3.0"
   }
 }

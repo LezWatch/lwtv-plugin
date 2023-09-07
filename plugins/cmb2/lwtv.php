@@ -247,7 +247,6 @@ class LWTV_CMB2 {
 			)
 		);
 	}
-
 }
 
 new LWTV_CMB2();

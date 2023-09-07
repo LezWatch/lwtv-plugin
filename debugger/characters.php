@@ -124,7 +124,6 @@ class LWTV_Debug_Characters {
 
 		return $problems;
 	}
-
 }
 
 new LWTV_Debug_Characters();

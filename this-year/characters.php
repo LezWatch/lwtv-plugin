@@ -281,7 +281,6 @@ class LWTV_This_Year_Chars {
 		}
 
 		return $return_array;
-
 	}
 
 	/**
@@ -306,7 +305,6 @@ class LWTV_This_Year_Chars {
 		if ( ! empty( $char_array ) ) {
 			( new LWTV_Stats() )->generate( 'characters', $format . '_year_' . $thisyear, 'piechart', '', $char_array );
 		}
-
 	}
 
 	/**
@@ -340,7 +338,7 @@ class LWTV_This_Year_Chars {
 
 					// Make sure this show is in the year
 					if ( array_key_exists( 'appears', $each_show ) && in_array( $thisyear, $each_show['appears'], true ) ) {
-						$counted_chars++;
+						++$counted_chars;
 
 						// If we're ONLY counting, we can bail now.
 						if ( ! $count ) {
@@ -408,7 +406,6 @@ class LWTV_This_Year_Chars {
 
 		return $return_array;
 	}
-
 }
 
 new LWTV_This_Year_Chars();

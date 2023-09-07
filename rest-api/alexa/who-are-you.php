@@ -42,23 +42,28 @@ class LWTV_Alexa_Who {
 
 			foreach ( $results as $actor ) {
 
+				$age_stuff = '';
+
+				// Born
 				if ( false !== $actor['born'] ) {
-					$age_stuff = 'was born ' . $actor['born'];
-					if ( false !== $actor['end'] ) {
+					$age_stuff .= 'was born ' . $actor['born'];
+					if ( false !== $actor['died'] ) {
 						$age_stuff .= ' and';
 					}
 				}
 
+				// Died
 				if ( false !== $actor['died'] ) {
 					$age_stuff .= ' died ' . $actor['died'];
 
 					if ( false !== $actor['age'] ) {
 						$age_stuff .= ' at ' . $actor['age'] . ' years of age.';
 					}
-				} else {
-					if ( false !== $actor['age'] ) {
-						$age_stuff .= ' is ' . $actor['age'];
-					}
+				}
+
+				// Is Age.
+				if ( false === $actor['died'] && false !== $actor['age'] ) {
+					$age_stuff .= ' is ' . $actor['age'];
 				}
 
 				// translators: %s is the number of queer characters
@@ -384,7 +389,6 @@ class LWTV_Alexa_Who {
 		// Return the array
 		return $search_array;
 	}
-
 }
 
 new LWTV_Alexa_Who();

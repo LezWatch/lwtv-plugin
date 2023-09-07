@@ -118,7 +118,6 @@ class LWTV_Stats_Query_Vars {
 		$return     = ( 'none' !== $statistics ) ? 'on ' . ucfirst( $statistics ) : '';
 		return $return;
 	}
-
 }
 
 new LWTV_Stats_Query_Vars();

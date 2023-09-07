@@ -199,7 +199,6 @@ class LWTV_Debug_Actors {
 		update_option( 'lwtv_debugger_status', $option );
 
 		return $items;
-
 	}
 
 	/**
@@ -359,7 +358,7 @@ class LWTV_Debug_Actors {
 				} elseif ( isset( $wiki_actor['sitelinks']['enwiki'] ) ) {
 					$wiki_title = str_replace( ' ', '_', $wiki_actor['sitelinks']['enwiki']['title'] );
 					$wiki_link  = 'https://en.wikipedia.org/wiki/' . $wiki_title;
-				};
+				}
 
 				$check_wiki = array(
 					'birth'     => ( isset( $wiki_actor['claims']['P569'] ) ) ? ( new LWTV_Debug() )->format_wikidate( $wiki_actor['claims']['P569'][0]['mainsnak']['datavalue']['value']['time'] ) : '',
@@ -401,7 +400,6 @@ class LWTV_Debug_Actors {
 
 		return $items;
 	}
-
 }
 
 new LWTV_Debug_Actors();

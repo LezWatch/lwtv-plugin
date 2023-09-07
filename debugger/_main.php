@@ -14,24 +14,24 @@ class LWTV_Debug {
 
 	/**
 	 * Sanitize social media handles
-	 * @param  string $string Username
-	 * @param  string $for    Social Media Type
-	 * @return string         sanitized username
+	 * @param  string $usename Username
+	 * @param  string $social  Social Media Type
+	 * @return string          sanitized username
 	 */
-	public function sanitize_social( $string, $for ) {
+	public function sanitize_social( $usename, $social ) {
 
 		// Defaults.
 		$trim  = 10;
 		$regex = '/[^a-zA-Z_.0-9]/';
 
-		switch ( $for ) {
+		switch ( $social ) {
 			case 'instagram': // ex: https://instagram.com/lezwatchtv
-				$string = str_replace( 'https://instagram.com/', '', $string );
-				$trim   = 30;
+				$usename = str_replace( 'https://instagram.com/', '', $usename );
+				$trim    = 30;
 				break;
 			case 'twitter': // ex: https://twitter.com/lezwatchtv
-				$string = str_replace( 'https://twitter.com/', '', $string );
-				$trim   = 15;
+				$usename = str_replace( 'https://twitter.com/', '', $usename );
+				$trim    = 15;
 				break;
 			case 'mastodon': // ex: https://mstdn.social/@lezwatchtv
 				$regex = '/[^a-zA-Z_.0-9:\/@]/';
@@ -40,7 +40,7 @@ class LWTV_Debug {
 		}
 
 		// Remove all illegal characters.
-		$clean = preg_replace( $regex, '', trim( $string ) );
+		$clean = preg_replace( $regex, '', trim( $usename ) );
 
 		$clean = substr( $clean, 0, $trim );
 
@@ -59,10 +59,10 @@ class LWTV_Debug {
 
 	/**
 	 * Validate IMDB
-	 * @param  string  $string IMDB ID
+	 * @param  string  $imdb IMDB ID
 	 * @return boolean         true/false
 	 */
-	public function validate_imdb( $string, $type = 'show' ) {
+	public function validate_imdb( $imdb, $type = 'show' ) {
 
 		// Defaults
 		$result = true;
@@ -81,13 +81,12 @@ class LWTV_Debug {
 		}
 
 		// IMDB looks like tt123456 or nm12356
-		if ( substr( $string, 0, 2 ) !== $substr || ! is_numeric( substr( $string, 2 ) ) ) {
+		if ( substr( $imdb, 0, 2 ) !== $substr || ! is_numeric( substr( $imdb, 2 ) ) ) {
 			$result = false;
 		}
 
 		return $result;
 	}
-
 }
 
 new LWTV_Debug();

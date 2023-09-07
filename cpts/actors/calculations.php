@@ -57,7 +57,7 @@ class LWTV_Actors_Calculate {
 			if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
 				foreach ( $actors as $actor ) {
 					// We have to check because due to so many characters, we have some actor mis-matches.
-					if ( $actor == $post_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+					if ( $actor == $post_id ) {  // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 						$character_checked[] = $char_id;
 					}
 				}
@@ -80,11 +80,11 @@ class LWTV_Actors_Calculate {
 			if ( '' !== $actors_array && 'publish' === get_post_status( $char_id ) ) {
 				foreach ( $actors_array as $char_actor ) {
 					// To compensate for maybe character situations, we need this loose
-					// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
+					// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 					if ( $char_actor == $post_id ) {
-						$queercount++;
+						++$queercount;
 						if ( $is_dead ) {
-							$deadcount++;
+							++$deadcount;
 						}
 					}
 				}
@@ -128,6 +128,6 @@ class LWTV_Actors_Calculate {
 		update_post_meta( $post_id, 'lezactors_dead_count', $dead_chars );
 		update_post_meta( $post_id, 'lezactors_queer', $is_queer );
 	}
-
 }
+
 new LWTV_Actors_Calculate();

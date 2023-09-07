@@ -38,7 +38,7 @@ class LWTV_Alexa_Whats_On {
 				$eptime = $one_show['rawdate'];
 				// Time is somehow off?
 				$episodes .= $one_show['show'] . ' at ' . gmdate( 'g:i A', $eptime + ( 19 * 3600 ) ) . '. ';
-				$showcount++;
+				++$showcount;
 			}
 		}
 		$output = $how_many . ' ' . gmdate( 'l F jS', $timestamp ) . '. ' . $episodes . ' All times are US Eastern.';
@@ -56,9 +56,7 @@ class LWTV_Alexa_Whats_On {
 		$output = $data['pretty'];
 
 		return $output;
-
 	}
-
 }
 
 new LWTV_Alexa_Whats_On();

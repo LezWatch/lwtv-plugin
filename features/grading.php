@@ -36,7 +36,7 @@ class LWTV_Grading {
 		// Build Array
 		$scores = array(
 			'lwtv'   => array(
-				'image' => plugins_url( '/assets/images/scores/lwtv.png', dirname( __FILE__ ) ),
+				'image' => plugins_url( '/assets/images/scores/lwtv.png', __DIR__ ),
 				'name'  => 'LezWatchTV',
 				'score' => $lwtv['score'],
 				'color' => self::color( $lwtv['score'] ),
@@ -44,7 +44,7 @@ class LWTV_Grading {
 				'url'   => $lwtv['url'],
 			),
 			'tmdb'   => array(
-				'image' => plugins_url( '/assets/images/scores/tmdb.svg', dirname( __FILE__ ) ),
+				'image' => plugins_url( '/assets/images/scores/tmdb.svg', __DIR__ ),
 				'name'  => 'The Movie Database',
 				'score' => $tmdb['score'],
 				'color' => self::color( $tmdb['score'] ),
@@ -52,7 +52,7 @@ class LWTV_Grading {
 				'url'   => $tmdb['url'],
 			),
 			'tvmaze' => array(
-				'image' => plugins_url( '/assets/images/scores/tvmaze.png', dirname( __FILE__ ) ),
+				'image' => plugins_url( '/assets/images/scores/tvmaze.png', __DIR__ ),
 				'name'  => 'TV Maze',
 				'score' => $tvmaze['score'],
 				'color' => self::color( $tvmaze['score'] ),
@@ -282,7 +282,6 @@ class LWTV_Grading {
 
 		update_post_meta( $show_id, 'lezshows_3rd_scores', $current );
 	}
-
 }
 
 new LWTV_Grading();

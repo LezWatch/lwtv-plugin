@@ -63,7 +63,6 @@ class LWTV_This_Year_JSON {
 				'permission_callback' => '__return_true',
 			)
 		);
-
 	}
 
 	/**
@@ -101,6 +100,7 @@ class LWTV_This_Year_JSON {
 	 */
 	public function this_year( $type, $year ) {
 
+		// phpcs:disable
 		// Remove <!--fwp-loop--> from output
 		add_filter(
 			'facetwp_is_main_query',
@@ -110,6 +110,7 @@ class LWTV_This_Year_JSON {
 			10,
 			2
 		);
+		// phpcs:enable
 
 		$year  = ( isset( $year ) ) ? (int) $year : gmdate( 'Y' );
 		$array = array();
@@ -124,7 +125,6 @@ class LWTV_This_Year_JSON {
 		}
 
 		return $array;
-
 	}
 
 	/**
@@ -163,12 +163,11 @@ class LWTV_This_Year_JSON {
 					'canceled'   => ( new LWTV_This_Year_Shows() )->get_list( (string) $start_year, 'ended', true ),
 				);
 			}
-			$start_year++;
+			++$start_year;
 		}
 
 		return $array;
 	}
-
 }
 
 new LWTV_This_Year_JSON();

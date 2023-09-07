@@ -14,13 +14,14 @@ class LWTV_Stats_Output {
 	 * It loops through the arrays and outputs data as needed
 	 *
 	 * @param string $subject The content subject
-	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
-	 * @param string $count The count of posts
+	 * @param string $data    The data 'subject' - used to generate the URLs
+	 * @param array  $saray   The array of data
+	 * @param string $count   The count of posts
 	 *
 	 * @return Content
 	 */
-	public function lists( $subject, $data, $array, $count ) {
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	public function lists( $subject, $data, $saray, $count ) {
 		?>
 		<table id="<?php echo esc_html( $subject ); ?>Table" class="tablesorter table table-striped table-hover">
 			<thead>
@@ -31,7 +32,7 @@ class LWTV_Stats_Output {
 			</thead>
 			<tbody>
 				<?php
-				foreach ( $array as $item ) {
+				foreach ( $saray as $item ) {
 					$name = ( 'Dead Lesbians (Dead Queers)' === $item['name'] ) ? 'Dead' : $item['name'];
 					if ( 0 !== $item['count'] ) {
 						echo '<tr>';
@@ -54,16 +55,16 @@ class LWTV_Stats_Output {
 	 *
 	 * @param string $subject The content subject
 	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
+	 * @param array $saray The array of data
 	 * @param string $count The count of posts
 	 *
 	 * @return Content
 	 */
-	public function percentages( $subject, $data, $array, $count ) {
+	public function percentages( $subject, $data, $saray, $count ) {
 		$pieces = preg_split( '(_|-)', $data );
 		if ( in_array( 'country', $pieces, true ) ) {
 			$count = 0;
-			foreach ( $array as $key => $item ) {
+			foreach ( $saray as $key => $item ) {
 				$count += $item['count'];
 			}
 		} elseif ( in_array( 'dead', $pieces, true ) && ! in_array( 'shows', $pieces ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
@@ -80,7 +81,7 @@ class LWTV_Stats_Output {
 		// @codingStandardsIgnoreStart
 		if ( ! in_array( 'dead', $pieces, true ) ) {
 			// Reorder by item count
-			usort( $array, function( $a, $b ) {
+			usort( $saray, function( $a, $b ) {
 				return $a['count'] - $b['count'];
 			} );
 		}
@@ -115,7 +116,7 @@ class LWTV_Stats_Output {
 			</thead>
 			<tbody>
 				<?php
-				foreach ( $array as $item ) {
+				foreach ( $saray as $item ) {
 					if ( 0 !== $item['count'] ) {
 						$first_count = round( ( ( $item['count'] / $count ) * 100 ), 1 );
 						echo '<tr>';
@@ -144,12 +145,12 @@ class LWTV_Stats_Output {
 	 *
 	 * @param string $subject The content subject (ex: dead)
 	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
+	 * @param array $saray The array of data
 	 * @param string $count The count of posts (usually all characters)
 	 *
 	 * @return Content
 	 */
-	public function averages( $subject, $data, $array, $count, $type = 'average' ) {
+	public function averages( $subject, $data, $saray, $count, $type = 'average' ) {
 
 		$valid_types = array( 'high', 'low', 'average' );
 		if ( ! in_array( $type, $valid_types, true ) ) {
@@ -160,7 +161,7 @@ class LWTV_Stats_Output {
 			case 'average':
 				$n   = ( 'dead-years' === $data ) ? ( gmdate( 'Y' ) - FIRST_LWTV_YEAR ) : $count;
 				$sum = 0;
-				foreach ( $array as $item ) {
+				foreach ( $saray as $item ) {
 					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
 					$sum = $sum + (float) $item['count'];
 				}
@@ -169,7 +170,7 @@ class LWTV_Stats_Output {
 				break;
 			case 'high':
 				$high = 0;
-				foreach ( $array as $key => $value ) {
+				foreach ( $saray as $key => $value ) {
 					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
 					if ( (float) $value['count'] > (float) $high ) {
 						// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
@@ -183,7 +184,7 @@ class LWTV_Stats_Output {
 				break;
 			case 'low':
 				$low = 20;
-				foreach ( $array as $key => $value ) {
+				foreach ( $saray as $key => $value ) {
 					// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
 					if ( (float) $low > (float) $value['count'] ) {
 						// phpcs:ignore WordPress.PHP.TypeCasts.DoubleRealFound
@@ -202,20 +203,20 @@ class LWTV_Stats_Output {
 	/**
 	 * Calculate Trendlines
 	 */
-	public function calculate_trendline( $array ) {
+	public function calculate_trendline( $saray ) {
 		// Calculate Trend
 		$names = array();
 		$count = array();
 		$trend = array();
 
-		foreach ( $array as $item ) {
+		foreach ( $saray as $item ) {
 			$names[] = $item['name'];
 			$count[] = $item['count'];
 		}
 
 		$trendarray = self::linear_regression( $names, $count );
 
-		foreach ( $array as $item ) {
+		foreach ( $saray as $item ) {
 			$number  = ( $trendarray['slope'] * $item['name'] ) + $trendarray['intercept'];
 			$trend[] = ( $number <= 0 ) ? 0 : $number;
 		}
@@ -278,20 +279,20 @@ class LWTV_Stats_Output {
 	 *
 	 * @param string $subject The content subject
 	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
+	 * @param array $saray The array of data
 	 *
 	 * @return Content
 	 */
-	public function barcharts( $subject, $data, $array ) {
+	public function barcharts( $subject, $data, $saray ) {
 
 		// Remove the zeros
-		foreach ( $array as $key => $value ) {
+		foreach ( $saray as $key => $value ) {
 			if ( 0 === $value['count'] ) {
-				unset( $array[ $key ] );
+				unset( $saray[ $key ] );
 			}
 		}
 
-		$count     = count( $array );
+		$count     = count( $saray );
 		$step_size = '5';
 		$height    = max( ( $count * 20 ), 30 ) + 20;
 		$rand      = substr( md5( microtime() ), wp_rand( 0, 26 ), 5 );
@@ -316,7 +317,7 @@ class LWTV_Stats_Output {
 		var bar<?php echo esc_attr( $bar_id ); ?>Data = {
 			labels : [
 				<?php
-				foreach ( $array as $item ) {
+				foreach ( $saray as $item ) {
 					if ( 0 !== $item['count'] ) {
 						switch ( $item['name'] ) {
 							case '0':
@@ -343,7 +344,7 @@ class LWTV_Stats_Output {
 					hoverBorderColor: "rgba(255,99,132,1)",
 					data : [
 						<?php
-						foreach ( $array as $item ) {
+						foreach ( $saray as $item ) {
 							echo '"' . (int) $item['count'] . '", ';
 						}
 						?>
@@ -393,13 +394,13 @@ class LWTV_Stats_Output {
 	 *
 	 * @param string $subject The content subject (shows, characters)
 	 * @param string $data The data - used to generate the URLs
-	 * @param array $array The array of data
+	 * @param array $saray The array of data
 	 *
 	 * @return Content
 	 */
-	public function stacked_barcharts( $subject, $data, $array ) {
+	public function stacked_barcharts( $subject, $data, $saray ) {
 
-		$count     = count( $array );
+		$count     = count( $saray );
 		$step_size = '5';
 		$height    = max( ( $count * 20 ), 30 ) + 20;
 
@@ -421,11 +422,12 @@ class LWTV_Stats_Output {
 			case 'tropes':
 				$datasets = array();
 				$termarry = array(
+					'taxonomy'   => 'lez_' . $data_subtax,
 					'orderby'    => 'count',
 					'order'      => 'DESC',
 					'hide_empty' => 0,
 				);
-				$terms    = get_terms( 'lez_' . $data_subtax, $termarry );
+				$terms    = get_terms( $termarry );
 				if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 					foreach ( $terms as $term ) {
 						$datasets[] = $term->slug;
@@ -454,7 +456,7 @@ class LWTV_Stats_Output {
 		foreach ( $datasets as $label ) {
 			$name                  = ( 'undefined' === $label ) ? 'nundefined' : str_replace( array( '-', '-', '-' ), '', $label );
 			$colors_array[ $name ] = '#' . $colors_tolra[ $color_count ];
-			$color_count++;
+			++$color_count;
 		}
 		?>
 
@@ -467,7 +469,7 @@ class LWTV_Stats_Output {
 		var barStacked<?php echo esc_attr( ucfirst( $subject ) ) . esc_attr( ucfirst( $data_main ) ); ?>Data = {
 			labels : [
 			<?php
-			foreach ( $array as $item ) {
+			foreach ( $saray as $item ) {
 				$name = $item['name'];
 				echo '"' . wp_kses_post( $name ) . ' (' . (int) $item[ $counter ] . ')", ';
 			}
@@ -484,7 +486,7 @@ class LWTV_Stats_Output {
 					stack: 'Stack',
 					data : [
 					<?php
-					foreach ( $array as $name => $item ) {
+					foreach ( $saray as $name => $item ) {
 						if ( isset( $item['dataset'][ $label ] ) ) {
 							echo wp_kses_post( $item['dataset'][ $label ] ) . ',';
 						} else {
@@ -539,11 +541,11 @@ class LWTV_Stats_Output {
 	 *
 	 * @param string $subject The content subject
 	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
+	 * @param array $saray The array of data
 	 *
 	 * @return Content
 	 */
-	public function piecharts( $subject, $data, $array ) {
+	public function piecharts( $subject, $data, $saray ) {
 		// Strip extra word(s) to make the chart key readable
 		switch ( $data ) {
 			case 'sexuality':
@@ -582,20 +584,20 @@ class LWTV_Stats_Output {
 		if ( ! is_int( $data ) || ! in_array( $data, $show_zero, true ) ) {
 			// @codingStandardsIgnoreStart
 			// Reorder by item count
-			usort( $array, function( $a, $b ) {
+			usort( $saray, function( $a, $b ) {
 				return $a['count'] - $b['count'];
 			} );
 			// @codingStandardsIgnoreEnd
 		}
 
 		$check_count = 0;
-		foreach ( $array as $item ) {
+		foreach ( $saray as $item ) {
 			if ( 0 !== $item['count'] ) {
 				$check_count = $check_count + (int) $item['count'];
 			}
 
 			if ( in_array( $data, $show_zero, true ) ) {
-				$check_count++;
+				++$check_count;
 			}
 		}
 
@@ -618,7 +620,7 @@ class LWTV_Stats_Output {
 			// Piechart for stats
 			var pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset = [
 				<?php
-				foreach ( $array as $item ) {
+				foreach ( $saray as $item ) {
 					if ( 0 !== $item['count'] || in_array( $data, $show_zero, true ) ) {
 						echo '"' . (int) $item['count'] . '", ';
 					}
@@ -628,7 +630,7 @@ class LWTV_Stats_Output {
 			var pie<?php echo esc_attr( ucfirst( $data ) ); ?>data = {
 				labels : [
 					<?php
-					foreach ( $array as $item ) {
+					foreach ( $saray as $item ) {
 						if ( 0 !== $item['count'] || in_array( $data, $show_zero, true ) ) {
 							$name = ucfirst( str_replace( $fixname, '', $item['name'] ) );
 							echo '"' . wp_kses_post( $name ) . ' (' . (int) $item['count'] . ')", ';
@@ -712,14 +714,14 @@ class LWTV_Stats_Output {
 	 *
 	 * @param string $subject The content subject
 	 * @param string $data The data 'subject' - used to generate the URLs
-	 * @param array $array The array of data
+	 * @param array $saray The array of data
 	 *
 	 * @return Content
 	 */
-	public function trendline( $subject, $data, $array ) {
+	public function trendline( $subject, $data, $saray ) {
 
-		$array = array_reverse( $array );
-		$trend = self::calculate_trendline( $array );
+		$saray = array_reverse( $saray );
+		$trend = self::calculate_trendline( $saray );
 
 		// Strip hyphens because ChartJS doesn't like it.
 		$cleandata = str_replace( '-', '_', $data );
@@ -741,7 +743,7 @@ class LWTV_Stats_Output {
 			data: {
 				labels : [
 					<?php
-					foreach ( $array as $item ) {
+					foreach ( $saray as $item ) {
 						echo '"' . wp_kses_post( $item['name'] ) . ' (' . (int) $item['count'] . ')", ';
 					}
 					?>
@@ -756,7 +758,7 @@ class LWTV_Stats_Output {
 					hoverBorderColor: "rgba(255,99,132,1)",
 					data : [
 						<?php
-						foreach ( $array as $item ) {
+						foreach ( $saray as $item ) {
 							echo '"' . (int) $item['count'] . '", ';
 						}
 						?>

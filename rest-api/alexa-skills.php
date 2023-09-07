@@ -59,7 +59,7 @@ class LWTV_Alexa_Skills {
 	/**
 	 * Rest API Callback for Flash Briefing
 	 */
-	public function flash_briefing_rest_api_callback( $data ) {
+	public function flash_briefing_rest_api_callback() {
 		require_once 'alexa/flash-brief.php';
 		$response = ( new LWTV_Alexa_Flash_Brief() )->flash_briefing();
 		return $response;

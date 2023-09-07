@@ -53,7 +53,7 @@ class LWTV_Related_Posts {
 			foreach ( $related_post_query as $related_post ) {
 				if ( $count_post < '3' ) {
 					$the_related_posts .= '<div class="col-sm"><center>' . get_the_post_thumbnail( $related_post, 'thumbnail' ) . '</center><br/><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a> &mdash; <em><small>' . get_the_date( get_option( 'date_format' ), $related_post ) . '</small></em></div>';
-					$count_post++;
+					++$count_post;
 				}
 			}
 			$the_related_posts .= '</div></div></div>';
@@ -170,7 +170,6 @@ class LWTV_Related_Posts {
 
 		return $content;
 	}
-
 }
 
 new LWTV_Related_Posts();

@@ -47,19 +47,20 @@ class LWTV_Shows_CMB2 {
 		if ( class_exists( 'LWTV_Languages' ) ) {
 			$this->language_array = ( new LWTV_Languages() )->all_languages();
 		}
-
 	}
 
 	/**
 	 * Use CMB2 filter to load our JavaScript
 	 * when CMB loads his/hers.
 	 *
-	 * @param string $return CMB scripts.
+	 * @param string $scripts CMB scripts.
 	 *
 	 * @return mixed
 	 */
-	public function cmb2_scripts( $return ) {
-		wp_enqueue_script( 'ajaxified_dropdown', plugin_dir_url( dirname( dirname( __FILE__ ) ) ) . 'assets/js/cmb2_ajax.js', array( 'jquery' ), '1.0.0', true );
+	public function cmb2_scripts( $scripts ) {
+		wp_enqueue_script( 'ajaxified_dropdown', plugin_dir_url( dirname( __DIR__ ) ) . 'assets/js/cmb2_ajax.js', array( 'jquery' ), '1.0.0', true );
+		$return = $scripts;
+
 		return $return;
 	}
 

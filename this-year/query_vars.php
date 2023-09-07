@@ -125,7 +125,6 @@ class LWTV_This_Year_Query_Vars {
 		$return    = '(' . $return . ')';
 		return $return;
 	}
-
 }
 
 new LWTV_This_Year_Query_Vars();

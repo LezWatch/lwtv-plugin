@@ -86,7 +86,7 @@ class LWTV_Exclusion_Checks {
 				case 'death':
 					$override = ucfirst( get_post_meta( $item, 'lezshows_byq_override', true ) );
 					break;
-			};
+			}
 
 			// If override is empty, we keep going.
 			if ( empty( $override ) || 'undefined' === $override ) {
@@ -103,7 +103,7 @@ class LWTV_Exclusion_Checks {
 				<td>' . esc_html( $override ) . '</td>
 			</tr>
 			';
-			$number++;
+			++$number;
 		}
 	}
 
@@ -236,8 +236,6 @@ class LWTV_Exclusion_Checks {
 
 		return $queery;
 	}
-
-
 }
 
 new LWTV_Exclusion_Checks();

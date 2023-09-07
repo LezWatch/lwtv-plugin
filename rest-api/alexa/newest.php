@@ -76,7 +76,6 @@ class LWTV_Alexa_Newest {
 
 		return $output;
 	}
-
 }
 
 new LWTV_Alexa_Newest();

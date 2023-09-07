@@ -562,7 +562,6 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 		}
 		return $translated_value;
 	}
-
 }
 
 GFAddOn::register( 'LWTV_GF_Approvals' );

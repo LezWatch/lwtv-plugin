@@ -72,7 +72,6 @@ class LWTV_What_Happened_JSON {
 				'permission_callback' => '__return_true',
 			)
 		);
-
 	}
 
 	/**
@@ -142,7 +141,7 @@ class LWTV_What_Happened_JSON {
 				$death_query_count = 0;
 				foreach ( $death_list_array as $the_dead ) {
 					if ( $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {
-						$death_query_count++;
+						++$death_query_count;
 					}
 				}
 				$count_array['dead'] = $death_query_count;
@@ -216,7 +215,6 @@ class LWTV_What_Happened_JSON {
 		);
 
 		return $count_array;
-
 	}
 
 	/**
@@ -257,17 +255,17 @@ class LWTV_What_Happened_JSON {
 						|| ( $airdates['finish'] >= $thisyear && $airdates['start'] <= $thisyear ) // Airdates between
 					) {
 						// Currently Airing Shows shows for the current year only
-						$shows_this_year['current']++;
+						++$shows_this_year['current'];
 					}
 
 					// Shows that ended this year
 					if ( $airdates['finish'] === $thisyear ) {
-						$shows_this_year['ended']++;
+						++$shows_this_year['ended'];
 					}
 
 					// Shows that STARTED this year
 					if ( $airdates['start'] === $thisyear ) {
-						$shows_this_year['started']++;
+						++$shows_this_year['started'];
 					}
 				}
 			}
@@ -275,7 +273,6 @@ class LWTV_What_Happened_JSON {
 
 		return $shows_this_year;
 	}
-
 }
 
 new LWTV_What_Happened_JSON();

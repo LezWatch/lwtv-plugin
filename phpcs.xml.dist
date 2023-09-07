@@ -1,16 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="LezWatch.TV Coding Standards">
 	<description>A custom ruleset to take in account both WordPress and Lesbian standards.</description>
-
-	<!--
-		Prevent errors caused by WordPress Coding Standards not supporting PHP 8.0+.
-		See https://github.com/WordPress/WordPress-Coding-Standards/issues/2035
-		This can be removed once WPCS is updated. But without this, PHP 8 suuuucks.
-	-->
-	<ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
-	<ini name="memory_limit" value="256M"/>
-
-	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
 	<file>.</file>
 
 	<arg name="extensions" value="php" />
@@ -49,7 +39,8 @@
 	<!-- Blocks -->
 	<exclude-pattern>*/blocks/build/*</exclude-pattern>
 
-	<!-- CMB2 Extensions - not written by us. -->
+	<!-- Extensions - not written by us. -->
+	<exclude-pattern>*/facetwp-cmb2/*</exclude-pattern>
 	<exclude-pattern>*/cmb2-grid/*</exclude-pattern>
 	<exclude-pattern>*/cmb2-attached-posts/*</exclude-pattern>
 	<exclude-pattern>*/cmb-field-select2/*</exclude-pattern>

@@ -24,7 +24,6 @@ class LWTV_CPT_Char_Columns {
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_sexuality' ), 10, 2 );
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_gender' ), 10, 2 );
 		add_filter( 'posts_clauses', array( $this, 'columns_sortability_romantic' ), 10, 2 );
-
 	}
 
 	/*

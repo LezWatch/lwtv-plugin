@@ -123,19 +123,19 @@ class LWTV_Functions {
 	 * Disable WP from updating this plugin.
 	 *
 	 * @access public
-	 * @param mixed $return - array to return.
+	 * @param mixed $data   - array to return.
 	 * @param mixed $url    - URL from which checks come and need to be blocked (i.e. wp.org).
-	 * @return array        - $return
+	 * @return array        - $data
 	 */
-	public function disable_wp_update( $return, $url ) {
+	public function disable_wp_update( $data, $url ) {
 		if ( 0 === strpos( $url, 'https://api.wordpress.org/plugins/update-check/' ) ) {
 			$my_plugin = plugin_basename( __FILE__ );
-			$plugins   = json_decode( $return['body']['plugins'], true );
+			$plugins   = json_decode( $data['body']['plugins'], true );
 			unset( $plugins['plugins'][ $my_plugin ] );
 			unset( $plugins['active'][ array_search( $my_plugin, $plugins['active'], true ) ] );
-			$return['body']['plugins'] = wp_json_encode( $plugins );
+			$data['body']['plugins'] = wp_json_encode( $plugins );
 		}
-		return $return;
+		return $data;
 	}
 
 	/**
@@ -217,10 +217,10 @@ class LWTV_Functions {
 	 * @access public
 	 * @param string $svg         (default: 'square.svg') - SVG name.
 	 * @param string $fontawesome (default: 'fa-square')  - Font-Awesome icon name.
-	 * @param string $class       (default: 'symbolicon') - SVG styling class name.
+	 * @param string $svg_class   (default: 'symbolicon') - SVG styling class name.
 	 * @return icon
 	 */
-	public function symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square', $class = 'symbolicon' ) {
+	public function symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon' ) {
 
 		$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
 		$square = get_template_directory_uri( '/images/square.svg' );
@@ -233,7 +233,7 @@ class LWTV_Functions {
 
 		if ( isset( $icon ) ) {
 			// @codingStandardsIgnoreStart
-			$return = '<span class="' . $class . '" role="img">' . file_get_contents( $icon ) . '</span>';
+			$return = '<span class="' . $svg_class . '" role="img">' . file_get_contents( $icon ) . '</span>';
 			// @codingStandardsIgnoreEnd
 		}
 
@@ -344,11 +344,14 @@ class LWTV_Functions {
 	 * @return int            New time (1 year)
 	 */
 	public function extend_login_session( $expire ) {
+		if ( ! empty( $expire ) ) {
+			$time = $expire;
+		}
 		// Set login session limit in seconds.
 		return YEAR_IN_SECONDS;
 	}
-
 }
+
 new LWTV_Functions();
 
 /*

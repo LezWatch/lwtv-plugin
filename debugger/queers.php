@@ -84,9 +84,7 @@ class LWTV_Debug_Queers {
 		update_option( 'lwtv_debugger_status', $option );
 
 		return $items;
-
 	}
-
 }
 
 new LWTV_Debug_Queers();

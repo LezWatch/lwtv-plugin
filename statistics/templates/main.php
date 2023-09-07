@@ -71,8 +71,8 @@ $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
 				<tbody>
 					<?php
 					$nations = get_terms(
-						'lez_country',
 						array(
+							'taxonomy'   => 'lez_country',
 							'number'     => 10,
 							'orderby'    => 'count',
 							'hide_empty' => 0,
@@ -106,8 +106,8 @@ $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
 				<tbody>
 					<?php
 					$stations = get_terms(
-						'lez_stations',
 						array(
+							'taxonomy'   => 'lez_stations',
 							'number'     => 10,
 							'orderby'    => 'count',
 							'hide_empty' => 0,

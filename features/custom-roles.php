@@ -143,9 +143,7 @@ class LWTV_Roles {
 				exit;
 			}
 		}
-
 	}
-
 }
 
 new LWTV_Roles();

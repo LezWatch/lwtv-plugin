@@ -126,7 +126,6 @@ class LWTV_Characters_Calculate {
 		// Update Actors
 		self::actors( $post_id );
 	}
-
 }
 
 new LWTV_Characters_Calculate();

@@ -324,7 +324,6 @@ class LWTV_CPT_Actors {
 		}
 		return $input;
 	}
-
 }
 
 new LWTV_CPT_Actors();

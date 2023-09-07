@@ -190,7 +190,6 @@ class LWTV_This_Year {
 		</nav><!-- .navigation -->
 		<?php
 	}
-
 }
 
 new LWTV_This_Year();

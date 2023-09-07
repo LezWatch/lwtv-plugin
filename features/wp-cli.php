@@ -43,12 +43,12 @@ class WP_CLI_LWTV_Commands {
 	 * @param array $args       Arguments passed to command (currently unused)
 	 * @param array $assoc_args Associate arguments (currently unused)
 	 */
-	public function tvmaze( $args, $assoc_args ) {
+	public function tvmaze( $args, $assoc_args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		$upload_dir = wp_upload_dir();
 		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
 		$response   = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );
 			WP_CLI::success( 'TVMaze updated successfully.' );
 		} else {
@@ -256,9 +256,7 @@ class WP_CLI_LWTV_Commands {
 		$setit = ( new LWTV_Of_The_Day() )->set_of_the_day( $otd );
 
 		WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set.' );
-
 	}
-
 }
 
 WP_CLI::add_command( 'lwtv', 'WP_CLI_LWTV_Commands' );

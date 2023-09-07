@@ -78,7 +78,6 @@ class LWTV_CPT_Post_Meta {
 			return $response;
 		}, 10, 2 );
 		// phpcs:enable
-
 	}
 
 	/*
@@ -93,7 +92,6 @@ class LWTV_CPT_Post_Meta {
 		foreach ( self::$all_post_metas as $meta_name => $post_type ) {
 			register_meta( $post_type, $meta_name, $default_args );
 		}
-
 	}
 }
 

@@ -361,7 +361,6 @@ class LWTV_Actors_CMB2 {
 		remove_meta_box( 'authordiv', 'post_type_actors', 'normal' );
 		remove_meta_box( 'postexcerpt', 'post_type_actors', 'normal' );
 	}
-
 }
 
 new LWTV_Actors_CMB2();

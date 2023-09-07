@@ -58,7 +58,7 @@ class LWTV_Monitor_Checks {
 										// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 										echo '<td><div class="monitor"><div class="monitor icon">' . $row['icon'] . '</div><div class="monitor status">' . wp_kses_post( $row['status'] ) . '</div></td>';
 									echo '</tr>';
-									$row_count++;
+									++$row_count;
 								}
 								?>
 							</tbody>
@@ -203,7 +203,6 @@ class LWTV_Monitor_Checks {
 		);
 
 		return $return;
-
 	}
 
 	public static function check_uptime_robot( $sitename ) {
@@ -292,9 +291,7 @@ class LWTV_Monitor_Checks {
 		);
 
 		return $return;
-
 	}
-
 }
 
 new LWTV_Monitor_Checks();

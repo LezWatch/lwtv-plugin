@@ -21,17 +21,17 @@ class LWTV_CMB2_Addons {
 	public function __construct() {
 
 		/* LWTV weird stuff */
-		require_once dirname( __FILE__ ) . '/cmb2/lwtv.php';
+		require_once __DIR__ . '/cmb2/lwtv.php';
 		/* CMB2 Grid */
-		require_once dirname( __FILE__ ) . '/cmb2/cmb2-grid/Cmb2GridPluginLoad.php';
+		require_once __DIR__ . '/cmb2/cmb2-grid/Cmb2GridPluginLoad.php';
 		/* Select2 */
 		if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
-			require_once dirname( __FILE__ ) . '/cmb2/cmb-field-select2/cmb-field-select2.php';
+			require_once __DIR__ . '/cmb2/cmb-field-select2/cmb-field-select2.php';
 		}
 		/* Date Year Range */
-		require_once dirname( __FILE__ ) . '/cmb2/year-range.php';
+		require_once __DIR__ . '/cmb2/year-range.php';
 		/* Attached Posts */
-		require_once dirname( __FILE__ ) . '/cmb2/cmb2-attached-posts/cmb2-attached-posts-field.php';
+		require_once __DIR__ . '/cmb2/cmb2-attached-posts/cmb2-attached-posts-field.php';
 
 		// Filter to allow show_on to limit by role
 		add_filter( 'cmb2_show_on', array( $this, 'cmb_show_meta_to_chosen_roles' ), 10, 2 );
@@ -42,7 +42,6 @@ class LWTV_CMB2_Addons {
 		add_filter( 'cmb2_attached_posts_status_filter', array( $this, 'cmb_filter_post_status_attached_posts' ), 10, 2 );
 		// Filter allowed Post perpage for search.
 		add_filter( 'cmb2_attached_posts_per_page_filter', array( $this, 'cmb_filter_post_perpage_attached_posts' ), 10, 2 );
-
 	}
 
 	/**
@@ -60,10 +59,11 @@ class LWTV_CMB2_Addons {
 	 */
 	public function select2_get_options_array_tax( $taxonomies, $query_args = '' ) {
 		$defaults    = array(
+			'taxonomy'   => $taxonomies,
 			'hide_empty' => false,
 		);
 		$args        = wp_parse_args( $query_args, $defaults );
-		$terms       = get_terms( $taxonomies, $args );
+		$terms       = get_terms( $args );
 		$terms_array = array();
 		if ( ! empty( $terms ) ) {
 			foreach ( $terms as $term ) {
@@ -110,16 +110,14 @@ class LWTV_CMB2_Addons {
 				$set_the_terms[] = $term->slug;
 			}
 			wp_set_object_terms( $post_id, $set_the_terms, $taxonomy );
-		} else {
+		} elseif ( false !== $none_term ) {
 			// If there's no postmeta, then set it 'none' if it exists
 			// (this only impacts cliches and tropes at the moment)
-			if ( false !== $none_term ) {
-				wp_set_object_terms( $post_id, $none_term->term_id, $taxonomy );
-				update_post_meta( $post_id, $postmeta, array( $none_term->term_id ) );
-			} else {
-				wp_set_object_terms( $post_id, '', $taxonomy );
-				update_post_meta( $post_id, $postmeta, '' );
-			}
+			wp_set_object_terms( $post_id, $none_term->term_id, $taxonomy );
+			update_post_meta( $post_id, $postmeta, array( $none_term->term_id ) );
+		} else {
+			wp_set_object_terms( $post_id, '', $taxonomy );
+			update_post_meta( $post_id, $postmeta, '' );
 		}
 	}
 
@@ -201,10 +199,9 @@ class LWTV_CMB2_Addons {
 	 *
 	 * For CMB2-Attached-Posts
 	 */
-	public function cmb_filter_post_perpage_attached_posts( $number ) {
-		return 100;
+	public function cmb_filter_post_perpage_attached_posts( $number = 100 ) {
+		return $number;
 	}
-
 }
 
 new LWTV_CMB2_Addons();

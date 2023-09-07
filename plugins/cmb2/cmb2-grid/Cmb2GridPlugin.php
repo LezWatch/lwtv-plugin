@@ -46,5 +46,5 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 	}
 } else {
 	/* PHP 5.3+, so load the plugin.  */
-	include_once dirname( __FILE__ ) . '/Cmb2GridPluginLoad.php';
+	include_once __DIR__ . '/Cmb2GridPluginLoad.php';
 }

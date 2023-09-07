@@ -273,7 +273,6 @@ class LWTV_Characters_CMB2 {
 				),
 			)
 		);
-
 	}
 
 	/*
@@ -283,7 +282,6 @@ class LWTV_Characters_CMB2 {
 		remove_meta_box( 'authordiv', 'post_type_characters', 'normal' );
 		remove_meta_box( 'postexcerpt', 'post_type_characters', 'normal' );
 	}
-
 }
 
 new LWTV_Characters_CMB2();

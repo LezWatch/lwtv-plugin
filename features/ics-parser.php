@@ -139,7 +139,6 @@ class LWTV_ICS_Parser {
 		$d = DateTime::createFromFormat( $format, $date );
 		return $d && $d->format( $format ) === $date;
 	}
-
 }
 
 new LWTV_ICS_Parser();

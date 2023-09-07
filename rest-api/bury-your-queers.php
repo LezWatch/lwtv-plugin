@@ -86,13 +86,12 @@ class LWTV_BYQ_JSON {
 				'permission_callback' => '__return_true',
 			)
 		);
-
 	}
 
 	/**
 	 * Rest API Callback for Last Death
 	 */
-	public function last_death_rest_api_callback( $data ) {
+	public function last_death_rest_api_callback() {
 		$response = $this->last_death();
 		return $response;
 	}
@@ -447,7 +446,6 @@ class LWTV_BYQ_JSON {
 
 		return $return;
 	}
-
 }
 
 new LWTV_BYQ_JSON();

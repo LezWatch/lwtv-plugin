@@ -28,7 +28,6 @@ class LWTV_Transients {
 
 		return get_transient( $transient );
 	}
-
 }
 
 new LWTV_Transients();

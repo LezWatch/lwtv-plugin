@@ -103,7 +103,6 @@ class LWTV_Find_Spammers {
 
 		return $return;
 	}
-
 }
 
 new LWTV_Find_Spammers();

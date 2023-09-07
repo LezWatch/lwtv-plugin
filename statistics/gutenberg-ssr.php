@@ -13,7 +13,7 @@ class LWTV_Stats_SSR {
 	 * Display statistics
 	 *
 	 * Usage:
-	 *		[statistics page=[main|death]]
+	 *  [statistics page=[main|death]]
 	 *
 	 * @since 1.0
 	 */
@@ -28,7 +28,7 @@ class LWTV_Stats_SSR {
 		$valid_pages = array( 'main', 'actors', 'characters', 'death', 'formats', 'nations', 'shows', 'stations' );
 		$the_page    = ( ! in_array( sanitize_text_field( $attributes['page'] ), $valid_pages, true ) ) ? 'main' : sanitize_text_field( $attributes['page'] );
 
-		$output = self::get_include_contents( dirname( __FILE__ ) . '/templates/' . $the_page . '.php' );
+		$output = self::get_include_contents( __DIR__ . '/templates/' . $the_page . '.php' );
 
 		return '<div class="lwtv-stats">' . $output . '</div>';
 	}
@@ -37,7 +37,7 @@ class LWTV_Stats_SSR {
 	 * Display statistics for actors/characters etc.
 	 *
 	 * Usage:
-	 *		[ministats posttype=[actor|show|character]]
+	 *  [ministats posttype=[actor|show|character]]
 	 *
 	 * @since 1.0
 	 */
@@ -52,7 +52,7 @@ class LWTV_Stats_SSR {
 		$valid_postypes = array( 'post_type_actors', 'post_type_characters', 'post_type_shows' );
 		$this_posttype  = ( ! in_array( sanitize_text_field( $attributes['posttype'] ), $valid_postypes, true ) ) ? 'none' : sanitize_text_field( $attributes['posttype'] );
 
-		$output = self::get_include_contents( dirname( __FILE__ ) . '/templates/' . $this_posttype . '.php' );
+		$output = self::get_include_contents( __DIR__ . '/templates/' . $this_posttype . '.php' );
 		return '<div class="lwtv-stats ' . $this_posttype . ' ">' . $output . '</div>';
 	}
 
@@ -64,7 +64,6 @@ class LWTV_Stats_SSR {
 		}
 		return false;
 	}
-
 }
 
 new LWTV_Stats_SSR();

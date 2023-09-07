@@ -55,5 +55,4 @@ class LWTV_Shows_Calendar {
 
 		return $return;
 	}
-
 }

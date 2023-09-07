@@ -27,7 +27,7 @@ class LWTV_FacetWP {
 		// Filter Facet output
 		add_filter(
 			'facetwp_facet_html',
-			function( $output, $params ) {
+			function ( $output, $params ) {
 				if ( 'show_airdates' === $params['facet']['name'] ) {
 					$output = str_replace( 'Min', 'First Year', $output );
 					$output = str_replace( 'Max', 'Last Year', $output );
@@ -41,7 +41,7 @@ class LWTV_FacetWP {
 		// Adding a weird filter...
 		add_filter(
 			'facetwp_facet_sources',
-			function( $sources ) {
+			function ( $sources ) {
 				$sources['custom_fields']['choices']['cf/lwtv_data'] = 'lwtv_data';
 				return $sources;
 			}
@@ -68,7 +68,7 @@ class LWTV_FacetWP {
 	 *
 	 * @since 1.1
 	 */
-	public function facetwp_index_row( $params, $class ) {
+	public function facetwp_index_row( $params, $facet_class ) {
 
 		// Shows
 		if ( 'post_type_shows' === get_post_type( $params['post_id'] ) ) {
@@ -77,7 +77,7 @@ class LWTV_FacetWP {
 			if ( 'show_stars' === $params['facet_name'] ) {
 				$params['facet_value']         = $params['facet_value'];
 				$params['facet_display_value'] = ucfirst( $params['facet_display_value'] );
-				$class->insert( $params );
+				$facet_class->insert( $params );
 				// skip default indexing
 				$params['facet_value'] = '';
 				return $params;
@@ -87,7 +87,7 @@ class LWTV_FacetWP {
 			if ( 'show_loved' === $params['facet_name'] ) {
 				$params['facet_value']         = ( 'on' === $params['facet_value'] ) ? 'yes' : 'no';
 				$params['facet_display_value'] = ( 'on' === $params['facet_display_value'] ) ? 'Yes' : 'No';
-				$class->insert( $params );
+				$facet_class->insert( $params );
 				// skip default indexing
 				$params['facet_value'] = '';
 				return $params;
@@ -97,7 +97,7 @@ class LWTV_FacetWP {
 			if ( 'show_death' === $params['facet_name'] ) {
 				$params['facet_value']         = ( $params['facet_value'] >= 1 ) ? 'yes' : 'no';
 				$params['facet_display_value'] = ( $params['facet_display_value'] >= 1 ) ? 'Yes' : 'No';
-				$class->insert( $params );
+				$facet_class->insert( $params );
 				// skip default indexing
 				$params['facet_value'] = '';
 				return $params;
@@ -107,7 +107,7 @@ class LWTV_FacetWP {
 			if ( 'show_trigger_warning' === $params['facet_name'] ) {
 				$params['facet_value']         = ( 'on' === $params['facet_display_value'] ) ? 'high' : $params['facet_display_value'];
 				$params['facet_display_value'] = ( 'on' === $params['facet_display_value'] ) ? 'High' : ucfirst( $params['facet_display_value'] );
-				$class->insert( $params );
+				$facet_class->insert( $params );
 				// skip default indexing
 				$params['facet_value'] = '';
 				return $params;
@@ -129,12 +129,12 @@ class LWTV_FacetWP {
 				// Add start date
 				$params_start['facet_value']         = $start;
 				$params_start['facet_display_value'] = $start;
-				$class->insert( $params_start );
+				$facet_class->insert( $params_start );
 
 				// Add end date
 				$params_end['facet_value']         = $end;
 				$params_end['facet_display_value'] = $end;
-				$class->insert( $params_end );
+				$facet_class->insert( $params_end );
 
 				// Extra check for is it currently on air
 				$params_on_air = $params;
@@ -149,7 +149,7 @@ class LWTV_FacetWP {
 				$params_on_air['facet_name']          = 'show_on_air';
 				$params_on_air['facet_value']         = $on_air;
 				$params_on_air['facet_display_value'] = ucfirst( $on_air );
-				$class->insert( $params_on_air );
+				$facet_class->insert( $params_on_air );
 
 				// skip default indexing
 				$params['facet_value'] = '';
@@ -168,7 +168,7 @@ class LWTV_FacetWP {
 					$params_loved['facet_source']        = 'cf/lezshows_worthit_show_we_love';
 					$params_loved['facet_value']         = 'no';
 					$params_loved['facet_display_value'] = 'No';
-					$class->insert( $params_loved );
+					$facet_class->insert( $params_loved );
 				}
 				// If there are no warnings
 				$warn = get_the_terms( $params['post_id'], 'lez_triggers' );
@@ -178,7 +178,7 @@ class LWTV_FacetWP {
 					$params_warn['facet_source']        = 'tax/lez_triggers';
 					$params_warn['facet_value']         = 'none';
 					$params_warn['facet_display_value'] = 'None';
-					$class->insert( $params_warn );
+					$facet_class->insert( $params_warn );
 				}
 				// If there are no stars
 				$stars = get_the_terms( $params['post_id'], 'lez_stars' );
@@ -188,7 +188,7 @@ class LWTV_FacetWP {
 					$params_stars['facet_source']        = 'tax/lez_stars';
 					$params_stars['facet_value']         = 'none';
 					$params_stars['facet_display_value'] = 'None';
-					$class->insert( $params_stars );
+					$facet_class->insert( $params_stars );
 				}
 				// skip default indexing
 				$params['facet_value'] = '';
@@ -203,7 +203,7 @@ class LWTV_FacetWP {
 			if ( 'is_queer' === $params['facet_name'] ) {
 				$params['facet_value']         = ( '1' === $params['facet_value'] ) ? 'yes' : 'no';
 				$params['facet_display_value'] = ( '1' === $params['facet_display_value'] ) ? 'Is Queer' : 'Is Not Queer';
-				$class->insert( $params );
+				$facet_class->insert( $params );
 				// skip default indexing
 				$params['facet_value'] = '';
 				return $params;
@@ -219,7 +219,7 @@ class LWTV_FacetWP {
 				foreach ( $values as $val ) {
 					$params['facet_value']         = $val;
 					$params['facet_display_value'] = get_the_title( $val );
-					$class->insert( $params );
+					$facet_class->insert( $params );
 				}
 				// skip default indexing
 				$params['facet_value'] = '';
@@ -233,7 +233,7 @@ class LWTV_FacetWP {
 					if ( isset( $val['show'] ) ) {
 						$params['facet_value']         = $val['show'];
 						$params['facet_display_value'] = get_the_title( $val['show'] );
-						$class->insert( $params );
+						$facet_class->insert( $params );
 					}
 				}
 				// skip default indexing
@@ -247,7 +247,7 @@ class LWTV_FacetWP {
 				foreach ( $values as $val ) {
 						$params['facet_value']         = $val['type'];
 						$params['facet_display_value'] = get_the_title( $val['type'] );
-						$class->insert( $params );
+						$facet_class->insert( $params );
 				}
 				// skip default indexing
 				$params['facet_value'] = '';
@@ -265,7 +265,7 @@ class LWTV_FacetWP {
 						$params['facet_value']         = $year;
 						$params['facet_display_value'] = $year;
 					}
-					$class->insert( $params );
+					$facet_class->insert( $params );
 				}
 				// skip default indexing
 				$params['facet_value'] = '';
@@ -275,7 +275,6 @@ class LWTV_FacetWP {
 
 		return $params;
 	}
-
 }
 
 new LWTV_FacetWP();

@@ -81,7 +81,7 @@ class LWTV_DashboardPostsInProgress {
 	/**
 	 * Output the widget contents
 	 */
-	public function widget( $args ) {
+	public function widget( $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		$filtered_post_type  = apply_filters( 'dashboard_posts_in_progress_type', 'post' );
 		$filtered_post_type  = ( post_type_exists( $filtered_post_type ) || 'any' === $filtered_post_type ) ? $filtered_post_type : 'post';
 		$post_type_object    = get_post_type_object( $filtered_post_type );
@@ -207,6 +207,8 @@ class LWTV_DashboardPostsInProgress {
 
 // Start this plugin once all other plugins are fully loaded
 add_action( 'plugins_loaded', 'lwtv_dashboard_posts_in_progress_loaded' );
+
+// phpcs:ignore Universal.Files.SeparateFunctionsFromOO.Mixed
 function lwtv_dashboard_posts_in_progress_loaded() {
 	new LWTV_DashboardPostsInProgress();
 }
