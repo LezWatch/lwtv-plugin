@@ -137,6 +137,8 @@ class LWTV_SSR_Calendar {
 		$get_tvdate = isset( $_GET['tvdate'] ) ? sanitize_text_field( $_GET['tvdate'] ) : 'today'; // phpcs:ignore WordPress.Security.NonceVerification
 		$date_query = ( ( strtotime( $get_tvdate ) !== false ) && ( $get_tvdate !== $today->format( 'Y-m-d' ) ) ) ? $get_tvdate : 'today';
 
+		// @todo: If 'date_query' is 2 weeks ago, or 2 weeks ahead, we don't show.
+
 		// Get the dates
 		$start_datetime = self::start_datetime( $date_query, $tz );
 		$end_datetime   = self::end_datetime( $date_query, $tz );
