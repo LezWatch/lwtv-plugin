@@ -20,7 +20,7 @@ class LWTV_Gravity_Forms {
 	/**
 	 * Mark as spam
 	 *
-	 * If someone on our block-list emails, auto-mark as spam becuase we do
+	 * If someone on our block-list emails, auto-mark as spam because we do
 	 * not want to hear from them, but we don't want them to know they were rejected
 	 * and thus encourage them to try other methods. Aren't assholes fun?
 	 *
@@ -82,6 +82,11 @@ class LWTV_Gravity_Forms {
 		// If a VPN...
 		if ( $is_naughty['vpn'] ) {
 			$warn_message .= 'Using a VPN. This may be harmless, but it\'s also how people evade bans. ';
+		}
+
+		// If the person is Moderated...
+		if ( $is_naughty['mod'] ) {
+			$warn_message .= 'Flagged for post moderation. Probably okay, but may be a pill later. ';
 		}
 
 		// And if it's a spammer...

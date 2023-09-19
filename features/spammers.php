@@ -55,9 +55,6 @@ class LWTV_Find_Spammers {
 	 */
 	public static function is_spammer( $to_check, $type = 'email', $keys = 'disallowed_keys' ) {
 
-		// Default assume good people.
-		$return = false;
-
 		// Get disallowed keys & convert to array
 		$disallowed = self::list( $keys );
 
@@ -80,7 +77,7 @@ class LWTV_Find_Spammers {
 
 			// If the email OR the domain is an exact match in the array, then it's a spammer
 			if ( in_array( $email, $disallowed, true ) || in_array( $domain, $disallowed, true ) ) {
-				$return = true;
+				return true;
 			}
 		}
 
@@ -88,20 +85,18 @@ class LWTV_Find_Spammers {
 			$ip      = $to_check;
 			$bad_ips = false;
 			foreach ( $disallowed as $nope ) {
+				// Only check the IPs:
 				if ( rest_is_ip_address( $nope ) ) {
 					if ( ( strpos( $ip, $nope ) !== false ) || $ip === $nope ) {
-						$bad_ips = true;
+						// If it's a match, it's a spam, return true and end.
+						return true;
 					}
 				}
 			}
-
-			// If they're a bad IP, then they're a bad IP and we flag.
-			if ( false !== $bad_ips ) {
-				$return = true;
-			}
 		}
 
-		return $return;
+		// If we got down here, we're not spam.
+		return false;
 	}
 }
 
