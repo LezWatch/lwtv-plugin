@@ -508,7 +508,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 							} else {
 								echo 'Anonymous ';
 							}
-							echo '(' . esc_html( $get_ip ) . ')';
+							echo '(' . esc_html( $get_ip['full'] ) . ')';
 							?>
 						</td>
 						<td>
