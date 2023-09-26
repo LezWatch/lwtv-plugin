@@ -20,11 +20,3 @@ require_once 'shortcodes.php';                   // Custom Shortcodes (mostly un
 require_once 'spammers.php';                     // Catch and Kill Spammers
 require_once 'transients.php';                   // Transients overridden
 require_once 'upgrades.php';                     // Handle Upgrades
-
-/**
- * WP CLI.
- * Only include this if WP-CLI is being used.
- */
-if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once 'wp-cli.php';
-}

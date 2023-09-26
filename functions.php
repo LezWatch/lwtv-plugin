@@ -369,5 +369,6 @@ require_once 'rest-api/_main.php';      // Our Rest API.
 require_once 'statistics/_main.php';    // Stats.
 require_once 'this-year/_main.php';     // This Year.
 require_once 'ways_to_watch/_main.php'; // Ways to Watch.
+require_once 'wp-cli/_main.php';        // WP-CLI commands
 
 require_once 'cpts/_main.php';         // Custom Post Types: This MUST be at the end.
