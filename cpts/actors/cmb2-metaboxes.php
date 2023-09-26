@@ -362,6 +362,7 @@ class LWTV_Actors_CMB2 {
 			$row9           = $grid_actorside->addRow();
 			$row10          = $grid_actorside->addRow();
 			$row11          = $grid_actorside->addRow();
+			$row12          = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
 			$row2->addColumns( array( $field_romantic, $field_queer_override ) );
 			$row3->addColumns( array( $field_pronouns ) );
