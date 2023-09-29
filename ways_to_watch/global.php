@@ -63,7 +63,7 @@ class LWTV_Affiliate_Global {
 		if ( preg_match( $regex_url, $post_content, $url ) ) {
 			// If there is a match, we need to update the URL to include our tag.
 			$linkurl = rtrim( $url[0], '"' );
-			$content = preg_replace( $regex_url, $linkurl . '?tag=lezpress-20"', $text );
+			$content = preg_replace( $regex_url, $linkurl . '?tag=lezpress-20"', $post_content );
 		}
 
 		return $content;

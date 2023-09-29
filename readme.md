@@ -6,7 +6,7 @@ Custom plugin for LezWatch.TV
 
 The LezWatch.TV plugin contains custom code for use with the site. Instead of having everything hardcoded into the theme, or shoved in a shared MU Plugin, it was moved to it's own plugin. This allows it to be updated outside of the theme and deploy new features as needed.
 
-The code was written by Tracy Levesque and Mika Epstein, with assistance from [Yikes Inc.](https://YikesInc.com)
+The code was written by Tracy Levesque and Mika Epstein, with assistance from [Yikes!](https://YikesInc.com)
 
 Further documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatchtv.com)
 
@@ -168,6 +168,19 @@ _Shows (`/shows/`)_
 * `custom-columns.php` - Define columns for post listing
 * `shows-link-this.php` - Calculations for 'shows like this' (uses [Related Posts by Taxonomy](https://wordpress.org/plugins/related-posts-by-taxonomy/))
 
+### Debugger
+
+Stored in `/debugger/` -- a collection of all code used to debug and manage content.
+
+* `_main.php` - Generalized features and calls all sub files
+    - `sanitize_social()` - Sanitizes and validates social media.
+    - `format_wikidate()` - Formats dates for and from WikiData
+    - `validate_imdb()` - Validates IMDb slugs
+* `actors.php` - Find all problems with Actor pages.
+* `characters.php` - Find all problems with Character pages.
+* `queers.php` - Find all problems with Queer data (i.e. are actors queer, are characters played by queer actors)
+* `shows.php` - Find all problems with Show pages.
+
 ### Features
 
 Stored in `/features/` -- a collection of miscellaneous features.
@@ -190,9 +203,8 @@ Stored in `/features/` -- a collection of miscellaneous features.
     - `post_meta_and_tax_query()` - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
     - `related_posts_by_tag()` - Related Posts by Tags.
 * `custom-roles.php` - Custom roles created for curation of content
-* `dashboard.php` - Custom column for featured images in posts lists and removal of self pings
 * `dashboard-posts-in-progress.php` - Forked version of a plugin to show in progress posts
-* `debug.php` - Debugging Tools for weird content.
+* `dashboard.php` - Custom column for featured images in posts lists and removal of self pings
 * `embeds.php` - Embeds DisneyABCPress videos, Gleam, GoFundMe, Indiegogo
 * `grading.php` - Build and format array for displaying show scores including 3rd parties.
 * `ics-parser.php` - Connection to the ICS Parser for calendar data.
@@ -214,17 +226,20 @@ Stored in `/features/` -- a collection of miscellaneous features.
 		* Spoilers: `[spoilers]` or `[spoilers warning="OMG SPIDERS!!!"]`
 * `spammers.php` - Prevent Spammers from annoying us
 * `upgrades.php` - Handle upgrades of WP and everything included.
-* `wp-cli.php`- WP-CLI
-    - Re-run calculations for specific post content (actors & shows): `wp lwtv calc [actor|show|character] PostID`
-    - Compare data to WikiData: `wp lwtv wiki [actor] PostID`
-    - Find miss matched data: ex. `wp lwtv find queerchars`
-    - Rebuild TVMaze ics file: `wp lwtv tvmaze`
 
 ### Node Scripts
 
 Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`). _This is removed by the builder script when pushed to production._
 
 * `postinstall.js` - script run at the end of NPM to move files to the correct location.
+
+### Of The Day
+
+Stored in `/of-the-day/` - code used to generate character and show of the day.
+
+* `_main.php` - generates custom SQL table to store 'of the day' records
+* `rss.php` - Generates custom RSS feed for of-the-day (`/feeds/otd/`)
+* `template.php` - Backup of theme template.
 
 ### Plugin Addons
 
@@ -236,13 +251,16 @@ The file `_main.php` acts as an autoloader.
     - Generates data used by Proxy Cache Purge to know what to flush.
 * `cmb2.php` - Integration with CMB2
     - calls other files
-    - generates a CB2 formatted list of terms
 * `/cmb2/` - CMB2 add on libraries
     - `cmb2-field-select2/` - Updated version of field select 2.
     - `cmb2-attached-posts/` - CMB2 attached posts (HEAVILY forked)
     - `cmb2-grid/` - CMB2 Grid Display
+    - `attached-posts.php` - Custom code for Attached Posts
     - `cmb2.css` - Custom CSS
-    - `lwtv.php` - Special code for us -- Favorite shows for author profiles, Symbolicon support
+    - `meta-by-role.php` - Only allow people with certain roles to edit certain post meta.
+    - `metabox-profiles.php` - Add custom metaboxes for user profiles
+    - `symbolicons.php` - Symbolicon integration for taxonomies.
+    - `taxonomies.php` - Custom filters for taxonomies so they display properly in meta boxes.
     - `year-range.php` - Year Range -- 'date_year_range' custom field type
 * `comment_probation.php` - Fork of abandoned plugin
 * `facetwp.php` -- Facet WP
@@ -330,7 +348,7 @@ Stored in `/statistics/` - These files generate everything for stats, from graph
     - `function show_roles()` - Roles of characters on Shows, with how many of each role are dead
     - `function complex_taxonomy()` - How many characters are played by out queer actors, but also how many characters for each term.
 * `gutenberg-ssr.php` - Gutenberg Server side rendering to show stats
-*  `output.php` - Output: `class LWTV_Stats_Output`
+* `output.php` - Output: `class LWTV_Stats_Output`
     - `function lists()` - Table lists with simple counts
     - `function percentages()` - Table lists with percentages and a bar
     - `function averages()` - Averages, highs, and lows (ex show scores)
@@ -359,11 +377,21 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 
 Stored in `/ways_to_watch/` -- Code to customize Ways to Watch links and add affiliate data, or alter display names.
 
-* `/images/` - Images used by local promotions.
 * `_main.php` - Loader file.
 * `deprecated.php` - Code from the former ads system, removed and will eventually be revamped.
 * `global.php` - All global data, such as header/meta and content regex.
 * `ways-to-watch.php` - Affiliate links and pretty-fication of services
+
+* `/images/` - Images used by local promotions.
+
+## WP-CLI
+
+Stored in `/wp-cli/` -- All code for WP-CLI
+
+* `_main.php` - Loader file.
+* `calc.php` - Calculations on content (scores, character count, etc) - `wp lwtv CALC [ID]`
+* `check.php` - Data validation checkers - `wp lwtv CHECK [queerchars|wiki] [id]`
+* `generate.php` - Generate custom content - `wp lwtv GENERATE [otd|tvmaze]`
 
 ## Developer Features
 
