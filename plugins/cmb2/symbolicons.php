@@ -1,36 +1,19 @@
 <?php
-/*
-Description: Customizations for CMB2
-Version: 2.0.2
-*/
-
-if ( ! defined( 'WPINC' ) ) {
-	die;
-}
-
 /**
- * class LWTV_CMB2
- *
- * Customize CMB2
+ * Add support for Symbolicons to CMB2
  *
  * @since 1.0
  */
-class LWTV_CMB2 {
+
+class LWTV_CMB2_Symbolicons {
 
 	public $icon_taxonomies; // Taxonomies that have an icon
 	public $symbolicon_path; // Path to symbolicons
-	public $version; // Plugin version
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-
-		$this->version = '2.0.2';
-
-		add_action( 'admin_init', array( $this, 'admin_init' ) );
-		add_action( 'cmb2_admin_init', array( $this, 'favorite_shows_user_profile_metabox' ) );
-
 		$this->icon_taxonomies = array( 'lez_cliches', 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_intersections' );
 
 		// Register metaboxes.
@@ -40,59 +23,6 @@ class LWTV_CMB2 {
 		foreach ( $this->icon_taxonomies as $tax_name ) {
 			add_filter( 'manage_edit-' . $tax_name . '_columns', array( $this, 'terms_column_header' ) );
 			add_action( 'manage_' . $tax_name . '_custom_column', array( $this, 'terms_column_content' ), 10, 3 );
-		}
-	}
-
-	/**
-	 * Init
-	 */
-	public function admin_init() {
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 10 );
-	}
-
-	/**
-	 * Get default data for some odd CMB2 things using select2
-	 * @param  string  $postmeta the name of the postmeta used by CMB2
-	 * @param  string  $taxonomy the name of the taxonomy we're using
-	 * @param  integer $post_id  post ID
-	 * @param  boolean $none     does it have a 'none'?
-	 * @return array             An array of Term IDs
-	 */
-	public function get_select2_defaults( $postmeta, $taxonomy, $post_id = 0, $none = false ) {
-
-		if ( 0 === $post_id ) {
-			return;
-		}
-
-		$get_postmeta    = get_post_meta( $post_id, $postmeta, true );
-		$postmeta_to_add = array();
-		if ( ! array( $get_postmeta ) || empty( $get_postmeta ) ) {
-			// If NONE is true, we have some extra
-			if ( $none ) {
-				$get_taxonomy = wp_get_post_terms( $post_id, $taxonomy );
-				if ( ! empty( $get_taxonomy ) && ! is_wp_error( $get_taxonomy ) ) {
-					foreach ( $get_taxonomy as $the_term ) {
-						$postmeta_to_add[] = $the_term->term_id;
-					}
-					update_post_meta( $post_id, $postmeta, $postmeta_to_add );
-				}
-			}
-		}
-		return $postmeta_to_add;
-	}
-
-	/**
-	 * CSS tweaks
-	 *
-	 * @access public
-	 * @param mixed $hook string - The filename of the page.
-	 * @return void
-	 */
-	public function admin_enqueue_scripts( $hook ) {
-		wp_register_style( 'cmb-styles', plugins_url( 'cmb2.css', __FILE__ ), array(), $this->version );
-		$post_array = array( 'edit-tags.php', 'post.php', 'post-new.php', 'term.php', 'page-new.php', 'page.php' );
-		if ( in_array( $hook, $post_array, true ) ) {
-			wp_enqueue_style( 'cmb-styles' );
 		}
 	}
 
@@ -170,7 +100,9 @@ class LWTV_CMB2 {
 		}
 	}
 
-	// Add before field icon display
+	/**
+	 * Add before field icon display.
+	 */
 	public function before_field_icon( $field_args, $field ) {
 		$icon = $field->value;
 
@@ -189,13 +121,17 @@ class LWTV_CMB2 {
 		return $content;
 	}
 
-	// Tax list column header
+	/**
+	 * Add column header for icon.
+	 */
 	public function terms_column_header( $columns ) {
 		$columns['icon'] = 'Icon';
 		return $columns;
 	}
 
-	// Tax list column content
+	/**
+	 * Column content for symbolicons.
+	 */
 	public function terms_column_content( $value, $content, $term_id ) {
 		$icon = get_term_meta( $term_id, 'lez_termsmeta_icon', true );
 
@@ -213,40 +149,6 @@ class LWTV_CMB2 {
 
 		return $content;
 	}
-
-	/**
-	 * favorite_shows_user_profile_metabox function.
-	 */
-	public function favorite_shows_user_profile_metabox() {
-		$prefix = 'lez_user_';
-		/**
-		 * Metabox for the user profile screen
-		 */
-		$cmb_user = new_cmb2_box(
-			array(
-				'id'               => $prefix . 'edit',
-				'title'            => 'Super Queer Love',
-				'object_types'     => array( 'user' ),
-				'show_names'       => true,
-				'new_user_section' => 'add-new-user',
-			)
-		);
-		$cmb_user->add_field(
-			array(
-				'name'     => 'Favorite Shows',
-				'desc'     => 'Drag a show from the left column to the right column to attach them to this page.<br />Rearrange the order in the right column by dragging and dropping.',
-				'id'       => $prefix . 'favourite_shows',
-				'type'     => 'custom_attached_posts',
-				'options'  => array(
-					'query_args' => array(
-						'posts_per_page' => 5,
-						'post_type'      => 'post_type_shows',
-					), // override the get_posts args
-				),
-				'on_front' => true,
-			)
-		);
-	}
 }
 
-new LWTV_CMB2();
+new LWTV_CMB2_Symbolicons();

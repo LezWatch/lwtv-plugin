@@ -1,8 +1,8 @@
 <?php
 /**
- * Class WDS_CMB2_Attached_Posts_Field
+ * Class LWTV_CMB2_Attached_Posts_Field
  */
-class WDS_CMB2_Attached_Posts_Field {
+class LWTV_CMB2_Attached_Posts_Field {
 
 	/**
 	 * Current version number
@@ -10,7 +10,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	const VERSION = CMB2_ATTACHED_POSTS_FIELD_VERSION;
 
 	/**
-	 * @var WDS_CMB2_Attached_Posts_Field
+	 * @var LWTV_CMB2_Attached_Posts_Field
 	 */
 	protected static $single_instance = null;
 
@@ -32,7 +32,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	/**
 	 * Creates or returns an instance of this class.
 	 * @since  0.1.0
-	 * @return WDS_CMB2_Attached_Posts_Field A single instance of this class.
+	 * @return LWTV_CMB2_Attached_Posts_Field A single instance of this class.
 	 */
 	public static function get_instance() {
 		if ( null === self::$single_instance ) {
@@ -73,86 +73,67 @@ class WDS_CMB2_Attached_Posts_Field {
 		}
 
 		$query_args  = (array) $this->field->options( 'query_args' );
-		$query_users = $this->field->options( 'query_users' );
 		$post_status = array( 'publish' );
 
-		if ( ! $query_users ) {
+		$args = wp_parse_args(
+			$query_args,
+			array(
+				'post_type'      => 'post',
+				'posts_per_page' => apply_filters( 'cmb2_attached_posts_per_page_filter', 50 ),
+				'post_status'    => apply_filters( 'cmb2_attached_posts_status_filter', $post_status ),
+			)
+		);
 
-			// Setup our args
-			$args = wp_parse_args(
-				$query_args,
-				array(
-					'post_type'      => 'post',
-					'posts_per_page' => apply_filters( 'cmb2_attached_posts_per_page_filter', 50 ),
-					'post_status'    => apply_filters( 'cmb2_attached_posts_status_filter', $post_status ),
-				)
-			);
-
-			// phpcs:ignore WordPress.Security.NonceVerification
-			if ( isset( $_POST['post'] ) ) {
-				// phpcs:ignore WordPress.Security.NonceVerification
-				$args['post__not_in'] = array( absint( $_POST['post'] ) );
-			}
-
-			// loop through post types to get labels for all
-			$post_type_labels = array();
-			foreach ( (array) $args['post_type'] as $post_type ) {
-				// Get post type object for attached post type
-				$post_type_obj = get_post_type_object( $post_type );
-
-				// continue if we don't have a label for the post type
-				if ( ! $post_type_obj || ! isset( $post_type_obj->labels->name ) ) {
-					continue;
-				}
-
-				if ( is_post_type_hierarchical( $post_type_obj ) ) {
-					$args['orderby'] = isset( $args['orderby'] ) ? $args['orderby'] : 'name';
-					$args['order']   = isset( $args['order'] ) ? $args['order'] : 'ASC';
-				}
-
-				$post_type_labels[] = $post_type_obj->labels->name;
-			}
-
-			$this->do_type_label = count( $post_type_labels ) > 1;
-
-			$post_type_labels = implode( '/', $post_type_labels );
-
-		} else {
-			// Setup our args
-			$args             = wp_parse_args(
-				$query_args,
-				array(
-					'number' => 100,
-				)
-			);
-			$post_type_labels = $field_type->_text( 'users_text', esc_html__( 'Users' ) );
+		// Exclude this post from search
+		if ( isset( $_POST['post'] ) ) {                               // phpcs:ignore WordPress.Security.NonceVerification
+			$args['post__not_in'] = array( absint( $_POST['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 		}
+
+		// loop through post types to get labels for all
+		$post_type_labels = array();
+		foreach ( (array) $args['post_type'] as $post_type ) {
+			// Get post type object for attached post type.
+			$post_type_obj = get_post_type_object( $post_type );
+
+			// Continue if we don't have a label for the post type.
+			if ( ! $post_type_obj || ! isset( $post_type_obj->labels->name ) ) {
+				continue;
+			}
+
+			$args['orderby'] = isset( $args['orderby'] ) ? $args['orderby'] : 'name';
+			$args['order']   = isset( $args['order'] ) ? $args['order'] : 'ASC';
+
+			$post_type_labels[] = $post_type_obj->labels->name;
+		}
+
+		$this->do_type_label = count( $post_type_labels ) > 1;
+
+		$post_type_labels = implode( '/', $post_type_labels );
 
 		$filter_boxes = '';
 		// Check 'filter' setting
 		if ( $this->field->options( 'filter_boxes' ) ) {
-			// translators: %s is the type of content we are filtering.
-			$filter_boxes = '<div class="search-wrap"><input type="text" placeholder="' . sprintf( __( 'Filter %s', 'cmb' ), $post_type_labels ) . '" class="regular-text search" name="%s" /></div>';
+			$filter_boxes = '<div class="search-wrap"><input type="text" placeholder="' . sprintf( 'Filter %s', $post_type_labels ) . '" class="regular-text search" name="%s" /></div>';
 		}
 
 		// Check to see if we have any meta values saved yet
 		$attached = (array) $escaped_value;
 
-		$objects = $this->get_all_objects( $args, $attached );
+		// Get all objects.
+		$att_objects = $this->get_all_objects( $args, $attached );
 
 		// If there are no posts found, just stop
-		if ( empty( $objects ) ) {
+		if ( empty( $att_objects ) ) {
 			echo '<p>No entries found for the ' . esc_html( $post_type_labels ) . ' post types</p>';
 			return;
 		}
 
-		// Wrap our lists
+		// Wrap our lists.
 		echo '<div class="attached-posts-wrap widefat" data-fieldname="' . esc_attr( $field_type->_name() ) . '">';
 
 		// Open our retrieved, or found posts, list
 		echo '<div class="retrieved-wrap column-wrap">';
-		// translators: %s is the post type.
-		echo '<h4 class="attached-posts-section">' . esc_html( sprintf( __( 'Newest %s', 'cmb' ), $post_type_labels ) ) . '</h4>';
+		echo '<h4 class="attached-posts-section">' . esc_html( sprintf( 'Newest %s', $post_type_labels ) ) . '</h4>';
 
 		// Set .has_thumbnail
 		$has_thumbnail = $this->field->options( 'show_thumbnails' ) ? ' has-thumbnails' : '';
@@ -163,55 +144,50 @@ class WDS_CMB2_Attached_Posts_Field {
 		$reached_limit = ( false !== $has_max_limit && count( $attached ) === $has_max_limit ) ? ' has-reached-limit' : '';
 
 		if ( $filter_boxes ) {
-			printf( $filter_boxes, 'available-search' );
+			printf( $filter_boxes, 'available-search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		echo '<ul class="retrieved connected' . esc_attr( $reached_limit ) . esc_attr( $has_thumbnail ) . esc_attr( $hide_selected ) . '">';
 
 		// Loop through our posts as list items
-		$this->display_retrieved( $objects, $attached );
+		$this->display_retrieved( $att_objects, $attached );
 
 		// Close our retrieved, or found, posts
 		echo '</ul><!-- .retrieved -->';
 
-		// @todo make User search work.
-		if ( ! $query_users ) {
-			// Set defaults.
-			$search_txt = $field_type->_text( 'find_text', __( 'Search' ) );
-			$find_txt = __( 'Find Posts and Pages' );
+		// Set defaults.
+		$search_txt = $field_type->_text( 'find_text', 'Search' );
+		$find_txt   = 'Find Posts and Pages';
 
-			// if the post type value isn't an array, let the post type decide what it is.
-			if ( ! is_array( $args['post_type'] ) ) {
-				$post_type_obj = get_post_type_object( $args['post_type'] );
-				$find_txt      = $post_type_obj->labels->search_items;
-			}
-
-			// Build JS.
-			$js_data = wp_json_encode(
-				array(
-					'queryUsers' => $query_users,
-					'types'      => $query_users ? 'user' : (array) $args['post_type'],
-					'cmbId'      => $this->field->cmb_id,
-					'errortxt'   => esc_attr( $field_type->_text( 'error_text', __( 'An error has occurred. Please reload the page and try again.' ) ) ),
-					'findtxt'    => esc_attr( $field_type->_text( 'find_text', $find_txt ) ),
-					'groupId'    => $this->field->group ? $this->field->group->id() : false,
-					'fieldId'    => $this->field->_id(),
-					'exclude'    => isset( $args['post__not_in'] ) ? $args['post__not_in'] : array(),
-				)
-			);
-
-			echo '<p><button type="button" class="button cmb2-attached-posts-search-button" data-search=\'' . esc_js( $js_data ) . '\'>' . esc_html( $search_txt ) . ' <span title="' . esc_attr( $search_txt ) . '" class="dashicons dashicons-search"></span></button></p>';
+		// if the post type value isn't an array, let the post type decide what it is.
+		if ( ! is_array( $args['post_type'] ) ) {
+			$post_type_obj = get_post_type_object( $args['post_type'] );
+			$find_txt      = $post_type_obj->labels->search_items;
 		}
 
+		// Build JS.
+		$js_data = wp_json_encode(
+			array(
+				'types'    => (array) $args['post_type'],
+				'cmbId'    => $this->field->cmb_id,
+				'errortxt' => esc_attr( $field_type->_text( 'error_text', 'An error has occurred. Please reload the page and try again.' ) ),
+				'findtxt'  => esc_attr( $field_type->_text( 'find_text', $find_txt ) ),
+				'groupId'  => $this->field->group ? $this->field->group->id() : false,
+				'fieldId'  => $this->field->_id(),
+				'exclude'  => isset( $args['post__not_in'] ) ? $args['post__not_in'] : array(),
+			)
+		);
+
+		echo '<p><button type="button" class="button cmb2-attached-posts-search-button" data-search=\'' . esc_js( $js_data ) . '\'>' . esc_html( $search_txt ) . ' <span title="' . esc_attr( $search_txt ) . '" class="dashicons dashicons-search"></span></button></p>';
 		echo '</div><!-- .retrieved-wrap -->';
 
 		// Open our attached posts list
 		echo '<div class="attached-wrap column-wrap">';
 		// translators: %s is the post content.
-		echo '<h4 class="attached-posts-section">' . esc_html( sprintf( __( 'Attached %s', 'cmb' ), $post_type_labels ) ) . '<span class="attached-posts-remaining hidden"> (<span class="attached-posts-remaining-number"></span> remaining)</span></span></h4>';
+		echo '<h4 class="attached-posts-section">' . esc_html( sprintf( 'Attached %s', $post_type_labels ) ) . '<span class="attached-posts-remaining hidden"> (<span class="attached-posts-remaining-number"></span> remaining)</span></span></h4>';
 
 		if ( $filter_boxes ) {
-			printf( $filter_boxes, 'attached-search' );
+			printf( $filter_boxes, 'attached-search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		echo '<ul class="attached connected' . esc_attr( $has_thumbnail ) . '">';
@@ -223,11 +199,12 @@ class WDS_CMB2_Attached_Posts_Field {
 		echo '</ul><!-- #attached -->';
 		echo '</div><!-- .attached-wrap -->';
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $field_type->input(
 			array(
 				'type'  => 'hidden',
 				'class' => 'attached-posts-ids',
-				'value' => ! empty( $ids ) ? implode( ',', $ids ) : '', // phpcs:ignore
+				'value' => esc_attr( ! empty( $ids ) ? implode( ',', $ids ) : '' ),
 				'desc'  => '',
 			)
 		);
@@ -243,25 +220,25 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @since  1.2.5
 	 *
-	 * @param  mixed  $objects  Posts or users.
-	 * @param  array  $attached Array of attached posts/users.
+	 * @param  mixed  $att_objects  Posts
+	 * @param  array  $attached Array of attached posts.
 	 *
 	 * @return void
 	 */
-	protected function display_retrieved( $objects, $attached ) {
+	protected function display_retrieved( $att_objects, $attached ) {
 		$count = 0;
 
 		// Loop through our posts as list items
-		foreach ( $objects as $object ) {
+		foreach ( $att_objects as $att_object ) {
 
 			// Set our zebra stripes
 			++$count; // increment count.
 			$class = ( 0 === $count % 2 ) ? 'even' : 'odd';
 
 			// Set a class if our post is in our attached meta
-			$class .= ! empty( $attached ) && in_array( $this->get_id( $object ), $attached ) ? ' added' : '';
+			$class .= ! empty( $attached ) && in_array( $this->get_id( $att_object ), $attached, true ) ? ' added' : '';
 
-			$this->list_item( $object, $class );
+			$this->list_item( $att_object, $class );
 		}
 	}
 
@@ -270,7 +247,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @since  1.2.5
 	 *
-	 * @param  array  $attached Array of attached posts/users.
+	 * @param  array  $attached Array of attached posts.
 	 *
 	 * @return void
 	 */
@@ -288,10 +265,10 @@ class WDS_CMB2_Attached_Posts_Field {
 
 		// Loop through and build our existing display items
 		foreach ( $attached as $id ) {
-			$object = $this->get_object( $id );
-			$id     = $this->get_id( $object );
+			$att_object = get_post( absint( $id ) );
+			$id         = $this->get_id( $att_object );
 
-			if ( empty( $object ) ) {
+			if ( empty( $att_object ) ) {
 				continue;
 			}
 
@@ -299,7 +276,7 @@ class WDS_CMB2_Attached_Posts_Field {
 			++$count;
 			$class = ( 0 === $count % 2 ) ? 'even' : 'odd';
 
-			$this->list_item( $object, $class, 'dashicons-minus' );
+			$this->list_item( $att_object, $class, 'dashicons-minus' );
 			$ids[ $id ] = $id;
 		}
 
@@ -311,22 +288,22 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @since  1.2.5
 	 *
-	 * @param  mixed  $object     Post or User.
+	 * @param  mixed  $att_object     Post or User.
 	 * @param  string  $li_class   The list item (zebra) class.
 	 * @param  string  $icon_class The icon class. Either 'dashicons-plus' or 'dashicons-minus'.
 	 *
 	 * @return void
 	 */
-	public function list_item( $object, $li_class, $icon_class = 'dashicons-plus' ) {
+	public function list_item( $att_object, $li_class, $icon_class = 'dashicons-plus' ) {
 		// Build our list item
 		printf(
-			'<li data-id="%1$d" class="%2$s" target="_blank">%3$s<a title="' . esc_html( __( 'Edit' ) ) . '" href="%4$s">%5$s</a>%6$s<span class="dashicons %7$s add-remove"></span></li>',
-			esc_attr( $this->get_id( $object ) ),
+			'<li data-id="%1$d" class="%2$s" target="_blank">%3$s<a title="Edit" href="%4$s">%5$s</a>%6$s<span class="dashicons %7$s add-remove"></span></li>',
+			esc_attr( $this->get_id( $att_object ) ),
 			esc_attr( $li_class ),
-			esc_html( $this->get_thumb( $object ) ),
-			esc_url( $this->get_edit_link( $object ) ),
-			esc_html( $this->get_title( $object ) ),
-			esc_html( $this->get_object_label( $object ) ),
+			esc_html( $this->get_thumb( $att_object ) ),
+			esc_url( get_edit_post_link( $att_object ) ),
+			esc_html( $this->get_title( $att_object ) ),
+			esc_html( $this->get_object_label( $att_object ) ),
 			esc_attr( $icon_class )
 		);
 	}
@@ -336,18 +313,16 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @since  1.2.4
 	 *
-	 * @param  mixed  $object Post or User
+	 * @param  mixed  $att_object Post
 	 *
 	 * @return string         The thumbnail, if endabled/found.
 	 */
-	public function get_thumb( $object ) {
+	public function get_thumb( $att_object ) {
 		$thumbnail = '';
 
+		// Set thumbnail if the options is true
 		if ( $this->field->options( 'show_thumbnails' ) ) {
-			// Set thumbnail if the options is true
-			$thumbnail = $this->field->options( 'query_users' )
-				? get_avatar( $object->ID, 25 )
-				: get_the_post_thumbnail( $object->ID, array( 50, 50 ) );
+			$thumbnail = get_the_post_thumbnail( $att_object->ID, array( 50, 50 ) );
 		}
 
 		return $thumbnail;
@@ -358,12 +333,12 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @since  1.2.4
 	 *
-	 * @param  mixed  $object Post or User
+	 * @param  mixed  $att_object Post
 	 *
 	 * @return int    The object ID.
 	 */
-	public function get_id( $object ) {
-		return isset( $object->ID ) ? $object->ID : false;
+	public function get_id( $att_object ) {
+		return isset( $att_object->ID ) ? $att_object->ID : false;
 	}
 
 	/**
@@ -371,14 +346,13 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @since  1.2.4
 	 *
-	 * @param  mixed  $object Post or User
+	 * @param  mixed  $att_object Post
 	 *
-	 * @return string         The object title.
+	 * @return string             The object title.
 	 */
-	public function get_title( $object ) {
-		$post = get_post( $object );
-		// Initial Title
-		$title = $this->field->options( 'query_users' ) ? $object->data->display_name : get_the_title( $post->ID );
+	public function get_title( $att_object ) {
+		$post  = get_post( $att_object );
+		$title = get_the_title( $post->ID );
 		$title = apply_filters( 'cmb2_attached_posts_title_filter', $title, $post->ID );
 
 		return $title;
@@ -389,49 +363,19 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @since  1.2.6
 	 *
-	 * @param  mixed  $object Post or User
+	 * @param  mixed  $att_object Post
 	 *
-	 * @return string         The object label.
+	 * @return string             The object label.
 	 */
-	public function get_object_label( $object ) {
+	public function get_object_label( $att_object ) {
 		if ( ! $this->do_type_label ) {
 			return '';
 		}
 
-		$post_type_obj = get_post_type_object( $object->post_type );
+		$post_type_obj = get_post_type_object( $att_object->post_type );
 		$label         = isset( $post_type_obj->labels->singular_name ) ? $post_type_obj->labels->singular_name : $post_type_obj->label;
 
-		return apply_filters( 'cmb2_attached_posts_field_label', ' &mdash; <span class="object-label">' . $label . '</span> ', $label, $object );
-	}
-
-	/**
-	 * Get edit link for the object.
-	 *
-	 * @since  1.2.4
-	 *
-	 * @param  mixed  $object Post or User
-	 *
-	 * @return string         The object edit link.
-	 */
-	public function get_edit_link( $object ) {
-		return $this->field->options( 'query_users' )
-			? get_edit_user_link( $object->ID )
-			: get_edit_post_link( $object );
-	}
-
-	/**
-	 * Get object by id.
-	 *
-	 * @since  1.2.4
-	 *
-	 * @param  int   $id Post or User ID.
-	 *
-	 * @return mixed     Post or User if found.
-	 */
-	public function get_object( $id ) {
-		return $this->field->options( 'query_users' )
-			? get_user_by( 'id', absint( $id ) )
-			: get_post( absint( $id ) );
+		return apply_filters( 'cmb2_attached_posts_field_label', ' &mdash; <span class="object-label">' . $label . '</span> ', $label, $att_object );
 	}
 
 	/**
@@ -445,41 +389,29 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return array            Array of attached object ids.
 	 */
 	public function get_all_objects( $args, $attached = array() ) {
-		$objects = $this->get_objects( $args );
-
 		$attached_objects = array();
-		foreach ( $objects as $object ) {
-			$attached_objects[ $this->get_id( $object ) ] = $object;
+
+		// Get each object from original search.
+		$original_objects = get_posts( $args );
+		foreach ( $original_objects as $att_object ) {
+			$attached_objects[ $this->get_id( $att_object ) ] = $att_object;
 		}
 
+		// If there are already attached posts, exclude them.
 		if ( ! empty( $attached ) ) {
-			$is_users                                        = $this->field->options( 'query_users' );
-			$args[ $is_users ? 'include' : 'post__in' ]      = $attached;
-			$args[ $is_users ? 'number' : 'posts_per_page' ] = count( $attached );
+			$args['post__in']       = $attached;
+			$args['posts_per_page'] = count( $attached );
 
-			$new = $this->get_objects( $args );
+			$new = get_posts( $args );
 
-			foreach ( $new as $object ) {
-				if ( ! isset( $attached_objects[ $this->get_id( $object ) ] ) ) {
-					$attached_objects[ $this->get_id( $object ) ] = $object;
+			foreach ( $new as $att_object ) {
+				if ( ! isset( $attached_objects[ $this->get_id( $att_object ) ] ) ) {
+					$attached_objects[ $this->get_id( $att_object ) ] = $att_object;
 				}
 			}
 		}
 
 		return apply_filters( 'cmb2_attached_posts_objects', $attached_objects, $args );
-	}
-
-	/**
-	 * Performs a get_posts or get_users query.
-	 *
-	 * @since  1.2.4
-	 *
-	 * @param  array  $args Array of query args.
-	 *
-	 * @return array        Array of results.
-	 */
-	public function get_objects( $args ) {
-		return call_user_func( $this->field->options( 'query_users' ) ? 'get_users' : 'get_posts', $args );
 	}
 
 	/**
@@ -489,20 +421,11 @@ class WDS_CMB2_Attached_Posts_Field {
 		static $once = false;
 
 		$dir = CMB2_ATTACHED_POSTS_FIELD_DIR;
-
-		if ( 'WIN' === strtoupper( substr( PHP_OS, 0, 3 ) ) ) {
-			// Windows
-			$content_dir = str_replace( '/', DIRECTORY_SEPARATOR, WP_CONTENT_DIR );
-			$content_url = str_replace( $content_dir, WP_CONTENT_URL, $dir );
-			$url         = str_replace( DIRECTORY_SEPARATOR, '/', $content_url );
-
-		} else {
-			$url = str_replace(
-				array( WP_CONTENT_DIR, WP_PLUGIN_DIR ),
-				array( WP_CONTENT_URL, WP_PLUGIN_URL ),
-				$dir
-			);
-		}
+		$url = str_replace(
+			array( WP_CONTENT_DIR, WP_PLUGIN_DIR ),
+			array( WP_CONTENT_URL, WP_PLUGIN_URL ),
+			$dir
+		);
 
 		$url = set_url_scheme( $url );
 		$url = apply_filters( 'cmb2_attached_posts_field_assets_url', $url );
@@ -547,7 +470,7 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @since  1.2.4
 	 *
 	 * @param  string  $sanitized_val The sanitized value to be saved.
-	 * @param  string  $val           The unsanitized value.
+	 * @param  string  $val           The non-sanitized value.
 	 *
 	 * @return string                 The (maybe-modified) sanitized value to be saved.
 	 */
@@ -565,7 +488,6 @@ class WDS_CMB2_Attached_Posts_Field {
 	 *
 	 * @since  1.2.4
 	 *
-
 	 * @return void
 	 */
 	public function ajax_find_posts() {
@@ -577,12 +499,7 @@ class WDS_CMB2_Attached_Posts_Field {
 			&& 'find_posts' === $_POST['action']
 			&& ! empty( $_POST['search_types'] )
 		) {
-			// This is not working until we fix the user query bit.
-			if ( ! empty( $_POST['query_users'] ) ) {
-				add_action( 'pre_get_users', array( $this, 'modify_query' ) );
-			} else {
-				add_action( 'pre_get_posts', array( $this, 'modify_query' ) );
-			}
+			add_action( 'pre_get_posts', array( $this, 'modify_query' ) );
 		}
 		// @codingStandardsIgnoreEnd
 	}
@@ -597,65 +514,47 @@ class WDS_CMB2_Attached_Posts_Field {
 	 * @return void
 	 */
 	public function modify_query( $query ) {
-		// @codingStandardsIgnoreStart
-		$is_users = 'pre_get_users' === current_filter();
+		// Set post types
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$types = $_POST['search_types'];
+		$types = is_array( $types ) ? array_map( 'sanitize_text_field', $types ) : sanitize_text_field( $types );
+		$query->set( 'post_type', $types );
 
-		if ( $is_users ) {
-			// This is not working until we fix the user query bit.
-			return;
-		} else {
-			$types = $_POST['search_types'];
-			$types = is_array( $types ) ? array_map( 'esc_attr', $types ) : esc_attr( $types );
-			$query->set( 'post_type', $types );
-		}
+		// Search Term
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$search = sanitize_text_field( isset( $_POST['ps'] ) ? $_POST['ps'] : '' );
 
-		if ( ! empty( $_POST['retrieved'] ) && is_array( $_POST['retrieved'] ) ) {
-			// Exclude posts/users already existing.
-			$ids = array_map( 'absint', $_POST['retrieved'] );
+		// Posts we've manually chosen to exclude
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$exclude = ( isset( $_POST['exclude'] ) && is_array( $_POST['exclude'] ) ) ? array_map( 'absint', $_POST['exclude'] ) : array();
 
-			if ( ! empty( $_POST['exclude'] ) && is_array( $_POST['exclude'] ) ) {
-				// Exclude the post that we're looking at.
-				$exclude = array_map( 'absint', $_POST['exclude'] );
-				$ids     = array_merge( $ids, $exclude );
+		// Posts already listed.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$retrieved = ( isset( $_POST['retrieved'] ) && is_array( $_POST['retrieved'] ) ) ? array_map( 'absint', $_POST['retrieved'] ) : array();
+
+		// If there are posts already listed, we don't need to re-search them.
+		if ( ! empty( $retrieved ) ) {
+			$ids = $retrieved;
+
+			// If there are other posts we manually chose to exclude, merge them.
+			if ( ! empty( $exclude ) ) {
+				$ids = array_merge( $ids, $exclude );
 			}
 
-			$query->set( $is_users ? 'exclude' : 'post__not_in', $ids );
+			// Set the query.
+			$query->set( 'post__not_in', $ids );
 		}
 
-		$this->maybe_callback( $query, $_POST );
-		// @codingStandardsIgnoreEnd
-	}
+		// for search, we want to do relevance.
+		if ( $query->is_search ) {
+			$search_term = $query->query_vars['s'];
+			$query->set( 'orderby', 'relevance' );
 
-	/**
-	 * If field has a 'attached_posts_search_query_cb', run the callback.
-	 *
-	 * @since  1.2.4
-	 *
-	 * @param  WP_Query $query     WP_Query instance during the pre_get_posts hook.
-	 * @param  array    $post_args The $_POST array.
-	 *
-	 * @return void
-	 */
-	public function maybe_callback( $query, $post_args ) {
-		$cmb   = isset( $post_args['cmb_id'] ) ? $post_args['cmb_id'] : '';
-		$group = isset( $post_args['group_id'] ) ? $post_args['group_id'] : '';
-		$field = isset( $post_args['field_id'] ) ? $post_args['field_id'] : '';
-
-		$cmb = cmb2_get_metabox( $cmb );
-		if ( $cmb && $group ) {
-			$group = $cmb->get_field( $group );
+			// If it's under 4 characters, we need a more exact search.
+			if ( 4 > strlen( $search_term ) ) {
+				$query->set( 'title', $search_term );
+			}
 		}
-
-		if ( $cmb && $field ) {
-			$group = $group ? $group : null;
-			$field = $cmb->get_field( $field, $group );
-		}
-
-		$cb = $field->maybe_callback( 'attached_posts_search_query_cb' );
-		if ( $field && $cb ) {
-			call_user_func( $cb, $query, $field, $this );
-		}
-
 	}
 
 	/**
@@ -749,6 +648,6 @@ class WDS_CMB2_Attached_Posts_Field {
 
 		return $return;
 	}
-
 }
-WDS_CMB2_Attached_Posts_Field::get_instance();
+
+LWTV_CMB2_Attached_Posts_Field::get_instance();

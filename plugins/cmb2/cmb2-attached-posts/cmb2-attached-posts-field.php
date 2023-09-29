@@ -3,18 +3,18 @@
  * Plugin Name: FORKED -- CMB2 Field Type: Attached Posts
  * Plugin URI: https://github.com/WebDevStudios/cmb2-attached-posts
  * Description: Attached posts field type for CMB2.
- * Version: 2.1
+ * Version: 3.0-FORK
  * Author: WebDevStudios, Ipstenu
  * License: GPLv2+
  */
 
 /**
- * WDS_CMB2_Attached_Posts_Field loader
+ * LWTV_CMB2_Attached_Posts_Field loader
  *
  * Handles checking for and smartly loading the newest version of this library.
  *
  * @category  WordPressLibrary
- * @package   WDS_CMB2_Attached_Posts_Field
+ * @package   LWTV_CMB2_Attached_Posts_Field
  * @author    WebDevStudios <contact@webdevstudios.com>
  * @copyright 2016 WebDevStudios <contact@webdevstudios.com>
  * @link      https://github.com/WebDevStudios/cmb2-attached-posts
@@ -25,6 +25,7 @@
  * Copyright (c) 2016 WebDevStudios (email : contact@webdevstudios.com)
  *
  * Forked with many fixes by LezWatch.TV - 2023
+ * As of Sept 2023, this is a fully divergent plugin.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2 or, at
@@ -45,7 +46,7 @@
  * Loader versioning: http://jtsternberg.github.io/wp-lib-loader/
  */
 
-if ( ! class_exists( 'WDS_CMB2_Attached_Posts_Field_210', false ) ) {
+if ( ! class_exists( 'LWTV_CMB2_Attached_Posts_Field_300', false ) ) {
 
 	/**
 	 * Versioned loader class-name
@@ -53,21 +54,21 @@ if ( ! class_exists( 'WDS_CMB2_Attached_Posts_Field_210', false ) ) {
 	 * This ensures each version is loaded/checked.
 	 *
 	 * @category WordPressLibrary
-	 * @package  WDS_CMB2_Attached_Posts_Field
+	 * @package  LWTV_CMB2_Attached_Posts_Field
 	 * @author   WebDevStudios <contact@webdevstudios.com>
 	 * @license  GPL-2.0+
 	 * @version  2.1.0
 	 * @link     https://github.com/WebDevStudios/cmb2-attached-posts
 	 * @since    1.2.3
 	 */
-	class WDS_CMB2_Attached_Posts_Field_210 {
+	class LWTV_CMB2_Attached_Posts_Field_300 {
 
 		/**
-		 * WDS_CMB2_Attached_Posts_Field version number
+		 * LWTV_CMB2_Attached_Posts_Field version number
 		 * @var   string
 		 * @since 1.2.3
 		 */
-		const VERSION = '2.1';
+		const VERSION = '3.0';
 
 		/**
 		 * Current version hook priority.
@@ -83,7 +84,7 @@ if ( ! class_exists( 'WDS_CMB2_Attached_Posts_Field_210', false ) ) {
 		 * Creates CMB2_ATTACHED_POSTS_FIELD_LOADED definition for early detection by
 		 * other scripts.
 		 *
-		 * Hooks WDS_CMB2_Attached_Posts_Field inclusion to the cmb2_attached_posts_field_load hook
+		 * Hooks LWTV_CMB2_Attached_Posts_Field inclusion to the cmb2_attached_posts_field_load hook
 		 * on a high priority which decrements (increasing the priority) with
 		 * each version release.
 		 *
@@ -92,8 +93,8 @@ if ( ! class_exists( 'WDS_CMB2_Attached_Posts_Field_210', false ) ) {
 		public function __construct() {
 			if ( ! defined( 'CMB2_ATTACHED_POSTS_FIELD_LOADED' ) ) {
 				/**
-				 * A constant you can use to check if WDS_CMB2_Attached_Posts_Field is loaded
-				 * for your plugins/themes with WDS_CMB2_Attached_Posts_Field dependency.
+				 * A constant you can use to check if LWTV_CMB2_Attached_Posts_Field is loaded
+				 * for your plugins/themes with LWTV_CMB2_Attached_Posts_Field dependency.
 				 *
 				 * Can also be used to determine the priority of the hook
 				 * in use for the currently loaded version.
@@ -121,7 +122,7 @@ if ( ! class_exists( 'WDS_CMB2_Attached_Posts_Field_210', false ) ) {
 
 		/**
 		 * A final check if WDS_CMB2_Attached_Posts_Field exists before kicking off
-		 * our WDS_CMB2_Attached_Posts_Field loading.
+		 * our LWTV_CMB2_Attached_Posts_Field loading.
 		 *
 		 * CMB2_ATTACHED_POSTS_FIELD_VERSION and CMB2_ATTACHED_POSTS_FIELD_DIR constants are
 		 * set at this point.
@@ -130,29 +131,29 @@ if ( ! class_exists( 'WDS_CMB2_Attached_Posts_Field_210', false ) ) {
 		 */
 		public function include_lib() {
 			if ( class_exists( 'WDS_CMB2_Attached_Posts_Field', false ) ) {
+				// @TODO: Really we want to DISABLE that...
 				return;
 			}
 
 			if ( ! defined( 'CMB2_ATTACHED_POSTS_FIELD_VERSION' ) ) {
 				/**
-				 * Defines the currently loaded version of WDS_CMB2_Attached_Posts_Field.
+				 * Defines the currently loaded version of LWTV_CMB2_Attached_Posts_Field.
 				 */
 				define( 'CMB2_ATTACHED_POSTS_FIELD_VERSION', self::VERSION );
 			}
 
 			if ( ! defined( 'CMB2_ATTACHED_POSTS_FIELD_DIR' ) ) {
 				/**
-				 * Defines the directory of the currently loaded version of WDS_CMB2_Attached_Posts_Field.
+				 * Defines the directory of the currently loaded version of LWTV_CMB2_Attached_Posts_Field.
 				 */
 				define( 'CMB2_ATTACHED_POSTS_FIELD_DIR', __DIR__ . '/' );
 			}
 
-			// Include and initiate WDS_CMB2_Attached_Posts_Field.
+			// Include and initiate LWTV_CMB2_Attached_Posts_Field.
 			require_once CMB2_ATTACHED_POSTS_FIELD_DIR . 'init.php';
 		}
-
 	}
 
 	// Kick it off.
-	new WDS_CMB2_Attached_Posts_Field_210();
+	new LWTV_CMB2_Attached_Posts_Field_300();
 }

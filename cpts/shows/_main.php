@@ -267,7 +267,7 @@ class LWTV_CPT_Shows {
 
 		// ALWAYS sync up data.
 		foreach ( self::$select2_taxonomies as $postmeta => $taxonomy ) {
-			( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
+			( new LWTV_CMB2_Taxonomies() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 		}
 
 		// re-hook this function

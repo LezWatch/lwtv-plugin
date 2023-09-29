@@ -574,7 +574,7 @@ class LWTV_CPT_Characters {
 		$clear_urls = ( new LWTV_Cache() )->collect_urls_for_characters( $post_id );
 
 		// Always Sync Taxonomies
-		( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		( new LWTV_CMB2_Taxonomies() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
 
 		// Always update Wikidata
 		( new LWTV_Debug_Actors() )->check_actors_wikidata( $post_id );

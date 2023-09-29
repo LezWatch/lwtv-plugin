@@ -276,7 +276,7 @@ window.CMBAP = window.CMBAP || {};
 		$button    : false,
 
 		events : {
-			'keypress .find-box-search:input' : 'maybeStartSearch',
+			'keydown .find-box-search:input' : 'maybeStartSearch',
 			'keyup #find-posts-input'  : 'escClose',
 			'click #find-posts-submit' : 'selectPost',
 			'click #find-posts-search' : 'send',
@@ -342,7 +342,6 @@ window.CMBAP = window.CMBAP || {};
 			var data = {
 				ps                   : this.$input.val(),
 				action               : 'find_posts',
-				query_users          : this.queryUsers ? 1 : 0,
 				search_types         : this.types,
 				cmb_id               : this.cmbId,
 				group_id             : this.groupId,
