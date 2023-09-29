@@ -49,6 +49,17 @@ class LWTV_CPT_Char_Columns {
 		if ( '' !== $character_show_ids ) {
 			foreach ( $character_show_ids as $each_show ) {
 
+				/**
+				 * I AM THE SHOW
+				 *
+				 * If there are no shows attached to the character, throw an error message
+				 * and stop processing. This prevents the character from being the show name.
+				 */
+				if ( ! isset( $each_show['show'] ) ) {
+					array_push( $show_title, 'ERROR! NO SHOW ADDED!' );
+					continue;
+				}
+
 				// Remove the Array.
 				if ( is_array( $each_show['show'] ) ) {
 					$each_show['show'] = $each_show['show'][0];
