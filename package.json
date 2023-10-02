@@ -25,9 +25,9 @@
   "repository": "https://github.com/lezwatch/lwtv-plugin/",
   "dependencies": {
     "@npmcli/fs": "^3.1.0",
-    "@wordpress/scripts": "^26.9.0",
-    "chart.js": "^4.0.1",
-    "chartjs-plugin-annotation": "^2.1.0",
+    "@wordpress/scripts": "^26.13.0",
+    "chart.js": "^4.4.0",
+    "chartjs-plugin-annotation": "^3.0.1",
     "npm-run-all": "^4.1.5",
     "postinstall": "*",
     "tablesorter": "^2.31.3"
@@ -35,6 +35,6 @@
   "devDependencies": {
     "@types/node": "^18.11.13",
     "eslint-plugin-prettier": "^5.0.0",
-    "husky": "^8.0.0"
+    "husky": "^8.0.3"
   }
 }
