@@ -297,7 +297,7 @@ class LWTV_CMB2_Attached_Posts_Field {
 	public function list_item( $att_object, $li_class, $icon_class = 'dashicons-plus' ) {
 		// Build our list item
 		printf(
-			'<li data-id="%1$d" class="%2$s" target="_blank">%3$s<a title="Edit" href="%4$s">%5$s</a>%6$s<span class="dashicons %7$s add-remove"></span></li>',
+			'<li data-id="%1$d" class="%2$s" target="_blank">%3$s<a title="Edit" href="%4$s" target="_new">%5$s</a>%6$s<span class="dashicons %7$s add-remove"></span></li>',
 			esc_attr( $this->get_id( $att_object ) ),
 			esc_attr( $li_class ),
 			esc_html( $this->get_thumb( $att_object ) ),
@@ -315,7 +315,7 @@ class LWTV_CMB2_Attached_Posts_Field {
 	 *
 	 * @param  mixed  $att_object Post
 	 *
-	 * @return string         The thumbnail, if endabled/found.
+	 * @return string         The thumbnail, if enabled/found.
 	 */
 	public function get_thumb( $att_object ) {
 		$thumbnail = '';
@@ -634,7 +634,7 @@ class LWTV_CMB2_Attached_Posts_Field {
 				$title = apply_filters( 'cmb2_attached_posts_title_filter', $post['title'], $id );
 
 				$return .= sprintf(
-					'<li id="attached-%d"><a href="%s">%s</a></li>',
+					'<li id="attached-%d"><a href="%s" target="_new">%s</a></li>',
 					$id,
 					$post['edit_link'],
 					$title

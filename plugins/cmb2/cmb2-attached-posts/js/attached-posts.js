@@ -276,7 +276,7 @@ window.CMBAP = window.CMBAP || {};
 		$button    : false,
 
 		events : {
-			'keydown .find-box-search:input' : 'maybeStartSearch',
+			'keydown .find-box-search' : 'maybeStartSearch',
 			'keyup #find-posts-input'  : 'escClose',
 			'click #find-posts-submit' : 'selectPost',
 			'click #find-posts-search' : 'send',

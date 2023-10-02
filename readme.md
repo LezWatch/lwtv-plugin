@@ -8,7 +8,7 @@ The LezWatch.TV plugin contains custom code for use with the site. Instead of ha
 
 The code was written by Tracy Levesque and Mika Epstein, with assistance from [Yikes!](https://YikesInc.com)
 
-Further documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatchtv.com)
+Usage documentation can be found at [docs.lezwatchtv.com](https://docs.lezwatchtv.com)
 
 - Uses Node to install and manage components, as well as to build final versions of Blocks.
 - Uses Composer for adding project dependencies.
