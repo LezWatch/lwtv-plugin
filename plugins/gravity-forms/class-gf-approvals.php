@@ -488,8 +488,8 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 				<tbody class="list:user user-list">
 				<?php
 
-				$get_ip = ( new LWTV_Gravity_Forms() )->check_ip_location( $entry['ip'] );
 				foreach ( $entries as $entry ) {
+					$get_ip    = ( new LWTV_Gravity_Forms() )->check_ip_location( $entry['ip'] );
 					$form      = GFAPI::get_form( $entry['form_id'] );
 					$user      = get_user_by( 'id', (int) $entry['created_by'] );
 					$url_entry = sprintf( 'admin.php?page=gf_entries&view=entry&id=%d&lid=%d', $entry['form_id'], $entry['id'] );
@@ -508,7 +508,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 							} else {
 								echo 'Anonymous ';
 							}
-							echo '(' . esc_html( $get_ip ) . ')';
+							echo '(' . esc_html( $get_ip['full'] ) . ')';
 							?>
 						</td>
 						<td>
@@ -562,7 +562,6 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 		}
 		return $translated_value;
 	}
-
 }
 
 GFAddOn::register( 'LWTV_GF_Approvals' );

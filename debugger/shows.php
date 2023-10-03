@@ -252,7 +252,6 @@ class LWTV_Debug_Shows {
 
 		return $items;
 	}
-
 }
 
 new LWTV_Debug_Shows();

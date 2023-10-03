@@ -103,7 +103,6 @@ class LWTV_Dashboard {
 			}
 		</style>';
 	}
-
 }
 
 new LWTV_Dashboard();

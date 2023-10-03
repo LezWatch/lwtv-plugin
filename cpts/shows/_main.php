@@ -187,7 +187,6 @@ class LWTV_CPT_Shows {
 			'has_archive'         => 'shows',
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,
-			'exclude_from_search' => false,
 			'capability_type'     => array( 'show', 'shows' ),
 			'map_meta_cap'        => true,
 		);
@@ -252,6 +251,7 @@ class LWTV_CPT_Shows {
 	 * @param post $post The post object.
 	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function save_post_meta( $post_id, $post, $update ) {
 
 		// Prevent running on autosave.
@@ -267,7 +267,7 @@ class LWTV_CPT_Shows {
 
 		// ALWAYS sync up data.
 		foreach ( self::$select2_taxonomies as $postmeta => $taxonomy ) {
-			( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
+			( new LWTV_CMB2_Taxonomies() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 		}
 
 		// re-hook this function
@@ -315,6 +315,7 @@ class LWTV_CPT_Shows {
 	 * @param mixed $post_type
 	 * @return void
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function hide_tags_from_quick_edit( $show_in_quick_edit, $taxonomy_name, $post_type ) {
 		$taxonomies = array( 'lez_tropes', 'lez_formats', 'lez_genres', 'lez_stars', 'lez_triggers', 'lez_intersections' );
 		if ( in_array( $taxonomy_name, $taxonomies, true ) ) {
@@ -335,7 +336,6 @@ class LWTV_CPT_Shows {
 		}
 		return $input;
 	}
-
 }
 
 new LWTV_CPT_Shows();

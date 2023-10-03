@@ -79,7 +79,6 @@ class LWTV_CPT_Actor_Columns {
 			}
 		}
 	}
-
 }
 
 new LWTV_CPT_Actor_Columns();

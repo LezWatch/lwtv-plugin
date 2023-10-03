@@ -301,6 +301,28 @@ class LWTV_Actors_CMB2 {
 				),
 			)
 		);
+		// Field: Bluesky URL
+		$field_bluesky = $cmb_actorside->add_field(
+			array(
+				'name'       => 'BlueSky',
+				'id'         => $prefix . 'bluesky',
+				'type'       => 'text',
+				'attributes' => array(
+					'placeholder' => 'Ex: https://bsky.app/profile/jerilryan.bsky.social',
+				),
+			)
+		);
+		// Field: Twitch URL
+		$field_twitch = $cmb_actorside->add_field(
+			array(
+				'name'       => 'Twitch',
+				'id'         => $prefix . 'twitch',
+				'type'       => 'text',
+				'attributes' => array(
+					'placeholder' => 'Ex: https://www.twitch.tv/criticalrole',
+				),
+			)
+		);
 		// Field: WikiData QID
 		$field_wikidata = $cmb_actorside->add_field(
 			array(
@@ -340,6 +362,7 @@ class LWTV_Actors_CMB2 {
 			$row9           = $grid_actorside->addRow();
 			$row10          = $grid_actorside->addRow();
 			$row11          = $grid_actorside->addRow();
+			$row12          = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
 			$row2->addColumns( array( $field_romantic, $field_queer_override ) );
 			$row3->addColumns( array( $field_pronouns ) );
@@ -349,8 +372,9 @@ class LWTV_Actors_CMB2 {
 			$row7->addColumns( array( $field_twitter, $field_instagram ) );
 			$row8->addColumns( array( $field_tumblr, $field_mastodon ) );
 			$row9->addColumns( array( $field_facebook, $field_tiktok ) );
-			$row10->addColumns( array( $field_wikidata ) );
-			$row11->addColumns( array( $field_excerpt ) );
+			$row10->addColumns( array( $field_bluesky, $field_twitch ) );
+			$row11->addColumns( array( $field_wikidata ) );
+			$row12->addColumns( array( $field_excerpt ) );
 		}
 	}
 
@@ -361,7 +385,6 @@ class LWTV_Actors_CMB2 {
 		remove_meta_box( 'authordiv', 'post_type_actors', 'normal' );
 		remove_meta_box( 'postexcerpt', 'post_type_actors', 'normal' );
 	}
-
 }
 
 new LWTV_Actors_CMB2();

@@ -27,9 +27,22 @@ class LWTV_Debug_Queers {
 		if ( $the_loop->have_posts() ) {
 			$characters = wp_list_pluck( $the_loop->posts, 'ID' );
 			wp_reset_query();
+		} else {
+			return;
+		}
+
+		// If this is WP-CLI, setup progress bar.
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting queer checker. Found %d characters...', count( $characters ) ), count( $characters ) );
 		}
 
 		foreach ( $characters as $character ) {
+
+			// If this is WP-CLI, tick progress bar.
+			if ( defined( 'WP_CLI' ) && WP_CLI ) {
+				$progress_bar->tick();
+			}
+
 			$problems = array();
 
 			// Get the actors...
@@ -70,6 +83,11 @@ class LWTV_Debug_Queers {
 			}
 		}
 
+		// If this is WP-CLI, finish progress bar.
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			$progress_bar->finish();
+		}
+
 		// Save Transient
 		set_transient( 'lwtv_debug_queercheck', $items, WEEK_IN_SECONDS );
 
@@ -84,9 +102,7 @@ class LWTV_Debug_Queers {
 		update_option( 'lwtv_debugger_status', $option );
 
 		return $items;
-
 	}
-
 }
 
 new LWTV_Debug_Queers();

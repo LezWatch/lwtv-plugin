@@ -155,7 +155,6 @@ class LWTV_Alexa_Shows {
 
 		return $return_array;
 	}
-
 }
 
 new LWTV_Alexa_Shows();

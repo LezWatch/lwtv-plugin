@@ -110,9 +110,7 @@ class LWTV_List_JSON {
 		asort( $post_options );
 
 		return $post_options;
-
 	}
-
 }
 
 new LWTV_List_JSON();

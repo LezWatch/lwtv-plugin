@@ -47,19 +47,20 @@ class LWTV_Shows_CMB2 {
 		if ( class_exists( 'LWTV_Languages' ) ) {
 			$this->language_array = ( new LWTV_Languages() )->all_languages();
 		}
-
 	}
 
 	/**
 	 * Use CMB2 filter to load our JavaScript
 	 * when CMB loads his/hers.
 	 *
-	 * @param string $return CMB scripts.
+	 * @param string $scripts CMB scripts.
 	 *
 	 * @return mixed
 	 */
-	public function cmb2_scripts( $return ) {
-		wp_enqueue_script( 'ajaxified_dropdown', plugin_dir_url( dirname( dirname( __FILE__ ) ) ) . 'assets/js/cmb2_ajax.js', array( 'jquery' ), '1.0.0', true );
+	public function cmb2_scripts( $scripts ) {
+		wp_enqueue_script( 'ajaxified_dropdown', plugin_dir_url( dirname( __DIR__ ) ) . 'assets/js/cmb2_ajax.js', array( 'jquery' ), '1.0.0', true );
+		$return = $scripts;
+
 		return $return;
 	}
 
@@ -218,8 +219,8 @@ class LWTV_Shows_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_stations' ),
-				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezshows_tvstations', 'lez_stations', $post_id, true ),
+				'options'           => ( new LWTV_CMB2_Taxonomies() )->select2_get_options_array_tax( 'lez_stations' ),
+				'default'           => ( new LWTV_CMB2_Taxonomies() )->get_select2_defaults( 'lezshows_tvstations', 'lez_stations', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. NBC',
 				),
@@ -235,8 +236,8 @@ class LWTV_Shows_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_country' ),
-				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezshows_tvnations', 'lez_country', $post_id, true ),
+				'options'           => ( new LWTV_CMB2_Taxonomies() )->select2_get_options_array_tax( 'lez_country' ),
+				'default'           => ( new LWTV_CMB2_Taxonomies() )->get_select2_defaults( 'lezshows_tvnations', 'lez_country', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Canada',
 				),
@@ -274,8 +275,8 @@ class LWTV_Shows_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_genres' ),
-				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezshows_tvgenre', 'lez_genres', $post_id ),
+				'options'           => ( new LWTV_CMB2_Taxonomies() )->select2_get_options_array_tax( 'lez_genres' ),
+				'default'           => ( new LWTV_CMB2_Taxonomies() )->get_select2_defaults( 'lezshows_tvgenre', 'lez_genres', $post_id ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Drama',
 				),
@@ -326,8 +327,8 @@ class LWTV_Shows_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_intersections' ),
-				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezshows_intersectional', 'lez_intersections', $post_id ),
+				'options'           => ( new LWTV_CMB2_Taxonomies() )->select2_get_options_array_tax( 'lez_intersections' ),
+				'default'           => ( new LWTV_CMB2_Taxonomies() )->get_select2_defaults( 'lezshows_intersectional', 'lez_intersections', $post_id ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Disabilities',
 				),
@@ -342,8 +343,8 @@ class LWTV_Shows_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_tropes' ),
-				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezshows_tropes', 'lez_tropes', $post_id ),
+				'options'           => ( new LWTV_CMB2_Taxonomies() )->select2_get_options_array_tax( 'lez_tropes' ),
+				'default'           => ( new LWTV_CMB2_Taxonomies() )->get_select2_defaults( 'lezshows_tropes', 'lez_tropes', $post_id ),
 				'attributes'        => array(
 					'placeholder' => 'Ex. Bury Your Queers',
 				),

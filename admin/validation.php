@@ -201,7 +201,7 @@ class LWTV_Data_Validation_Checks {
 				<td>' . esc_html( $time ) . '<br/>(' . esc_html( $time_diff ) . ' ago)</td>
 			</tr>
 			';
-			$number++;
+			++$number;
 		}
 	}
 

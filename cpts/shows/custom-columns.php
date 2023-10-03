@@ -124,7 +124,6 @@ SQL;
 
 		return $clauses;
 	}
-
 }
 
 new LWTV_CPT_Show_Columns();

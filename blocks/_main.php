@@ -34,7 +34,7 @@ class LWTV_Blocks {
 	 * @return string Absolute path to the file.
 	 */
 	public function path_to( $path_relative ) {
-		self::$directory = dirname( __FILE__ );
+		self::$directory = __DIR__;
 		return sprintf( '%s/%s', self::$directory, ltrim( $path_relative, '/\\' ) );
 	}
 
@@ -60,6 +60,7 @@ class LWTV_Blocks {
 	 * @param   array                   $block_categories       Array of categories for block types.
 	 * @param   WP_Block_Editor_Context $block_editor_context   The current block editor context.
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function action_add_block_category( $block_categories, $block_editor_context ) {
 		return array_merge(
 			$block_categories,
@@ -117,7 +118,6 @@ class LWTV_Blocks {
 			}
 		}
 	}
-
 }
 
 new LWTV_Blocks();

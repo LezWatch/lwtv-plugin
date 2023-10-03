@@ -133,8 +133,8 @@ class LWTV_Characters_CMB2 {
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
 				'remove_default'    => 'true',
-				'options'           => ( new LWTV_CMB2_Addons() )->select2_get_options_array_tax( 'lez_cliches' ),
-				'default'           => ( new LWTV_CMB2() )->get_select2_defaults( 'lezchars_cliches', 'lez_cliches', $post_id, true ),
+				'options'           => ( new LWTV_CMB2_Taxonomies() )->select2_get_options_array_tax( 'lez_cliches' ),
+				'default'           => ( new LWTV_CMB2_Taxonomies() )->get_select2_defaults( 'lezchars_cliches', 'lez_cliches', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'Common clichés ...',
 				),
@@ -234,7 +234,6 @@ class LWTV_Characters_CMB2 {
 				'post_type'  => 'post_type_shows',
 				'options'    => array(
 					'query_args' => array(
-						'filter_boxes'   => true,
 						'posts_per_page' => 2,
 						'post_type'      => 'post_type_shows',
 					), // override the get_posts args
@@ -273,7 +272,6 @@ class LWTV_Characters_CMB2 {
 				),
 			)
 		);
-
 	}
 
 	/*
@@ -283,7 +281,6 @@ class LWTV_Characters_CMB2 {
 		remove_meta_box( 'authordiv', 'post_type_characters', 'normal' );
 		remove_meta_box( 'postexcerpt', 'post_type_characters', 'normal' );
 	}
-
 }
 
 new LWTV_Characters_CMB2();

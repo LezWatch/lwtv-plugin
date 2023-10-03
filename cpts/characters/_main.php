@@ -345,7 +345,7 @@ class LWTV_CPT_Characters {
 						if ( is_array( $char_show['show'] ) ) {
 							$char_show['show'] = $char_show['show'][0];
 						}
-						// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
+						// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 						if ( $char_show['show'] == $show_id ) {
 							// Get a list of actors (we need this twice later)
 							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
@@ -357,17 +357,17 @@ class LWTV_CPT_Characters {
 							// So we don't **REALLY** count then via this method unless the show
 							// is there for the character.
 							// Increase the count of characters
-							$char_counts['total']++;
+							++$char_counts['total'];
 							$new_characters[] = $char_id;
 
 							// Dead?
 							if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-								$char_counts['dead']++;
+								++$char_counts['dead'];
 								$dead_characters[] = $char_id;
 							}
 							// No cliches?
 							if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
-								$char_counts['none']++;
+								++$char_counts['none'];
 							}
 							// The Tambour Takedown: Checking Queer IRL
 							// We don't award shows that have cast a cis/het actor in a queer
@@ -376,20 +376,20 @@ class LWTV_CPT_Characters {
 							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
 								$top_actor = reset( $actors_ids );
 								if ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $top_actor ) ) {
-									$char_counts['quirl']++;
+									++$char_counts['quirl'];
 								}
 							}
 
 							// Is the character is not Cisgender ...
 							$valid_trans_char = array( 'cisgender', 'intersex', 'unknown' );
 							if ( ! has_term( $valid_trans_char, 'lez_gender', $char_id ) ) {
-								$char_counts['trans']++;
+								++$char_counts['trans'];
 							}
 
 							// If an actor is transgender, we get an extra bonus.
 							foreach ( $actors_ids as $actor ) {
 								if ( 'yes' === ( new LWTV_Loops() )->is_actor_trans( $actor ) ) {
-									$char_counts['txirl']++;
+									++$char_counts['txirl'];
 								}
 							}
 						}
@@ -519,7 +519,7 @@ class LWTV_CPT_Characters {
 					}
 
 					// Because of show IDs having SIMILAR numbers, we need to be a little more flex
-					// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
+					// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 					if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
 						$display[ $char_id ] = array(
 							'id'        => $char_id,
@@ -574,7 +574,7 @@ class LWTV_CPT_Characters {
 		$clear_urls = ( new LWTV_Cache() )->collect_urls_for_characters( $post_id );
 
 		// Always Sync Taxonomies
-		( new LWTV_CMB2_Addons() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		( new LWTV_CMB2_Taxonomies() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
 
 		// Always update Wikidata
 		( new LWTV_Debug_Actors() )->check_actors_wikidata( $post_id );

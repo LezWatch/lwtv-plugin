@@ -133,7 +133,6 @@ class LWTV_Alexa_This_Year {
 
 		return $output;
 	}
-
 }
 
 new LWTV_Alexa_This_Year();

@@ -196,13 +196,13 @@ class LWTV_Stats_Arrays {
 				if ( is_array( $all_shows ) ) {
 					foreach ( $all_shows as $each_show ) {
 						if ( 'regular' === $each_show['type'] ) {
-							$by_role['regular']++;
+							++$by_role['regular'];
 						}
 						if ( 'guest' === $each_show['type'] ) {
-							$by_role['guest']++;
+							++$by_role['guest'];
 						}
 						if ( 'recurring' === $each_show['type'] ) {
-							$by_role['recurring']++;
+							++$by_role['recurring'];
 						}
 					}
 				}
@@ -452,11 +452,11 @@ class LWTV_Stats_Arrays {
 			if ( isset( $all_shows ) && is_array( $all_shows ) ) {
 				foreach ( $all_shows as $show_id ) {
 					// This data is universal for every thing we process.
-					$shows++;
+					++$shows;
 					$dead       += get_post_meta( $show_id, 'lezshows_dead_count', true );
 					$characters += get_post_meta( $show_id, 'lezshows_char_count', true );
 					if ( has_term( 'dead-queers', 'lez_tropes', $show_id ) ) {
-						$dead_shows++;
+						++$dead_shows;
 					}
 					// Get the data...
 					if ( 'all' !== $data_meta && 'stackedbar' !== $format ) {
@@ -471,12 +471,12 @@ class LWTV_Stats_Arrays {
 										if ( ! isset( $big_data[ $big_data_item->name ] ) ) {
 											$big_data[ $big_data_item->name ] = 0;
 										}
-										$big_data[ $big_data_item->name ]++;
+										++$big_data[ $big_data_item->name ];
 									} else {
 										if ( ! isset( $big_data[ $big_data_item->slug ] ) ) {
 											$big_data[ $big_data_item->slug ] = 0;
 										}
-										$big_data[ $big_data_item->slug ]++;
+										++$big_data[ $big_data_item->slug ];
 									}
 								}
 							}
@@ -499,7 +499,7 @@ class LWTV_Stats_Arrays {
 									if ( ! isset( $big_data[ $big_data_item->slug ] ) ) {
 										$big_data[ $big_data_item->slug ] = 0;
 									}
-									$big_data[ $big_data_item->slug ]++;
+									++$big_data[ $big_data_item->slug ];
 								}
 							}
 						} else {
@@ -762,6 +762,7 @@ class LWTV_Stats_Arrays {
 					case 'post_type_shows':
 						$year_queery = 0;
 						$show_queery = ( false === $data ) ? ( new LWTV_Loops() )->post_type_query( 'post_type_shows' ) : $data;
+						$allshows    = array();
 
 						if ( $show_queery->have_posts() ) {
 							$allshows = wp_list_pluck( $show_queery->posts, 'ID' );
@@ -772,7 +773,7 @@ class LWTV_Stats_Arrays {
 						foreach ( $allshows as $post_id ) {
 							$on_air = ( new LWTV_Loops() )->is_show_on_air( $post_id, $year );
 							if ( false !== $on_air ) {
-								$year_queery++;
+								++$year_queery;
 							}
 						}
 						break;
@@ -968,11 +969,11 @@ class LWTV_Stats_Arrays {
 
 					foreach ( $queery->posts as $show ) {
 						// This data is universal for every thing we process.
-						$shows++;
+						++$shows;
 						$dead_chars += get_post_meta( $show->ID, 'lezshows_dead_count', true );
 						$characters += get_post_meta( $show->ID, 'lezshows_char_count', true );
 						if ( has_term( 'dead-queers', 'lez_tropes', $show->ID ) ) {
-							$dead_shows++;
+							++$dead_shows;
 						}
 					}
 
@@ -1084,7 +1085,7 @@ class LWTV_Stats_Arrays {
 							'url'   => '',
 						);
 					} else {
-						$array[ $key ]['count']++;
+						++$array[ $key ]['count'];
 					}
 				}
 			}
@@ -1159,21 +1160,21 @@ class LWTV_Stats_Arrays {
 
 							foreach ( $shows_array as $char_show ) {
 								if ( 'guest' === $char_show['type'] ) {
-									$guest['alive']++;
+									++$guest['alive'];
 									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-										$guest['dead']++;
+										++$guest['dead'];
 									}
 								}
 								if ( 'regular' === $char_show['type'] ) {
-									$regular['alive']++;
+									++$regular['alive'];
 									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-										$regular['dead']++;
+										++$regular['dead'];
 									}
 								}
 								if ( 'recurring' === $char_show['type'] ) {
-									$recurring['alive']++;
+									++$recurring['alive'];
 									if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-										$recurring['dead']++;
+										++$recurring['dead'];
 									}
 								}
 							}
@@ -1332,10 +1333,10 @@ class LWTV_Stats_Arrays {
 								// And now we set the numbers!
 								switch ( $is_queer ) {
 									case 'yes':
-										$array['queer']['count']++;
+										++$array['queer']['count'];
 										break;
 									case 'no':
-										$array['not_queer']['count']++;
+										++$array['not_queer']['count'];
 										break;
 								}
 							}
@@ -1413,7 +1414,7 @@ class LWTV_Stats_Arrays {
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
 						foreach ( $actors as $actor ) {
 							// We have to check because due to so many characters, we have some actor mis-matches.
-							if ( $actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+							if ( $actor == $the_id ) {  // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 								$character_checked[] = $the_id;
 							}
 						}
@@ -1429,10 +1430,10 @@ class LWTV_Stats_Arrays {
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 						foreach ( $actors_array as $char_actor ) {
-							if ( $char_actor == $the_id ) { // phpcs:ignore WordPress.PHP.StrictComparisons
+							if ( $char_actor == $the_id ) { // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 								$shows = get_post_meta( $char_id, 'lezchars_show_group', true );
 								foreach ( $shows as $show ) {
-									$base_array[ $show['type'] ]++;
+									++$base_array[ $show['type'] ];
 								}
 							}
 						}
@@ -1453,7 +1454,6 @@ class LWTV_Stats_Arrays {
 		}
 
 		return $array;
-
 	}
 
 	/**
@@ -1503,7 +1503,7 @@ class LWTV_Stats_Arrays {
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
 						foreach ( $actors as $actor ) {
 							// We have to check because due to so many characters, we have some actor mis-matches.
-							if ( $actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+							if ( $actor == $the_id ) {  // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 								$character_checked[] = $the_id;
 							}
 						}
@@ -1519,11 +1519,11 @@ class LWTV_Stats_Arrays {
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 						foreach ( $actors_array as $char_actor ) {
-							if ( $char_actor == $the_id ) {  // phpcs:ignore WordPress.PHP.StrictComparisons
+							if ( $char_actor == $the_id ) {  // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 								if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-									$base_array['dead']['count']++;
+									++$base_array['dead']['count'];
 								} else {
-									$base_array['alive']['count']++;
+									++$base_array['alive']['count'];
 								}
 							}
 						}
@@ -1572,7 +1572,7 @@ class LWTV_Stats_Arrays {
 				foreach ( $year_array as $character ) {
 					$terms = get_the_terms( $character['id'], 'lez_' . $taxonomy );
 					foreach ( $terms as $term ) {
-						$array[ $term->slug ]['count']++;
+						++$array[ $term->slug ]['count'];
 					}
 				}
 			}

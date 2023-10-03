@@ -123,23 +123,26 @@ class LWTV_Of_The_Day_RSS {
 				<description><![CDATA[<?php echo wp_kses_post( $use_data->content ); ?>]]></description>
 				<content:encoded><![CDATA[<?php echo wp_kses_post( $use_data->content ); ?>]]></content:encoded>
 				<?php
-				if ( ! has_post_thumbnail( $use_data->posts_id ) ) {
-					return;
-				}
+				if ( has_post_thumbnail( $use_data->posts_id ) ) {
+					$thumbnail_id = get_post_thumbnail_id( $use_data->posts_id );
+					$thumbnail    = image_get_intermediate_size( $thumbnail_id, $use_data->posts_type . '-img' );
 
-				$thumbnail_size = apply_filters( 'rss_enclosure_image_size', 'large' );
-				$thumbnail_id   = get_post_thumbnail_id( $use_data->posts_id );
-				$thumbnail      = image_get_intermediate_size( $thumbnail_id, $thumbnail_size );
+					// If there is image that size, try thumbnail.
+					if ( empty( $thumbnail ) ) {
+						$thumbnail = image_get_intermediate_size( $thumbnail_id );
+					}
 
-				if ( ! empty( $thumbnail ) ) {
-					$upload_dir = wp_upload_dir();
+					// Now we should have one.
+					if ( ! empty( $thumbnail ) ) {
+						$upload_dir = wp_upload_dir();
 
-					printf(
-						'<enclosure url="%s" length="%s" type="%s" />',
-						esc_url( $thumbnail['url'] ),
-						esc_html( filesize( path_join( $upload_dir['basedir'], $thumbnail['path'] ) ) ),
-						esc_html( get_post_mime_type( $thumbnail_id ) )
-					);
+						printf(
+							'<enclosure url="%s" length="%s" type="%s" />',
+							esc_url( $thumbnail['url'] ),
+							esc_html( filesize( path_join( $upload_dir['basedir'], $thumbnail['path'] ) ) ),
+							esc_html( get_post_mime_type( $thumbnail_id ) )
+						);
+					}
 				}
 				?>
 
@@ -148,7 +151,6 @@ class LWTV_Of_The_Day_RSS {
 			<?php
 		}
 	}
-
 }
 
 new LWTV_Of_The_Day_RSS();

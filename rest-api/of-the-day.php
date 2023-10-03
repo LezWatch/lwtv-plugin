@@ -74,6 +74,6 @@ class LWTV_OTD_JSON {
 		$response = ( new LWTV_Of_The_Day() )->of_the_day( $type, $format );
 		return $response;
 	}
-
 }
+
 new LWTV_OTD_JSON();

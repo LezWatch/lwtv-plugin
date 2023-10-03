@@ -78,8 +78,8 @@ switch ( $view ) {
 						<tbody>
 							<?php
 							$tropes = get_terms(
-								'lez_tropes',
 								array(
+									'taxonomy'   => 'lez_tropes',
 									'number'     => 10,
 									'orderby'    => 'count',
 									'hide_empty' => 0,
@@ -110,8 +110,8 @@ switch ( $view ) {
 						<tbody>
 							<?php
 							$genres = get_terms(
-								'lez_genres',
 								array(
+									'taxonomy'   => 'lez_genres',
 									'number'     => 10,
 									'orderby'    => 'count',
 									'hide_empty' => 0,

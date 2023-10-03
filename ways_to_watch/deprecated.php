@@ -1,9 +1,12 @@
 <?php
-
 /**
  * Deprecated LWTV Affiliates because ads was a losing game and was worthless. May be worth revisiting, but it will
  * be something totally different, like just "Ads" or whatever.
+ *
+ * No sniffing this one.
  */
+
+// phpcs:disable
 
 class LWTV_Affilliates {
 

@@ -130,7 +130,6 @@ class LWTV_IMDb_JSON {
 
 		return $array;
 	}
-
 }
 
 new LWTV_IMDb_JSON();

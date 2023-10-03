@@ -254,29 +254,29 @@ class LWTV_Shows_Calculate {
 			// Calculate good tropes
 			foreach ( $good_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
-					$has_tropes['good']++;
-					$has_tropes['any']++;
+					++$has_tropes['good'];
+					++$has_tropes['any'];
 				}
 			}
 			// Calculate Maybe Good Tropes
 			foreach ( $maybe_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
-					$has_tropes['maybe']++;
-					$has_tropes['any']++;
+					++$has_tropes['maybe'];
+					++$has_tropes['any'];
 				}
 			}
 			// Calculate Bad Tropes
 			foreach ( $bad_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
-					$has_tropes['bad']++;
-					$has_tropes['any']++;
+					++$has_tropes['bad'];
+					++$has_tropes['any'];
 				}
 			}
 			// Calculate Ploy Tropes
 			foreach ( $ploy_tropes as $trope ) {
 				if ( has_term( $trope, 'lez_tropes', $post_id ) ) {
-					$has_tropes['ploy']++;
-					$has_tropes['any']++;
+					++$has_tropes['ploy'];
+					++$has_tropes['any'];
 				}
 			}
 
@@ -414,10 +414,10 @@ class LWTV_Shows_Calculate {
 						$char_show['show'] = $char_show['show'][0];
 					}
 
-					// phpcs:ignore WordPress.PHP.StrictComparisons
+					// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 					if ( $char_show['show'] == $post_id ) {
 						// Bump the array for this role
-						$role_data[ $char_show['type'] ]++;
+						++$role_data[ $char_show['type'] ];
 						$new_characters[] = $char_id;
 
 						// Now we'll sort gender and stuff...
@@ -425,7 +425,7 @@ class LWTV_Shows_Calculate {
 							$this_term = get_the_terms( $char_id, $taxonomy, true );
 							if ( $this_term && ! is_wp_error( $this_term ) ) {
 								foreach ( $this_term as $term ) {
-									$tax_data[ $title ][ $term->slug ]++;
+									++$tax_data[ $title ][ $term->slug ];
 								}
 							}
 						}
@@ -442,7 +442,6 @@ class LWTV_Shows_Calculate {
 		foreach ( $valid_taxes as $title => $taxonomy ) {
 			update_post_meta( $post_id, 'lezshows_char_' . $title, $tax_data[ $title ] );
 		}
-
 	}
 
 	/**

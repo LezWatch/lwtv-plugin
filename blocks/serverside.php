@@ -15,7 +15,7 @@ class LWTV_ServerSideRendering {
 	protected static $directory;
 
 	public function __construct() {
-		self::$directory = dirname( __FILE__ );
+		self::$directory = __DIR__;
 
 		// Register SSR blocks.
 		// author-box

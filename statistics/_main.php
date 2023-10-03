@@ -46,11 +46,11 @@ class LWTV_Stats {
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );
 
-			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chart.js', array( 'jquery' ), '4.3.2', false );
-			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.2.1', false );
-			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
-			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.31.3', false );
-			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/css/theme.bootstrap_4.min.css', array(), '2.31.1', false );
+			wp_enqueue_script( 'chartjs', plugin_dir_url( __DIR__ ) . 'assets/js/chart.js', array( 'jquery' ), '4.3.2', false );
+			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( __DIR__ ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.2.1', false );
+			wp_enqueue_script( 'palette', plugin_dir_url( __DIR__ ) . 'assets/js/palette.js', array(), '1.0.0', false );
+			wp_enqueue_script( 'tablesorter', plugin_dir_url( __DIR__ ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.31.3', false );
+			wp_enqueue_style( 'tablesorter', plugin_dir_url( __DIR__ ) . 'assets/css/theme.bootstrap_4.min.css', array(), '2.31.1', false );
 
 			switch ( $statistics ) {
 				case 'nations':
@@ -75,9 +75,9 @@ class LWTV_Stats {
 					break;
 			}
 		} elseif ( 'post_type_actors' === get_post_type() || is_page( array( 'this-year' ) ) ) {
-			wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chart.js', array( 'jquery' ), '4.0.1', false );
-			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.1.0', false );
-			wp_enqueue_script( 'palette', plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
+			wp_enqueue_script( 'chartjs', plugin_dir_url( __DIR__ ) . 'assets/js/chart.js', array( 'jquery' ), '4.0.1', false );
+			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( __DIR__ ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.1.0', false );
+			wp_enqueue_script( 'palette', plugin_dir_url( __DIR__ ) . 'assets/js/palette.js', array(), '1.0.0', false );
 		}
 	}
 
@@ -322,7 +322,7 @@ class LWTV_Stats {
 							$airdates = get_post_meta( $show->ID, 'lezshows_airdates', true );
 							$end      = $airdates['finish'];
 							if ( 'current' === lcfirst( $end ) || $end >= $date ) {
-								$onair++;
+								++$onair;
 							}
 						}
 					}
@@ -352,7 +352,7 @@ class LWTV_Stats {
 							$end        = $airdates['finish'];
 							if ( 'current' === lcfirst( $end ) || $end >= $date ) {
 								$score += $this_score;
-								$onair++;
+								++$onair;
 							}
 						}
 					}

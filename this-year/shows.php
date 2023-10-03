@@ -418,7 +418,7 @@ class LWTV_This_Year_Shows {
 
 					// If the show pased whatever checks we have...
 					if ( $yes_count ) {
-						$counted_shows++;
+						++$counted_shows;
 
 						// If we're ONLY counting, we don't have to do the rest.
 						if ( ! $count ) {

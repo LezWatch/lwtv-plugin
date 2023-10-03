@@ -33,6 +33,7 @@ class LWTV_Alexa_Common {
 				break;
 		}
 
+		// phpcs:disable
 		// Remove <!--fwp-loop--> from output
 		add_filter(
 			'facetwp_is_main_query',
@@ -42,6 +43,7 @@ class LWTV_Alexa_Common {
 			10,
 			2
 		);
+		// phpcs:enable
 
 		// Use SQL to find possible name matches, since WP_Query doesn't use "LIKE"
 		// for post titles.
@@ -171,7 +173,7 @@ class LWTV_Alexa_Common {
 									$the_dead .= 'And ';
 								}
 								$the_dead .= $dead_character['name'] . ' in ' . $dead_character['died'] . '. ';
-								$deadcount++;
+								++$deadcount;
 							}
 						}
 						$whodied = $how_many . ' on ' . gmdate( 'F jS', $timestamp ) . '. ' . $the_dead;
@@ -196,7 +198,6 @@ class LWTV_Alexa_Common {
 		);
 		return $response;
 	}
-
 }
 
 new LWTV_Alexa_Common();

@@ -102,7 +102,6 @@ class LWTV_Of_The_Day {
 			$table,
 			$array
 		);
-
 	}
 
 	/*
@@ -165,6 +164,7 @@ class LWTV_Of_The_Day {
 	 * @param string $format (default: 'format')
 	 * @return array
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function character_show( $date = '', $type = 'character', $format = 'default' ) {
 
 		// Defaults...
@@ -268,7 +268,6 @@ class LWTV_Of_The_Day {
 		}
 
 		return $return;
-
 	}
 
 	/**

@@ -37,7 +37,6 @@ class LWTV_ClickJacking {
 
 		return $headers;
 	}
-
 }
 
 new LWTV_ClickJacking();

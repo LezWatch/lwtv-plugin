@@ -3,13 +3,13 @@
 namespace Cmb2Grid;
 
 if ( ! defined( 'CMB2GRID_DIR' ) ) {
-	define( 'CMB2GRID_DIR', trailingslashit( dirname( __FILE__ ) ) );
+	define( 'CMB2GRID_DIR', trailingslashit( __DIR__ ) );
 }
 
 
 if ( ! class_exists( '\Cmb2Grid\Cmb2GridPlugin' ) ) {
 
-	require_once dirname( __FILE__ ) . '/DesignPatterns/Singleton.php';
+	require_once __DIR__ . '/DesignPatterns/Singleton.php';
 
 	class Cmb2GridPlugin extends DesignPatterns\Singleton {
 
@@ -113,7 +113,7 @@ if ( ! function_exists( '\Cmb2Grid\init' ) ) {
 	function init() {
 		if ( defined( 'CMB2_LOADED' ) ) {
 			if ( ! defined( 'CMB2GRID_DIR' ) ) {
-				define( 'CMB2GRID_DIR', trailingslashit( dirname( __FILE__ ) ) );
+				define( 'CMB2GRID_DIR', trailingslashit( __DIR__ ) );
 			}
 			Cmb2GridPlugin::getInstance();
 		}

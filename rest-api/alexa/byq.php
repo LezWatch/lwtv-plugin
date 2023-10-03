@@ -63,7 +63,7 @@ class LWTV_Alexa_BYQ {
 					$death_count      = 0;
 					foreach ( $death_list_array as $the_dead ) {
 						if ( $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {
-							$death_count++;
+							++$death_count;
 						}
 					}
 					break;
@@ -120,14 +120,13 @@ class LWTV_Alexa_BYQ {
 					$the_dead .= 'And ';
 				}
 				$the_dead .= $dead_character['name'] . ' in ' . $dead_character['died'] . '. ';
-				$deadcount++;
+				++$deadcount;
 			}
 		}
 		$output = $how_many . ' on ' . gmdate( 'F jS', $timestamp ) . '. ' . $the_dead;
 
 		return $output;
 	}
-
 }
 
 new LWTV_Alexa_BYQ();

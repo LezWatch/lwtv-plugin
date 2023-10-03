@@ -29,7 +29,6 @@ class LWTV_Jetpack {
 		// Integrate spam checkers with Jetpack.
 		add_filter( 'jetpack_contact_form_is_spam', array( $this, 'jetpack_spammers' ), 11, 2 );
 		add_filter( 'jetpack_contact_form_is_spam', array( $this, 'jetpack_harassment' ), 11, 2 );
-
 	}
 
 	/**
@@ -71,7 +70,7 @@ class LWTV_Jetpack {
 			return $is_spam;
 		}
 
-		if ( wp_blacklist_check( $form['comment_author'], $form['comment_author_email'], $form['comment_author_url'], $form['comment_content'], $form['user_ip'], $form['user_agent'] ) ) {
+		if ( wp_check_comment_disallowed_list( $form['comment_author'], $form['comment_author_email'], $form['comment_author_url'], $form['comment_content'], $form['user_ip'], $form['user_agent'] ) ) {
 			return true;
 		}
 
@@ -153,4 +152,3 @@ class LWTV_Jetpack {
 }
 
 new LWTV_Jetpack();
-

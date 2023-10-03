@@ -245,6 +245,7 @@ class LWTV_Export_JSON {
 	 */
 	public function export_full( $item, $tax, $term ) {
 
+		// phpcs:disable
 		// Remove <!--fwp-loop--> from output
 		add_filter(
 			'facetwp_is_main_query',
@@ -254,6 +255,7 @@ class LWTV_Export_JSON {
 			10,
 			2
 		);
+		// phpcs:enable
 
 		// Prep Return
 		$response_array = array();
@@ -273,33 +275,30 @@ class LWTV_Export_JSON {
 				'hide_empty' => false,
 				'parent'     => 0,
 			);
-
 			foreach ( $valid_tax as $this_tax ) {
-				$response_array[ $this_tax ] = wp_count_terms( 'lez_' . $this_tax, $term_params );
+				$term_params['taxonomy']     = 'lez_' . $this_tax;
+				$response_array[ $this_tax ] = wp_count_terms( $term_params );
 			}
 		} elseif ( ! in_array( $tax, $valid_tax, true ) ) {
 			// Failure
 			return new WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $tax );
-		} else {
-			if ( ! isset( $term ) || 'none' === $term ) {
-				// Make list of all terms
-				$terms = get_terms(
-					array(
-						'taxonomy' => 'lez_' . $tax,
-					),
-				);
+		} elseif ( ! isset( $term ) || 'none' === $term ) {
+			// Make list of all terms
+			$terms = get_terms(
+				array(
+					'taxonomy' => 'lez_' . $tax,
+				),
+			);
 
-				// Process list to show term slug and count
-				foreach ( $terms as $one_term ) {
-					$response_array[ $one_term->slug ] = $one_term->count;
-				}
-			} else {
-				$response_array = self::get_full_list( $item, $tax, $term );
+			// Process list to show term slug and count
+			foreach ( $terms as $one_term ) {
+				$response_array[ $one_term->slug ] = $one_term->count;
 			}
+		} else {
+			$response_array = self::get_full_list( $item, $tax, $term );
 		}
 
 		return $response_array;
-
 	}
 
 	/**
@@ -775,12 +774,11 @@ class LWTV_Export_JSON {
 		if ( get_query_var( 'export' ) ) {
 			// phpcs:disable
 			add_filter( 'template_include', function() {
-				return dirname( __FILE__ ) . '/templates/export-json.php';
+				return __DIR__ . '/templates/export-json.php';
 			});
 			// phpcs:enable
 		}
 	}
-
 }
 
 new LWTV_Export_JSON();

@@ -16,9 +16,11 @@ class LWTV_Shows_Calendar {
 	 * Since TV Maze sometimes uses different names than we do, we have to make
 	 * a related array that can handle two names.
 	 *
+	 * @TODO: Make this something we have UX access to.
+	 *
 	 * @param  string $showname Display Name of the show
 	 * @param  string $source   lwtv or tvmaze
-	 * @return string           The display nem
+	 * @return string           The display name
 	 */
 	public function check_name( $showname, $source ) {
 
@@ -55,5 +57,4 @@ class LWTV_Shows_Calendar {
 
 		return $return;
 	}
-
 }

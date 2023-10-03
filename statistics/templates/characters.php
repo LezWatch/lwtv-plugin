@@ -79,8 +79,8 @@ switch ( $view ) {
 						<tbody>
 							<?php
 							$cliches = get_terms(
-								'lez_cliches',
 								array(
+									'taxonomy'   => 'lez_cliches',
 									'number'     => 14,
 									'orderby'    => 'count',
 									'hide_empty' => 0,
@@ -114,8 +114,8 @@ switch ( $view ) {
 						<tbody>
 							<?php
 							$sexualities = get_terms(
-								'lez_sexuality',
 								array(
+									'taxonomy'   => 'lez_sexuality',
 									'number'     => 5,
 									'orderby'    => 'count',
 									'hide_empty' => 0,
@@ -149,8 +149,8 @@ switch ( $view ) {
 						<tbody>
 							<?php
 							$genders = get_terms(
-								'lez_gender',
 								array(
+									'taxonomy'   => 'lez_gender',
 									'number'     => 5,
 									'orderby'    => 'count',
 									'hide_empty' => 0,

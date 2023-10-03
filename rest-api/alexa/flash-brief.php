@@ -51,7 +51,6 @@ class LWTV_Alexa_Flash_Brief {
 		}
 		return $responses;
 	}
-
 }
 
 new LWTV_Alexa_Flash_Brief();

@@ -282,7 +282,7 @@ class LWTV_Whats_On_JSON {
 					$show_info = wp_remote_get( 'http://api.tvmaze.com/lookup/shows?imdb=' . get_post_meta( $show_id, 'lezshows_imdb', true ) );
 				} else {
 					// Check the show namer just in case we have odd versions for TV Maze.
-					require_once dirname( __FILE__, 2 ) . '/cpts/shows/calendar-names.php';
+					require_once dirname( __DIR__, 2 ) . '/cpts/shows/calendar-names.php';
 					$show_name = ( new LWTV_Shows_Calendar() )->check_name( $show_name, 'lwtv' );
 
 					// Search TV Maze API for show info:
@@ -417,7 +417,6 @@ class LWTV_Whats_On_JSON {
 		}
 
 		return $by_day_array;
-
 	}
 
 	/**
@@ -456,7 +455,7 @@ class LWTV_Whats_On_JSON {
 						$on_array[ $show_name ]['title'] = array( $on_array[ $show_name ]['title'] );
 					}
 
-					$on_array[ $show_name ]['count']++;
+					++$on_array[ $show_name ]['count'];
 					$on_array[ $show_name ]['show']  = $show_name;
 					$on_array[ $show_name ]['title'] = $on_array[ $show_name ]['count'] . ' episodes';
 				} else {
@@ -478,7 +477,6 @@ class LWTV_Whats_On_JSON {
 
 		return $return;
 	}
-
 }
 
 new LWTV_Whats_On_JSON();

@@ -46,10 +46,11 @@ class LWTV_Shortcodes {
 	 * Display The first year we had queers
 	 *
 	 * Usage:
-	 *		[firstyear]
+	 *  [firstyear]
 	 *
 	 * @since 1.1
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	public function first_year( $atts ) {
 		return FIRST_LWTV_YEAR;
 	}
@@ -58,8 +59,8 @@ class LWTV_Shortcodes {
 	 * Display This Month recap
 	 *
 	 * Usage:
-	 *		[thismonth]
-	 *		[thismonth date="2017-01"]
+	 *  [thismonth]
+	 *  [thismonth date="2017-01"]
 	 *
 	 * @since 1.0
 	 */
@@ -117,7 +118,7 @@ class LWTV_Shortcodes {
 		$death_query_count = 0;
 		foreach ( $death_list_array as $the_dead ) {
 			if ( $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {
-				$death_query_count++;
+				++$death_query_count;
 			}
 		}
 		$count_array['dead'] = $death_query_count;
@@ -224,7 +225,7 @@ class LWTV_Shortcodes {
 	 * Usage: [glossary taxonomy="taxonomy slug"]
 	 *
 	 * Attributes:
-	 *		taxonomy = taxonomy slug
+	 *  taxonomy = taxonomy slug
 	 *
 	 * @since 1.0
 	 */
@@ -263,7 +264,7 @@ class LWTV_Shortcodes {
 	*/
 	public static function author_box( $attributes ) {
 
-		wp_enqueue_style( 'author-box-shortcode', plugins_url( 'assets/css/author-box.css', dirname( __FILE__ ) ), array(), self::$version );
+		wp_enqueue_style( 'author-box-shortcode', plugins_url( 'assets/css/author-box.css', __DIR__ ), array(), self::$version );
 
 		// Default to large
 		$format = ( isset( $attributes['format'] ) ) ? sanitize_text_field( $attributes['format'] ) : 'large';
@@ -380,8 +381,8 @@ class LWTV_Shortcodes {
 	 * Usage: [copyright year=(start year) text=(copyright text)]
 	 *
 	 * Attributes:
-	 * 		year = (int) start year. (default: current year)
-	 *		text = (text) copyright message. (default: &copy; )
+	 *  year = (int) start year. (default: current year)
+	 *  text = (text) copyright message. (default: &copy; )
 	 *
 	 * @since 1.0
 	 */
@@ -476,7 +477,7 @@ class LWTV_Shortcodes {
 	 * Usage: [indiegogo url="https://www.indiegogo.com/projects/riley-parra-season-2-lgbt"]
 	 *
 	 * Attributes:
-	 *		url: The URL of the project
+	 *  url: The URL of the project
 	 *
 	 * @since 1.3
 	 */
@@ -500,8 +501,8 @@ class LWTV_Shortcodes {
 	 * Display Spoiler Warning
 	 *
 	 * Usage:
-	 *		[spoilers]
-	 *		[spoilers warning="OMG! SPIDERS!!!"]
+	 *  [spoilers]
+	 *  [spoilers warning="OMG! SPIDERS!!!"]
 	 *
 	 * @since 1.3
 	 */
@@ -522,10 +523,11 @@ class LWTV_Shortcodes {
 	 * Display Badge Link
 	 *
 	 * Usage:
-	 *		[badge url=LINK class="class class" role="role"]TEXT[/badge]
+	 *  [badge url=LINK class="class class" role="role"]TEXT[/badge]
 	 *
 	 * @since 1.3
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function badge( $atts, $content = '', $tag = '' ) {
 		$attributes = shortcode_atts(
 			array(
@@ -547,7 +549,7 @@ class LWTV_Shortcodes {
 	 * Display Gleam Contest
 	 *
 	 * Usage:
-	 *		[gleam url="https://gleam.io/iR0GQ/gleam-demo-competition"]Gleam Demo Competition[/gleam]
+	 *  [gleam url="https://gleam.io/iR0GQ/gleam-demo-competition"]Gleam Demo Competition[/gleam]
 	 *
 	 * @since 1.3.1
 	 */
@@ -572,10 +574,11 @@ class LWTV_Shortcodes {
 	 * Display Disney/ABC Press Video
 	 *
 	 * Usage:
-	 *		[disneypress url="https://www.disneyabcpress.com/freeform/video/B11DA0A8-9C3A-D70E-E864-3A4261C207FB/embed"]
+	 *  [disneypress url="https://www.disneyabcpress.com/freeform/video/B11DA0A8-9C3A-D70E-E864-3A4261C207FB/embed"]
 	 *
 	 * @since 2.0
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function disneypress( $atts, $content = null ) {
 		$attributes = shortcode_atts(
 			array(
@@ -591,6 +594,6 @@ class LWTV_Shortcodes {
 
 		return sprintf( '<div class="embed-responsive embed-responsive-16by9"><iframe id="embed" src="%s" frameborder="0"></iframe></div>', esc_url( $attributes['url'] ) );
 	}
-
 }
+
 new LWTV_Shortcodes();

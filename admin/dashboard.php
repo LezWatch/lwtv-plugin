@@ -59,9 +59,7 @@ class LWTV_Tools_Dashboard {
 		</div>
 
 		<?php
-
 	}
-
 }
 
 new LWTV_Tools_Dashboard();

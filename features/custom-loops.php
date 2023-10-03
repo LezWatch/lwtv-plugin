@@ -102,7 +102,7 @@ class LWTV_Loops {
 			// At this point, we're probably NOT queer per pronouns, but we have a check:
 			$pronoun_terms_count = 0;
 			foreach ( $pronoun_terms as $a_pronoun ) {
-				$pronoun_terms_count++;
+				++$pronoun_terms_count;
 			}
 			// If they have more than one pronoun choice, they're queer (i.e. he/him AND she/her is queer)
 			if ( 1 === $pronoun_terms_count ) {
@@ -489,7 +489,6 @@ class LWTV_Loops {
 		wp_reset_query();
 		return $query;
 	}
-
 }
 
 new LWTV_Loops();

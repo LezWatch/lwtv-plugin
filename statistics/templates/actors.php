@@ -76,8 +76,8 @@ switch ( $view ) {
 						<tbody>
 							<?php
 							$sexualities = get_terms(
-								'lez_actor_sexuality',
 								array(
+									'taxonomy'   => 'lez_actor_sexuality',
 									'number'     => 5,
 									'orderby'    => 'count',
 									'hide_empty' => 0,
@@ -108,8 +108,8 @@ switch ( $view ) {
 						<tbody>
 							<?php
 							$genders = get_terms(
-								'lez_actor_gender',
 								array(
+									'taxonomy'   => 'lez_actor_gender',
 									'number'     => 5,
 									'orderby'    => 'count',
 									'hide_empty' => 0,

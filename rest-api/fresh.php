@@ -82,7 +82,6 @@ class LWTV_Fresh_JSON {
 	public function whats_new( $type, $time ) {
 		// this will spit out everyone added in the last X timeframe (hour, day, week)
 	}
-
 }
 
 new LWTV_Fresh_JSON();

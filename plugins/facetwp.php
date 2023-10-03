@@ -20,8 +20,8 @@ class LWTV_FacetWP_Addons {
 	public function __construct() {
 
 		// Include extra Plugins
-		require_once dirname( __FILE__ ) . '/facetwp/facetwp-cmb2/cmb2.php';
-		require_once dirname( __FILE__ ) . '/facetwp/lwtv.php';
+		require_once __DIR__ . '/facetwp/facetwp-cmb2/cmb2.php';
+		require_once __DIR__ . '/facetwp/lwtv.php';
 
 		// Filter paged output
 		add_filter( 'facetwp_pager_html', array( $this, 'facetwp_pager_html' ), 10, 2 );
@@ -93,11 +93,11 @@ class LWTV_FacetWP_Addons {
 	 *
 	 * @since 1.1.0
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	public function reset_shortcode( $atts ) {
 		$reset = '<center><button class="facetwp-reset" onclick="FWP.reset()">Reset Filters</button></center>';
 		return $reset;
 	}
-
 }
 
 if ( class_exists( 'FacetWP' ) ) {
