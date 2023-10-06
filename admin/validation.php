@@ -364,8 +364,7 @@ class LWTV_Data_Validation_Checks {
 		}
 
 		// Get the last run time.
-		$last_run_time = self::last_run( 'actor_problems' );
-		$last_run_echo = '<p>The actor checker was last run on ' . $last_run_time . '</p>';
+		$last_run = self::last_run( 'actor_problems' );
 
 		// Defaults.
 		$button  = 'Run Scan';
@@ -377,7 +376,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>Every actor has at least one character and their data looks sane.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -389,7 +388,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -401,7 +400,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following actor(s) need your attention.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 
@@ -496,8 +495,7 @@ class LWTV_Data_Validation_Checks {
 		}
 
 		// Get the last run time.
-		$last_run_time = self::last_run( 'actor_empty' );
-		$last_run_echo = '<p>The incomplete actor checker was last run on ' . $last_run_time . '</p>';
+		$last_run = self::last_run( 'actor_empty' );
 
 		// Convert to JSON
 		$json_it = wp_json_encode( $items );
@@ -512,7 +510,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>All actors have at least some information.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -524,7 +522,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -536,7 +534,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following actor(s) are missing critical data. Please review and update them.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 
@@ -585,8 +583,7 @@ class LWTV_Data_Validation_Checks {
 		}
 
 		// Get the last run time.
-		$last_run_time = self::last_run( 'actor_imdb' );
-		$last_run_echo = '<p>The IMDb actor checker was last run on ' . $last_run_time . '</p>';
+		$last_run = self::last_run( 'actor_imdb' );
 
 		// Convert to JSON
 		$json_it = wp_json_encode( $items );
@@ -601,7 +598,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>All actors have at an IMDb entry.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -613,7 +610,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -625,7 +622,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following actor(s) have invalid IMDb data or do not have IMDb data at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 
@@ -674,8 +671,7 @@ class LWTV_Data_Validation_Checks {
 		}
 
 		// Get the last run time.
-		$last_run_time = self::last_run( 'show_problems' );
-		$last_run_echo = '<p>The show checker was last run on ' . $last_run_time . '</p>';
+		$last_run = self::last_run( 'show_problems' );
 
 		// Default.
 		$button  = 'Run Scan';
@@ -687,7 +683,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>All shows look good and the data looks sane.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -699,7 +695,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -712,7 +708,7 @@ class LWTV_Data_Validation_Checks {
 				<div id="lwtv-tools-alerts">
 					<p>The following show(s) need your attention.</p>
 					<p>Note: Remember that intersectionality is meant to be a <em>positive</em> representation. If it's bad disability rep (like Grey's Anatomy with Arizona), do not list them.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 
@@ -761,8 +757,7 @@ class LWTV_Data_Validation_Checks {
 		}
 
 		// Get the last run time.
-		$last_run_time = self::last_run( 'show_imdb' );
-		$last_run_echo = '<p>The IMDb show checker was last run on ' . $last_run_time . '</p>';
+		$last_run = self::last_run( 'show_imdb' );
 
 		// Convert to JSON
 		$json_it = wp_json_encode( $items );
@@ -777,7 +772,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>All actors have at an IMDb entry.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -789,7 +784,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -801,7 +796,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following show(s) have invalid IMDb data or do not have IMDb data at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 
@@ -850,8 +845,7 @@ class LWTV_Data_Validation_Checks {
 		}
 
 		// Get the last run time.
-		$last_run_time = self::last_run( 'character_problems' );
-		$last_run_echo = '<p>The character checker was last run on ' . $last_run_time . '</p>';
+		$last_run = self::last_run( 'character_problems' );
 
 		// Default.
 		$button  = 'Run Scan';
@@ -863,7 +857,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>All characters look good and their data looks sane. Even Sara Lance.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -875,7 +869,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
@@ -887,7 +881,7 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following character(s) need your attention.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 
