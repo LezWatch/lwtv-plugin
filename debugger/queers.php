@@ -16,20 +16,43 @@ class LWTV_Debug_Queers {
 	 * Find all characters who are mismatched with their queer settings
 	 * and the actor who plays them
 	 */
-	public function find_queerchars() {
+	public function find_queerchars( $items = array() ) {
 
-		// Empty to start
+		// The array we will be checking.
+		$characters = array();
+
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the characters from items!
+			foreach ( $items as $character_item ) {
+				if ( get_post_status( $character_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$characters[] = $character_item['id'];
+				}
+			}
+		} else {
+			// Get all the characters
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters' );
+
+			if ( $the_loop->have_posts() ) {
+				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
+				wp_reset_query();
+			}
+		}
+
+		// If somehow characters is totally empty...
+		if ( empty( $characters ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$characters = array_unique( $characters );
+
+		// reset items since we recheck off $characters.
 		$items = array();
 
-		// Get all the characters
-		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters' );
-
-		if ( $the_loop->have_posts() ) {
-			$characters = wp_list_pluck( $the_loop->posts, 'ID' );
-			wp_reset_query();
-		} else {
-			return;
-		}
+		// Reset items
+		$items = array();
 
 		// If this is WP-CLI, setup progress bar.
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {

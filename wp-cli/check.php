@@ -55,7 +55,7 @@ class WP_CLI_LWTV_Check {
 	 * <check_name>
 	 * : Type to check (i.e. 'queerchars').
 	 *
-	 * <post_id>
+	 * [<post_id>]
 	 * : Post ID to check
 	 *
 	 * [--fix-it]
@@ -75,7 +75,7 @@ class WP_CLI_LWTV_Check {
 		$this->format = \WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'table' );
 		$this->fix_it = \WP_CLI\Utils\get_flag_value( $assoc_args, 'fix-it', null );
 		$this->check  = $args[0];
-		$this->second = $args[1];
+		$this->second = isset( $args[1] ) ? $args[1] : '';
 
 		try {
 			$this->run_checker( $this->check, $this->second );
@@ -90,13 +90,15 @@ class WP_CLI_LWTV_Check {
 	public function run_checker( $check_type, $second ) {
 		$valid_types   = array( 'queerchars', 'wiki' );
 		$display_types = implode( ' or ', $valid_types );
+
+		// Language check.
 		if ( 3 >= count( $valid_types ) ) {
 			$last          = array_pop( $valid_types );
 			$display_types = implode( ', ', $valid_types ) . ' or ' . $last;
 		}
 
 		// Last sanity check: Is the post ID a member of THIS post type...
-		if ( $current_type !== $post_type && ! in_array( $current_type, $valid_types, true ) ) {
+		if ( ! in_array( $check_type, $valid_types, true ) ) {
 			WP_CLI::error( 'You can only run checks on ' . $display_types . '.' . $check_type . ' is invalid.' );
 		}
 

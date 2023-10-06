@@ -75,13 +75,15 @@ class LWTV_Data_Validation_Checks {
 		// Get the timestamp from the individual last run OR the global.
 		if ( 'intro' !== $tool && isset( $options[ $tool ]['last'] ) ) {
 			$timestamp = $options[ $tool ]['last'];
+			$tool      = 'checker';
 		} else {
 			$timestamp = $options['timestamp'];
 		}
 
-		$last_run = '<strong>' . get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) . '</strong> (' . human_time_diff( $timestamp ) . ' ago).';
+		$last_run_time = '<strong>' . get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), 'F j, Y H:i:s' ) . '</strong> (' . human_time_diff( $timestamp ) . ' ago).';
+		$last_run_echo = '<p>The ' . str_replace( '_', ' ', $tool ) . ' was last run on ' . $last_run_time . '</p>';
 
-		return $last_run;
+		return $last_run_echo;
 	}
 
 	/*
@@ -111,7 +113,7 @@ class LWTV_Data_Validation_Checks {
 		}
 
 		if ( isset( $content ) ) {
-			$message = '<div class="notice notice-' . esc_attr( $notice_value ) . ' is-dismissable"><p>' . esc_html( $content ) . '</p></div>';
+			$message = '<div class="notice notice-' . esc_attr( $notice_value ) . ' is-dissmissable"><p>' . esc_html( $content ) . '</p></div>';
 			add_action( 'admin_notices', $message );
 		}
 	}
@@ -150,7 +152,7 @@ class LWTV_Data_Validation_Checks {
 						self::tab_actor_wiki();
 						break;
 					case 'actor_empty':
-						self::tab_actor_empty();
+						self::tab_actor_incomplete();
 						break;
 					case 'actor_imdb':
 						self::tab_actor_imdb();
@@ -221,9 +223,9 @@ class LWTV_Data_Validation_Checks {
 			<h3>LezWatch.TV Data Validation Checks</h3>
 			<p>If data gets out of sync or we update things incorrectly, these checkers can help identify those errors before people notice. They run on an automated cycle, each check once a week, to try and catch things early.</p>
 
-			<p>When visiting the individual checker, it will show you the status of the last run. To re-run the tool, press the 'Check Again' button at the bottom of the page.</p>
+			<p>When visiting the individual checker, it will show you the status of the last run. To re-run the tool, press the 'Run Scan' button at the bottom of the page.</p>
 
-			<p>The checks were last run on <?php echo wp_kses_post( $last_run ); ?></p>
+			<p><?php echo wp_kses_post( $last_run ); ?></p>
 
 			<ul>
 				<?php
@@ -266,14 +268,22 @@ class LWTV_Data_Validation_Checks {
 
 		$items = LWTV_Transients::get_transient( 'lwtv_debug_queercheck' );
 
-		// Check whether the button has been pressed AND also check the nonce
+		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_queer_checker_clicked' ) ) || false === $items ) {
 			$items = ( new LWTV_Debug_Queers() )->find_queerchars();
 		}
 
+		// If recheck was clicked, only check the problem children.
+		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_queer_checker_clicked' ) && false !== $items ) {
+			$items = ( new LWTV_Debug_Queers() )->find_queerchars( $items );
+		}
+
 		// Get the last run time.
-		$last_run_time = self::last_run( 'queercheck' );
-		$last_run_echo = '<p>The queer checker was last run on ' . $last_run_time . '</p>';
+		$last_run = self::last_run( 'queercheck' );
+
+		// Defaults.
+		$button  = 'Run Scan';
+		$is_name = 'rerun';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -281,17 +291,31 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
 					<p>Every character's queerness matches their actors.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
+				</div>
+			</div>
+			<?php
+		} elseif ( false === $items ) {
+			$button  = 'Full Scan';
+			$is_name = 'rerun';
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 			<?php
 		} else {
+			$button  = 'Recheck';
+			$is_name = 'recheck';
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following character(s) need your attention. Please edit the actor or character queerness as indicated.</p>
-					<?php echo wp_kses_post( $last_run_echo ); ?>
+					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
 
@@ -316,8 +340,8 @@ class LWTV_Data_Validation_Checks {
 		?>
 		<form action="admin.php?page=lwtv_data_check&tab=queer_checker" method="post">
 			<?php wp_nonce_field( 'run_queer_checker_clicked' ); ?>
-			<input type="hidden" value="true" name="rerun" />
-			<?php submit_button( 'Check Again' ); ?>
+			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
+			<?php submit_button( $button ); ?>
 		</form>
 		<?php
 	}
@@ -329,14 +353,23 @@ class LWTV_Data_Validation_Checks {
 
 		$items = LWTV_Transients::get_transient( 'lwtv_debug_actor_problems' );
 
-		// Check whether the button has been pressed AND also check the nonce
+		// If re-run, do a whole full scan!
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_checker_clicked' ) ) || false === $items ) {
 			$items = ( new LWTV_Debug_Actors() )->find_actors_problems();
+		}
+
+		// If recheck was clicked, only check the problem children.
+		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_actor_checker_clicked' ) && false !== $items ) {
+			$items = ( new LWTV_Debug_Actors() )->find_actors_problems( $items );
 		}
 
 		// Get the last run time.
 		$last_run_time = self::last_run( 'actor_problems' );
 		$last_run_echo = '<p>The actor checker was last run on ' . $last_run_time . '</p>';
+
+		// Defaults.
+		$button  = 'Run Scan';
+		$is_name = 'rerun';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -348,7 +381,21 @@ class LWTV_Data_Validation_Checks {
 				</div>
 			</div>
 			<?php
+		} elseif ( false === $items ) {
+			$button  = 'Full Scan';
+			$is_name = 'rerun';
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
+				</div>
+			</div>
+			<?php
 		} else {
+			$button  = 'Recheck';
+			$is_name = 'recheck';
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
@@ -379,8 +426,8 @@ class LWTV_Data_Validation_Checks {
 		?>
 		<form action="admin.php?page=lwtv_data_check&tab=actor_checker" method="post">
 			<?php wp_nonce_field( 'run_actor_checker_clicked' ); ?>
-			<input type="hidden" value="true" name="rerun" />
-			<?php submit_button( 'Check Again' ); ?>
+			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
+			<?php submit_button( $button ); ?>
 		</form>
 		<?php
 	}
@@ -432,15 +479,20 @@ class LWTV_Data_Validation_Checks {
 	}
 
 	/**
-	 * Output the results of actors without data ...
+	 * Output the results of actors with missing data ...
 	 */
-	public static function tab_actor_empty() {
+	public static function tab_actor_incomplete() {
 
 		$items = LWTV_Transients::get_transient( 'lwtv_debug_actor_empty' );
 
-		// Check whether the button has been pressed AND also check the nonce
-		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_empty_clicked' ) ) || false === $items ) {
-			$items = ( new LWTV_Debug_Actors() )->find_actors_empty();
+		// If re-run, do a whole full scan!
+		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_incomplete_clicked' ) ) || false === $items ) {
+			$items = ( new LWTV_Debug_Actors() )->find_actors_incomplete();
+		}
+
+		// If recheck was clicked, only check the problem children.
+		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_actor_incomplete_clicked' ) && false !== $items ) {
+			$items = ( new LWTV_Debug_Actors() )->find_actors_incomplete( $items );
 		}
 
 		// Get the last run time.
@@ -449,6 +501,10 @@ class LWTV_Data_Validation_Checks {
 
 		// Convert to JSON
 		$json_it = wp_json_encode( $items );
+
+		// Default.
+		$button  = 'Run Scan';
+		$is_name = 'rerun';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -460,12 +516,26 @@ class LWTV_Data_Validation_Checks {
 				</div>
 			</div>
 			<?php
+		} elseif ( false === $items ) {
+			$button  = 'Full Scan';
+			$is_name = 'rerun';
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
+				</div>
+			</div>
+			<?php
 		} else {
+			$button  = 'Recheck';
+			$is_name = 'recheck';
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
-					<p>The following actor(s) have not have their data entered yet. Please review and update them.</p>
+					<p>The following actor(s) are missing critical data. Please review and update them.</p>
 					<?php echo wp_kses_post( $last_run_echo ); ?>
 				</div>
 			</div>
@@ -490,9 +560,9 @@ class LWTV_Data_Validation_Checks {
 
 		?>
 		<form action="admin.php?page=lwtv_data_check&tab=actor_empty" method="post">
-			<?php wp_nonce_field( 'run_actor_empty_clicked' ); ?>
-			<input type="hidden" value="true" name="rerun" />
-			<?php submit_button( 'Check Again' ); ?>
+			<?php wp_nonce_field( 'run_actor_incomplete_clicked' ); ?>
+			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
+			<?php submit_button( $button ); ?>
 		</form>
 		<?php
 	}
@@ -504,9 +574,14 @@ class LWTV_Data_Validation_Checks {
 
 		$items = LWTV_Transients::get_transient( 'lwtv_debug_actor_imdb' );
 
-		// Check whether the button has been pressed AND also check the nonce
+		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_actor_imdb_clicked' ) ) || false === $items ) {
 			$items = ( new LWTV_Debug_Actors() )->find_actors_no_imdb();
+		}
+
+		// If recheck was clicked, only check the problem children.
+		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_actor_imdb_clicked' ) && false !== $items ) {
+			$items = ( new LWTV_Debug_Actors() )->find_actors_no_imdb( $items );
 		}
 
 		// Get the last run time.
@@ -515,6 +590,10 @@ class LWTV_Data_Validation_Checks {
 
 		// Convert to JSON
 		$json_it = wp_json_encode( $items );
+
+		// Default.
+		$button  = 'Run Scan';
+		$is_name = 'rerun';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -526,7 +605,21 @@ class LWTV_Data_Validation_Checks {
 				</div>
 			</div>
 			<?php
+		} elseif ( false === $items ) {
+			$button  = 'Full Scan';
+			$is_name = 'rerun';
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
+				</div>
+			</div>
+			<?php
 		} else {
+			$button  = 'Recheck';
+			$is_name = 'recheck';
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
@@ -557,8 +650,8 @@ class LWTV_Data_Validation_Checks {
 		?>
 		<form action="admin.php?page=lwtv_data_check&tab=actor_imdb" method="post">
 			<?php wp_nonce_field( 'run_actor_imdb_clicked' ); ?>
-			<input type="hidden" value="true" name="rerun" />
-			<?php submit_button( 'Check Again' ); ?>
+			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
+			<?php submit_button( $button ); ?>
 		</form>
 		<?php
 	}
@@ -570,14 +663,23 @@ class LWTV_Data_Validation_Checks {
 
 		$items = LWTV_Transients::get_transient( 'lwtv_debug_show_problems' );
 
-		// Check whether the button has been pressed AND also check the nonce
+		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_checker_clicked' ) ) || false === $items ) {
 			$items = ( new LWTV_Debug_Shows() )->find_shows_problems();
+		}
+
+		// If recheck was clicked, only check the problem children.
+		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_show_checker_clicked' ) && false !== $items ) {
+			$items = ( new LWTV_Debug_Shows() )->find_shows_problems( $items );
 		}
 
 		// Get the last run time.
 		$last_run_time = self::last_run( 'show_problems' );
 		$last_run_echo = '<p>The show checker was last run on ' . $last_run_time . '</p>';
+
+		// Default.
+		$button  = 'Run Scan';
+		$is_name = 'rerun';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -589,7 +691,21 @@ class LWTV_Data_Validation_Checks {
 				</div>
 			</div>
 			<?php
+		} elseif ( false === $items ) {
+			$button  = 'Full Scan';
+			$is_name = 'rerun';
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
+				</div>
+			</div>
+			<?php
 		} else {
+			$button  = 'Recheck';
+			$is_name = 'recheck';
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
@@ -621,8 +737,8 @@ class LWTV_Data_Validation_Checks {
 		?>
 		<form action="admin.php?page=lwtv_data_check&tab=show_checker" method="post">
 			<?php wp_nonce_field( 'run_show_checker_clicked' ); ?>
-			<input type="hidden" value="true" name="rerun" />
-			<?php submit_button( 'Check Again' ); ?>
+			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
+			<?php submit_button( $button ); ?>
 		</form>
 		<?php
 	}
@@ -634,9 +750,14 @@ class LWTV_Data_Validation_Checks {
 
 		$items = LWTV_Transients::get_transient( 'lwtv_debug_show_imdb' );
 
-		// Check whether the button has been pressed AND also check the nonce
+		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_imdb_clicked' ) ) || false === $items ) {
 			$items = ( new LWTV_Debug_Shows() )->find_shows_no_imdb();
+		}
+
+		// If recheck was clicked, only check the problem children.
+		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_show_imdb_clicked' ) && false !== $items ) {
+			$items = ( new LWTV_Debug_Shows() )->find_shows_no_imdb( $items );
 		}
 
 		// Get the last run time.
@@ -645,6 +766,10 @@ class LWTV_Data_Validation_Checks {
 
 		// Convert to JSON
 		$json_it = wp_json_encode( $items );
+
+		// Default.
+		$button  = 'Run Scan';
+		$is_name = 'rerun';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -656,7 +781,21 @@ class LWTV_Data_Validation_Checks {
 				</div>
 			</div>
 			<?php
+		} elseif ( false === $items ) {
+			$button  = 'Full Scan';
+			$is_name = 'rerun';
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
+				</div>
+			</div>
+			<?php
 		} else {
+			$button  = 'Recheck';
+			$is_name = 'recheck';
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
@@ -687,8 +826,8 @@ class LWTV_Data_Validation_Checks {
 		?>
 		<form action="admin.php?page=lwtv_data_check&tab=show_imdb" method="post">
 			<?php wp_nonce_field( 'run_show_imdb_clicked' ); ?>
-			<input type="hidden" value="true" name="rerun" />
-			<?php submit_button( 'Check Again' ); ?>
+			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
+			<?php submit_button( $button ); ?>
 		</form>
 		<?php
 	}
@@ -700,14 +839,23 @@ class LWTV_Data_Validation_Checks {
 
 		$items = LWTV_Transients::get_transient( 'lwtv_debug_character_problems' );
 
-		// Check whether the button has been pressed AND also check the nonce
+		// If rerun was clicked, gotta check 'em all.
 		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_character_checker_clicked' ) ) || false === $items ) {
 			$items = ( new LWTV_Debug_Characters() )->find_characters_problems();
+		}
+
+		// If recheck was clicked, only check the problem children.
+		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_showrun_character_checker_clicked_imdb_clicked' ) && false !== $items ) {
+			$items = ( new LWTV_Debug_Characters() )->find_characters_problems( $items );
 		}
 
 		// Get the last run time.
 		$last_run_time = self::last_run( 'character_problems' );
 		$last_run_echo = '<p>The character checker was last run on ' . $last_run_time . '</p>';
+
+		// Default.
+		$button  = 'Run Scan';
+		$is_name = 'rerun';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			?>
@@ -719,7 +867,21 @@ class LWTV_Data_Validation_Checks {
 				</div>
 			</div>
 			<?php
+		} elseif ( false === $items ) {
+			$button  = 'Full Scan';
+			$is_name = 'rerun';
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
+					<?php echo wp_kses_post( $last_run_echo ); ?>
+				</div>
+			</div>
+			<?php
 		} else {
+			$button  = 'Recheck';
+			$is_name = 'recheck';
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
@@ -750,8 +912,8 @@ class LWTV_Data_Validation_Checks {
 		?>
 		<form action="admin.php?page=lwtv_data_check&tab=character_checker" method="post">
 			<?php wp_nonce_field( 'run_character_checker_clicked' ); ?>
-			<input type="hidden" value="true" name="rerun" />
-			<?php submit_button( 'Check Again' ); ?>
+			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
+			<?php submit_button( $button ); ?>
 		</form>
 		<?php
 	}
