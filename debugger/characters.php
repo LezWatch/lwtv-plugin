@@ -1,6 +1,10 @@
 <?php
 /*
  * Find all problems with Character pages.
+ *
+ * find_characters_problems()  - find characters with bad or missing data
+ *
+ * check_disabled_characters() - check that disabled characters' shows are flagged correctly
  */
 
 // if this file is called directly abort
@@ -13,17 +17,40 @@ class LWTV_Debug_Characters {
 	/**
 	 * Find Characters with Problems
 	 */
-	public function find_characters_problems() {
-		// Default
-		$items = array();
+	public function find_characters_problems( $items = array() ) {
 
-		// Get all the characters
-		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters' );
+		// The array we will be checking.
+		$characters = array();
 
-		if ( $the_loop->have_posts() ) {
-			$characters = wp_list_pluck( $the_loop->posts, 'ID' );
-			wp_reset_query();
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the characters from items!
+			foreach ( $items as $character_item ) {
+				if ( get_post_status( $character_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$characters[] = $character_item['id'];
+				}
+			}
+		} else {
+			// Get all the characters
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_characters' );
+
+			if ( $the_loop->have_posts() ) {
+				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
+				wp_reset_query();
+			}
 		}
+
+		// If somehow characters is totally empty...
+		if ( empty( $characters ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$characters = array_unique( $characters );
+
+		// reset items since we recheck off $characters.
+		$items = array();
 
 		foreach ( $characters as $char_id ) {
 			$problems = array();
@@ -103,8 +130,34 @@ class LWTV_Debug_Characters {
 	 * @return [type]          [description]
 	 */
 	public function check_disabled_characters( $show_id ) {
-		// Get all the queers for the show:
-		$characters = ( new LWTV_CPT_Characters() )->list_characters( $show_id, 'query' );
+
+		// The array we will be checking.
+		$characters = array();
+
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the characters from items!
+			foreach ( $items as $character_item ) {
+				if ( get_post_status( $character_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$characters[] = $character_item['id'];
+				}
+			}
+		} else {
+			// Get all the characters
+			$characters = ( new LWTV_CPT_Characters() )->list_characters( $show_id, 'query' );
+		}
+
+		// If somehow characters is totally empty...
+		if ( empty( $characters ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$characters = array_unique( $characters );
+
+		// reset items since we recheck off $characters.
+		$items = array();
 
 		// Default has disabled
 		$has_disabled = false;

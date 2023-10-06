@@ -1,6 +1,12 @@
 <?php
 /*
  * Find all problems with Actor pages.
+ *
+ * find_actors_problems()   - find actors with weird/bad data
+ * find_actors_incomplete() - find actors without bio or photo
+ * find_actors_no_imdb()    - find actors without IMDb / bad IMDb data
+ *
+ * check_actors_wikidata()  - Validate our data vs WikiData.
  */
 
 // if this file is called directly abort
@@ -15,21 +21,45 @@ class LWTV_Debug_Actors {
 	 *
 	 * @return array $problems - array of problems. Can be empty.
 	 */
-	public function find_actors_problems() {
+	public function find_actors_problems( $items = array() ) {
 
-		// Default
-		$items = array();
+		// The array we will be checking.
+		$actors = array();
 
-		// Get all the actors
-		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the actors from items!
+			foreach ( $items as $actor_item ) {
+				if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$actors[] = $actor_item['id'];
+				}
+			}
+		} else {
+			// Get all the actors
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 
-		if ( $the_loop->have_posts() ) {
-			$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-			wp_reset_query();
+			// Add ONLY the IDs to the array.
+			if ( $the_loop->have_posts() ) {
+				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
+				wp_reset_query();
+			}
 		}
+
+		// If somehow actors is totally empty...
+		if ( empty( $actors ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$actors = array_unique( $actors );
+
+		// reset items since we recheck off $actors.
+		$items = array();
 
 		foreach ( $actors as $actor_id ) {
 			$problems = array();
+			$warnings = array();
 
 			// What we can check for
 			$check = array(
@@ -52,7 +82,7 @@ class LWTV_Debug_Actors {
 			// - Warn if there is a death and no birth (nb: this may not be a good idea, some people have no DoB!)
 			if ( ! empty( $check['death'] ) ) {
 				if ( empty( $check['birth'] ) ) {
-					$problems[] = 'Death date set without date of birth.';
+					$warnings[] = 'Death date set without date of birth.';
 				}
 			}
 
@@ -104,7 +134,6 @@ class LWTV_Debug_Actors {
 			}
 
 			// - Duplicate Actor check - shouldn't end in -[NUMBER].
-
 			$permalink_array = explode( '-', $check['dupes'] );
 			$ends_with       = end( $permalink_array );
 			// If it ends in a number, we have to check.
@@ -151,18 +180,41 @@ class LWTV_Debug_Actors {
 	 *
 	 * @return array $problems - array of problems. Can be empty.
 	 */
-	public function find_actors_empty() {
+	public function find_actors_incomplete( $items = array() ) {
 
-		// Default
-		$items = array();
+		// The array we will be checking.
+		$actors = array();
 
-		// Get all the actors
-		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the actors from items!
+			foreach ( $items as $actor_item ) {
+				if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$actors[] = $actor_item['id'];
+				}
+			}
+		} else {
+			// Get all the actors
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
 
-		if ( $the_loop->have_posts() ) {
-			$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-			wp_reset_query();
+			// Add ONLY the IDs to the array.
+			if ( $the_loop->have_posts() ) {
+				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
+				wp_reset_query();
+			}
 		}
+
+		// If somehow actors is totally empty...
+		if ( empty( $actors ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$actors = array_unique( $actors );
+
+		// reset items since we recheck off $actors.
+		$items = array();
 
 		foreach ( $actors as $actor_id ) {
 			$problems = array();
@@ -206,17 +258,41 @@ class LWTV_Debug_Actors {
 	 *
 	 * @return array $problems - array of problems. Can be empty.
 	 */
-	public function find_actors_no_imdb() {
-		// Default
-		$items = array();
+	public function find_actors_no_imdb( $items = array() ) {
 
-		// Get all the actors
-		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
+		// The array we will be checking.
+		$actors = array();
 
-		if ( $the_loop->have_posts() ) {
-			$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-			wp_reset_query();
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the actors from items!
+			foreach ( $items as $actor_item ) {
+				if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$actors[] = $actor_item['id'];
+				}
+			}
+		} else {
+			// Get all the actors
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
+
+			// Add ONLY the IDs to the array.
+			if ( $the_loop->have_posts() ) {
+				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
+				wp_reset_query();
+			}
 		}
+
+		// If somehow actors is totally empty...
+		if ( empty( $actors ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$actors = array_unique( $actors );
+
+		// reset items since we recheck off $actors.
+		$items = array();
 
 		foreach ( $actors as $actor_id ) {
 
@@ -268,22 +344,49 @@ class LWTV_Debug_Actors {
 	 *
 	 * @return array    $items Result of checks.
 	 */
-	public function check_actors_wikidata( $actors = 0 ) {
-
-		$items = array();
+	public function check_actors_wikidata( $actors = 0, $items = array() ) {
 
 		// If actors aren't a number or 0, AND they're not an array, we check everyone...
 		if ( is_numeric( $actors ) && 0 !== $actors && ! is_array( $actors ) ) {
 			$actors = array( $actors );
 		} else {
-			// Get all the actors
-			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
+			// The array we will be checking.
+			$actors = array();
 
-			if ( $the_loop->have_posts() ) {
-				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-				wp_reset_query();
+			// Are we a full scan or a recheck?
+			if ( ! empty( $items ) ) {
+				// Check only the actors from items!
+				foreach ( $items as $actor_item ) {
+					if ( get_post_status( $actor_item['id'] ) !== 'draft' ) {
+						// If it's NOT a draft, we'll recheck.
+						$actors[] = $actor_item['id'];
+					} else {
+						// Delete post meta for drafts.
+						delete_post_meta( $actor_item['id'], 'debug_check' );
+					}
+				}
+			} else {
+				// Get all the actors
+				$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_actors' );
+
+				// Add ONLY the IDs to the array.
+				if ( $the_loop->have_posts() ) {
+					$actors = wp_list_pluck( $the_loop->posts, 'ID' );
+					wp_reset_query();
+				}
 			}
 		}
+
+		// If somehow actors is totally empty...
+		if ( empty( $actors ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$actors = array_unique( $actors );
+
+		// reset items since we recheck off $actors.
+		$items = array();
 
 		// Since this now an array no matter what, we search it all.
 		foreach ( $actors as $actor_id ) {
@@ -394,7 +497,12 @@ class LWTV_Debug_Actors {
 		if ( is_array( $items ) ) {
 			// Save it all in the DB
 			foreach ( $items as $one_item => $one_data ) {
-				update_post_meta( $one_data['id'], '_lezactors_wikidata', $one_data );
+				if ( 'post_type_actor' === get_post_type( $one_data['id'] ) ) {
+					update_post_meta( $one_data['id'], '_lezactors_wikidata', $one_data );
+				} else {
+					// Needed because of oopsie.
+					delete_post_meta( $one_data['id'], '_lezactors_wikidata' );
+				}
 			}
 		}
 

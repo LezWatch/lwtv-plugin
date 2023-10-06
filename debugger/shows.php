@@ -13,17 +13,40 @@ class LWTV_Debug_Shows {
 	/**
 	 * Find Shows with Problems
 	 */
-	public function find_shows_problems() {
-		// Default
-		$items = array();
+	public function find_shows_problems( $items = array() ) {
 
-		// Get all the shows
-		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
+		// The array we will be checking.
+		$shows = array();
 
-		if ( $the_loop->have_posts() ) {
-			$shows = wp_list_pluck( $the_loop->posts, 'ID' );
-			wp_reset_query();
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the shows from items!
+			foreach ( $items as $show_item ) {
+				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$shows[] = $show_item['id'];
+				}
+			}
+		} else {
+			// Get all the shows
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
+
+			if ( $the_loop->have_posts() ) {
+				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
+				wp_reset_query();
+			}
 		}
+
+		// If somehow shows is totally empty...
+		if ( empty( $shows ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$shows = array_unique( $shows );
+
+		// reset items since we recheck off $shows.
+		$items = array();
 
 		foreach ( $shows as $show_id ) {
 			$problems = array();
@@ -163,17 +186,40 @@ class LWTV_Debug_Shows {
 	 * Ensure they have matching characters.
 	 * @return [type] [description]
 	 */
-	public function find_intersection_problems() {
+	public function find_intersection_problems( $items = array() ) {
 
-		$items = array();
+		// The array we will be checking.
+		$shows = array();
 
-		// list everything that has a DISABLED intersection tag
-		$disabled_shows_loop = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_intersections', 'slug', 'disabilities' );
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the shows from items!
+			foreach ( $items as $show_item ) {
+				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$shows[] = $show_item['id'];
+				}
+			}
+		} else {
+			// list everything that has a DISABLED intersection tag
+			$disabled_shows_loop = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_intersections', 'slug', 'disabilities' );
 
-		if ( $disabled_shows_loop->have_posts() ) {
-			$shows = wp_list_pluck( $disabled_shows_loop->posts, 'ID' );
-			wp_reset_query();
+			if ( $disabled_shows_loop->have_posts() ) {
+				$shows = wp_list_pluck( $disabled_shows_loop->posts, 'ID' );
+				wp_reset_query();
+			}
 		}
+
+		// If somehow shows is totally empty...
+		if ( empty( $shows ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$shows = array_unique( $shows );
+
+		// reset items since we recheck off $shows.
+		$items = array();
 
 		foreach ( $shows as $show_id ) {
 			// Try to get the problems.
@@ -198,17 +244,40 @@ class LWTV_Debug_Shows {
 	 *
 	 * @return array $problems - array of problems. Can be empty.
 	 */
-	public function find_shows_no_imdb() {
-		// Default
-		$items = array();
+	public function find_shows_no_imdb( $items = array() ) {
 
-		// Get all the Shows
-		$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
+		// The array we will be checking.
+		$shows = array();
 
-		if ( $the_loop->have_posts() ) {
-			$shows = wp_list_pluck( $the_loop->posts, 'ID' );
-			wp_reset_query();
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the shows from items!
+			foreach ( $items as $show_item ) {
+				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$shows[] = $show_item['id'];
+				}
+			}
+		} else {
+			// Get all the shows
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
+
+			if ( $the_loop->have_posts() ) {
+				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
+				wp_reset_query();
+			}
 		}
+
+		// If somehow shows is totally empty...
+		if ( empty( $shows ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$shows = array_unique( $shows );
+
+		// reset items since we recheck off $shows.
+		$items = array();
 
 		foreach ( $shows as $show_id ) {
 

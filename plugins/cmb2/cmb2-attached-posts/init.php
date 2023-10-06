@@ -84,9 +84,13 @@ class LWTV_CMB2_Attached_Posts_Field {
 			)
 		);
 
+		if ( ! isset( $args['post__not_in'] ) ) {
+			$args['post__not_in'] = array();
+		}
+
 		// Exclude this post from search
-		if ( isset( $_POST['post'] ) ) {                               // phpcs:ignore WordPress.Security.NonceVerification
-			$args['post__not_in'] = array( absint( $_POST['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		if ( isset( $_POST['post'] ) ) {                        // phpcs:ignore WordPress.Security.NonceVerification
+			$args['post__not_in'][] = absint( $_POST['post'] ); // phpcs:ignore WordPress.Security.NonceVerification
 		}
 
 		// loop through post types to get labels for all
@@ -100,8 +104,9 @@ class LWTV_CMB2_Attached_Posts_Field {
 				continue;
 			}
 
-			$args['orderby'] = isset( $args['orderby'] ) ? $args['orderby'] : 'name';
-			$args['order']   = isset( $args['order'] ) ? $args['order'] : 'ASC';
+			// Default order by newest.
+			$args['orderby'] = isset( $args['orderby'] ) ? $args['orderby'] : 'publish_date';
+			$args['order']   = isset( $args['order'] ) ? $args['order'] : 'DESC';
 
 			$post_type_labels[] = $post_type_obj->labels->name;
 		}
@@ -236,7 +241,8 @@ class LWTV_CMB2_Attached_Posts_Field {
 			$class = ( 0 === $count % 2 ) ? 'even' : 'odd';
 
 			// Set a class if our post is in our attached meta
-			$class .= ! empty( $attached ) && in_array( $this->get_id( $att_object ), $attached, true ) ? ' added' : '';
+			// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict -- loose is okay.
+			$class .= ! empty( $attached ) && in_array( $this->get_id( $att_object ), $attached ) ? ' added' : '';
 
 			$this->list_item( $att_object, $class );
 		}
@@ -297,7 +303,7 @@ class LWTV_CMB2_Attached_Posts_Field {
 	public function list_item( $att_object, $li_class, $icon_class = 'dashicons-plus' ) {
 		// Build our list item
 		printf(
-			'<li data-id="%1$d" class="%2$s" target="_blank">%3$s<a title="Edit" href="%4$s" target="_new">%5$s</a>%6$s<span class="dashicons %7$s add-remove"></span></li>',
+			'<li data-id="%1$d" class="%2$s">%3$s<a title="Edit" href="%4$s" target="_new">%5$s</a>%6$s<span class="dashicons %7$s add-remove"></span></li>',
 			esc_attr( $this->get_id( $att_object ) ),
 			esc_attr( $li_class ),
 			esc_html( $this->get_thumb( $att_object ) ),
@@ -520,6 +526,10 @@ class LWTV_CMB2_Attached_Posts_Field {
 		$types = is_array( $types ) ? array_map( 'sanitize_text_field', $types ) : sanitize_text_field( $types );
 		$query->set( 'post_type', $types );
 
+		// Orderby default is newest first
+		$query->set( 'orderby', 'publish_date' );
+		$query->set( 'order', 'DESC' );
+
 		// Search Term
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$search = sanitize_text_field( isset( $_POST['ps'] ) ? $_POST['ps'] : '' );
@@ -547,8 +557,12 @@ class LWTV_CMB2_Attached_Posts_Field {
 
 		// for search, we want to do relevance.
 		if ( $query->is_search ) {
+			// Save our search term.
 			$search_term = $query->query_vars['s'];
+
+			// change orderby.
 			$query->set( 'orderby', 'relevance' );
+			unset( $query->query_vars['order'] );
 
 			// If it's under 4 characters, we need a more exact search.
 			if ( 4 > strlen( $search_term ) ) {

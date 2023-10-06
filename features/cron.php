@@ -237,7 +237,7 @@ SQL;
 				$check = ( new LWTV_Debug_Actors() )->find_actors_no_imdb();
 				break;
 			case 'Wed':
-				$check = ( new LWTV_Debug_Actors() )->find_actors_empty();
+				$check = ( new LWTV_Debug_Actors() )->find_actors_incomplete();
 				break;
 			case 'Thu':
 				$check = ( new LWTV_Debug_Queers() )->find_queerchars();
