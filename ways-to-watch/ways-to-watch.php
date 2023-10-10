@@ -5,7 +5,7 @@
  *
  */
 
-class LWTV_ways-to-watch {
+class LWTV_Ways_To_Watch {
 
 	/**
 	 * Call Custom Affiliate Links
@@ -13,7 +13,7 @@ class LWTV_ways-to-watch {
 	 * This is used by shows to figure out where people can watch things
 	 * There's some juggling for certain sites
 	 */
-	public function ways-to-watch( $id ) {
+	public function ways_to_watch( $id ) {
 
 		$affiliate_url = get_post_meta( $id, 'lezshows_affiliate', true );
 		$links         = array();
@@ -205,4 +205,4 @@ class LWTV_ways-to-watch {
 	}
 }
 
-new LWTV_ways-to-watch();
+new LWTV_Ways_To_Watch();
