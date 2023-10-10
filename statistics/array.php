@@ -414,7 +414,8 @@ class LWTV_Stats_Arrays {
 		$pieces    = explode( '_', $data );
 		$data_main = $pieces[0];
 		$data_term = ( isset( $pieces[1] ) ) ? $pieces[1] : 'all';
-		$data_meta = ( isset( $pieces[2] ) && in_array( $pieces[2], array_keys( $valid_subtaxes ) ) ) ? $pieces[2] : 'all'; // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+		$data_meta = ( isset( $pieces[2] ) && in_array( $pieces[2], $valid_subtaxes ) ) ? $pieces[2] : 'all'; // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+
 		// Get the taxonomy data.
 		// This is the nation or station (term) we're going to process.
 		// If no specific term provided, we'll process the whole taxonomy.
