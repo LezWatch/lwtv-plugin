@@ -45,7 +45,7 @@ class LWTV_Affilliates {
 	 * Used to return an ad OR ways to watch.
 	 *
 	 * Advertisements - removed.
-	 * Ways To Watch  - Replaced with LWTV_Ways_to_watch->ways_to_watch();
+	 * Ways To Watch  - Replaced with LWTV_ways-to-watch->ways-to-watch();
 	 *
 	 * @param number $id - Post ID
 	 * @param string $format - Format of ad
@@ -54,7 +54,7 @@ class LWTV_Affilliates {
 	 */
 	public function shows( $id, $format ) {
 		if ( 'affiliate' === $format ) {
-			return ( new LWTV_Ways_To_Watch() )->ways_to_watch( $id );
+			return ( new LWTV_ways-to-watch() )->ways-to-watch( $id );
 		}
 
 		return '';

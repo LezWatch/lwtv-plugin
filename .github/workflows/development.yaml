@@ -12,7 +12,7 @@ jobs:
     steps:
 
       - name: Do a git checkout including submodules
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -33,7 +33,7 @@ jobs:
       - name: Setup PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           tools: composer:v2
 
       - name: Install dependencies

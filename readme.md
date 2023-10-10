@@ -375,7 +375,7 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 
 ### Ways to Watch
 
-Stored in `/ways_to_watch/` -- Code to customize Ways to Watch links and add affiliate data, or alter display names.
+Stored in `/ways-to-watch/` -- Code to customize Ways to Watch links and add affiliate data, or alter display names.
 
 * `_main.php` - Loader file.
 * `deprecated.php` - Code from the former ads system, removed and will eventually be revamped.
