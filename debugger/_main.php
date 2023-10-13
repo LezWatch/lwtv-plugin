@@ -29,8 +29,9 @@ class LWTV_Debug {
 				$usename = str_replace( 'https://instagram.com/', '', $usename );
 				$trim    = 30;
 				break;
-			case 'twitter': // ex: https://twitter.com/lezwatchtv
+			case 'twitter': // ex: https://twitter.com/lezwatchtv OR https://x.com/lezwatchtv
 				$usename = str_replace( 'https://twitter.com/', '', $usename );
+				$usename = str_replace( 'https://x.com/', '', $usename );
 				$trim    = 15;
 				break;
 			case 'mastodon': // ex: https://mstdn.social/@lezwatchtv
