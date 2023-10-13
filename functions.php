@@ -60,9 +60,6 @@ class LWTV_Functions {
 		add_filter( 'auto_plugin_update_send_email', '__return_false' );
 		add_filter( 'auto_theme_update_send_email', '__return_false' );
 
-		// Disable quick edit.
-		add_filter( 'post_row_actions', 'remove_quick_edit', 10, 1 );
-
 		// Extend the cookies.
 		add_filter( 'auth_cookie_expiration', array( $this, 'extend_login_session' ) );
 
