@@ -9,7 +9,6 @@
 $valid_views = array( 'formats', 'tropes', 'genres', 'intersectionality', 'stars', 'triggers', 'on-air', 'worth-it', 'we-love-it' );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
-
 ?>
 <h2>
 	<a href="/shows/">Total Shows</a> (<?php echo (int) ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' ); ?>)
@@ -37,7 +36,7 @@ switch ( $view ) {
 			<div class="row">
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-success">Shows</h3>
+						<h3 class="card-header shows">Shows</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' ); ?></h5>
 						</div>
@@ -45,7 +44,7 @@ switch ( $view ) {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-info">Tropes</h3>
+						<h3 class="card-header tropes">Tropes</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_tropes' ); ?></h5>
 						</div>
@@ -53,7 +52,7 @@ switch ( $view ) {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-warning">Genres</h3>
+						<h3 class="card-header genres">Genres</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_genres' ); ?></h5>
 						</div>
@@ -95,7 +94,7 @@ switch ( $view ) {
 							?>
 						</tbody>
 					</table>
-					<a href="?view=tropes"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_tropes' ); ?> Tropes</button></a>
+					<a href="?view=tropes"><button type="button" class="btn btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_tropes' ); ?> Tropes</button></a>
 				</div>
 
 				<div class="col">
@@ -127,7 +126,7 @@ switch ( $view ) {
 							?>
 						</tbody>
 					</table>
-					<a href="?view=genres"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_genres' ); ?> Genres</button></a>
+					<a href="?view=genres"><button type="button" class="btn  btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_genres' ); ?> Genres</button></a>
 				</div>
 			</div>
 		</div>

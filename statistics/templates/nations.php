@@ -48,14 +48,13 @@ switch ( $country ) {
 }
 
 ?>
-
 <h2><?php echo wp_kses_post( $title_country ); ?></h2>
 
-<section id="toc" class="toc-container card-body">
-	<div class="navbar navbar-expand-lg navbar-light breadcrumb">
-		<form method="get" id="go" class="form-inline">
-			<div class="navbar-nav form-group mr-auto">
-				<select name="country" id="country" class="form-control">
+<form method="get" id="go">
+	<div class="container-fluid text-center">
+		<div class="row">
+			<div class="col-8">
+				<select name="country" id="country">
 					<option value="all">Country (All)</option>
 					<?php
 					foreach ( $nations as $nation ) {
@@ -66,7 +65,7 @@ switch ( $country ) {
 					?>
 				</select>
 			</div>
-			<div class="form-group">
+			<div class="col-2">
 				<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
 				<?php
 				if ( 'all' !== $country ) {
@@ -74,9 +73,9 @@ switch ( $country ) {
 				}
 				?>
 			</div>
-		</form>
+		</div>
 	</div>
-</section>
+</form>
 
 <ul class="nav nav-tabs">
 	<?php

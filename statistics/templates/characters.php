@@ -37,7 +37,7 @@ switch ( $view ) {
 			<div class="row">
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-success">Characters</h3>
+						<h3 class="card-header characters">Characters</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) $character_count; ?></h5>
 						</div>
@@ -45,7 +45,7 @@ switch ( $view ) {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-info">Sexual Orientations</h3>
+						<h3 class="card-header sexuality">Sexual Orientations</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_sexuality' ); ?></h5>
 						</div>
@@ -53,7 +53,7 @@ switch ( $view ) {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-warning">Gender Identities</h3>
+						<h3 class="card-header gender">Gender Identities</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_gender' ); ?></h5>
 						</div>
