@@ -49,10 +49,16 @@ class LWTV_Related_Posts {
 			$max_posts  = 3;
 			$count_post = 0;
 
-			$the_related_posts = '<div class="container text-center"><div class="row">';
+			$the_related_posts = '<div class="container related-post-container"><div class="row site-loop related-post-loop">';
 			foreach ( $related_post_query as $related_post ) {
 				if ( $count_post < '3' ) {
-					$the_related_posts .= '<div class="col-sm"><center>' . get_the_post_thumbnail( $related_post, 'thumbnail' ) . '</center><br/><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a> &mdash; <em><small>' . get_the_date( get_option( 'date_format' ), $related_post ) . '</small></em></div>';
+					$the_related_posts .= '<div class="card">
+					<center>' . get_the_post_thumbnail( $related_post, 'medium' ) . '</center>
+					<div class="card-body">
+						<h5 class="card-title"><a href="' . get_the_permalink( $related_post ) . '">' . get_the_title( $related_post ) . '</a></h5>
+						<p><em><small>' . get_the_date( get_option( 'date_format' ), $related_post ) . '</small></em></p>
+					</div>
+					</div>';
 					++$count_post;
 				}
 			}
