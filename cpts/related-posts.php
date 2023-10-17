@@ -63,7 +63,15 @@ class LWTV_Related_Posts {
 				}
 			}
 			$the_related_posts .= '</div></div>';
+
+			if ( count( ( new LWTV_Related_Posts() )->count_related_posts( $slug ) ) > '3' ) {
+				$get_tags = term_exists( $slug, 'post_tag' );
+				if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
+					$the_related_posts .= '<p class="read-more"><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '" class="btn btn-outline-primary">Read More ...</a></p>';
+				}
+			}
 		}
+
 		return $the_related_posts;
 	}
 
