@@ -246,7 +246,7 @@ class LWTV_FacetWP {
 				$values = (array) $params['facet_value'];
 				foreach ( $values as $val ) {
 						$params['facet_value']         = $val['type'];
-						$params['facet_display_value'] = get_the_title( $val['type'] );
+						$params['facet_display_value'] = ucfirst( $val['type'] );
 						$facet_class->insert( $params );
 				}
 				// skip default indexing
