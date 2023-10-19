@@ -223,7 +223,7 @@ class LWTV_Functions {
 	public function symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon' ) {
 
 		$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
-		$square = get_template_directory_uri( '/images/square.svg' );
+		$square = get_template_directory() . '/images/square.svg';
 
 		if ( ! empty( $svg ) && defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_PATH . $svg ) ) {
 			$icon = LWTV_SYMBOLICONS_PATH . $svg;
