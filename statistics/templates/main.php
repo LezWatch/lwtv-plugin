@@ -9,7 +9,6 @@ $characters = ( new LWTV_Stats() )->generate( 'characters', 'total', 'count' );
 $shows      = ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' );
 $actors     = ( new LWTV_Stats() )->generate( 'actors', 'total', 'count' );
 $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
-
 ?>
 <h2><a name="overview">Overview</a></h2>
 
@@ -17,7 +16,7 @@ $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
 	<div class="row">
 		<div class="col">
 			<div class="card text-center">
-				<h3 class="card-header alert-info">Shows</h3>
+				<h3 class="card-header shows">Shows</h3>
 				<div class="card-body bg-light">
 					<h5 class="card-title"><?php echo (int) $shows; ?></h5>
 					<a href="shows" class="btn btn-primary btn-sm">Show Statistics</a>
@@ -26,7 +25,7 @@ $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
 		</div>
 		<div class="col">
 			<div class="card text-center">
-				<h3 class="card-header alert-success">Characters</h3>
+				<h3 class="card-header characters">Characters</h3>
 				<div class="card-body bg-light">
 					<h5 class="card-title"><?php echo (int) $characters; ?></h5>
 					<a href="characters" class="btn btn-primary btn-sm">Character Statistics</a>
@@ -35,7 +34,7 @@ $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
 		</div>
 		<div class="col">
 			<div class="card text-center">
-				<h3 class="card-header alert-warning">Actors</h3>
+				<h3 class="card-header actors">Actors</h3>
 				<div class="card-body bg-light">
 					<h5 class="card-title"><?php echo (int) $actors; ?></h5>
 					<a href="actors" class="btn btn-primary btn-sm">Actor Statistics</a>
@@ -44,7 +43,7 @@ $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
 		</div>
 		<div class="col">
 			<div class="card text-center">
-				<h3 class="card-header alert-danger">Dead Characters</h3>
+				<h3 class="card-header dead-characters">Dead Characters</h3>
 				<div class="card-body bg-light">
 					<h5 class="card-title"><?php echo (int) $dead_chars; ?></h5>
 					<a href="death" class="btn btn-primary btn-sm">Death Statistics</a>
@@ -84,13 +83,13 @@ $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
 						echo '<tr>
 								<th scope="row"><a href="' . esc_url( site_url( 'statistics/nations/?country=' . $nation->slug ) ) . '">' . esc_html( $nation->name ) . '</a></th>
 								<td>' . (int) $nation->count . '</td>
-								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
+								<td><div class="progress"><div class="progress-bar" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
 							</tr>';
 					}
 					?>
 				</tbody>
 			</table>
-			<a href="nations"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_country' ); ?> Nations</button></a>
+			<a href="nations"><button type="button" class="btn btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_country' ); ?> Nations</button></a>
 		</div>
 
 		<div class="col">
@@ -119,13 +118,13 @@ $dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
 						echo '<tr>
 								<th scope="row"><a href="' . esc_url( site_url( 'statistics/stations/?station=' . $station->slug ) ) . '">' . esc_html( $station->name ) . '</a></th>
 								<td>' . (int) $station->count . '</td>
-								<td><div class="progress"><div class="progress-bar bg-info" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
+								<td><div class="progress"><div class="progress-bar" role="progressbar" style="width: ' . esc_html( $percent ) . '%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div></div>&nbsp;' . esc_html( $percent ) . '%</td>
 							</tr>';
 					}
 					?>
 				</tbody>
 			</table>
-			<a href="stations"><button type="button" class="btn btn-info btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_stations' ); ?> Stations</button></a>
+			<a href="stations"><button type="button" class="btn btn-lg btn-block">All <?php echo (int) wp_count_terms( 'lez_stations' ); ?> Stations</button></a>
 		</div>
 	</div>
 </div>

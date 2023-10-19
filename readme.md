@@ -283,7 +283,7 @@ The file `_main.php` acts as an autoloader.
     - Custom Icon for Feedback in "Right Now"
     - Mark feedbacks as having been answered
     - Protection from spammers via disallowed keys
-* `varnish.php` - Generate a list of special URLs to flush per post type.
+* `related-posts-by-taxonomy.php` - Filters to allow a custom layout for "Shows Like This"
 * `yoast.php` - Custom Yoast controls
 
 ### Rest API
@@ -375,7 +375,7 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 
 ### Ways to Watch
 
-Stored in `/ways_to_watch/` -- Code to customize Ways to Watch links and add affiliate data, or alter display names.
+Stored in `/ways-to-watch/` -- Code to customize Ways to Watch links and add affiliate data, or alter display names.
 
 * `_main.php` - Loader file.
 * `deprecated.php` - Code from the former ads system, removed and will eventually be revamped.

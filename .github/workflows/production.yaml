@@ -11,7 +11,7 @@ jobs:
 
 
       - name: Do a git checkout including submodules
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -32,7 +32,7 @@ jobs:
       - name: Setup PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           tools: composer:v2
 
       - name: Install dependencies
@@ -52,5 +52,4 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}/wp-content/plugins/lwtv-plugin
-          EXCLUDE: "/.git/, /.github/, /.husky/, /.vscode/, /node_scripts/, /node_modules/, /vendor/, .editorconfig, .gitignore, .npmrc, .nvmrc, composer.json, package-lock.json, package.json, phpcs.xml.dist, /blocks/node_modules/, /blocks/.editorconfig, /blocks/.gitignore, /blocks/package-lock.json, /blocks/package.json"
-
+          EXCLUDE: "/.git/, /.github/, /.husky/, /.vscode/, /node_scripts/, /node_modules/, /vendor/, .editorconfig, .gitignore, .npmrc, .nvmrc, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, /blocks/node_modules/, /blocks/.editorconfig, /blocks/.gitignore, /blocks/package-lock.json, /blocks/package.json"

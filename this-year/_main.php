@@ -23,7 +23,7 @@ class LWTV_This_Year {
 		$baseurl     = ( gmdate( 'Y' ) !== $thisyear ) ? '/this-year/' . $thisyear . '/' : '/this-year/';
 
 		?>
-		<div class="thisyear-container">
+		<div class="container">
 			<ul class="nav nav-tabs">
 				<?php
 				echo '<li class="nav-item"><a class="nav-link' . esc_attr( ( 'overview' === $view ) ? ' active' : '' ) . '" href="' . esc_url( $baseurl ) . '">OVERVIEW</a></li>';
@@ -79,7 +79,7 @@ class LWTV_This_Year {
 			<div class="row">
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-success">Characters on Air</h3>
+						<h3 class="card-header characters">Characters on Air</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) $array['characters']; ?></h5>
 						</div>
@@ -87,7 +87,7 @@ class LWTV_This_Year {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-danger">Dead Characters</h3>
+						<h3 class="card-header dead-characters">Dead Characters</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) $array['dead']; ?></h5>
 						</div>
@@ -98,7 +98,7 @@ class LWTV_This_Year {
 			<div class="row">
 				<div class="col col-sm-6">
 					<div class="card text-center">
-						<h3 class="card-header alert-success">Character Sexuality</h3>
+						<h3 class="card-header sexuality">Character Sexuality</h3>
 						<div class="card-body bg-light">
 							<div>
 								<?php ( new LWTV_This_Year_Chars() )->chart( $thisyear, 'sexuality' ); ?>
@@ -108,7 +108,7 @@ class LWTV_This_Year {
 				</div>
 				<div class="col col-sm-6">
 					<div class="card text-center">
-						<h3 class="card-header alert-success">Character Gender</h3>
+						<h3 class="card-header gender">Character Gender</h3>
 						<div class="card-body bg-light">
 							<div>
 								<?php ( new LWTV_This_Year_Chars() )->chart( $thisyear, 'gender' ); ?>
@@ -121,7 +121,7 @@ class LWTV_This_Year {
 			<div class="row">
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-primary">Shows on Air</h3>
+						<h3 class="card-header shows-onair">Shows on Air</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) $array['shows']; ?></h5>
 						</div>
@@ -129,7 +129,7 @@ class LWTV_This_Year {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-info">New Shows</h3>
+						<h3 class="card-header new-shows">New Shows</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) $array['started']; ?></h5>
 						</div>
@@ -137,7 +137,7 @@ class LWTV_This_Year {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-warning">Canceled Shows</h3>
+						<h3 class="card-header canceled-shows">Canceled Shows</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) $array['canceled']; ?></h5>
 						</div>

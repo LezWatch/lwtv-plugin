@@ -33,8 +33,8 @@
     "tablesorter": "^2.31.3"
   },
   "devDependencies": {
-    "@types/node": "^18.11.13",
-    "eslint-plugin-prettier": "^5.0.0",
+    "@types/node": "^18.18.6",
+    "eslint-plugin-prettier": "^5.0.1",
     "husky": "^8.0.3"
   }
 }

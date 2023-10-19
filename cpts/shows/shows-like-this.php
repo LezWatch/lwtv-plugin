@@ -74,7 +74,7 @@ class LWTV_Shows_Like_This {
 			// Include the terms list
 			$rpbt_include = 'include_terms=""' . $include . '" exclude_terms="' . $exclude . '"';
 
-			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" fields="ids" order="RAND" title="" format="thumbnails" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies=" ' . $taxonomies . '" ' . $rpbt_include . ' related="false"]' );
+			$return = do_shortcode( '[related_posts_by_tax post_id="' . $show_id . '" fields="ids" order="RAND" title="" format="lwtv_cards" image_size="postloop-img" link_caption="true" posts_per_page="6" columns="0" post_class="similar-shows" taxonomies=" ' . $taxonomies . '" ' . $rpbt_include . ' related="false"]' );
 		}
 
 		if ( empty( $return ) ) {

@@ -45,34 +45,32 @@ switch ( $station ) {
 		$title_station  = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_object['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 }
 ?>
-
 <h2><?php echo wp_kses_post( $title_station ); ?></h2>
 
-<section id="toc" class="toc-container card-body">
-	<nav class="breadcrumb">
-		<form method="get" id="go" class="form-inline">
-			<div class="form-group">
-				<select name="station" id="station" class="form-control">
-					<option value="all">All Stations</option>
-					<?php
-					foreach ( $all_stations as $the_station ) {
-						$selected = ( $station === $the_station->slug ) ? 'selected=selected' : '';
-						echo '<option value="' . esc_attr( $the_station->slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $the_station->name ) . '</option>';
-					}
-					?>
-				</select>
-			</div>
-			<div class="form-group">
-				<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
+<form method="get" id="go">
+<div class="container-fluid text-center">
+	<div class="row">
+		<div class="col-8">
+			<select name="station" id="station">
+				<option value="all">All Stations</option>
 				<?php
-				if ( 'all' !== $station ) {
-					echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/stations/" role="button">Reset</a>';
+				foreach ( $all_stations as $the_station ) {
+					$selected = ( $station === $the_station->slug ) ? 'selected=selected' : '';
+					echo '<option value="' . esc_attr( $the_station->slug ) . '" ' . esc_html( $selected ) . '>' . esc_html( $the_station->name ) . '</option>';
 				}
 				?>
-			</div>
-		</form>
-	</nav>
-</section>
+			</select>
+		</div>
+		<div class="col-2">
+			<button type="submit" id="submit" class="btn btn-default btn-outline-primary">Go</button>
+			<?php
+			if ( 'all' !== $station ) {
+				echo '&nbsp;<a class="btn btn-default btn-outline-primary" href="/statistics/stations/" role="button">Reset</a>';
+			}
+			?>
+		</div>
+	</div>
+</form>
 
 <ul class="nav nav-tabs">
 	<?php

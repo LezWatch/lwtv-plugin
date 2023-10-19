@@ -35,7 +35,7 @@ switch ( $view ) {
 			<div class="row">
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-success">Actors</h3>
+						<h3 class="card-header actors">Actors</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) ( new LWTV_Stats() )->generate( 'actors', 'total', 'count' ); ?></h5>
 						</div>
@@ -43,7 +43,7 @@ switch ( $view ) {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-info">Sexual Orientation</h3>
+						<h3 class="card-header sexuality">Sexual Orientation</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_actor_sexuality' ); ?></h5>
 						</div>
@@ -51,7 +51,7 @@ switch ( $view ) {
 				</div>
 				<div class="col">
 					<div class="card text-center">
-						<h3 class="card-header alert-warning">Gender Identities</h3>
+						<h3 class="card-header gender">Gender Identities</h3>
 						<div class="card-body bg-light">
 							<h5 class="card-title"><?php echo (int) wp_count_terms( 'lez_actor_gender' ); ?></h5>
 						</div>
@@ -204,3 +204,4 @@ switch ( $view ) {
 		<?php
 		break;
 }
+?>

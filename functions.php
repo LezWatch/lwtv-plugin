@@ -223,7 +223,7 @@ class LWTV_Functions {
 	public function symbolicons( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon' ) {
 
 		$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
-		$square = get_template_directory_uri( '/images/square.svg' );
+		$square = get_template_directory() . '/images/square.svg';
 
 		if ( ! empty( $svg ) && defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_PATH . $svg ) ) {
 			$icon = LWTV_SYMBOLICONS_PATH . $svg;
@@ -368,7 +368,7 @@ require_once 'plugins/_main.php';       // Tweaks for Plugins.
 require_once 'rest-api/_main.php';      // Our Rest API.
 require_once 'statistics/_main.php';    // Stats.
 require_once 'this-year/_main.php';     // This Year.
-require_once 'ways_to_watch/_main.php'; // Ways to Watch.
+require_once 'ways-to-watch/_main.php'; // Ways to Watch.
 require_once 'wp-cli/_main.php';        // WP-CLI commands
 
 require_once 'cpts/_main.php';         // Custom Post Types: This MUST be at the end.

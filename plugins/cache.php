@@ -59,22 +59,22 @@ class LWTV_Cache {
 
 	/**
 	 * Clean URLs
+	 *
+	 * It would be preferable to use the rp_nginx filter, however that runs every time
+	 * any page is updated. This method is slower and uglier, but more precise.
+	 *
+	 * $purge_urls = apply_filters('rt_nginx_helper_purge_urls', $purge_urls, false);
+	 *
 	 * @return void
 	 */
 	public function clean_urls( $clear_urls ) {
 		foreach ( $clear_urls as $url ) {
+			// Change domain.com/path/to/url to domain.com/PURGE/path/to/url
+			$url_parse    = wp_parse_url( $url );
+			$url_to_purge = $url_parse['scheme'] . '//' . $url_parse['host'] . '/purge' . $url_parse['path'];
+
 			// Reload the data by calling the page
-			$request = wp_remote_get( $url . '/?nocache' );
-
-			// Proxy Cache Purge (Varnish)
-			if ( class_exists( 'VarnishPurger' ) ) {
-				VarnishPurger::purge_url( $url );
-			}
-
-			// Rocket Cache
-			if ( function_exists( 'is_wp_rocket_active' ) && is_wp_rocket_active() ) {
-				rocket_clean_files( $url );
-			}
+			$request = wp_remote_get( $url_to_purge );
 		}
 	}
 }
