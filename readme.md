@@ -283,7 +283,7 @@ The file `_main.php` acts as an autoloader.
     - Custom Icon for Feedback in "Right Now"
     - Mark feedbacks as having been answered
     - Protection from spammers via disallowed keys
-* `varnish.php` - Generate a list of special URLs to flush per post type.
+* `related-posts-by-taxonomy.php` - Filters to allow a custom layout for "Shows Like This"
 * `yoast.php` - Custom Yoast controls
 
 ### Rest API
