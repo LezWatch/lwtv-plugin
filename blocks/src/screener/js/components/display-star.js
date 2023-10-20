@@ -23,7 +23,7 @@ export default function DisplayStar({ score }) {
 		return (
 			<Fragment>
 				<span
-					data-toggle="tooltip"
+					data-bs-toggle="tooltip"
 					aria-label={`${score} Star Show`}
 					title=""
 					data-original-title={`${score} Star Show`}

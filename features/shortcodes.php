@@ -200,7 +200,7 @@ class LWTV_Shortcodes {
 					$warn_color = 'info';
 					break;
 			}
-			$warning = '<span data-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers"><button type="button" class="btn btn-' . $warn_color . '"><span class="screener screener-warn ' . $warn_color . '" role="img">' . $warn_image . '</span></button></span>';
+			$warning = '<span data-bs-toggle="tooltip" aria-label="Warning - This show contains triggers" title="Warning - This show contains triggers"><button type="button" class="btn btn-' . $warn_color . '"><span class="screener screener-warn ' . $warn_color . '" role="img">' . $warn_image . '</span></button></span>';
 		}
 
 		// Get proper Star
@@ -208,12 +208,12 @@ class LWTV_Shortcodes {
 		$star  = ( in_array( $attributes['star'], array( 'gold', 'silver', 'bronze', 'anti' ), true ) ) ? $attributes['star'] : 'none';
 
 		if ( 'none' !== $star ) {
-			$stars = '<span data-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-info"><span role="img" class="screener screener-star ' . $star . '">' . ( new LWTV_Functions() )->symbolicons( 'star.svg', 'fa-star' ) . '</span></button></span>';
+			$stars = '<span data-bs-toggle="tooltip" aria-label="' . ucfirst( $star ) . ' Star Show" title="' . ucfirst( $star ) . ' Star Show"><button type="button" class="btn btn-info"><span role="img" class="screener screener-star ' . $star . '">' . ( new LWTV_Functions() )->symbolicons( 'star.svg', 'fa-star' ) . '</span></button></span>';
 		}
 
 		$output = '<div class="bd-callout screener-shortcode"><h5 id="' . esc_attr( $attributes['title'] ) . '">Screener Review on <em>' . esc_html( $attributes['title'] ) . '</em></h5>
 		<p>' . esc_html( $attributes['summary'] ) . '</p>
-		<p><span data-toggle="tooltip" aria-label="How good is this show for queers?" title="How good is this show for queers?"><button type="button" class="btn btn-dark">Queer Score: ' . $queer . '</button></span> <span data-toggle="tooltip" aria-label="Is this show worth watching? ' . ucfirst( $worth ) . '" title="Is this show worth watching? ' . ucfirst( $worth ) . '"><button type="button" class="btn btn-' . $worth_color . '">Worth It? <span role="img" class="screener screener-worthit ' . lcfirst( $worth ) . '">' . $worth_image . '</span></button></span> ' . $warning . $stars . '</p>
+		<p><span data-bs-toggle="tooltip" aria-label="How good is this show for queers?" title="How good is this show for queers?"><button type="button" class="btn btn-dark">Queer Score: ' . $queer . '</button></span> <span data-bs-toggle="tooltip" aria-label="Is this show worth watching? ' . ucfirst( $worth ) . '" title="Is this show worth watching? ' . ucfirst( $worth ) . '"><button type="button" class="btn btn-' . $worth_color . '">Worth It? <span role="img" class="screener screener-worthit ' . lcfirst( $worth ) . '">' . $worth_image . '</span></button></span> ' . $warning . $stars . '</p>
 		</div>';
 
 		return $output;
@@ -332,15 +332,15 @@ class LWTV_Shortcodes {
 		// Confirm the ones with HTTPS have HTTPS:
 		$urls_not_names = array( 'bluesky', 'tumblr', 'mastodon', 'website', 'tiktok' );
 		foreach ( $urls_not_names as $url_name ) {
-			if ( ! str_contains( $content[ $url_name ], 'http' ) ) {
+			if ( ! empty( $content[ $url_name ] ) && ! str_contains( $content[ $url_name ], 'http' ) ) {
 				$content[ $url_name ] = 'https://' . $content[ $url_name ];
 			}
 		}
 
 		// Get all the stupid social...
-		$bluesky   = ( ! empty( $content['bluesky'] ) ) ? '<a href="' . $content['bluesky'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'bluesky.svg', 'fa-instagram' ) . '</a>' : false;
-		$instagram = ( ! empty( $content['instagram'] ) ) ? '<a href="https://instagram.com/' . $content['instagram'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
-		$twitter   = ( ! empty( $content['twitter'] ) ) ? '<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'x-twitter.svg', 'fa-twitter' ) . '</a>' : false;
+		$bluesky   = ( ! empty( $content['bluesky'] ) ) ? '<a href="' . $content['bluesky'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'bluesky.svg', 'fa-bluesky' ) . '</a>' : false;
+		$instagram = ( ! empty( $content['instagram'] ) ) ? '<a href="' . $content['instagram'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
+		$twitter   = ( ! empty( $content['twitter'] ) ) ? '<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'twitter.svg', 'fa-twitter' ) . '</a>' : false;
 		$tumblr    = ( ! empty( $content['tumblr'] ) ) ? '<a href="' . $content['tumblr'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
 		$website   = ( ! empty( $content['website'] ) ) ? '<a href="' . $content['website'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'home.svg', 'fa-home' ) . '</a>' : false;
 		$mastodon  = ( ! empty( $content['mastodon'] ) ) ? '<a href="' . $content['mastodon'] . '" target="_blank" rel="nofollow">' . ( new LWTV_Functions() )->symbolicons( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
@@ -363,7 +363,7 @@ class LWTV_Shortcodes {
 				$view_articles    = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . ( new LWTV_Functions() )->symbolicons( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $author_id ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
 
 				// Build it.
-				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h4 class="author_name">' . $content['name'] . ' ' . $content['title'] . implode( ' ', $social_array ) . '</h4><div class="author-bio">' . nl2br( $content['bio'] ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
+				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h4 class="author_name">' . $content['name'] . ' ' . $content['title'] . ' ' . implode( ' ', $social_array ) . '</h4><div class="author-bio">' . nl2br( $content['bio'] ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
 				break;
 			default:
 				$author_details = '';

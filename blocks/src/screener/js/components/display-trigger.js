@@ -20,7 +20,7 @@ export default function DisplayTrigger({ score }) {
 		return (
 			<Fragment>
 				<span
-					data-toggle="tooltip"
+					data-bs-toggle="tooltip"
 					aria-label="Warning - This show contains triggers"
 					title="Warning - This show contains triggers"
 				>

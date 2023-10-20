@@ -24,8 +24,8 @@ class LWTV_External_APIs {
 			if ( isset( $tvmaze_episode['next_summary'] ) && 'TBD' !== $tvmaze_episode['next_summary'] ) {
 				// get TV Maze URLs
 				$tvmaze   = ( isset( $tvmaze_episode['tvmaze'] ) ) ? $tvmaze_episode['tvmaze'] : 'https://tvmaze.com/';
-				$collapse = 'data-toggle="collapse" href="#episodeSummary" role="button" aria-expanded="false" aria-controls="episodeSummary"';
-				echo '<br /><button class="btn btn-primary btn-sm btn-block" type="button" data-toggle="collapse" data-target="#episodeSummary" aria-expanded="false" aria-controls="episodeSummary">Read More</button></li>';
+				$collapse = 'data-bs-toggle="collapse" href="#episodeSummary" role="button" aria-expanded="false" aria-controls="episodeSummary"';
+				echo '<br /><button class="btn btn-primary btn-sm btn-block" type="button" data-bs-toggle="collapse" data-target="#episodeSummary" aria-expanded="false" aria-controls="episodeSummary">Read More</button></li>';
 				echo '<div class="collapse" id="episodeSummary"><div class="card card-body">' . esc_html( stripslashes( $tvmaze_episode['next_summary'] ) ) . '<br /><small><a href="' . esc_url( $tvmaze ) . '" target="_new">Powered by TVMaze</a></small></div></div>';
 			} else {
 				echo '</li>';
