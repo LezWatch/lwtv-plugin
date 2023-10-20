@@ -18,6 +18,7 @@ class LWTV_This_Year_Shows {
 		$fail_msg      = '<p>No shows were on air this year.</p>';
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'now' );
+		$shows_count   = self::get_list( $thisyear, 'now', true );
 		$shows_current = $show_array['current'];
 		$shows_formats = $show_array['formats'];
 		$shows_country = $show_array['country'];
@@ -27,20 +28,20 @@ class LWTV_This_Year_Shows {
 		}
 		?>
 
-		<h2><a name="showsonair"><?php echo count( $shows_current ); ?> Shows On Air </a></h2>
+		<h2><a name="showsonair"><?php echo (int) $shows_count; ?> Shows On Air </a></h2>
 
 		<p>&nbsp;</p>
 
 		<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
 			<?php
 			if ( ! empty( $shows_current ) ) {
-				echo '<li class="nav-item"><a class="nav-link active" id="v-pills-byname-tab" data-toggle="pill" href="#v-pills-byname" role="tab" aria-controls="v-pills-byname" aria-selected="true">By Name</a></li>';
+				echo '<li class="nav-item"><a class="nav-link active" id="v-pills-byname-tab" data-bs-toggle="pill" href="#v-pills-byname" role="tab" aria-controls="v-pills-byname" aria-selected="true">By Name</a></li>';
 			}
 			if ( ! empty( $shows_formats ) ) {
-				echo '<li class="nav-item"><a class="nav-link" id="v-pills-byformat-tab" data-toggle="pill" href="#v-pills-byformat" role="tab" aria-controls="v-pills-byformat" aria-selected="true">By Format</a></li>';
+				echo '<li class="nav-item"><a class="nav-link" id="v-pills-byformat-tab" data-bs-toggle="pill" href="#v-pills-byformat" role="tab" aria-controls="v-pills-byformat" aria-selected="true">By Format</a></li>';
 			}
 			if ( ! empty( $shows_country ) ) {
-				echo '<li class="nav-item"><a class="nav-link" id="v-pills-bycountry-tab" data-toggle="pill" href="#v-pills-bycountry" role="tab" aria-controls="v-pills-bycountry" aria-selected="true">By Country</a></li>';
+				echo '<li class="nav-item"><a class="nav-link" id="v-pills-bycountry-tab" data-bs-toggle="pill" href="#v-pills-bycountry" role="tab" aria-controls="v-pills-bycountry" aria-selected="true">By Country</a></li>';
 			}
 			?>
 
@@ -52,14 +53,26 @@ class LWTV_This_Year_Shows {
 				ksort( $shows_current );
 				?>
 				<div class="tab-pane fade show active" id="v-pills-byname" role="tabpanel" aria-labelledby="v-pills-byname-tab">
-					<ul class="this-year-shows showsonair">
-					<?php
-					foreach ( $shows_current as $s_show ) {
-						$show_s_tooltip = ( $s_show['airdates']['start'] === $s_show['airdates']['finish'] ) ? $s_show['airdates']['start'] : $s_show['airdates']['start'] . '-' . $s_show['airdates']['finish'];
-						echo '<li><a href="' . esc_url( $s_show['url'] ) . '" data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_s_tooltip ) . '">' . esc_html( $s_show['name'] ) . '</a> <small>(' . esc_html( $s_show['country'] ) . ' - ' . esc_html( $s_show['format'] ) . ')</small></li>';
-					}
-					?>
-					</ul>
+					<table class="table table-md table-hover table-striped">
+						<thead class="thead-light">
+							<tr>
+								<th style="width: 200px;" scope="col">Letter</th>
+								<th scope="col">Show(s)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+							foreach ( $shows_current as $letter => $s_shows ) {
+								echo '<tr><td><h4>' . esc_html( strtoupper( $letter ) ) . ' (' . count( $s_shows ) . ')</h4></td><td><ul class="this-year-shows showsonair">';
+								foreach ( $s_shows as $s_show ) {
+									$show_s_tooltip = ( $s_show['airdates']['start'] === $s_show['airdates']['finish'] ) ? $s_show['airdates']['start'] : $s_show['airdates']['start'] . '-' . $s_show['airdates']['finish'];
+									echo '<li><a href="' . esc_url( $s_show['url'] ) . '" data-bs-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_s_tooltip ) . '">' . esc_html( $s_show['name'] ) . '</a> <small>(' . esc_html( $s_show['country'] ) . ' - ' . esc_html( $s_show['format'] ) . ')</small></li>';
+								}
+								echo '</ul></td></tr>';
+							}
+							?>
+						</tbody>
+					</table>
 				</div>
 				<?php
 			}
@@ -78,10 +91,10 @@ class LWTV_This_Year_Shows {
 						<tbody>
 							<?php
 							foreach ( $shows_formats as $format => $f_shows ) {
-								echo '<tr><td>' . esc_html( $format ) . ' (' . count( $f_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
+								echo '<tr><td><h4>' . esc_html( $format ) . ' (' . count( $f_shows ) . ')</h4></td><td><ul class="this-year-shows showsonair">';
 								foreach ( $f_shows as $f_show ) {
 									$show_f_tooltip = ( $f_show['airdates']['start'] === $f_show['airdates']['finish'] ) ? $f_show['airdates']['start'] : $f_show['airdates']['start'] . '-' . $f_show['airdates']['finish'];
-									echo '<li><a href="' . esc_url( $f_show['url'] ) . '" data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_f_tooltip ) . '">' . esc_html( $f_show['name'] ) . '</a> <small>(' . esc_html( $f_show['country'] ) . ')</small></li>';
+									echo '<li><a href="' . esc_url( $f_show['url'] ) . '" data-bs-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_f_tooltip ) . '">' . esc_html( $f_show['name'] ) . '</a> <small>(' . esc_html( $f_show['country'] ) . ')</small></li>';
 								}
 								echo '</ul></td></tr>';
 							}
@@ -106,10 +119,10 @@ class LWTV_This_Year_Shows {
 						<tbody>
 							<?php
 							foreach ( $shows_country as $nation => $n_shows ) {
-								echo '<tr><td>' . esc_html( $nation ) . ' (' . count( $n_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
+								echo '<tr><td><h4>' . esc_html( $nation ) . ' (' . count( $n_shows ) . ')</h4></td><td><ul class="this-year-shows showsonair">';
 								foreach ( $n_shows as $n_show ) {
 									$show_n_output = ( $n_show['airdates']['start'] === $n_show['airdates']['finish'] ) ? $n_show['airdates']['start'] : $n_show['airdates']['start'] . '-' . $n_show['airdates']['finish'];
-									echo '<li><a href="' . esc_url( $n_show['url'] ) . '" data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_n_output ) . '">' . esc_html( $n_show['name'] ) . '</a> <small>(' . esc_html( $n_show['format'] ) . ')</small></li>';
+									echo '<li><a href="' . esc_url( $n_show['url'] ) . '" data-bs-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_n_output ) . '">' . esc_html( $n_show['name'] ) . '</a> <small>(' . esc_html( $n_show['format'] ) . ')</small></li>';
 								}
 								echo '</ul></td></tr>';
 							}
@@ -139,24 +152,25 @@ class LWTV_This_Year_Shows {
 		$fail_msg      = '<p>No shows were new this year.</p>';
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'started' );
+		$shows_count   = self::get_list( $thisyear, 'started', true );
 		$shows_started = $show_array['current'];
 		$shows_formats = $show_array['formats'];
 		$shows_country = $show_array['country'];
 		?>
-		<h2><a name="showsonair"><?php echo count( $shows_started ); ?> Shows Began</a></h2>
+		<h2><a name="showsonair"><?php echo (int) $shows_count; ?> Shows Began</a></h2>
 
 		<p>&nbsp;</p>
 
 		<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
 			<?php
 			if ( ! empty( $shows_started ) ) {
-				echo '<li class="nav-item"><a class="nav-link active" id="v-pills-byname-tab" data-toggle="pill" href="#v-pills-byname" role="tab" aria-controls="v-pills-byname" aria-selected="true">By Name</a></li>';
+				echo '<li class="nav-item"><a class="nav-link active" id="v-pills-byname-tab" data-bs-toggle="pill" href="#v-pills-byname" role="tab" aria-controls="v-pills-byname" aria-selected="true">By Name</a></li>';
 			}
 			if ( ! empty( $shows_formats ) ) {
-				echo '<li class="nav-item"><a class="nav-link" id="v-pills-byformat-tab" data-toggle="pill" href="#v-pills-byformat" role="tab" aria-controls="v-pills-byformat" aria-selected="true">By Format</a></li>';
+				echo '<li class="nav-item"><a class="nav-link" id="v-pills-byformat-tab" data-bs-toggle="pill" href="#v-pills-byformat" role="tab" aria-controls="v-pills-byformat" aria-selected="true">By Format</a></li>';
 			}
 			if ( ! empty( $shows_country ) ) {
-				echo '<li class="nav-item"><a class="nav-link" id="v-pills-bycountry-tab" data-toggle="pill" href="#v-pills-bycountry" role="tab" aria-controls="v-pills-bycountry" aria-selected="true">By Country</a></li>';
+				echo '<li class="nav-item"><a class="nav-link" id="v-pills-bycountry-tab" data-bs-toggle="pill" href="#v-pills-bycountry" role="tab" aria-controls="v-pills-bycountry" aria-selected="true">By Country</a></li>';
 			}
 			?>
 		</ul>
@@ -167,15 +181,26 @@ class LWTV_This_Year_Shows {
 				ksort( $shows_started );
 				?>
 				<div class="tab-pane fade show active" id="v-pills-byname" role="tabpanel" aria-labelledby="v-pills-byname-tab">
-					<ul class="this-year-shows showsonair">
-					<?php
-					foreach ( $shows_started as $s_show ) {
-						$show_s_tooltip = ( $s_show['airdates']['start'] === $s_show['airdates']['finish'] ) ? $s_show['airdates']['start'] : $s_show['airdates']['start'] . '-' . $s_show['airdates']['finish'];
-						echo '<li><a href="' . esc_url( $s_show['url'] ) . '" data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_s_tooltip ) . '">' . esc_html( $s_show['name'] ) . '</a> <small>(' . esc_html( $s_show['country'] ) . ' - ' . esc_html( $s_show['format'] ) . ')</small></li>';
-
-					}
-					?>
-					</ul>
+					<table class="table table-md table-hover table-striped">
+						<thead class="thead-light">
+							<tr>
+								<th style="width: 200px;" scope="col">Letter</th>
+								<th scope="col">Show(s)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+							foreach ( $shows_started as $letter => $s_shows ) {
+								echo '<tr><td><h4>' . esc_html( strtoupper( $letter ) ) . ' (' . count( $s_shows ) . ')</h4></td><td><ul class="this-year-shows showsonair">';
+								foreach ( $s_shows as $s_show ) {
+									$show_s_tooltip = ( $s_show['airdates']['start'] === $s_show['airdates']['finish'] ) ? $s_show['airdates']['start'] : $s_show['airdates']['start'] . '-' . $s_show['airdates']['finish'];
+									echo '<li><a href="' . esc_url( $s_show['url'] ) . '" data-bs-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_s_tooltip ) . '">' . esc_html( $s_show['name'] ) . '</a> <small>(' . esc_html( $s_show['country'] ) . ' - ' . esc_html( $s_show['format'] ) . ')</small></li>';
+								}
+								echo '</ul></td></tr>';
+							}
+							?>
+						</tbody>
+					</table>
 				</div>
 				<?php
 			} else {
@@ -195,10 +220,10 @@ class LWTV_This_Year_Shows {
 						<tbody>
 							<?php
 							foreach ( $shows_formats as $format => $f_shows ) {
-								echo '<tr><td>' . esc_html( $format ) . ' (' . count( $f_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
+								echo '<tr><td><h4>' . esc_html( $format ) . ' (' . count( $f_shows ) . ')</h4></td><td><ul class="this-year-shows showsonair">';
 								foreach ( $f_shows as $f_show ) {
 									$show_f_tooltip = ( $f_show['airdates']['start'] === $f_show['airdates']['finish'] ) ? $f_show['airdates']['start'] : $f_show['airdates']['start'] . '-' . $f_show['airdates']['finish'];
-									echo '<li><a href="' . esc_url( $f_show['url'] ) . '" data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_f_tooltip ) . '">' . esc_html( $f_show['name'] ) . '</a> <small>(' . esc_html( $f_show['country'] ) . ')</small></li>';
+									echo '<li><a href="' . esc_url( $f_show['url'] ) . '" data-bs-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_f_tooltip ) . '">' . esc_html( $f_show['name'] ) . '</a> <small>(' . esc_html( $f_show['country'] ) . ')</small></li>';
 								}
 								echo '</ul></td></tr>';
 							}
@@ -224,10 +249,10 @@ class LWTV_This_Year_Shows {
 						<tbody>
 							<?php
 							foreach ( $shows_country as $nation => $n_shows ) {
-								echo '<tr><td>' . esc_html( $nation ) . ' (' . count( $n_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
+								echo '<tr><td><h4>' . esc_html( $nation ) . ' (' . count( $n_shows ) . ')</h4></td><td><ul class="this-year-shows showsonair">';
 								foreach ( $n_shows as $n_show ) {
 									$show_n_output = ( $n_show['airdates']['start'] === $n_show['airdates']['finish'] ) ? $n_show['airdates']['start'] : $n_show['airdates']['start'] . '-' . $n_show['airdates']['finish'];
-									echo '<li><a href="' . esc_url( $n_show['url'] ) . '" data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_n_output ) . '">' . esc_html( $n_show['name'] ) . '</a> <small>(' . esc_html( $n_show['format'] ) . ')</small></li>';
+									echo '<li><a href="' . esc_url( $n_show['url'] ) . '" data-bs-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_n_output ) . '">' . esc_html( $n_show['name'] ) . '</a> <small>(' . esc_html( $n_show['format'] ) . ')</small></li>';
 
 								}
 								echo '</ul></td></tr>';
@@ -259,24 +284,25 @@ class LWTV_This_Year_Shows {
 		$fail_msg      = '<p>No shows were canceled this year.</p>';
 		$thisyear      = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$show_array    = self::get_list( $thisyear, 'ended' );
+		$shows_count   = self::get_list( $thisyear, 'ended', true );
 		$shows_ended   = $show_array['current'];
 		$shows_formats = $show_array['formats'];
 		$shows_country = $show_array['country'];
 		?>
-		<h2><a name="showsonair"><?php echo count( $shows_ended ); ?> Shows Canceled</a></h2>
+		<h2><a name="showsonair"><?php echo (int) $shows_count; ?> Shows Canceled</a></h2>
 
 		<p>&nbsp;</p>
 
 		<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
 			<?php
 			if ( ! empty( $shows_ended ) ) {
-				echo '<li class="nav-item"><a class="nav-link active" id="v-pills-byname-tab" data-toggle="pill" href="#v-pills-byname" role="tab" aria-controls="v-pills-byname" aria-selected="true">By Name</a></li>';
+				echo '<li class="nav-item"><a class="nav-link active" id="v-pills-byname-tab" data-bs-toggle="pill" href="#v-pills-byname" role="tab" aria-controls="v-pills-byname" aria-selected="true">By Name</a></li>';
 			}
 			if ( ! empty( $shows_formats ) ) {
-				echo '<li class="nav-item"><a class="nav-link" id="v-pills-byformat-tab" data-toggle="pill" href="#v-pills-byformat" role="tab" aria-controls="v-pills-byformat" aria-selected="true">By Format</a></li>';
+				echo '<li class="nav-item"><a class="nav-link" id="v-pills-byformat-tab" data-bs-toggle="pill" href="#v-pills-byformat" role="tab" aria-controls="v-pills-byformat" aria-selected="true">By Format</a></li>';
 			}
 			if ( ! empty( $shows_country ) ) {
-				echo '<li class="nav-item"><a class="nav-link" id="v-pills-bycountry-tab" data-toggle="pill" href="#v-pills-bycountry" role="tab" aria-controls="v-pills-bycountry" aria-selected="true">By Country</a></li>';
+				echo '<li class="nav-item"><a class="nav-link" id="v-pills-bycountry-tab" data-bs-toggle="pill" href="#v-pills-bycountry" role="tab" aria-controls="v-pills-bycountry" aria-selected="true">By Country</a></li>';
 			}
 			?>
 		</ul>
@@ -288,15 +314,26 @@ class LWTV_This_Year_Shows {
 				ksort( $shows_ended );
 				?>
 				<div class="tab-pane fade show active" id="v-pills-byname" role="tabpanel" aria-labelledby="v-pills-byname-tab">
-					<ul class="this-year-shows showsonair">
-					<?php
-					foreach ( $shows_ended as $s_show ) {
-						$show_s_tooltip = ( $s_show['airdates']['start'] === $s_show['airdates']['finish'] ) ? $s_show['airdates']['start'] : $s_show['airdates']['start'] . '-' . $s_show['airdates']['finish'];
-						echo '<li><a href="' . esc_url( $s_show['url'] ) . '" data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_s_tooltip ) . '">' . esc_html( $s_show['name'] ) . '</a> <small>(' . esc_html( $s_show['country'] ) . ' - ' . esc_html( $s_show['format'] ) . ')</small></li>';
-
-					}
-					?>
-					</ul>
+					<table class="table table-md table-hover table-striped">
+						<thead class="thead-light">
+							<tr>
+								<th style="width: 200px;" scope="col">Letter</th>
+								<th scope="col">Show(s)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+							foreach ( $shows_ended as $letter => $s_shows ) {
+								echo '<tr><td><h4>' . esc_html( strtoupper( $letter ) ) . ' (' . count( $s_shows ) . ')</h4></td><td><ul class="this-year-shows showsonair">';
+								foreach ( $s_shows as $s_show ) {
+									$show_s_tooltip = ( $s_show['airdates']['start'] === $s_show['airdates']['finish'] ) ? $s_show['airdates']['start'] : $s_show['airdates']['start'] . '-' . $s_show['airdates']['finish'];
+									echo '<li><a href="' . esc_url( $s_show['url'] ) . '" data-bs-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_s_tooltip ) . '">' . esc_html( $s_show['name'] ) . '</a> <small>(' . esc_html( $s_show['country'] ) . ' - ' . esc_html( $s_show['format'] ) . ')</small></li>';
+								}
+								echo '</ul></td></tr>';
+							}
+							?>
+						</tbody>
+					</table>
 				</div>
 				<?php
 			} else {
@@ -316,10 +353,10 @@ class LWTV_This_Year_Shows {
 						<tbody>
 							<?php
 							foreach ( $shows_formats as $format => $f_shows ) {
-								echo '<tr><td>' . esc_html( $format ) . ' (' . count( $f_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
+								echo '<tr><td><h4>' . esc_html( $format ) . ' (' . count( $f_shows ) . ')</h4></td><td><ul class="this-year-shows showsonair">';
 								foreach ( $f_shows as $f_show ) {
 									$show_f_tooltip = ( $f_show['airdates']['start'] === $f_show['airdates']['finish'] ) ? $f_show['airdates']['start'] : $f_show['airdates']['start'] . '-' . $f_show['airdates']['finish'];
-									echo '<li><a href="' . esc_url( $f_show['url'] ) . '" data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_f_tooltip ) . '">' . esc_html( $f_show['name'] ) . '</a> <small>(' . esc_html( $f_show['country'] ) . ')</small></li>';
+									echo '<li><a href="' . esc_url( $f_show['url'] ) . '" data-bs-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_f_tooltip ) . '">' . esc_html( $f_show['name'] ) . '</a> <small>(' . esc_html( $f_show['country'] ) . ')</small></li>';
 
 								}
 								echo '</ul></td></tr>';
@@ -344,10 +381,10 @@ class LWTV_This_Year_Shows {
 						<tbody>
 							<?php
 							foreach ( $shows_country as $nation => $n_shows ) {
-								echo '<tr><td>' . esc_html( $nation ) . ' (' . count( $n_shows ) . ')</td><td><ul class="this-year-shows showsonair">';
+								echo '<tr><td><h4>' . esc_html( $nation ) . ' (' . count( $n_shows ) . ')</h4></td><td><ul class="this-year-shows showsonair">';
 								foreach ( $n_shows as $n_show ) {
 									$show_n_output = ( $n_show['airdates']['start'] === $n_show['airdates']['finish'] ) ? $n_show['airdates']['start'] : $n_show['airdates']['start'] . '-' . $n_show['airdates']['finish'];
-									echo '<li><a href="' . esc_url( $n_show['url'] ) . '" data-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_n_output ) . '">' . esc_html( $n_show['name'] ) . '</a> <small>(' . esc_html( $n_show['format'] ) . ')</small></li>';
+									echo '<li><a href="' . esc_url( $n_show['url'] ) . '" data-bs-toggle="tooltip" data-placement="top" title="On air ' . wp_kses_post( $show_n_output ) . '">' . esc_html( $n_show['name'] ) . '</a> <small>(' . esc_html( $n_show['format'] ) . ')</small></li>';
 								}
 								echo '</ul></td></tr>';
 							}
@@ -416,13 +453,24 @@ class LWTV_This_Year_Shows {
 							break;
 					}
 
-					// If the show pased whatever checks we have...
+					// If the show passed whatever checks we have...
 					if ( $yes_count ) {
 						++$counted_shows;
 
 						// If we're ONLY counting, we don't have to do the rest.
 						if ( ! $count ) {
-							$shows_current[ $show_name ] = array(
+							// Build the first character
+							$first_char = substr( $show_name, 0, 1 );
+							if ( is_numeric( $first_char ) ) {
+								$marker = '#';
+							} elseif ( ctype_alnum( $first_char ) ) {
+								$marker = $first_char;
+							} else {
+								$marker = '-';
+							}
+
+							// Build the array
+							$shows_current[ $marker ][ $show_name ] = array(
 								'url'      => get_permalink( $show_id ),
 								'name'     => get_the_title( $show_id ),
 								'country'  => wp_strip_all_tags( $countries ),

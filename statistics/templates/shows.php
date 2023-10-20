@@ -137,8 +137,8 @@ switch ( $view ) {
 		<h3>Trope Breakdown</h3>
 		<div class="container chart-container">
 			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
-				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
-				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
+				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-bs-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
+				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-bs-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
 			</ul>
 			<p>&nbsp;</p>
 			<div class="tab-content" id="v-pills-tabContent">
@@ -153,8 +153,8 @@ switch ( $view ) {
 		<h3>Genre Breakdown</h3>
 		<div class="container chart-container">
 			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
-				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
-				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
+				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-bs-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
+				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-bs-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
 			</ul>
 			<p>&nbsp;</p>
 			<div class="tab-content" id="v-pills-tabContent">
@@ -201,8 +201,8 @@ switch ( $view ) {
 		<h3>Intersectionality Breakdown</h3>
 		<div class="container chart-container">
 			<ul class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
-				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
-				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
+				<li class="nav-item"><a class="nav-link active" id="v-pills-barchart-tab" data-bs-toggle="pill" href="#v-pills-barchart" role="tab" aria-controls="v-pills-barchart" aria-selected="true">Barchart</a></li>
+				<li class="nav-item"><a class="nav-link" id="v-pills-list-tab" data-bs-toggle="pill" href="#v-pills-list" role="tab" aria-controls="v-pills-list" aria-selected="false">List</a></li>
 			</ul>
 			<p>&nbsp;</p>
 			<div class="tab-content" id="v-pills-tabContent">

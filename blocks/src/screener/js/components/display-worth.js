@@ -35,7 +35,7 @@ export default function DisplayWorth({ score }) {
 	return (
 		<Fragment>
 			<span
-				data-toggle="tooltip"
+				data-bs-toggle="tooltip"
 				aria-label={`Is this show worth watching? ${score}`}
 				title=""
 				data-original-title={`Is this show worth watching? ${score}`}

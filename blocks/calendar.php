@@ -116,14 +116,14 @@ class LWTV_SSR_Calendar {
 		$next_week      = add_query_arg( 'tvdate', $next, get_permalink() );
 		$next_week_icon = ( new LWTV_Functions() )->symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' );
 
-		$navigation = '<nav aria-label="Calendar Navigation" role="navigation" class="yikes-pagination"><ul class="pagination justify-content-center"><li class="page-item first mr-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';
+		$navigation = '<nav aria-label="Calendar Navigation" role="navigation" class="yikes-pagination"><ul class="pagination justify-content-center"><li class="page-item first me-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';
 
 		// ... We only show 'this week' when it's NOT this week
 		if ( 'today' !== $date && $today !== $date ) {
 			$navigation .= '<li class="page-item"><a href="/calendar/" class="page-link">This Week</a></li>';
 		}
 
-		$navigation .= '<li class="page-item last ml-auto"><a href="' . $next_week . '" class="page-link">' . $next_week_icon . ' Next Week</a></li></ul></nav>';
+		$navigation .= '<li class="page-item last ms-auto"><a href="' . $next_week . '" class="page-link">Next Week ' . $next_week_icon . ' </a></li></ul></nav>';
 
 		return $navigation;
 	}
@@ -185,7 +185,7 @@ class LWTV_SSR_Calendar {
 					// Build output
 					$show_content = '<div class="ep-calendar-title">';
 					if ( is_array( $show['title'] ) ) {
-						$show_content .= '<em>' . $show_name . ' <span class="badge badge-secondary badge-pill">' . count( $show['title'] ) . '</span></em>';
+						$show_content .= '<em>' . $show_name . ' <span class="badge text-bg-secondary badge-pill">' . count( $show['title'] ) . '</span></em>';
 						$show_content .= '<ul>';
 						foreach ( $show['title'] as $one_show ) {
 							$show_content .= '<li>' . $one_show . '</li>';

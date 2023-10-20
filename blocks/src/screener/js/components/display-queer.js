@@ -5,7 +5,7 @@ export default function DisplayQueer({ score }) {
 	return (
 		<Fragment>
 			<span
-				data-toggle="tooltip"
+				data-bs-toggle="tooltip"
 				aria-label="How good is this show for queers?"
 				title=""
 				data-original-title="How good is this show for queers?"
