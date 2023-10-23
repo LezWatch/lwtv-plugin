@@ -122,6 +122,46 @@ class LWTV_Related_Posts {
 	}
 
 	/**
+	 * Related Content Archive
+	 */
+	public function related_archive_header( $tag_id ) {
+		$tag         = get_tag( $tag_id );
+		$linked_post = get_term_meta( $tag->term_id, 'lez_termsmeta_linked_post', true );
+		$icons       = array(
+			'show'      => ( new LWTV_Functions() )->symbolicons( 'tv-hd.svg', 'fa-tv' ),
+			'actor'     => ( new LWTV_Functions() )->symbolicons( 'team.svg', 'fa-users' ),
+			'character' => ( new LWTV_Functions() )->symbolicons( 'contact-card.svg', 'fa-users' ),
+		);
+
+		if ( ! empty( $linked_post ) ) {
+			// If we have a linked post, we will trust it.
+			$type    = rtrim( str_replace( 'post_type_', '', get_post_type( $linked_post ) ), 's' );
+			$related = '<p><a href="' . get_permalink( $linked_post ) . '">' . get_the_title( $linked_post ) . '</a></p>';
+		} else {
+			// There's no post linked, so we're going to do it the hard way:
+			$maybe         = array(
+				'show'  => get_page_by_path( $tag->slug, OBJECT, 'post_type_shows' ),
+				'actor' => get_page_by_path( $tag->slug, OBJECT, 'post_type_actors' ),
+			);
+			$related_items = '';
+			foreach ( $maybe as $type => $item ) {
+				if ( $item && $item->post_name === $tag->slug ) {
+					$related_items = '<a class="btn btn-outline-primary btn-lg" href="/' . $type . '/' . $tag->slug . '">' . $icons[ $type ] . ' Learn more about this ' . $type . ' </a></br>';
+					break;
+				}
+			}
+
+			if ( ! empty( $related_items ) ) {
+				$related = '<p>' . $related_items . '</p>';
+			}
+		}
+
+		if ( isset( $related ) ) {
+			return $related;
+		}
+	}
+
+	/**
 	 * Related Content: Shows, Characters, or Actors related to this post
 	 * Used on Posts only.
 	 *
