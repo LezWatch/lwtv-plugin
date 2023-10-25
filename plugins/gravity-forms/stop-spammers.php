@@ -131,10 +131,10 @@ class LWTV_Gravity_Forms_Spam {
 			$body = wp_remote_retrieve_body( $request );
 			$data = json_decode( $body );
 
-			$country = ( isset( $data->countryCode ) ) ? $data->countryCode : ''; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-			$city    = ( isset( $data->countryCode ) ) ? $data->city : ''; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$country = ( isset( $data->countryCode ) ) ? ' - ' . $data->countryCode : ''; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$city    = ( isset( $data->countryCode ) ) ? ' / ' . $data->city : ''; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
-			$return['full'] = $ip . ' ' . $country . ' - ' . $city;
+			$return['full'] = $ip . ' ' . $country . $city;
 			$return['bot']  = ( isset( $data->hosting ) && true === $data->hosting ) ? true : false;
 			$return['vpn']  = ( isset( $data->proxy ) && true === $data->proxy ) ? true : false;
 		}
@@ -152,11 +152,20 @@ class LWTV_Gravity_Forms_Spam {
 	 */
 	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	public function populate_lwtvlocation( $value ) {
-		$ip = (string) isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+		if ( array_key_exists( 'HTTP_X_FORWARDED_FOR', $_SERVER ) ) {
+			$ip = (string) $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} elseif ( array_key_exists( 'REMOTE_ADDR', $_SERVER ) ) {
+			$ip = (string) $_SERVER['REMOTE_ADDR'];
+		} elseif ( array_key_exists( 'HTTP_CLIENT_IP', $_SERVER ) ) {
+			$ip = (string) $_SERVER['HTTP_CLIENT_IP'];
+		} else {
+			// Honestly one of those should exist...
+			return;
+		}
 
-		// If there's a comma, we want to grab the first. If not, trust.
+		// If there's a comma we have multiple proxies and want to grab the first. If not, trust.
 		if ( str_contains( $ip, ',' ) ) {
-			$ips     = explode( ',', $ip );
+			$ips     = array_values( array_filter( explode( ',', $ip ) ) );
 			$real_ip = reset( $ips );
 		} else {
 			$real_ip = $ip;
