@@ -152,10 +152,16 @@ class LWTV_Gravity_Forms_Spam {
 	 */
 	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	public function populate_lwtvlocation( $value ) {
-		$ip  = (string) isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
-		$ips = explode( ',', $ip );
+		$ip = (string) isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
-		$real_ip  = $ips[0];
+		// If there's a comma, we want to grab the first. If not, trust.
+		if ( str_contains( $ip, ',' ) ) {
+			$ips     = explode( ',', $ip );
+			$real_ip = reset( $ips );
+		} else {
+			$real_ip = $ip;
+		}
+
 		$location = self::check_ip_location( $real_ip );
 
 		return $location['full'];
