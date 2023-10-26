@@ -1,20 +1,9 @@
 <?php
 /*
-Description: FacetWP Customizations
-Version: 1.1
-*/
-
-if ( ! defined( 'WPINC' ) ) {
-	die;
-}
-
-/**
- * class LWTV_FacetWP
- *
- * Custom FacetWP Functions
- * @since 1.0
+ * Description: FacetWP Indexing
  */
-class LWTV_FacetWP {
+
+class LWTV_FacetWP_Index {
 
 	/**
 	 * Constructor
@@ -277,4 +266,4 @@ class LWTV_FacetWP {
 	}
 }
 
-new LWTV_FacetWP();
+new LWTV_FacetWP_Index();

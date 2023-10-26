@@ -41,7 +41,7 @@ class LWTV_Data_Validation_Checks {
 				'desc' => 'Actors that have not yet been updated since the Great Migration.',
 			),
 			'actor_imdb'        => array(
-				'name' => 'Actors missing IMDb',
+				'name' => 'Actors IMDb',
 				'desc' => 'Actors who have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
 			),
 			'character_checker' => array(
@@ -53,8 +53,12 @@ class LWTV_Data_Validation_Checks {
 				'desc' => 'Checks that all information for shows appears correct. Like do they have characters and ratings etc, does intersectionality seem to match.',
 			),
 			'show_imdb'         => array(
-				'name' => 'Shows missing IMDb',
+				'name' => 'Shows IMDb',
 				'desc' => 'Shows that have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
+			),
+			'show_urls'         => array(
+				'name' => 'Shows Watch Links',
+				'desc' => 'Shows that have invalid Ways to Watch links. Make sure they are all valid and functional.',
 			),
 		);
 	}
@@ -165,6 +169,9 @@ class LWTV_Data_Validation_Checks {
 						break;
 					case 'show_imdb':
 						self::tab_show_imdb();
+						break;
+					case 'show_url':
+						self::tab_show_url();
 						break;
 					default:
 						self::tab_introduction();
@@ -771,7 +778,7 @@ class LWTV_Data_Validation_Checks {
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
 				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
 				<div id="lwtv-tools-alerts">
-					<p>All actors have at an IMDb entry.</p>
+					<p>All shows have at an IMDb entry.</p>
 					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>
@@ -796,6 +803,94 @@ class LWTV_Data_Validation_Checks {
 				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
 				<div id="lwtv-tools-alerts">
 					<p>The following show(s) have invalid IMDb data or do not have IMDb data at all. Not all will be possible to fix, as many webseries and international shows aren't listed on IMDb.</p>
+					<?php echo wp_kses_post( $last_run ); ?>
+				</div>
+			</div>
+
+			<div class="lwtv-tools-table">
+				<table class="widefat fixed" cellspacing="0">
+					<thead><tr>
+						<th id="character" class="manage-column column-character" scope="col">Show</th>
+						<th id="problem" class="manage-column column-problem" scope="col">Problem</th>
+						<th id="date" class="manage-column column-date" scope="col">Last Updated</th>
+					</tr></thead>
+
+					<tbody>
+						<?php
+						self::table_content( $items );
+						?>
+					</tbody>
+				</table>
+			</div>
+			<?php
+		}
+
+		?>
+		<form action="admin.php?page=lwtv_data_check&tab=show_imdb" method="post">
+			<?php wp_nonce_field( 'run_show_imdb_clicked' ); ?>
+			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
+			<?php submit_button( $button ); ?>
+		</form>
+		<?php
+	}
+
+	/**
+	 * Output the results of shows with bad URLs for Ways to Watch.
+	 */
+	public static function tab_show_url() {
+
+		$items = LWTV_Transients::get_transient( 'lwtv_debug_show_url' );
+
+		// If rerun was clicked, gotta check 'em all.
+		if ( ( isset( $_POST['rerun'] ) && check_admin_referer( 'run_show_url_clicked' ) ) || false === $items ) {
+			$items = ( new LWTV_Debug_Shows() )->find_shows_bad_url();
+		}
+
+		// If recheck was clicked, only check the problem children.
+		if ( isset( $_POST['recheck'] ) && check_admin_referer( 'run_show_url_clicked' ) && false !== $items ) {
+			$items = ( new LWTV_Debug_Shows() )->find_shows_bad_url( $items );
+		}
+
+		// Get the last run time.
+		$last_run = self::last_run( 'show_url' );
+
+		// Convert to JSON
+		$json_it = wp_json_encode( $items );
+
+		// Default.
+		$button  = 'Run Scan';
+		$is_name = 'rerun';
+
+		if ( empty( $items ) || ! is_array( $items ) ) {
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-yes"></span> Excellent!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>All shows have valid URLs for Ways to Watch.</p>
+					<?php echo wp_kses_post( $last_run ); ?>
+				</div>
+			</div>
+			<?php
+		} elseif ( false === $items ) {
+			$button  = 'Full Scan';
+			$is_name = 'rerun';
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-dissmiss"></span> Bogus!</h3>
+				<div id="lwtv-tools-alerts">
+					<p>Something has gone wrong. Please run a full scan. If this repeats, let Mika know.</p>
+					<?php echo wp_kses_post( $last_run ); ?>
+				</div>
+			</div>
+			<?php
+		} else {
+			$button  = 'Recheck';
+			$is_name = 'recheck';
+			?>
+			<div class="lwtv-tools-container lwtv-tools-container__alert">
+				<h3><span class="dashicons dashicons-warning"></span> Problems (<?php echo count( $items ); ?>)</h3>
+				<div id="lwtv-tools-alerts">
+					<p>The following show(s) have invalid URLs for their Ways to Watch.</p>
 					<?php echo wp_kses_post( $last_run ); ?>
 				</div>
 			</div>

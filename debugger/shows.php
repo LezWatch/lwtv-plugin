@@ -238,7 +238,6 @@ class LWTV_Debug_Shows {
 		return $items;
 	}
 
-
 	/**
 	 * Find all shows without IMDb Settings.
 	 *
@@ -313,6 +312,121 @@ class LWTV_Debug_Shows {
 		$option              = get_option( 'lwtv_debugger_status' );
 		$option['show_imdb'] = array(
 			'name'  => 'Shows without IMDb',
+			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
+			'last'  => time(),
+		);
+		$option['timestamp'] = time();
+		update_option( 'lwtv_debugger_status', $option );
+
+		return $items;
+	}
+
+	/**
+	 * Find all shows with bad URLs for Ways to Watch
+	 *
+	 * @return array $problems - array of problems. Can be empty.
+	 */
+	public function find_shows_bad_url( $items = array() ) {
+
+		// The array we will be checking.
+		$shows = array();
+
+		// Are we a full scan or a recheck?
+		if ( ! empty( $items ) ) {
+			// Check only the shows from items!
+			foreach ( $items as $show_item ) {
+				if ( get_post_status( $show_item['id'] ) !== 'draft' ) {
+					// If it's NOT a draft, we'll recheck.
+					$shows[] = $show_item['id'];
+				}
+			}
+		} else {
+			// Get all the shows
+			$the_loop = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
+
+			if ( $the_loop->have_posts() ) {
+				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
+				wp_reset_query();
+			}
+		}
+
+		// If somehow shows is totally empty...
+		if ( empty( $shows ) ) {
+			return false;
+		}
+
+		// Make sure we don't have dupes.
+		$shows = array_unique( $shows );
+
+		// reset items since we recheck off $shows.
+		$items = array();
+
+		foreach ( $shows as $show_id ) {
+
+			$problems = array();
+
+			$ways_to_watch = get_post_meta( $show_id, 'lezshows_affiliate', true );
+			$links         = array();
+
+			if ( ! empty( $ways_to_watch ) ) {
+
+				// Parse each URL.
+				foreach ( $ways_to_watch as $url ) {
+					$response = wp_remote_get( $url );
+
+					if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+						$http_code = wp_remote_retrieve_response_code( $response );
+
+						if ( '200' === $http_code ) {
+							// If it's a 200, we're good, skip the rest.
+							continue;
+						} elseif ( empty( $http_code ) ) {
+							// If it's empty, we got a bad URL.
+							$problems[] = 'URL does not exist. Remove it from the page. -- ' . $url;
+						} else {
+							// Check the codes.
+							switch ( $http_code ) {
+								case '301':
+								case '308':
+									$problems[] = 'URL has been moved. Update the page so it doesn\'t have to redirect. -- ' . $url;
+									break;
+								case '400':
+								case '403':
+									$problems[] = 'URL cannot be accessed. We might be blocked from automated testing. Check to make sure it exists. -- ' . $url;
+									break;
+								case '404':
+								case '410':
+								case '418':
+									$problems[] = 'URL does not exist. Remove it from the page. -- ' . $url;
+									break;
+								default:
+									$problems[] = 'Something is up with this URL -- ' . $url;
+									break;
+							}
+						}
+					} else {
+						$problems[] = 'URL is un-retrievable. Check if it really exists. -- ' . $url;
+					}
+				}
+			}
+
+			// If we added any problems, loop and add.
+			if ( ! empty( $problems ) ) {
+				$items[] = array(
+					'url'     => get_permalink( $show_id ),
+					'id'      => $show_id,
+					'problem' => implode( '</br>', $problems ),
+				);
+			}
+		}
+
+		// Save Transient
+		set_transient( 'lwtv_debug_show_url', $items, WEEK_IN_SECONDS );
+
+		// Update Options
+		$option              = get_option( 'lwtv_debugger_status' );
+		$option['show_imdb'] = array(
+			'name'  => 'Shows with bad Ways to Watch',
 			'count' => ( ! empty( $items ) ) ? count( $items ) : 0,
 			'last'  => time(),
 		);

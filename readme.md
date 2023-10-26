@@ -91,7 +91,7 @@ Stored in `/admin/` -- Makes admin panels
 * `dashboard.php` - Powers wp-admin dashboard code
 * `exclusions.php` - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
 * `monitors.php` - Services monitored (runs daily)
-* `validation.php` - Data consistency checks (runs weekly)
+* `validation.php` - Data consistency checks (each one runs weekly)
 
 ### Assets
 
@@ -224,7 +224,8 @@ Stored in `/features/` -- a collection of miscellaneous features.
 		* Embed IndieGoGo: `[indiegogo url=URL]`
 		* Glossary: `[glossary taxonomy=TAXONOMY]`
 		* Spoilers: `[spoilers]` or `[spoilers warning="OMG SPIDERS!!!"]`
-* `spammers.php` - Prevent Spammers from annoying us
+* `spammers.php` - Prevent Spammers from annoying us.
+* `transients.php` - Wrapper code for Transients so when you dev-test, you get updated content.
 * `upgrades.php` - Handle upgrades of WP and everything included.
 
 ### Node Scripts
@@ -265,17 +266,20 @@ The file `_main.php` acts as an autoloader.
 * `comment_probation.php` - Fork of abandoned plugin
 * `facetwp.php` -- Facet WP
     - calls other files
-    - Only show pagination if there's more than one page
     - Reset Shortcode
 * `/facetwp/` - FacetWP Folder
     - `/facetwp-cmb2/` - FacetWP Integration with CMB2 (forked)
-    - `facet.js` - Pagination Scrolling and Refresh Warning
-    - `lwtv.php`
+    - `indexing.php`
         - filter Data before it's saved to rename values (capitalization)
         - split actors and shows into separate entries, and add additional orderby params
-* `gravity-forms.php` - Protection from spammers via disallowed keys
+    - `pagination.js` - Pagination Scrolling and Refresh Warning
+    - `pagination.php` - Only show pagination if there's more than one page
+* `gravity-forms.php` - Gravity Forms Integration
+    - Prevents views from being counted
+    - calls other files
 * `/gravity-forms/` - Gravity Forms Folder
     - `class-gf-approvals.php` - Approval Code (forked from another plugin)
+    - `stop-spammers.php` - Block Spammers
 * `gutenslam.php` - make Block Editor stop being such a dillhole and forget preferences
 * `jetpack.php`  - Jetpack integration
     - Adds Post Type to sort.
@@ -378,7 +382,6 @@ Stored in `/this-year/` - Technically a subset of statistics, This Year shows yo
 Stored in `/ways-to-watch/` -- Code to customize Ways to Watch links and add affiliate data, or alter display names.
 
 * `_main.php` - Loader file.
-* `deprecated.php` - Code from the former ads system, removed and will eventually be revamped.
 * `global.php` - All global data, such as header/meta and content regex.
 * `ways-to-watch.php` - Affiliate links and pretty-fication of services
 
