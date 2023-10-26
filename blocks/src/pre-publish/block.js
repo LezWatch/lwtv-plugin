@@ -83,6 +83,7 @@ const PrePublishCheckList = () => {
 		}
 
 		if (lockPost === true) {
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 			styleClass = 'pre-publish-fail';
 			lockPostSaving();
 		} else {
