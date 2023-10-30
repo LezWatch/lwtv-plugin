@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "johngrogg/ics-parser",
-            "version": "v3.2.1",
+            "version": "v3.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/u01jmg3/ics-parser.git",
-                "reference": "a3a291c51c378cc4a7f3aec6cd2478bdbd110575"
+                "reference": "eeb51c4c0c06e6df3266f85ea774ca314536aba4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/u01jmg3/ics-parser/zipball/a3a291c51c378cc4a7f3aec6cd2478bdbd110575",
-                "reference": "a3a291c51c378cc4a7f3aec6cd2478bdbd110575",
+                "url": "https://api.github.com/repos/u01jmg3/ics-parser/zipball/eeb51c4c0c06e6df3266f85ea774ca314536aba4",
+                "reference": "eeb51c4c0c06e6df3266f85ea774ca314536aba4",
                 "shasum": ""
             },
             "require": {
@@ -60,7 +60,7 @@
             ],
             "support": {
                 "issues": "https://github.com/u01jmg3/ics-parser/issues",
-                "source": "https://github.com/u01jmg3/ics-parser/tree/v3.2.1"
+                "source": "https://github.com/u01jmg3/ics-parser/tree/v3.3.1"
             },
             "funding": [
                 {
@@ -68,7 +68,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-02-23T16:50:46+00:00"
+            "time": "2023-10-10T09:58:49+00:00"
         }
     ],
     "packages-dev": [
@@ -416,5 +416,5 @@
     "platform-overrides": {
         "php": "8.0"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
