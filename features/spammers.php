@@ -55,6 +55,11 @@ class LWTV_Find_Spammers {
 	 */
 	public static function is_spammer( $to_check, $type = 'email', $keys = 'disallowed_keys' ) {
 
+		// If nothing was passed through, we cannot check at all so bail.
+		if ( empty( $to_check ) ) {
+			return false;
+		}
+
 		// Get disallowed keys & convert to array
 		$disallowed = self::list( $keys );
 

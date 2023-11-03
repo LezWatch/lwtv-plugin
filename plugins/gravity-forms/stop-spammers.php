@@ -9,7 +9,7 @@ class LWTV_Gravity_Forms_Spam {
 		// Check all Gravity Forms ... forms for spammers.
 		add_action( 'gform_entry_is_spam', array( $this, 'gform_entry_is_spam' ), 10, 3 );
 
-		// Populate ip location
+		// Check location.
 		add_filter( 'gform_field_value_lwtvlocation', array( $this, 'populate_lwtvlocation' ) );
 	}
 
@@ -61,23 +61,15 @@ class LWTV_Gravity_Forms_Spam {
 			}
 
 			if ( rest_is_ip_address( (string) $key ) ) {
-				$ip                 = (string) $key;
-				$check_ip_address   = self::check_ip_location( $ip );
-				$is_naughty['spam'] = LWTV_Find_Spammers::is_spammer( $ip, 'ip', 'disallowed_keys' );
-				$is_naughty['mod']  = LWTV_Find_Spammers::is_spammer( $ip, 'ip', 'moderated_keys' );
-				$is_naughty['bot']  = $check_ip_address['bot'];
-				$is_naughty['vpn']  = $check_ip_address['vpn'];
+				$lwtv_ip          = (string) $key;
+				$gravity_forms_ip = ( isset( $entry->ip ) ) ? $entry->ip : '';
+				$check_lwtv_ip    = self::check_ip_location( $lwtv_ip );
+				$check_gf_ip      = self::check_ip_location( $gravity_forms_ip );
+
+				// Santa Clause time.
+				$is_naughty['spam'] = LWTV_Find_Spammers::is_spammer( $gravity_forms_ip, 'ip', 'disallowed_keys' );
+				$is_naughty['mod']  = LWTV_Find_Spammers::is_spammer( $gravity_forms_ip, 'ip', 'moderated_keys' );
 			}
-		}
-
-		// If this was a bot...
-		if ( $is_naughty['bot'] ) {
-			$warn_message .= 'Likely submitted by a bot or someone scripting. ';
-		}
-
-		// If a VPN...
-		if ( $is_naughty['vpn'] ) {
-			$warn_message .= 'Using a VPN. This may be harmless, but it\'s also how people evade bans. ';
 		}
 
 		// If the person is Moderated...
@@ -92,8 +84,13 @@ class LWTV_Gravity_Forms_Spam {
 			if ( isset( $email ) ) {
 				$message .= ' - Email ( ' . $email . ' )';
 			}
-			if ( isset( $ip ) ) {
-				$message .= ' - IP Address ( ' . $ip . ' )';
+
+			if ( isset( $lwtv_ip ) && isset( $gravity_forms_ip ) ) {
+				$message .= ' - IP Addresses ( ' . $lwtv_ip . ', ' . $gravity_forms_ip . ' )';
+			} elseif ( isset( $lwtv_ip ) ) {
+				$message .= ' - IP Address ( ' . $lwtv_ip . ' )';
+			} elseif ( isset( $gravity_forms_ip ) ) {
+				$message .= ' - IP Address ( ' . $gravity_forms_ip . ' )';
 			}
 
 			$result = GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $message, 'error', 'spam' );
@@ -173,7 +170,7 @@ class LWTV_Gravity_Forms_Spam {
 
 		$location = self::check_ip_location( $real_ip );
 
-		return $location['full'];
+		return $location['full'] . ' (Note: Unreliable)';
 	}
 }
 
