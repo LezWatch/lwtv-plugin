@@ -395,6 +395,8 @@ class LWTV_Debug_Actors {
 				'name' => get_the_title( $actor_id ),
 			);
 
+			$facebook = get_post_meta( $actor_id, 'lezactors_facebook', true );
+
 			// What we can check for
 			$check_ours = array(
 				'birth'     => get_post_meta( $actor_id, 'lezactors_birth', true ),
@@ -403,7 +405,7 @@ class LWTV_Debug_Actors {
 				'wikipedia' => get_post_meta( $actor_id, 'lezactors_wikipedia', true ),
 				'instagram' => get_post_meta( $actor_id, 'lezactors_instagram', true ),
 				'twitter'   => get_post_meta( $actor_id, 'lezactors_twitter', true ),
-				'facebook'  => str_replace( 'https://facebook.com/', '', get_post_meta( $actor_id, 'lezactors_facebook', true ) ),
+				'facebook'  => ( str_contains( $facebook, 'https://facebook.com/' ) ) ? str_replace( 'https://facebook.com/', '', $facebook ) : '',
 				'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
 			);
 
