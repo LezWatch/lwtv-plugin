@@ -130,12 +130,24 @@ _Javascript (`js`)_
 
 Stored in `/blocks/`
 
-Blocks for Gutenberg. The file `_main.php` acts as an autoloader. If you're updating the CSS, you will need to rebuild the blocks. Read `/blocks/README.md` for more information or just tell Mika what to change.
+Blocks for Gutenberg. The file `_main.php` acts as an autoloader.
 
 * `calendar.php` - Calendar specific code
 * `serverside.php` - Server-side Renders: Run PHP code in JS blocks
 
-The source code is in `/src/` broken up by folder, with one special file, fully documented in `/blocks/README.md` 
+_Source (`src`)_
+
+Development is fully documented in `/blocks/README.md`
+
+Each block is broken up by folder with the following files:
+
+* `block.js` - Main block caller
+* `block.json` - Schema definition file
+* `/css/editor.scss` - Style for Editor
+* `/css/style.scss` - Style for Front end
+* `/js/edit.js` - Editor code
+* `/js/save.js` - Save code
+* `/js/components/` - (optional) Components used blocks
 
 ### Custom Post Types
 
@@ -332,41 +344,64 @@ _Templates (`/templates/`)_
 Stored in `/statistics/` - These files generate everything for stats, from graphs to the rest API stuff.
 
 * `_main.php` - Base Code: `class LWTV_Stats`
+    - `function enqueue_scripts()` - Enqueues scripts selectively
     - `function generate()` - Generates base stats. This makes a lot of calls to arrays and outputs
+    - `function maybe_year()` - Determine if the data is a valid year.
+    - `function maybe_complex()` - Deep Dive for custom data that is extra complex.
     - `function showcount()` - Slices shows into smaller chunks (i.e 'all shows in Australia') and can output raw counts, on-air counts, scores, or on-air scores.
-* `array.php` -  Arrays: `class LWTV_Stats_Arrays`
-    - `function taxonomy()` - Generate array to parse taxonomy content
-    - `function dead_taxonomy()` - Generate Taxonomy Array for dead characters
-    - `function dead_role()` - Array for dead characters by role (regular, etc)
-    - `function dead_meta_tax()` - Generate array to parse taxonomy content as it relates to post metas (for dead characters)
-    - `function meta()` - Generate array to parse post meta data
-    - `function yes_no()` - Generates arrays for content that has Yes/No values (shows we love, on air)
-    - `function taxonomy_breakdowns()` - generates complex arrays of cross related data from multiple taxonomies to list 'all miniseries in the USA' (this one makes us cry)
-    - `function dead_basic()` - Simple counts of all shows with dead, or all dead characters
-    - `function dead_year()` - Simple counts of death by year (Sara Lance...)
-    - `function on_air()` - Shows or characters on air per year
-    - `function dead_shows()` - Array of shows with (and without) dead characters, but because of Sara Lance, we have to cross relate to make sure all the shows with death have actually dead characters (yes, a show can have a dead-flag but no actively dead characters)
-    - `function dead_complex_taxonomy()` - Complex death taxonomies for stations and nations.
-    - `function scores()` - Show Scores
-    - `function actor_chars()` - How many actors or characters per actor or character...
-    - `function show_roles()` - Roles of characters on Shows, with how many of each role are dead
-    - `function complex_taxonomy()` - How many characters are played by out queer actors, but also how many characters for each term.
 * `gutenberg-ssr.php` - Gutenberg Server side rendering to show stats
-* `output.php` - Output: `class LWTV_Stats_Output`
-    - `function lists()` - Table lists with simple counts
-    - `function percentages()` - Table lists with percentages and a bar
-    - `function averages()` - Averages, highs, and lows (ex show scores)
-    - `function calculate_trendline()` - Calculates trendline data
-    - `function linear_regression()` - Calculates linear regression (used by trends)
-    - `function barcharts()` - Horizontal barcharts
-    - `function stacked_barcharts()` - Stacked Barcharts (also horizontal)
-    - `function piecharts()` - Piecharts (actually donuts...)
-    - `function trendline()` - Trendlines (against a vertical barchart)
 * `query_vars.php` - Query Variables customization (to make virtual pages) and Yoast meta
+
+_Build (`/build/`)_
+
+Each file has a `generate()` function which build an array that will be passed to the formatter code and ouput.
+
+* `class-actor-char-dead.php` - Stats for dead character per actor.
+* `class-actor-chars.php` - How many actors or characters per actor or character...
+* `class-complex-taxonomy.php` - How many characters are played by out queer actors, but also how many characters for each term.
+* `class-dead-basic.php` - Simple counts of all shows with dead, or all dead characters
+* `class-dead-complex-taxonomy.php` - Complex death taxonomies for stations and nations.
+* `class-dead-meta-tax.php` - Generate array to parse taxonomy content as it relates to post metas (for dead characters)
+* `class-dead-role.php` - Array for dead characters by role (regular, etc)
+* `class-dead_shows.php` - Array of shows with (and without) dead characters, but because of Sara Lance, we have to cross relate to make sure all the shows with death have actually dead characters (yes, a show can have a dead-flag but no actively dead characters)
+* `class-dead-taxonomy.php` - Taxonomy Array for dead characters
+* `class-dead-year.php` - Simple counts of death by year (Sara Lance...)
+* `class-meta.php` - Generate array to parse post meta data
+* `class-on_air.php` - Shows or characters on air per year
+* `class-scores.php` - Show Scores
+* `class-show-roles.php` - Roles of characters on Shows, with how many of each role are dead
+* `class-taxonomy.php` - Parse taxonomy content
+* `class-taxonomy-breakdowns.php` - generates complex arrays of cross related data from multiple taxonomies to list 'all miniseries in the USA' (this one makes us cry)
+* `class-this-year.php` - Generate this year data
+* `class-yes-no.php` - Generates data for content that has Yes/No values (shows we love, on air)
+
+_Formats (`/formats`)_
+
+Each file has a `build()` function which formats the arrays build in the `build` section (above) for proper display.
+
+* `class-averages.php` - Averages, highs, and lows (ex show scores)
+* `class-barcharts.php` - Horizontal barcharts
+* `class-barcharts-stacked.php` - Stacked Barcharts (also horizontal)
+* `class-lists.php` - Table lists with simple counts
+* `class-percentages.php` - Table lists with percentages and a bar
+* `class-piecharts.php` - Piecharts (actually donuts...)
+* `class-trendline.php` - Trendlines (against a vertical barchart)
+    - `calculate_trendline()` - Calculates trendline data
+    - `linear_regression()` - Calculates linear regression
 
 _Templates (`/templates/`)_
 
-Output templates used by the shortcodes and Gutenberg (as well as when included on the pages themselves). These were originally in the theme, but were moved here to allow for easier updates.
+Templates used by the shortcodes and Gutenberg (as well as when included on the pages themselves).
+
+* `actors.php` - Actor stats
+* `characters.php` - Character stats
+* `death.php` - Death stats
+* `formats.php` - Formats (tv series, web series, etc) stats
+* `main.php` - Main stats page
+* `nations.php` - Nation stats
+* `post_type_actors.php` - Partial for showing the character stats for a single actor
+* `shows.php` - Show statistics
+* `stations.php` - Networks/Stations statistics
 
 ### This Year
 

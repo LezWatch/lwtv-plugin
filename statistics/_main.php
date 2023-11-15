@@ -8,8 +8,6 @@
 
 // Include sub files
 require_once 'query_vars.php';
-require_once 'array.php';
-require_once 'output.php';
 require_once 'gutenberg-ssr.php';
 
 class LWTV_Stats {
@@ -75,7 +73,7 @@ class LWTV_Stats {
 					break;
 			}
 		} elseif ( 'post_type_actors' === get_post_type() || is_page( array( 'this-year' ) ) ) {
-			wp_enqueue_script( 'chartjs', plugin_dir_url( __DIR__ ) . 'assets/js/chart.js', array( 'jquery' ), '4.0.1', false );
+			wp_enqueue_script( 'chartjs', plugin_dir_url( __DIR__ ) . 'assets/js/chart.js', array( 'jquery' ), '4.4.0', false );
 			wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( __DIR__ ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.1.0', false );
 			wp_enqueue_script( 'palette', plugin_dir_url( __DIR__ ) . 'assets/js/palette.js', array(), '1.0.0', false );
 		}
@@ -84,11 +82,13 @@ class LWTV_Stats {
 	/*
 	 * Generate: Statistics Base Code
 	 *
-	 * @param string $subject 'characters' or 'shows'.
-	 * @param string $data The stats being run.
-	 * @param string $format The format of the output.
+	 * @param string $subject      'actors', 'characters', or 'shows'.
+	 * @param string $data         The stats being run.
+	 * @param string $format       The format of the output.
+	 * @param int    $post_id      Post ID (optional)
+	 * @param array  $custom_array Extra array of data
 	 *
-	 * @return array
+	 * @return mixed/na -- Value or the formatted output.
 	 */
 	public function generate( $subject, $data, $format, $post_id = false, $custom_array = array() ) {
 		// Bail early if we're not an approved subject matter.
@@ -102,194 +102,257 @@ class LWTV_Stats {
 		$count     = wp_count_posts( $post_type )->publish;
 		$taxonomy  = 'lez_' . $data;
 
-		// Calculate the array based on data.
-		// This includes everything EXCEPT Death and some weeeeeird stuff.
-		switch ( $data ) {
-			case 'cliches':
-			case 'sexuality':
-			case 'gender':
-			case 'tropes':
-			case 'romantic':
-			case 'actor_gender':
-			case 'actor_sexuality':
-			case 'genres':
-			case 'formats':
-			case 'intersections':
-				// Simple taxonomy data.
-				$array = ( new LWTV_Stats_Arrays() )->taxonomy( $post_type, $taxonomy );
-				break;
-			case 'queer-irl':
-			case 'triggers':
-			case 'stars':
-				// Complex Taxonomy Data.
-				$array = ( new LWTV_Stats_Arrays() )->complex_taxonomy( $count, $data, $subject );
-				break;
-			case 'role':
-				$roles = array(
-					'regular',
-					'recurring',
-					'guest',
-				);
-				$array = ( new LWTV_Stats_Arrays() )->meta( $post_type, $role_array, 'lezchars_show_group', $data, 'LIKE' );
-				break;
-			case 'thumbs':
-				$thumbs = array(
-					'Yes',
-					'No',
-					'Meh',
-					'TBD',
-				);
-				$array  = ( new LWTV_Stats_Arrays() )->meta( $post_type, $thumbs, 'lezshows_worthit_rating', $data );
-				break;
-			case 'weloveit':
-			case 'current':
-				$array = ( new LWTV_Stats_Arrays() )->yes_no( $post_type, $data, $count );
-				break;
-			case 'scores':
-				// Show Scores.
-				$array = ( new LWTV_Stats_Arrays() )->scores( $post_type );
-				break;
-			case 'charroles':
-				// show roles of character in each role.
-				$array = ( new LWTV_Stats_Arrays() )->show_roles();
-				break;
-			case 'per-char':
-				// Custom call for actor/character.
-				$array = ( new LWTV_Stats_Arrays() )->actor_chars( 'characters' );
-				break;
-			case 'per-actor':
-				// Custom call for character/actor.
-				$array = ( new LWTV_Stats_Arrays() )->actor_chars( 'actors' );
-				break;
-			case 'on-air':
-				// Custom call for on-air (show or character)
-				$array = ( new LWTV_Stats_Arrays() )->on_air( $post_type );
-				break;
-			case 'actor_char_roles':
-				// Custom call for character role breakdown per actor
-				$array = ( new LWTV_Stats_Arrays() )->actor_char_role( $post_type, $post_id );
-				break;
-			case 'actor_char_dead':
-				// Custom call for dead character breakdown per actor
-				$array = ( new LWTV_Stats_Arrays() )->actor_char_dead( $post_type, $post_id );
-				break;
+		// Secondary Variables
+		$prearray = false;
+		$minor    = false;
+
+		// If this is a year, customize.
+		$maybe_year = $this->maybe_year( $data );
+		if ( false !== $maybe_year ) {
+			$data_custom = $data;
+			$data        = 'this-year';
 		}
 
-		// Custom call for years. We check if the value ends with a year and is between
-		// FIRST_LWTV_YEAR and this year.
-		// Then we check if the data is of the two subsets we want:
+		// See if we need a deep dive.
+		$maybe_deep = $this->maybe_deep( $data, $format, $count );
+		if ( false !== $maybe_deep ) {
+			$data_custom = $data;
+			$data        = $maybe_deep['data'];
+			$prearray    = $maybe_deep['prearray'];
+			$count       = $maybe_deep['count'];
+			$minor       = $maybe_deep['minor'];
+		}
+
+		// If this is death, we need a different count.
+		if ( 'dead' === $data ) {
+			require_once 'build/class-dead-basic.php';
+			$count = ( new LWTV_Stats_Dead_Basic() )->build( $subject, 'count' );
+		}
+
+		$dead_tax = '';
+		if ( 'dead-sex' === $data ) {
+			$dead_tax = 'lez_sexuality';
+		}
+
+		if ( 'dead-gender' === $data ) {
+			$dead_tax = 'lez_gender';
+		}
+
+		// Custom Meta
+		$meta_array = array(
+			'role'  => array(
+				'array'   => array( 'regular', 'recurring', 'guest' ),
+				'key'     => 'lezchars_show_group',
+				'compare' => 'LIKE',
+			),
+			'thumb' => array(
+				'array'   => array( 'Yes', 'No', 'Meh', 'TBD' ),
+				'key'     => 'lezshows_worthit_rating',
+				'compare' => null,
+			),
+		);
+
+		// Which data calls which class.
+		$data_matcher = array(
+			'actor_char_roles'    => 'Actor_Char_Role',
+			'actor_char_dead'     => 'Actor_Char_Dead',
+			'actor_gender'        => 'Taxonomy',
+			'actor_sexuality'     => 'Taxonomy',
+			'cliches'             => 'Taxonomy',
+			'dead'                => 'Dead_Basic',
+			'dead-gender'         => 'Dead_Taxonomy',
+			'dead-list'           => 'Dead_List',
+			'dead-nations'        => 'Dead_Complex_Taxonomy',
+			'dead-role'           => 'Dead_Role',
+			'dead-sex'            => 'Dead_Taxonomy',
+			'dead-shows'          => 'Dead_Shows',
+			'dead-stations'       => 'Dead_Complex_Taxonomy',
+			'dead-years'          => 'Dead_Year',
+			'formats'             => 'Taxonomy',
+			'gender'              => 'Taxonomy',
+			'genres'              => 'Taxonomy',
+			'intersections'       => 'Taxonomy',
+			'on_air'              => 'On_Air',
+			'per_actor'           => 'Actor_Chars',
+			'per_char'            => 'Actor_Chars',
+			'role'                => 'Meta_Role',
+			'romantic'            => 'Taxonomy',
+			'sexuality'           => 'Taxonomy',
+			'stars'               => 'Complex_Taxonomy',
+			'taxonomy_breakdowns' => 'Taxonomy_Breakdowns',
+			'thumbs'              => 'Meta_Thumbs',
+			'this-year'           => 'This_Year',
+			'triggers'            => 'Complex_Taxonomy',
+			'tropes'              => 'Taxonomy',
+			'queer-irl'           => 'Complex_Taxonomy',
+		);
+
+		if ( isset( $data_matcher[ $data ] ) ) {
+			// Define the class file: 'Complex_Taxonomy' becomes 'class-complex-taxonomy.php'
+			$build_file = __DIR__ . '/build/class-' . strtolower( str_replace( '_', '-', $data_matcher[ $data ] ) ) . '.php';
+
+			// If the class file does not exist, bail.
+			if ( ! file_exists( $build_file ) ) {
+				return;
+			}
+
+			// Build Params, based on Data type.
+			$build_params = array(
+				'Actor_Char_Role'       => array( $post_type, $post_id ),
+				'Actor_Char_Dead'       => array( $post_type, $post_id ),
+				'Actor_Chars'           => ( str_contains( $data, 'per_' ) && str_replace( 'per_', '', $data ) === 'char' ) ? 'characters' : 'actors',
+				'Char_Role'             => '',
+				'Complex_Taxonomy'      => array( $count, $data, $subject ),
+				'Dead_Basic'            => array( $subject, 'array' ),
+				'Dead_Complex_Taxonomy' => array( substr( $data, 0, -5 ) ),
+				'Dead_List'             => array( $format ),
+				'Dead_Role'             => '',
+				'Dead_Shows'            => array( 'simple' ),
+				'Dead_Taxonomy'         => array( $post_type, $dead_tax ),
+				'Dead_Year'             => '',
+				'Meta'                  => isset( $meta_array[ $data ]['array'] ) ? array( $post_type, $meta_array[ $data ]['array'], $meta_array[ $data ]['key'], $data, $meta_array[ $data ]['compare'] ) : '',
+				'On_Air'                => array( $post_type, $prearray, $minor ),
+				'Scores'                => array( $post_type ),
+				'Taxonomy'              => array( $post_type, $taxonomy ),
+				'Taxonomy_Breakdowns'   => array( $count, $format, $data, $subject ),
+				'This_Year'             => isset( $data_custom ) ? array( $data_custom, $custom_array ) : '',
+				'Yes_No'                => array( $post_type, $data, $count ),
+			);
+
+			require_once $build_file;
+			$build_class  = 'LWTV_Stats_' . $data_matcher[ $data ];
+			$build_params = $build_params[ $data_matcher[ $data ] ];
+
+			if ( is_array( $build_params ) ) {
+				$build_class_var = new $build_class();
+				$array           = call_user_func_array( array( $build_class_var, 'build' ), $build_params );
+			} else {
+				$array = ( new $build_class() )->build( $build_params );
+			}
+		}
+
+		// Which data calls which class.
+		$format_matcher = array(
+			'average'    => 'Averages',
+			'barchart'   => 'Barcharts',
+			'high'       => 'Averages',
+			'list'       => 'Lists',
+			'low'        => 'Averages',
+			'percentage' => 'Percentages',
+			'piechart'   => 'Piecharts',
+			'stackedbar' => 'Stacked_Barcharts',
+			'trendline'  => 'Trendline',
+		);
+
+		if ( ! empty( $array ) && isset( $format_matcher[ $format ] ) ) {
+			// Define the class file: 'Stacked_Barcharts' becomes 'class-stacked-barchart.php'
+			$format_file = __DIR__ . '/format/class-' . strtolower( str_replace( '_', '-', $format_matcher[ $format ] ) ) . '.php';
+
+			// If the class file does not exist, bail.
+			if ( ! file_exists( $format_file ) ) {
+				return;
+			}
+
+			// Custom piechart data.
+			$data_piechart = ( isset( $data_custom ) ) ? $data_custom : $data;
+
+			// Assign parameters to format:
+			$format_params = array(
+				'Averages'          => array( $subject, $data, $array, $count, $format ),
+				'Barcharts'         => array( $subject, $data, $array ),
+				'Lists'             => array( $subject, $data, $array, $count ),
+				'Percentages'       => array( $subject, $data, $array, $count ),
+				'Piecharts'         => array( $subject, $data_piechart, $array ),
+				'Stacked_Barcharts' => array( $subject, $data, $array ),
+				'Trendline'         => array( $subject, $data, $array ),
+			);
+
+			require_once $format_file;
+			$format_class  = 'LWTV_Stats_' . $format_matcher[ $format ];
+			$format_params = $format_params[ $format_matcher[ $format ] ];
+
+			// return formatted output.
+			if ( is_array( $format_params ) ) {
+				$format_class_var = new $format_class();
+				call_user_func_array( array( $format_class_var, 'generate' ), $format_params );
+			} else {
+				( new $format_class() )->generate( $format_params );
+			}
+		} elseif ( 'array' === $format ) {
+			return $array;
+		} elseif ( 'count' === $format ) {
+			return $count;
+		}
+	}
+
+	/**
+	 * Custom check for years. Since that comes as 'sexuality_year_YYYY' we need to check:
+	 *
+	 * 1. Is this between FIRST_LWTV_YEAR and this year?
+	 * 2. Is the data in our approved subsets?
+	 *
+	 * If so, yes.
+	 */
+	public function maybe_year( $data ) {
 		$maybe_year = substr( $data, -4 );
 
 		if ( $maybe_year <= gmdate( 'Y' ) && $maybe_year >= FIRST_LWTV_YEAR ) {
 			$years_array = array( 'sexuality_year', 'gender_year' );
 			$maybe_case  = substr( $data, 0, -5 );
 			if ( in_array( $maybe_case, $years_array, true ) ) {
-				$array = ( new LWTV_Stats_Arrays() )->this_year( $data, $custom_array );
+				return true;
 			}
 		}
 
-		// Custom call for Deep Dive Data
-		// - nations, stations, formats
+		return false;
+	}
+
+	/**
+	 * Deep Dive for custom data that is extra complex.
+	 *
+	 * @param string $data   Data we're looking for.
+	 * @param string $format Output format.
+	 */
+	public function maybe_deep( $data, $format, $count ) {
+		$return  = false;
 		$details = explode( '_', $data );
-		if ( empty( $array ) && ( 'country' === $details[0] || 'stations' === $details[0] || 'formats' === $details[0] ) ) {
-			$minor = $details[1]; // station or nation name.
-			if ( 'trendline' === $format && 'on-air' === $details[2] ) {
-				$data = 'on-air';
-				// Build Pre-Array based on station or nation
-				switch ( $details[0] ) {
-					case 'stations':
-						$prearray = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_stations', 'slug', $minor );
-						break;
-					case 'country':
-						$prearray = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_country', 'slug', $minor );
-						break;
-				}
+		$valid   = array( 'nations', 'stations', 'formats' );
 
-				$array = ( new LWTV_Stats_Arrays() )->on_air( $post_type, $prearray, $minor );
-				$count = ( new LWTV_Stats() )->showcount( 'total', 'stations', $minor );
-			} else {
-				$array    = ( new LWTV_Stats_Arrays() )->taxonomy_breakdowns( $count, $format, $data, $subject );
-				$precount = $count;
-				$count    = ( new LWTV_Stats_Arrays() )->taxonomy_breakdowns( $precount, 'count', $data, $subject );
-			}
+		// If the details don't match what we know to be true, we are false.
+		if ( ! in_array( $details[0], $valid, true ) ) {
+			return false;
 		}
 
-		// And dead stats? IN-fucking-sane.
-		// Everything gets a custom setup.
-		if ( empty( $array ) && false !== strpos( $data, 'dead' ) ) {
-			switch ( $data ) {
-				case 'dead':
-					$array = ( new LWTV_Stats_Arrays() )->dead_basic( $subject, 'array' );
-					$count = ( new LWTV_Stats_Arrays() )->dead_basic( $subject, 'count' );
+		$minor = $details[1]; // station or nation name.
+
+		if ( 'trendline' === $format && 'on-air' === $details[2] ) {
+			$data = 'on-air';
+
+			// Build Pre-Array based on station or nation
+			switch ( $details[0] ) {
+				case 'stations':
+					$prearray = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_stations', 'slug', $minor );
 					break;
-				case 'dead-sex':
-					$array = ( new LWTV_Stats_Arrays() )->dead_taxonomy( $post_type, 'lez_sexuality' );
-					break;
-				case 'dead-gender':
-					$array = ( new LWTV_Stats_Arrays() )->dead_taxonomy( $post_type, 'lez_gender' );
-					break;
-				case 'dead-role':
-					$array = ( new LWTV_Stats_Arrays() )->dead_role();
-					break;
-				case 'dead-list':
-					$array = ( new LWTV_Stats_Arrays() )->dead_list( $format );
-					break;
-				case 'dead-shows':
-					$array = ( new LWTV_Stats_Arrays() )->dead_shows( 'simple' );
-					break;
-				case 'dead-years':
-					$array = ( new LWTV_Stats_Arrays() )->dead_year();
-					break;
-				case 'dead-stations':
-					$array = ( new LWTV_Stats_Arrays() )->dead_complex_taxonomy( 'stations' );
-					break;
-				case 'dead-nations':
-					$array = ( new LWTV_Stats_Arrays() )->dead_complex_taxonomy( 'country' );
+				case 'country':
+					$prearray = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_country', 'slug', $minor );
 					break;
 			}
+
+			$count = $this->showcount( 'total', 'stations', $minor );
+		} else {
+			$data     = 'taxonomy_breakdowns';
+			$precount = $count;
+			$count    = ( new LWTV_Stats_Taxonomy_Breakdowns() )->build( $precount, 'count', $data, $subject );
 		}
 
-		// Acutally output shit.
-		switch ( $format ) {
-			case 'barchart':
-				( new LWTV_Stats_Output() )->barcharts( $subject, $data, $array );
-				break;
-			case 'stackedbar':
-				( new LWTV_Stats_Output() )->stacked_barcharts( $subject, $data, $array );
-				break;
-			case 'piechart':
-				( new LWTV_Stats_Output() )->piecharts( $subject, $data, $array );
-				break;
-			case 'trendline':
-				( new LWTV_Stats_Output() )->trendline( $subject, $data, $array );
-				break;
-			case 'count':
-				$return = $count;
-				break;
-			case 'list':
-				( new LWTV_Stats_Output() )->lists( $subject, $data, $array, $count );
-				break;
-			case 'percentage':
-				( new LWTV_Stats_Output() )->percentages( $subject, $data, $array, $count );
-				break;
-			case 'average':
-				( new LWTV_Stats_Output() )->averages( $subject, $data, $array, $count, 'average' );
-				break;
-			case 'high':
-				( new LWTV_Stats_Output() )->averages( $subject, $data, $array, $count, 'high' );
-				break;
-			case 'low':
-				( new LWTV_Stats_Output() )->averages( $subject, $data, $array, $count, 'low' );
-				break;
-			case 'array':
-			default:
-				$return = $array;
-				break;
-		}
+		$return = array(
+			'data'     => $data,
+			'minor'    => $minor,
+			'prearray' => isset( $prearray ) ? $prearray : false,
+			'count'    => $count,
+		);
 
-		if ( isset( $return ) ) {
-			return $return;
-		}
+		return $return;
 	}
 
 	/*
