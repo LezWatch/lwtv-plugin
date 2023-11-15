@@ -108,7 +108,7 @@ switch ( $station ) {
 
 		if ( '_all' === $station ) {
 			// Always show the same thing here.
-			$all_count = ( new LWTV_Stats() )->showcount( 'score', 'stations', $the_station->slug );
+			$all_count = ( new LWTV_Stats() )->count_shows( 'score', 'stations', $the_station->slug );
 			?>
 			<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
 			<table id="stationsTable" class="tablesorter table table-striped table-hover">
@@ -138,10 +138,10 @@ switch ( $station ) {
 		} else {
 			// There is a specific Station!
 			$format     = 'piechart';
-			$onair      = ( new LWTV_Stats() )->showcount( 'onair', 'stations', ltrim( $station, '_' ) );
-			$allshows   = ( new LWTV_Stats() )->showcount( 'total', 'stations', ltrim( $station, '_' ) );
-			$showscore  = ( new LWTV_Stats() )->showcount( 'score', 'stations', ltrim( $station, '_' ) );
-			$onairscore = ( new LWTV_Stats() )->showcount( 'onairscore', 'stations', ltrim( $station, '_' ) );
+			$onair      = ( new LWTV_Stats() )->count_shows( 'onair', 'stations', ltrim( $station, '_' ) );
+			$allshows   = ( new LWTV_Stats() )->count_shows( 'total', 'stations', ltrim( $station, '_' ) );
+			$showscore  = ( new LWTV_Stats() )->count_shows( 'score', 'stations', ltrim( $station, '_' ) );
+			$onairscore = ( new LWTV_Stats() )->count_shows( 'onairscore', 'stations', ltrim( $station, '_' ) );
 
 			if ( '_all' === $view ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this station is ' . $showscore );

@@ -70,7 +70,7 @@ class LWTV_Stats_Query_Vars {
 	 * @since 1.0
 	 */
 	public function admin_notice_permalinks() {
-		echo '<div class="error"><p><strong>LezWatch.TV Query Vars</strong> require you to use custom permalinks.</p></div>';
+		echo '<div class="error"><p><strong>LezWatch.TV Query Vars</strong> requires you use custom permalinks.</p></div>';
 	}
 
 	/**

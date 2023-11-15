@@ -345,6 +345,15 @@ class LWTV_Actors_CMB2 {
 				'default'   => get_post_field( 'post_excerpt' ),
 			)
 		);
+		// Field: Dupe Override
+		$field_dupe_override = $cmb_actorside->add_field(
+			array(
+				'name' => 'Duplicate Name',
+				'desc' => 'If this actor has the same name as another actor, check this box to confirm.',
+				'id'   => $prefix . 'dupe_override',
+				'type' => 'checkbox',
+			)
+		);
 
 		// Actor Sidebar Grid
 		if ( ! is_admin() ) {
@@ -363,6 +372,7 @@ class LWTV_Actors_CMB2 {
 			$row10          = $grid_actorside->addRow();
 			$row11          = $grid_actorside->addRow();
 			$row12          = $grid_actorside->addRow();
+			$row13          = $grid_actorside->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );
 			$row2->addColumns( array( $field_romantic, $field_queer_override ) );
 			$row3->addColumns( array( $field_pronouns ) );
@@ -375,6 +385,7 @@ class LWTV_Actors_CMB2 {
 			$row10->addColumns( array( $field_bluesky, $field_twitch ) );
 			$row11->addColumns( array( $field_wikidata ) );
 			$row12->addColumns( array( $field_excerpt ) );
+			$row13->addColumns( array( $field_dupe_override ) );
 		}
 	}
 

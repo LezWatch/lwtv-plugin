@@ -11,12 +11,12 @@ $valid_country = term_exists( $sent_country, 'lez_country' );
 $country       = ( '' === $sent_country || ! is_array( $valid_country ) ) ? 'all' : sanitize_title( $sent_country );
 
 $valid_views = array(
-	'sexuality' => 'characters',
-	'gender'    => 'characters',
-	'tropes'    => 'shows',
-	// for now we're removing this: 'intersections' => 'shows',
-	'formats'   => 'shows',
-	'on-air'    => 'shows',
+	'sexuality'     => 'characters',
+	'gender'        => 'characters',
+	'tropes'        => 'shows',
+	'intersections' => 'shows',
+	'formats'       => 'shows',
+	'on-air'        => 'shows',
 );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! array_key_exists( $sent_view, $valid_views ) ) ? 'overview' : $sent_view;
@@ -116,7 +116,7 @@ switch ( $country ) {
 
 		if ( '_all' === $country ) {
 			// Always show the same thing here.
-			$all_count = ( new LWTV_Stats() )->showcount( 'score', 'country', $nation->slug );
+			$all_count = ( new LWTV_Stats() )->count_shows( 'score', 'country', $nation->slug );
 			?>
 			<p>For more information on individual nations, please use the dropdown menu, or click on a nation listed below.</p>
 			<table id="nationsTable" class="tablesorter table table-striped table-hover">
@@ -146,10 +146,10 @@ switch ( $country ) {
 		} else {
 			// We have a specific nation, let's show it.
 			$format     = 'piechart';
-			$onair      = ( new LWTV_Stats() )->showcount( 'onair', 'country', ltrim( $country, '_' ) );
-			$allshows   = ( new LWTV_Stats() )->showcount( 'total', 'country', ltrim( $country, '_' ) );
-			$showscore  = ( new LWTV_Stats() )->showcount( 'score', 'country', ltrim( $country, '_' ) );
-			$onairscore = ( new LWTV_Stats() )->showcount( 'onairscore', 'country', ltrim( $country, '_' ) );
+			$onair      = ( new LWTV_Stats() )->count_shows( 'onair', 'country', ltrim( $country, '_' ) );
+			$allshows   = ( new LWTV_Stats() )->count_shows( 'total', 'country', ltrim( $country, '_' ) );
+			$showscore  = ( new LWTV_Stats() )->count_shows( 'score', 'country', ltrim( $country, '_' ) );
+			$onairscore = ( new LWTV_Stats() )->count_shows( 'onairscore', 'country', ltrim( $country, '_' ) );
 
 			if ( '_all' === $view ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this country is ' . $showscore );

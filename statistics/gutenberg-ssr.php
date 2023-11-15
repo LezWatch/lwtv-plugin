@@ -1,10 +1,8 @@
 <?php
-/*
-Description: Statistics Gutenberg - server side rendering.
-Version: 1.0
-Author: Mika Epstein
-
-In a perfect world this would be 100% gutenized. It's not.
+/**
+ * Statistics For Gutenberg - server side rendering.
+ *
+ * In a perfect world this would be 100% gutenized. It's not.
 */
 
 class LWTV_Stats_SSR {

@@ -15,7 +15,7 @@ class LWTV_This_Year_Chars {
 	public function dead( $thisyear ) {
 		$thisyear   = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$char_array = self::get_dead( $thisyear );
-		$count      = ( isset( $char_array['count'] ) ) ? $char_array['list'] : '0';
+		$count      = ( isset( $char_array['count'] ) ) ? $char_array['count'] : '0';
 		$list_array = ( isset( $char_array['list'] ) ) ? $char_array['list'] : '';
 		$show_array = ( isset( $char_array['show'] ) ) ? $char_array['show'] : '';
 		?>
@@ -175,12 +175,14 @@ class LWTV_This_Year_Chars {
 		$return_array = array();
 		$thisyear     = ( isset( $thisyear ) ) ? $thisyear : gmdate( 'Y' );
 		$dead_loop    = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', $thisyear, 'REGEXP' );
+		wp_reset_query();
 
-		if ( $dead_loop->have_posts() ) {
-			$queery = wp_list_pluck( $dead_loop->posts, 'ID' );
-			wp_reset_query();
+		if ( ! $dead_loop->have_posts() ) {
+			return;
 		}
 
+		$queery     = wp_list_pluck( $dead_loop->posts, 'ID' );
+		$dead_count = count( $queery );
 		$show_array = array();
 		$list_array = array();
 
@@ -193,6 +195,7 @@ class LWTV_This_Year_Chars {
 
 				// If the character is in a show this year, we'll add it.
 				foreach ( $show_ids_raw as $each_show ) {
+
 					if ( array_key_exists( 'appears', $each_show ) && in_array( $thisyear, $each_show['appears'], true ) ) {
 						$show_ids[] = $each_show;
 					}
@@ -204,6 +207,10 @@ class LWTV_This_Year_Chars {
 				}
 
 				foreach ( $show_ids as $each_show ) {
+					// If this is somehow an array, grab the first item.
+					if ( is_array( $each_show['show'] ) ) {
+						$each_show['show'] = $each_show['show'][0];
+					}
 
 					// Get some defaults
 					$char_slug = get_post_field( 'post_name', get_post( $char ) );
@@ -270,10 +277,10 @@ class LWTV_This_Year_Chars {
 		if ( isset( $queery ) ) {
 			// if we counted, just kick that back.
 			if ( $count ) {
-				$return_array = count( $queery );
+				$return_array = $dead_count;
 			} else {
 				$return_array = array(
-					'count' => count( $queery ),
+					'count' => $dead_count,
 					'list'  => $list_array,
 					'show'  => $show_array,
 				);
