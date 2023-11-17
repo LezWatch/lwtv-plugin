@@ -82,7 +82,8 @@ class LWTV_This_Year {
 	 * Generate data
 	 *
 	 * @param string $this_year  Year
-	 * @param string $view       View
+	 * @param string $view       The context we're viewing (characters on air, shows on air, etc)
+	 * @param mixed  $custom     Custom data we may (or may not) need.
 	 *
 	 * @return N/A
 	 */
@@ -96,6 +97,16 @@ class LWTV_This_Year {
 		}
 	}
 
+	/**
+	 * Build the array we will use to process output.
+	 *
+	 * @param string $this_year The Year
+	 * @param string $view      The context we're viewing (characters on air, shows on air, etc)
+	 * @param mixed  $custom    Custom data we may (or may not) need.
+	 * @param bool   $count     True/False, are we just counting?
+	 *
+	 * @return array            The build data.
+	 */
 	public function build_array( $this_year, $view, $custom = false, $count = false ) {
 		// If there's no data match, return empty:
 		if ( ! isset( self::DATA_CLASS_MATCHER[ $view ] ) ) {
@@ -135,6 +146,17 @@ class LWTV_This_Year {
 		return $array;
 	}
 
+	/**
+	 * Process the output!
+	 *
+	 * @param string $this_year  The Year
+	 * @param string $view       The context we're viewing (characters on air, shows on air, etc)
+	 * @param array  $build_data The Array with all our data
+	 * @param mixed  $custom     Custom data we may (or may not) need.
+	 * @param bool   $count      True/False, are we just counting?
+	 *
+	 * @return N/A child function outputs
+	 */
 	public function build_format( $this_year, $view, $build_data, $custom = false, $count = false ) {
 		// If there's no valid format, bail.
 		if ( ! isset( self::FORMAT_CLASS_MATCHER[ $view ] ) ) {
@@ -174,7 +196,7 @@ class LWTV_This_Year {
 	}
 
 	/**
-	 * Navigation for the year
+	 * Navigation for the year. This changes a little based on your sub pages.
 	 *
 	 * @param string  $this_year
 	 * @param string  $view

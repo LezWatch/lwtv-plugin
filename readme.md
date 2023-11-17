@@ -359,7 +359,7 @@ Stored in `/statistics/` - These files generate everything for stats, from graph
 
 _Build (`/build/`)_
 
-Each file has a `generate()` function which build an array that will be passed to the formatter code and ouput.
+Each file has a `generate()` function which build an array that will be passed to the formatter code and output.
 
 * `class-actor-char-dead.php` - Stats for dead character per actor.
 * `class-actor-chars.php` - How many actors or characters per actor or character...
@@ -413,9 +413,32 @@ Templates used by the shortcodes and Gutenberg (as well as when included on the 
 Stored in `/this-year/` - Technically a subset of statistics, This Year shows you just the data for the indicated year.
 
 * `_main.php` - Basic data loading, calls templates etc.
-* `characters.php` - all data on characters per year
+    - `const DATA_CLASS_MATCHER` - Array of data types to classes
+    - `const FORMAT_CLASS_MATCHER` - Array of format types to classes
+    - `function display()` - Controls individual pages
+    - `function generator()` - Wrapper to generate content and arrays
+    - `function build_array()` - Builds array
+    - `function build_output()` - Builds formatted output
+    - `function navigation()` - Builds the nav footer shown in `display()`
 * `query_vars.php` - customize query variables
-* `shows.php` - all data on shows per year
+
+_Build (`/build/`)_
+
+Each file has a `generate()` function which build an array that will be passed to the formatter code and output.
+
+* `class-characters-dead.php` - Generates data for dead characters
+* `class-characters-list.php` - Generates data for all characters
+* `class-overview.php` - Builds the data for the overview page
+* `class-shows-list.php` - Generates data for all show pages
+
+_Formats (`/formats`)_
+
+Each file has a `build()` function which formats the arrays build in the `build` section (above) for proper display.
+
+* `class-chart.php` - Outputs charts (currently only used on the default page)
+* `class-dead.php` - Outputs dead content
+* `class-default.php` - Outputs front page of this-year
+* `class-shows.php` - Outputs all show pages dynamically
 
 ### Ways to Watch
 
