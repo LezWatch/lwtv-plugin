@@ -14,7 +14,6 @@ class LWTV_Stats_Taxonomy_Breakdowns {
 	 * @return void
 	 */
 	public function build( $count, $format, $data, $subject ) {
-
 		// Set defaults.
 		$array = array();
 		// Arrays of the secondary taxonomies we care about.
@@ -253,7 +252,6 @@ class LWTV_Stats_Taxonomy_Breakdowns {
 					break;
 			}
 		}
-
 		return $array;
 	}
 }

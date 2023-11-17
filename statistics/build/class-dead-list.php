@@ -9,7 +9,6 @@ class LWTV_Stats_Dead_List {
 	 * @return array          All the dead, yo
 	 */
 	public function build( $format = 'array' ) {
-
 		$transient = 'dead_list_' . $format;
 		$array     = LWTV_Transients::get_transient( $transient );
 

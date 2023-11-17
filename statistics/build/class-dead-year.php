@@ -11,7 +11,6 @@ class LWTV_Stats_Dead_Year {
 	 * @return array
 	 */
 	public function build() {
-
 		$transient = 'dead_year_stats';
 		$array     = LWTV_Transients::get_transient( $transient );
 
