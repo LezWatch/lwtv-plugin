@@ -15,11 +15,6 @@
  * This file was part of Dashboard: Posts In Progress, a plugin for WordPress.
  */
 
-// Deactivate existing plugin if it's active.
-if ( class_exists( 'DashboardPostsInProgress' ) || is_plugin_active( 'dashboard-in-progress/easy-dashboard-status.php' ) ) {
-	deactivate_plugins( plugin_basename( 'dashboard-in-progress/easy-dashboard-status.php' ) );
-}
-
 class LWTV_DashboardPostsInProgress {
 
 	/**

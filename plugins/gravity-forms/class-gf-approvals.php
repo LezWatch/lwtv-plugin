@@ -13,12 +13,6 @@ if ( ! class_exists( 'GFForms' ) ) {
 	die();
 }
 
-// If the other plugin is active, we deactivate.
-if ( defined( 'GF_APPROVALS_VERSION' ) && is_plugin_active( 'gravityformsapprovals/approvals.php' ) ) {
-	deactivate_plugins( 'gravityformsapprovals/approvals.php' );
-}
-
-
 // The Add-On Framework is not loaded by default.
 // Use the following function to load the appropriate files.
 GFForms::include_feed_addon_framework();

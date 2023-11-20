@@ -37,9 +37,14 @@
     "lint-fix": "phpcbf",
     "post-update-cmd": [
       "cp -r ./vendor/johngrogg/ics-parser/src/ICal/ ./features/ICal/"
-    ]
+    ],
+    "test": "phpunit"
   },
   "require-dev": {
-    "wp-coding-standards/wpcs": "^3.0"
+    "wp-coding-standards/wpcs": "^3.0",
+    "10up/wp_mock": "^1.0",
+    "phpunit/phpunit": "^9.6",
+    "yoast/phpunit-polyfills": "^2.0",
+    "phpcompatibility/phpcompatibility-wp": "*"
   }
 }
