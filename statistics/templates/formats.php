@@ -115,7 +115,7 @@ switch ( $showform ) {
 
 		if ( '_all' === $showform ) {
 			if ( '_all' === $view ) {
-				$all_count = ( new LWTV_Stats() )->showcount( 'score', 'formats', $a_form->slug );
+				$all_count = ( new LWTV_Stats() )->count_shows( 'score', 'formats', $a_form->slug );
 				?>
 				<p>For more information on individual show formats, please use the dropdown menu, or click on a format type listed below.</p>
 				<table id="formatTable" class="tablesorter table table-striped table-hover">
@@ -160,10 +160,10 @@ switch ( $showform ) {
 				}
 			}
 		} else {
-			$onair      = ( new LWTV_Stats() )->showcount( 'onair', 'formats', ltrim( $showform, '_' ) );
-			$allshows   = ( new LWTV_Stats() )->showcount( 'total', 'formats', ltrim( $showform, '_' ) );
-			$showscore  = ( new LWTV_Stats() )->showcount( 'score', 'formats', ltrim( $showform, '_' ) );
-			$onairscore = ( new LWTV_Stats() )->showcount( 'onairscore', 'formats', ltrim( $showform, '_' ) );
+			$onair      = ( new LWTV_Stats() )->count_shows( 'onair', 'formats', ltrim( $showform, '_' ) );
+			$allshows   = ( new LWTV_Stats() )->count_shows( 'total', 'formats', ltrim( $showform, '_' ) );
+			$showscore  = ( new LWTV_Stats() )->count_shows( 'score', 'formats', ltrim( $showform, '_' ) );
+			$onairscore = ( new LWTV_Stats() )->count_shows( 'onairscore', 'formats', ltrim( $showform, '_' ) );
 			$type_name  = ( ! str_ends_with( $showform_obj['name'], 's' ) ) ? $showform_obj['name'] . 's' : $showform_obj['name'];
 
 			if ( '_all' === $view ) {

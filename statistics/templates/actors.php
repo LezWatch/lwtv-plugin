@@ -5,6 +5,11 @@
  * @package LezWatch.TV
  */
 
+// if this file is called directly abort
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 $valid_views = array( 'gender', 'sexuality', 'roles' );
 $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;

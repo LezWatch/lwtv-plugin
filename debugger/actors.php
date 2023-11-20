@@ -134,20 +134,16 @@ class LWTV_Debug_Actors {
 			}
 
 			// - Duplicate Actor check - shouldn't end in -[NUMBER].
-			$permalink_array = explode( '-', $check['dupes'] );
-			$ends_with       = end( $permalink_array );
-			// If it ends in a number, we have to check.
-			if ( is_numeric( $ends_with ) ) {
-				// See if an existing page without the -NUMBER exists (someone could rename themselves with numbers...).
-				$possible = get_page_by_path( str_replace( '-' . $ends_with, '', $check['dupes'] ), OBJECT, 'post_type_actor' );
-				if ( is_object( $possible ) && false !== $possible ) {
-					// make sure the name doesn't have a year in parens!
-					$pos_imdb = get_post_meta( $possible->ID, 'lezactors_imdb', true );
-					if ( isset( $pos_imdb ) && $pos_imdb === $check['imdb'] ) {
-						$problems[] = 'Duplicate? Another Actor page with this name contains the same IMDb data - ' . sanitize_url( $possible->url );
-					}
-				}
+			// Check if slug ends in -# - if so, flag as warning
+			// For this to be effective, though, we need an override for actors with same name!
+			// lezactors_dupe_override
+			/**
+			$is_dupe = get_post_meta( $actor_id, 'lezactors_dupe_override', true );
+
+			if ( ! $is_dupe && is_numeric( substr( $check['dupes'], -1, 1 ) ) ) {
+				$problems[] = 'There is another actor with this name. If these are separate people, please edit their pages and check the box "Duplicate Name Okay" at the bottom. If not, combine the actors and edit their characters.';
 			}
+			**/
 
 			// If we added any problems, loop and add.
 			if ( ! empty( $problems ) ) {
@@ -395,9 +391,8 @@ class LWTV_Debug_Actors {
 				'name' => get_the_title( $actor_id ),
 			);
 
-			$facebook = get_post_meta( $actor_id, 'lezactors_facebook', true );
-
-			// What we can check for
+			// What we can check for.
+			$facebook   = get_post_meta( $actor_id, 'lezactors_facebook', true );
 			$check_ours = array(
 				'birth'     => get_post_meta( $actor_id, 'lezactors_birth', true ),
 				'death'     => get_post_meta( $actor_id, 'lezactors_death', true ),

@@ -725,9 +725,9 @@ class LWTV_Stats_JSON {
 
 				// Only run this if we're complex...
 				if ( 'complex' === $format ) {
-					$return[ $slug ]['onair']           = ( new LWTV_Stats() )->showcount( 'onair', $type, $slug );
-					$return[ $slug ]['avg_score']       = ( new LWTV_Stats() )->showcount( 'score', $type, $slug );
-					$return[ $slug ]['avg_onair_score'] = ( new LWTV_Stats() )->showcount( 'onairscore', $type, $slug );
+					$return[ $slug ]['onair']           = ( new LWTV_Stats() )->count_shows( 'onair', $type, $slug );
+					$return[ $slug ]['avg_score']       = ( new LWTV_Stats() )->count_shows( 'score', $type, $slug );
+					$return[ $slug ]['avg_onair_score'] = ( new LWTV_Stats() )->count_shows( 'onairscore', $type, $slug );
 				}
 
 				// Character counts

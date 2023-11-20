@@ -180,7 +180,7 @@ switch ( $view ) {
 		?>
 		<h3>List of All Dead Characters</h3>
 
-		<p>The longest timespan between character deaths is <strong><?php echo (int) $time_since['time']; ?> days</strong> (<?php echo wp_kses_post( $time_start ); ?> to <?php echo wp_kses_post( $time_end ); ?>). The shortest timespan is <strong>0 days</strong> (multiple characters have died on the same day).</p>
+		<p>The longest time span between character deaths is <strong><?php echo (int) $time_since['time']; ?> days</strong> (<?php echo wp_kses_post( $time_start ); ?> to <?php echo wp_kses_post( $time_end ); ?>). The shortest timespan is <strong>0 days</strong> (multiple characters have died on the same day).</p>
 
 		<div class="container">
 			<div class="row">

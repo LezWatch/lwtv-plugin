@@ -133,14 +133,14 @@ class LWTV_This_Year_JSON {
 	 * @return array        Array of data from one year
 	 */
 	public function one_year( $year ) {
-		$year  = (string) $year;
-		$array = array(
-			'year'       => (int) $year,
-			'characters' => ( new LWTV_This_Year_Chars() )->get_list( $year, true ),
-			'dead'       => ( new LWTV_This_Year_Chars() )->get_dead( $year, true ),
-			'shows'      => ( new LWTV_This_Year_Shows() )->get_list( $year, 'now', true ),
-			'started'    => ( new LWTV_This_Year_Shows() )->get_list( $year, 'started', true ),
-			'canceled'   => ( new LWTV_This_Year_Shows() )->get_list( $year, 'ended', true ),
+		$this_year = (string) $year;
+		$array     = array(
+			'year'       => (int) $this_year,
+			'characters' => ( new LWTV_This_Year() )->build_array( $this_year, 'characters-on-air', true ),
+			'dead'       => ( new LWTV_This_Year() )->build_array( $this_year, 'dead-characters', true ),
+			'shows'      => ( new LWTV_This_Year() )->build_array( $this_year, 'shows-on-air', 'now', true ),
+			'started'    => ( new LWTV_This_Year() )->build_array( $this_year, 'new-shows', 'started', true ),
+			'canceled'   => ( new LWTV_This_Year() )->build_array( $this_year, 'canceled-shows', 'ended', true ),
 		);
 
 		return $array;
