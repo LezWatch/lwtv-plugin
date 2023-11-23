@@ -64,7 +64,7 @@ class LWTV_CPTs_Related_Posts {
 			}
 			$the_related_posts .= '</div></div>';
 
-			if ( count( ( new LWTV_Related_Posts() )->count_related_posts( $slug ) ) > '3' ) {
+			if ( count( $this->count_related_posts( $slug ) ) > '3' ) {
 				$get_tags = term_exists( $slug, 'post_tag' );
 				if ( ! is_null( $get_tags ) && $get_tags >= 1 ) {
 					$the_related_posts .= '<p class="read-more"><a href="' . esc_url( get_tag_link( $get_tags['term_id'] ) ) . '" class="btn btn-outline-primary">Read More ...</a></p>';
@@ -78,15 +78,14 @@ class LWTV_CPTs_Related_Posts {
 	/**
 	 * Count the related posts
 	 *
-	 * @access public
-	 * @static
-	 * @param mixed $slug
-	 * @return void
+	 * @param string $slug
+	 * @return array
 	 */
-	public function count_related_posts( $slug ) {
+	public function count_related_posts( $slug ): array {
 
+		// If there are no posts
 		if ( ! self::are_there_posts( $slug ) ) {
-			return;
+			return array();
 		}
 
 		$related_post_loop  = ( new LWTV_Features_Loops() )->related_posts_by_tag( 'post', $slug );

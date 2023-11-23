@@ -101,7 +101,7 @@ class LWTV_Assets_Symbolicons {
 	 * Create our settings page
 	 */
 	public function add_settings_page() {
-		$page = add_theme_page( 'Symbolicons', 'Symbolicons', 'edit_posts', 'symbolicons', array( $this, 'settings_page' ) );
+		add_theme_page( 'Symbolicons', 'Symbolicons', 'edit_posts', 'symbolicons', array( $this, 'settings_page' ) );
 	}
 
 	/*

@@ -15,11 +15,21 @@ class LWTV_Ways_To_Watch_Output {
 	 */
 	public function ways_to_watch( $id ) {
 
-		$affiliate_url = get_post_meta( $id, 'lezshows_affiliate', true );
-		$links         = array();
+		$affiliate_urls = get_post_meta( $id, 'lezshows_affiliate', true );
+		$links          = self::generate_links( $affiliate_urls );
+		$link_output    = implode( '', $links );
+
+		$icon   = ( new LWTV_Functions() )->symbolicons( 'tv-hd.svg', 'fa-tv' );
+		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span> ' . $link_output;
+
+		return $output;
+	}
+
+	public function generate_links( $affiliate_urls ) {
+		$links = array();
 
 		// Parse each URL to figure out who it is...
-		foreach ( $affiliate_url as $url ) {
+		foreach ( $affiliate_urls as $url ) {
 			$parsed_url  = wp_parse_url( $url );
 			$hostname    = $parsed_url['host'];
 			$clean_path  = ( isset( $parsed_url['path'] ) ) ? $parsed_url['path'] : '';
@@ -196,12 +206,7 @@ class LWTV_Ways_To_Watch_Output {
 			$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $name . '</a>' . $extra;
 		}
 
-		$link_output = implode( '', $links );
-
-		$icon   = ( new LWTV_Functions() )->symbolicons( 'tv-hd.svg', 'fa-tv' );
-		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span> ' . $link_output;
-
-		return $output;
+		return $links;
 	}
 }
 
