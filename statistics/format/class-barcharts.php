@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Barcharts {
+class LWTV_Statistics_Barcharts_Format {
 
 	/*
 	 * Statistics Display Barcharts
@@ -16,7 +16,7 @@ class LWTV_Stats_Barcharts {
 	 *
 	 * @return Content
 	 */
-	public function generate( $subject, $data, $data_array ) {
+	public function make( $subject, $data, $data_array ) {
 
 		// Remove the zeros
 		foreach ( $data_array as $key => $value ) {
@@ -117,5 +117,3 @@ class LWTV_Stats_Barcharts {
 		<?php
 	}
 }
-
-new LWTV_Stats_Barcharts();

@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_This_Year_Characters_Dead {
+class LWTV_This_Year_Characters_Dead_Build {
 	/**
 	 * Get a list of the dead
 	 * @param  int     $this_year The year
@@ -8,11 +8,11 @@ class LWTV_This_Year_Characters_Dead {
 	 *
 	 * @return array              All the data you need.
 	 */
-	public function build( $this_year, $count = false ) {
+	public function make( $this_year, $count = false ) {
 
 		$transient    = 'characters_dead_' . $this_year;
 		$transient   .= ( $count ) ? '_count' : '';
-		$return_array = LWTV_Transients::get_transient( $transient );
+		$return_array = LWTV_Features_Transients::get_transient( $transient );
 
 		// If we have an array saved, use it.
 		if ( false !== $return_array && ! empty( $return_array ) ) {
@@ -20,7 +20,7 @@ class LWTV_This_Year_Characters_Dead {
 		}
 
 		// Otherwise we have no array and must build.
-		$dead_loop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', $this_year, 'REGEXP' );
+		$dead_loop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', $this_year, 'REGEXP' );
 		wp_reset_query();
 
 		if ( ! $dead_loop->have_posts() ) {
@@ -137,4 +137,4 @@ class LWTV_This_Year_Characters_Dead {
 	}
 }
 
-new LWTV_This_Year_Characters_Dead();
+new LWTV_This_Year_Characters_Dead_Build();

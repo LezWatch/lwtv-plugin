@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_This_Year_Default {
+class LWTV_This_Year_Default_Format {
 
 	/**
 	 * Output Default Data
@@ -10,7 +10,7 @@ class LWTV_This_Year_Default {
 	 *
 	 * @return N/A -- output
 	 */
-	public function generate( $this_year, $build_array ) {
+	public function make( $this_year, $build_array ) {
 		$this_year = ( isset( $this_year ) ) ? $this_year : gmdate( 'Y' );
 		$array     = $build_array;
 		?>
@@ -40,7 +40,7 @@ class LWTV_This_Year_Default {
 						<h3 class="card-header sexuality">Character Sexuality</h3>
 						<div class="card-body bg-light">
 							<div>
-								<?php ( new LWTV_This_Year() )->generator( $this_year, 'chart', 'sexuality' ); ?>
+								<?php ( new LWTV_This_Year_Generator() )->make( $this_year, 'chart', 'sexuality' ); ?>
 							</div>
 						</div>
 					</div>
@@ -50,7 +50,7 @@ class LWTV_This_Year_Default {
 						<h3 class="card-header gender">Character Gender</h3>
 						<div class="card-body bg-light">
 							<div>
-								<?php ( new LWTV_This_Year() )->generator( $this_year, 'chart', 'gender' ); ?>
+								<?php ( new LWTV_This_Year_Generator() )->make( $this_year, 'chart', 'gender' ); ?>
 							</div>
 						</div>
 					</div>
@@ -88,5 +88,3 @@ class LWTV_This_Year_Default {
 		<?php
 	}
 }
-
-new LWTV_This_Year_Default();

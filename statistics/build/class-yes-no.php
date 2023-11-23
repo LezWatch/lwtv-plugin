@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Yes_No {
+class LWTV_Statistics_Yes_No_Build {
 
 	/*
 	 * Yes/No arrays
@@ -15,7 +15,7 @@ class LWTV_Stats_Yes_No {
 	 *
 	 * @return array
 	 */
-	public function build( $post_type, $data, $count ) {
+	public function make( $post_type, $data, $count ) {
 
 		$array = array(
 			'no'  => array(
@@ -50,8 +50,7 @@ class LWTV_Stats_Yes_No {
 		}
 
 		// Collect the data
-		require_once 'class-meta.php';
-		$meta = ( new LWTV_Stats_Meta() )->build( $post_type, $meta_array, $key, $data, $compare );
+		$meta = ( new LWTV_Statistics_Meta_Build() )->make( $post_type, $meta_array, $key, $data, $compare );
 
 		// Parse the data
 		switch ( $data ) {
@@ -69,5 +68,3 @@ class LWTV_Stats_Yes_No {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Yes_No();

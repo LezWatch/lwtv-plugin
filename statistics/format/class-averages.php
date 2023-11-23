@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Averages {
+class LWTV_Statistics_Averages_Format {
 	/*
 	 * Statistics Display Average
 	 *
@@ -14,7 +14,7 @@ class LWTV_Stats_Averages {
 	 *
 	 * @return Content
 	 */
-	public function generate( $subject, $data, $data_array, $count, $type = 'average' ) {
+	public function make( $subject, $data, $data_array, $count, $type = 'average' ) {
 
 		$valid_types = array( 'high', 'low', 'average' );
 		if ( ! in_array( $type, $valid_types, true ) ) {
@@ -59,5 +59,3 @@ class LWTV_Stats_Averages {
 		echo (float) $return;
 	}
 }
-
-new LWTV_Stats_Averages();

@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Meta {
+class LWTV_Statistics_Meta_Build {
 
 	/*
 	 * Statistics Simple Meta Array
@@ -15,15 +15,15 @@ class LWTV_Stats_Meta {
 	 *
 	 * @return array
 	 */
-	public function build( $post_type, $meta_array, $key, $data, $compare = '=' ) {
+	public function make( $post_type, $meta_array, $key, $data, $compare = '=' ) {
 		$transient = 'stats_meta_' . $key;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
 			$array = array();
 			foreach ( $meta_array as $value ) {
-				$meta_query      = ( new LWTV_Loops() )->post_meta_query( $post_type, $key, $value, $compare );
+				$meta_query      = ( new LWTV_Features_Loops() )->post_meta_query( $post_type, $key, $value, $compare );
 				$array[ $value ] = array(
 					'count' => $meta_query->post_count,
 					'name'  => ucfirst( $value ),
@@ -38,5 +38,3 @@ class LWTV_Stats_Meta {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Meta();

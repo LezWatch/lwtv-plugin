@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Dead_Taxonomy {
+class LWTV_Statistics_Dead_Taxonomy_Build {
 
 	/*
 	 * Statistics Taxonomy Array for DEAD
@@ -12,13 +12,13 @@ class LWTV_Stats_Dead_Taxonomy {
 	 *
 	 * @return array
 	 */
-	public function build( $post_type, $taxonomy ) {
+	public function make( $post_type, $taxonomy ) {
 
 		$array      = array();
 		$taxonomies = get_terms( $taxonomy );
 
 		foreach ( $taxonomies as $term ) {
-			$queery = ( new LWTV_Loops() )->tax_two_query( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
+			$queery = ( new LWTV_Features_Loops() )->tax_two_query( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
 
 			$array[ $term->slug ] = array(
 				'count' => $queery->post_count,
@@ -29,5 +29,3 @@ class LWTV_Stats_Dead_Taxonomy {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Dead_Taxonomy();

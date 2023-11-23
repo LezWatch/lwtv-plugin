@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_This_Year_Dead {
+class LWTV_This_Year_Dead_Format {
 	/**
 	 * Output the dead
 	 *
@@ -8,7 +8,7 @@ class LWTV_This_Year_Dead {
 	 *
 	 * @return void (echos output)
 	 */
-	public function generate( $this_year, $count = false, $char_array = array() ) {
+	public function make( $this_year, $count = false, $char_array = array() ) {
 		$this_year  = ( isset( $this_year ) ) ? $this_year : gmdate( 'Y' );
 		$count      = ( isset( $char_array['count'] ) ) ? $char_array['count'] : '0';
 		$list_array = ( isset( $char_array['list'] ) ) ? $char_array['list'] : '';
@@ -80,5 +80,3 @@ class LWTV_This_Year_Dead {
 		}
 	}
 }
-
-new LWTV_This_Year_Dead();

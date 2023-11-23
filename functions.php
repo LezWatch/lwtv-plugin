@@ -3,26 +3,15 @@
  * Plugin Name: Core LezWatch.TV Plugin
  * Plugin URI:  https://lezwatchtv.com
  * Description: All the base code for LezWatch.TV - If this isn't active, the site dies. An ugly death.
- * Version: 3.3
+ * Version: 5.0
  * Author: LezWatch.TV
  * Update URI: http://lezwatchtv.com
  *
  * @package LWTV_PLUGIN
  */
 
-/*
- * Define the first year
- */
-if ( ! defined( 'FIRST_LWTV_YEAR' ) ) {
-	define( 'FIRST_LWTV_YEAR', '1961' );
-}
-
-/*
- * Load Symbolicons
- */
-if ( ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
-	require_once 'assets/symbolicons.php';
-}
+// Call Autoloader
+require_once 'autoload.php';
 
 /**
  * Class LWTV_Functions
@@ -39,13 +28,128 @@ class LWTV_Functions {
 	protected static $version;
 
 	/**
+	 * Specify list of supported components.
+	 *
+	 * The components are called in order (top down), so if a component is used by another,
+	 * it must be on top.
+	 *
+	 * @return array[]
+	 */
+	protected function core_components(): array {
+		return array(
+			// Features Must be First
+			'LWTV_Features_Upgrades',
+			'LWTV_Features_ClickJacking',
+			'LWTV_Features_Cron',
+			'LWTV_Features_Roles',
+			'LWTV_Features_Embeds',
+			'LWTV_Features_Private_Posts',
+			'LWTV_Features_User_Profiles',
+			'LWTV_Features_Shortcodes',
+			// Symbolicons
+			'LWTV_Assets_Symbolicons',
+			// Debugger
+			'LWTV_Debugger',
+			// Admin Menus
+			'LWTV_Admin_Menu',
+			'LWTV_Admin_Dashboard',
+			// Statistics
+			'LWTV_Statistics',
+			'LWTV_This_Year',
+			// Blocks
+			'LWTV_Blocks',
+			// Of The Day RSS Feed
+			'LWTV_Of_The_Day_RSS',
+			// Rest API
+			'LWTV_Rest_API_Fresh_JSON',
+			'LWTV_Rest_API_Alexa_Skills',
+			'LWTV_Rest_API_Export_JSON',
+			'LWTV_Rest_API_IMDb_JSON',
+			'LWTV_Rest_API_List_JSON',
+			'LWTV_Rest_API_OTD_JSON',
+			'LWTV_Rest_API_Shows_Like_JSON',
+			'LWTV_Rest_API_Stats_JSON',
+			'LWTV_Rest_API_This_Year_JSON',
+			'LWTV_Rest_API_What_Happened_JSON',
+			'LWTV_Rest_API_Whats_On_JSON',
+			// Plugins
+			'LWTV_Plugins_CMB2',
+			'LWTV_Plugins_Comment_Probation',
+			'LWTV_Plugins_FacetWP',
+			'LWTV_Plugins_Gravity_Forms',
+			'LWTV_Plugins_Gutenslam',
+			'LWTV_Plugins_Jetpack',
+			'LWTV_Plugins_Yoast',
+			'LWTV_Plugins_Related_Posts_By_Taxonomy',
+			// WP-CLI
+			'LWTV_WP_CLI',
+			// Custom Post Types: This MUST be at the end.
+			'LWTV_CPTs',
+		);
+	}
+
+	/**
+	 * Specify list of components called after plugins are loaded.
+	 *
+	 * The components are called in order (top down), so if a component is used by another,
+	 * it must be on top.
+	 *
+	 * @return array[]
+	 */
+	protected function plugin_components(): array {
+		return array(
+			'LWTV_Features_Dashboard',
+			'LWTV_Features_Dashboard_Posts_In_Progress',
+		);
+	}
+
+	/**
 	 * Constructor.
 	 *
 	 * @access public
 	 * @return void
 	 */
 	public function __construct() {
-		self::$version = '4.1';
+		// Set the version.
+		self::$version = '5.0';
+
+		// Define First Year:
+		if ( ! defined( 'FIRST_LWTV_YEAR' ) ) {
+			define( 'FIRST_LWTV_YEAR', '1961' );
+		}
+
+		// Call the components:
+		$components = $this->core_components();
+		foreach ( $components as $component ) {
+			new $component();
+		}
+
+		// Instantiate actions and filters:
+		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
+
+		// Instantiate Features AFTER plugins are loaded:
+		add_action( 'plugins_loaded', array( $this, 'instantiate_after_plugins_loaded' ) );
+	}
+
+	/**
+	 * Instantiate feature AFTER plugins are loaded.
+	 *
+	 * @return void
+	 */
+	public function instantiate_after_plugins_loaded() {
+		// Call the components:
+		$components = $this->plugin_components();
+		foreach ( $components as $component ) {
+			new $component();
+		}
+	}
+
+	/**
+	 * Initialize Actions and Filters
+	 *
+	 * @return void
+	 */
+	public function instantiate_actions_and_filters(): void {
 		add_filter( 'http_request_args', array( $this, 'disable_wp_update' ), 10, 2 );
 		add_filter( 'attachment_fields_to_edit', array( $this, 'add_attachment_attribution' ), 10000, 2 );
 		add_action( 'edit_attachment', array( $this, 'save_attachment_attribution' ) );
@@ -345,7 +449,7 @@ class LWTV_Functions {
 	 */
 	public function extend_login_session( $expire ) {
 		if ( ! empty( $expire ) ) {
-			$time = $expire;
+			return $expire;
 		}
 		// Set login session limit in seconds.
 		return YEAR_IN_SECONDS;
@@ -353,22 +457,3 @@ class LWTV_Functions {
 }
 
 new LWTV_Functions();
-
-/*
- * Add-Ons.
- */
-require_once 'features/_main.php';     // General Features: This MUST be at the top.
-
-require_once 'admin/_main.php';         // Admin Settings.
-require_once 'assets/symbolicons.php';  // Symbolicons/Font Icons.
-require_once 'blocks/_main.php';        // Custom Blocks.
-require_once 'debugger/_main.php';      // Debugger and data fixers.
-require_once 'of-the-day/_main.php';    // Of the Day RSS code
-require_once 'plugins/_main.php';       // Tweaks for Plugins.
-require_once 'rest-api/_main.php';      // Our Rest API.
-require_once 'statistics/_main.php';    // Stats.
-require_once 'this-year/_main.php';     // This Year.
-require_once 'ways-to-watch/_main.php'; // Ways to Watch.
-require_once 'wp-cli/_main.php';        // WP-CLI commands
-
-require_once 'cpts/_main.php';         // Custom Post Types: This MUST be at the end.

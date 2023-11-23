@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Dead_List {
+class LWTV_Statistics_Dead_List_Build {
 
 	/**
 	 * List of dead characters
@@ -8,13 +8,13 @@ class LWTV_Stats_Dead_List {
 	 * @param  string $format [all|YEAR]
 	 * @return array          All the dead, yo
 	 */
-	public function build( $format = 'array' ) {
+	public function make( $format = 'array' ) {
 		$transient = 'dead_list_' . $format;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array     = array();
-			$dead_loop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', '', '!=' );
+			$dead_loop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', '', '!=' );
 
 			if ( $dead_loop->have_posts() ) {
 				$queery = wp_list_pluck( $dead_loop->posts, 'ID' );
@@ -83,5 +83,3 @@ class LWTV_Stats_Dead_List {
 		return $return;
 	}
 }
-
-new LWTV_Stats_Dead_List();

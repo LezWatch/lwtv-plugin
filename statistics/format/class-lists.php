@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Lists {
+class LWTV_Statistics_Lists_Format {
 	/*
 	 * Statistics Display Lists
 	 *
@@ -14,7 +14,7 @@ class LWTV_Stats_Lists {
 	 *
 	 * @return Content
 	 */
-	public function generate( $subject, $slug = null, $data = array(), $count = 0 ) {
+	public function make( $subject, $slug = null, $data = array(), $count = 0 ) {
 		?>
 		<table id="<?php echo esc_html( $subject ); ?>Table" class="tablesorter table table-striped table-hover">
 			<thead>
@@ -40,5 +40,3 @@ class LWTV_Stats_Lists {
 		<?php
 	}
 }
-
-new LWTV_Stats_Lists();

@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_This_Year_Characters_List {
+class LWTV_This_Year_Characters_List_Build {
 
 	/**
 	 * Get a list of the characters for a year
@@ -8,11 +8,11 @@ class LWTV_This_Year_Characters_List {
 	 * @param  boolean $count     Just a count?
 	 * @return array              All the data you need.
 	 */
-	public function build( $this_year, $count = false ) {
+	public function make( $this_year, $count = false ) {
 
 		$transient    = 'characters_list_' . $this_year;
 		$transient   .= ( $count ) ? '_count' : '';
-		$return_array = LWTV_Transients::get_transient( $transient );
+		$return_array = LWTV_Features_Transients::get_transient( $transient );
 
 		// If we have an array saved, use it.
 		if ( false !== $return_array && ! empty( $return_array ) ) {
@@ -20,7 +20,7 @@ class LWTV_This_Year_Characters_List {
 		}
 
 		// Get the loop
-		$loop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $this_year, 'REGEXP' );
+		$loop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $this_year, 'REGEXP' );
 
 		if ( $loop->have_posts() ) {
 			$queery = wp_list_pluck( $loop->posts, 'ID' );
@@ -113,4 +113,4 @@ class LWTV_This_Year_Characters_List {
 	}
 }
 
-new LWTV_This_Year_Characters_List();
+new LWTV_This_Year_Characters_List_Build();

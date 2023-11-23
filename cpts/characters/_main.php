@@ -305,7 +305,7 @@ class LWTV_CPT_Characters {
 		// If the character list is empty, we must build it
 		if ( ! isset( $characters ) || empty( $characters ) ) {
 			// Loop to get the list of characters
-			$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			$charactersloop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 			if ( $charactersloop->have_posts() ) {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
@@ -375,7 +375,7 @@ class LWTV_CPT_Characters {
 							// (i.e. the one listed first). If THEY are QIRL, the show gets points.
 							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
 								$top_actor = reset( $actors_ids );
-								if ( 'yes' === ( new LWTV_Loops() )->is_actor_queer( $top_actor ) ) {
+								if ( 'yes' === ( new LWTV_Features_Loops() )->is_actor_queer( $top_actor ) ) {
 									++$char_counts['quirl'];
 								}
 							}
@@ -388,7 +388,7 @@ class LWTV_CPT_Characters {
 
 							// If an actor is transgender, we get an extra bonus.
 							foreach ( $actors_ids as $actor ) {
-								if ( 'yes' === ( new LWTV_Loops() )->is_actor_trans( $actor ) ) {
+								if ( 'yes' === ( new LWTV_Features_Loops() )->is_actor_trans( $actor ) ) {
 									++$char_counts['txirl'];
 								}
 							}
@@ -488,7 +488,7 @@ class LWTV_CPT_Characters {
 		// If the character list is empty, we must build it
 		if ( empty( $characters ) ) {
 			// Loop to get the list of characters
-			$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			$charactersloop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 			if ( $charactersloop->have_posts() ) {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
@@ -571,17 +571,17 @@ class LWTV_CPT_Characters {
 		( new LWTV_Characters_Calculate() )->do_the_math( $post_id );
 
 		// Get a list of URLs to flush
-		$clear_urls = ( new LWTV_Cache() )->collect_urls_for_characters( $post_id );
+		$clear_urls = ( new LWTV_Plugins_Cache() )->collect_urls_for_characters( $post_id );
 
 		// Always Sync Taxonomies
 		( new LWTV_CMB2_Taxonomies() )->select2_taxonomy_save( $post_id, 'lezchars_cliches', 'lez_cliches' );
 
 		// Always update Wikidata
-		( new LWTV_Debug_Actors() )->check_actors_wikidata( $post_id );
+		( new LWTV_Debugger_Actors() )->check_actors_wikidata( $post_id );
 
 		// If we've got a list of URLs, then flush.
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			( new LWTV_Cache() )->clean_urls( $clear_urls );
+			( new LWTV_Plugins_Cache() )->clean_urls( $clear_urls );
 		}
 
 		// re-hook this function

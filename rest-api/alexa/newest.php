@@ -43,7 +43,7 @@ class LWTV_Alexa_Newest {
 	public function latest( $posttype ) {
 
 		if ( 'death' === $posttype ) {
-			$data   = ( new LWTV_BYQ_JSON() )->last_death();
+			$data   = ( new LWTV_Rest_API_BYQ() )->last_death();
 			$name   = $data['name'];
 			$output = $name . ' on ' . gmdate( 'F j, Y', $data['died'] );
 		} else {

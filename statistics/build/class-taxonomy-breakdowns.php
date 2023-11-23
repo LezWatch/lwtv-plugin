@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Taxonomy_Breakdowns {
+class LWTV_Statistics_Taxonomy_Breakdowns_Build {
 
 	/**
 	 * Calculate statistics for complicated taxonomies
@@ -13,7 +13,7 @@ class LWTV_Stats_Taxonomy_Breakdowns {
 	 * @param mixed $subject - string; post type (shows, characters).
 	 * @return void
 	 */
-	public function build( $count, $format, $data, $subject ) {
+	public function make( $count, $format, $data, $subject ) {
 		// Set defaults.
 		$array = array();
 		// Arrays of the secondary taxonomies we care about.
@@ -80,7 +80,7 @@ class LWTV_Stats_Taxonomy_Breakdowns {
 			// This is the display name (used by stacked barcharts).
 			$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 			// Get the posts.
-			$queery = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
+			$queery = ( new LWTV_Features_Loops() )->tax_query( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
 
 			if ( $queery->have_posts() ) {
 				$all_shows = wp_list_pluck( $queery->posts, 'ID' );
@@ -255,5 +255,3 @@ class LWTV_Stats_Taxonomy_Breakdowns {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Taxonomy_Breakdowns();

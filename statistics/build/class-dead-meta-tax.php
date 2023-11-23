@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Dead_Meta_Tax {
+class LWTV_Statistics_Dead_Meta_Tax_Build {
 
 	/*
 	 * Dead Statistics Meta and Taxonomy Array
@@ -15,16 +15,16 @@ class LWTV_Stats_Dead_Meta_Tax {
 	 *
 	 * @return array
 	 */
-	public function build( $post_type, $meta_array, $key, $taxonomy = 'lez_cliches', $field = 'dead' ) {
+	public function make( $post_type, $meta_array, $key, $taxonomy = 'lez_cliches', $field = 'dead' ) {
 
 		$transient = 'dead_meta_tax_' . $post_type . '_' . $taxonomy . '_' . $field;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array = array();
 
 			foreach ( $meta_array as $value ) {
-				$query           = ( new LWTV_Loops() )->post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, 'slug', $field );
+				$query           = ( new LWTV_Features_Loops() )->post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, 'slug', $field );
 				$array[ $value ] = array(
 					'count' => $query->post_count,
 					'name'  => ucfirst( $value ),
@@ -39,5 +39,3 @@ class LWTV_Stats_Dead_Meta_Tax {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Dead_Meta_Tax();

@@ -56,7 +56,7 @@ class LWTV_Alexa_This_Year {
 		}
 
 		// Get the data
-		$count_array = ( new LWTV_What_Happened_JSON() )->what_happened( $date );
+		$count_array = ( new LWTV_Rest_API_What_Happened_JSON() )->what_happened( $date );
 
 		// Language of Death
 		$dead = 'Miraculously, no characters died';
@@ -112,7 +112,7 @@ class LWTV_Alexa_This_Year {
 		$ended = ( 0 === $count_array['on_air']['ended'] ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['on_air']['ended'] ), $count_array['on_air']['ended'] );
 
 		// This Year DEATH information
-		$death_this_year_query = ( new LWTV_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+		$death_this_year_query = ( new LWTV_Features_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 
 		// Translators: %s is number of dead characters
 		$death_this_year = ( 0 === $death_this_year_query->post_count ) ? 'no characters died' : sprintf( _n( '%s character died', '%s characters died', $death_this_year_query->post_count ), $death_this_year_query->post_count );

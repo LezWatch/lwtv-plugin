@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_This_Year_Overview {
+class LWTV_This_Year_Overview_Build {
 
 	/**
 	 * Build the raw data for this year, which is hella recursive.
@@ -9,18 +9,18 @@ class LWTV_This_Year_Overview {
 	 *
 	 * @return array
 	 */
-	public function build( $this_year ) {
+	public function make( $this_year ) {
 		$this_year = ( isset( $this_year ) ) ? $this_year : gmdate( 'Y' );
 		$array     = array(
-			'characters' => ( new LWTV_This_Year() )->build_array( $this_year, 'characters-on-air', false, true ),
-			'dead'       => ( new LWTV_This_Year() )->build_array( $this_year, 'dead-characters', false, true ),
-			'shows'      => ( new LWTV_This_Year() )->build_array( $this_year, 'shows-on-air', 'now', true ),
-			'started'    => ( new LWTV_This_Year() )->build_array( $this_year, 'new-shows', 'started', true ),
-			'canceled'   => ( new LWTV_This_Year() )->build_array( $this_year, 'canceled-shows', 'ended', true ),
+			'characters' => ( new LWTV_This_Year_Array() )->make( $this_year, 'characters-on-air', false, true ),
+			'dead'       => ( new LWTV_This_Year_Array() )->make( $this_year, 'dead-characters', false, true ),
+			'shows'      => ( new LWTV_This_Year_Array() )->make( $this_year, 'shows-on-air', 'now', true ),
+			'started'    => ( new LWTV_This_Year_Array() )->make( $this_year, 'new-shows', 'started', true ),
+			'canceled'   => ( new LWTV_This_Year_Array() )->make( $this_year, 'canceled-shows', 'ended', true ),
 		);
 
 		return $array;
 	}
 }
 
-new LWTV_This_Year_Overview();
+new LWTV_This_Year_Overview_Build();

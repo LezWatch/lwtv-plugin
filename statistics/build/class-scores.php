@@ -1,20 +1,20 @@
 <?php
 
-class LWTV_Stats_Scores {
+class LWTV_Statistics_Scores_Build {
 
 	/*
 	 * Statistics Scores
 	 *
 	 * @return array
 	 */
-	public function build( $post_type ) {
+	public function make( $post_type ) {
 
 		$transient = 'scores_' . $post_type;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
-			$the_queery = ( new LWTV_Loops() )->post_type_query( $post_type );
+			$the_queery = ( new LWTV_Features_Loops() )->post_type_query( $post_type );
 			$array      = array();
 
 			if ( $the_queery->have_posts() ) {
@@ -39,5 +39,3 @@ class LWTV_Stats_Scores {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Scores();

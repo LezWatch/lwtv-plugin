@@ -56,8 +56,8 @@ class LWTV_Gravity_Forms_Spam {
 
 			if ( is_email( $key ) ) {
 				$email              = $key;
-				$is_naughty['spam'] = LWTV_Find_Spammers::is_spammer( $email, 'email', 'disallowed_keys' );
-				$is_naughty['mod']  = LWTV_Find_Spammers::is_spammer( $email, 'email', 'moderated_keys' );
+				$is_naughty['spam'] = LWTV_Features_Spammers::is_spammer( $email, 'email', 'disallowed_keys' );
+				$is_naughty['mod']  = LWTV_Features_Spammers::is_spammer( $email, 'email', 'moderated_keys' );
 			}
 
 			if ( rest_is_ip_address( (string) $key ) ) {
@@ -67,8 +67,8 @@ class LWTV_Gravity_Forms_Spam {
 				$check_gf_ip      = self::check_ip_location( $gravity_forms_ip );
 
 				// Santa Clause time.
-				$is_naughty['spam'] = LWTV_Find_Spammers::is_spammer( $gravity_forms_ip, 'ip', 'disallowed_keys' );
-				$is_naughty['mod']  = LWTV_Find_Spammers::is_spammer( $gravity_forms_ip, 'ip', 'moderated_keys' );
+				$is_naughty['spam'] = LWTV_Features_Spammers::is_spammer( $gravity_forms_ip, 'ip', 'disallowed_keys' );
+				$is_naughty['mod']  = LWTV_Features_Spammers::is_spammer( $gravity_forms_ip, 'ip', 'moderated_keys' );
 			}
 		}
 

@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Show_Roles {
+class LWTV_Statistics_Show_Roles_Build {
 
 	/**
 	 * Statistics Roles on Shows
@@ -10,16 +10,16 @@ class LWTV_Stats_Show_Roles {
 	 * @param string $type (default: 'dead')
 	 * @return void
 	 */
-	public function build( $type = 'dead' ) {
+	public function make( $type = 'dead' ) {
 
 		$transient = 'show_roles_' . $type;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array = array();
 
 			// List of shows
-			$all_shows_query = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
+			$all_shows_query = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_shows' );
 
 			if ( $all_shows_query->have_posts() ) {
 				$show_array = wp_list_pluck( $all_shows_query->posts, 'ID' );
@@ -39,7 +39,7 @@ class LWTV_Stats_Show_Roles {
 					$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
 					$show_name = strtolower( $show_name );
 
-					$role_loop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+					$role_loop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 					if ( $role_loop->have_posts() ) {
 
@@ -180,5 +180,3 @@ class LWTV_Stats_Show_Roles {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Show_Roles();

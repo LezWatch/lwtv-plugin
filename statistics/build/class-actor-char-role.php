@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Actor_Char_Role {
+class LWTV_Statistics_Actor_Char_Role_Build {
 
 	/**
 	 * Stats for character roles per actor.
@@ -10,13 +10,13 @@ class LWTV_Stats_Actor_Char_Role {
 	 *
 	 * @return array
 	 */
-	public function build( $type, $the_id ) {
+	public function make( $type, $the_id ) {
 		// Default
 		$array     = array();
 		$post_type = $type;
 
 		$transient = 'actor_char_role_' . $the_id;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 		if ( false === $array || empty( $array ) ) {
 			$base_array = array(
 				'regular'   => 0,
@@ -31,7 +31,7 @@ class LWTV_Stats_Actor_Char_Role {
 			// If the character list is empty, we must build it
 			if ( empty( $char_array ) ) {
 				// Loop to get the list of characters
-				$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+				$charactersloop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
 
 				if ( $charactersloop->have_posts() ) {
 					$char_array = wp_list_pluck( $charactersloop->posts, 'ID' );
@@ -86,5 +86,3 @@ class LWTV_Stats_Actor_Char_Role {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Actor_Char_Role();

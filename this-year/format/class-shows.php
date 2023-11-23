@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_This_Year_Shows {
+class LWTV_This_Year_Shows_Format {
 	/**
 	 * List of shows for the year.
 	 *
@@ -9,7 +9,7 @@ class LWTV_This_Year_Shows {
 	 *
 	 * @return void
 	 */
-	public function generate( $this_year, $build_data, $view = 'shows-on-air' ) {
+	public function make( $this_year, $build_data, $view = 'shows-on-air' ) {
 		$fail_msg      = '<p>No shows were new this year.</p>';
 		$this_year     = ( isset( $this_year ) ) ? $this_year : gmdate( 'Y' );
 		$show_array    = $build_data;
@@ -149,5 +149,3 @@ class LWTV_This_Year_Shows {
 		<?php
 	}
 }
-
-new LWTV_This_Year_Shows();

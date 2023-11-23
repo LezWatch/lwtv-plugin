@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Dead_Role {
+class LWTV_Statistics_Dead_Role_Build {
 
 	/*
 	 * Statistics Array for DEAD by ROLE
@@ -9,14 +9,14 @@ class LWTV_Stats_Dead_Role {
 	 *
 	 * @return array
 	 */
-	public function build() {
+	public function make() {
 
 		$transient = 'dead_role_stats';
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array        = array();
-			$all_the_dead = ( new LWTV_Loops() )->tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+			$all_the_dead = ( new LWTV_Features_Loops() )->tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
 			$by_role      = array(
 				'regular'   => 0,
 				'guest'     => 0,
@@ -70,5 +70,3 @@ class LWTV_Stats_Dead_Role {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Dead_Role();

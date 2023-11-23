@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_This_Year_Chart {
+class LWTV_This_Year_Chart_Format {
 	/**
 	 * Chart of characters for the year.
 	 *
@@ -9,7 +9,7 @@ class LWTV_This_Year_Chart {
 	 * @param string $format
 	 * @return void
 	 */
-	public function generate( $this_year, $format = 'sexuality', $loop_array = array() ) {
+	public function make( $this_year, $format = 'sexuality', $loop_array = array() ) {
 		// Defaults:
 		$this_year    = ( isset( $this_year ) ) ? $this_year : gmdate( 'Y' );
 		$valid_format = array( 'gender', 'sexuality ' );
@@ -20,9 +20,7 @@ class LWTV_This_Year_Chart {
 
 		// If the data isn't empty, we go!
 		if ( ! empty( $char_array ) ) {
-			( new LWTV_Stats() )->generate( 'characters', $format . '_year_' . $this_year, 'piechart', '', $char_array );
+			( new LWTV_Statistics() )->generate( 'characters', $format . '_year_' . $this_year, 'piechart', '', $char_array );
 		}
 	}
 }
-
-new LWTV_This_Year_Chart();

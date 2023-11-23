@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Dead_Basic {
+class LWTV_Statistics_Dead_Basic_Build {
 
 	/*
 	 * Statistics Basic death
@@ -13,7 +13,7 @@ class LWTV_Stats_Dead_Basic {
 	 *
 	 * @return array or count
 	 */
-	public function build( $subject, $output ) {
+	public function make( $subject, $output ) {
 
 		switch ( $subject ) {
 			case 'characters':
@@ -26,8 +26,7 @@ class LWTV_Stats_Dead_Basic {
 				break;
 		}
 
-		require_once 'class-taxonomy.php';
-		$array = ( new LWTV_Stats_Taxonomy() )->build( 'post_type_' . $subject, $taxonomy, $terms );
+		$array = ( new LWTV_Statistics_Taxonomy_Build() )->make( 'post_type_' . $subject, $taxonomy, $terms );
 
 		switch ( $subject ) {
 			case 'characters':
@@ -60,5 +59,3 @@ class LWTV_Stats_Dead_Basic {
 		return $return;
 	}
 }
-
-new LWTV_Stats_Dead_Basic();

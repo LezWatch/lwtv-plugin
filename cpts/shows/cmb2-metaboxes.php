@@ -44,8 +44,8 @@ class LWTV_Shows_CMB2 {
 		);
 
 		// Allow for multiple language names to be saved.
-		if ( class_exists( 'LWTV_Languages' ) ) {
-			$this->language_array = ( new LWTV_Languages() )->all_languages();
+		if ( class_exists( 'LWTV_Features_Languages' ) ) {
+			$this->language_array = ( new LWTV_Features_Languages() )->all_languages();
 		}
 	}
 

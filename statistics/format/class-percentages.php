@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Percentages {
+class LWTV_Statistics_Percentages_Format {
 	/*
 	 * Statistics Display Percentages
 	 *
@@ -14,7 +14,7 @@ class LWTV_Stats_Percentages {
 	 *
 	 * @return Content
 	 */
-	public function generate( $subject, $data, $data_array, $count ) {
+	public function make( $subject, $data, $data_array, $count ) {
 		$pieces = preg_split( '(_|-)', $data );
 		if ( in_array( 'country', $pieces, true ) ) {
 			$count = 0;
@@ -93,5 +93,3 @@ class LWTV_Stats_Percentages {
 		<?php
 	}
 }
-
-new LWTV_Stats_Percentages();

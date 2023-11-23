@@ -24,7 +24,7 @@ class LWTV_Shows_Like_This {
 		add_filter( 'related_posts_by_taxonomy_wp_rest_api', '__return_true' );
 	}
 
-	public function generate( $show_id ) {
+	public function make( $show_id ) {
 		$return = '';
 
 		if ( ! empty( $show_id ) && has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {

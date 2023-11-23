@@ -1,11 +1,11 @@
 <?php
 
-class LWTV_This_Year_Shows_List {
+class LWTV_This_Year_Shows_List_Build {
 	/**
 	 * get all the shows that were active for a year
 	 * @return array massive array of everything.
 	 */
-	public function build( $this_year, $type = 'now', $count = false ) {
+	public function make( $this_year, $type = 'now', $count = false ) {
 
 		// Combine alt names to ensure we have ONE transient.
 		switch ( $type ) {
@@ -24,7 +24,7 @@ class LWTV_This_Year_Shows_List {
 
 		$transient    = 'shows_list_' . $type . '_' . $this_year;
 		$transient   .= ( $count ) ? '_count' : '';
-		$return_array = LWTV_Transients::get_transient( $transient );
+		$return_array = LWTV_Features_Transients::get_transient( $transient );
 
 		// If we have an array saved, use it.
 		if ( false !== $return_array && ! empty( $return_array ) ) {
@@ -36,7 +36,7 @@ class LWTV_This_Year_Shows_List {
 		$shows_formats = array();
 		$shows_country = array();
 		$counted_shows = 0;
-		$shows_queery  = ( new LWTV_Loops() )->post_type_query( 'post_type_shows' );
+		$shows_queery  = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_shows' );
 
 		if ( $shows_queery->have_posts() ) {
 			$shows_array = wp_list_pluck( $shows_queery->posts, 'ID' );
@@ -146,4 +146,4 @@ class LWTV_This_Year_Shows_List {
 	}
 }
 
-new LWTV_This_Year_Shows_List();
+new LWTV_This_Year_Shows_List_Build();

@@ -34,15 +34,15 @@ $showforms   = get_terms(
 	)
 );
 $count       = wp_count_terms( 'lez_formats' );
-$shows_count = ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' );
+$shows_count = ( new LWTV_Statistics() )->generate( 'shows', 'total', 'count' );
 
 switch ( $showform ) {
 	case 'all':
 		$title_showform = 'All Show Formats (' . $count . ')';
 		break;
 	default:
-		$characters     = ( new LWTV_Stats() )->generate( 'characters', 'formats_' . $showform . '_all', 'count' );
-		$shows          = ( new LWTV_Stats() )->generate( 'shows', 'formats_' . $showform . '_all', 'count' );
+		$characters     = ( new LWTV_Statistics() )->generate( 'characters', 'formats_' . $showform . '_all', 'count' );
+		$shows          = ( new LWTV_Statistics() )->generate( 'shows', 'formats_' . $showform . '_all', 'count' );
 		$showform_obj   = get_term_by( 'slug', $showform, 'lez_formats', 'ARRAY_A' );
 		$title_showform = '<a href="/format/' . $showform . '">' . $showform_obj['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 }
@@ -115,7 +115,7 @@ switch ( $showform ) {
 
 		if ( '_all' === $showform ) {
 			if ( '_all' === $view ) {
-				$all_count = ( new LWTV_Stats() )->count_shows( 'score', 'formats', $a_form->slug );
+				$all_count = ( new LWTV_Statistics() )->count_shows( 'score', 'formats', $a_form->slug );
 				?>
 				<p>For more information on individual show formats, please use the dropdown menu, or click on a format type listed below.</p>
 				<table id="formatTable" class="tablesorter table table-striped table-hover">
@@ -145,32 +145,32 @@ switch ( $showform ) {
 			} else {
 				$this_one_view = substr( $view, 1 );
 				if ( 'shows' !== $valid_views[ $this_one_view ] ) {
-					( new LWTV_Stats() )->generate( $cpts_type, 'formats' . $showform . $view, 'stackedbar' );
+					( new LWTV_Statistics() )->generate( $cpts_type, 'formats' . $showform . $view, 'stackedbar' );
 				} else {
 					?>
 					<div class="row">
 						<div class="col-sm-6">
-							<?php ( new LWTV_Stats() )->generate( 'shows', $this_one_view, 'piechart' ); ?>
+							<?php ( new LWTV_Statistics() )->generate( 'shows', $this_one_view, 'piechart' ); ?>
 						</div>
 						<div class="col-sm-6">
-							<?php ( new LWTV_Stats() )->generate( 'shows', $this_one_view, 'percentage' ); ?>
+							<?php ( new LWTV_Statistics() )->generate( 'shows', $this_one_view, 'percentage' ); ?>
 						</div>
 					</div>
 					<?php
 				}
 			}
 		} else {
-			$onair      = ( new LWTV_Stats() )->count_shows( 'onair', 'formats', ltrim( $showform, '_' ) );
-			$allshows   = ( new LWTV_Stats() )->count_shows( 'total', 'formats', ltrim( $showform, '_' ) );
-			$showscore  = ( new LWTV_Stats() )->count_shows( 'score', 'formats', ltrim( $showform, '_' ) );
-			$onairscore = ( new LWTV_Stats() )->count_shows( 'onairscore', 'formats', ltrim( $showform, '_' ) );
+			$onair      = ( new LWTV_Statistics() )->count_shows( 'onair', 'formats', ltrim( $showform, '_' ) );
+			$allshows   = ( new LWTV_Statistics() )->count_shows( 'total', 'formats', ltrim( $showform, '_' ) );
+			$showscore  = ( new LWTV_Statistics() )->count_shows( 'score', 'formats', ltrim( $showform, '_' ) );
+			$onairscore = ( new LWTV_Statistics() )->count_shows( 'onairscore', 'formats', ltrim( $showform, '_' ) );
 			$type_name  = ( ! str_ends_with( $showform_obj['name'], 's' ) ) ? $showform_obj['name'] . 's' : $showform_obj['name'];
 
 			if ( '_all' === $view ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows identified as ' . $type_name . ' are on air. Their average score is ' . $showscore . ', and ' . $onairscore . ' for ' . $showform_obj['name'] . 's currently on air (out of a possible 100).</p>' );
 			}
 
-			( new LWTV_Stats() )->generate( $cpts_type, 'formats' . $showform . $view, $format );
+			( new LWTV_Statistics() )->generate( $cpts_type, 'formats' . $showform . $view, $format );
 		}
 		?>
 		</div>
@@ -180,7 +180,7 @@ switch ( $showform ) {
 		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php ( new LWTV_Stats() )->generate( $cpts_type, 'formats' . $showform . $view, $format ); ?>
+			<?php ( new LWTV_Statistics() )->generate( $cpts_type, 'formats' . $showform . $view, $format ); ?>
 		</div>
 		<?php
 	}

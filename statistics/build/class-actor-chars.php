@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Actor_Chars {
+class LWTV_Statistics_Actor_Chars_Build {
 
 	/**
 	 * Statistics: Actors and Characters
@@ -10,19 +10,19 @@ class LWTV_Stats_Actor_Chars {
 	 * @param string $type (default: 'characters')
 	 * @return void
 	 */
-	public function build( $type = 'characters' ) {
+	public function make( $type = 'characters' ) {
 
 		if ( str_contains( $type, 'per-' ) ) {
 			$type = ( 'per-char' === $type ) ? 'characters' : 'actors';
 		}
 
 		$transient = 'actor_chars_' . $type;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
 			// list of people
-			$all_query = ( new LWTV_Loops() )->post_type_query( 'post_type_' . $type );
+			$all_query = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_' . $type );
 
 			if ( $all_query->have_posts() ) {
 				$all_array = wp_list_pluck( $all_query->posts, 'ID' );
@@ -74,5 +74,3 @@ class LWTV_Stats_Actor_Chars {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Actor_Chars();

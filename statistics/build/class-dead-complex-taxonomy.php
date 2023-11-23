@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Dead_Complex_Taxonomy {
+class LWTV_Statistics_Dead_Complex_Taxonomy_Build {
 
 	/**
 	 * Complex death taxonomies for stations and nations.
@@ -10,7 +10,7 @@ class LWTV_Stats_Dead_Complex_Taxonomy {
 	 * @param mixed $type - string.
 	 * @return array.
 	 */
-	public function build( $type ) {
+	public function make( $type ) {
 
 		// Defaults.
 		$valid_types = array( 'stations', 'country' );
@@ -21,7 +21,7 @@ class LWTV_Stats_Dead_Complex_Taxonomy {
 		}
 
 		$transient = 'dead_complex_taxonomy_lez_' . $type;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 			$array    = array();
@@ -34,7 +34,7 @@ class LWTV_Stats_Dead_Complex_Taxonomy {
 				$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 
 				// Get the posts.
-				$queery = ( new LWTV_Loops() )->tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
+				$queery = ( new LWTV_Features_Loops() )->tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
 
 				// Process the posts.
 				if ( $queery->have_posts() ) {
@@ -71,5 +71,3 @@ class LWTV_Stats_Dead_Complex_Taxonomy {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Dead_Complex_Taxonomy();

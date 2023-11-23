@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Dead_Year {
+class LWTV_Statistics_Dead_Year_Build {
 
 	/*
 	 * Statistics Death By Year
@@ -10,9 +10,9 @@ class LWTV_Stats_Dead_Year {
 	 *
 	 * @return array
 	 */
-	public function build() {
+	public function make() {
 		$transient = 'dead_year_stats';
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
@@ -33,7 +33,7 @@ class LWTV_Stats_Dead_Year {
 			}
 
 			foreach ( $year_deathlist_array as $year ) {
-				$year_death_query = ( new LWTV_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+				$year_death_query = ( new LWTV_Features_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 
 				$array[ $year ] = array(
 					'name'  => $year,
@@ -49,5 +49,3 @@ class LWTV_Stats_Dead_Year {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Dead_Year();

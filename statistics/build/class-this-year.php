@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_This_Year {
+class LWTV_Statistics_This_Year_Build {
 
 	/**
 	 * Stats for This Year
@@ -10,11 +10,11 @@ class LWTV_Stats_This_Year {
 	 *
 	 * @return array
 	 */
-	public function build( $data, $year_array = array() ) {
+	public function make( $data, $year_array = array() ) {
 
 		// loop through array and rebuild into format for charts.
 		$transient = 'this_year_' . $data;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 		$taxonomy  = substr( $data, 0, -10 );      // Remove _year_XXXX from the end.
 
 		// If the array is empty, we want to rebuild it.
@@ -49,5 +49,3 @@ class LWTV_Stats_This_Year {
 		return $array;
 	}
 }
-
-new LWTV_Stats_This_Year();

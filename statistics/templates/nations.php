@@ -34,15 +34,15 @@ $nations     = get_terms(
 	)
 );
 $count       = wp_count_terms( 'lez_country' );
-$shows_count = ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' );
+$shows_count = ( new LWTV_Statistics() )->generate( 'shows', 'total', 'count' );
 
 switch ( $country ) {
 	case 'all':
 		$title_country = 'All Countries (' . $count . ')';
 		break;
 	default:
-		$characters     = ( new LWTV_Stats() )->generate( 'characters', 'country_' . $country . '_all', 'count' );
-		$shows          = ( new LWTV_Stats() )->generate( 'shows', 'country_' . $country . '_all', 'count' );
+		$characters     = ( new LWTV_Statistics() )->generate( 'characters', 'country_' . $country . '_all', 'count' );
+		$shows          = ( new LWTV_Statistics() )->generate( 'shows', 'country_' . $country . '_all', 'count' );
 		$country_object = get_term_by( 'slug', $country, 'lez_country', 'ARRAY_A' );
 		$title_country  = '<a href="' . home_url( '/country/' . $country ) . '">' . $country_object['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 }
@@ -116,7 +116,7 @@ switch ( $country ) {
 
 		if ( '_all' === $country ) {
 			// Always show the same thing here.
-			$all_count = ( new LWTV_Stats() )->count_shows( 'score', 'country', $nation->slug );
+			$all_count = ( new LWTV_Statistics() )->count_shows( 'score', 'country', $nation->slug );
 			?>
 			<p>For more information on individual nations, please use the dropdown menu, or click on a nation listed below.</p>
 			<table id="nationsTable" class="tablesorter table table-striped table-hover">
@@ -146,10 +146,10 @@ switch ( $country ) {
 		} else {
 			// We have a specific nation, let's show it.
 			$format     = 'piechart';
-			$onair      = ( new LWTV_Stats() )->count_shows( 'onair', 'country', ltrim( $country, '_' ) );
-			$allshows   = ( new LWTV_Stats() )->count_shows( 'total', 'country', ltrim( $country, '_' ) );
-			$showscore  = ( new LWTV_Stats() )->count_shows( 'score', 'country', ltrim( $country, '_' ) );
-			$onairscore = ( new LWTV_Stats() )->count_shows( 'onairscore', 'country', ltrim( $country, '_' ) );
+			$onair      = ( new LWTV_Statistics() )->count_shows( 'onair', 'country', ltrim( $country, '_' ) );
+			$allshows   = ( new LWTV_Statistics() )->count_shows( 'total', 'country', ltrim( $country, '_' ) );
+			$showscore  = ( new LWTV_Statistics() )->count_shows( 'score', 'country', ltrim( $country, '_' ) );
+			$onairscore = ( new LWTV_Statistics() )->count_shows( 'onairscore', 'country', ltrim( $country, '_' ) );
 
 			if ( '_all' === $view ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this country is ' . $showscore );
@@ -168,7 +168,7 @@ switch ( $country ) {
 				echo wp_kses_post( '<h3>Shows On-Air Per Year</h3>' );
 			}
 
-			( new LWTV_Stats() )->generate( $cpts_type, 'country' . $country . $view, $format );
+			( new LWTV_Statistics() )->generate( $cpts_type, 'country' . $country . $view, $format );
 		}
 		?>
 		</div>
@@ -178,7 +178,7 @@ switch ( $country ) {
 		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php ( new LWTV_Stats() )->generate( $cpts_type, 'country' . $country . $view, $format ); ?>
+			<?php ( new LWTV_Statistics() )->generate( $cpts_type, 'country' . $country . $view, $format ); ?>
 		</div>
 		<?php
 	}

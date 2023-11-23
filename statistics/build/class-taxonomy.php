@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Taxonomy {
+class LWTV_Statistics_Taxonomy_Build {
 
 	/*
 	 * Statistics Taxonomy Array
@@ -14,10 +14,10 @@ class LWTV_Stats_Taxonomy {
 	 *
 	 * @return array
 	 */
-	public function build( $post_type, $taxonomy, $terms = '', $operator = 'IN' ) {
+	public function make( $post_type, $taxonomy, $terms = '', $operator = 'IN' ) {
 
 		$transient = 'taxonomy_' . $taxonomy . '_' . $terms;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
@@ -31,7 +31,7 @@ class LWTV_Stats_Taxonomy {
 				$term_link         = get_term_link( $term, $taxonomy );
 				$term_slug         = ( '' === $terms ) ? $term->slug : $terms;
 				$term_name         = ( '' === $terms ) ? $term->name : $term_obj['name'];
-				$count_terms_query = ( new LWTV_Loops() )->tax_query( $post_type, $taxonomy, 'slug', $term_slug, $operator );
+				$count_terms_query = ( new LWTV_Features_Loops() )->tax_query( $post_type, $taxonomy, 'slug', $term_slug, $operator );
 				$term_count        = $count_terms_query->post_count;
 
 				$array[ $term_slug ] = array(
@@ -48,5 +48,3 @@ class LWTV_Stats_Taxonomy {
 		return $array;
 	}
 }
-
-new LWTV_Stats_Taxonomy();

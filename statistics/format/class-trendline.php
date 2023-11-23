@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Trendline {
+class LWTV_Statistics_Trendline_Format {
 
 	/*
 	 * Statistics Display Trendlines
@@ -16,7 +16,7 @@ class LWTV_Stats_Trendline {
 	 *
 	 * @return Content
 	 */
-	public function generate( $subject, $data, $data_array ) {
+	public function make( $subject, $data, $data_array ) {
 
 		$data_array = array_reverse( $data_array );
 		$trend      = self::calculate_trendline( $data_array );
@@ -158,5 +158,3 @@ class LWTV_Stats_Trendline {
 		return $return;
 	}
 }
-
-new LWTV_Stats_Trendline();

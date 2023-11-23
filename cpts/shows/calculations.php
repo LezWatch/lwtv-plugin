@@ -390,7 +390,7 @@ class LWTV_Shows_Calculate {
 		// If the character list is empty, we must build it
 		if ( empty( $characters ) ) {
 			// Loop to get the list of characters
-			$charactersloop = ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
+			$charactersloop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
 
 			if ( $charactersloop->have_posts() ) {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
@@ -485,7 +485,7 @@ class LWTV_Shows_Calculate {
 		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
 
 		// Update 3rd party scores
-		( new LWTV_Grading() )->update_scores( $post_id );
+		( new LWTV_Features_Grading() )->update_scores( $post_id );
 
 		// Cheat and update the show 'on-air' ness.
 		$on_air   = 'no';

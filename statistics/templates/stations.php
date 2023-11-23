@@ -31,7 +31,7 @@ $all_stations = get_terms(
 	)
 );
 $count        = wp_count_terms( 'lez_stations' );
-$shows_count  = ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' );
+$shows_count  = ( new LWTV_Statistics() )->generate( 'shows', 'total', 'count' );
 
 // Title
 switch ( $station ) {
@@ -39,8 +39,8 @@ switch ( $station ) {
 		$title_station = 'All Stations (' . $count . ')';
 		break;
 	default:
-		$characters     = ( new LWTV_Stats() )->generate( 'characters', 'stations_' . $station . '_all', 'count' );
-		$shows          = ( new LWTV_Stats() )->generate( 'shows', 'stations_' . $station . '_all', 'count' );
+		$characters     = ( new LWTV_Statistics() )->generate( 'characters', 'stations_' . $station . '_all', 'count' );
+		$shows          = ( new LWTV_Statistics() )->generate( 'shows', 'stations_' . $station . '_all', 'count' );
 		$station_object = get_term_by( 'slug', $station, 'lez_stations', 'ARRAY_A' );
 		$title_station  = '<a href="' . home_url( '/station/' . $station ) . '">' . $station_object['name'] . '</a> (' . $shows . ' Shows / ' . $characters . ' Characters)';
 }
@@ -108,7 +108,7 @@ switch ( $station ) {
 
 		if ( '_all' === $station ) {
 			// Always show the same thing here.
-			$all_count = ( new LWTV_Stats() )->count_shows( 'score', 'stations', $the_station->slug );
+			$all_count = ( new LWTV_Statistics() )->count_shows( 'score', 'stations', $the_station->slug );
 			?>
 			<p>For more information on individual stations, please use the dropdown menu, or click on a station listed below.</p>
 			<table id="stationsTable" class="tablesorter table table-striped table-hover">
@@ -138,10 +138,10 @@ switch ( $station ) {
 		} else {
 			// There is a specific Station!
 			$format     = 'piechart';
-			$onair      = ( new LWTV_Stats() )->count_shows( 'onair', 'stations', ltrim( $station, '_' ) );
-			$allshows   = ( new LWTV_Stats() )->count_shows( 'total', 'stations', ltrim( $station, '_' ) );
-			$showscore  = ( new LWTV_Stats() )->count_shows( 'score', 'stations', ltrim( $station, '_' ) );
-			$onairscore = ( new LWTV_Stats() )->count_shows( 'onairscore', 'stations', ltrim( $station, '_' ) );
+			$onair      = ( new LWTV_Statistics() )->count_shows( 'onair', 'stations', ltrim( $station, '_' ) );
+			$allshows   = ( new LWTV_Statistics() )->count_shows( 'total', 'stations', ltrim( $station, '_' ) );
+			$showscore  = ( new LWTV_Statistics() )->count_shows( 'score', 'stations', ltrim( $station, '_' ) );
+			$onairscore = ( new LWTV_Statistics() )->count_shows( 'onairscore', 'stations', ltrim( $station, '_' ) );
 
 			if ( '_all' === $view ) {
 				echo wp_kses_post( '<p>Currently, ' . $onair . ' of ' . $allshows . ' shows are on air. The average score for all shows in this station is ' . $showscore );
@@ -160,7 +160,7 @@ switch ( $station ) {
 				echo wp_kses_post( '<h4>Shows On-Air Per Year</h4>' );
 			}
 
-			( new LWTV_Stats() )->generate( $cpts_type, 'stations' . $station . $view, $format );
+			( new LWTV_Statistics() )->generate( $cpts_type, 'stations' . $station . $view, $format );
 		}
 		?>
 		</div>
@@ -170,7 +170,7 @@ switch ( $station ) {
 		$format = ( 'shows' === $cpts_type ) ? 'list' : 'percentage';
 		?>
 		<div class="<?php echo esc_attr( $col_class ); ?>">
-			<?php ( new LWTV_Stats() )->generate( $cpts_type, 'stations' . $station . $view, $format ); ?>
+			<?php ( new LWTV_Statistics() )->generate( $cpts_type, 'stations' . $station . $view, $format ); ?>
 		</div>
 		<?php
 	}

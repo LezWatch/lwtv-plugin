@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_On_Air {
+class LWTV_Statistics_On_Air_Build {
 
 	/*
 	 * Statistics On Air
@@ -13,11 +13,11 @@ class LWTV_Stats_On_Air {
 	 *
 	 * @return array
 	 */
-	public function build( $post_type, $data = false, $minor = false ) {
+	public function make( $post_type, $data = false, $minor = false ) {
 
 		$transient = 'on_air_stats_' . $post_type;
 		$transient = ( false !== $minor ) ? $transient . '_' . $minor : $transient;
-		$array     = LWTV_Transients::get_transient( $transient );
+		$array     = LWTV_Features_Transients::get_transient( $transient );
 
 		if ( false === $array ) {
 
@@ -40,11 +40,11 @@ class LWTV_Stats_On_Air {
 				switch ( $post_type ) {
 					case 'post_type_characters':
 						// It doesn't matter which show they're on, just that they're on that year.
-						$year_queery = ( false === $data ) ? ( new LWTV_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $year, 'LIKE' ) : $data;
+						$year_queery = ( false === $data ) ? ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $year, 'LIKE' ) : $data;
 						break;
 					case 'post_type_shows':
 						$year_queery = 0;
-						$show_queery = ( false === $data ) ? ( new LWTV_Loops() )->post_type_query( 'post_type_shows' ) : $data;
+						$show_queery = ( false === $data ) ? ( new LWTV_Features_Loops() )->post_type_query( 'post_type_shows' ) : $data;
 						$allshows    = array();
 
 						if ( $show_queery->have_posts() ) {
@@ -54,7 +54,7 @@ class LWTV_Stats_On_Air {
 						}
 
 						foreach ( $allshows as $post_id ) {
-							$on_air = ( new LWTV_Loops() )->is_show_on_air( $post_id, $year );
+							$on_air = ( new LWTV_Features_Loops() )->is_show_on_air( $post_id, $year );
 							if ( false !== $on_air ) {
 								++$year_queery;
 							}
@@ -101,5 +101,3 @@ class LWTV_Stats_On_Air {
 		return $array;
 	}
 }
-
-new LWTV_Stats_On_Air();

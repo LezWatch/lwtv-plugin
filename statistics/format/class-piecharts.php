@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Piecharts {
+class LWTV_Statistics_Piecharts_Format {
 	/*
 	 * Statistics Display Piecharts
 	 *
@@ -15,24 +15,24 @@ class LWTV_Stats_Piecharts {
 	 *
 	 * @return Content
 	 */
-	public function generate( $subject, $data, $data_array ) {
+	public function make( $subject, $data, $data_array ) {
 		// Strip extra word(s) to make the chart key readable
 		switch ( $data ) {
 			case 'sexuality':
 			case 'dead-sex':
 				$fixname = 'sexual';
-				$count   = ( new LWTV_Stats() )->generate( 'characters', 'all', 'count' );
+				$count   = ( new LWTV_Statistics() )->generate( 'characters', 'all', 'count' );
 				$center  = $count . ' Characters';
 				break;
 			case 'gender':
 			case 'dead-gender':
 				$fixname = 'gender';
-				$count   = ( new LWTV_Stats() )->generate( 'characters', 'all', 'count' );
+				$count   = ( new LWTV_Statistics() )->generate( 'characters', 'all', 'count' );
 				$center  = $count . ' Characters';
 				break;
 			case 'dead-shows':
 				$fixname = 'queers are dead';
-				$count   = ( new LWTV_Stats() )->generate( 'shows', 'all', 'count' );
+				$count   = ( new LWTV_Statistics() )->generate( 'shows', 'all', 'count' );
 				$center  = $count . ' Shows';
 				break;
 			default:
@@ -174,5 +174,3 @@ class LWTV_Stats_Piecharts {
 		<?php
 	}
 }
-
-new LWTV_Stats_Piecharts();

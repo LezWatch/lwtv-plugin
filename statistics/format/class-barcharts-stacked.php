@@ -1,6 +1,6 @@
 <?php
 
-class LWTV_Stats_Barcharts_Stacked {
+class LWTV_Statistics_Barcharts_Stacked_Format {
 	/*
 	 * Statistics Stacked Barcharts
 	 *
@@ -15,7 +15,7 @@ class LWTV_Stats_Barcharts_Stacked {
 	 *
 	 * @return Content
 	 */
-	public function stacked_barcharts( $subject, $data, $data_array ) {
+	public function make( $subject, $data, $data_array ) {
 
 		$count     = count( $data_array );
 		$step_size = '5';
@@ -132,7 +132,7 @@ class LWTV_Stats_Barcharts_Stacked {
 				scales: {
 					x: { stacked: true },
 					y: { stacked: true }
-				}
+				},
 				tooltips: {
 					mode: 'index',
 					intersect: false
@@ -144,5 +144,3 @@ class LWTV_Stats_Barcharts_Stacked {
 		<?php
 	}
 }
-
-new LWTV_Stats_Barcharts_Stacked();
