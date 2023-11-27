@@ -6,16 +6,16 @@
  * and open the template in the editor.
  */
 
-namespace Cmb2Grid\Grid\Group;
+namespace LWTV\Cmb2Grid\Grid\Group;
 
-if ( ! class_exists( '\Cmb2Grid\Grid\Group\GroupColumn' ) ) {
+if ( ! class_exists( 'LWTV\Cmb2Grid\Grid\Group\GroupColumn' ) ) {
 
 	/**
 	 * Description of GroupColumn.
 	 *
 	 * @author Pablo
 	 */
-	class GroupColumn extends \Cmb2Grid\Grid\Column {
+	class GroupColumn extends \LWTV\Cmb2Grid\Grid\Column {
 
 		protected $parentFieldId;
 
@@ -24,13 +24,13 @@ if ( ! class_exists( '\Cmb2Grid\Grid\Group\GroupColumn' ) ) {
 			$field		 = $this->getField();
 			$fieldID	 = $this->getFieldId();
 
-			//\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field->args['fields'][$fieldID], 'before_row' );
-			//\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field->args['fields'][$fieldID], 'after_row' );
-			\Cmb2Grid\Cmb2\Utils::appendGroupFieldArg( $field, $fieldID, 'before_row',  "<div class=\"{$columnClass}\">" );
-			\Cmb2Grid\Cmb2\Utils::appendGroupFieldArg( $field, $fieldID, 'after_row',  "</div>" );
+			//\LWTV\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field->args['fields'][$fieldID], 'before_row' );
+			//\LWTV\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field->args['fields'][$fieldID], 'after_row' );
+			\LWTV\Cmb2Grid\Cmb2\Utils::appendGroupFieldArg( $field, $fieldID, 'before_row',  "<div class=\"{$columnClass}\">" );
+			\LWTV\Cmb2Grid\Cmb2\Utils::appendGroupFieldArg( $field, $fieldID, 'after_row',  "</div>" );
 		}
 
-		public function __construct( $field, \Cmb2Grid\Grid\Cmb2Grid $grid ) {
+		public function __construct( $field, \LWTV\Cmb2Grid\Grid\Cmb2Grid $grid ) {
 
 			if ( is_array( $field ) && isset( $field['class'] ) ) {
 				$this->setColumnClass( $field['class'] );

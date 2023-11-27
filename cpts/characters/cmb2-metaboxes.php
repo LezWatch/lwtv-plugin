@@ -105,7 +105,7 @@ class LWTV_Characters_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_char = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_char_grid );
+			$grid_char = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_char_grid );
 			$row1      = $grid_char->addRow();
 			$row2      = $grid_char->addRow();
 			$row1->addColumns( array( $field_gender, $field_sexuality ) );

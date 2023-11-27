@@ -40,8 +40,8 @@ class Autoload {
 	 */
 	public function autoload( $auto_class ) {
 
-		// Only run for LezWatch
-		if ( ! str_starts_with( $auto_class, 'LWTV_' ) ) {
+		// Only run for LezWatch and not for Forks. There's a reason.
+		if ( ! str_starts_with( $auto_class, 'LWTV_' ) || str_starts_with( $auto_class, 'LWTV_Fork_' ) ) {
 			return;
 		}
 

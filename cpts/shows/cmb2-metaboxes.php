@@ -354,7 +354,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_b_deet = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_b_details );
+			$grid_b_deet = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_b_details );
 			$row1_b_deet = $grid_b_deet->addRow();
 			$row2_b_deet = $grid_b_deet->addRow();
 			$row3_b_deet = $grid_b_deet->addRow();
@@ -408,7 +408,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_c_worth = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_c_worth );
+			$grid_c_worth = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_c_worth );
 			$row_c_worth  = $grid_c_worth->addRow();
 			$row_c_worth->addColumns( array( $field_worththumb, $field_worthdetails ) );
 		}
@@ -453,7 +453,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_d_edit = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_d_editorial );
+			$grid_d_edit = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_d_editorial );
 			$row_d_edit  = $grid_d_edit->addRow();
 			$row_d_edit->addColumns( array( $field_worthshowwelove, $field_byq_override ) );
 		}
@@ -598,7 +598,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_f_plot = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_f_shiplots );
+			$grid_f_plot = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_f_shiplots );
 			$rows_f_plot = $grid_f_plot->addRow();
 			$rows_f_plot->addColumns( array( $field_timeline, $field_episodes ) );
 		}
@@ -698,7 +698,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_g_rate  = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_g_ratings );
+			$grid_g_rate  = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_g_ratings );
 			$rows1_g_rate = $grid_g_rate->addRow();
 			$rows2_g_rate = $grid_g_rate->addRow();
 			$rows3_g_rate = $grid_g_rate->addRow();

@@ -359,7 +359,7 @@ class LWTV_Actors_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_actorside = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_actorside );
+			$grid_actorside = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_actorside );
 			$row1           = $grid_actorside->addRow();
 			$row2           = $grid_actorside->addRow();
 			$row3           = $grid_actorside->addRow();

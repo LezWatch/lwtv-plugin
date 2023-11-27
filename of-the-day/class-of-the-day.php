@@ -224,7 +224,7 @@ class LWTV_Of_The_Day {
 					$show_name = trim( preg_replace( '~\([^)]+\)~', '', $show_post->post_title ) ); // Remove the (2018) from some shows, using ⌘ as delimiter because shows have all sorts of characters.
 					$show_name = str_replace( ' & ', ' and ', $show_name );
 					$show_name = sanitize_title( $show_name );
-					$hashtag   = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) );
+					$hashtag   = '#' . implode( '', array_map( 'ucfirst', explode( '-', $show_name ) ) ) . ' ' . $showsmore;
 				}
 				// Set all shows but we only use the one because Sara Lance.
 				if ( '' !== $all_shows && ! empty( $shows_value ) ) {

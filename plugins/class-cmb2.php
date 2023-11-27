@@ -27,7 +27,7 @@ class LWTV_Plugins_CMB2 {
 		require_once __DIR__ . '/cmb2/cmb2-grid/Cmb2GridPluginLoad.php';
 
 		/* ADDON: Select2 -- FORKED */
-		if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
+		if ( ! class_exists( 'LWTV_Fork_CMB2_Field_Select2' ) ) {
 			require_once __DIR__ . '/cmb2/cmb-field-select2/cmb-field-select2.php';
 		}
 

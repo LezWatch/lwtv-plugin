@@ -1,11 +1,11 @@
 <?php
-namespace Cmb2Grid\Cmb2;
+namespace LWTV\Cmb2Grid\Cmb2;
 /**
  * Description of Utils.
  *
  * @author Pablo Pacheco <pablo.pacheco@origgami.com.br>
  */
-if ( ! class_exists( '\Cmb2Grid\Cmb2\Utils' ) ) {
+if ( ! class_exists( 'LWTV\Cmb2Grid\Cmb2\Utils' ) ) {
 	class Utils {
 
 		public static function initializeFieldArg( \CMB2_Field $field, $arg ) {
