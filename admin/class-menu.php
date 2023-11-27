@@ -33,7 +33,7 @@ class LWTV_Admin_Menu {
 		global $submenu;
 
 		// Add main menu
-		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'read', 'lwtv', array( $this, 'settings_page' ), ( new LWTV_Functions() )->get_icon_svg(), 2 );
+		add_menu_page( 'lwtv-plugin', 'LezWatch.TV', 'read', 'lwtv', array( $this, 'settings_page' ), ( new LWTV_Features() )->get_icon_svg(), 2 );
 
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 

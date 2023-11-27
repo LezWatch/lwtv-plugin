@@ -127,9 +127,9 @@ class LWTV_CPTs_Related_Posts {
 		$tag         = get_tag( $tag_id );
 		$linked_post = get_term_meta( $tag->term_id, 'lez_termsmeta_linked_post', true );
 		$icons       = array(
-			'show'      => ( new LWTV_Functions() )->symbolicons( 'tv-hd.svg', 'fa-tv' ),
-			'actor'     => ( new LWTV_Functions() )->symbolicons( 'team.svg', 'fa-users' ),
-			'character' => ( new LWTV_Functions() )->symbolicons( 'contact-card.svg', 'fa-users' ),
+			'show'      => ( new LWTV_Features() )->symbolicons( 'tv-hd.svg', 'fa-tv' ),
+			'actor'     => ( new LWTV_Features() )->symbolicons( 'team.svg', 'fa-users' ),
+			'character' => ( new LWTV_Features() )->symbolicons( 'contact-card.svg', 'fa-users' ),
 		);
 
 		if ( ! empty( $linked_post ) ) {
@@ -178,9 +178,9 @@ class LWTV_CPTs_Related_Posts {
 				'character' => '',
 			);
 			$icons       = array(
-				'show'      => ( new LWTV_Functions() )->symbolicons( 'tv-hd.svg', 'fa-tv' ),
-				'actor'     => ( new LWTV_Functions() )->symbolicons( 'team.svg', 'fa-users' ),
-				'character' => ( new LWTV_Functions() )->symbolicons( 'contact-card.svg', 'fa-users' ),
+				'show'      => ( new LWTV_Features() )->symbolicons( 'tv-hd.svg', 'fa-tv' ),
+				'actor'     => ( new LWTV_Features() )->symbolicons( 'team.svg', 'fa-users' ),
+				'character' => ( new LWTV_Features() )->symbolicons( 'contact-card.svg', 'fa-users' ),
 			);
 			$related_out = '';
 

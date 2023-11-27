@@ -11,6 +11,7 @@
  * https://affiliate.itunes.apple.com/resources/documentation/basic_affiliate_link_guidelines_for_the_phg_network/
  */
 
+namespace LWTV\Ways_To_Watch;
 
 class LWTV_Ways_To_Watch {
 

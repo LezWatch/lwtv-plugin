@@ -14,16 +14,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-$upload_dir = wp_upload_dir();
-
-if ( ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
-	define( 'LWTV_SYMBOLICONS_PATH', $upload_dir['basedir'] . '/lezpress-icons/symbolicons/' );
-}
-
-if ( ! defined( 'LWTV_SYMBOLICONS_URL' ) ) {
-	define( 'LWTV_SYMBOLICONS_URL', $upload_dir['baseurl'] . '/lezpress-icons/symbolicons/' );
-}
-
 class LWTV_Assets_Symbolicons {
 
 	protected static $version;

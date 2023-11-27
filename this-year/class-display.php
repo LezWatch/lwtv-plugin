@@ -70,8 +70,8 @@ class LWTV_This_Year_Display {
 				// If it's not the oldest year there were queers, we can show the first year we have queers.
 				if ( $this_year !== $start_year ) {
 					?>
-					<li class="page-item first me-auto"><a href="<?php echo esc_url( $baseurl . $start_year . '/' . $view ); ?>" class="page-link"><?php echo ( new LWTV_Functions() )->symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> First (<?php echo (int) $start_year; ?>)</a></li>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year - 1 ) . '/' . $view ); ?>" title="previous year" class="page-link"><?php echo ( new LWTV_Functions() )->symbolicons( 'caret-left.svg', 'fa-chevron-left' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> Previous</a></li>
+					<li class="page-item first me-auto"><a href="<?php echo esc_url( $baseurl . $start_year . '/' . $view ); ?>" class="page-link"><?php echo ( new LWTV_Features() )->symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> First (<?php echo (int) $start_year; ?>)</a></li>
+					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year - 1 ) . '/' . $view ); ?>" title="previous year" class="page-link"><?php echo ( new LWTV_Features() )->symbolicons( 'caret-left.svg', 'fa-chevron-left' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> Previous</a></li>
 					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year - 2 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $this_year - 2 ); ?></a></li>
 					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year - 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $this_year - 1 ); ?></a></li>
 					<?php
@@ -84,8 +84,8 @@ class LWTV_This_Year_Display {
 				if ( gmdate( 'Y' ) !== $this_year ) {
 					?>
 					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year + 1 ) . '/' . $view ); ?>" class="page-link"><?php echo (int) ( $this_year + 1 ); ?></a></li>
-					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year + 1 ) . '/' . $view ); ?>" class="page-link" title="next year">Next <?php echo ( new LWTV_Functions() )->symbolicons( 'caret-right.svg', 'fa-chevron-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></li>
-					<li class="page-item last ms-auto"><a href="<?php echo esc_url( $baseurl . gmdate( 'Y' ) . '/' . $view ); ?>" class="page-link">Last (<?php echo (int) gmdate( 'Y' ); ?>) <?php echo ( new LWTV_Functions() )->symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></li>
+					<li class="page-item"><a href="<?php echo esc_url( $baseurl . ( $this_year + 1 ) . '/' . $view ); ?>" class="page-link" title="next year">Next <?php echo ( new LWTV_Features() )->symbolicons( 'caret-right.svg', 'fa-chevron-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></li>
+					<li class="page-item last ms-auto"><a href="<?php echo esc_url( $baseurl . gmdate( 'Y' ) . '/' . $view ); ?>" class="page-link">Last (<?php echo (int) gmdate( 'Y' ); ?>) <?php echo ( new LWTV_Features() )->symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></li>
 					<?php
 				}
 				?>

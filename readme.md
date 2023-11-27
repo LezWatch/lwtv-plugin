@@ -77,10 +77,19 @@ Pushes to branches are automatically deployed via Github Actions as follows:
 
 The follow is a description of all the files in the code and more or less what they do.
 
-* `functions.php` - Main Plugin file
-    - `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwise defined). Currently 1961.
-* `autoload.php` - Autoloader that allows us to generate whatever we need dynamically
-* `lwtv-plugin.php` - Wrapper for Unit Testing
+* `functions.php` - Main Plugin file. Loads auto-loader, components, and defines.
+
+### Helpers
+
+* `class-autoload.php` - Autoloader that allows us to generate whatever we need dynamically
+    - `add()` - Wrapper to add a component as a class
+    - `autoload()` - Autoloads a class
+    - `parse_folder()` - Converts the class name into a folder
+    - `parse_filename()` - Converts the class name into a file
+    - `last_item()` - Extracts the last item in an array
+    - `str_last_replace()` - Replaces the last instance of a string in a string
+* `class-components.php` - Returns core components
+* `defines.php` - All our defines.
 
 ### Admin Panels
 
@@ -406,10 +415,6 @@ Templates used by the shortcodes and Gutenberg (as well as when included on the 
 * `shows.php` - Show statistics
 * `stations.php` - Networks/Stations statistics
 
-### Tests
-
-Unit Test code (in progress)
-
 ### Theme
 
 Stored in `/theme/` - Code used to generate data for the theme in weird ways. Each class file has a `make()` function that generates the output. Some have sub-sets.
@@ -480,7 +485,7 @@ Stored in `/ways-to-watch/` -- Code to customize Ways to Watch links and add aff
 * `class-ways-to-watch.php` - All global data, such as header/meta and content regex.
 * `class-output.php` - Affiliate links and pretty-fication of services
 
-## WP-CLI
+### WP-CLI
 
 Stored in `/wp-cli/` -- All code for WP-CLI
 
@@ -488,6 +493,14 @@ Stored in `/wp-cli/` -- All code for WP-CLI
 * `cli-calc.php` - Calculations on content (scores, character count, etc) - `wp lwtv CALC [ID]`
 * `cli-check.php` - Data validation checkers - `wp lwtv CHECK [queerchars|wiki] [id]`
 * `cli-generate.php` - Generate custom content - `wp lwtv GENERATE [otd|tvmaze]`
+
+### Tests
+
+Stored in `/tests/ ` -- Unit/Functionality Tests
+
+* `bootstrap.php` - Boostrapper
+* `test-sample.php` - Example
+* `test-ways-to-watch.php` - Ways to Watch
 
 ## Developer Features
 

@@ -116,7 +116,7 @@ class LWTV_Admin_Monitors {
 
 		$return = array(
 			'description' => '<strong><a href="https://tvmaze.com" target="_new">TVMaze</a></strong><br/>Local ICS file, updates daily.',
-			'icon'        => ( new LWTV_Functions() )->symbolicons( $icon['symbolicon'], $icon['font-awesome'], 'symbolicons ' . $icon['class'] ),
+			'icon'        => ( new LWTV_Features() )->symbolicons( $icon['symbolicon'], $icon['font-awesome'], 'symbolicons ' . $icon['class'] ),
 			'status'      => $status,
 		);
 
@@ -198,7 +198,7 @@ class LWTV_Admin_Monitors {
 
 		$return = array(
 			'description' => '<strong><a href="https://gtmetrix.com" target="_new">GTMetrix</a></strong><br/>Remote service, updates scores daily.',
-			'icon'        => ( new LWTV_Functions() )->symbolicons( $icon['symbolicon'], $icon['font-awesome'], 'symbolicons ' . $icon['class'] ),
+			'icon'        => ( new LWTV_Features() )->symbolicons( $icon['symbolicon'], $icon['font-awesome'], 'symbolicons ' . $icon['class'] ),
 			'status'      => $status,
 		);
 
@@ -286,7 +286,7 @@ class LWTV_Admin_Monitors {
 
 		$return = array(
 			'description' => '<strong><a href="https://uptimerobot.com" target="_new">Uptime Robot</a> / <a href="https://status.lezwatchtv.com" target="_new">status.lezwatchtv.com</a></strong><br/>Remote service, tracks uptime live.',
-			'icon'        => ( new LWTV_Functions() )->symbolicons( $icon['symbolicon'], $icon['font-awesome'], 'symbolicons ' . $icon['class'] ),
+			'icon'        => ( new LWTV_Features() )->symbolicons( $icon['symbolicon'], $icon['font-awesome'], 'symbolicons ' . $icon['class'] ),
 			'status'      => $status,
 		);
 

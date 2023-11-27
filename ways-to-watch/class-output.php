@@ -7,6 +7,67 @@
 
 class LWTV_Ways_To_Watch_Output {
 
+	const SUBDOMAINS = array( 'gshow.', 'play.', 'premium.', 'watch.', 'www.' );
+	const TLDS       = array( '.com', '.co.nz', '.co.uk', '.ca', '.cbc', '.co', '.fandom', '.globo', '.go', '.org', '.tv' );
+
+	// URLs that belong to someone else.
+	const OWNER_ARRAY = array(
+		'7eer'                       => 'cbs',
+		'southpark.cc'               => 'cc',
+		'itunes'                     => 'apple',
+		'tv.apple'                   => 'apple',
+		'itunes.apple'               => 'apple',
+		'watch.amazon'               => 'amazon',
+		'disneynow'                  => 'disney',
+		'disneyplus'                 => 'disney',
+		'disneyplusoriginals.disney' => 'disney',
+		'globoplay.globo'            => 'globo',
+		'gshow.globo'                => 'globo',
+		'lobo'                       => 'globo',
+		'lesflicksvod.vhx.tv'        => 'lesflicks',
+		'oprah'                      => 'own',
+		'paus.tv'                    => 'paus',
+		'watch.paus'                 => 'paus',
+		'peacocktv'                  => 'peacock',
+		'paramountplus'              => 'cbs',
+		'primevideo'                 => 'amazon',
+		'sho'                        => 'showtime',
+		'showtimeanytime'            => 'showtime',
+		'youtu.be'                   => 'youtube',
+	);
+
+	// URL and name params based on host.
+	const CUSTOM_DETAILS = array(
+		'acorn.tv'            => 'Acorn',
+		'adultswim'           => 'Adult Swim',
+		'amazon'              => 'Prime Video',
+		'atresplayer'         => 'ATRESPlayer',
+		'apple'               => 'Apple TV+',
+		'bbcamerica'          => 'BBC America',
+		'bet.plus'            => 'BET+',
+		'bifltheseries'       => 'BIFL',
+		'cartoonnetwork'      => 'Cartoon Network',
+		'cc'                  => 'Comedy Central',
+		'cwtv'                => 'The CW',
+		'dcuniverse'          => 'DC Universe',
+		'disney'              => 'Disney+',
+		'hallmarkchannel'     => 'Hallmark Channel',
+		'hbomax'              => 'HBO Max',
+		'lesflicksvod'        => 'LesFlicks',
+		'paus'                => 'paus',
+		'peacock'             => 'Peacock TV (NBC)',
+		'peepoodo.bobbypills' => 'BobbyPills',
+		'reelwomensnetwork'   => 'Reel Women\'s Network',
+		'roosterteeth'        => 'Roster Teeth',
+		'svtvnetwork'         => 'SVtv',
+		'tellofilms'          => 'Tello Films',
+		'tntdrama'            => 'TNT Drama',
+		'youtube'             => 'YouTube',
+		'tvnz'                => 'TVNZ',
+		'tv.line.me'          => 'LineTV',
+		'tv.youtube'          => 'YouTube TV',
+	);
+
 	/**
 	 * Call Custom Affiliate Links
 	 *
@@ -19,194 +80,98 @@ class LWTV_Ways_To_Watch_Output {
 		$links          = self::generate_links( $affiliate_urls );
 		$link_output    = implode( '', $links );
 
-		$icon   = ( new LWTV_Functions() )->symbolicons( 'tv-hd.svg', 'fa-tv' );
+		$icon   = ( new LWTV_Features() )->symbolicons( 'tv-hd.svg', 'fa-tv' );
 		$output = $icon . '<span class="how-to-watch">Ways to Watch:</span> ' . $link_output;
 
 		return $output;
 	}
 
+	/**
+	 * Generate Affiliate URLs
+	 *
+	 * @param  array $affiliate_urls
+	 * @return array
+	 */
 	public function generate_links( $affiliate_urls ) {
 		$links = array();
 
 		// Parse each URL to figure out who it is...
 		foreach ( $affiliate_urls as $url ) {
-			$parsed_url  = wp_parse_url( $url );
-			$hostname    = $parsed_url['host'];
-			$clean_path  = ( isset( $parsed_url['path'] ) ) ? $parsed_url['path'] : '';
-			$clean_query = ( isset( $parsed_url['query'] ) ) ? '/?' . $parsed_url['query'] : '';
-			$clean_url   = $parsed_url['scheme'] . '://' . $parsed_url['host'] . $clean_path . $clean_query;
+			$parsed_url = wp_parse_url( $url );
+			$hostname   = $parsed_url['host'];
 
-			// While I'd love to use an array to trim this stuff, some
-			// people use really weird URLs so we have to hard code.
-			// It catches about 90% of people.
-
-			// Remove common subdomains from the beginning:
-			$subdomain = array( 'www.', 'play.', 'premium.', 'watch.', 'gshow.' );
-			foreach ( $subdomain as $remove ) {
-				$count = strlen( $remove );
-				if ( substr( $hostname, 0, $count ) === $remove ) {
-					$hostname = ltrim( $hostname, $remove );
-				}
-			}
+			// Clean the subdomain.
+			$hostname = $this->clean_subdomain( $hostname );
 
 			// Remove TLDs from the end:
-			$gtldomain = array( '.com', '.co.nz', '.co.uk', '.ca', '.cbc', '.co', '.fandom', '.go', '.org', '.tv', '.globo' );
-			foreach ( $gtldomain as $remove ) {
-				$count = strlen( $remove );
-				if ( substr( $hostname, -$count ) === $remove ) {
-					$hostname = substr( $hostname, 0, -$count );
-				}
-			}
+			$hostname = $this->clean_tlds( $hostname );
 
-			// URLs that belong to someone else.
-			$host_array = array(
-				'7eer'                       => 'cbs',
-				'southpark.cc'               => 'cc',
-				'itunes'                     => 'apple',
-				'tv.apple'                   => 'apple',
-				'itunes.apple'               => 'apple',
-				'watch.amazon'               => 'amazon',
-				'disneynow'                  => 'disney',
-				'disneyplus'                 => 'disney',
-				'disneyplusoriginals.disney' => 'disney',
-				'globoplay.globo'            => 'globo',
-				'gshow.globo'                => 'globo',
-				'lobo'                       => 'globo',
-				'lesflicksvod.vhx.tv'        => 'lesflicks',
-				'oprah'                      => 'own',
-				'paus.tv'                    => 'paus',
-				'watch.paus'                 => 'paus',
-				'peacocktv'                  => 'peacock',
-				'paramountplus'              => 'cbs',
-				'primevideo'                 => 'amazon',
-				'sho'                        => 'showtime',
-				'showtimeanytime'            => 'showtime',
-				'youtu.be'                   => 'youtube',
-			);
+			// Get the slug based on the hostname to array translation.
+			$slug = ( array_key_exists( $hostname, self::OWNER_ARRAY ) ) ? self::OWNER_ARRAY[ $hostname ] : $hostname;
 
-			// URL and name params based on host.
-			$url_array = array(
-				'acorn.tv'            => array(
-					'name' => 'Acorn',
-				),
-				'adultswim'           => array(
-					'name' => 'Adult Swim',
-				),
-				'amazon'              => array(
-					'url'   => $clean_url . 'ref=as_li_tl?ie=UTF8&tag=lezpress-20',
-					'extra' => '<img src="//ir-na.amazon-adsystem.com/e/ir?t=lezpress-20&l=pf4&o=1" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />',
-					'name'  => 'Prime Video',
-				),
-				'atresplayer'         => array(
-					'name' => 'ATRESPlayer',
-				),
-				'apple'               => array(
-					'url'  => $clean_url . '?at=1010lMaT&ct=lwtv',
-					'name' => 'Apple TV+',
-				),
-				'bbcamerica'          => array(
-					'name' => 'BBC America',
-				),
-				'bet.plus'            => array(
-					'name' => 'BET+',
-				),
-				'bifltheseries'       => array(
-					'name' => 'BIFL',
-				),
-				'cartoonnetwork'      => array(
-					'name' => 'Cartoon Network',
-				),
-				'cbs'                 => array(
-					'url'   => 'https://paramountplus.qflm.net/c/1242493/1007327/3065',
-					'extra' => '<img height="0" width="0" src="https://paramountplus.qflm.net/i/1242493/1007327/3065" style="position:absolute;visibility:hidden;" border="0" />',
-					'name'  => 'Paramount+',
-				),
-				'cc'                  => array(
-					'name' => 'Comedy Central',
-				),
-				'cwtv'                => array(
-					'name' => 'The CW',
-				),
-				'dcuniverse'          => array(
-					'name' => 'DC Universe',
-				),
-				'disney'              => array(
-					'name' => 'Disney+',
-				),
-				'hallmarkchannel'     => array(
-					'name' => 'Hallmark Channel',
-				),
-				'hbomax'              => array(
-					'name' => 'HBO Max',
-				),
-				'lesflicksvod'        => array(
-					'name' => 'LesFlicks',
-				),
-				'paus'                => array(
-					'name' => 'paus',
-				),
-				'peacock'             => array(
-					'name' => 'Peacock TV (NBC)',
-				),
-				'peepoodo.bobbypills' => array(
-					'name' => 'BobbyPills',
-				),
-				'reelwomensnetwork'   => array(
-					'name' => 'Reel Women\'s Network',
-				),
-				'roosterteeth'        => array(
-					'name' => 'Roster Teeth',
-				),
-				'svtvnetwork'         => array(
-					'name' => 'SVtv',
-				),
-				'tellofilms'          => array(
-					'name' => 'Tello Films',
-				),
-				'tntdrama'            => array(
-					'name' => 'TNT Drama',
-				),
-				'youtube'             => array(
-					'name' => 'YouTube',
-				),
-				'tvnz'                => array(
-					'name' => 'TVNZ',
-				),
-				'tv.line.me'          => array(
-					'name' => 'LineTV',
-				),
-				'tv.youtube'          => array(
-					'name' => 'YouTube TV',
-				),
-			);
-
-			// Get the slug based on the hostname to host_array.
-			$slug = ( array_key_exists( $hostname, $host_array ) ) ? $host_array[ $hostname ] : $hostname;
-
-			// Set extra based on slug in url_array.
-			// If not set, leave empty.
-			$extra = ( isset( $url_array[ $slug ]['extra'] ) ) ? $url_array[ $slug ]['extra'] : '';
-
-			// Set name based on slug in url_array.
-			// If not set, capitalize string.
+			// Set name based on slug in url_array. If not set, capitalize string.
+			$name = ( isset( self::CUSTOM_DETAILS[ $slug ] ) ) ? self::CUSTOM_DETAILS[ $slug ] : ucfirst( $slug );
 			// If it's three letters, it's always capitalized.
-			$name = ( isset( $url_array[ $slug ]['name'] ) ) ? $url_array[ $slug ]['name'] : ucfirst( $slug );
-			$name = ( ! isset( $url_array[ $slug ]['name'] ) && 3 === strlen( $name ) ) ? strtoupper( $name ) : $name;
+			$name = ( ! isset( self::CUSTOM_DETAILS[ $slug ] ) && 3 === strlen( $name ) ) ? strtoupper( $name ) : $name;
 
-			// Crazy failsafe
+			// Crazy failsafe:
 			if ( empty( $name ) ) {
 				$name = 'Watch Online';
 			}
 
-			// Set URL based on slug in url_array
-			// If not set, use $clean_url
-			$url = ( isset( $url_array[ $slug ]['url'] ) ) ? $url_array[ $slug ]['url'] : $clean_url;
-
 			// Add to the links array.
-			$links[] = '<a href="' . $url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $name . '</a>' . $extra;
+			$links[] = $this->build_link( $url, $name );
 		}
 
 		return $links;
+	}
+
+	/**
+	 * Build formatted link
+	 *
+	 * @param  string $url
+	 * @param  string $name
+	 * @param  string $extra
+	 * @return string
+	 */
+	public function build_link( $url, $name ): string {
+		return '<a href="' . $url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $name . '</a>';
+	}
+
+	/**
+	 * Clean Subdomains
+	 *
+	 * @param  string $hostname
+	 * @return string
+	 */
+	public function clean_subdomain( $hostname ): string {
+		foreach ( self::SUBDOMAINS as $remove ) {
+			$count = strlen( $remove );
+			if ( substr( $hostname, 0, $count ) === $remove ) {
+				$hostname = ltrim( $hostname, $remove );
+				break;
+			}
+		}
+
+		return $hostname;
+	}
+
+	/**
+	 * Clean TLDs off hosts
+	 *
+	 * @param  string $hostname
+	 * @return string
+	 */
+	public function clean_tlds( $hostname ): string {
+		foreach ( self::TLDS as $remove ) {
+			$count = strlen( $remove );
+			if ( substr( $hostname, -$count ) === $remove ) {
+				$hostname = substr( $hostname, 0, -$count );
+				break;
+			}
+		}
+
+		return $hostname;
 	}
 }
 

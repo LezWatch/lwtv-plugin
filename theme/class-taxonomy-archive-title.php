@@ -83,7 +83,7 @@ class LWTV_Theme_Taxonomy_Archive_Title {
 		}
 
 		// Build Icon:
-		$icon = ( new LWTV_Functions() )->symbolicons( $svg, $fa );
+		$icon = ( new LWTV_Features() )->symbolicons( $svg, $fa );
 
 		switch ( $post_type ) {
 			case 'post_type_characters':

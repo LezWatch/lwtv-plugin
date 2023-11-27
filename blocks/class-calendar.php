@@ -112,9 +112,9 @@ class LWTV_Blocks_Calendar {
 
 		// echo previous and next links:
 		$last_week      = add_query_arg( 'tvdate', $last, get_permalink() );
-		$last_week_icon = ( new LWTV_Functions() )->symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' );
+		$last_week_icon = ( new LWTV_Features() )->symbolicons( 'caret-left-circle.svg', 'fa-chevron-circle-left' );
 		$next_week      = add_query_arg( 'tvdate', $next, get_permalink() );
-		$next_week_icon = ( new LWTV_Functions() )->symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' );
+		$next_week_icon = ( new LWTV_Features() )->symbolicons( 'caret-right-circle.svg', 'fa-chevron-circle-right' );
 
 		$navigation = '<nav aria-label="Calendar Navigation" role="navigation" class="yikes-pagination"><ul class="pagination justify-content-center"><li class="page-item first me-auto"><a href="' . $last_week . '" class="page-link">' . $last_week_icon . ' Last Week</a></li>';
 

@@ -2,6 +2,8 @@
 /**
  * Class LWTV_Tests_Ways_To_Watch
  *
+ * Functionality tests for Ways to Watch
+ *
  * @package Lwtv_Plugin
  */
 
@@ -11,15 +13,54 @@
 class LWTV_Tests_Ways_To_Watch extends WP_UnitTestCase {
 
 	/**
-	 * A single example test.
+	 * Test Generate Links
 	 */
-	public function test_CW() {
-		$check_cw = array( 'http://www.cwtv.com/shows/the-100/' );
-		$links_cw = ( new LWTV_Ways_To_Watch_Output() )->generate_links( $check_cw );
+	public function test_generate_links() {
+		$check_url = array( 'http://www.cwtv.com/shows/the-100/' );
+		$links     = ( new LWTV_Ways_To_Watch_Output() )->generate_links( $check_url );
 
-		$output = array( '<a href="http://www.cwtv.com/shows/the-100/" target="_blank" class="btn btn-primary" rel="nofollow">The CW</a>' );
+		$expected = array( '<a href="http://www.cwtv.com/shows/the-100/" target="_blank" class="btn btn-primary" rel="nofollow">The CW</a>' );
 
-		$this->assertNotEmpty( $links_cw );
-		$this->assertSame( $output, $links_cw );
+		$this->assertNotEmpty( $links );
+		$this->assertSame( $expected, $links );
 	}
+
+	/**
+	 * Test Building a link.
+	 */
+	public function test_build_link() {
+		$check_url  = 'http://www.cwtv.com/shows/the-100/';
+		$check_name = 'The CW';
+		$expected   = '<a href="' . $check_url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $check_name . '</a>';
+		$build_link = ( new LWTV_Ways_To_Watch_Output() )->build_link( $check_url, $check_name );
+
+		$this->assertSame( $expected, $build_link );
+	}
+
+	/**
+	 * Test Clean Sub Domain
+	 *
+	 * @return void
+	 */
+	public function test_clean_subdomain() {
+		$check_url    = 'www.cwtv.com';
+		$clean_url    = ( new LWTV_Ways_To_Watch_Output() )->clean_subdomain( $check_url );
+		$expected_url = 'cwtv.com';
+
+		$this->assertSame( $expected_url, $clean_url );
+	}
+
+	/**
+	 * Test Clean Sub Domain
+	 *
+	 * @return void
+	 */
+	public function test_clean_tld() {
+		$check_url    = 'cwtv.com';
+		$clean_url    = ( new LWTV_Ways_To_Watch_Output() )->clean_tlds( $check_url );
+		$expected_url = 'cwtv';
+
+		$this->assertSame( $expected_url, $clean_url );
+	}
+
 }

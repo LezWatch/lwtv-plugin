@@ -5,10 +5,12 @@
  * @package LWTV
  */
 
+namespace LWTV\Helpers;
+
 /**
  * Class Autoload.
  */
-class LWTV_Autoload {
+class Autoload {
 
 	private const SUBFOLDERS = array( 'build', 'format', 'templates' );
 
@@ -17,6 +19,16 @@ class LWTV_Autoload {
 	 */
 	public function __construct() {
 		spl_autoload_register( array( $this, 'autoload' ) );
+	}
+
+	/**
+	 * Add components.
+	 *
+	 * @param  string $components
+	 * @return void
+	 */
+	public function add( $component ) {
+		new $component();
 	}
 
 	/**
@@ -48,13 +60,13 @@ class LWTV_Autoload {
 		$filename = self::parse_filename( $folder, $filename );
 
 		// Path = /theme/class-data-author.php
-		$path = __DIR__ . '/' . $folder . '/' . $filename . '.php';
+		$path = dirname( __DIR__, 1 ) . '/' . $folder . '/' . $filename . '.php';
 
 		// @TODO: Give a better fallback.
 		// If the folder exists but not the path, call the default
-		if ( is_dir( __DIR__ . '/' . $folder . '/' ) && ! file_exists( $path ) ) {
+		if ( is_dir( dirname( __DIR__, 1 ) . '/' . $folder . '/' ) && ! file_exists( $path ) ) {
 			// LWTV_This_Year => /this-year/class-this-year.php
-			$path = __DIR__ . '/' . $folder . '/class-' . $folder . '.php';
+			$path = dirname( __DIR__, 1 ) . '/' . $folder . '/class-' . $folder . '.php';
 		}
 
 		if ( is_readable( $path ) ) {
@@ -86,7 +98,7 @@ class LWTV_Autoload {
 			$subfolder = ( in_array( $end, self::SUBFOLDERS, true ) ) ? '/' . $end : '';
 
 			// If the folder exists, return it and stop.
-			if ( is_dir( __DIR__ . '/' . $folder . $subfolder ) ) {
+			if ( is_dir( dirname( __DIR__, 1 ) . '/' . $folder . $subfolder ) ) {
 				return $folder . $subfolder;
 			}
 
@@ -169,5 +181,3 @@ class LWTV_Autoload {
 		return $subject;
 	}
 }
-
-new LWTV_Autoload();

@@ -23,7 +23,7 @@ class LWTV_Theme_Show_Stars {
 				$color      = $color_term[0]->slug;
 			}
 
-			$icon = ( new LWTV_Functions() )->symbolicons( 'star.svg', 'fa-star' );
+			$icon = ( new LWTV_Features() )->symbolicons( 'star.svg', 'fa-star' );
 			$star = ' <span role="img" aria-label="' . ucfirst( $color ) . ' Star Show" data-bs-target="tooltip" title="' . ucfirst( $color ) . ' Star Show" class="show-star ' . $color . '">' . $icon . '</span>';
 
 			return $star;
