@@ -32,18 +32,16 @@ class LWTV_Statistics_Actor_Char_Dead_Build {
 				),
 			);
 
-			$characters = array();
-
 			// Get array of characters (by ID)
 			$char_array = get_post_meta( $the_id, 'lezactors_char_list', true );
 
 			// If the character list is empty, we must build it
 			if ( empty( $char_array ) ) {
 				// Loop to get the list of characters
-				$charactersloop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+				$characters = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_actor', $the_id, 'LIKE' );
 
-				if ( $charactersloop->have_posts() ) {
-					$char_array = wp_list_pluck( $charactersloop->posts, 'ID' );
+				if ( $characters->have_posts() ) {
+					$char_array = wp_list_pluck( $characters->posts, 'ID' );
 				}
 				wp_reset_query();
 

@@ -197,7 +197,7 @@ class LWTV_Statistics_Taxonomy_Breakdowns_Build {
 							}
 						}
 					} else {
-						$array = self::taxonomy( 'post_type_shows', 'lez_' . $data_main );
+						$array = ( new LWTV_Statistics_Taxonomy_Build() )->make( 'post_type_shows', 'lez_' . $data_main );
 					}
 					break;
 				case 'percentage':
@@ -227,7 +227,7 @@ class LWTV_Statistics_Taxonomy_Breakdowns_Build {
 							);
 						}
 					} else {
-						$array = self::taxonomy( 'post_type_shows', 'lez_' . $data_main );
+						$array = ( new LWTV_Statistics_Taxonomy_Build() )->make( 'post_type_shows', 'lez_' . $data_main );
 					}
 					break;
 				case 'count':
