@@ -20,7 +20,7 @@ class LWTV_This_Year_Characters_List_Build {
 		}
 
 		// Get the loop
-		$loop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $this_year, 'REGEXP' );
+		$loop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $this_year, 'REGEXP' );
 
 		if ( $loop->have_posts() ) {
 			$queery = wp_list_pluck( $loop->posts, 'ID' );

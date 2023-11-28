@@ -216,7 +216,7 @@ class LWTV_Rest_API_Stats_JSON {
 				$stats_array = ( new LWTV_Statistics() )->generate( 'actors', 'actor_sexuality', 'array' );
 				break;
 			case 'complex':
-				$queery = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_actors', $page );
+				$queery = ( new LWTV_Queery_Post_Type() )->make( 'post_type_actors', $page );
 
 				if ( $queery->have_posts() ) {
 					$actors = wp_list_pluck( $queery->posts, 'ID' );
@@ -230,7 +230,7 @@ class LWTV_Rest_API_Stats_JSON {
 						'dead_chars' => get_post_meta( $actor, 'lezactors_dead_count', true ),
 						'gender'     => implode( ', ', wp_get_post_terms( $actor, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
 						'sexuality'  => implode( ', ', wp_get_post_terms( $actor, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-						'queer'      => ( new LWTV_Features_Loops() )->is_actor_queer( $actor ),
+						'queer'      => ( new LWTV_Queery_Is_Actor_Queer() )->make( $actor ),
 						'url'        => get_the_permalink( $actor ),
 					);
 				}
@@ -297,7 +297,7 @@ class LWTV_Rest_API_Stats_JSON {
 				break;
 			case 'complex':
 				$stats_array    = array();
-				$charactersloop = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_characters', $page );
+				$charactersloop = ( new LWTV_Queery_Post_Type() )->make( 'post_type_characters', $page );
 
 				if ( $charactersloop->have_posts() ) {
 					$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
@@ -488,7 +488,7 @@ class LWTV_Rest_API_Stats_JSON {
 				$stats_array = ( new LWTV_Statistics() )->generate( 'shows', 'intersections', 'array' );
 				break;
 			case 'complex':
-				$showsloop = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_shows', $page );
+				$showsloop = ( new LWTV_Queery_Post_Type() )->make( 'post_type_shows', $page );
 
 				if ( $showsloop->have_posts() ) {
 					$shows = wp_list_pluck( $showsloop->posts, 'ID' );
@@ -578,7 +578,7 @@ class LWTV_Rest_API_Stats_JSON {
 					'dead_chars' => get_post_meta( $id, 'lezactors_dead_count', true ),
 					'gender'     => implode( ', ', wp_get_post_terms( $id, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
 					'sexuality'  => implode( ', ', wp_get_post_terms( $id, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-					'queer'      => ( new LWTV_Features_Loops() )->is_actor_queer( $id ),
+					'queer'      => ( new LWTV_Queery_Is_Actor_Queer() )->make( $id ),
 					'url'        => get_the_permalink( $id ),
 				);
 				break;
@@ -688,7 +688,7 @@ class LWTV_Rest_API_Stats_JSON {
 			$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 
 			// Get the posts for this singular term (i.e. a specific station)
-			$queery = ( new LWTV_Features_Loops() )->tax_query( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
+			$queery = ( new LWTV_Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
 
 			if ( $queery->have_posts() ) {
 				$shows_queery = wp_list_pluck( $queery->posts, 'ID' );

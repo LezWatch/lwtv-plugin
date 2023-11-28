@@ -208,7 +208,7 @@ class LWTV_Rest_API_BYQ {
 	public function last_death() {
 		$return = '';
 		// Get all our dead queers
-		$dead_chars_loop  = ( new LWTV_Features_Loops() )->tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+		$dead_chars_loop  = ( new LWTV_Queery_Taxonomy() )->make( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		// Extract the last death
@@ -246,7 +246,7 @@ class LWTV_Rest_API_BYQ {
 		$type        = ( ! in_array( $type, $valid_types, true ) ) ? 'json' : $type;
 
 		// Get all our dead queers
-		$dead_chars_loop  = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
+		$dead_chars_loop  = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_death_year', '', 'EXISTS' );
 		$death_list_array = self::list_of_dead_characters( $dead_chars_loop );
 
 		$died_today_array = array();

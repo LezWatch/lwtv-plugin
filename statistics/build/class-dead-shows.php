@@ -21,14 +21,14 @@ class LWTV_Statistics_Dead_Shows_Build {
 		if ( false === $array ) {
 
 			// Shows With Dead Query
-			$dead_shows_query = ( new LWTV_Features_Loops() )->tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
+			$dead_shows_query = ( new LWTV_Queery_Taxonomy() )->make( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
 			if ( $dead_shows_query->have_posts() ) {
 				$dead_shows = wp_list_pluck( $dead_shows_query->posts, 'ID' );
 				wp_reset_query();
 			}
 
 			// Shows With NO Dead Query
-			$alive_shows_query = ( new LWTV_Features_Loops() )->tax_query( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers', 'NOT IN' );
+			$alive_shows_query = ( new LWTV_Queery_Taxonomy() )->make( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers', 'NOT IN' );
 			if ( $alive_shows_query->have_posts() ) {
 				$alive_shows = wp_list_pluck( $alive_shows_query->posts, 'ID' );
 				wp_reset_query();
@@ -60,7 +60,7 @@ class LWTV_Statistics_Dead_Shows_Build {
 					$show_name = strtolower( $show_name );
 
 					// Loop of characters who MIGHT be in this show
-					$this_show_characters_query = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+					$this_show_characters_query = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 					$fulldeathcount = get_post_meta( $show_id, 'lezshows_dead_count', true );
 					$allcharcount   = get_post_meta( $show_id, 'lezshows_char_count', true );

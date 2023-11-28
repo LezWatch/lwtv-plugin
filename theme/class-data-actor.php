@@ -69,7 +69,7 @@ class LWTV_Theme_Data_Actor {
 		// If the character list is empty, we must build it.
 		if ( empty( $character_array ) ) {
 			// Loop to get the list of characters
-			$charactersloop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $actor_id, 'LIKE' );
+			$charactersloop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_actor', $actor_id, 'LIKE' );
 
 			if ( $charactersloop->have_posts() ) {
 				$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
@@ -130,7 +130,7 @@ class LWTV_Theme_Data_Actor {
 		// If the character list is empty, we must build it
 		if ( empty( $character_array ) ) {
 			// Loop to get the list of characters
-			$charactersloop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $actor_id, 'LIKE' );
+			$charactersloop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_actor', $actor_id, 'LIKE' );
 
 			if ( $charactersloop->have_posts() ) {
 				$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );

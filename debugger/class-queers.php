@@ -32,7 +32,7 @@ class LWTV_Debugger_Queers {
 			}
 		} else {
 			// Get all the characters
-			$the_loop = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_characters' );
+			$the_loop = ( new LWTV_Queery_Post_Type() )->make( 'post_type_characters' );
 
 			if ( $the_loop->have_posts() ) {
 				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
@@ -78,7 +78,7 @@ class LWTV_Debugger_Queers {
 
 				// If ANY actor is flagged as queer, we're queer.
 				foreach ( $character_actors as $actor ) {
-					$actor_queer = ( 'yes' === ( new LWTV_Features_Loops() )->is_actor_queer( $actor ) ) ? true : false;
+					$actor_queer = ( 'yes' === ( new LWTV_Queery_Is_Actor_Queer() )->make( $actor ) ) ? true : false;
 
 					// If queer, we're done!
 					if ( $actor_queer ) {

@@ -31,7 +31,7 @@ class LWTV_Statistics_Taxonomy_Build {
 				$term_link         = get_term_link( $term, $taxonomy );
 				$term_slug         = ( '' === $terms ) ? $term->slug : $terms;
 				$term_name         = ( '' === $terms ) ? $term->name : $term_obj['name'];
-				$count_terms_query = ( new LWTV_Features_Loops() )->tax_query( $post_type, $taxonomy, 'slug', $term_slug, $operator );
+				$count_terms_query = ( new LWTV_Queery_Taxonomy() )->make( $post_type, $taxonomy, 'slug', $term_slug, $operator );
 				$term_count        = $count_terms_query->post_count;
 
 				$array[ $term_slug ] = array(

@@ -37,7 +37,7 @@ class LWTV_Debugger_Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_actors' );
+			$the_loop = ( new LWTV_Queery_Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( $the_loop->have_posts() ) {
@@ -192,7 +192,7 @@ class LWTV_Debugger_Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_actors' );
+			$the_loop = ( new LWTV_Queery_Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( $the_loop->have_posts() ) {
@@ -270,7 +270,7 @@ class LWTV_Debugger_Actors {
 			}
 		} else {
 			// Get all the actors
-			$the_loop = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_actors' );
+			$the_loop = ( new LWTV_Queery_Post_Type() )->make( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
 			if ( $the_loop->have_posts() ) {
@@ -363,7 +363,7 @@ class LWTV_Debugger_Actors {
 				}
 			} else {
 				// Get all the actors
-				$the_loop = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_actors' );
+				$the_loop = ( new LWTV_Queery_Post_Type() )->make( 'post_type_actors' );
 
 				// Add ONLY the IDs to the array.
 				if ( $the_loop->have_posts() ) {

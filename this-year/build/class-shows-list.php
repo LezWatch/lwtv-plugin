@@ -36,7 +36,7 @@ class LWTV_This_Year_Shows_List_Build {
 		$shows_formats = array();
 		$shows_country = array();
 		$counted_shows = 0;
-		$shows_queery  = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_shows' );
+		$shows_queery  = ( new LWTV_Queery_Post_Type() )->make( 'post_type_shows' );
 
 		if ( $shows_queery->have_posts() ) {
 			$shows_array = wp_list_pluck( $shows_queery->posts, 'ID' );

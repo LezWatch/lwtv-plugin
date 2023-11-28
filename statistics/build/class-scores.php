@@ -14,7 +14,7 @@ class LWTV_Statistics_Scores_Build {
 
 		if ( false === $array ) {
 
-			$the_queery = ( new LWTV_Features_Loops() )->post_type_query( $post_type );
+			$the_queery = ( new LWTV_Queery_Post_Type() )->make( $post_type );
 			$array      = array();
 
 			if ( $the_queery->have_posts() ) {

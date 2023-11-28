@@ -283,10 +283,10 @@ class LWTV_Statistics {
 			// Build Pre-Array based on station or nation
 			switch ( $details[0] ) {
 				case 'stations':
-					$prearray = ( new LWTV_Features_Loops() )->tax_query( 'post_type_shows', 'lez_stations', 'slug', $minor );
+					$prearray = ( new LWTV_Queery_Taxonomy() )->make( 'post_type_shows', 'lez_stations', 'slug', $minor );
 					break;
 				case 'country':
-					$prearray = ( new LWTV_Features_Loops() )->tax_query( 'post_type_shows', 'lez_country', 'slug', $minor );
+					$prearray = ( new LWTV_Queery_Taxonomy() )->make( 'post_type_shows', 'lez_country', 'slug', $minor );
 					break;
 			}
 
@@ -315,7 +315,7 @@ class LWTV_Statistics {
 	 * @return array        [total number, on-air, total score, on-air score]
 	 */
 	public function count_shows( $type, $tax, $term ) {
-		$queery = ( new LWTV_Features_Loops() )->tax_query( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
+		$queery = ( new LWTV_Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
 		$return = 0;
 
 		// Create the date with regards to timezones

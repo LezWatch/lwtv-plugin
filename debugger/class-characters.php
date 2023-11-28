@@ -33,7 +33,7 @@ class LWTV_Debugger_Characters {
 			}
 		} else {
 			// Get all the characters
-			$the_loop = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_characters' );
+			$the_loop = ( new LWTV_Queery_Post_Type() )->make( 'post_type_characters' );
 
 			if ( $the_loop->have_posts() ) {
 				$characters = wp_list_pluck( $the_loop->posts, 'ID' );

@@ -175,7 +175,7 @@ class LWTV_Rest_API_Export_JSON {
 		$return = array();
 
 		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
-			$the_loop = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_' . $item );
+			$the_loop = ( new LWTV_Queery_Post_Type() )->make( 'post_type_' . $item );
 			if ( $the_loop->have_posts() ) {
 				while ( $the_loop->have_posts() ) {
 					$the_loop->the_post();
@@ -212,7 +212,7 @@ class LWTV_Rest_API_Export_JSON {
 		$return = array();
 
 		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
-			$the_loop = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_' . $item );
+			$the_loop = ( new LWTV_Queery_Post_Type() )->make( 'post_type_' . $item );
 			if ( $the_loop->have_posts() ) {
 				while ( $the_loop->have_posts() ) {
 					$the_loop->the_post();
@@ -329,7 +329,7 @@ class LWTV_Rest_API_Export_JSON {
 	 * @return array
 	 */
 	public function get_full_list_characters( $group, $term ) {
-		$the_loop = ( new LWTV_Features_Loops() )->tax_query( 'post_type_characters', 'lez_' . $group, 'slug', $term );
+		$the_loop = ( new LWTV_Queery_Taxonomy() )->make( 'post_type_characters', 'lez_' . $group, 'slug', $term );
 
 		if ( $the_loop->have_posts() ) {
 			$characters_list = wp_list_pluck( $the_loop->posts, 'ID' );

@@ -305,7 +305,7 @@ class LWTV_CPT_Characters {
 		// If the character list is empty, we must build it
 		if ( ! isset( $characters ) || empty( $characters ) ) {
 			// Loop to get the list of characters
-			$charactersloop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			$charactersloop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 			if ( $charactersloop->have_posts() ) {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
@@ -375,7 +375,7 @@ class LWTV_CPT_Characters {
 							// (i.e. the one listed first). If THEY are QIRL, the show gets points.
 							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
 								$top_actor = reset( $actors_ids );
-								if ( 'yes' === ( new LWTV_Features_Loops() )->is_actor_queer( $top_actor ) ) {
+								if ( 'yes' === ( new LWTV_Queery_Is_Actor_Queer() )->make( $top_actor ) ) {
 									++$char_counts['quirl'];
 								}
 							}
@@ -388,7 +388,7 @@ class LWTV_CPT_Characters {
 
 							// If an actor is transgender, we get an extra bonus.
 							foreach ( $actors_ids as $actor ) {
-								if ( 'yes' === ( new LWTV_Features_Loops() )->is_actor_trans( $actor ) ) {
+								if ( 'yes' === ( new LWTV_Queery_Is_Actor_Trans() )->make( $actor ) ) {
 									++$char_counts['txirl'];
 								}
 							}
@@ -488,7 +488,7 @@ class LWTV_CPT_Characters {
 		// If the character list is empty, we must build it
 		if ( empty( $characters ) ) {
 			// Loop to get the list of characters
-			$charactersloop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			$charactersloop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 			if ( $charactersloop->have_posts() ) {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );

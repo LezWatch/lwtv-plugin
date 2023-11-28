@@ -24,7 +24,7 @@ class LWTV_Statistics_Dead_Meta_Tax_Build {
 			$array = array();
 
 			foreach ( $meta_array as $value ) {
-				$query           = ( new LWTV_Features_Loops() )->post_meta_and_tax_query( $post_type, $key, $value, $taxonomy, 'slug', $field );
+				$query           = ( new LWTV_Queery_Post_Meta_And_Tax() )->make( $post_type, $key, $value, $taxonomy, 'slug', $field );
 				$array[ $value ] = array(
 					'count' => $query->post_count,
 					'name'  => ucfirst( $value ),

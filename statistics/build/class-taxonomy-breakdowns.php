@@ -80,7 +80,7 @@ class LWTV_Statistics_Taxonomy_Breakdowns_Build {
 			// This is the display name (used by stacked barcharts).
 			$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 			// Get the posts.
-			$queery = ( new LWTV_Features_Loops() )->tax_query( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
+			$queery = ( new LWTV_Queery_Taxonomy() )->make( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
 
 			if ( $queery->have_posts() ) {
 				$all_shows = wp_list_pluck( $queery->posts, 'ID' );

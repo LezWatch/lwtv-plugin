@@ -390,7 +390,7 @@ class LWTV_Shows_Calculate {
 		// If the character list is empty, we must build it
 		if ( empty( $characters ) ) {
 			// Loop to get the list of characters
-			$charactersloop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
+			$charactersloop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
 
 			if ( $charactersloop->have_posts() ) {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );

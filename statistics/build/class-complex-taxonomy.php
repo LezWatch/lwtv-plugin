@@ -45,7 +45,7 @@ class LWTV_Statistics_Complex_Taxonomy_Build {
 						$array['not_queer']['count'] = ( $count - $array['queer']['count'] );
 						break;
 					case 'actors':
-						$all_actors_query = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_actors' );
+						$all_actors_query = ( new LWTV_Queery_Post_Type() )->make( 'post_type_actors' );
 						if ( $all_actors_query->have_posts() ) {
 							$char_array = wp_list_pluck( $all_actors_query->posts, 'ID' );
 							wp_reset_query();
@@ -53,7 +53,7 @@ class LWTV_Statistics_Complex_Taxonomy_Build {
 
 						if ( is_array( $char_array ) ) {
 							foreach ( $char_array as $the_id ) {
-								$is_queer = ( new LWTV_Features_Loops() )->is_actor_queer( $the_id );
+								$is_queer = ( new LWTV_Queery_Is_Actor_Queer() )->make( $the_id );
 
 								// And now we set the numbers!
 								switch ( $is_queer ) {
@@ -76,7 +76,7 @@ class LWTV_Statistics_Complex_Taxonomy_Build {
 					$term_link           = get_term_link( $term, $data );
 					$term_slug           = $term->slug;
 					$term_name           = $term->name;
-					$count_terms_queery  = ( new LWTV_Features_Loops() )->tax_query( $post_type, 'lez_' . $data, 'slug', $term_slug, 'IN' );
+					$count_terms_queery  = ( new LWTV_Queery_Taxonomy() )->make( $post_type, 'lez_' . $data, 'slug', $term_slug, 'IN' );
 					$term_count          = $count_terms_queery->post_count;
 					$array[ $term_slug ] = array(
 						'count' => $term_count,

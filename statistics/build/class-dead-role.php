@@ -16,7 +16,7 @@ class LWTV_Statistics_Dead_Role_Build {
 
 		if ( false === $array ) {
 			$array        = array();
-			$all_the_dead = ( new LWTV_Features_Loops() )->tax_query( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
+			$all_the_dead = ( new LWTV_Queery_Taxonomy() )->make( 'post_type_characters', 'lez_cliches', 'slug', 'dead' );
 			$by_role      = array(
 				'regular'   => 0,
 				'guest'     => 0,

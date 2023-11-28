@@ -18,7 +18,7 @@ class LWTV_Statistics_Dead_Taxonomy_Build {
 		$taxonomies = get_terms( $taxonomy );
 
 		foreach ( $taxonomies as $term ) {
-			$queery = ( new LWTV_Features_Loops() )->tax_two_query( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
+			$queery = ( new LWTV_Queery_Tax_Two() )->make( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
 
 			$array[ $term->slug ] = array(
 				'count' => $queery->post_count,

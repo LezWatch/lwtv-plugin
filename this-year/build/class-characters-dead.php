@@ -20,7 +20,7 @@ class LWTV_This_Year_Characters_Dead_Build {
 		}
 
 		// Otherwise we have no array and must build.
-		$dead_loop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', $this_year, 'REGEXP' );
+		$dead_loop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_death_year', $this_year, 'REGEXP' );
 		wp_reset_query();
 
 		if ( ! $dead_loop->have_posts() ) {

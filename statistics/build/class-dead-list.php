@@ -14,7 +14,7 @@ class LWTV_Statistics_Dead_List_Build {
 
 		if ( false === $array ) {
 			$array     = array();
-			$dead_loop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_death_year', '', '!=' );
+			$dead_loop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_death_year', '', '!=' );
 
 			if ( $dead_loop->have_posts() ) {
 				$queery = wp_list_pluck( $dead_loop->posts, 'ID' );

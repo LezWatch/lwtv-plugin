@@ -22,7 +22,7 @@ class LWTV_Statistics_Actor_Chars_Build {
 		if ( false === $array ) {
 
 			// list of people
-			$all_query = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_' . $type );
+			$all_query = ( new LWTV_Queery_Post_Type() )->make( 'post_type_' . $type );
 
 			if ( $all_query->have_posts() ) {
 				$all_array = wp_list_pluck( $all_query->posts, 'ID' );

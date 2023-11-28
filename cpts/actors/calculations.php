@@ -38,7 +38,7 @@ class LWTV_Actors_Calculate {
 		if ( empty( $characters ) || 0 === count( $characters ) ) {
 
 			// Loop to get the list of characters:
-			$charactersloop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+			$charactersloop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
 
 			// We only need the IDs:
 			if ( $charactersloop->have_posts() ) {
@@ -121,7 +121,7 @@ class LWTV_Actors_Calculate {
 		// Calculate meta:
 		$all_chars  = self::count( $post_id, 'count' );
 		$dead_chars = self::count( $post_id, 'dead' );
-		$is_queer   = ( 'yes' === ( new LWTV_Features_Loops() )->is_actor_queer( $post_id ) ) ? true : false;
+		$is_queer   = ( 'yes' === ( new LWTV_Queery_Is_Actor_Queer() )->make( $post_id ) ) ? true : false;
 
 		// Update Meta:
 		update_post_meta( $post_id, 'lezactors_char_count', $all_chars );

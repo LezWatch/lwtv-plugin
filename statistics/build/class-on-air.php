@@ -40,11 +40,11 @@ class LWTV_Statistics_On_Air_Build {
 				switch ( $post_type ) {
 					case 'post_type_characters':
 						// It doesn't matter which show they're on, just that they're on that year.
-						$year_queery = ( false === $data ) ? ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $year, 'LIKE' ) : $data;
+						$year_queery = ( false === $data ) ? ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $year, 'LIKE' ) : $data;
 						break;
 					case 'post_type_shows':
 						$year_queery = 0;
-						$show_queery = ( false === $data ) ? ( new LWTV_Features_Loops() )->post_type_query( 'post_type_shows' ) : $data;
+						$show_queery = ( false === $data ) ? ( new LWTV_Queery_Post_Type() )->make( 'post_type_shows' ) : $data;
 						$allshows    = array();
 
 						if ( $show_queery->have_posts() ) {
@@ -54,7 +54,7 @@ class LWTV_Statistics_On_Air_Build {
 						}
 
 						foreach ( $allshows as $post_id ) {
-							$on_air = ( new LWTV_Features_Loops() )->is_show_on_air( $post_id, $year );
+							$on_air = ( new LWTV_Queery_Is_Show_On_Air() )->make( $post_id, $year );
 							if ( false !== $on_air ) {
 								++$year_queery;
 							}

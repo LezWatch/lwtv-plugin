@@ -23,7 +23,7 @@ class LWTV_Statistics_Meta_Build {
 
 			$array = array();
 			foreach ( $meta_array as $value ) {
-				$meta_query      = ( new LWTV_Features_Loops() )->post_meta_query( $post_type, $key, $value, $compare );
+				$meta_query      = ( new LWTV_Queery_Post_Meta() )->make( $post_type, $key, $value, $compare );
 				$array[ $value ] = array(
 					'count' => $meta_query->post_count,
 					'name'  => ucfirst( $value ),

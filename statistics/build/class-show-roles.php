@@ -19,7 +19,7 @@ class LWTV_Statistics_Show_Roles_Build {
 			$array = array();
 
 			// List of shows
-			$all_shows_query = ( new LWTV_Features_Loops() )->post_type_query( 'post_type_shows' );
+			$all_shows_query = ( new LWTV_Queery_Post_Type() )->make( 'post_type_shows' );
 
 			if ( $all_shows_query->have_posts() ) {
 				$show_array = wp_list_pluck( $all_shows_query->posts, 'ID' );
@@ -39,7 +39,7 @@ class LWTV_Statistics_Show_Roles_Build {
 					$show_name = preg_replace( '/\s*/', '', get_the_title( $show_id ) );
 					$show_name = strtolower( $show_name );
 
-					$role_loop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+					$role_loop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
 					if ( $role_loop->have_posts() ) {
 

@@ -113,7 +113,7 @@ class LWTV_Features_Shortcodes {
 		}
 
 		// Death count
-		$death_query       = ( new LWTV_Features_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+		$death_query       = ( new LWTV_Queery_Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 		$death_list_array  = ( new LWTV_Rest_API_BYQ() )->list_of_dead_characters( $death_query );
 		$death_query_count = 0;
 		foreach ( $death_list_array as $the_dead ) {

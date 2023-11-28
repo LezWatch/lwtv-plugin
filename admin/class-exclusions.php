@@ -219,7 +219,7 @@ class LWTV_Admin_Exclusions {
 	 * Loop through the results and remove posts that aren't undefined.
 	 */
 	public static function queery_loop( $post_type, $meta ) {
-		$queery_loop = ( new LWTV_Features_Loops() )->post_meta_query( $post_type, $meta, '', 'EXISTS' );
+		$queery_loop = ( new LWTV_Queery_Post_Meta() )->make( $post_type, $meta, '', 'EXISTS' );
 		$queery      = array();
 
 		if ( $queery_loop->have_posts() ) {

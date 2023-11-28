@@ -33,7 +33,7 @@ class LWTV_Statistics_Dead_Year_Build {
 			}
 
 			foreach ( $year_deathlist_array as $year ) {
-				$year_death_query = ( new LWTV_Features_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+				$year_death_query = ( new LWTV_Queery_Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $year, 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 
 				$array[ $year ] = array(
 					'name'  => $year,

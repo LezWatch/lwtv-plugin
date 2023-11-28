@@ -215,17 +215,6 @@ Stored in `/features/` -- a collection of miscellaneous features.
 * `class-grading.php` - Build and format array for displaying show scores including 3rd parties.
 * `class-ics-parser.php` - Connection to the ICS Parser for calendar data.
 * `class-languages.php` - Support for multiple languages in a dropdown (used by Shows for alt show names)
-* `class-loops.php` - `class LWTV_Features_Loops` - Custom arrays and WP_Query calls that are repeated in multiple places.
-    - `is_actor_queer()` - Determine if actor is queer (yes/no)
-    - `is_actor_trans()` - Determine if an actor is trans (called by is queer) (yes/no)
-    - `is_show_on_air()` - Determine if a show is on air or not (bool)
-    - `tax_query()` - Taxonomy Array
-    - `tax_two_query()` - Taxonomy Two Array is used for generating a query of posts that are in two taxonomies
-    - `post_meta_query()` - Post Meta Array returns the whole post data. Can handle compares and likes
-    - `wp_meta_query()` - SQL version of meta query _(not currently used)_
-    - `post_type_query()` - Generate an object of all posts in a specific post type.
-    - `post_meta_and_tax_query()` - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
-    - `related_posts_by_tag()` - Related Posts by Tags.
 * `class-private-posts.php` - Shows alert that a page is hidden if the post is set private.
 * `class-roles.php` - Custom roles created for curation of content
 * `class-shortcodes.php` - Various shortcodes - mostly deprecated, but some used by blocks.
@@ -245,12 +234,6 @@ Stored in `/features/` -- a collection of miscellaneous features.
 * `class-transients.php` - Wrapper code for Transients so when you dev-test, you get updated content.
 * `class-upgrades.php` - Handle upgrades of WP and everything included.
 * `class-user-profiles.php` - Custom profile code
-
-### Node Scripts
-
-Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`). _This is removed by the builder script when pushed to production._
-
-* `postinstall.js` - script run at the end of NPM to move files to the correct location.
 
 ### Of The Day
 
@@ -307,6 +290,21 @@ The file `_main.php` acts as an autoloader.
     - Protection from spammers via disallowed keys
 * `class-related-posts-by-taxonomy.php` - Filters to allow a custom layout for "Shows Like This"
 * `class-yoast.php` - Custom Yoast controls
+
+### Queery
+
+Stored in `/queery/` - Custom arrays and WP_Query calls that are repeated in multiple places.
+
+* `class-is-actor-queer.php` - Determine if actor is queer (yes/no)
+* `class-is-actor-trans.php` - Determine if an actor is trans (yes/no)
+* `class-is-show-on-air.php` - Determine if a show is on air or not (bool)
+* `class-tax-query.php` - Taxonomy Array
+* `class-tax-two-query.php` - Taxonomy Two Array is used for generating a query of posts that are in two taxonomies
+* `class-post-meta-query.php` - Post Meta Array returns the whole post data. Can handle compares and likes
+* `class-wp-meta-query.php` - SQL version of meta query _(not currently used)_
+* `class-post-type-query.php` - Generate an object of all posts in a specific post type.
+* `class-post-meta-and-tax-query.php` - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
+* `class-related-posts-by-tag.php` - Related Posts by Tags.
 
 ### Rest API
 
@@ -501,6 +499,13 @@ Stored in `/tests/ ` -- Unit/Functionality Tests
 * `bootstrap.php` - Boostrapper
 * `test-sample.php` - Example
 * `test-ways-to-watch.php` - Ways to Watch
+
+### Node Scripts
+
+Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`). _This is removed by the builder script when pushed to production._
+
+* `postinstall.js` - script run at the end of NPM to move files to the correct location.
+
 
 ## Developer Features
 

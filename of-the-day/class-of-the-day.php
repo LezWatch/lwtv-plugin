@@ -503,7 +503,7 @@ class LWTV_Of_The_Day {
 	public function birthday( $date = '', $format = 'default' ) {
 
 		// Get all our birthdays
-		$actor_loop = ( new LWTV_Features_Loops() )->post_meta_query( 'post_type_actors', 'lezactors_birth', $date, 'LIKE' );
+		$actor_loop = ( new LWTV_Queery_Post_Meta() )->make( 'post_type_actors', 'lezactors_birth', $date, 'LIKE' );
 
 		if ( $actor_loop->have_posts() ) {
 			foreach ( $actor_loop->posts as $actor ) {

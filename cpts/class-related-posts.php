@@ -33,7 +33,7 @@ class LWTV_CPTs_Related_Posts {
 			return;
 		}
 
-		$related_post_loop = ( new LWTV_Features_Loops() )->related_posts_by_tag( 'post', $slug );
+		$related_post_loop = ( new LWTV_Queery_Related_Posts_By_Tag() )->make( 'post', $slug );
 
 		if ( $related_post_loop->have_posts() ) {
 			$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
@@ -88,7 +88,7 @@ class LWTV_CPTs_Related_Posts {
 			return array();
 		}
 
-		$related_post_loop  = ( new LWTV_Features_Loops() )->related_posts_by_tag( 'post', $slug );
+		$related_post_loop  = ( new LWTV_Queery_Related_Posts_By_Tag() )->make( 'post', $slug );
 		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
 		$related_post_query = array_unique( $related_post_query );
 		return $related_post_query;
