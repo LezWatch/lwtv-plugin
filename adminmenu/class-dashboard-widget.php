@@ -10,7 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_AdminPanels_Dashboard_Widget {
+class LWTV_AdminMenu_Dashboard_Widget {
 
 	/*
 	 * Construct
@@ -63,4 +63,4 @@ class LWTV_AdminPanels_Dashboard_Widget {
 	}
 }
 
-new LWTV_AdminPanels_Dashboard_Widget();
+new LWTV_AdminMenu_Dashboard_Widget();

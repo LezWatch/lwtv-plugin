@@ -31,8 +31,8 @@ class Components {
 			// Debugger
 			'LWTV_Debugger',
 			// Admin Menus
-			'LWTV_AdminPanels_Menu',
-			'LWTV_AdminPanels_Dashboard_Widget',
+			'LWTV_AdminMenu_Menu',
+			'LWTV_AdminMenu_Dashboard_Widget',
 			// Statistics
 			'LWTV_Statistics',
 			'LWTV_This_Year',

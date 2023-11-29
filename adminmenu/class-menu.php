@@ -9,7 +9,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_AdminPanels_Menu {
+class LWTV_AdminMenu_Menu {
 
 	/**
 	 * Local Variables
@@ -37,21 +37,22 @@ class LWTV_AdminPanels_Menu {
 
 		add_submenu_page( 'lwtv', 'Welcome', 'Welcome', 'read', 'lwtv', array( $this, 'settings_page' ) );
 
-		if ( class_exists( 'LWTV_AdminPanels_Validation' ) ) {
-			add_submenu_page( 'lwtv', 'Data Validation', 'Data Validation', 'upload_files', 'lwtv_data_check', 'LWTV_AdminPanels_Validation::settings_page' );
+		if ( class_exists( 'LWTV_AdminMenu_Validation' ) ) {
+			add_submenu_page( 'lwtv', 'Data Validation', 'Data Validation', 'upload_files', 'lwtv_data_check', 'LWTV_AdminMenu_Validation::settings_page' );
 		}
 
-		if ( class_exists( 'LWTV_AdminPanels_Monitors' ) ) {
-			add_submenu_page( 'lwtv', 'Monitor Status', 'Monitor Status', 'upload_files', 'lwtv_monitor_check', 'LWTV_AdminPanels_Monitors::settings_page' );
+		if ( class_exists( 'LWTV_AdminMenu_Monitors' ) ) {
+			add_submenu_page( 'lwtv', 'Monitor Status', 'Monitor Status', 'upload_files', 'lwtv_monitor_check', 'LWTV_AdminMenu_Monitors::settings_page' );
 		}
 
 		// Only admins can access this part:
-		if ( class_exists( 'LWTV_AdminPanels_Exclusions' ) && current_user_can( 'activate_plugins' ) ) {
-			add_submenu_page( 'lwtv', 'Exclusion Checker', 'Exclusion Checker', 'activate_plugins', 'lwtv_exclusion_check', 'LWTV_AdminPanels_Exclusions::settings_page' );
+		if ( class_exists( 'LWTV_AdminMenu_Exclusions' ) && current_user_can( 'activate_plugins' ) ) {
+			add_submenu_page( 'lwtv', 'Exclusion Checker', 'Exclusion Checker', 'activate_plugins', 'lwtv_exclusion_check', 'LWTV_AdminMenu_Exclusions::settings_page' );
 		}
 
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$submenu['lwtv'][] = array( 'Documentation', 'read', esc_url( 'https://docs.lezwatchtv.com/' ) );
+
 		//phpcs:ignore WordPress.WP.GlobalVariablesOverride
 		$submenu['lwtv'][] = array( 'Slack', 'read', esc_url( 'https://lezwatchtv.slack.com/' ) );
 	}
@@ -60,10 +61,6 @@ class LWTV_AdminPanels_Menu {
 	 * Settings Page Content
 	 */
 	public function settings_page() {
-		// Get the active tab for later
-		// phpcs:ignore WordPress.Security.NonceVerification
-		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'intro';
-
 		?>
 		<div class="wrap">
 
@@ -82,17 +79,17 @@ class LWTV_AdminPanels_Menu {
 				<ul>
 				<?php
 				// Validation Code
-				if ( class_exists( 'LWTV_AdminPanels_Validation' ) ) {
+				if ( class_exists( 'LWTV_AdminMenu_Validation' ) ) {
 					echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=lwtv_data_check' ) ) . '">Data Validation</a></li>';
 				}
 
 				// Monitors
-				if ( class_exists( 'LWTV_AdminPanels_Monitors' ) ) {
+				if ( class_exists( 'LWTV_AdminMenu_Monitors' ) ) {
 					echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=lwtv_monitor_check' ) ) . '">Monitor Status</a></li>';
 				}
 
 				// Only admins can access this part:
-				if ( class_exists( 'LWTV_AdminPanels_Exclusions' ) && current_user_can( 'activate_plugins' ) ) {
+				if ( class_exists( 'LWTV_AdminMenu_Exclusions' ) && current_user_can( 'activate_plugins' ) ) {
 					echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=lwtv_exclusion_check' ) ) . '">Exclusion Checker</a></li>';
 				}
 				?>

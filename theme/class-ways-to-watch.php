@@ -5,13 +5,13 @@
  *
  */
 
-class LWTV_Ways_To_Watch_Output {
+class LWTV_Theme_Ways_To_Watch {
 
 	const SUBDOMAINS = array( 'gshow.', 'play.', 'premium.', 'watch.', 'www.' );
 	const TLDS       = array( '.com', '.co.nz', '.co.uk', '.ca', '.cbc', '.co', '.fandom', '.globo', '.go', '.org', '.tv' );
 
 	// URLs that belong to someone else.
-	const OWNER_ARRAY = array(
+	const URL_OWNER = array(
 		'7eer'                       => 'cbs',
 		'southpark.cc'               => 'cc',
 		'itunes'                     => 'apple',
@@ -37,7 +37,7 @@ class LWTV_Ways_To_Watch_Output {
 	);
 
 	// URL and name params based on host.
-	const CUSTOM_DETAILS = array(
+	const PRETTY_NAME = array(
 		'acorn.tv'            => 'Acorn',
 		'adultswim'           => 'Adult Swim',
 		'amazon'              => 'Prime Video',
@@ -51,6 +51,7 @@ class LWTV_Ways_To_Watch_Output {
 		'cwtv'                => 'The CW',
 		'dcuniverse'          => 'DC Universe',
 		'disney'              => 'Disney+',
+		'globaltv'            => 'GlobalTV',
 		'hallmarkchannel'     => 'Hallmark Channel',
 		'hbomax'              => 'HBO Max',
 		'lesflicksvod'        => 'LesFlicks',
@@ -107,17 +108,10 @@ class LWTV_Ways_To_Watch_Output {
 			$hostname = $this->clean_tlds( $hostname );
 
 			// Get the slug based on the hostname to array translation.
-			$slug = ( array_key_exists( $hostname, self::OWNER_ARRAY ) ) ? self::OWNER_ARRAY[ $hostname ] : $hostname;
+			$slug = ( array_key_exists( $hostname, self::URL_OWNER ) ) ? self::URL_OWNER[ $hostname ] : $hostname;
 
-			// Set name based on slug in url_array. If not set, capitalize string.
-			$name = ( isset( self::CUSTOM_DETAILS[ $slug ] ) ) ? self::CUSTOM_DETAILS[ $slug ] : ucfirst( $slug );
-			// If it's three letters, it's always capitalized.
-			$name = ( ! isset( self::CUSTOM_DETAILS[ $slug ] ) && 3 === strlen( $name ) ) ? strtoupper( $name ) : $name;
-
-			// Crazy failsafe:
-			if ( empty( $name ) ) {
-				$name = 'Watch Online';
-			}
+			// Clean the name
+			$name = $this->clean_name( $slug );
 
 			// Add to the links array.
 			$links[] = $this->build_link( $url, $name );
@@ -173,6 +167,27 @@ class LWTV_Ways_To_Watch_Output {
 
 		return $hostname;
 	}
+
+	/**
+	 * Clean the pretty name based on the slug
+	 *
+	 * @param  string $slug
+	 * @return string
+	 */
+	private function clean_name( string $slug ): string {
+		// Set name based on slug in url_array. If not set, capitalize string.
+		$name = ( isset( self::PRETTY_NAME[ $slug ] ) ) ? self::PRETTY_NAME[ $slug ] : ucfirst( $slug );
+
+		// If it's three letters, it's always capitalized.
+		$name = ( ! isset( self::PRETTY_NAME[ $slug ] ) && 3 === strlen( $name ) ) ? strtoupper( $name ) : $name;
+
+		// Crazy failsafe:
+		if ( empty( $name ) ) {
+			$name = 'Watch Online';
+		}
+
+		return $name;
+	}
 }
 
-new LWTV_Ways_To_Watch_Output();
+new LWTV_Theme_Ways_To_Watch();

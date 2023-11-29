@@ -71,7 +71,7 @@ class LWTV_Blocks_Serverside {
 	 */
 	public function render_tvshow_calendar() {
 		// Require the calendar file
-		$return = ( new LWTV_Blocks_Calendar() )->output();
+		$return = ( new LWTV_Calendar_Blocks() )->make();
 		return $return;
 	}
 
@@ -79,6 +79,8 @@ class LWTV_Blocks_Serverside {
 	 * Render private blocks
 	 *
 	 * This requires some Dom Massaging.
+	 *
+	 * @TODO: Convert to new HTML API?
 	 */
 	public function render_private_blocks( $attributes, $content ) {
 

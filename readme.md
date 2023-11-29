@@ -91,15 +91,27 @@ The follow is a description of all the files in the code and more or less what t
 * `class-components.php` - Returns core components
 * `defines.php` - All our defines.
 
-### Admin Panels
+### Admin Menu
 
-Stored in `/adminpanels/` -- Makes admin panels
+Stored in `/adminmenu/` -- Makes admin menu items and dashboard widget
 
 * `class-menu.php` - Basic Menu
-* `class-dashboard.php` - Powers wp-admin dashboard code
+* `class-dashboard-widget.php` - Adds widget to wp-admin dashboard
 * `class-exclusions.php` - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
 * `class-monitors.php` - Services monitored (runs daily)
 * `class-validation.php` - Data consistency checks (each one runs weekly)
+
+_Build (`/build/`)_
+
+* `class-validate-actor-checker.php` - Check actors for valid data
+* `class-validate-actor-empty.php` - Check actors empty required data
+* `class-validate-actor-imdb.php` - List actors missing IMDb
+* `class-validate-actor-wiki.php` - Check actors wiki data (NOT CURRENTLY USED)
+* `class-validate-character-checker.php` - Check characters for valid data
+* `class-validate-queer-checker.php` - Check that all characters for queer actors are marked properly
+* `class-validate-show-checker.php` - Check shows for valid data
+* `class-validate-show-imdb.php` - List shows missing IMDb
+* `class-validate-show-urls.php` - Check Ways-To-Watch URLs
 
 ### Assets
 
@@ -447,6 +459,7 @@ Stored in `/theme/` - Code used to generate data for the theme in weird ways. Ea
 * `class-taxonomy-archive-title.php` - Customize title of archives with pretty icons
 * `class-tvmaze.php` - Calls to TVMaze
     - `episodes()` - output of next ep for TV Maze
+* `class-ways-to-watch.php` - Outputs Ways to Watch
 
 ### This Year
 
@@ -484,13 +497,6 @@ Each file has a `make()` function which formats the arrays build in the BUILD se
 * `class-dead.php` - Outputs dead content
 * `class-default.php` - Outputs front page of this-year
 * `class-shows.php` - Outputs all show pages dynamically
-
-### Ways to Watch
-
-Stored in `/ways-to-watch/` -- Code to customize Ways to Watch links and add affiliate data, or alter display names.
-
-* `class-ways-to-watch.php` - All global data, such as header/meta and content regex.
-* `class-output.php` - Affiliate links and pretty-fication of services
 
 ### WP-CLI
 

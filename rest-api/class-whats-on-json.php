@@ -281,7 +281,7 @@ class LWTV_Rest_API_Whats_On_JSON {
 				} else {
 					// Check the show namer just in case we have odd versions for TV Maze.
 					require_once dirname( __DIR__, 2 ) . '/cpts/shows/calendar-names.php';
-					$show_name = ( new LWTV_Calendar_Names() )->check_name( $show_name, 'lwtv' );
+					$show_name = ( new LWTV_Calendar_Names() )->make( $show_name, 'lwtv' );
 
 					// Search TV Maze API for show info:
 					$show_info = wp_remote_get( 'http://api.tvmaze.com/singlesearch/shows?q=' . $show_name );
@@ -368,7 +368,7 @@ class LWTV_Rest_API_Whats_On_JSON {
 		$episodes_array = ( new LWTV_Calendar_ICS_Parser() )->generate_by_date( $tvmaze_url, 'week', $date );
 
 		if ( empty( $episodes_array ) ) {
-			$return['none'] = 'Nothing is on TV that week. We\'re pretty shocked too!';
+			$return['none'] = 'Nothing queer is on TV that week. We\'re pretty shocked too!';
 		} else {
 			foreach ( $episodes_array as $episode ) {
 
@@ -385,17 +385,11 @@ class LWTV_Rest_API_Whats_On_JSON {
 				// Only list a show once, trying to compensate for The Binge.
 				if ( isset( $by_day_array[ $airdate ] ) && array_key_exists( $show_name, $by_day_array[ $airdate ] ) ) {
 					if ( $by_day_array[ $airdate ][ $show_name ]['timestamp'] === $showtime->getTimestamp() ) {
-						if ( is_array( $by_day_array[ $airdate ][ $show_name ]['title'] ) ) {
-							$by_day_array[ $airdate ][ $show_name ]['title'][] = $episode->description . ' (' . $episode_number . ')';
-						} else {
-							$first = $by_day_array[ $airdate ][ $show_name ]['title'];
-							$newer = $episode->description . ' (' . $episode_number . ')';
-
-							// Now Make it.
-							$by_day_array[ $airdate ][ $show_name ]['title'] = array( $first, $newer );
-						}
+						$by_day_array[ $airdate ][ $show_name ]['title'] = $this->binge_it( $by_day_array[ $airdate ][ $show_name ]['title'], $episode->description, $episode_number );
+					} elseif ( isset( $by_day_array[ $airdate ][ $show_name . '.lwtv-' . $airdate ] ) ) {
+						$by_day_array[ $airdate ][ $show_name . '.lwtv-' . $airdate ]['title'] = $this->binge_it( $by_day_array[ $airdate ][ $show_name . '.lwtv-' . $airdate ]['title'], $episode->description, $episode_number );
 					} else {
-						$by_day_array[ $airdate ][ $show_name . '.' . wp_rand() ] = array(
+						$by_day_array[ $airdate ][ $show_name . '.lwtv-' . $airdate ] = array(
 							'show_name' => $show_name,
 							'title'     => $episode->description . ' (' . $episode_number . ')',
 							'timestamp' => $showtime->getTimestamp(),
@@ -412,6 +406,28 @@ class LWTV_Rest_API_Whats_On_JSON {
 		}
 
 		return $by_day_array;
+	}
+
+	/**
+	 * Rebuild the list if a bunch of episodes drop at once.
+	 *
+	 * @param  array|string  $show_title_array
+	 * @param  string        $description
+	 * @param  string        $number
+	 * @return array
+	 */
+	private function binge_it( mixed $show_title_array, string $description, string $number ): array {
+		if ( is_array( $show_title_array ) ) {
+			$show_title_array[] = $description . ' (' . $number . ')';
+		} else {
+			$first = $show_title_array;
+			$newer = $description . ' (' . $number . ')';
+
+			// Now Make it.
+			$show_title_array = array( $first, $newer );
+		}
+
+		return $show_title_array;
 	}
 
 	/**

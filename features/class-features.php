@@ -7,6 +7,8 @@
  */
 class LWTV_Features {
 
+	private $base_dir = '';
+
 	/**
 	 * Constructor.
 	 *
@@ -14,6 +16,8 @@ class LWTV_Features {
 	 * @return void
 	 */
 	public function __construct() {
+		$this->base_dir = __DIR__;
+
 		// Instantiate actions and filters:
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
 	}
@@ -87,7 +91,7 @@ class LWTV_Features {
 		global $wp_list_table;
 
 		$hide_plugins = array(
-			plugin_basename( __FILE__ ),
+			plugin_basename( $this->base_dir ),
 		);
 		$curr_plugins = $wp_list_table->items;
 		foreach ( $curr_plugins as $plugin => $data ) {
@@ -107,7 +111,7 @@ class LWTV_Features {
 	 */
 	public function disable_wp_update( $data, $url ) {
 		if ( 0 === strpos( $url, 'https://api.wordpress.org/plugins/update-check/' ) ) {
-			$my_plugin = plugin_basename( __FILE__ );
+			$my_plugin = plugin_basename( $this->base_dir );
 			$plugins   = json_decode( $data['body']['plugins'], true );
 			unset( $plugins['plugins'][ $my_plugin ] );
 			unset( $plugins['active'][ array_search( $my_plugin, $plugins['active'], true ) ] );
@@ -180,9 +184,9 @@ class LWTV_Features {
 	 * @return array $defaults  Updated defaults.
 	 */
 	public function default_avatar( $defaults ) {
-		$toaster              = plugins_url( 'assets/images/toaster.png', __FILE__ );
+		$toaster              = plugins_url( 'assets/images/toaster.png', $this->base_dir );
 		$defaults[ $toaster ] = 'Toaster';
-		$unicorn              = plugins_url( 'assets/images/unicorn.png', __FILE__ );
+		$unicorn              = plugins_url( 'assets/images/unicorn.png', $this->base_dir );
 		$defaults[ $unicorn ] = 'Unicorn';
 		return $defaults;
 	}
@@ -244,7 +248,7 @@ class LWTV_Features {
 	 * Admin CSS
 	 */
 	public function admin_enqueue_scripts() {
-		wp_enqueue_style( 'admin-styles', plugins_url( 'assets/css/wp-admin.css', __FILE__ ), array(), LWTV_VERSION );
+		wp_enqueue_style( 'admin-styles', plugins_url( '/assets/css/wp-admin.css', $this->base_dir ), array(), LWTV_VERSION );
 	}
 
 	/**
@@ -253,7 +257,7 @@ class LWTV_Features {
 	public function login_logos() {
 		?>
 		<style type="text/css">
-			#login h1 a, .login h1 a { background-image: url(<?php echo esc_url( plugins_url( 'assets/images/lezwatchtv.png', __FILE__ ) ); ?>);
+			#login h1 a, .login h1 a { background-image: url(<?php echo esc_url( plugins_url( '/assets/images/lezwatchtv.png', $this->base_dir ) ); ?>);
 				height:80px;
 				width:80px;
 				background-size: 80px 80px;
@@ -285,7 +289,7 @@ class LWTV_Features {
 	 * @return string $error Updated Error.
 	 */
 	public function login_errors( $error ) {
-		$diane = '<br /><img src="' . plugins_url( 'assets/images/diane-fuck-off.gif', __FILE__ ) . '" />';
+		$diane = '<br /><img src="' . plugins_url( '/assets/images/diane-fuck-off.gif', $this->base_dir ) . '" />';
 		$error = $error . $diane;
 		return $error;
 	}

@@ -9,7 +9,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_AdminPanels_Exclusions {
+class LWTV_AdminMenu_Exclusions {
 
 	/**
 	 * Local Variables
@@ -147,11 +147,14 @@ class LWTV_AdminPanels_Exclusions {
 			</div>
 			<?php
 		} else {
+			$count = count( $queery );
+			// translators: %s is the number of shows.
+			$have = _n( 'character has', 'characters have', $count );
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
-				<h3><span class="dashicons dashicons-flag"></span> Overridden (<?php echo count( $queery ); ?>)</h3>
+				<h3><span class="dashicons dashicons-flag"></span> Overridden (<?php echo (int) $count; ?>)</h3>
 				<div id="lwtv-tools-alerts">
-					<p>The following character(s) have had their queerness overridden.</p>
+					<p>The following <?php echo esc_html( $have ); ?> had their queerness overridden.</p>
 				</div>
 			</div>
 
@@ -189,11 +192,14 @@ class LWTV_AdminPanels_Exclusions {
 			</div>
 			<?php
 		} else {
+			$count = count( $queery );
+			// translators: %s is the number of shows.
+			$have = _n( 'show has', 'shows have', $count );
 			?>
 			<div class="lwtv-tools-container lwtv-tools-container__alert">
-				<h3><span class="dashicons dashicons-flag"></span> Overridden (<?php echo count( $queery ); ?>)</h3>
+				<h3><span class="dashicons dashicons-flag"></span> Overridden (<?php echo (int) $count; ?>)</h3>
 				<div id="lwtv-tools-alerts">
-					<p>The following show(s) have had their death-score deductions overridden.</p>
+					<p>The following <?php echo esc_html( $have ); ?> had death-score deductions overridden.</p>
 				</div>
 			</div>
 
@@ -238,4 +244,4 @@ class LWTV_AdminPanels_Exclusions {
 	}
 }
 
-new LWTV_AdminPanels_Exclusions();
+new LWTV_AdminMenu_Exclusions();

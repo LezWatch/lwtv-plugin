@@ -10,12 +10,6 @@ if ( ! defined( 'WPINC' ) ) {
 
 class LWTV_Calendar_Names {
 
-	// @TODO: Delete this once the new code is imported.
-	const SHOW_NAMES = array(
-		// TV MAZE NAME                  => OUR NAME
-		'Mythic Quest: Raven\'s Banquet' => 'Mythic Quest',
-	);
-
 	/**
 	 * Check Show Name
 	 *
@@ -28,12 +22,44 @@ class LWTV_Calendar_Names {
 	 * @param  string $source   lwtv or tvmaze
 	 * @return string           The display name
 	 */
-	public function check_name( $name, $source ) {
+	public function make( $name, $source ) {
 
-		// Save the original
-		$display_name = $name;
+		// Set Defaults:
+		$check_name = array(
+			'id'   => 0,
+			'name' => $name,
+		);
 
-		// Check TV Maze first:
+		// Check TV Maze
+		$check_name = $this->tvmaze( $name );
+
+		// If the ID is 0, try looking for a local show that matches.
+		if ( 0 === $check_name['id'] ) {
+			$check_name = $this->local( $name );
+		}
+
+		// Output depends on source calling.
+		switch ( $source ) {
+			case 'lwtv':
+				// Return only the name
+				return $check_name['name'];
+			case 'tvmaze':
+				// Return the link.
+				return '<a href="' . get_permalink( $check_name['id'] ) . '">' . $check_name['name'] . '</a>';
+		}
+	}
+
+	/**
+	 * Check TV Maze for a stored name.
+	 *
+	 * @param  string $name
+	 * @return array
+	 */
+	private function tvmaze( string $name ): array {
+		// Set base name and ID.
+		$show_name = $name;
+		$show_id   = 0;
+
 		$tvmaze_obj = get_page_by_path( sanitize_title( $name ), OBJECT, 'post_type_tvmaze' );
 
 		// If there is a TV Maze entry already, we use it.
@@ -44,36 +70,31 @@ class LWTV_Calendar_Names {
 			$show_name = get_the_title( $show_id );
 		}
 
-		// if there's no show ID, we check the default array
-		// This will be deleted later when we're done with that array.
-		if ( ! isset( $show_id ) ) {
-			$name_array = self::SHOW_NAMES;
+		return array(
+			'id'   => $show_id,
+			'name' => $show_name,
+		);
+	}
 
-			$search_array = $name_array;
-			if ( 'lwtv' === $source ) {
-				// this will be faster.
-				$search_array = array_flip( $name_array );
-			}
+	/**
+	 * Check local shows for the matching name.
+	 *
+	 * @param  string $name
+	 * @return array
+	 */
+	private function local( string $name ): array {
+		// Find the show based on the LezWatch name
+		$show_page_obj = get_page_by_path( sanitize_title( $name ), OBJECT, 'post_type_shows' );
 
-			if ( isset( $search_array[ $display_name ] ) ) {
-				$display_name = $search_array[ $display_name ];
-			}
-
-			// Find the show based on the LezWatch name
-			$show_page_obj = get_page_by_path( sanitize_title( $name ), OBJECT, 'post_type_shows' );
-
-			// If we have a show, we will link.
-			if ( isset( $show_page_obj->ID ) && 0 !== $show_page_obj->ID && 'publish' === get_post_status( $show_page_obj->ID ) ) {
-				$show_id   = $show_page_obj->ID;
-				$show_name = $show_page_obj->post_title;
-			}
+		// If there is a local show with a full match, we can use it.
+		if ( isset( $show_page_obj->ID ) && 0 !== $show_page_obj->ID && 'publish' === get_post_status( $show_page_obj->ID ) ) {
+			$show_id   = $show_page_obj->ID;
+			$show_name = get_the_title( $show_id );
 		}
 
-		switch ( $source ) {
-			case 'lwtv':
-				return $show_name;
-			case 'tvmaze':
-				return '<a href="' . get_permalink( $show_id ) . '">' . $show_name . '</a>';
-		}
+		return array(
+			'id'   => $show_id,
+			'name' => $show_name,
+		);
 	}
 }

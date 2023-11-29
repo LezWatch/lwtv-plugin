@@ -9,7 +9,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_AdminPanels_Monitors {
+class LWTV_AdminMenu_Monitors {
 
 	/*
 	 * Construct
@@ -83,7 +83,7 @@ class LWTV_AdminPanels_Monitors {
 		$filename   = $upload_dir['basedir'] . '/tvmaze.ics';
 
 		if ( ! file_exists( $filename ) ) {
-			$status .= '<em>ERROR! The TVMaze calendar file is missing! Tell Mika.<em>';
+			$status = '<em>ERROR! The TVMaze calendar file is missing! Tell Mika.<em>';
 		} else {
 			$file_time  = filemtime( $filename );
 			$time_since = human_time_diff( $file_time, strtotime( time() ) );
@@ -294,4 +294,4 @@ class LWTV_AdminPanels_Monitors {
 	}
 }
 
-new LWTV_AdminPanels_Monitors();
+new LWTV_AdminMenu_Monitors();
