@@ -93,11 +93,11 @@ The follow is a description of all the files in the code and more or less what t
 
 ### Admin Panels
 
-Stored in `/admin/` -- Makes admin panels
+Stored in `/adminpanels/` -- Makes admin panels
 
+* `class-menu.php` - Basic Menu
 * `class-dashboard.php` - Powers wp-admin dashboard code
 * `class-exclusions.php` - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
-* `class-menu.php` - Basic Menu
 * `class-monitors.php` - Services monitored (runs daily)
 * `class-validation.php` - Data consistency checks (each one runs weekly)
 
@@ -156,6 +156,15 @@ Each block is broken up by folder with the following files:
 * `/js/save.js` - Save code
 * `/js/components/` - (optional) Components used blocks
 
+### Calendar
+
+Stored in `/calendar/`:
+
+* `/ICal` - Subfolder for the ICal Parser Library
+* `class-calendar.php` - Creates TV Maze CPT to connect A to B
+* `class-ics-parser.php` - Connection to the ICS Parser for calendar data.
+* `class-names.php` - Process TV Maze names.
+
 ### Custom Post Types
 
 Stored in `/cpts/`:
@@ -204,16 +213,12 @@ Stored in `/debugger/` -- a collection of all code used to debug and manage cont
 
 Stored in `/features/` -- a collection of miscellaneous features.
 
-* `/ICal` - Subfolder for the ICal Parser Library
 * `class-clickjacking.php` - Prevents Clickjacking (or at least people claiming it's an issue)
 * `class-cron.php` - Custom cron jobs to pre-cache high-traffic pages, and run regular jobs
 * `class-dashboard-posts-in-progress.php` - Forked version of a plugin to show in progress posts
 * `class-dashboard.php` - Custom column for featured images in posts lists and removal of self pings
 * `class-embeds.php` - Embeds DisneyABCPress videos, Gleam, GoFundMe, Indiegogo
-* `class-external-apis.php` - Calls to third party APIs
-    - `tvmaze_episodes()` - output of next ep for TV Maze
 * `class-grading.php` - Build and format array for displaying show scores including 3rd parties.
-* `class-ics-parser.php` - Connection to the ICS Parser for calendar data.
 * `class-languages.php` - Support for multiple languages in a dropdown (used by Shows for alt show names)
 * `class-private-posts.php` - Shows alert that a page is hidden if the post is set private.
 * `class-roles.php` - Custom roles created for curation of content
@@ -347,9 +352,6 @@ _Templates (`/templates/`)_
 Stored in `/statistics/` - These files generate everything for stats, from graphs to the rest API stuff.
 
 * `class-statistics.php` - Base Code: `class LWTV_Statistics`
-    - `const DATA_CLASS_MATCHER` - Array of data types to classes
-    - `const FORMAT_CLASS_MATCHER` - Array of format types to classes
-    - `const META_PARAMS` - Array of custom params for meta data searches
     - `function __construct()` - Constructor
     - `function init()` - Runs on init
     - `function enqueue_scripts()` - Enqueues scripts selectively
@@ -358,6 +360,10 @@ Stored in `/statistics/` - These files generate everything for stats, from graph
     - `function maybe_complex()` - Deep Dive for custom data that is extra complex.
     - `function count_shows()` - Slices shows into smaller chunks (i.e 'all shows in Australia') and can output raw counts, on-air counts, scores, or on-air scores.
 * `class-array.php` - Builds the array via `make()`
+* `class-matcher.php` - Data Matcher
+    - `const BUILD_CLASS_MATCHER` - Array of data types to classes
+    - `const FORMAT_CLASS_MATCHER` - Array of format types to classes
+    - `const META_PARAMS` - Array of custom params for meta data searches
 * `class-gutenberg-ssr.php` - Gutenberg Server side rendering to show stats
 * `class-output.php` - Builds the output `make()`
 * `class-query_vars.php` - Query Variables customization (to make virtual pages) and Yoast meta
@@ -437,7 +443,10 @@ Stored in `/theme/` - Code used to generate data for the theme in weird ways. Ea
     - `function terms()`  - Generate and return term data related to character (gender, pronouns, etc)
 * `class-list-characters.php` - Generate and return list of Characters from a show
 * `class-show-stars.php` - Make show stars
+* `class-stats-symbolicon.php` - Makes the icon/title for symbolicons
 * `class-taxonomy-archive-title.php` - Customize title of archives with pretty icons
+* `class-tvmaze.php` - Calls to TVMaze
+    - `episodes()` - output of next ep for TV Maze
 
 ### This Year
 

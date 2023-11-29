@@ -55,7 +55,7 @@ class LWTV_Features_Roles {
 				'manage_categories' => true, // so they can add sexualities etc
 				'unfiltered_html'   => true,
 			);
-			$result          = add_role( 'data_editor', 'Data Editor', $de_capabilities );
+			add_role( 'data_editor', 'Data Editor', $de_capabilities );
 		}
 	}
 
@@ -67,7 +67,7 @@ class LWTV_Features_Roles {
 		$roles = array( 'data_editor', 'editor', 'administrator' );
 
 		// The CPTs they work for
-		$cpts = array( 'actor', 'character', 'show' );
+		$cpts = array( 'actor', 'character', 'show', 'tvmaze_name' );
 
 		// Loop through each role and assign capabilities
 		foreach ( $roles as $the_role ) {
@@ -105,7 +105,7 @@ class LWTV_Features_Roles {
 	 * out of it....
 	 */
 	public function admin_menu_customization() {
-		global $current_user, $menu;
+		global $current_user;
 		wp_get_current_user();
 
 		if ( in_array( 'data_editor', $current_user->roles, true ) ) {

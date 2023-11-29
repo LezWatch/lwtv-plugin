@@ -77,24 +77,7 @@ class LWTV_Blocks_Calendar {
 	 * @return string       Pretty Name with URL (if exists)
 	 */
 	public function show_name( $name ) {
-
-		// Defaults
-		$displayname = $name;
-		$show_name   = $name;
-
-		// Call the namer to try and sort out different names.
-		require_once dirname( __DIR__ ) . '/cpts/shows/calendar-names.php';
-		$name = ( new LWTV_Shows_Calendar() )->check_name( $name, 'tvmaze' );
-
-		// Find the show based on the LezWatch name
-		$show_page_obj = get_page_by_path( sanitize_title( $name ), OBJECT, 'post_type_shows' );
-
-		// If we have a show, we will link.
-		if ( isset( $show_page_obj->ID ) && 0 !== $show_page_obj->ID && 'publish' === get_post_status( $show_page_obj->ID ) ) {
-			$show_name = '<a href="' . get_permalink( $show_page_obj->ID ) . '">' . $displayname . '</a>';
-		}
-
-		return $show_name;
+		return ( new LWTV_Calendar_Names() )->check_name( $name, 'tvmaze' );
 	}
 
 	/**

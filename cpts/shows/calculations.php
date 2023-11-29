@@ -485,7 +485,7 @@ class LWTV_Shows_Calculate {
 		update_post_meta( $post_id, 'lezshows_the_score', $calculate );
 
 		// Update 3rd party scores
-		( new LWTV_Features_Grading() )->update_scores( $post_id );
+		( new LWTV_Grading() )->update_scores( $post_id );
 
 		// Cheat and update the show 'on-air' ness.
 		$on_air   = 'no';

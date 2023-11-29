@@ -9,7 +9,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_Admin_Monitors {
+class LWTV_AdminPanels_Monitors {
 
 	/*
 	 * Construct
@@ -294,4 +294,4 @@ class LWTV_Admin_Monitors {
 	}
 }
 
-new LWTV_Admin_Monitors();
+new LWTV_AdminPanels_Monitors();

@@ -2,6 +2,7 @@
 /*
  * Dashboard Widget
  *
+ * Shows tools as a dashboard widget.
  */
 
 // if this file is called directly abort
@@ -9,7 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_Admin_Dashboard {
+class LWTV_AdminPanels_Dashboard_Widget {
 
 	/*
 	 * Construct
@@ -62,4 +63,4 @@ class LWTV_Admin_Dashboard {
 	}
 }
 
-new LWTV_Admin_Dashboard();
+new LWTV_AdminPanels_Dashboard_Widget();

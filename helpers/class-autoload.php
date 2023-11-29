@@ -13,6 +13,7 @@ namespace LWTV\Helpers;
 class Autoload {
 
 	private const SUBFOLDERS = array( 'build', 'format', 'templates' );
+	private const DEFINES    = array( 'factory' );
 
 	/**
 	 * Set up the autoloader.
@@ -122,15 +123,22 @@ class Autoload {
 	 * @return string $filename Updated file name
 	 */
 	private function parse_filename( $folder, $filename ) {
+
 		// folder = this-year/build => array( 'this-year', 'build ) => this-year
 		$folder_array = explode( '/', $folder );
 		$folder       = $folder_array[0];
 
 		// lwtv-this-year-characters-dead-build => class-characters-dead-build
-		$filename = str_replace( 'lwtv-' . $folder, 'class', $filename );
+		// or
+		// lwtv-grading-scores-factory => factory-scores
+		$name_array = explode( '-', $filename );
+		$end        = self::last_item( $name_array );
+		$define     = ( in_array( $end, self::DEFINES, true ) ) ? $end : 'class';
+
+		$filename = str_replace( 'lwtv-' . $folder, $define, $filename );
 
 		// Remove SUBFOLDER from end of filename.
-		foreach ( self::SUBFOLDERS as $subfolder ) {
+		foreach ( array_merge( self::DEFINES, self::SUBFOLDERS ) as $subfolder ) {
 			// class-characters-dead-build => class-characters-dead
 			$filename = self::str_last_replace( $subfolder, '', $filename );
 		}

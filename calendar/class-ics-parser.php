@@ -18,10 +18,10 @@ require_once 'ICal/Event.php';
 use ICal\ICal;
 
 /**
- * class LWTV_Features_ICS_Parser
+ * class LWTV_Calendar_ICS_Parser
  *
  */
-class LWTV_Features_ICS_Parser {
+class LWTV_Calendar_ICS_Parser {
 
 	/**
 	 * Construct

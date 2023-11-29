@@ -472,7 +472,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Watch Online
-		$field_affiliateurl = $cmb_e_watch->add_field(
+		$cmb_e_watch->add_field(
 			array(
 				'name'       => 'Watch Online Link(s)',
 				'desc'       => 'Paste in a direct link. Links are auto-converted to affiliate links.',
@@ -482,7 +482,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Similar Shows.
-		$field_similarshows = $cmb_e_watch->add_field(
+		$cmb_e_watch->add_field(
 			array(
 				'name'       => 'Similar Shows',
 				'desc'       => 'Drag shows from the left column to the right column to add them.<br />Use search to find the shows.',
@@ -515,7 +515,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Name
-		$field_shows = $cmb_e_watch->add_group_field(
+		$cmb_e_watch->add_group_field(
 			$group_names,
 			array(
 				'name'             => 'Name',
@@ -526,7 +526,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Language
-		$field_chartype = $cmb_e_watch->add_group_field(
+		$cmb_e_watch->add_group_field(
 			$group_names,
 			array(
 				'name'             => 'Language',
@@ -552,7 +552,7 @@ class LWTV_Shows_CMB2 {
 				'show_names'   => true, // Show field names on the left.
 			)
 		);
-		$field_ships    = $cmb_f_shiplots->add_field(
+		$cmb_f_shiplots->add_field(
 			array(
 				'name'       => '#Ships',
 				'id'         => $prefix . 'ships',

@@ -123,7 +123,7 @@ class LWTV_Rest_API_Whats_On_JSON {
 
 		$upload_dir = wp_upload_dir();
 		$tvmaze_url = $upload_dir['basedir'] . '/tvmaze.ics';
-		$calendar   = ( new LWTV_Features_ICS_Parser() )->generate_by_date( $tvmaze_url, $when );
+		$calendar   = ( new LWTV_Calendar_ICS_Parser() )->generate_by_date( $tvmaze_url, $when );
 		$whats_on   = $calendar;
 
 		if ( empty( $whats_on ) ) {
@@ -147,7 +147,7 @@ class LWTV_Rest_API_Whats_On_JSON {
 		$lwtv_tz    = new DateTimeZone( 'America/New_York' );
 		$upload_dir = wp_upload_dir();
 		$tvmaze_url = $upload_dir['basedir'] . '/tvmaze.ics';
-		$calendar   = ( new LWTV_Features_ICS_Parser() )->generate_by_date( $tvmaze_url, 'date', $date );
+		$calendar   = ( new LWTV_Calendar_ICS_Parser() )->generate_by_date( $tvmaze_url, 'date', $date );
 		$whats_on   = $calendar;
 
 		if ( empty( $whats_on ) ) {
@@ -174,9 +174,9 @@ class LWTV_Rest_API_Whats_On_JSON {
 		$tvmaze_url = $upload_dir['basedir'] . '/tvmaze.ics';
 
 		if ( 'now' === $when ) {
-			$calendar = ( new LWTV_Features_ICS_Parser() )->generate_by_date( $tvmaze_url, 'week' );
+			$calendar = ( new LWTV_Calendar_ICS_Parser() )->generate_by_date( $tvmaze_url, 'week' );
 		} else {
-			$calendar = ( new LWTV_Features_ICS_Parser() )->generate_by_date( $tvmaze_url, 'week', $when );
+			$calendar = ( new LWTV_Calendar_ICS_Parser() )->generate_by_date( $tvmaze_url, 'week', $when );
 		}
 
 		$whats_on = $calendar;
@@ -281,7 +281,7 @@ class LWTV_Rest_API_Whats_On_JSON {
 				} else {
 					// Check the show namer just in case we have odd versions for TV Maze.
 					require_once dirname( __DIR__, 2 ) . '/cpts/shows/calendar-names.php';
-					$show_name = ( new LWTV_Shows_Calendar() )->check_name( $show_name, 'lwtv' );
+					$show_name = ( new LWTV_Calendar_Names() )->check_name( $show_name, 'lwtv' );
 
 					// Search TV Maze API for show info:
 					$show_info = wp_remote_get( 'http://api.tvmaze.com/singlesearch/shows?q=' . $show_name );
@@ -365,17 +365,16 @@ class LWTV_Rest_API_Whats_On_JSON {
 		$by_day_array   = array();
 		$upload_dir     = wp_upload_dir();
 		$tvmaze_url     = $upload_dir['basedir'] . '/tvmaze.ics';
-		$episodes_array = ( new LWTV_Features_ICS_Parser() )->generate_by_date( $tvmaze_url, 'week', $date );
+		$episodes_array = ( new LWTV_Calendar_ICS_Parser() )->generate_by_date( $tvmaze_url, 'week', $date );
 
 		if ( empty( $episodes_array ) ) {
 			$return['none'] = 'Nothing is on TV that week. We\'re pretty shocked too!';
 		} else {
 			foreach ( $episodes_array as $episode ) {
 
-				$showtime  = new DateTime( $episode->dtstart, $tvmaze_tz );
-				$timestamp = $showtime->getTimestamp();
-				$offset    = $lwtv_tz->getOffset( $showtime );
-				$interval  = DateInterval::createFromDateString( (string) $offset . 'seconds' );
+				$showtime = new DateTime( $episode->dtstart, $tvmaze_tz );
+				$offset   = $lwtv_tz->getOffset( $showtime );
+				$interval = DateInterval::createFromDateString( (string) $offset . 'seconds' );
 				$showtime->add( $interval );
 
 				// Reformat the show name and episode name
@@ -386,13 +385,13 @@ class LWTV_Rest_API_Whats_On_JSON {
 				// Only list a show once, trying to compensate for The Binge.
 				if ( isset( $by_day_array[ $airdate ] ) && array_key_exists( $show_name, $by_day_array[ $airdate ] ) ) {
 					if ( $by_day_array[ $airdate ][ $show_name ]['timestamp'] === $showtime->getTimestamp() ) {
-
 						if ( is_array( $by_day_array[ $airdate ][ $show_name ]['title'] ) ) {
 							$by_day_array[ $airdate ][ $show_name ]['title'][] = $episode->description . ' (' . $episode_number . ')';
 						} else {
 							$first = $by_day_array[ $airdate ][ $show_name ]['title'];
 							$newer = $episode->description . ' (' . $episode_number . ')';
 
+							// Now Make it.
 							$by_day_array[ $airdate ][ $show_name ]['title'] = array( $first, $newer );
 						}
 					} else {

@@ -71,7 +71,6 @@ class LWTV_Blocks_Serverside {
 	 */
 	public function render_tvshow_calendar() {
 		// Require the calendar file
-		require_once 'calendar.php';
 		$return = ( new LWTV_Blocks_Calendar() )->output();
 		return $return;
 	}

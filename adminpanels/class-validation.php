@@ -10,7 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_Admin_Validation {
+class LWTV_AdminPanels_Validation {
 
 	/**
 	 * Local Variables
@@ -1008,4 +1008,4 @@ class LWTV_Admin_Validation {
 	}
 }
 
-new LWTV_Admin_Validation();
+new LWTV_AdminPanels_Validation();

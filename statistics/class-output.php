@@ -20,12 +20,12 @@ class LWTV_Statistics_Output {
 	public function make( $subject, $data, $build_array, $count, $format, $data_original = null ) {
 
 		// If there's no valid format, bail.
-		if ( ! isset( LWTV_Statistics::FORMAT_CLASS_MATCHER[ $format ] ) ) {
+		if ( ! isset( LWTV_Statistics_Matcher::FORMAT_CLASS_MATCHER[ $format ] ) ) {
 			return;
 		}
 
 		// Define match:
-		$format_class_match = LWTV_Statistics::FORMAT_CLASS_MATCHER[ $format ];
+		$format_class_match = LWTV_Statistics_Matcher::FORMAT_CLASS_MATCHER[ $format ];
 
 		// Reset Data:
 		$data = ( ! is_null( $data_original ) ) ? $data_original : $data;

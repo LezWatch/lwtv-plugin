@@ -26,11 +26,13 @@ class Components {
 			'LWTV_Features_Shortcodes',
 			// Symbolicons
 			'LWTV_Assets_Symbolicons',
+			// Calendar
+			'LWTV_Calendar',
 			// Debugger
 			'LWTV_Debugger',
 			// Admin Menus
-			'LWTV_Admin_Menu',
-			'LWTV_Admin_Dashboard',
+			'LWTV_AdminPanels_Menu',
+			'LWTV_AdminPanels_Dashboard_Widget',
 			// Statistics
 			'LWTV_Statistics',
 			'LWTV_This_Year',

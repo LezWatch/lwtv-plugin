@@ -28,10 +28,10 @@ class LWTV_Statistics_Array {
 		$minor     = ( false !== $maybe_deep ) ? $maybe_deep['minor'] : false;
 
 		// Custom Meta
-		$meta_params = ( isset( LWTV_Statistics::META_PARAMS[ $data ] ) ) ? LWTV_Statistics::META_PARAMS[ $data ] : null;
+		$meta_params = ( isset( LWTV_Statistics_Matcher::META_PARAMS[ $data ] ) ) ? LWTV_Statistics_Matcher::META_PARAMS[ $data ] : null;
 
 		// If there's no data match, return empty:
-		if ( ! isset( LWTV_Statistics::DATA_CLASS_MATCHER[ $data ] ) ) {
+		if ( ! isset( LWTV_Statistics_Matcher::BUILD_CLASS_MATCHER[ $data ] ) ) {
 			return;
 		}
 
@@ -39,7 +39,7 @@ class LWTV_Statistics_Array {
 		$dead_tax = self::dead_taxonomy( $data );
 
 		// Define Data Class.
-		$data_class = LWTV_Statistics::DATA_CLASS_MATCHER[ $data ];
+		$data_class = LWTV_Statistics_Matcher::BUILD_CLASS_MATCHER[ $data ];
 
 		// Reset Data:
 		$data = ( ! is_null( $data_original ) ) ? $data_original : $data;

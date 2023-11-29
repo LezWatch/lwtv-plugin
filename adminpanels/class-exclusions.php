@@ -9,7 +9,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-class LWTV_Admin_Exclusions {
+class LWTV_AdminPanels_Exclusions {
 
 	/**
 	 * Local Variables
@@ -238,4 +238,4 @@ class LWTV_Admin_Exclusions {
 	}
 }
 
-new LWTV_Admin_Exclusions();
+new LWTV_AdminPanels_Exclusions();

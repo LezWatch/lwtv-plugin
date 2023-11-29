@@ -125,7 +125,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Character Clichés
-		$field_cliches = $cmb_characters->add_field(
+		$cmb_characters->add_field(
 			array(
 				'name'              => 'Character Clichés',
 				'id'                => $prefix . 'cliches',
@@ -141,7 +141,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Year of Death (if applicable)
-		$field_death = $cmb_characters->add_field(
+		$cmb_characters->add_field(
 			array(
 				'name'        => 'Date of Death',
 				'desc'        => 'If the character is dead, select when they died.',
@@ -152,7 +152,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Actor Name(s)
-		$field_actors = $cmb_characters->add_field(
+		$cmb_characters->add_field(
 			array(
 				'name'    => 'Actor Name(s)',
 				'id'      => $prefix . 'actor',
@@ -182,7 +182,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Source Name
-		$field_alt_single_image = $cmb_characters->add_group_field(
+		$cmb_characters->add_group_field(
 			$group_alt_images,
 			array(
 				'name' => 'From ...',
@@ -192,7 +192,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Image
-		$field_alt_single_image = $cmb_characters->add_group_field(
+		$cmb_characters->add_group_field(
 			$group_alt_images,
 			array(
 				'name'         => 'Image File',
@@ -224,7 +224,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Show Name
-		$field_shows = $cmb_characters->add_group_field(
+		$cmb_characters->add_group_field(
 			$group_shows,
 			array(
 				'name'       => 'TV Show',
@@ -244,7 +244,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Character Type
-		$field_chartype = $cmb_characters->add_group_field(
+		$cmb_characters->add_group_field(
 			$group_shows,
 			array(
 				'name'             => 'Character Type',
@@ -257,7 +257,7 @@ class LWTV_Characters_CMB2 {
 			)
 		);
 		// Field: Character Years Appears
-		$field_years_appears = $cmb_characters->add_group_field(
+		$cmb_characters->add_group_field(
 			$group_shows,
 			array(
 				'name'              => 'Years Appears',
