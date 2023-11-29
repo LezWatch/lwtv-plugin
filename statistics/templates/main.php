@@ -5,10 +5,10 @@
  * @package LezWatch.TV
  */
 
-$characters = ( new LWTV_Stats() )->generate( 'characters', 'total', 'count' );
-$shows      = ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' );
-$actors     = ( new LWTV_Stats() )->generate( 'actors', 'total', 'count' );
-$dead_chars = ( new LWTV_Stats() )->generate( 'characters', 'dead', 'count' );
+$characters = ( new LWTV_Statistics() )->generate( 'characters', 'total', 'count' );
+$shows      = ( new LWTV_Statistics() )->generate( 'shows', 'total', 'count' );
+$actors     = ( new LWTV_Statistics() )->generate( 'actors', 'total', 'count' );
+$dead_chars = ( new LWTV_Statistics() )->generate( 'characters', 'dead', 'count' );
 ?>
 <h2><a name="overview">Overview</a></h2>
 

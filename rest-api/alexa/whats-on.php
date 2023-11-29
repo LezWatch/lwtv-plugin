@@ -21,7 +21,7 @@ class LWTV_Alexa_Whats_On {
 		$timestamp = strtotime( 'now' );
 
 		// Get the list of what's on:
-		$data = ( new LWTV_Whats_On_JSON() )->whats_on_date( $date );
+		$data = ( new LWTV_Rest_API_Whats_On_JSON() )->whats_on_date( $date );
 
 		$count = ( 'none' === key( $data ) ) ? 0 : count( $data );
 
@@ -52,7 +52,7 @@ class LWTV_Alexa_Whats_On {
 	 * @return string       Pretty language about what's on
 	 */
 	public function show( $show ) {
-		$data   = ( new LWTV_Whats_On_JSON() )->whats_on_show( $show );
+		$data   = ( new LWTV_Rest_API_Whats_On_JSON() )->whats_on_show( $show );
 		$output = $data['pretty'];
 
 		return $output;

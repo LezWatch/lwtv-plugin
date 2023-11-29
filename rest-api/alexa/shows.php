@@ -45,7 +45,7 @@ class LWTV_Alexa_Shows {
 			foreach ( $results as $show ) {
 				$show_slug = get_post_field( 'post_name', $show );
 				$show_name = get_the_title( $show );
-				$similar   = ( new LWTV_Shows_Like_This_JSON() )->similar_show( $show_slug );
+				$similar   = ( new LWTV_Rest_API_Shows_Like_JSON() )->similar_show( $show_slug );
 				foreach ( $similar['related'] as $a_show ) {
 					$related_array[] = $a_show['title'];
 				}

@@ -6,16 +6,16 @@
  * and open the template in the editor.
  */
 
-namespace Cmb2Grid\Grid\Group;
+namespace LWTV\Cmb2Grid\Grid\Group;
 
-if ( ! class_exists( '\Cmb2Grid\Grid\Group\Cmb2GroupGrid' ) ) {
+if ( ! class_exists( 'LWTV\Cmb2Grid\Grid\Group\Cmb2GroupGrid' ) ) {
 
 	/**
 	 * Description of Cmb2GroupGrid.
 	 *
 	 * @author Pablo
 	 */
-	class Cmb2GroupGrid extends \Cmb2Grid\Grid\Cmb2Grid {
+	class Cmb2GroupGrid extends \LWTV\Cmb2Grid\Grid\Cmb2Grid {
 
 		protected $parentFieldId;
 

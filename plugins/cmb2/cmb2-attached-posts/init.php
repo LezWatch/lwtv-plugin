@@ -1,8 +1,8 @@
 <?php
 /**
- * Class LWTV_CMB2_Attached_Posts_Field
+ * Class LWTV_Fork_CMB2_Attached_Posts_Field
  */
-class LWTV_CMB2_Attached_Posts_Field {
+class LWTV_Fork_CMB2_Attached_Posts_Field {
 
 	/**
 	 * Current version number
@@ -10,7 +10,7 @@ class LWTV_CMB2_Attached_Posts_Field {
 	const VERSION = CMB2_ATTACHED_POSTS_FIELD_VERSION;
 
 	/**
-	 * @var LWTV_CMB2_Attached_Posts_Field
+	 * @var LWTV_Fork_CMB2_Attached_Posts_Field
 	 */
 	protected static $single_instance = null;
 
@@ -32,7 +32,7 @@ class LWTV_CMB2_Attached_Posts_Field {
 	/**
 	 * Creates or returns an instance of this class.
 	 * @since  0.1.0
-	 * @return LWTV_CMB2_Attached_Posts_Field A single instance of this class.
+	 * @return LWTV_Fork_CMB2_Attached_Posts_Field A single instance of this class.
 	 */
 	public static function get_instance() {
 		if ( null === self::$single_instance ) {
@@ -664,4 +664,4 @@ class LWTV_CMB2_Attached_Posts_Field {
 	}
 }
 
-LWTV_CMB2_Attached_Posts_Field::get_instance();
+LWTV_Fork_CMB2_Attached_Posts_Field::get_instance();

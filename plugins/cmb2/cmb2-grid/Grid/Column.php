@@ -1,13 +1,13 @@
 <?php
 
-namespace Cmb2Grid\Grid;
+namespace LWTV\Cmb2Grid\Grid;
 
 /**
  * Description of Cmb2GridColumn.
  *
  * @author Pablo Pacheco <pablo.pacheco@origgami.com.br>
  */
-if ( ! class_exists( '\Cmb2Grid\Grid\Column' ) ) {
+if ( ! class_exists( 'LWTV\Cmb2Grid\Grid\Column' ) ) {
 
 	class Column {
 
@@ -23,7 +23,7 @@ if ( ! class_exists( '\Cmb2Grid\Grid\Column' ) ) {
 				$this->setFieldId( $field );
 			} elseif ( is_array( $field ) ) {
 				$this->setFieldId( $field[0] );
-			} elseif ( is_a( $field, '\Cmb2Grid\Grid\Group\Cmb2GroupGrid' ) ) {
+			} elseif ( is_a( $field, 'LWTV\Cmb2Grid\Grid\Group\Cmb2GroupGrid' ) ) {
 				$this->setFieldId( $field->getParentFieldId() );
 			}
 			$fieldId = $this->getFieldId();
@@ -51,13 +51,13 @@ if ( ! class_exists( '\Cmb2Grid\Grid\Column' ) ) {
 
 
 			if ( $field->args['type'] === 'group' ) {
-				\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field, 'before_group' );
-				\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field, 'after_group' );
+				\LWTV\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field, 'before_group' );
+				\LWTV\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field, 'after_group' );
 				$field->args['before_group'] .= "<div class=\"{$columnClass}\">";
 				$field->args['after_group']  .= '</div>';
 			} else {
-				\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field, 'before_row' );
-				\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field, 'after_row' );
+				\LWTV\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field, 'before_row' );
+				\LWTV\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field, 'after_row' );
 				$field->args['before_row'] .= "<div class=\"{$columnClass}\">";
 				$field->args['after_row']  .= '</div>';
 			}

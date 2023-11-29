@@ -12,11 +12,11 @@
 	<div class="row">
 		<div class="col-6">
 			<h5>Roles</h5>
-			<?php ( new LWTV_Stats() )->generate( 'actors', 'actor_char_roles', 'piechart', get_the_id() ); ?>
+			<?php ( new LWTV_Statistics() )->generate( 'actors', 'actor_char_roles', 'piechart', get_the_id() ); ?>
 		</div>
 		<div class="col-6">
 			<h5>Status</h5>
-			<?php ( new LWTV_Stats() )->generate( 'actors', 'actor_char_dead', 'piechart', get_the_id() ); ?>
+			<?php ( new LWTV_Statistics() )->generate( 'actors', 'actor_char_dead', 'piechart', get_the_id() ); ?>
 		</div>
 	</div>
 </div>

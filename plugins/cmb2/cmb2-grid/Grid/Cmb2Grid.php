@@ -1,6 +1,6 @@
 <?php
 
-namespace Cmb2Grid\Grid;
+namespace LWTV\Cmb2Grid\Grid;
 
 /**
  * Description of Cmb2Grid.
@@ -8,7 +8,7 @@ namespace Cmb2Grid\Grid;
  * @author Pablo Pacheco <pablo.pacheco@origgami.com.br>
  */
 
-if ( ! class_exists( '\Cmb2Grid\Grid\Cmb2Grid' ) ) {
+if ( ! class_exists( 'LWTV\Cmb2Grid\Grid\Cmb2Grid' ) ) {
 	class Cmb2Grid {
 
 		private $cmb2Obj;
@@ -29,7 +29,7 @@ if ( ! class_exists( '\Cmb2Grid\Grid\Cmb2Grid' ) ) {
 		/**
 		 *
 		 * @param type $field
-		 * @return \Cmb2Grid\Grid\Group\Cmb2GroupGrid
+		 * @return \LWTV\Cmb2Grid\Grid\Group\Cmb2GroupGrid
 		 */
 		public function addCmb2GroupGrid( $field ) {
 			$cmb2GroupGrid = new Group\Cmb2GroupGrid( $this->getMetaBoxConfig() );

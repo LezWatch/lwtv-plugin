@@ -41,7 +41,7 @@ Now, create your columns like this:
 if(!is_admin()){
 	return;
 }
-$cmb2Grid = new \Cmb2Grid\Grid\Cmb2Grid($cmb);
+$cmb2Grid = new \LWTV\Cmb2Grid\Grid\Cmb2Grid($cmb);
 $row = $cmb2Grid->addRow();
 $row->addColumns(array($field1, $field2));
 ```

@@ -44,8 +44,8 @@ class LWTV_Shows_CMB2 {
 		);
 
 		// Allow for multiple language names to be saved.
-		if ( class_exists( 'LWTV_Languages' ) ) {
-			$this->language_array = ( new LWTV_Languages() )->all_languages();
+		if ( class_exists( 'LWTV_Features_Languages' ) ) {
+			$this->language_array = ( new LWTV_Features_Languages() )->all_languages();
 		}
 	}
 
@@ -354,7 +354,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_b_deet = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_b_details );
+			$grid_b_deet = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_b_details );
 			$row1_b_deet = $grid_b_deet->addRow();
 			$row2_b_deet = $grid_b_deet->addRow();
 			$row3_b_deet = $grid_b_deet->addRow();
@@ -408,7 +408,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_c_worth = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_c_worth );
+			$grid_c_worth = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_c_worth );
 			$row_c_worth  = $grid_c_worth->addRow();
 			$row_c_worth->addColumns( array( $field_worththumb, $field_worthdetails ) );
 		}
@@ -453,7 +453,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_d_edit = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_d_editorial );
+			$grid_d_edit = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_d_editorial );
 			$row_d_edit  = $grid_d_edit->addRow();
 			$row_d_edit->addColumns( array( $field_worthshowwelove, $field_byq_override ) );
 		}
@@ -472,7 +472,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Watch Online
-		$field_affiliateurl = $cmb_e_watch->add_field(
+		$cmb_e_watch->add_field(
 			array(
 				'name'       => 'Watch Online Link(s)',
 				'desc'       => 'Paste in a direct link. Links are auto-converted to affiliate links.',
@@ -482,7 +482,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Similar Shows.
-		$field_similarshows = $cmb_e_watch->add_field(
+		$cmb_e_watch->add_field(
 			array(
 				'name'       => 'Similar Shows',
 				'desc'       => 'Drag shows from the left column to the right column to add them.<br />Use search to find the shows.',
@@ -515,7 +515,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Name
-		$field_shows = $cmb_e_watch->add_group_field(
+		$cmb_e_watch->add_group_field(
 			$group_names,
 			array(
 				'name'             => 'Name',
@@ -526,7 +526,7 @@ class LWTV_Shows_CMB2 {
 			)
 		);
 		// Field: Show Language
-		$field_chartype = $cmb_e_watch->add_group_field(
+		$cmb_e_watch->add_group_field(
 			$group_names,
 			array(
 				'name'             => 'Language',
@@ -552,7 +552,7 @@ class LWTV_Shows_CMB2 {
 				'show_names'   => true, // Show field names on the left.
 			)
 		);
-		$field_ships    = $cmb_f_shiplots->add_field(
+		$cmb_f_shiplots->add_field(
 			array(
 				'name'       => '#Ships',
 				'id'         => $prefix . 'ships',
@@ -598,7 +598,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_f_plot = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_f_shiplots );
+			$grid_f_plot = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_f_shiplots );
 			$rows_f_plot = $grid_f_plot->addRow();
 			$rows_f_plot->addColumns( array( $field_timeline, $field_episodes ) );
 		}
@@ -698,7 +698,7 @@ class LWTV_Shows_CMB2 {
 		if ( ! is_admin() ) {
 			return;
 		} else {
-			$grid_g_rate  = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_g_ratings );
+			$grid_g_rate  = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_g_ratings );
 			$rows1_g_rate = $grid_g_rate->addRow();
 			$rows2_g_rate = $grid_g_rate->addRow();
 			$rows3_g_rate = $grid_g_rate->addRow();

@@ -5,7 +5,7 @@
  * Forked from https://wordpress.org/plugins/gravityformsapprovals/
  * because it's no longer maintained, and is missing some important things.
  *
- * Version 1.0.0
+ * Version 2.0.0
  */
 
 // Make sure Gravity Forms is active and already loaded.
@@ -13,23 +13,17 @@ if ( ! class_exists( 'GFForms' ) ) {
 	die();
 }
 
-// If the other plugin is active, we deactivate.
-if ( defined( 'GF_APPROVALS_VERSION' ) && is_plugin_active( 'gravityformsapprovals/approvals.php' ) ) {
-	deactivate_plugins( 'gravityformsapprovals/approvals.php' );
-}
-
-
 // The Add-On Framework is not loaded by default.
 // Use the following function to load the appropriate files.
 GFForms::include_feed_addon_framework();
 
-class LWTV_GF_Approvals extends GFFeedAddOn {
+class LWTV_Fork_GF_Approvals extends GFFeedAddOn {
 
 	// The following class variables are used by the Framework.
 	// They are defined in GFAddOn and should be overridden.
 
 	// The version number is used for example during add-on upgrades.
-	protected $_version = '1.0.0';
+	protected $_version = '2.0.0';
 
 	// The Framework will display an appropriate message on the plugins page if necessary
 	protected $_min_gravityforms_version = '2.4';
@@ -75,7 +69,7 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 
 	public static function get_instance() {
 		if ( null === self::$_instance ) {
-			self::$_instance = new LWTV_GF_Approvals();
+			self::$_instance = new LWTV_Fork_GF_Approvals();
 		}
 
 		return self::$_instance;
@@ -564,4 +558,4 @@ class LWTV_GF_Approvals extends GFFeedAddOn {
 	}
 }
 
-GFAddOn::register( 'LWTV_GF_Approvals' );
+GFAddOn::register( 'LWTV_Fork_GF_Approvals' );

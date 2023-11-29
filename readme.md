@@ -77,27 +77,47 @@ Pushes to branches are automatically deployed via Github Actions as follows:
 
 The follow is a description of all the files in the code and more or less what they do.
 
-The main file `functions.php` calls all other needed files.
+* `functions.php` - Main Plugin file. Loads auto-loader, components, and defines.
 
-Defines:
+### Helpers
 
-* `FIRST_LWTV_YEAR` - The first year of known queers on TV (if not otherwise defined). Currently 1961.
+* `class-autoload.php` - Autoloader that allows us to generate whatever we need dynamically
+    - `add()` - Wrapper to add a component as a class
+    - `autoload()` - Autoloads a class
+    - `parse_folder()` - Converts the class name into a folder
+    - `parse_filename()` - Converts the class name into a file
+    - `last_item()` - Extracts the last item in an array
+    - `str_last_replace()` - Replaces the last instance of a string in a string
+* `class-components.php` - Returns core components
+* `defines.php` - All our defines.
 
-### Admin Panels
+### Admin Menu
 
-Stored in `/admin/` -- Makes admin panels
+Stored in `/adminmenu/` -- Makes admin menu items and dashboard widget
 
-* `_main.php` - Loader file and mapping
-* `dashboard.php` - Powers wp-admin dashboard code
-* `exclusions.php` - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
-* `monitors.php` - Services monitored (runs daily)
-* `validation.php` - Data consistency checks (each one runs weekly)
+* `class-menu.php` - Basic Menu
+* `class-dashboard-widget.php` - Adds widget to wp-admin dashboard
+* `class-exclusions.php` - Lists any exclusions or overrides applied by admins (i.e. forcing someone to show as queer)
+* `class-monitors.php` - Services monitored (runs daily)
+* `class-validation.php` - Data consistency checks (each one runs weekly)
+
+_Build (`/build/`)_
+
+* `class-validate-actor-checker.php` - Check actors for valid data
+* `class-validate-actor-empty.php` - Check actors empty required data
+* `class-validate-actor-imdb.php` - List actors missing IMDb
+* `class-validate-actor-wiki.php` - Check actors wiki data (NOT CURRENTLY USED)
+* `class-validate-character-checker.php` - Check characters for valid data
+* `class-validate-queer-checker.php` - Check that all characters for queer actors are marked properly
+* `class-validate-show-checker.php` - Check shows for valid data
+* `class-validate-show-imdb.php` - List shows missing IMDb
+* `class-validate-show-urls.php` - Check Ways-To-Watch URLs
 
 ### Assets
 
 Stored in `/assets/`
 
-* `symbolicons.php` - Symbolicons
+* `class-symbolicons.php` - Symbolicons
 
 _CSS (`css`)_
 
@@ -130,20 +150,40 @@ _Javascript (`js`)_
 
 Stored in `/blocks/`
 
-Blocks for Gutenberg. The file `_main.php` acts as an autoloader. If you're updating the CSS, you will need to rebuild the blocks. Read `/blocks/README.md` for more information or just tell Mika what to change.
+* `class-blocks.php` - Main loader file
+* `class-calendar.php` - Calendar specific code
+* `class-serverside.php` - Server-side Renders: Run PHP code in JS blocks
 
-* `calendar.php` - Calendar specific code
-* `serverside.php` - Server-side Renders: Run PHP code in JS blocks
+_Source (`src`)_
 
-The source code is in `/src/` broken up by folder, with one special file, fully documented in `/blocks/README.md` 
+Development is fully documented in `/blocks/README.md`
+
+Each block is broken up by folder with the following files:
+
+* `block.js` - Main block caller
+* `block.json` - Schema definition file
+* `/css/editor.scss` - Style for Editor
+* `/css/style.scss` - Style for Front end
+* `/js/edit.js` - Editor code
+* `/js/save.js` - Save code
+* `/js/components/` - (optional) Components used blocks
+
+### Calendar
+
+Stored in `/calendar/`:
+
+* `/ICal` - Subfolder for the ICal Parser Library
+* `class-calendar.php` - Creates TV Maze CPT to connect A to B
+* `class-ics-parser.php` - Connection to the ICS Parser for calendar data.
+* `class-names.php` - Process TV Maze names.
 
 ### Custom Post Types
 
 Stored in `/cpts/`:
 
-* `_main.php` - Main file that calls everything else. Also disables calendar code for CPTs
-* `post-meta.php` - Registers post-meta so it can be properly used and hidden from Gutenberg
-* `related-posts.php` - Displays related shows and posts (based on tags)
+* `class-cpts.php` - Main file that calls everything else. Also disables calendar code for CPTs
+* `class-post-meta.php` - Registers post-meta so it can be properly used and hidden from Gutenberg
+* `class-related-posts.php` - Displays related shows and posts (based on tags)
 
 _Actors (`actors`)_
 
@@ -172,46 +212,29 @@ _Shows (`/shows/`)_
 
 Stored in `/debugger/` -- a collection of all code used to debug and manage content.
 
-* `_main.php` - Generalized features and calls all sub files
+* `class-debugger.php` - Generalized features and calls all sub files
     - `sanitize_social()` - Sanitizes and validates social media.
     - `format_wikidate()` - Formats dates for and from WikiData
     - `validate_imdb()` - Validates IMDb slugs
-* `actors.php` - Find all problems with Actor pages.
-* `characters.php` - Find all problems with Character pages.
-* `queers.php` - Find all problems with Queer data (i.e. are actors queer, are characters played by queer actors)
-* `shows.php` - Find all problems with Show pages.
+* `class-actors.php` - Find all problems with Actor pages.
+* `class-characters.php` - Find all problems with Character pages.
+* `class-queers.php` - Find all problems with Queer data (i.e. are actors queer, are characters played by queer actors)
+* `class-shows.php` - Find all problems with Show pages.
 
 ### Features
 
 Stored in `/features/` -- a collection of miscellaneous features.
 
-* `/ICal` - Subfolder for the ICal Parser Library
-* `_main.php` - Calls all other files
-* `apis.php` - Calls to third party APIs
-    - `tvmaze_episodes()` - output of next ep for TV Maze
-* `clickjacking.php` - Prevents Clickjacking (or at least people claiming it's an issue)
-* `cron.php` - Custom cron jobs to pre-cache high-traffic pages, and run regular jobs.
-* `custom-loops.php` - `class LWTV_Loops` - Custom arrays and WP_Query calls that are repeated in multiple places.
-    - `is_actor_queer()` - Determine if actor is queer (yes/no)
-    - `is_actor_trans()` - Determine if an actor is trans (called by is queer) (yes/no)
-    - `is_show_on_air()` - Determine if a show is on air or not (bool)
-    - `tax_query()` - Taxonomy Array
-    - `tax_two_query()` - Taxonomy Two Array is used for generating a query of posts that are in two taxonomies
-    - `post_meta_query()` - Post Meta Array returns the whole post data. Can handle compares and likes
-    - `wp_meta_query()` - SQL version of meta query _(not currently used)_
-    - `post_type_query()` - Generate an object of all posts in a specific post type.
-    - `post_meta_and_tax_query()` - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
-    - `related_posts_by_tag()` - Related Posts by Tags.
-* `custom-roles.php` - Custom roles created for curation of content
-* `dashboard-posts-in-progress.php` - Forked version of a plugin to show in progress posts
-* `dashboard.php` - Custom column for featured images in posts lists and removal of self pings
-* `embeds.php` - Embeds DisneyABCPress videos, Gleam, GoFundMe, Indiegogo
-* `grading.php` - Build and format array for displaying show scores including 3rd parties.
-* `ics-parser.php` - Connection to the ICS Parser for calendar data.
-* `languages.php` - Support for multiple languages in a dropdown (used by Shows for alt show names)
-* `private-data.php` - Shows alert that a page is hidden if the post is set private.
-* `profiles.php` - Custom profile code
-* `shortcodes.php` - Various shortcodes - mostly deprecated, but some used by blocks.
+* `class-clickjacking.php` - Prevents Clickjacking (or at least people claiming it's an issue)
+* `class-cron.php` - Custom cron jobs to pre-cache high-traffic pages, and run regular jobs
+* `class-dashboard-posts-in-progress.php` - Forked version of a plugin to show in progress posts
+* `class-dashboard.php` - Custom column for featured images in posts lists and removal of self pings
+* `class-embeds.php` - Embeds DisneyABCPress videos, Gleam, GoFundMe, Indiegogo
+* `class-grading.php` - Build and format array for displaying show scores including 3rd parties.
+* `class-languages.php` - Support for multiple languages in a dropdown (used by Shows for alt show names)
+* `class-private-posts.php` - Shows alert that a page is hidden if the post is set private.
+* `class-roles.php` - Custom roles created for curation of content
+* `class-shortcodes.php` - Various shortcodes - mostly deprecated, but some used by blocks.
     - Badges: `[badge url=LINK class="class class" role="role"]TEXT[/badge]`
     - Copyright Year: `[copyright year=(start year) text=(copyright text)]`
     - Number of Posts: `[numposts data="posts" posttype="post type" term="term slug" taxonomy="taxonomy slug"]`
@@ -224,22 +247,17 @@ Stored in `/features/` -- a collection of miscellaneous features.
 		* Embed IndieGoGo: `[indiegogo url=URL]`
 		* Glossary: `[glossary taxonomy=TAXONOMY]`
 		* Spoilers: `[spoilers]` or `[spoilers warning="OMG SPIDERS!!!"]`
-* `spammers.php` - Prevent Spammers from annoying us.
-* `transients.php` - Wrapper code for Transients so when you dev-test, you get updated content.
-* `upgrades.php` - Handle upgrades of WP and everything included.
-
-### Node Scripts
-
-Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`). _This is removed by the builder script when pushed to production._
-
-* `postinstall.js` - script run at the end of NPM to move files to the correct location.
+* `class-spammers.php` - Prevent Spammers from annoying us.
+* `class-transients.php` - Wrapper code for Transients so when you dev-test, you get updated content.
+* `class-upgrades.php` - Handle upgrades of WP and everything included.
+* `class-user-profiles.php` - Custom profile code
 
 ### Of The Day
 
 Stored in `/of-the-day/` - code used to generate character and show of the day.
 
-* `_main.php` - generates custom SQL table to store 'of the day' records
-* `rss.php` - Generates custom RSS feed for of-the-day (`/feeds/otd/`)
+* `class-of-the-day.php` - generates custom SQL table to store 'of the day' records
+* `class-rss.php` - Generates custom RSS feed for of-the-day (`/feeds/otd/`)
 * `template.php` - Backup of theme template.
 
 ### Plugin Addons
@@ -248,9 +266,9 @@ Stored in `/plugins/` - all files are used to enhance other plugins installed on
 
 The file `_main.php` acts as an autoloader.
 
-* `cache.php` - Custom Cache specific to DreamPress hosting
+* `class-cache.php` - Custom Cache specific to DreamPress hosting
     - Generates data used by Proxy Cache Purge to know what to flush.
-* `cmb2.php` - Integration with CMB2
+* `class-cmb2.php` - Integration with CMB2
     - calls other files
 * `/cmb2/` - CMB2 add on libraries
     - `cmb2-field-select2/` - Updated version of field select 2.
@@ -263,8 +281,8 @@ The file `_main.php` acts as an autoloader.
     - `symbolicons.php` - Symbolicon integration for taxonomies.
     - `taxonomies.php` - Custom filters for taxonomies so they display properly in meta boxes.
     - `year-range.php` - Year Range -- 'date_year_range' custom field type
-* `comment_probation.php` - Fork of abandoned plugin
-* `facetwp.php` -- Facet WP
+* `class-comment-probation.php` - Fork of abandoned plugin
+* `class-facetwp.php` -- Facet WP
     - calls other files
     - Reset Shortcode
 * `/facetwp/` - FacetWP Folder
@@ -274,42 +292,56 @@ The file `_main.php` acts as an autoloader.
         - split actors and shows into separate entries, and add additional orderby params
     - `pagination.js` - Pagination Scrolling and Refresh Warning
     - `pagination.php` - Only show pagination if there's more than one page
-* `gravity-forms.php` - Gravity Forms Integration
+* `class-gravity-forms.php` - Gravity Forms Integration
     - Prevents views from being counted
     - calls other files
 * `/gravity-forms/` - Gravity Forms Folder
     - `class-gf-approvals.php` - Approval Code (forked from another plugin)
     - `stop-spammers.php` - Block Spammers
-* `gutenslam.php` - make Block Editor stop being such a dillhole and forget preferences
-* `jetpack.php`  - Jetpack integration
+* `class-gutenslam.php` - make Block Editor stop being such a dillhole and forget preferences
+* `class-jetpack.php`  - Jetpack integration
     - Adds Post Type to sort.
     - Show Feedback in "Right Now"
     - Custom Icon for Feedback in "Right Now"
     - Mark feedbacks as having been answered
     - Protection from spammers via disallowed keys
-* `related-posts-by-taxonomy.php` - Filters to allow a custom layout for "Shows Like This"
-* `yoast.php` - Custom Yoast controls
+* `class-related-posts-by-taxonomy.php` - Filters to allow a custom layout for "Shows Like This"
+* `class-yoast.php` - Custom Yoast controls
+
+### Queery
+
+Stored in `/queery/` - Custom arrays and WP_Query calls that are repeated in multiple places.
+
+* `class-is-actor-queer.php` - Determine if actor is queer (yes/no)
+* `class-is-actor-trans.php` - Determine if an actor is trans (yes/no)
+* `class-is-show-on-air.php` - Determine if a show is on air or not (bool)
+* `class-tax-query.php` - Taxonomy Array
+* `class-tax-two-query.php` - Taxonomy Two Array is used for generating a query of posts that are in two taxonomies
+* `class-post-meta-query.php` - Post Meta Array returns the whole post data. Can handle compares and likes
+* `class-wp-meta-query.php` - SQL version of meta query _(not currently used)_
+* `class-post-type-query.php` - Generate an object of all posts in a specific post type.
+* `class-post-meta-and-tax-query.php` - Generate an array of posts that have a specific post meta AND a specific taxonomy value. Useful for getting a list of all dead queers who are main characters (for example).
+* `class-related-posts-by-tag.php` - Related Posts by Tags.
 
 ### Rest API
 
 Stored in `/rest-api/` - These files generate the REST API output.
 
-* `_main.php` - autoloader
-* `alexa-skills.php` - Builds the basic Alexa API (see also Alexa Skills section below)
-* `bury-your-queers.php` -  LezWatch.TV Plugin (formerly Bury Your Queers)
+* `class-alexa-skills.php` - Builds the basic Alexa API (see also Alexa Skills section below)
+* `class-byq.php` -  LezWatch.TV Plugin (formerly Bury Your Queers)
     - Last Death - "It has been X days since the last WLW Death"
     - On This Day - "On this day, X died"
     - When Died - "X died on date Y"
-* `export-json.php` - Export content in JSON format. Mostly used for WikiData and Universities.
-* `fresh.php` - Generates 'whats new' content
-* `imdb.php` - API to communicate with IMDb and generate information (used by Alexa)
-* `list.php` - Generates lists
-* `of-the-day.php` - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
-* `shows-like-this.php` - Similar shows.
-* `stats.php` - JSON API version of the stats (mostly)
-* `this-year.php` - Outputs simplified lists of what happened in a given year.
-* `what-happened.php` - Outputs data based on what happened in a given year, year-month, or specific day.
-* `whats-on.php` - What's on TV tonight (or tomorrow).
+* `class-export-json.php` - Export content in JSON format. Mostly used for WikiData and Universities.
+* `class-fresh-json.php` - Generates 'whats new' content
+* `class-imdb-json.php` - API to communicate with IMDb and generate information (used by Alexa)
+* `class-list-json.php` - Generates lists
+* `class-otd-json.php` - X Of The Day API service. Every 24 hours, a new character and show of the day are spawned
+* `class-shows-like-json.php` - Similar shows.
+* `class-stats-json.php` - JSON API version of the stats (mostly)
+* `class-this-year-json.php` - Outputs simplified lists of what happened in a given year.
+* `class-what-happened-json.php` - Outputs data based on what happened in a given year, year-month, or specific day.
+* `class-whats-on-json.php` - What's on TV tonight (or tomorrow).
 
 _Alexa Skills (`/alexa/`)_
 
@@ -331,70 +363,164 @@ _Templates (`/templates/`)_
 
 Stored in `/statistics/` - These files generate everything for stats, from graphs to the rest API stuff.
 
-* `_main.php` - Base Code: `class LWTV_Stats`
+* `class-statistics.php` - Base Code: `class LWTV_Statistics`
+    - `function __construct()` - Constructor
+    - `function init()` - Runs on init
+    - `function enqueue_scripts()` - Enqueues scripts selectively
     - `function generate()` - Generates base stats. This makes a lot of calls to arrays and outputs
-    - `function showcount()` - Slices shows into smaller chunks (i.e 'all shows in Australia') and can output raw counts, on-air counts, scores, or on-air scores.
-* `array.php` -  Arrays: `class LWTV_Stats_Arrays`
-    - `function taxonomy()` - Generate array to parse taxonomy content
-    - `function dead_taxonomy()` - Generate Taxonomy Array for dead characters
-    - `function dead_role()` - Array for dead characters by role (regular, etc)
-    - `function dead_meta_tax()` - Generate array to parse taxonomy content as it relates to post metas (for dead characters)
-    - `function meta()` - Generate array to parse post meta data
-    - `function yes_no()` - Generates arrays for content that has Yes/No values (shows we love, on air)
-    - `function taxonomy_breakdowns()` - generates complex arrays of cross related data from multiple taxonomies to list 'all miniseries in the USA' (this one makes us cry)
-    - `function dead_basic()` - Simple counts of all shows with dead, or all dead characters
-    - `function dead_year()` - Simple counts of death by year (Sara Lance...)
-    - `function on_air()` - Shows or characters on air per year
-    - `function dead_shows()` - Array of shows with (and without) dead characters, but because of Sara Lance, we have to cross relate to make sure all the shows with death have actually dead characters (yes, a show can have a dead-flag but no actively dead characters)
-    - `function dead_complex_taxonomy()` - Complex death taxonomies for stations and nations.
-    - `function scores()` - Show Scores
-    - `function actor_chars()` - How many actors or characters per actor or character...
-    - `function show_roles()` - Roles of characters on Shows, with how many of each role are dead
-    - `function complex_taxonomy()` - How many characters are played by out queer actors, but also how many characters for each term.
-* `gutenberg-ssr.php` - Gutenberg Server side rendering to show stats
-* `output.php` - Output: `class LWTV_Stats_Output`
-    - `function lists()` - Table lists with simple counts
-    - `function percentages()` - Table lists with percentages and a bar
-    - `function averages()` - Averages, highs, and lows (ex show scores)
-    - `function calculate_trendline()` - Calculates trendline data
-    - `function linear_regression()` - Calculates linear regression (used by trends)
-    - `function barcharts()` - Horizontal barcharts
-    - `function stacked_barcharts()` - Stacked Barcharts (also horizontal)
-    - `function piecharts()` - Piecharts (actually donuts...)
-    - `function trendline()` - Trendlines (against a vertical barchart)
-* `query_vars.php` - Query Variables customization (to make virtual pages) and Yoast meta
+    - `function maybe_year()` - Determine if the data is a valid year.
+    - `function maybe_complex()` - Deep Dive for custom data that is extra complex.
+    - `function count_shows()` - Slices shows into smaller chunks (i.e 'all shows in Australia') and can output raw counts, on-air counts, scores, or on-air scores.
+* `class-array.php` - Builds the array via `make()`
+* `class-matcher.php` - Data Matcher
+    - `const BUILD_CLASS_MATCHER` - Array of data types to classes
+    - `const FORMAT_CLASS_MATCHER` - Array of format types to classes
+    - `const META_PARAMS` - Array of custom params for meta data searches
+* `class-gutenberg-ssr.php` - Gutenberg Server side rendering to show stats
+* `class-output.php` - Builds the output `make()`
+* `class-query_vars.php` - Query Variables customization (to make virtual pages) and Yoast meta
+
+_Build (`/build/`)_
+
+Each file has a `make()` function which build an array that will be passed to the formatter code and output.
+
+* `class-actor-char-dead.php` - Stats for dead character per actor.
+* `class-actor-chars.php` - How many actors or characters per actor or character...
+* `class-complex-taxonomy.php` - How many characters are played by out queer actors, but also how many characters for each term.
+* `class-dead-basic.php` - Simple counts of all shows with dead, or all dead characters
+* `class-dead-complex-taxonomy.php` - Complex death taxonomies for stations and nations.
+* `class-dead-meta-tax.php` - Generate array to parse taxonomy content as it relates to post metas (for dead characters)
+* `class-dead-role.php` - Array for dead characters by role (regular, etc)
+* `class-dead_shows.php` - Array of shows with (and without) dead characters, but because of Sara Lance, we have to cross relate to make sure all the shows with death have actually dead characters (yes, a show can have a dead-flag but no actively dead characters)
+* `class-dead-taxonomy.php` - Taxonomy Array for dead characters
+* `class-dead-year.php` - Simple counts of death by year (Sara Lance...)
+* `class-meta.php` - Generate array to parse post meta data
+* `class-on_air.php` - Shows or characters on air per year
+* `class-scores.php` - Show Scores
+* `class-show-roles.php` - Roles of characters on Shows, with how many of each role are dead
+* `class-taxonomy.php` - Parse taxonomy content
+* `class-taxonomy-breakdowns.php` - generates complex arrays of cross related data from multiple taxonomies to list 'all miniseries in the USA' (this one makes us cry)
+* `class-this-year.php` - Generate this year data
+* `class-yes-no.php` - Generates data for content that has Yes/No values (shows we love, on air)
+
+_Formats (`/formats`)_
+
+Each file has a `build()` function which formats the arrays build in the `build` section (above) for proper display.
+
+* `class-averages.php` - Averages, highs, and lows (ex show scores)
+* `class-barcharts.php` - Horizontal barcharts
+* `class-barcharts-stacked.php` - Stacked Barcharts (also horizontal)
+* `class-lists.php` - Table lists with simple counts
+* `class-percentages.php` - Table lists with percentages and a bar
+* `class-piecharts.php` - Piecharts (actually donuts...)
+* `class-trendline.php` - Trendlines (against a vertical barchart)
+    - `calculate_trendline()` - Calculates trendline data
+    - `linear_regression()` - Calculates linear regression
 
 _Templates (`/templates/`)_
 
-Output templates used by the shortcodes and Gutenberg (as well as when included on the pages themselves). These were originally in the theme, but were moved here to allow for easier updates.
+Templates used by the shortcodes and Gutenberg (as well as when included on the pages themselves).
+
+* `actors.php` - Actor stats
+* `characters.php` - Character stats
+* `death.php` - Death stats
+* `formats.php` - Formats (tv series, web series, etc) stats
+* `main.php` - Main stats page
+* `nations.php` - Nation stats
+* `post_type_actors.php` - Partial for showing the character stats for a single actor
+* `shows.php` - Show statistics
+* `stations.php` - Networks/Stations statistics
+
+### Theme
+
+Stored in `/theme/` - Code used to generate data for the theme in weird ways. Each class file has a `make()` function that generates the output. Some have sub-sets.
+
+* `class-actor-birthday.php` - Boolean return if an actor is having a birthday.
+* `class-content-warning.php` - If a show has a content warning, we display it/
+* `class-data-actor.php` - Generate custom data for actors
+    - `function age()` - Generate and return actor age
+    - `function characters()` - Generate and return characters played by actor
+    - `function dead()` - Generate and return all DEAD characters played by actor
+    - `function terms()`  - Generate and return term data related to actor (gender, pronouns, etc)
+* `class-data-author.php` - Generate and return data for Authors (Mika, Tracy, Etc.)
+    - `function social()` - Social Media for authors
+    - `function favorite_shows()` - Favorite Showes
+* `class-data-character.php` - Generate character Data
+    - `function actors()` - Generate data for Actors
+    - `function cliches()` - Generate data for Clichés
+    - `function dead()` - Generate data for Dead characters
+    - `function oneactor()` - Generate data for PRIMARY Actor
+    - `function oneshow()` - Generate data for PRIMARY show
+    - `function shows()` - Generate data for all shows a character is on
+    - `function terms()`  - Generate and return term data related to character (gender, pronouns, etc)
+* `class-list-characters.php` - Generate and return list of Characters from a show
+* `class-show-stars.php` - Make show stars
+* `class-stats-symbolicon.php` - Makes the icon/title for symbolicons
+* `class-taxonomy-archive-title.php` - Customize title of archives with pretty icons
+* `class-tvmaze.php` - Calls to TVMaze
+    - `episodes()` - output of next ep for TV Maze
+* `class-ways-to-watch.php` - Outputs Ways to Watch
 
 ### This Year
 
 Stored in `/this-year/` - Technically a subset of statistics, This Year shows you just the data for the indicated year.
 
-* `_main.php` - Basic data loading, calls templates etc.
-* `characters.php` - all data on characters per year
-* `query_vars.php` - customize query variables
-* `shows.php` - all data on shows per year
+* `class-this-year.php` - Basic data loading, customize query variables.
+    - `const DATA_CLASS_MATCHER` - Array of data types to classes
+    - `const FORMAT_CLASS_MATCHER` - Array of format types to classes
+    - `function init()` - Sets up the query vars for permalinks
+    - `function admin_notice_permalinks()` - Admin notice if you forgot permalinks
+    - `function query_vars()` - Accepted query vars
+    - `function page_template()` - Summons the templates from the theme
+    - `function yoast_seo_register_extra_replacements()` - Yoast replacement wrapper
+    - `function yoast_retrieve_year_replacement()` - Yoast replacements
+* `class-array.php` - Builds the array
+* `class-display.php` - Controls individual pages
+    - `function navigation()` - Builds the nav footer shown in `display()`
+* `class-generator.php` - Wrapper to generate content and arrays
+* `class-output.php` - Builds the pretty output
 
-### Ways to Watch
+_Build (`/build/`)_
 
-Stored in `/ways-to-watch/` -- Code to customize Ways to Watch links and add affiliate data, or alter display names.
+Each file has a `make()` function which build an array that will be passed to the formatter code and output.
 
-* `_main.php` - Loader file.
-* `global.php` - All global data, such as header/meta and content regex.
-* `ways-to-watch.php` - Affiliate links and pretty-fication of services
+* `class-characters-dead.php` - Generates data for dead characters
+* `class-characters-list.php` - Generates data for all characters
+* `class-overview.php` - Builds the data for the overview page
+* `class-shows-list.php` - Generates data for all show pages
 
-* `/images/` - Images used by local promotions.
+_Formats (`/formats`)_
 
-## WP-CLI
+Each file has a `make()` function which formats the arrays build in the BUILD section (above) for proper display.
+
+* `class-chart.php` - Outputs charts (currently only used on the default page)
+* `class-dead.php` - Outputs dead content
+* `class-default.php` - Outputs front page of this-year
+* `class-shows.php` - Outputs all show pages dynamically
+
+### WP-CLI
 
 Stored in `/wp-cli/` -- All code for WP-CLI
 
-* `_main.php` - Loader file.
-* `calc.php` - Calculations on content (scores, character count, etc) - `wp lwtv CALC [ID]`
-* `check.php` - Data validation checkers - `wp lwtv CHECK [queerchars|wiki] [id]`
-* `generate.php` - Generate custom content - `wp lwtv GENERATE [otd|tvmaze]`
+* `class-wp-cli.php` - Loader file.
+* `cli-calc.php` - Calculations on content (scores, character count, etc) - `wp lwtv CALC [ID]`
+* `cli-check.php` - Data validation checkers - `wp lwtv CHECK [queerchars|wiki] [id]`
+* `cli-generate.php` - Generate custom content - `wp lwtv GENERATE [otd|tvmaze]`
+
+### Tests
+
+Stored in `/tests/ ` -- Unit/Functionality Tests
+
+* `bootstrap.php` - Boostrapper
+* `test-sample.php` - Example
+* `test-ways-to-watch.php` - Ways to Watch
+
+### Node Scripts
+
+Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`). _This is removed by the builder script when pushed to production._
+
+* `postinstall.js` - script run at the end of NPM to move files to the correct location.
+
 
 ## Developer Features
 

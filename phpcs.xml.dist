@@ -8,6 +8,14 @@
 	<arg value="s" /><!-- Show sniff codes in all reports. -->
 	<arg value="p" /><!-- Show progress. -->
 
+	<!-- Rules: Check PHP version compatibility -->
+	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
+	<config name="testVersion" value="8.1-"/>
+	<!-- https://github.com/PHPCompatibility/PHPCompatibilityWP -->
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- Rules: WordPress Coding Standards -->
+	<config name="minimum_supported_wp_version" value="6.4"/>
 	<rule ref="WordPress-Extra">
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
@@ -24,13 +32,17 @@
 
 	<rule ref="WordPress.Security.EscapeOutput">
 		<properties>
-			<property name="customAutoEscapedFunctions" value="LWTV_Functions,symbolicons" type="array" />
+			<property name="customAutoEscapedFunctions" value="LWTV_Features,symbolicons" type="array" />
 		</properties>
 	</rule>
 
 	<rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
 	<exclude-pattern>class-gf-approvals.php</exclude-pattern>
 	</rule>
+
+	<!-- Unit Tests -->
+	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/bin/*</exclude-pattern>
 
 	<!-- Node and Vendor -->
 	<exclude-pattern>*/vendor/*</exclude-pattern>
@@ -43,7 +55,7 @@
 	<exclude-pattern>*/facetwp-cmb2/*</exclude-pattern>
 	<exclude-pattern>*/cmb2-grid/*</exclude-pattern>
 	<exclude-pattern>*/cmb-field-select2/*</exclude-pattern>
-	
+
 	<!-- External Libraries -->
 	<exclude-pattern>*/ICal/*</exclude-pattern>
 </ruleset>

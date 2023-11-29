@@ -52,4 +52,4 @@ jobs:
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DOMAIN }}/wp-content/plugins/lwtv-plugin
-          EXCLUDE: "/.git/, /.github/, /.husky/, /.vscode/, /node_scripts/, /node_modules/, /vendor/, .editorconfig, .gitignore, .npmrc, .nvmrc, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, /blocks/node_modules/, /blocks/.editorconfig, /blocks/.gitignore, /blocks/package-lock.json, /blocks/package.json"
+          EXCLUDE: "/.git/, /.github/, /.husky/, /.vscode/, /bin/, /node_scripts/, /node_modules/, /vendor/, /tests/, .editorconfig, .gitignore, .npmrc, .nvmrc, .phpcs.xml.dist, .phpunit.result.cache, .travis.yml, composer.json, composer.lock, package-lock.json, package.json, phpcs.xml.dist, phpunit.xml.dist, /blocks/node_modules/, /blocks/.editorconfig, /blocks/.gitignore, /blocks/package-lock.json, /blocks/package.json"

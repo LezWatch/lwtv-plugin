@@ -1,11 +1,11 @@
 <?php
-namespace Cmb2Grid\DesignPatterns;
+namespace LWTV\Cmb2Grid\DesignPatterns;
 /**
  * Description of Singleton.
  *
  * Pablo Pacheco <pablo.pacheco@origgami.com.br>
  */
-if ( ! class_exists( '\Cmb2Grid\DesignPatterns\Singleton' ) ) {
+if ( ! class_exists( 'LWTV\Cmb2Grid\DesignPatterns\Singleton' ) ) {
 
 	abstract class Singleton {
 
