@@ -21,7 +21,8 @@ class LWTV_Theme_Data_Actor {
 		}
 
 		$do_run = ( in_array( $format, $run_as_term, true ) ) ? 'terms' : $format;
-		$output = call_user_func_array( array( $this, $do_run ), array( $actor_id, $format ) );
+		$array  = array( $actor_id, $format );
+		$output = self::$do_run( ...$array );
 
 		return $output;
 	}

@@ -24,6 +24,9 @@ class LWTV_Blocks {
 		// Enqueues.
 		add_action( 'enqueue_block_assets', array( $this, 'block_assets' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'block_editor_assets' ) );
+
+		// Restrict Blocks
+		add_filter( 'allowed_block_types_all', array( $this, 'allowed_block_types' ), 25, 2 );
 	}
 
 	/**
@@ -117,6 +120,27 @@ class LWTV_Blocks {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Allowed Block Types
+	 *
+	 * Disable certain blocks from being used.
+	 *
+	 * @param  array  $allowed_block_types
+	 * @param  int    $post
+	 * @return void
+	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	public function allowed_block_types( $allowed_block_types, $post ) {
+		// An array of block names to disable
+		$disabled_blocks = array(
+			'core/post-featured-image',
+		);
+
+		$allowed_block_types = array_diff( $allowed_block_types, $disabled_blocks );
+
+		return $allowed_block_types;
 	}
 }
 

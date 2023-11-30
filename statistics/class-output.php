@@ -47,8 +47,7 @@ class LWTV_Statistics_Output {
 
 		// return formatted output.
 		if ( is_array( $format_params ) ) {
-			$format_class_var = new $format_class();
-			call_user_func_array( array( $format_class_var, 'make' ), $format_params );
+			( new $format_class() )->make( ...$format_params );
 		} else {
 			( new $format_class() )->make( $format_params );
 		}

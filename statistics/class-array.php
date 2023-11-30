@@ -71,8 +71,7 @@ class LWTV_Statistics_Array {
 		$build_params = $build_params[ $data_class ];
 
 		if ( is_array( $build_params ) ) {
-			$build_class_var = new $build_class();
-			$array           = call_user_func_array( array( $build_class_var, 'make' ), $build_params );
+			$array = ( new $build_class() )->make( ...$build_params );
 		} else {
 			$array = ( new $build_class() )->make( $build_params );
 		}

@@ -39,11 +39,10 @@ class LWTV_This_Year_Array {
 		$build_params    = $build_params[ $data_class ];
 		$build_class_var = new $build_class();
 
-		// If this is an array, use call_user_func_array().
 		if ( is_array( $build_params ) ) {
-			$array = call_user_func_array( array( $build_class_var, 'make' ), $build_params );
+			$array = ( new $build_class_var() )->make( ...$build_params );
 		} else {
-			$array = $build_class_var->make( $build_params );
+			$array = ( new $build_class_var() )->make( $build_params );
 		}
 
 		return $array;

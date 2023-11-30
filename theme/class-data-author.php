@@ -11,14 +11,14 @@ class LWTV_Theme_Data_Author {
 	 *
 	 * @return array  Array of data to use.
 	 */
-	public function make( $author, $format ) {
+	public function make( float $author, $format ) {
 
 		$valid_data = array( 'social', 'favorite_shows' );
 		if ( ! in_array( $format, $valid_data, true ) ) {
 			return;
 		}
 
-		$output = call_user_func_array( array( $this, $format ), array( $author ) );
+		$output = self::$format( $author );
 
 		return $output;
 	}
@@ -70,7 +70,7 @@ class LWTV_Theme_Data_Author {
 	public function favorite_shows( $author ) {
 		// Get author Fav Shows.
 		$all_fav_shows = get_the_author_meta( 'lez_user_favourite_shows', $author );
-		if ( '' !== $all_fav_shows ) {
+		if ( '' !== $all_fav_shows && is_array( $all_fav_shows ) ) {
 			$show_title = array();
 			foreach ( $all_fav_shows as $each_show ) {
 				if ( 'publish' !== get_post_status( $each_show ) ) {
@@ -83,7 +83,7 @@ class LWTV_Theme_Data_Author {
 			$fav_title  = _n( 'Show', 'Shows', count( $show_title ) );
 		}
 
-		$details = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . lwtv_symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
+		$details = ( isset( $favourites ) && ! empty( $favourites ) ) ? '<div class="author-favourites">' . ( new LWTV_Features() )->symbolicons( 'tv-hd.svg', 'fa-tv' ) . '&nbsp;Favorite ' . $fav_title . ': ' . $favourites . '</div>' : '';
 
 		return $details;
 	}
