@@ -1,13 +1,13 @@
 <?php
 
-namespace Cmb2Grid\Test;
+namespace LWTV\Cmb2Grid\Test;
 
 /**
  * Description of Test.
  *
  * @author Pablo Pacheco <pablo.pacheco@origgami.com.br>
  */
-if ( ! class_exists( '\Cmb2Grid\Test\Test' ) ) {
+if ( ! class_exists( 'LWTV\Cmb2Grid\Test\Test' ) ) {
 
 	class Test {
 
@@ -64,7 +64,7 @@ if ( ! class_exists( '\Cmb2Grid\Test\Test' ) ) {
 			));
 
 			// Create a default grid.
-			$cmb2Grid = new \Cmb2Grid\Grid\Cmb2Grid( $cmb_group );
+			$cmb2Grid = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb_group );
 
 			// Create now a Grid of group fields.
 			$cmb2GroupGrid	 = $cmb2Grid->addCmb2GroupGrid( $group_field_id );
@@ -128,7 +128,7 @@ if ( ! class_exists( '\Cmb2Grid\Test\Test' ) ) {
 				'type'	 => 'text',
 			));
 
-			$cmb2Grid	 = new \Cmb2Grid\Grid\Cmb2Grid( $cmb );
+			$cmb2Grid	 = new \LWTV\Cmb2Grid\Grid\Cmb2Grid( $cmb );
 			$row		 = $cmb2Grid->addRow();
 			$row->addColumns( array(
 				//$field1,

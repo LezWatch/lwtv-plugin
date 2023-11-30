@@ -8,11 +8,11 @@
 $valid_views     = array( 'cliches', 'gender', 'sexuality', 'queer-irl', 'roles', 'on-air' );
 $sent_view       = get_query_var( 'view', 'overview' );
 $view            = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
-$character_count = ( new LWTV_Stats() )->generate( 'characters', 'total', 'count' );
+$character_count = ( new LWTV_Statistics() )->generate( 'characters', 'total', 'count' );
 ?>
 
 <h2>
-	<a href="/characters/">Total Characters</a> (<?php echo ( new LWTV_Stats() )->generate( 'characters', 'total', 'count' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>)
+	<a href="/characters/">Total Characters</a> (<?php echo ( new LWTV_Statistics() )->generate( 'characters', 'total', 'count' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>)
 </h2>
 
 <ul class="nav nav-tabs">
@@ -185,8 +185,8 @@ switch ( $view ) {
 			</ul>
 			<p>&nbsp;</p>
 			<div class="tab-content" id="v-pills-tabContent">
-				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Stats() )->generate( 'characters', 'cliches', 'barchart' ); ?></div>
-				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Stats() )->generate( 'characters', 'cliches', 'list' ); ?></div>
+				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Statistics() )->generate( 'characters', 'cliches', 'barchart' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Statistics() )->generate( 'characters', 'cliches', 'list' ); ?></div>
 			</div>
 		</div>
 		<?php
@@ -197,11 +197,11 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'characters', 'sexuality', 'piechart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'characters', 'sexuality', 'piechart' ); ?>
 				</div>
 
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'characters', 'sexuality', 'percentage' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'characters', 'sexuality', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -213,11 +213,11 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'characters', 'gender', 'piechart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'characters', 'gender', 'piechart' ); ?>
 				</div>
 
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'characters', 'gender', 'percentage' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'characters', 'gender', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -229,11 +229,11 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'characters', 'queer-irl', 'piechart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'characters', 'queer-irl', 'piechart' ); ?>
 				</div>
 
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'characters', 'queer-irl', 'percentage' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'characters', 'queer-irl', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -246,14 +246,14 @@ switch ( $view ) {
 			<div class="row">
 				<div class="col">
 					<h4>Actors per Character</h4>
-					<?php ( new LWTV_Stats() )->generate( 'actors', 'per-char', 'barchart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'actors', 'per-char', 'barchart' ); ?>
 					<p>&nbsp;<br />The above chart displays the number of actors who play each character. So for example, "11 Actors (1)" means there's one character who has eleven (11) actors (and yes, there is one).</p>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
 					<h4>Characters per Actor</h4>
-					<?php ( new LWTV_Stats() )->generate( 'actors', 'per-actor', 'barchart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'actors', 'per-actor', 'barchart' ); ?>
 					<p>&nbsp;<br />The above chart displays the number of characters each actor plays. The actor with the highest number of characters played is the 'unknown' actor.</p>
 				</div>
 			</div>
@@ -266,7 +266,7 @@ switch ( $view ) {
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php ( new LWTV_Stats() )->generate( 'characters', 'on-air', 'trendline' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'characters', 'on-air', 'trendline' ); ?>
 				</div>
 			</div>
 		</div>

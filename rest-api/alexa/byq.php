@@ -28,7 +28,7 @@ class LWTV_Alexa_BYQ {
 
 		// Simple - how many have died total
 		if ( 'simple' === $type ) {
-			$data   = ( new LWTV_Stats_JSON() )->statistics( 'death', 'simple' );
+			$data   = ( new LWTV_Rest_API_Stats_JSON() )->statistics( 'death', 'simple' );
 			$output = 'A total of ' . $data['characters']['dead'] . ' characters have died on TV.';
 		} else {
 			$date = $type;
@@ -54,12 +54,12 @@ class LWTV_Alexa_BYQ {
 			// Calculate death
 			switch ( $format ) {
 				case 'year':
-					$death_query = ( new LWTV_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+					$death_query = ( new LWTV_Queery_Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 					$death_count = $death_query->post_count;
 					break;
 				case 'month':
-					$death_query      = ( new LWTV_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-					$death_list_array = ( new LWTV_BYQ_JSON() )->list_of_dead_characters( $death_query );
+					$death_query      = ( new LWTV_Queery_Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+					$death_list_array = ( new LWTV_Rest_API_BYQ() )->list_of_dead_characters( $death_query );
 					$death_count      = 0;
 					foreach ( $death_list_array as $the_dead ) {
 						if ( $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {
@@ -68,7 +68,7 @@ class LWTV_Alexa_BYQ {
 					}
 					break;
 				case 'day':
-					$death_query = ( new LWTV_Loops() )->post_meta_and_tax_query( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'm/d/Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+					$death_query = ( new LWTV_Queery_Post_Meta_And_Tax() )->make( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'm/d/Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 					$death_count = $death_query->post_count;
 					break;
 				default:
@@ -108,7 +108,7 @@ class LWTV_Alexa_BYQ {
 
 		// Figure out who died on a day...
 		$this_day = gmdate( 'm-d', $timestamp );
-		$data     = ( new LWTV_BYQ_JSON() )->on_this_day( $this_day );
+		$data     = ( new LWTV_Rest_API_BYQ() )->on_this_day( $this_day );
 		$count    = ( 'none' === key( $data ) ) ? 0 : count( $data );
 		$how_many = 'No characters died ';
 		$the_dead = '';

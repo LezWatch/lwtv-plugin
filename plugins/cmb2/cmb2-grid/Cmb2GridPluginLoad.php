@@ -1,13 +1,13 @@
 <?php
 
-namespace Cmb2Grid;
+namespace LWTV\Cmb2Grid;
 
 if ( ! defined( 'CMB2GRID_DIR' ) ) {
 	define( 'CMB2GRID_DIR', trailingslashit( __DIR__ ) );
 }
 
 
-if ( ! class_exists( '\Cmb2Grid\Cmb2GridPlugin' ) ) {
+if ( ! class_exists( 'LWTV\Cmb2Grid\Cmb2GridPlugin' ) ) {
 
 	require_once __DIR__ . '/DesignPatterns/Singleton.php';
 
@@ -104,7 +104,7 @@ if ( ( function_exists( 'wp_installing' ) && wp_installing() === false ) || ( ! 
 	add_action( 'plugins_loaded', '\\' . __NAMESPACE__ . '\init' );
 }
 
-if ( ! function_exists( '\Cmb2Grid\init' ) ) {
+if ( ! function_exists( 'LWTV\Cmb2Grid\init' ) ) {
 	/**
 	 * Initialize the class only if CMB2 is detected.
 	 *
@@ -119,5 +119,5 @@ if ( ! function_exists( '\Cmb2Grid\init' ) ) {
 		}
 	}
 }
-add_action( 'cmb2_init', '\Cmb2Grid\init' );
+add_action( 'cmb2_init', 'LWTV\Cmb2Grid\init' );
 

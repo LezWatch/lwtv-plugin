@@ -6,16 +6,16 @@
  * and open the template in the editor.
  */
 
-namespace Cmb2Grid\Grid\Group;
+namespace LWTV\Cmb2Grid\Grid\Group;
 
-if ( !class_exists( '\Cmb2Grid\Grid\Group\GroupRow' ) ) {
+if ( !class_exists( 'LWTV\Cmb2Grid\Grid\Group\GroupRow' ) ) {
 
     /**
      * Description of GroupRow.
      *
      * @author Pablo
      */
-    class GroupRow extends \Cmb2Grid\Grid\Row {
+    class GroupRow extends \LWTV\Cmb2Grid\Grid\Row {
 
         protected $parentFieldId;
 
@@ -34,16 +34,16 @@ if ( !class_exists( '\Cmb2Grid\Grid\Group\GroupRow' ) ) {
           //error_log( print_r( $field, true ) );
 
 
-          \Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field, 'after_row' );
+          \LWTV\Cmb2Grid\Cmb2\Utils::initializeFieldArg( $field, 'after_row' );
           $field->args['after_row'].= '</div>';
           } */
 
         protected function closeGroupRow( \CMB2_Field $field, $fieldID ) {
-            \Cmb2Grid\Cmb2\Utils::appendGroupFieldArg( $field, $fieldID, 'after_row', '</div>' );
+            \LWTV\Cmb2Grid\Cmb2\Utils::appendGroupFieldArg( $field, $fieldID, 'after_row', '</div>' );
         }
 
         protected function openGroupRow( \CMB2_Field $field, $fieldID ) {
-            \Cmb2Grid\Cmb2\Utils::appendGroupFieldArg( $field, $fieldID, 'before_row', '<div class="row cmb2GridRow">' );
+            \LWTV\Cmb2Grid\Cmb2\Utils::appendGroupFieldArg( $field, $fieldID, 'before_row', '<div class="row cmb2GridRow">' );
         }
 
         protected function handleRow() {

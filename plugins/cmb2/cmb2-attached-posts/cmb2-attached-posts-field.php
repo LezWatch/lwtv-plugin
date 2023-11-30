@@ -9,12 +9,12 @@
  */
 
 /**
- * LWTV_CMB2_Attached_Posts_Field loader
+ * LWTV_Fork_CMB2_Attached_Posts_Field loader
  *
  * Handles checking for and smartly loading the newest version of this library.
  *
  * @category  WordPressLibrary
- * @package   LWTV_CMB2_Attached_Posts_Field
+ * @package   LWTV_Fork_CMB2_Attached_Posts_Field
  * @author    WebDevStudios <contact@webdevstudios.com>
  * @copyright 2016 WebDevStudios <contact@webdevstudios.com>
  * @link      https://github.com/WebDevStudios/cmb2-attached-posts
@@ -46,7 +46,7 @@
  * Loader versioning: http://jtsternberg.github.io/wp-lib-loader/
  */
 
-if ( ! class_exists( 'LWTV_CMB2_Attached_Posts_Field_300', false ) ) {
+if ( ! class_exists( 'LWTV_Fork_CMB2_Attached_Posts_Field_300', false ) ) {
 
 	/**
 	 * Versioned loader class-name
@@ -54,17 +54,17 @@ if ( ! class_exists( 'LWTV_CMB2_Attached_Posts_Field_300', false ) ) {
 	 * This ensures each version is loaded/checked.
 	 *
 	 * @category WordPressLibrary
-	 * @package  LWTV_CMB2_Attached_Posts_Field
+	 * @package  LWTV_Fork_CMB2_Attached_Posts_Field
 	 * @author   WebDevStudios <contact@webdevstudios.com>
 	 * @license  GPL-2.0+
 	 * @version  2.1.0
 	 * @link     https://github.com/WebDevStudios/cmb2-attached-posts
 	 * @since    1.2.3
 	 */
-	class LWTV_CMB2_Attached_Posts_Field_300 {
+	class LWTV_Fork_CMB2_Attached_Posts_Field_300 {
 
 		/**
-		 * LWTV_CMB2_Attached_Posts_Field version number
+		 * LWTV_Fork_CMB2_Attached_Posts_Field version number
 		 * @var   string
 		 * @since 1.2.3
 		 */
@@ -84,7 +84,7 @@ if ( ! class_exists( 'LWTV_CMB2_Attached_Posts_Field_300', false ) ) {
 		 * Creates CMB2_ATTACHED_POSTS_FIELD_LOADED definition for early detection by
 		 * other scripts.
 		 *
-		 * Hooks LWTV_CMB2_Attached_Posts_Field inclusion to the cmb2_attached_posts_field_load hook
+		 * Hooks LWTV_Fork_CMB2_Attached_Posts_Field inclusion to the cmb2_attached_posts_field_load hook
 		 * on a high priority which decrements (increasing the priority) with
 		 * each version release.
 		 *
@@ -93,8 +93,8 @@ if ( ! class_exists( 'LWTV_CMB2_Attached_Posts_Field_300', false ) ) {
 		public function __construct() {
 			if ( ! defined( 'CMB2_ATTACHED_POSTS_FIELD_LOADED' ) ) {
 				/**
-				 * A constant you can use to check if LWTV_CMB2_Attached_Posts_Field is loaded
-				 * for your plugins/themes with LWTV_CMB2_Attached_Posts_Field dependency.
+				 * A constant you can use to check if LWTV_Fork_CMB2_Attached_Posts_Field is loaded
+				 * for your plugins/themes with LWTV_Fork_CMB2_Attached_Posts_Field dependency.
 				 *
 				 * Can also be used to determine the priority of the hook
 				 * in use for the currently loaded version.
@@ -122,7 +122,7 @@ if ( ! class_exists( 'LWTV_CMB2_Attached_Posts_Field_300', false ) ) {
 
 		/**
 		 * A final check if WDS_CMB2_Attached_Posts_Field exists before kicking off
-		 * our LWTV_CMB2_Attached_Posts_Field loading.
+		 * our LWTV_Fork_CMB2_Attached_Posts_Field loading.
 		 *
 		 * CMB2_ATTACHED_POSTS_FIELD_VERSION and CMB2_ATTACHED_POSTS_FIELD_DIR constants are
 		 * set at this point.
@@ -137,23 +137,23 @@ if ( ! class_exists( 'LWTV_CMB2_Attached_Posts_Field_300', false ) ) {
 
 			if ( ! defined( 'CMB2_ATTACHED_POSTS_FIELD_VERSION' ) ) {
 				/**
-				 * Defines the currently loaded version of LWTV_CMB2_Attached_Posts_Field.
+				 * Defines the currently loaded version of LWTV_Fork_CMB2_Attached_Posts_Field.
 				 */
 				define( 'CMB2_ATTACHED_POSTS_FIELD_VERSION', self::VERSION );
 			}
 
 			if ( ! defined( 'CMB2_ATTACHED_POSTS_FIELD_DIR' ) ) {
 				/**
-				 * Defines the directory of the currently loaded version of LWTV_CMB2_Attached_Posts_Field.
+				 * Defines the directory of the currently loaded version of LWTV_Fork_CMB2_Attached_Posts_Field.
 				 */
 				define( 'CMB2_ATTACHED_POSTS_FIELD_DIR', __DIR__ . '/' );
 			}
 
-			// Include and initiate LWTV_CMB2_Attached_Posts_Field.
+			// Include and initiate LWTV_Fork_CMB2_Attached_Posts_Field.
 			require_once CMB2_ATTACHED_POSTS_FIELD_DIR . 'init.php';
 		}
 	}
 
 	// Kick it off.
-	new LWTV_CMB2_Attached_Posts_Field_300();
+	new LWTV_Fork_CMB2_Attached_Posts_Field_300();
 }

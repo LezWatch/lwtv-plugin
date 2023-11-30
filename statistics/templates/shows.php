@@ -11,7 +11,7 @@ $sent_view   = get_query_var( 'view', 'overview' );
 $view        = ( ! in_array( $sent_view, $valid_views, true ) ) ? 'overview' : $sent_view;
 ?>
 <h2>
-	<a href="/shows/">Total Shows</a> (<?php echo (int) ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' ); ?>)
+	<a href="/shows/">Total Shows</a> (<?php echo (int) ( new LWTV_Statistics() )->generate( 'shows', 'total', 'count' ); ?>)
 </h2>
 
 <ul class="nav nav-tabs">
@@ -38,7 +38,7 @@ switch ( $view ) {
 					<div class="card text-center">
 						<h3 class="card-header shows">Shows</h3>
 						<div class="card-body bg-light">
-							<h5 class="card-title"><?php echo (int) ( new LWTV_Stats() )->generate( 'shows', 'total', 'count' ); ?></h5>
+							<h5 class="card-title"><?php echo (int) ( new LWTV_Statistics() )->generate( 'shows', 'total', 'count' ); ?></h5>
 						</div>
 					</div>
 				</div>
@@ -61,7 +61,7 @@ switch ( $view ) {
 			</div>
 		</div>
 
-		<p>&nbsp;<br/>The average show score is <strong><?php ( new LWTV_Stats() )->generate( 'shows', 'scores', 'average' ); ?></strong>. The lowest score is <strong><?php ( new LWTV_Stats() )->generate( 'shows', 'scores', 'low' ); ?></strong> and the highest is <strong><?php ( new LWTV_Stats() )->generate( 'shows', 'scores', 'high' ); ?></strong>.</p>
+		<p>&nbsp;<br/>The average show score is <strong><?php ( new LWTV_Statistics() )->generate( 'shows', 'scores', 'average' ); ?></strong>. The lowest score is <strong><?php ( new LWTV_Statistics() )->generate( 'shows', 'scores', 'low' ); ?></strong> and the highest is <strong><?php ( new LWTV_Statistics() )->generate( 'shows', 'scores', 'high' ); ?></strong>.</p>
 
 		<div class="container">
 			<div class="row">
@@ -142,8 +142,8 @@ switch ( $view ) {
 			</ul>
 			<p>&nbsp;</p>
 			<div class="tab-content" id="v-pills-tabContent">
-				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'tropes', 'barchart' ); ?></div>
-				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'tropes', 'percentage' ); ?></div>
+				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Statistics() )->generate( 'shows', 'tropes', 'barchart' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Statistics() )->generate( 'shows', 'tropes', 'percentage' ); ?></div>
 			</div>
 		</div>
 		<?php
@@ -158,8 +158,8 @@ switch ( $view ) {
 			</ul>
 			<p>&nbsp;</p>
 			<div class="tab-content" id="v-pills-tabContent">
-				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'genres', 'barchart' ); ?></div>
-				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'genres', 'percentage' ); ?></div>
+				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Statistics() )->generate( 'shows', 'genres', 'barchart' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Statistics() )->generate( 'shows', 'genres', 'percentage' ); ?></div>
 			</div>
 		</div>
 		<?php
@@ -170,10 +170,10 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'thumbs', 'piechart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'thumbs', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'thumbs', 'percentage' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'thumbs', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -186,10 +186,10 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'stars', 'piechart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'stars', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'stars', 'percentage' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'stars', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -206,8 +206,8 @@ switch ( $view ) {
 			</ul>
 			<p>&nbsp;</p>
 			<div class="tab-content" id="v-pills-tabContent">
-				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'intersections', 'barchart' ); ?></div>
-				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Stats() )->generate( 'shows', 'intersections', 'percentage' ); ?></div>
+				<div class="tab-pane fade show active" id="v-pills-barchart" role="tabpanel" aria-labelledby="v-pills-barchart-tab"><?php ( new LWTV_Statistics() )->generate( 'shows', 'intersections', 'barchart' ); ?></div>
+				<div class="tab-pane fade" id="v-pills-list" role="tabpanel" aria-labelledby="v-pills-list-tab"><?php ( new LWTV_Statistics() )->generate( 'shows', 'intersections', 'percentage' ); ?></div>
 			</div>
 		</div>
 		<?php
@@ -219,10 +219,10 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'formats', 'piechart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'formats', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'formats', 'percentage' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'formats', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -234,10 +234,10 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'triggers', 'piechart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'triggers', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'triggers', 'percentage' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'triggers', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -249,10 +249,10 @@ switch ( $view ) {
 		<div class="container chart-container">
 			<div class="row">
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'weloveit', 'piechart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'weloveit', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'weloveit', 'percentage' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'weloveit', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -264,10 +264,10 @@ switch ( $view ) {
 			<h4>Currently On Air</h4>
 			<div class="row">
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'current', 'piechart' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'current', 'piechart' ); ?>
 				</div>
 				<div class="col-sm-6">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'current', 'percentage' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'current', 'percentage' ); ?>
 				</div>
 			</div>
 		</div>
@@ -276,7 +276,7 @@ switch ( $view ) {
 			<h4>On Air Per Year</h4>
 			<div class="row">
 				<div class="col">
-					<?php ( new LWTV_Stats() )->generate( 'shows', 'on-air', 'trendline' ); ?>
+					<?php ( new LWTV_Statistics() )->generate( 'shows', 'on-air', 'trendline' ); ?>
 				</div>
 			</div>
 		</div>

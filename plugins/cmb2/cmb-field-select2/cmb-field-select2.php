@@ -15,11 +15,11 @@
  */
 
 // Ensure class exists.
-if ( ! class_exists( 'PW_CMB2_Field_Select2' ) ) {
+if ( ! class_exists( 'LWTV_Fork_CMB2_Field_Select2' ) ) {
 /**
- * Class PW_CMB2_Field_Select2
+ * Class LWTV_Fork_CMB2_Field_Select2
 	*/
-class PW_CMB2_Field_Select2 {
+class LWTV_Fork_CMB2_Field_Select2 {
 
 	/**
 	 * Current version number
@@ -306,5 +306,5 @@ class PW_CMB2_Field_Select2 {
 }
 
 
-$pw_cmb2_field_select2 = new PW_CMB2_Field_Select2();
+$pw_cmb2_field_select2 = new LWTV_Fork_CMB2_Field_Select2();
 }

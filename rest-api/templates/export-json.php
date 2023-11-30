@@ -19,7 +19,7 @@ $a_post_type   = ( isset( $wp_query->query['exportname'] ) ) ? esc_attr( $wp_que
 
 switch ( $export_type ) {
 	case 'wikilist':
-		$return = ( new LWTV_Export_JSON() )->export( 'list', $a_post_type . 's' );
+		$return = ( new LWTV_Rest_API_Export_JSON() )->export( 'list', $a_post_type . 's' );
 		foreach ( $return as $item ) {
 			$echo = wp_json_encode( $item, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 			if ( '[]' !== $echo ) {
@@ -28,7 +28,7 @@ switch ( $export_type ) {
 		}
 		break;
 	case 'wikidata':
-		$return = ( new LWTV_Export_JSON() )->export( $a_post_type, esc_attr( $wp_query->query['name'] ) );
+		$return = ( new LWTV_Rest_API_Export_JSON() )->export( $a_post_type, esc_attr( $wp_query->query['name'] ) );
 		$echo   = wp_json_encode( $return, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 		echo '<pre>' . wp_kses_post( $echo ) . '</pre>';
 		break;
