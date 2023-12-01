@@ -115,12 +115,12 @@ class LWTV_Calendar {
 			array(
 				'name'       => 'TV Show',
 				'id'         => $prefix . 'our_show',
-				'desc'       => 'Select one show. If there are additional shows, scroll down and use the \'Add Another Show\' button.',
+				'desc'       => 'Select one show. Each TVMaze show can only link to ONE show.',
 				'type'       => 'custom_attached_posts', // This field type
 				'post_type'  => 'post_type_shows',
 				'options'    => array(
 					'query_args' => array(
-						'posts_per_page' => 2,
+						'posts_per_page' => 5,
 						'post_type'      => 'post_type_shows',
 					), // override the get_posts args
 				),
