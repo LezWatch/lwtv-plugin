@@ -48,7 +48,7 @@ All code must pass through the `development` branch which is kept up tp date. As
 To install and update:
 
 * `$ npm install` - Install all the things.
-* `$ npm update` - Updates all the things.
+* `$ npm run updater` - Updates all the things (npm, composer, etc).
 * `$ npm run build` - Builds all the things for production.
 
 All commits are linted automatically on commit via eslint and phpcs, to ensure nothing breaks when we push the code.
@@ -520,7 +520,6 @@ Stored in `/tests/ ` -- Unit/Functionality Tests
 Stored in `/node_scripts/` -  Scripts used by NPM (for anything in `node_modules`). _This is removed by the builder script when pushed to production._
 
 * `postinstall.js` - script run at the end of NPM to move files to the correct location.
-
 
 ## Developer Features
 

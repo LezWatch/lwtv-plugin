@@ -55,7 +55,7 @@ class Statistics implements Component, Templater {
 		}
 
 		// Enqueue files shared:
-		wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/chart.js', array( 'jquery' ), '4.4.0', false );
+		wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/chart.js', array( 'jquery' ), '4.4.1', false );
 		wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.2.1', false );
 		wp_enqueue_script( 'palette', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
 

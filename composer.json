@@ -36,7 +36,7 @@
     "lint": "phpcs",
     "lint-fix": "phpcbf",
     "post-update-cmd": [
-      "cp -r ./vendor/johngrogg/ics-parser/src/ICal/ ./features/ICal/"
+      "cp -r ./vendor/johngrogg/ics-parser/src/ICal/ ./php/calendar/ICal/"
     ],
     "test": "phpunit"
   },
