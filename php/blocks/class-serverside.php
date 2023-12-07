@@ -8,12 +8,14 @@
 namespace LWTV\Blocks;
 
 use LWTV\Calendar\Blocks as CalendarBlocks;
+use LWTV\Features\Shortcodes;
 
 class Serverside {
 
 	protected static $directory;
 
 	public function __construct() {
+		new Shortcodes();
 		self::$directory = __DIR__;
 
 		// Register SSR blocks.
@@ -26,7 +28,7 @@ class Serverside {
 					'users'       => array( 'type' => 'string' ),
 					'format'      => array( 'type' => 'string' ),
 				),
-				'render_callback' => array( 'LWTV_Features_Shortcodes', 'author_box' ),
+				'render_callback' => array( 'Shortcodes', 'author_box' ),
 			)
 		);
 
@@ -38,7 +40,7 @@ class Serverside {
 					'api_version' => 3,
 					'taxonomy'    => array( 'type' => 'string' ),
 				),
-				'render_callback' => array( 'LWTV_Features_Shortcodes', 'glossary' ),
+				'render_callback' => array( 'Shortcodes', 'glossary' ),
 			)
 		);
 

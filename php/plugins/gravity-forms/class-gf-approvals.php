@@ -8,6 +8,10 @@
  * Version 2.0.0
  */
 
+namespace LWTV\Plugins\Gravity_Forms;
+
+use LWTV\Plugins\Gravity_Forms\Stop_Spammers;
+
 // Make sure Gravity Forms is active and already loaded.
 if ( ! class_exists( 'GFForms' ) ) {
 	die();
@@ -15,9 +19,9 @@ if ( ! class_exists( 'GFForms' ) ) {
 
 // The Add-On Framework is not loaded by default.
 // Use the following function to load the appropriate files.
-GFForms::include_feed_addon_framework();
+\GFForms::include_feed_addon_framework();
 
-class LWTV_Fork_GF_Approvals extends GFFeedAddOn {
+class GF_Approvals extends \GFFeedAddOn {
 
 	// The following class variables are used by the Framework.
 	// They are defined in GFAddOn and should be overridden.
@@ -69,7 +73,7 @@ class LWTV_Fork_GF_Approvals extends GFFeedAddOn {
 
 	public static function get_instance() {
 		if ( null === self::$_instance ) {
-			self::$_instance = new LWTV_Fork_GF_Approvals();
+			self::$_instance = new GF_Approvals();
 		}
 
 		return self::$_instance;
@@ -82,7 +86,7 @@ class LWTV_Fork_GF_Approvals extends GFFeedAddOn {
 		add_filter( 'gform_notification_events', array( $this, 'add_notification_event' ) );
 		add_filter( 'gform_entries_field_value', array( $this, 'filter_gform_entries_field_value' ), 10, 4 );
 
-		if ( GFAPI::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+		if ( \GFAPI::current_user_can_any( 'gravityforms_edit_entries' ) ) {
 			add_action( 'wp_dashboard_setup', array( $this, 'dashboard_setup' ) );
 		}
 	}
@@ -375,9 +379,9 @@ class LWTV_Fork_GF_Approvals extends GFFeedAddOn {
 				do_action( 'gform_approvals_entry_approved', $entry, $form );
 			}
 
-			$notifications_to_send = GFCommon::get_notifications_to_send( 'form_approval', $form, $entry );
+			$notifications_to_send = \GFCommon::get_notifications_to_send( 'form_approval', $form, $entry );
 			foreach ( $notifications_to_send as $notification ) {
-				GFCommon::send_notification( $notification, $form, $entry );
+				\GFCommon::send_notification( $notification, $form, $entry );
 			}
 		}
 
@@ -466,7 +470,7 @@ class LWTV_Fork_GF_Approvals extends GFFeedAddOn {
 			'value' => 'pending',
 		);
 
-		$entries = GFAPI::get_entries( 0, $search_criteria );
+		$entries = \GFAPI::get_entries( 0, $search_criteria );
 
 		if ( ! empty( $entries ) && count( $entries ) > 0 ) {
 			?>
@@ -483,8 +487,8 @@ class LWTV_Fork_GF_Approvals extends GFFeedAddOn {
 				<?php
 
 				foreach ( $entries as $entry ) {
-					$get_ip    = ( new LWTV_Gravity_Forms_Spam() )->check_ip_location( $entry['ip'] );
-					$form      = GFAPI::get_form( $entry['form_id'] );
+					$get_ip    = ( new Stop_Spammers() )->check_ip_location( $entry['ip'] );
+					$form      = \GFAPI::get_form( $entry['form_id'] );
 					$user      = get_user_by( 'id', (int) $entry['created_by'] );
 					$url_entry = sprintf( 'admin.php?page=gf_entries&view=entry&id=%d&lid=%d', $entry['form_id'], $entry['id'] );
 					$url_entry = sanitize_url( admin_url( $url_entry ) );
@@ -558,4 +562,4 @@ class LWTV_Fork_GF_Approvals extends GFFeedAddOn {
 	}
 }
 
-GFAddOn::register( 'LWTV_Fork_GF_Approvals' );
+\GFAddOn::register( 'GF_Approvals' );

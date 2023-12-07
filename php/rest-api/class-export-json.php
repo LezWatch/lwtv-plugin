@@ -167,29 +167,34 @@ class Export_JSON {
 
 		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
 			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_' . $item );
-			if ( $the_loop && $the_loop->have_posts() ) {
-				while ( $the_loop->have_posts() ) {
-					$the_loop->the_post();
-					$post = get_post();
+			wp_reset_query();
 
-					switch ( $item ) {
-						case 'actor':
-						case 'actors':
-							$return[] = self::export_actor( $post->post_name, 'wiki' );
-							break;
-						case 'character':
-						case 'characters':
-							$return[] = self::export_character( $post->post_name, 'wiki' );
-							break;
-						case 'show':
-						case 'shows':
-							$return[] = self::export_show( $post->post_name, 'wiki' );
-							break;
-					}
+			if ( ! is_object( $the_loop ) || ! $the_loop->have_posts() ) {
+				return $return;
+			}
+
+			while ( $the_loop->have_posts() ) {
+				$the_loop->the_post();
+				$post = get_post();
+
+				switch ( $item ) {
+					case 'actor':
+					case 'actors':
+						$return[] = self::export_actor( $post->post_name, 'wiki' );
+						break;
+					case 'character':
+					case 'characters':
+						$return[] = self::export_character( $post->post_name, 'wiki' );
+						break;
+					case 'show':
+					case 'shows':
+						$return[] = self::export_show( $post->post_name, 'wiki' );
+						break;
 				}
 			}
 		}
-		return $return;
+
+			return $return;
 	}
 
 	/**
@@ -204,28 +209,33 @@ class Export_JSON {
 
 		if ( in_array( $item, array( 'characters', 'shows', 'actors' ), true ) ) {
 			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_' . $item );
-			if ( $the_loop && $the_loop->have_posts() ) {
-				while ( $the_loop->have_posts() ) {
-					$the_loop->the_post();
-					$post = get_post();
+			wp_reset_query();
 
-					switch ( $item ) {
-						case 'actor':
-						case 'actors':
-							$return[] = self::export_actor( $post->post_name, 'raw' );
-							break;
-						case 'character':
-						case 'characters':
-							$return[] = self::export_character( $post->post_name, 'raw' );
-							break;
-						case 'show':
-						case 'shows':
-							$return[] = self::export_show( $post->post_name, 'raw' );
-							break;
-					}
+			if ( ! is_object( $the_loop ) || ! $the_loop->have_posts() ) {
+				return $return;
+			}
+
+			while ( $the_loop->have_posts() ) {
+				$the_loop->the_post();
+				$post = get_post();
+
+				switch ( $item ) {
+					case 'actor':
+					case 'actors':
+						$return[] = self::export_actor( $post->post_name, 'raw' );
+						break;
+					case 'character':
+					case 'characters':
+						$return[] = self::export_character( $post->post_name, 'raw' );
+						break;
+					case 'show':
+					case 'shows':
+						$return[] = self::export_show( $post->post_name, 'raw' );
+						break;
 				}
 			}
 		}
+
 		return $return;
 	}
 
@@ -322,70 +332,73 @@ class Export_JSON {
 	public function get_full_list_characters( $group, $term ) {
 
 		$the_loop = lwtv_plugin()->queery_taxonomy( 'post_type_characters', 'lez_' . $group, 'slug', $term );
+		wp_reset_query();
+
+		if ( ! is_object( $the_loop ) || ! $the_loop->have_posts() ) {
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method: ' . $term );
+		}
 
 		// Make empty array for later
 		$characters = array();
 
-		if ( $the_loop && $the_loop->have_posts() ) {
-			$characters_list = wp_list_pluck( $the_loop->posts, 'ID' );
+		$characters_list = wp_list_pluck( $the_loop->posts, 'ID' );
 
-			foreach ( $characters_list as $character ) {
-				// Gender -- array of all applicable
-				$gender       = array();
-				$gender_terms = get_the_terms( $character, 'lez_gender', true );
-				if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
-					foreach ( $gender_terms as $gender_term ) {
-						$gender[] = $gender_term->name;
-					}
+		foreach ( $characters_list as $character ) {
+			// Gender -- array of all applicable
+			$gender       = array();
+			$gender_terms = get_the_terms( $character, 'lez_gender', true );
+			if ( $gender_terms && ! is_wp_error( $gender_terms ) ) {
+				foreach ( $gender_terms as $gender_term ) {
+					$gender[] = $gender_term->name;
 				}
-
-				// Sexuality -- array of all applicable
-				$sexuality       = array();
-				$sexuality_terms = get_the_terms( $character, 'lez_sexuality', true );
-				if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
-					foreach ( $sexuality_terms as $sexuality_term ) {
-						$sexuality[] = $sexuality_term->name;
-					}
-				}
-
-				// Cliches -- array of all applicable
-				$cliches     = array();
-				$lez_cliches = get_the_terms( $character, 'lez_cliches' );
-				if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
-					foreach ( $lez_cliches as $the_cliche ) {
-						$cliches[] = $the_cliche->name;
-					}
-				}
-				$cliches_clean = implode( '; ', $cliches );
-
-				// Shows
-				$shows_full  = get_post_meta( $character, 'lezchars_show_group', true );
-				$shows_array = array();
-				foreach ( $shows_full as $show ) {
-					// Remove the Array.
-					if ( is_array( $show['show'] ) ) {
-						$show['show'] = $show['show'][0];
-					}
-
-					$appears       = implode( ';', $show['appears'] );
-					$shows_array[] = get_the_title( $show['show'] ) . ' - ' . $show['type'] . ' (' . $appears . ')';
-				}
-				$shows_clean = implode( '; ', $shows_array );
-
-				$char_name = get_the_title( $character );
-				$char_url  = get_the_permalink( $character );
-
-				$characters[ sanitize_title( $char_name ) ] = array(
-					'id'        => $character,
-					'name'      => $char_name,
-					'url'       => $char_url,
-					'image'     => wp_get_attachment_url( get_post_thumbnail_id( $character ) ),
-					'sexuality' => $sexuality,
-					'gender'    => $gender,
-					'cliches'   => $cliches_clean,
-					'shows'     => $shows_clean,
-				);
 			}
+
+			// Sexuality -- array of all applicable
+			$sexuality       = array();
+			$sexuality_terms = get_the_terms( $character, 'lez_sexuality', true );
+			if ( $sexuality_terms && ! is_wp_error( $sexuality_terms ) ) {
+				foreach ( $sexuality_terms as $sexuality_term ) {
+					$sexuality[] = $sexuality_term->name;
+				}
+			}
+
+			// Cliches -- array of all applicable
+			$cliches     = array();
+			$lez_cliches = get_the_terms( $character, 'lez_cliches' );
+			if ( $lez_cliches && ! is_wp_error( $lez_cliches ) ) {
+				foreach ( $lez_cliches as $the_cliche ) {
+					$cliches[] = $the_cliche->name;
+				}
+			}
+			$cliches_clean = implode( '; ', $cliches );
+
+			// Shows
+			$shows_full  = get_post_meta( $character, 'lezchars_show_group', true );
+			$shows_array = array();
+			foreach ( $shows_full as $show ) {
+				// Remove the Array.
+				if ( is_array( $show['show'] ) ) {
+					$show['show'] = $show['show'][0];
+				}
+
+				$appears       = implode( ';', $show['appears'] );
+				$shows_array[] = get_the_title( $show['show'] ) . ' - ' . $show['type'] . ' (' . $appears . ')';
+			}
+			$shows_clean = implode( '; ', $shows_array );
+
+			$char_name = get_the_title( $character );
+			$char_url  = get_the_permalink( $character );
+
+			$characters[ sanitize_title( $char_name ) ] = array(
+				'id'        => $character,
+				'name'      => $char_name,
+				'url'       => $char_url,
+				'image'     => wp_get_attachment_url( get_post_thumbnail_id( $character ) ),
+				'sexuality' => $sexuality,
+				'gender'    => $gender,
+				'cliches'   => $cliches_clean,
+				'shows'     => $shows_clean,
+			);
 		}
 
 		if ( ! isset( $characters ) || empty( $characters ) ) {

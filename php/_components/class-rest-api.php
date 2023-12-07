@@ -100,21 +100,36 @@ class Rest_API implements Component, Templater {
 	/**
 	 * Generate Statistics
 	 *
+	 * @param string $stat_type
+	 * @param string $format
+	 * @param int    $page
+	 *
 	 * @return array with stats data
 	 */
 	public function get_json_statistics( $stat_type = 'characters', $format = 'simple', $page = 1 ) {
 		return ( new Stats_JSON() )->statistics( $stat_type, $format, $page );
 	}
 
-	/*
+	/**
 	 * Similar Show
+	 *
+	 * @param string $show_slug
+	 *
+	 * @return mixed
 	 */
 	public function get_json_similar_show( $show_slug ) {
 		return ( new Shows_Like_JSON() )->similar_show( $show_slug );
 	}
 
-	/*
+	/**
 	 * Export
+	 *
+	 * @param  string $type
+	 * @param  string $item
+	 * @param  string $tax
+	 * @param  string $term
+	 *
+	 * @return array|string|WP_Error
 	 */
 	public function get_json_export( $type = 'actor', $item = 'unknown', $tax = '', $term = '' ) {
 		return ( new Export_JSON() )->export( $type, $item, $tax, $term );

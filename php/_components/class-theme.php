@@ -53,6 +53,10 @@ class Theme implements Component, Templater {
 
 	/**
 	 * Symbolicon for Stats pages
+	 *
+	 * @param string $stat_type
+	 *
+	 * @return string Custom SVG Icon
 	 */
 	public function get_stats_symbolicon( $stat_type ) {
 		return ( new Stats_Symbolicon() )->make( $stat_type );
@@ -60,6 +64,11 @@ class Theme implements Component, Templater {
 
 	/**
 	 * List all characters
+	 *
+	 * @param  int    $post_id
+	 * @param  string $format
+	 *
+	 * @return array  List of characters
 	 */
 	public function get_list_characters( $post_id, $format ) {
 		return ( new List_Characters() )->make( $post_id, $format );
@@ -67,6 +76,10 @@ class Theme implements Component, Templater {
 
 	/**
 	 * Generate author social media details
+	 *
+	 * @param  string $author
+	 *
+	 * @return string Output with Social
 	 */
 	public function get_author_social( $author ) {
 		return ( new Data_Author() )->social( $author );
@@ -74,6 +87,10 @@ class Theme implements Component, Templater {
 
 	/**
 	 * Generate author favorite shows.
+	 *
+	 * @param  string $author
+	 *
+	 * @return string Fav shows
 	 */
 	public function get_author_favorite_shows( $author ) {
 		return ( new Data_Author() )->favorite_shows( $author );
@@ -81,6 +98,12 @@ class Theme implements Component, Templater {
 
 	/**
 	 * Take the data from the taxonomy to determine a dynamic title.
+	 *
+	 * @param  string $location
+	 * @param  string $post_type
+	 * @param  string $taxonomy
+	 *
+	 * @return string
 	 */
 	public function get_tax_archive_title( $location, $post_type, $taxonomy ) {
 		return ( new Taxonomy_Archive_Title() )->make( $location, $post_type, $taxonomy );
@@ -88,6 +111,10 @@ class Theme implements Component, Templater {
 
 	/**
 	 * Get the stars for a show
+	 *
+	 * @param  int $show_id
+	 *
+	 * @return string
 	 */
 	public function get_show_stars( $show_id ) {
 		return ( new Show_Stars() )->make( $show_id );
@@ -95,6 +122,10 @@ class Theme implements Component, Templater {
 
 	/**
 	 * Generate content warning
+	 *
+	 * @param int    $show_id Actor ID
+	 *
+	 * @return string
 	 */
 	public function get_show_content_warning( $show_id ) {
 		return ( new Content_Warning() )->make( $show_id );
@@ -102,16 +133,26 @@ class Theme implements Component, Templater {
 
 	/**
 	 * Generate character data
+	 *
+	 * @param int    $character_id Character ID
+	 * @param string $format       Type of output
+	 *
+	 * @return string
 	 */
-	public function get_character_data( $character_id, $data ) {
-		return ( new Data_Character() )->make( $character_id, $data );
+	public function get_character_data( $character_id, $format ) {
+		return ( new Data_Character() )->make( $character_id, $format );
 	}
 
 	/**
 	 * Generate actor data
+	 *
+	 * @param int    $the_id Actor ID
+	 * @param string $format Type of output
+	 *
+	 * @return string
 	 */
-	public function get_actor_data( $the_id, $data ) {
-		return ( new Data_Actor() )->make( $the_id, $data );
+	public function get_actor_data( $the_id, $format ) {
+		return ( new Data_Actor() )->make( $the_id, $format );
 	}
 
 	/**

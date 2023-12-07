@@ -81,8 +81,7 @@ class Spammers {
 		}
 
 		if ( 'ip' === $type ) {
-			$ip      = $to_check;
-			$bad_ips = false;
+			$ip = $to_check;
 			foreach ( $disallowed as $nope ) {
 				// Only check the IPs:
 				if ( rest_is_ip_address( $nope ) ) {

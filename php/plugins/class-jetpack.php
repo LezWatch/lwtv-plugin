@@ -11,7 +11,6 @@ if ( ! class_exists( 'Jetpack' ) ) {
 	return;
 }
 
-
 class Jetpack {
 
 	public function __construct() {

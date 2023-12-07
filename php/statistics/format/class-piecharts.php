@@ -77,7 +77,6 @@ class Piecharts {
 			echo '<p><em>Coming Soon</em></p>';
 			return;
 		}
-
 		?>
 
 		<canvas
@@ -87,6 +86,25 @@ class Piecharts {
 		/>
 			<p>Your browser cannot display this piechart for stats on <?php echo esc_html( $subject ); ?>.</p>
 		</canvas>
+
+		<?php
+		// Piechart Variables
+		$display = 'true';
+		if ( in_array( $data, $show_zero, true ) ) {
+			$position = 'bottom';
+		} elseif ( in_array( $data_top, $show_top, true ) ) {
+			$position = 'top';
+		} else {
+			$display = 'false';
+		}
+
+		// Background Color
+		$background_color = "palette('tol-rainbow', pie" . ucfirst( $data ) . "Dataset.length).map(function(hex) { return '#' + hex; })";
+		if ( in_array( $data, $show_zero, true ) ) {
+			// phpcs:ignore Universal.Arrays.DisallowShortArraySyntax.Found
+			$background_color = [ '#5cb85c', '#06c', '#c0392b' ];
+		}
+		?>
 
 		<script>
 			// Piechart for stats
@@ -112,21 +130,7 @@ class Piecharts {
 				],
 				datasets : [{
 					data : pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset,
-					<?php
-					if ( in_array( $data, $show_zero, true ) ) {
-						?>
-						backgroundColor: [
-							'#5cb85c',
-							'#06c',
-							'#c0392b'
-						],
-						<?php
-					} else {
-						?>
-						backgroundColor: palette('tol-rainbow', pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset.length).map(function(hex) { return '#' + hex; }),
-						<?php
-					}
-					?>
+					backgroundColor: <?php echo esc_attr( $background_color ); ?>,
 				}]
 			};
 
@@ -149,25 +153,9 @@ class Piecharts {
 					},
 					plugins: {
 						legend: {
-							<?php
-							if ( in_array( $data, $show_zero, true ) ) {
-								?>
-								position: 'bottom',
-								<?php
-							} elseif ( in_array( $data_top, $show_top, true ) ) {
-								?>
-								position: 'top',
-								<?php
-							} else {
-								// Everything else has a sidebar so we don't need both... Do we?
-								?>
-								display: false,
-								<?php
-							}
-							?>
-							labels: {
-								boxWidth: 10,
-							}
+							position: '<?php echo esc_attr( $position ); ?>',
+							display: '<?php echo esc_attr( $display ); ?>',,
+							labels: { boxWidth: 10, }
 						}
 					}
 				}

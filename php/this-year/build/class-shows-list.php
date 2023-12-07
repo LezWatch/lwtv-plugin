@@ -40,10 +40,13 @@ class Shows_List {
 		$counted_shows = 0;
 		$shows_queery  = lwtv_plugin()->queery_post_type( 'post_type_shows' );
 
-		if ( $shows_queery->have_posts() ) {
-			$shows_array = wp_list_pluck( $shows_queery->posts, 'ID' );
-			wp_reset_query();
+		wp_reset_query();
+
+		if ( ! is_object( $shows_queery ) || ! $shows_queery->have_posts() ) {
+			return;
 		}
+
+		$shows_array = wp_list_pluck( $shows_queery->posts, 'ID' );
 
 		if ( is_array( $shows_array ) ) {
 			foreach ( $shows_array as $show_id ) {

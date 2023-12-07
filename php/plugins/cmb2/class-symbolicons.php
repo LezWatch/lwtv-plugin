@@ -5,7 +5,9 @@
  * @since 1.0
  */
 
-class LWTV_CMB2_Symbolicons {
+namespace LWTV\Plugins\CMB2;
+
+class Symbolicons {
 
 	public $icon_taxonomies; // Taxonomies that have an icon
 	public $symbolicon_path; // Path to symbolicons
@@ -150,5 +152,3 @@ class LWTV_CMB2_Symbolicons {
 		return $content;
 	}
 }
-
-new LWTV_CMB2_Symbolicons();

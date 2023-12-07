@@ -62,11 +62,9 @@ class Stop_Spammers {
 				$is_naughty['mod']  = lwtv_plugin()->is_spammer( $email, 'email', 'moderated_keys' );
 			}
 
-			if ( rest_is_ip_address( (string) $key ) ) {
+			if ( rest_is_ip_address( (string) $key ) && is_object( $entry ) ) {
 				$lwtv_ip          = (string) $key;
 				$gravity_forms_ip = ( isset( $entry->ip ) ) ? $entry->ip : '';
-				$check_lwtv_ip    = self::check_ip_location( $lwtv_ip );
-				$check_gf_ip      = self::check_ip_location( $gravity_forms_ip );
 
 				// Santa Clause time.
 				$is_naughty['spam'] = lwtv_plugin()->is_spammer( $gravity_forms_ip, 'ip', 'disallowed_keys' );
@@ -95,10 +93,10 @@ class Stop_Spammers {
 				$message .= ' - IP Address ( ' . $gravity_forms_ip . ' )';
 			}
 
-			$result = \GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $message, 'error', 'spam' );
+			\GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $message, 'error', 'spam' );
 			return true;
 		} elseif ( ! empty( $warn_message ) ) {
-			$add_note = \GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $warn_message, 'warning', 'spam' );
+			\GFAPI::add_note( $entry['id'], 0, 'LWTV Robot', $warn_message, 'warning', 'spam' );
 		}
 
 		// If we got all the way down here, we're not spam!

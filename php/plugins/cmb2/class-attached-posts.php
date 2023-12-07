@@ -3,7 +3,9 @@
  * CMB2 filters and hooks for Attached Posts.
  */
 
-class LWTV_CMB2_Attached_Posts {
+namespace LWTV\Plugins\CMB2;
+
+class Attached_Posts {
 
 	/**
 	 * Constructor
@@ -71,5 +73,3 @@ class LWTV_CMB2_Attached_Posts {
 		return $number;
 	}
 }
-
-new LWTV_CMB2_Attached_Posts();

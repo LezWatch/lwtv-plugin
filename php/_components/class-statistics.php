@@ -256,6 +256,10 @@ class Statistics implements Component, Templater {
 		$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $tax, 'slug', $term );
 		$return = 0;
 
+		if ( ! is_object( $queery ) ) {
+			return 0;
+		}
+
 		// Create the date with regards to timezones
 		$tz        = 'America/New_York';
 		$timestamp = time();
@@ -322,6 +326,8 @@ class Statistics implements Component, Templater {
 	 * Display statistics
 	 *
 	 *  @param array $attributes
+	 *
+	 * @return string
 	 */
 	public function generate_stats_block( $attributes ) {
 		return ( new Gutenberg_SSR() )->statistics( $attributes );
@@ -331,6 +337,8 @@ class Statistics implements Component, Templater {
 	 * Display Actor stats block
 	 *
 	 * @param  array $attributes
+	 *
+	 * @return string
 	 */
 	public function generate_stats_block_actor( $attributes ) {
 		return ( new Gutenberg_SSR() )->mini_stats( $attributes );

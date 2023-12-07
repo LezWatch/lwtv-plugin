@@ -5,6 +5,8 @@
 
 namespace LWTV\CPTs\Shows;
 
+use LWTV\Plugins\CMB2;
+
 class CMB2_Metaboxes {
 
 	public $ratings_array;

@@ -7,17 +7,22 @@
  * @package Lwtv_Plugin
  */
 
+namespace LWTV\Tests;
+
+use LWTV\Theme\Ways_To_Watch;
+use LWTV\Plugin;
+
 /**
  * Ways to Watch Tests.
  */
-class LWTV_Tests_Ways_To_Watch extends WP_UnitTestCase {
+class Ways_To_Watch_Test extends \WP_UnitTestCase {
 
 	/**
 	 * Test Generate Links
 	 */
 	public function test_generate_links() {
 		$check_url = array( 'http://www.cwtv.com/shows/the-100/' );
-		$links     = ( new LWTV_Theme_Ways_To_Watch() )->generate_links( $check_url );
+		$links     = ( new Ways_To_Watch() )->generate_links( $check_url );
 
 		$expected = array( '<a href="http://www.cwtv.com/shows/the-100/" target="_blank" class="btn btn-primary" rel="nofollow">The CW</a>' );
 
@@ -32,7 +37,7 @@ class LWTV_Tests_Ways_To_Watch extends WP_UnitTestCase {
 		$check_url  = 'http://www.cwtv.com/shows/the-100/';
 		$check_name = 'The CW';
 		$expected   = '<a href="' . $check_url . '" target="_blank" class="btn btn-primary" rel="nofollow">' . $check_name . '</a>';
-		$build_link = ( new LWTV_Theme_Ways_To_Watch() )->build_link( $check_url, $check_name );
+		$build_link = ( new Ways_To_Watch() )->build_link( $check_url, $check_name );
 
 		$this->assertSame( $expected, $build_link );
 	}
@@ -44,7 +49,7 @@ class LWTV_Tests_Ways_To_Watch extends WP_UnitTestCase {
 	 */
 	public function test_clean_subdomain() {
 		$check_url    = 'www.cwtv.com';
-		$clean_url    = ( new LWTV_Theme_Ways_To_Watch() )->clean_subdomain( $check_url );
+		$clean_url    = ( new Ways_To_Watch() )->clean_subdomain( $check_url );
 		$expected_url = 'cwtv.com';
 
 		$this->assertSame( $expected_url, $clean_url );
@@ -57,7 +62,7 @@ class LWTV_Tests_Ways_To_Watch extends WP_UnitTestCase {
 	 */
 	public function test_clean_tld() {
 		$check_url    = 'cwtv.com';
-		$clean_url    = ( new LWTV_Theme_Ways_To_Watch() )->clean_tlds( $check_url );
+		$clean_url    = ( new Ways_To_Watch() )->clean_tlds( $check_url );
 		$expected_url = 'cwtv';
 
 		$this->assertSame( $expected_url, $clean_url );

@@ -71,20 +71,20 @@ class WP_CLI_LWTV_Calculate {
 
 		// Bail ASAP if the post ID is invalid.
 		if ( false === get_post_status( $post_id ) ) {
-			WP_CLI::error( $post_id . ' is not a valid post.' );
+			\WP_CLI::error( $post_id . ' is not a valid post.' );
 		}
 
-		$valid_types   = array( 'actor', 'show' );
-		$post_type     = rtrim( str_replace( 'post_type_', '', get_post_type( $post_id ) ), 's' );
-		$display_types = implode( ' or ', $valid_types );
-		if ( 3 >= count( $valid_types ) ) {
-			$last          = array_pop( $valid_types );
-			$display_types = implode( ', ', $valid_types ) . ' or ' . $last;
-		}
+		$valid_types = array( 'actor', 'show' );
+		$post_type   = rtrim( str_replace( 'post_type_', '', get_post_type( $post_id ) ), 's' );
 
 		// Last sanity check: Is the post ID a member of THIS post type...
 		if ( ! in_array( $post_type, $valid_types, true ) ) {
-			WP_CLI::error( 'You can only run calculations on ' . $display_types . ' post types, but ' . get_the_title( $post_id ) . ' (#' . $post_id . ') is a ' . $current_type . '.' );
+			$display_types = implode( ' or ', $valid_types );
+			if ( 3 >= count( $valid_types ) ) {
+				$last          = array_pop( $valid_types );
+				$display_types = implode( ', ', $valid_types ) . ' or ' . $last;
+			}
+			\WP_CLI::error( 'You can only run calculations on ' . $display_types . ' post types, but ' . get_the_title( $post_id ) . ' (#' . $post_id . ') is a ' . $post_type . '.' );
 		}
 
 		// Switch to run the commands since they're different.
@@ -93,24 +93,24 @@ class WP_CLI_LWTV_Calculate {
 				// Recount characters and flag queerness
 				delete_post_meta( $post_id, 'lezactors_char_count' );
 				delete_post_meta( $post_id, 'lezactors_dead_count' );
-				$new_calc = lwtv_plugin()->calculate_actor_data( $post_id );
-				$queer    = ( get_post_meta( $post_id, 'lezactors_queer', true ) ) ? 'Yes' : 'No';
-				$chars    = get_post_meta( $post_id, 'lezactors_char_count', true );
-				$deads    = get_post_meta( $post_id, 'lezactors_dead_count', true );
-				$score    = 'Is Queer (' . $queer . ') Chars (' . $chars . ') Dead (' . $deads . ')';
+				lwtv_plugin()->calculate_actor_data( $post_id );
+				$queer = ( get_post_meta( $post_id, 'lezactors_queer', true ) ) ? 'Yes' : 'No';
+				$chars = get_post_meta( $post_id, 'lezactors_char_count', true );
+				$deads = get_post_meta( $post_id, 'lezactors_dead_count', true );
+				$score = 'Is Queer (' . $queer . ') Chars (' . $chars . ') Dead (' . $deads . ')';
 				break;
 			case 'show':
 				delete_post_meta( $post_id, 'lezshows_char_count' );
 				delete_post_meta( $post_id, 'lezshows_dead_count' );
-				$new_calc = lwtv_plugin()->calculate_show_data( $post_id );
-				$chars    = get_post_meta( $post_id, 'lezshows_char_count', true );
-				$dead     = get_post_meta( $post_id, 'lezshows_dead_count', true );
-				$score    = 'Score (' . get_post_meta( $post_id, 'lezshows_the_score', true ) . ') Chars (' . $chars . ') Dead (' . $dead . ')';
+				lwtv_plugin()->calculate_show_data( $post_id );
+				$chars = get_post_meta( $post_id, 'lezshows_char_count', true );
+				$dead  = get_post_meta( $post_id, 'lezshows_dead_count', true );
+				$score = 'Score (' . get_post_meta( $post_id, 'lezshows_the_score', true ) . ') Chars (' . $chars . ') Dead (' . $dead . ')';
 				break;
 		}
 
-		WP_CLI::success( 'Calculations run for ' . get_the_title( $post_id ) . ': ' . $score );
+		\WP_CLI::success( 'Calculations run for ' . get_the_title( $post_id ) . ': ' . $score );
 	}
 }
 
-WP_CLI::add_command( 'lwtv calc', 'WP_CLI_LWTV_Calculate' );
+\WP_CLI::add_command( 'lwtv calc', 'WP_CLI_LWTV_Calculate' );

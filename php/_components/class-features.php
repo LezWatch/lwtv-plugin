@@ -20,10 +20,13 @@ use LWTV\Features\User_Profiles;
 
 class Features implements Component, Templater {
 
-	/**
-	 * Setup the modules.
+	/*
+	 * Construct
 	 */
-	public function __construct() {
+	public function init() {
+		add_filter( 'wp_headers', array( $this, 'modify_front_end_http_headers' ), 10, 2 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'pre_ping', array( $this, 'no_self_ping' ) );
 
 		// Instantiate actions and filters:
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
@@ -40,14 +43,6 @@ class Features implements Component, Templater {
 		new User_Profiles();
 	}
 
-	/*
-	 * Construct
-	 */
-	public function init() {
-		add_filter( 'wp_headers', array( $this, 'modify_front_end_http_headers' ), 10, 2 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-	}
-
 	/**
 	 * Gets tags to expose as methods accessible through `lwtv_plugin()`.
 	 *
@@ -61,6 +56,20 @@ class Features implements Component, Templater {
 			'get_spammers_list' => array( $this, 'get_spammers_list' ),
 			'is_spammer'        => array( $this, 'is_spammer' ),
 		);
+	}
+
+	/**
+	 * Prevent self pings by interlinks
+	 *
+	 * @since 1.2.0
+	 */
+	public function no_self_ping( &$links ) {
+		$home = get_option( 'home' );
+		foreach ( $links as $l => $link ) {
+			if ( 0 === strpos( $link, $home ) ) {
+				unset( $links[ $l ] );
+			}
+		}
 	}
 
 	/**

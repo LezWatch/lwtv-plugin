@@ -17,21 +17,6 @@ class Dashboard {
 		add_filter( 'manage_posts_columns', array( $this, 'featured_image_manage_posts_columns' ) );
 		add_action( 'manage_posts_custom_column', array( $this, 'featured_image_manage_custom_columns' ), 10, 2 );
 		add_action( 'admin_print_scripts', array( $this, 'featured_image_admin_print_styles' ) );
-		add_action( 'pre_ping', array( $this, 'no_self_ping' ) );
-	}
-
-	/**
-	 * Prevent self pings by interlinks
-	 *
-	 * @since 1.2.0
-	 */
-	public function no_self_ping( &$links ) {
-		$home = get_option( 'home' );
-		foreach ( $links as $l => $link ) {
-			if ( 0 === strpos( $link, $home ) ) {
-				unset( $links[ $l ] );
-			}
-		}
 	}
 
 	/*
@@ -63,6 +48,13 @@ class Dashboard {
 	 */
 	public function featured_image_manage_custom_columns( $column_name, $post_ID ) {
 		if ( 'featured_image' !== $column_name ) {
+			return;
+		}
+
+		$post_type = get_post_type( $post_ID );
+
+		// Don't run for TV Maze
+		if ( 'post_type_tvmaze' === $post_type ) {
 			return;
 		}
 

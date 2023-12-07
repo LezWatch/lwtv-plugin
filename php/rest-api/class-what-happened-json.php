@@ -120,7 +120,7 @@ class What_Happened_JSON {
 
 		// Calculate death
 		$death_query_year         = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-		$count_array['dead_year'] = $death_query_year->post_count;
+		$count_array['dead_year'] = ( is_object( $death_query_year ) ) ? $death_query_year->post_count : 0;
 
 		switch ( $format ) {
 			case 'year':
@@ -139,7 +139,7 @@ class What_Happened_JSON {
 				break;
 			case 'day':
 				$death_query         = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'm/d/Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-				$count_array['dead'] = $death_query->post_count;
+				$count_array['dead'] = ( is_object( $death_query ) ) ? $death_query->post_count : 0;
 				break;
 			default:
 				$count_array['dead'] = 0;
@@ -231,33 +231,35 @@ class What_Happened_JSON {
 			'started' => 0,
 		);
 
-		if ( $shows_queery->have_posts() ) {
-			while ( $shows_queery->have_posts() ) {
-				$shows_queery->the_post();
+		if ( ! is_object( $shows_queery ) || ! $shows_queery->have_posts() ) {
+			return $shows_this_year;
+		}
 
-				$show_id = get_the_ID();
+		while ( $shows_queery->have_posts() ) {
+			$shows_queery->the_post();
 
-				// Shows Currently Airing
-				if ( get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
-					$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
+			$show_id = get_the_ID();
 
-					if (
-						( 'current' === $airdates['finish'] && $thisyear === $dt->format( 'Y' ) )
-						|| ( $airdates['finish'] >= $thisyear && $airdates['start'] <= $thisyear ) // Airdates between
-					) {
-						// Currently Airing Shows shows for the current year only
-						++$shows_this_year['current'];
-					}
+			// Shows Currently Airing
+			if ( get_post_meta( $show_id, 'lezshows_airdates', true ) ) {
+				$airdates = get_post_meta( $show_id, 'lezshows_airdates', true );
 
-					// Shows that ended this year
-					if ( $airdates['finish'] === $thisyear ) {
-						++$shows_this_year['ended'];
-					}
+				if (
+					( 'current' === $airdates['finish'] && $thisyear === $dt->format( 'Y' ) )
+					|| ( $airdates['finish'] >= $thisyear && $airdates['start'] <= $thisyear ) // Airdates between
+				) {
+					// Currently Airing Shows shows for the current year only
+					++$shows_this_year['current'];
+				}
 
-					// Shows that STARTED this year
-					if ( $airdates['start'] === $thisyear ) {
-						++$shows_this_year['started'];
-					}
+				// Shows that ended this year
+				if ( $airdates['finish'] === $thisyear ) {
+					++$shows_this_year['ended'];
+				}
+
+				// Shows that STARTED this year
+				if ( $airdates['start'] === $thisyear ) {
+					++$shows_this_year['started'];
 				}
 			}
 		}

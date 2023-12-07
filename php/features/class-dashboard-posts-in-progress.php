@@ -4,12 +4,10 @@
  *
  * Displays unpublished posts on your dashboard.
  *
- * @version 2.0.1
- *
  * Author: Viper007Bond, Ipstenu
  * License: GPLv2 (or Later)
  *
- * Copyright 2008-19 Alex Mills (Viper007Bond) - http://www.viper007bond.com/wordpress-plugins/dashboard-pending-review/ https://wordpress.org/plugins/dashboard-pending-review/
+ * Copyright 2008-19 Alex Mills (Viper007Bond - RIP) - http://www.viper007bond.com/wordpress-plugins/dashboard-pending-review/ https://wordpress.org/plugins/dashboard-pending-review/
  * Copyright 2019-23 Mika Epstein (Ipstenu)
  *
  * This file was part of Dashboard: Posts In Progress, a plugin for WordPress.
@@ -19,12 +17,6 @@
 namespace LWTV\Features;
 
 class Dashboard_Posts_In_Progress {
-
-	/**
-	 * Version Number
-	 * @var string
-	 */
-	public static $version = '2.0.1';
 
 	/**
 	 * __construct function.
@@ -63,7 +55,7 @@ class Dashboard_Posts_In_Progress {
 	 */
 	public function custom_css() {
 		if ( is_user_logged_in() && is_admin() ) {
-			wp_register_style( 'dashboard_in_progress', plugins_url( 'style.css', __FILE__ ), false, self::$version );
+			wp_register_style( 'dashboard_in_progress', plugins_url( 'style.css', __FILE__ ), false, LWTV_PLUGIN_VERSION );
 			wp_enqueue_style( 'dashboard_in_progress' );
 		}
 	}
@@ -88,7 +80,8 @@ class Dashboard_Posts_In_Progress {
 	/**
 	 * Output the widget contents
 	 */
-	public function widget( $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	public function widget( $args ) {
 		$filtered_post_type  = apply_filters( 'dashboard_posts_in_progress_type', 'post' );
 		$filtered_post_type  = ( post_type_exists( $filtered_post_type ) || 'any' === $filtered_post_type ) ? $filtered_post_type : 'post';
 		$post_type_object    = get_post_type_object( $filtered_post_type );

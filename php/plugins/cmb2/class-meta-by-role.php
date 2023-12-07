@@ -3,7 +3,9 @@
  * Only allow people with certain roles to edit certain post meta.
  */
 
-class LWTV_CMB2_Meta_Role {
+namespace LWTV\Plugins\CMB2;
+
+class Meta_By_Role {
 
 	/**
 	 * Constructor
@@ -50,5 +52,3 @@ class LWTV_CMB2_Meta_Role {
 		return false;
 	}
 }
-
-new LWTV_CMB2_Meta_Role();

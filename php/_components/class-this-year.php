@@ -110,7 +110,7 @@ class This_Year implements Component, Templater {
 	 * @return $templates
 	 */
 	public function page_template( $templates = '' ) {
-		if ( isset( $wp_query->query['thisyear'] ) ) {
+		if ( isset( $wp_query ) && isset( $wp_query->query['thisyear'] ) ) {
 			$templates = get_stylesheet_directory() . '/page-templates/thisyear.php';
 		}
 		return $templates;

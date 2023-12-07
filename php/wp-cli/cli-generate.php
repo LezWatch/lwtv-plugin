@@ -104,9 +104,9 @@ class WP_CLI_LWTV_Generate {
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );
-			WP_CLI::success( 'TVMaze updated successfully.' );
+			\WP_CLI::success( 'TVMaze updated successfully.' );
 		} else {
-			WP_CLI::error( 'TVMaze is not able to be updated.' );
+			\WP_CLI::error( 'TVMaze is not able to be updated.' );
 		}
 	}
 
@@ -121,7 +121,7 @@ class WP_CLI_LWTV_Generate {
 
 		// Check for valid arguments and post types
 		if ( ! empty( $otd ) && ! in_array( $otd, $valid_otd, true ) ) {
-			WP_CLI::error( 'You must provide a valid type of item to set for "Of the Day": ' . implode( ', ', $valid_otd ) );
+			\WP_CLI::error( 'You must provide a valid type of item to set for "Of the Day": ' . implode( ', ', $valid_otd ) );
 		}
 
 		if ( empty( $otd ) ) {
@@ -132,10 +132,10 @@ class WP_CLI_LWTV_Generate {
 
 		// Set it!
 		foreach ( $to_do as $otd ) {
-			$set_it = lwtv_plugin()->set_of_the_day( $otd );
-			WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set.' );
+			lwtv_plugin()->set_of_the_day( $otd );
+			\WP_CLI::success( 'The ' . $otd . ' "Of the Day" has been set.' );
 		}
 	}
 }
 
-WP_CLI::add_command( 'lwtv generate', 'WP_CLI_LWTV_Generate' );
+\WP_CLI::add_command( 'lwtv generate', 'WP_CLI_LWTV_Generate' );

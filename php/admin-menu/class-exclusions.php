@@ -227,13 +227,15 @@ class Exclusions {
 		$queery_loop = lwtv_plugin()->queery_post_meta( $post_type, $meta, '', 'EXISTS' );
 		$queery      = array();
 
-		if ( $queery_loop->have_posts() ) {
-			while ( $queery_loop->have_posts() ) {
-				$queery_loop->the_post();
-				$override = get_post_meta( get_the_ID(), $meta, true );
-				if ( 'undefined' !== $override ) {
-					$queery[] = get_the_ID();
-				}
+		if ( ! is_object( $queery_loop ) || ! $queery_loop->have_posts() ) {
+			return $queery;
+		}
+
+		while ( $queery_loop->have_posts() ) {
+			$queery_loop->the_post();
+			$override = get_post_meta( get_the_ID(), $meta, true );
+			if ( 'undefined' !== $override ) {
+				$queery[] = get_the_ID();
 			}
 		}
 		wp_reset_postdata();

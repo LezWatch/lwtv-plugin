@@ -7,6 +7,7 @@
 namespace LWTV\Plugins;
 
 use LWTV\Plugins\Gravity_Forms\Stop_Spammers;
+use LWTV\Plugins\Gravity_Forms\GF_Approvals;
 
 class Gravity_Forms {
 
@@ -18,7 +19,7 @@ class Gravity_Forms {
 
 		// Call addon code.
 		if ( method_exists( 'GFForms', 'include_feed_addon_framework' ) ) {
-			require_once 'gravity-forms/class-gf-approvals.php';
+			new GF_Approvals();
 		}
 	}
 }

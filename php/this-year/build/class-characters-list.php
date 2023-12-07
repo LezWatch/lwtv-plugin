@@ -23,12 +23,13 @@ class Characters_List {
 
 		// Get the loop
 		$loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $this_year, 'REGEXP' );
+		wp_reset_query();
 
-		if ( $loop->have_posts() ) {
-			$queery = wp_list_pluck( $loop->posts, 'ID' );
-			wp_reset_query();
+		if ( ! is_object( $loop ) || ! $loop->have_posts() ) {
+			return;
 		}
 
+		$queery        = wp_list_pluck( $loop->posts, 'ID' );
 		$counted_chars = 0;
 		$show_array    = array();
 		$char_array    = array();

@@ -201,11 +201,13 @@ class Stats_JSON {
 				break;
 			case 'complex':
 				$queery = lwtv_plugin()->queery_post_type( 'post_type_actors', $page );
+				wp_reset_query();
 
-				if ( $queery->have_posts() ) {
-					$actors = wp_list_pluck( $queery->posts, 'ID' );
-					wp_reset_query();
+				if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
+					return $stats_array;
 				}
+
+				$actors = wp_list_pluck( $queery->posts, 'ID' );
 
 				foreach ( $actors as $actor ) {
 					$stats_array[ get_the_title( $actor ) ] = array(
@@ -280,13 +282,14 @@ class Stats_JSON {
 				$stats_array = lwtv_plugin()->generate_statistics( 'characters', 'romantic', 'array' );
 				break;
 			case 'complex':
-				$stats_array    = array();
 				$charactersloop = lwtv_plugin()->queery_post_type( 'post_type_characters', $page );
+				wp_reset_query();
 
-				if ( $charactersloop->have_posts() ) {
-					$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
-					wp_reset_query();
+				if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
+					return $stats_array;
 				}
+
+				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 
 				foreach ( $characters as $character ) {
 					$died   = get_post_meta( $character, 'lezchars_death_year', true );
@@ -473,11 +476,13 @@ class Stats_JSON {
 				break;
 			case 'complex':
 				$showsloop = lwtv_plugin()->queery_post_type( 'post_type_shows', $page );
+				wp_reset_query();
 
-				if ( $showsloop->have_posts() ) {
-					$shows = wp_list_pluck( $showsloop->posts, 'ID' );
-					wp_reset_query();
+				if ( ! is_object( $showsloop ) || ! $showsloop->have_posts() ) {
+					return $stats_array;
 				}
+
+				$shows = wp_list_pluck( $showsloop->posts, 'ID' );
 
 				foreach ( $shows as $show ) {
 					$stats_array[ get_the_title( $show ) ] = array(
@@ -527,7 +532,7 @@ class Stats_JSON {
 			return false;
 		}
 
-		$post = get_page_by_path( $slug, OBJECT, 'post_type_' . $cpt . 's' );
+		$post = get_page_by_path( $slug, OBJECT, 'post_type_' . $post_type . 's' );
 
 		$stats_array = self::format_id( $post_type, $post->ID );
 
@@ -669,15 +674,16 @@ class Stats_JSON {
 			$char_data  = array();
 
 			$slug = ( ! isset( $the_tax->slug ) ) ? $the_tax['slug'] : $the_tax->slug;
-			$name = ( ! isset( $the_tax->name ) ) ? $the_tax['name'] : $the_tax->name;
 
 			// Get the posts for this singular term (i.e. a specific station)
 			$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
+			wp_reset_query();
 
-			if ( $queery->have_posts() ) {
-				$shows_queery = wp_list_pluck( $queery->posts, 'ID' );
-				wp_reset_query();
+			if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
+				return;
 			}
+
+			$shows_queery = wp_list_pluck( $queery->posts, 'ID' );
 
 			foreach ( $shows_queery as $show_id ) {
 

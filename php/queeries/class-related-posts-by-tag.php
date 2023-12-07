@@ -16,7 +16,7 @@ class Related_Posts_By_Tag {
 	 * @static
 	 * @param string $post_type i.e 'posts' or 'post_type_characters'
 	 * @param string $slug i.e. the slug of the post we're trying to relate to
-	 * @return void
+	 * @return WP_Query
 	 */
 	public function make( $post_type, $slug ) {
 		$term = term_exists( $slug, 'post_tag' );

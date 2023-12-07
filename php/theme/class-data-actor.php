@@ -73,19 +73,19 @@ class Data_Actor {
 		if ( empty( $character_array ) ) {
 			// Loop to get the list of characters
 			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $actor_id, 'LIKE' );
+			wp_reset_query();
 
-			if ( $charactersloop->have_posts() ) {
-				$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
+			if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
+				return;
 			}
+
+			$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
 
 			if ( ! is_array( $character_array ) ) {
 				$character_array = array( $character_array );
 			}
 			$character_array = array_unique( $character_array );
 			update_post_meta( $actor_id, 'lezactors_char_list', $character_array );
-
-			// Reset to end
-			wp_reset_query();
 		}
 
 		// @TODO: There needs to be a way to invalidate this and re-run without a re-save.
@@ -134,16 +134,15 @@ class Data_Actor {
 		if ( empty( $character_array ) ) {
 			// Loop to get the list of characters
 			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $actor_id, 'LIKE' );
+			wp_reset_query();
 
-			if ( $charactersloop->have_posts() ) {
-				$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
+			if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
+				return;
 			}
 
+			$character_array = wp_list_pluck( $charactersloop->posts, 'ID' );
 			$character_array = ( is_array( $character_array ) ) ? array_unique( $character_array ) : array_unique( array( $character_array ) );
 			update_post_meta( $actor_id, 'lezactors_char_list', $character_array );
-
-			// Reset to end
-			wp_reset_query();
 		}
 
 		// @TODO: There needs to be a way to invalidate this and re-run without a re-save.

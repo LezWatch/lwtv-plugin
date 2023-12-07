@@ -18,8 +18,8 @@ class Is_Actor_Queer {
 	 * There's also an override.
 	 *
 	 * @access public
-	 * @param mixed $the_id
-	 * @return void
+	 * @param  mixed $the_id
+	 * @return bool
 	 */
 	public function make( $the_id ) {
 

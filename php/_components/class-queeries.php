@@ -55,42 +55,135 @@ class Queeries implements Component, Templater {
 		);
 	}
 
-	public function is_actor_queer( $the_id ) {
+	/**
+	 * Is an Actor Queer?
+	 *
+	 * @param  int   $the_id
+	 * @return bool
+	 */
+	public function is_actor_queer( $the_id ): bool {
 		return ( new Is_Actor_Queer() )->make( $the_id );
 	}
 
-	public function is_actor_trans( $the_id ) {
+	/**
+	 * Is actor trans?
+	 *
+	 * @param  int   $the_id
+	 * @return bool
+	 */
+	public function is_actor_trans( $the_id ): bool {
 		return ( new Is_Actor_Trans() )->make( $the_id );
 	}
 
-	public function is_show_on_air( $show_id, $year ) {
+	/**
+	 * Is Show on air?
+	 *
+	 * @param  int   $the_id
+	 * @return bool
+	 */
+	public function is_show_on_air( $show_id, $year ): bool {
 		return ( new Is_Show_On_Air() )->make( $show_id, $year );
 	}
 
+	/**
+	 * Query Post Meta and taxonomy
+	 *
+	 * @param  string $post_type
+	 * @param  string $key
+	 * @param  string $value
+	 * @param  string $taxonomy
+	 * @param  string $field
+	 * @param  string $terms
+	 * @param  string $compare
+	 * @param  string $operator
+	 *
+	 * @return WP_Query
+	 */
 	public function queery_post_meta_and_tax( $post_type, $key, $value, $taxonomy, $field, $terms, $compare = '=', $operator = 'IN' ) {
 		return ( new Post_Meta_And_Tax() )->make( $post_type, $key, $value, $taxonomy, $field, $terms, $compare, $operator );
 	}
 
+	/**
+	 * Query Post Meta
+	 *
+	 * @param  string $post_type
+	 * @param  string $key
+	 * @param  string $value
+	 * @param  string $compare
+	 *
+	 * @return WP_Query
+	 */
 	public function queery_post_meta( $post_type, $key, $value, $compare = '=' ) {
 		return ( new Post_Meta() )->make( $post_type, $key, $value, $compare );
 	}
 
+	/**
+	 * Query Post Type
+	 *
+	 * @param  string $post_type
+	 * @param  int    $page
+	 *
+	 * @return WP_Query
+	 */
 	public function queery_post_type( $post_type, $page = 0 ) {
 		return ( new Post_Type() )->make( $post_type, $page );
 	}
 
+	/**
+	 * Get Related Posts by Tag
+	 *
+	 * @param  string $post_type
+	 * @param  string $slug
+	 *
+	 * @return WP_Query
+	 */
 	public function get_related_posts_by_tag( $post_type, $slug ) {
 		return ( new Related_Posts_By_Tag() )->make( $post_type, $slug );
 	}
 
+	/**
+	 * Query TWO Taxonomies for overlap
+	 *
+	 * @param  string $post_type
+	 * @param  string $taxonomy1
+	 * @param  string $field1
+	 * @param  string $terms1
+	 * @param  string $taxonomy2
+	 * @param  string $field2
+	 * @param  string $terms2
+	 * @param  string $operator1
+	 * @param  string $operator2
+	 * @param  string $relation
+	 *
+	 * @return WP_Query
+	 */
 	public function queery_tax_two( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1 = 'IN', $operator2 = 'IN', $relation = 'AND' ) {
 		return ( new Tax_Two() )->make( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1, $operator2, $relation );
 	}
 
+	/**
+	 * Query Taxonomy
+	 *
+	 * @param  string $post_type
+	 * @param  string $taxonomy
+	 * @param  string $field
+	 * @param  string $term
+	 * @param  string $operator
+	 *
+	 * @return WP_Query
+	 */
 	public function queery_taxonomy( $post_type, $taxonomy, $field, $term, $operator = 'IN' ) {
 		return ( new Taxonomy() )->make( $post_type, $taxonomy, $field, $term, $operator );
 	}
 
+	/**
+	 * Query WP Meta (not currently used)
+	 *
+	 * @param  string $post_type
+	 * @param  string $slug
+	 *
+	 * @return WP_Query
+	 */
 	public function queery_wp_meta( $post_type, $slug ) {
 		return ( new WP_Meta() )->make( $post_type, $slug );
 	}

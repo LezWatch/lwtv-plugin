@@ -25,7 +25,7 @@ class Characters_Dead {
 		$dead_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_death_year', $this_year, 'REGEXP' );
 		wp_reset_query();
 
-		if ( ! $dead_loop->have_posts() ) {
+		if ( ! is_object( $dead_loop ) || ! $dead_loop->have_posts() ) {
 			return;
 		}
 

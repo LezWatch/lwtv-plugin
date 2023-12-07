@@ -29,10 +29,12 @@ class Related_Posts_By_Taxonomy {
 
 	// Create new format thumbnail_excerpt for use in widget and shortcode
 	public function lwtv_cards_format() {
-		$defaults = \Related_Posts_By_Taxonomy_Defaults::get_instance();
+		if ( class_exists( 'Related_Posts_By_Taxonomy_Defaults\\get_instance' ) ) {
+			$defaults = \Related_Posts_By_Taxonomy_Defaults::get_instance();
 
-		// Add the new format .
-		$defaults->formats['lwtv_cards'] = __( 'LWTV Customized Display' );
+			// Add the new format .
+			$defaults->formats['lwtv_cards'] = __( 'LWTV Customized Display' );
+		}
 	}
 
 	// Return posts with post thumbnails for the thumbnail_excerpt format.

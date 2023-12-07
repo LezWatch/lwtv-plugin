@@ -1,6 +1,11 @@
 <?php
 /**
- * Set up Autoloader.
+ * Plugin Name: Core LezWatch.TV Plugin
+ * Plugin URI:  https://lezwatchtv.com
+ * Description: All the base code for LezWatch.TV - If this isn't active, the site dies. An ugly death.
+ * Version: 6.0
+ * Author: LezWatch.TV
+ * Update URI: http://lezwatchtv.com
  *
  * @package LWTV
  */

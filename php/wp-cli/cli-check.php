@@ -88,27 +88,28 @@ class WP_CLI_LWTV_Check {
 	 * Check what we've got.
 	 */
 	public function run_checker( $check_type, $second ) {
-		$valid_types   = array( 'queerchars', 'wiki' );
-		$display_types = implode( ' or ', $valid_types );
-
-		// Language check.
-		if ( 3 >= count( $valid_types ) ) {
-			$last          = array_pop( $valid_types );
-			$display_types = implode( ', ', $valid_types ) . ' or ' . $last;
-		}
+		$valid_types = array( 'queerchars', 'wiki' );
 
 		// Last sanity check: Is the post ID a member of THIS post type...
 		if ( ! in_array( $check_type, $valid_types, true ) ) {
-			WP_CLI::error( 'You can only run checks on ' . $display_types . '.' . $check_type . ' is invalid.' );
+			$display_types = implode( ' or ', $valid_types );
+
+			// Language check.
+			if ( 3 >= count( $valid_types ) ) {
+				$last          = array_pop( $valid_types );
+				$display_types = implode( ', ', $valid_types ) . ' or ' . $last;
+			}
+
+			\WP_CLI::error( 'You can only run checks on ' . $display_types . '.' . $check_type . ' is invalid.' );
 		}
 
 		// Run the appropriate checker:
 		switch ( $check_type ) {
 			case 'queerchars':
-				$items = lwtv_plugin()->find_queer_chars();
+				$this->run_queerchecker();
 				break;
 			case 'wiki':
-				$items = $this->run_wiki( $second );
+				$this->run_wiki( $second );
 				break;
 		}
 	}
@@ -124,7 +125,7 @@ class WP_CLI_LWTV_Check {
 		// Last sanity check: Is the post ID a member of THIS post type...
 		if ( 'post_type_actors' !== $post_type ) {
 			$real_post_type = rtrim( str_replace( 'post_type_', '', $post_type ), 's' );
-			WP_CLI::error( 'You are currently checking wikidata for actors, but ' . get_the_title( $post_id ) . ' (#' . $post_id . ') is a ' . $real_post_type . ', not an actor.' );
+			\WP_CLI::error( 'You are currently checking wikidata for actors, but ' . get_the_title( $post_id ) . ' (#' . $post_id . ') is a ' . $real_post_type . ', not an actor.' );
 		}
 
 		// Even though we only support actors...
@@ -134,14 +135,14 @@ class WP_CLI_LWTV_Check {
 			$return_array = array( 'id', 'name', 'wikidata', 'birth', 'death', 'imdb', 'wikipedia', 'instagram', 'twitter', 'website' );
 
 			if ( empty( $items ) ) {
-				WP_CLI::error( 'Something has gone horribly wrong. Go get Mika.' );
+				\WP_CLI::error( 'Something has gone horribly wrong. Go get Mika.' );
 			} elseif ( ! isset( $items[ $post_id ]['wikipedia'] ) ) {
-				WP_CLI::error( 'No data from WikiData.' );
+				\WP_CLI::error( 'No data from WikiData.' );
 			}
 		}
 
-		WP_CLI::success( 'WikiData comparison for ' . get_the_title( $post_id ) . ' complete!' );
-		WP_CLI\Utils\format_items( $format, $items, $return_array );
+		\WP_CLI::success( 'WikiData comparison for ' . get_the_title( $post_id ) . ' complete!' );
+		\WP_CLI\Utils\format_items( $format, $items, $return_array );
 	}
 
 	/**
@@ -151,17 +152,17 @@ class WP_CLI_LWTV_Check {
 		$items = lwtv_plugin()->find_queer_chars();
 
 		if ( ! isset( $items ) ) {
-			WP_CLI::error( 'An unexpected error has occurred. Go get Mika.' );
+			\WP_CLI::error( 'An unexpected error has occurred. Go get Mika.' );
 		} elseif ( empty( $items ) || ! is_array( $items ) ) {
 			// Everything passed.
-			WP_CLI::success( 'Awesome! Check passes without any attention needed.' );
+			\WP_CLI::success( 'Awesome! Check passes without any attention needed.' );
 		} else {
 			// These need attention
-			WP_CLI::log( count( $items ) . ' character(s) need your attention.' );
-			WP_CLI\Utils\format_items( $this->format, $items, array( 'url', 'id', 'problem' ) );
-			WP_CLI::success( 'Search complete.' );
+			\WP_CLI::log( count( $items ) . ' character(s) need your attention.' );
+			\WP_CLI\Utils\format_items( $this->format, $items, array( 'url', 'id', 'problem' ) );
+			\WP_CLI::success( 'Search complete.' );
 		}
 	}
 }
 
-WP_CLI::add_command( 'lwtv check', 'WP_CLI_LWTV_Check' );
+\WP_CLI::add_command( 'lwtv check', 'WP_CLI_LWTV_Check' );

@@ -9,6 +9,8 @@
 
 namespace LWTV\Rest_API;
 
+use LWTV\_Components\Of_The_Day;
+
 class OTD_JSON {
 
 	/**
@@ -63,7 +65,7 @@ class OTD_JSON {
 		$type   = ( isset( $params['type'] ) && '' !== $params['type'] ) ? sanitize_title_for_query( $params['type'] ) : 'unknown';
 		$format = ( isset( $params['format'] ) && '' !== $params['format'] ) ? sanitize_title_for_query( $params['format'] ) : 'default';
 
-		$response = ( new LWTV_Of_The_Day() )->of_the_day( $type, $format );
+		$response = ( new Of_The_Day() )->of_the_day( $type, $format );
 		return $response;
 	}
 }

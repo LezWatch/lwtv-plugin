@@ -3,7 +3,9 @@
  * Add custom metaboxes for user profiles
  */
 
-class LWTV_CMB2_Metabox_Profile {
+namespace LWTV\Plugins\CMB2;
+
+class Metabox_Profile {
 
 	/**
 	 * Constructor.
@@ -49,5 +51,3 @@ class LWTV_CMB2_Metabox_Profile {
 		);
 	}
 }
-
-new LWTV_CMB2_Metabox_Profile();

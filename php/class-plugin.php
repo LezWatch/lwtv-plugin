@@ -13,6 +13,9 @@ use LWTV\_Helpers\Utils;
 /**
  * Class Plugin
  *
+ * All methods listed below may be called via lwtv_plugin()->METHOD()
+ * i.e. lwtv_plugin()->calculate_character_data( $post_id );
+ *
  * CALENDAR
  * @method array  generate_ics_by_date( $url, $when, $date )        \_Components\Calendar
  * @method string get_show_name_for_calendar( $show_name, $source ) \_Components\Calendar
@@ -58,6 +61,7 @@ use LWTV\_Helpers\Utils;
  * @method string get_wp_version()         \_Components\Of_The_Day
  * @method string get_rss_otd_last_build() \_Components\Of_The_Day
  * @method string get_rss_otd_feed()       \_Components\Of_The_Day
+ * @method void   set_of_the_day()         \_Components\Of_The_Day
  *
  * PLUGINS
  * @method array  collect_cache_urls_for_characters( $post_id )                 \_Components\Plugins
@@ -138,7 +142,7 @@ class Plugin {
 	 * Specify list of supported components.
 	 *
 	 * The components are called in order (top down), so if a component is used by another,
-	 * it must be on top.
+	 * it must be on top. Otherwise, alphabetical is fine.
 	 *
 	 * @return string[]
 	 */
@@ -199,7 +203,7 @@ class Plugin {
 		$component_slug = get_class( $component );
 
 		if ( isset( $this->components[ $component_slug ] ) ) {
-			throw new \RuntimeException( 'Component ' . esc_html( $component_slug ) . ' has already been registered' );
+			throw new \RuntimeException( 'A Component named ' . esc_html( $component_slug ) . ' has already been registered' );
 		}
 
 		$this->components[ $component_slug ] = $component;

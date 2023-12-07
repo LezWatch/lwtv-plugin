@@ -1,21 +1,11 @@
 <?php
-/*
-Description: 'date_year_range' custom field type
-Version: 1.0
-*/
-
-if ( ! defined( 'WPINC' ) ) {
-	die;
-}
-
 /**
- * class LWTV_CMB2_DYR
- *
- * Customize CMB2
- *
- * @since 1.0
+ * 'date_year_range' custom field type
  */
-class LWTV_CMB2_DYR {
+
+namespace LWTV\Plugins\CMB2;
+
+class Date_Year_Range {
 
 	/**
 	 * Constructor
@@ -45,6 +35,12 @@ class LWTV_CMB2_DYR {
 	 * @param object $type_object The `CMB2_Types` object
 	 */
 	public function jt_cmb2_date_year_range( $field, $value, $object_id, $object_type, $type_object ) {
+
+		// If this isn't an object, bail.
+		if ( ! is_object( $field ) ) {
+			return;
+		}
+
 		// @codingStandardsIgnoreStart
 		$earliest = $field->options( 'earliest' );
 		$earliest = $earliest ? absint( $earliest ) : 1900;
@@ -70,7 +66,7 @@ class LWTV_CMB2_DYR {
 
 		// More defaults
 		$field->args['description'] = '';
-		$type_object->type          = new CMB2_Type_Select( $type_object );
+		$type_object->type          = new \CMB2_Type_Select( $type_object );
 
 		echo '<em>' . $type_object->_text( 'start_label', 'Starting Year' ) . '</em> ';
 
@@ -283,4 +279,4 @@ class LWTV_CMB2_DYR {
 	}
 }
 
-new LWTV_CMB2_DYR();
+new Date_Year_Range();

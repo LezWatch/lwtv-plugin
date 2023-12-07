@@ -255,7 +255,7 @@ class LWTV_Fork_CMB2_Attached_Posts_Field {
 	 *
 	 * @param  array  $attached Array of attached posts.
 	 *
-	 * @return void
+	 * @return array
 	 */
 	protected function display_attached( $attached ) {
 		$ids = array();
@@ -450,11 +450,12 @@ class LWTV_Fork_CMB2_Attached_Posts_Field {
 		wp_enqueue_style( 'cmb2-attached-posts-field', plugins_url( 'css/attached-posts-admin.css', __FILE__ ), array(), self::VERSION );
 
 		if ( ! $once ) {
+			$subject = ( ! is_null( get_edit_post_link( get_the_ID() ) ) ) ? get_edit_post_link( get_the_ID() ) : get_home_url();
 			wp_localize_script(
 				'cmb2-attached-posts-field',
 				'CMBAP',
 				array(
-					'edit_link_template' => str_replace( get_the_ID(), 'REPLACEME', get_edit_post_link( get_the_ID() ) ),
+					'edit_link_template' => str_replace( get_the_ID(), 'REPLACEME', $subject ),
 					'ajaxurl'            => admin_url( 'admin-ajax.php', 'relative' ),
 				)
 			);

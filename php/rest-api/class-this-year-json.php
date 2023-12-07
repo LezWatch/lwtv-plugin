@@ -5,6 +5,8 @@
 
 namespace LWTV\Rest_API;
 
+use LWTV\This_Year\The_Array as This_Year_Array;
+
 class This_Year_JSON {
 
 	/**
@@ -127,11 +129,11 @@ class This_Year_JSON {
 		$this_year = (string) $year;
 		$array     = array(
 			'year'       => (int) $this_year,
-			'characters' => ( new LWTV_This_Year_Array() )->make( $this_year, 'characters-on-air', true ),
-			'dead'       => ( new LWTV_This_Year_Array() )->make( $this_year, 'dead-characters', true ),
-			'shows'      => ( new LWTV_This_Year_Array() )->make( $this_year, 'shows-on-air', 'now', true ),
-			'started'    => ( new LWTV_This_Year_Array() )->make( $this_year, 'new-shows', 'started', true ),
-			'canceled'   => ( new LWTV_This_Year_Array() )->make( $this_year, 'canceled-shows', 'ended', true ),
+			'characters' => ( new This_Year_Array() )->make( $this_year, 'characters-on-air', true ),
+			'dead'       => ( new This_Year_Array() )->make( $this_year, 'dead-characters', true ),
+			'shows'      => ( new This_Year_Array() )->make( $this_year, 'shows-on-air', 'now', true ),
+			'started'    => ( new This_Year_Array() )->make( $this_year, 'new-shows', 'started', true ),
+			'canceled'   => ( new This_Year_Array() )->make( $this_year, 'canceled-shows', 'ended', true ),
 		);
 
 		return $array;
@@ -147,11 +149,11 @@ class This_Year_JSON {
 		while ( $start_year <= $end_year ) {
 			if ( ( $start_year >= LWTV_FIRST_YEAR && $start_year <= gmdate( 'Y' ) ) ) {
 				$array[ $start_year ] = array(
-					'characters' => ( new LWTV_This_Year_Array() )->make( $start_year, 'characters-on-air', false, true ),
-					'dead'       => ( new LWTV_This_Year_Array() )->make( $start_year, 'dead-characters', false, true ),
-					'shows'      => ( new LWTV_This_Year_Array() )->make( $start_year, 'shows-on-air', 'now', true ),
-					'started'    => ( new LWTV_This_Year_Array() )->make( $start_year, 'new-shows', 'started', true ),
-					'canceled'   => ( new LWTV_This_Year_Array() )->make( $start_year, 'canceled-shows', 'ended', true ),
+					'characters' => ( new This_Year_Array() )->make( $start_year, 'characters-on-air', false, true ),
+					'dead'       => ( new This_Year_Array() )->make( $start_year, 'dead-characters', false, true ),
+					'shows'      => ( new This_Year_Array() )->make( $start_year, 'shows-on-air', 'now', true ),
+					'started'    => ( new This_Year_Array() )->make( $start_year, 'new-shows', 'started', true ),
+					'canceled'   => ( new This_Year_Array() )->make( $start_year, 'canceled-shows', 'ended', true ),
 				);
 			}
 			++$start_year;
