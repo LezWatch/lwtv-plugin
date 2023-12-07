@@ -3,3 +3,44 @@ span.svg-shortcode svg {
 	height: 50px;
 	margin: 0 5px 0 5px;
 }
+
+span.symbolicons svg {
+	width: 100px;
+}
+
+span.cmb2-icon {
+	width: 80px;
+	display: inline-block;
+	vertical-align: top;
+	margin: 10px;
+	word-wrap: break-word;
+}
+span.cmb2-icon svg {
+	width: 75px;
+	height: 75px;
+}
+span.cmb2-icon svg * {
+	fill: #444!important;
+}
+
+
+span.success svg  * {
+	fill: #5cb85c!important;
+}
+
+span.failure svg  * {
+	fill: #c0392b!important;
+}
+
+span.warning svg  * {
+	fill: #f1c40f!important;
+}
+
+.monitor {
+	display: flex;
+	padding: 0.5rem 0.75rem;
+}
+
+.monitor.status {
+	display: inline;
+}

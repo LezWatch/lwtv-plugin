@@ -1,35 +1,53 @@
 <?php
 /**
- * Plugin Name: Core LezWatch.TV Plugin
- * Plugin URI:  https://lezwatchtv.com
- * Description: All the base code for LezWatch.TV - If this isn't active, the site dies. An ugly death.
- * Version: 5.0
- * Author: LezWatch.TV
- * Update URI: http://lezwatchtv.com
+ * Set up Autoloader.
  *
  * @package LWTV
  */
 
+use LWTV\_Helpers\Autoload;
+use LWTV\Plugin;
+
+require_once __DIR__ . '/php/_helpers/class-autoload.php';
+
+// Plugin Version
+define( 'LWTV_PLUGIN_VERSION', '6.0' );
+
+// Define First Year:
+define( 'LWTV_FIRST_YEAR', '1961' );
+
+// Plugin Home
+define( 'LWTV_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+
 /**
- * Set up Autoloader.
- *
- * @package Galvanized_Network_Plugin
+ * Symbolicons
  */
+$upload_dir = wp_upload_dir();
+define( 'LWTV_SYMBOLICONS_PATH', $upload_dir['basedir'] . '/lezpress-icons/symbolicons/' );
+define( 'LWTV_SYMBOLICONS_URL', $upload_dir['baseurl'] . '/lezpress-icons/symbolicons/' );
 
-use LWTV\Helpers\Autoload;
-use LWTV\Helpers\Components;
-
-// Call Autoloader
-require_once 'helpers/class-autoload.php';
-require_once 'helpers/class-components.php';
-require_once 'helpers/defines.php';
-
-$components      = new Components();
-$core_components = $components->core_components();
-
+/**
+ * Autoloader serves for `LWTV` namespace and autoload all files under the php directory.
+ *
+ * To add a new component, see the file /php/class-plugin.php
+ */
 $autoload = new Autoload();
+$autoload->add( 'LWTV', sprintf( '%s/php', __DIR__ ) );
 
-// Load core components.
-foreach ( $core_components as $component ) {
-	$autoload->add( $component );
+/**
+ * Retrieves an instance of the Plugin.
+ *
+ * @return Plugin
+ */
+function lwtv_plugin() {
+	static $plugin = null;
+
+	if ( ! $plugin ) {
+		$plugin = new Plugin();
+		$plugin->init();
+	}
+
+	return $plugin;
 }
+
+lwtv_plugin();
