@@ -101,7 +101,7 @@ class CPTs implements Component, Templater {
 	 *
 	 * @param  int    $show_id
 	 * @param  string $output
-	 * @return void
+	 * @return mixed
 	 */
 	public function get_characters_list( $show_id, $output = 'query' ) {
 		return ( new Characters() )->list_characters( $show_id, $output );

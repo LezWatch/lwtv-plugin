@@ -37,6 +37,7 @@ class Calendar implements Component, Templater {
 		return array(
 			'generate_ics_by_date'       => array( $this, 'generate_ics_by_date' ),
 			'get_show_name_for_calendar' => array( $this, 'get_show_name_for_calendar' ),
+			'download_tvmaze'            => array( $this, 'download_tvmaze' ),
 		);
 	}
 
@@ -63,6 +64,23 @@ class Calendar implements Component, Templater {
 	 */
 	public function get_show_name_for_calendar( $show_name, $source = 'lwtv' ) {
 		return ( new Names() )->make( $show_name, $source );
+	}
+
+	/**
+	 * Download TV Maze
+	 *
+	 * Saves the ICS data to a file so we're not overloading the API.
+	 *
+	 * @return void
+	 */
+	public function download_tvmaze() {
+		$upload_dir = wp_upload_dir();
+		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
+		$response   = wp_remote_get( TV_MAZE );
+		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+			file_put_contents( $ics_file, $response['body'] );
+		}
 	}
 
 	/**

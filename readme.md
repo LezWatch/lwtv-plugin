@@ -163,6 +163,13 @@ All top-level components, stored in `/php/_components/` - Many components have '
 * `interface-component.php` - Interface for classes that act as plugin components.
 * `interface-templater.php` - Interface for classes that return template functions.
 
+### _Helpers
+
+Helper files are not used as 'code' per-sey but our code relies on them.
+
+* `class-autoload.php` - Autoloader
+* `class-utils.php` - common utility functions
+
 ### Admin Menu
 
 Stored in `/php/admin-menu/` -- Makes admin menu items

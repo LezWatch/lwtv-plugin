@@ -153,13 +153,8 @@ class Symbolicons implements Component, Templater {
 	public function get_symbolicon( $svg = 'square.svg', $fontawesome = 'fa-square', $svg_class = 'symbolicon' ) {
 
 		$return = '<i class="fas ' . $fontawesome . ' fa-fw" aria-hidden="true"></i>';
-		$square = get_template_directory() . '/images/square.svg';
 
-		if ( ! empty( $svg ) && defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_PATH . $svg ) ) {
-			$icon = LWTV_SYMBOLICONS_PATH . $svg;
-		} elseif ( ! wp_style_is( 'fontawesome', 'enqueued' ) ) {
-			$icon = $square;
-		}
+		$icon = $this->get_icon_file( $svg );
 
 		if ( isset( $icon ) ) {
 			// @codingStandardsIgnoreStart
@@ -168,5 +163,21 @@ class Symbolicons implements Component, Templater {
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Get the icon file by SVG name,
+	 *
+	 * @param  string $svg
+	 * @return string
+	 */
+	public function get_icon_file( $svg ) {
+		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_PATH . $svg ) ) {
+			$icon = LWTV_SYMBOLICONS_PATH . $svg;
+		} elseif ( ! wp_style_is( 'fontawesome', 'enqueued' ) ) {
+			$icon = get_template_directory() . '/images/square.svg';
+		}
+
+		return $icon;
 	}
 }

@@ -98,12 +98,13 @@ class WP_CLI_LWTV_Generate {
 	 * Regenerate the TV Maze ICS file.
 	 */
 	public function run_tvmaze() {
+		lwtv_plugin()->download_tvmaze();
+
 		$upload_dir = wp_upload_dir();
 		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
-		$response   = wp_remote_get( TV_MAZE );
-		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-			file_put_contents( $ics_file, $response['body'] );
+		$file_time  = filemtime( $ics_file );
+
+		if ( file_exists( $ics_file ) && $file_time <= strtotime( '+1 sec' ) ) {
 			\WP_CLI::success( 'TVMaze updated successfully.' );
 		} else {
 			\WP_CLI::error( 'TVMaze is not able to be updated.' );
