@@ -2,7 +2,7 @@
 /**
  * Class LWTV_Tests_Roles
  *
- * Functionality tests for Ways to Watch
+ * Functionality tests for Roles
  *
  * @package Lwtv_Plugin
  */
