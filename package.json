@@ -4,7 +4,7 @@
   "description": "LezWatch.TV Plugin",
   "main": "index.js",
   "workspaces": [
-    "blocks"
+    "php/blocks"
   ],
   "scripts": {
     "build": "npm-run-all build:*",
@@ -18,6 +18,7 @@
     "preinstall": "composer install",
     "postinstall": "( node ./node_scripts/postinstall.js ) && ( cd ./blocks && npm install --ignore-scripts )",
     "prepare": "husky install",
+    "updater": "npm update && composer update && ( node ./node_scripts/postinstall.js )",
     "clean": "rm -rf node_modules vendor blocks/node_modules"
   },
   "author": "LezWatch.TV",

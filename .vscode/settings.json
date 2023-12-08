@@ -13,5 +13,10 @@
 	"eslint.format.enable": true,
 	"[javascript]": {
 		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
-	}
+	},
+	"cSpell.words": [
+		"lwtv",
+		"queery",
+		"Templater"
+	]
 }

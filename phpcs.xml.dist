@@ -30,12 +30,6 @@
 		<exclude name="WordPress.PHP.DisallowShortTernary.Found" />
 	</rule>
 
-	<rule ref="WordPress.Security.EscapeOutput">
-		<properties>
-			<property name="customAutoEscapedFunctions" value="LWTV_Features,symbolicons" type="array" />
-		</properties>
-	</rule>
-
 	<rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
 	<exclude-pattern>class-gf-approvals.php</exclude-pattern>
 	</rule>
