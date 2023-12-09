@@ -7,6 +7,7 @@
 
 namespace LWTV\_Components;
 
+use Error;
 use LWTV\Calendar\ICS_Parser;
 use LWTV\Calendar\Names;
 
@@ -38,6 +39,7 @@ class Calendar implements Component, Templater {
 			'generate_ics_by_date'       => array( $this, 'generate_ics_by_date' ),
 			'get_show_name_for_calendar' => array( $this, 'get_show_name_for_calendar' ),
 			'download_tvmaze'            => array( $this, 'download_tvmaze' ),
+			'get_tvmaze_ics'             => array( $this, 'get_tvmaze_ics' ),
 		);
 	}
 
@@ -66,6 +68,17 @@ class Calendar implements Component, Templater {
 		return ( new Names() )->make( $show_name, $source );
 	}
 
+	public function get_tvmaze_ics() {
+		$upload_dir  = wp_upload_dir();
+		$tvmaze_file = $upload_dir['basedir'] . '/tvmaze.ics';
+
+		if ( ! file_exists( $tvmaze_file ) ) {
+			return false;
+		}
+
+		return $tvmaze_file;
+	}
+
 	/**
 	 * Download TV Maze
 	 *
@@ -74,9 +87,8 @@ class Calendar implements Component, Templater {
 	 * @return void
 	 */
 	public function download_tvmaze() {
-		$upload_dir = wp_upload_dir();
-		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
-		$response   = wp_remote_get( TV_MAZE );
+		$ics_file = self::get_tvmaze_ics();
+		$response = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			file_put_contents( $ics_file, $response['body'] );

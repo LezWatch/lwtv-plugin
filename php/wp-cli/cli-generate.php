@@ -100,9 +100,13 @@ class WP_CLI_LWTV_Generate {
 	public function run_tvmaze() {
 		lwtv_plugin()->download_tvmaze();
 
-		$upload_dir = wp_upload_dir();
-		$ics_file   = $upload_dir['basedir'] . '/tvmaze.ics';
-		$file_time  = filemtime( $ics_file );
+		$ics_file = lwtv_plugin()->get_tvmaze_ics();
+
+		if ( false === $ics_file ) {
+			\WP_CLI::error( 'The TVMaze file is missing.' );
+		}
+
+		$file_time = filemtime( $ics_file );
 
 		if ( file_exists( $ics_file ) && $file_time <= strtotime( '+1 sec' ) ) {
 			\WP_CLI::success( 'TVMaze updated successfully.' );

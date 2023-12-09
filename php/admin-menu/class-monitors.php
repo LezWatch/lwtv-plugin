@@ -76,8 +76,7 @@ class Monitors {
 	 * Returns the file/date stamp of the file, so we know if it's been updated.
 	 */
 	public static function check_tvmaze() {
-		$upload_dir = wp_upload_dir();
-		$filename   = $upload_dir['basedir'] . '/tvmaze.ics';
+		$filename = lwtv_plugin()->get_tvmaze_ics();
 
 		if ( ! file_exists( $filename ) ) {
 			$status = '<em>ERROR! The TVMaze calendar file is missing! Tell Mika.<em>';
