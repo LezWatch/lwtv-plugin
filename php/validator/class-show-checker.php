@@ -91,7 +91,7 @@ class Show_Checker {
 		}
 
 		?>
-		<form action="admin.php?page=lwtv_data_check&tab=show_checker" method="post">
+		<form action="admin.php?page=lwtv_data_check&tab=tab_show_checker" method="post">
 			<?php wp_nonce_field( 'run_show_checker_clicked' ); ?>
 			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
 			<?php submit_button( $button ); ?>

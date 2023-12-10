@@ -90,7 +90,7 @@ class Actor_Checker {
 		}
 
 		?>
-		<form action="admin.php?page=lwtv_data_check&tab=actor_checker" method="post">
+		<form action="admin.php?page=lwtv_data_check&tab=tab_actor_checker" method="post">
 			<?php wp_nonce_field( 'run_actor_checker_clicked' ); ?>
 			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
 			<?php submit_button( $button ); ?>

@@ -50,7 +50,7 @@ class Piecharts {
 		$show_top = array( 'gender_year', 'sexuality_year' );
 		$data_top = substr( $data, 0, -5 );
 
-		// Strip hypens becuase ChartJS doesn't like it.
+		// Strip hyphens because ChartJS doesn't like it.
 		$data = str_replace( '-', '', $data );
 
 		if ( ! is_int( $data ) || ! in_array( $data, $show_zero, true ) ) {
@@ -77,6 +77,7 @@ class Piecharts {
 			echo '<p><em>Coming Soon</em></p>';
 			return;
 		}
+
 		?>
 
 		<canvas
@@ -88,21 +89,15 @@ class Piecharts {
 		</canvas>
 
 		<?php
-		// Piechart Variables
-		$display = 'true';
-		if ( in_array( $data, $show_zero, true ) ) {
-			$position = 'bottom';
-		} elseif ( in_array( $data_top, $show_top, true ) ) {
-			$position = 'top';
-		} else {
-			$display = 'false';
-		}
+		// Params
+		$background_color    = "palette('tol-rainbow', pie" . ucfirst( $data ) . "Dataset.length).map(function(hex) { return '#' + hex; })";
+		$position_or_display = 'display: false';
 
-		// Background Color
-		$background_color = "palette('tol-rainbow', pie" . ucfirst( $data ) . "Dataset.length).map(function(hex) { return '#' + hex; })";
 		if ( in_array( $data, $show_zero, true ) ) {
-			// phpcs:ignore Universal.Arrays.DisallowShortArraySyntax.Found
-			$background_color = [ '#5cb85c', '#06c', '#c0392b' ];
+			$background_color    = "[ '#5cb85c', '#06c', '#c0392b' ]";
+			$position_or_display = "position: 'bottom'";
+		} elseif ( in_array( $data_top, $show_top, true ) ) {
+			$position_or_display = "position: 'top'";
 		}
 		?>
 
@@ -130,7 +125,7 @@ class Piecharts {
 				],
 				datasets : [{
 					data : pie<?php echo esc_attr( ucfirst( $data ) ); ?>Dataset,
-					backgroundColor: <?php echo esc_attr( $background_color ); ?>,
+					backgroundColor: <?php echo wp_kses_post( $background_color ); ?>,
 				}]
 			};
 
@@ -153,9 +148,10 @@ class Piecharts {
 					},
 					plugins: {
 						legend: {
-							position: '<?php echo esc_attr( $position ); ?>',
-							display: '<?php echo esc_attr( $display ); ?>',,
-							labels: { boxWidth: 10, }
+							<?php echo esc_attr( $position_or_display ); ?>,
+							labels: {
+								boxWidth: 10,
+							}
 						}
 					}
 				}

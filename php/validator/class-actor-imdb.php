@@ -90,7 +90,7 @@ class Actor_IMDb {
 		}
 
 		?>
-		<form action="admin.php?page=lwtv_data_check&tab=actor_imdb" method="post">
+		<form action="admin.php?page=lwtv_data_check&tab=tab_actor_imdb" method="post">
 			<?php wp_nonce_field( 'run_actor_imdb_clicked' ); ?>
 			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
 			<?php submit_button( $button ); ?>

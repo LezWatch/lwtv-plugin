@@ -88,7 +88,7 @@ class Actor_Empty {
 		}
 
 		?>
-		<form action="admin.php?page=lwtv_data_check&tab=actor_empty" method="post">
+		<form action="admin.php?page=lwtv_data_check&tab=tab_actor_empty" method="post">
 			<?php wp_nonce_field( 'run_actor_incomplete_clicked' ); ?>
 			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
 			<?php submit_button( $button ); ?>

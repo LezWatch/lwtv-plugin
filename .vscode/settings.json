@@ -7,8 +7,8 @@
 		"scss"
 	],
 	"editor.codeActionsOnSave": {
-		"source.fixAll.stylelint": true,
-		"source.fixAll.eslint": true
+		"source.fixAll.stylelint": "explicit",
+		"source.fixAll.eslint": "explicit"
 	},
 	"eslint.format.enable": true,
 	"[javascript]": {

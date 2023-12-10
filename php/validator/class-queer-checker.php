@@ -90,7 +90,7 @@ class Queer_Checker {
 		}
 
 		?>
-		<form action="admin.php?page=lwtv_data_check&tab=queer_checker" method="post">
+		<form action="admin.php?page=lwtv_data_check&tab=tab_queer_checker" method="post">
 			<?php wp_nonce_field( 'run_queer_checker_clicked' ); ?>
 			<input type="hidden" value="true" name=<?php echo esc_attr( $is_name ); ?> />
 			<?php submit_button( $button ); ?>
