@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/block.json",
+  "apiVersion": 2,
+  "name": "lez-library/featured-image",
+  "version": "1.0",
+  "title": "LWTV Featured Image",
+  "category": "lezwatch",
+  "description": "Featured Image inside the editor.",
+  "supports": {
+    "multiple": false,
+    "reusable": false
+  },
+  "editorScript": "file:./block.js"
+}

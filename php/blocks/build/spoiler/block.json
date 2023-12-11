@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/block.json",
+  "apiVersion": 2,
+  "name": "lez-library/spoilers",
+  "version": "1.0",
+  "title": "Spoiler Warning",
+  "category": "lezwatch",
+  "icon": "video-alt",
+  "description": "Uh uh uh, no spoilers, sweetie.",
+  "keywords": [
+    "spoiler",
+    "warning"
+  ],
+  "editorScript": "file:./block.js",
+  "supports": {
+    "customClassName": false
+  },
+  "attributes": {
+    "content": {
+      "type": "string",
+      "default": "Warning: This post contains spoilers!",
+      "selector": "div",
+      "source": "html"
+    }
+  }
+}

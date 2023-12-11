@@ -49,7 +49,7 @@ jobs:
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.LWTV_SSH_KEY }}
-          ARGS: "-rgoDzvc -i"
+          ARGS: "-rgoDzvc -i --delete"
           REMOTE_HOST: ${{ secrets.LWTV_HOST }}
           REMOTE_USER: ${{ secrets.LWTV_USER }}
           TARGET: /home/${{ secrets.LWTV_USER }}/${{ secrets.LWTV_DEV_DOMAIN }}/wp-content/plugins/lwtv-plugin

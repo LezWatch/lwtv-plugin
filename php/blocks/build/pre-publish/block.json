@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/block.json",
+  "apiVersion": 2,
+  "name": "lwtv/pre-publish-checks",
+  "version": "0.0.1",
+  "title": "Pre-Publish Checks",
+  "category": "lezwatch",
+  "icon": "info-outline",
+  "description": "Pre-Publish checklists."
+}
