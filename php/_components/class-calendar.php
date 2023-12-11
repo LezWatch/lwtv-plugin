@@ -86,8 +86,8 @@ class Calendar implements Component, Templater {
 	 *
 	 * @return void
 	 */
-	public function download_tvmaze() {
-		$ics_file = self::get_tvmaze_ics();
+	public function download_tvmaze( $ics_file = null ) {
+		$ics_file = ( is_null( $ics_file ) ) ? self::get_tvmaze_ics() : $ics_file;
 		$response = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents

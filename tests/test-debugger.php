@@ -39,11 +39,10 @@ class Debugger_Test extends \WP_UnitTestCase {
 	 * Test that the sanitizer fixes bad Mastodon names
 	 */
 	public function test_sanitize_mastodon() {
-		$format = 'mastodon';
-		$real = 'thisisaname';
-		$bad  = 'this$is$a%name';
-		$long = 'https://mstdn.social/@' . $real;
-
+		$format   = 'mastodon';
+		$real     = 'thisisaname';
+		$bad      = 'this$is$a%name';
+		$long     = 'https://mstdn.social/@' . $real;
 		$bad_long = 'https://mstdn.social/@' . $bad;
 
 		$sanitize_long     = ( new Debugger() )->sanitize_social( $long, $format );
@@ -61,9 +60,9 @@ class Debugger_Test extends \WP_UnitTestCase {
 	 */
 	public function test_sanitize_instagram() {
 		$format = 'instagram';
-		$real = 'thisisaname';
-		$bad  = 'this$is$a%name';
-		$long = 'https://instagram.com/' . $real;
+		$real   = 'thisisaname';
+		$bad    = 'this$is$a%name';
+		$long   = 'https://instagram.com/' . $real;
 
 		$sanitize_long = ( new Debugger() )->sanitize_social( $long, $format );
 		$sanitize_real = ( new Debugger() )->sanitize_social( $real, $format );

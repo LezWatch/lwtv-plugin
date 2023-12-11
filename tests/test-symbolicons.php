@@ -17,6 +17,32 @@ use LWTV\_Components\Symbolicons;
 class Symbolicons_Test extends \WP_UnitTestCase {
 
 	/**
+	 * Set up.
+	 *
+	 * @return void
+	 */
+	public function setUp(): void {
+		parent::setUp();
+		$this->instance  = new Symbolicons();
+		$this->path      = '/tmp/wordpress/wp-content/uploads/lezpress-icons/symbolicons/';
+		$this->test_path = '/tmp/wordpress-tests-lib/data/themedir1/default/images/';
+		$this->beer_mug  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>beer-mug</title><g id="beer-mug"><path d="M19.5,9.5A5.39,5.39,0,0,1,18,9.28V18a1,1,0,0,1-2,0V9.64a5.74,5.74,0,0,1-4,0V18a1,1,0,0,1-2,0V9.28a5.39,5.39,0,0,1-1.5.22A5.47,5.47,0,0,1,6.22,9H4a3,3,0,0,0-3,3v5a3,3,0,0,0,3,3H6a4,4,0,0,0,4,4h8a4,4,0,0,0,4-4V9h-.22A5.47,5.47,0,0,1,19.5,9.5ZM6,18H4a1,1,0,0,1-1-1V12a1,1,0,0,1,1-1H6ZM8.5,7.5a3.5,3.5,0,0,0,2.42-1,3.94,3.94,0,0,0,6.16,0,3.5,3.5,0,1,0,0-5,3.94,3.94,0,0,0-6.16,0,3.5,3.5,0,1,0-2.42,6Z"/></g></svg>';
+		$this->square    = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 28 28" enable-background="new 0 0 28 28" xml:space="preserve"><g><rect fill="#231F20" width="28" height="28"/></g></svg>';
+
+		// Make the Symbolicons path
+		if ( ! is_dir( $this->path ) ) {
+			mkdir( $this->path, 0777, true );
+		}
+		file_put_contents( $this->path . 'beer-mug.svg', $this->beer_mug );
+
+		// Make the test folder path
+		if ( ! is_dir( $this->test_path ) ) {
+			mkdir( $this->test_path, 0777, true );
+		}
+		file_put_contents( $this->test_path . 'square.svg', $this->square );
+	}
+
+	/**
 	 * Test a plain icon
 	 *
 	 * @return void
@@ -43,28 +69,28 @@ class Symbolicons_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * This doesn't work because the filepath is wrong
-	 * -'/wp-content/uploads/lezpress-icons/symbolicons/beer-mug.svg'
-	 * +'/tmp/wordpress-tests-lib/includes/../data/themedir1/default/images/square.svg'
+	 * Test the folder path is correct.
+	 */
+	public function test_get_icon_file() {
 
-	public function test_get_icon_path() {
 		$svg       = 'beer-mug.svg';
-		$file_path = '/wp-content/uploads/lezpress-icons/symbolicons/' . $svg;
+		$file_path = $this->path . $svg;
 		$get_file  = ( new Symbolicons() )->get_icon_file( $svg );
 
+		// Test that the file is properly called
 		$this->assertSame( $file_path, $get_file );
 	}
 
-
+	/**
+	 * Test that getting a symbolicon works.
+	 */
 	public function test_get_symbolicon() {
+		$get_existing_symbolicon     = ( new Symbolicons() )->get_symbolicon( $svg );
+		$get_non_existing_symbolicon = ( new Symbolicons() )->get_symbolicon( 'fake.svg' );
+		$expected_symbolicon         = '<span class="symbolicon" role="img">' . $this->beer_mug . '</span>';
 
-		$svg         = 'square.svg';
-		$fontawesome = 'fa-square';
-		$svg_class   = 'symbolicon'
-		$icon        = ( new Symbolicons() )->get_icon_file( $svg );
-		$base_symbolicon = '<span class="' . $svg_class . '" role="img">' . file_get_contents( $icon ) . '</span>';
-		$get_symbolicon  = ( new Symbolicons() )->get_symbolicon();
+		$this->assertSame( $get_existing_symbolicon, $expected_symbolicon );
+		$this->assertNotSame( $get_non_existing_symbolicon, $get_existing_symbolicon );
 	}
-	*/
 
 }
