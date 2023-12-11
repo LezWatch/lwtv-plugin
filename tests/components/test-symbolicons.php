@@ -85,7 +85,7 @@ class Symbolicons_Test extends \WP_UnitTestCase {
 	 * Test that getting a symbolicon works.
 	 */
 	public function test_get_symbolicon() {
-		$get_existing_symbolicon     = ( new Symbolicons() )->get_symbolicon( $svg );
+		$get_existing_symbolicon     = ( new Symbolicons() )->get_symbolicon( 'beer-mug.svg' );
 		$get_non_existing_symbolicon = ( new Symbolicons() )->get_symbolicon( 'fake.svg' );
 		$expected_symbolicon         = '<span class="symbolicon" role="img">' . $this->beer_mug . '</span>';
 

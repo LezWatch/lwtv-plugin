@@ -519,8 +519,18 @@ Stored in `/wp-cli/` -- All code for WP-CLI
 Stored in `/tests/ ` -- Unit/Functionality Tests
 
 * `bootstrap.php` - Boostrapper
-* `test-sample.php` - Example
-* `test-ways-to-watch.php` - Ways to Watch
+* `test-sample.php` - Sample
+
+All tests for the components are found in `/components/`:
+
+* `test-autoload.php`
+* `test-block-types-allowed.php`
+* `test-cpts.php`
+* `test-debugger.php`
+* `test-grading.php`
+* `test-roles.php`
+* `test-symbolicon.php`
+* `test-ways-to-watch.php`
 
 ### Node Scripts
 
