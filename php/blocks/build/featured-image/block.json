@@ -3,7 +3,7 @@
   "apiVersion": 2,
   "name": "lez-library/featured-image",
   "version": "1.0",
-  "title": "Featured Image",
+  "title": "LWTV Featured Image",
   "category": "lezwatch",
   "description": "Featured Image inside the editor.",
   "supports": {

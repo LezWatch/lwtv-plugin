@@ -149,6 +149,7 @@ class Plugin {
 	protected function core_components(): array {
 		return array(
 			_Components\Admin_Menu::class,
+			_Components\Block_Types_Allowed::class,
 			_Components\Blocks::class,
 			_Components\Calendar::class,
 			_Components\CPTs::class,
