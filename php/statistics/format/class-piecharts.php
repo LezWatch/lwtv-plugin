@@ -148,7 +148,7 @@ class Piecharts {
 					},
 					plugins: {
 						legend: {
-							<?php echo esc_attr( $position_or_display ); ?>,
+							<?php echo wp_kses_post( $position_or_display ); ?>,
 							labels: {
 								boxWidth: 10,
 							}
