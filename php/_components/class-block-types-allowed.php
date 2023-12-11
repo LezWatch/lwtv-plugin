@@ -15,7 +15,9 @@ use WP_Block_Type_Registry;
 class Block_Types_Allowed implements Component {
 
 	/**
-	 * List of allowed WP core block types.
+	 * List of disallowed WP core block types.
+	 *
+	 * These are blocks we DO NOT want to run.
 	 *
 	 * @var array<string>
 	 */
@@ -51,11 +53,12 @@ class Block_Types_Allowed implements Component {
 	 */
 	public function filter_maybe_disable_block_types() {
 		$registered_block_types = WP_Block_Type_Registry::get_instance()->get_all_registered();
+		$disallowed_block_types = self::get_disallowed_core_block_types();
 		$allowed_block_types    = array();
 
 		foreach ( $registered_block_types as $block_type => $_ ) {
 			// Disable all WP core blocks not in the allow-list.
-			if ( false === str_contains( $block_type, 'core/' ) || ! isset( self::DISALLOWED_CORE_BLOCK_TYPES[ $block_type ] ) ) {
+			if ( false === str_contains( $block_type, 'core/' ) || ! isset( $disallowed_block_types[ $block_type ] ) ) {
 				$allowed_block_types[] = $block_type;
 			}
 		}
