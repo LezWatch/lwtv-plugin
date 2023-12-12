@@ -452,6 +452,7 @@ Templates used by the shortcodes and Gutenberg (as well as when included on the 
 
 Stored in `/php/theme/` - Code used to generate data for the theme in weird ways. Each class file has a `make()` function that generates the output. Some have sub-sets.
 
+* `class-actor-age.php` - Returns actor age.
 * `class-actor-birthday.php` - Boolean return if an actor is having a birthday.
 * `class-actor-characters.php` - List all characters for an actor.
 * `class-actor-pronouns.php` - Sort actor pronouns
@@ -472,8 +473,7 @@ Stored in `/php/theme/` - Code used to generate data for the theme in weird ways
 * `class-show-stars.php` - Make show stars
 * `class-stats-symbolicon.php` - Makes the icon/title for symbolicons
 * `class-taxonomy-archive-title.php` - Customize title of archives with pretty icons
-* `class-tvmaze.php` - Calls to TVMaze
-    - `episodes()` - output of next ep for TV Maze
+* `class-tvmaze.php` - Calls to TVMaze (uses `episodes()` instead of `make()`)
 * `class-ways-to-watch.php` - Outputs Ways to Watch
 
 ### This Year
