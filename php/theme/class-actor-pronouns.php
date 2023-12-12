@@ -12,26 +12,26 @@ class Actor_Pronouns {
 	 * @return string
 	 */
 	public function make( $actor_id ): string {
-		$pronouns          = array(
-			'singular' => array(),
-			'plural'   => array(),
+		$pronouns         = array(
+			'subject' => array(),
+			'object'  => array(),
 		);
-		$singular_pronouns = array( 'Any', 'He', 'She', 'Her', 'Hir', 'They', 'Xe', 'Ze' );
+		$subject_pronouns = array( 'Any', 'He', 'Per', 'She', 'They', 'Ve', 'Xe', 'Ze', 'Zie' );
 
 		$pronoun_terms = get_the_terms( $actor_id, 'lez_actor_pronouns', true );
 		if ( $pronoun_terms && ! is_wp_error( $pronoun_terms ) ) {
 
 			foreach ( $pronoun_terms as $pronoun_term ) {
-				if ( in_array( $pronoun_term->name, $singular_pronouns, true ) ) {
-					$pronouns['singular'][] = $pronoun_term->name;
+				if ( in_array( $pronoun_term->name, $subject_pronouns, true ) ) {
+					$pronouns['subject'][] = $pronoun_term->name;
 				} else {
-					$pronouns['plural'][] = $pronoun_term->name;
+					$pronouns['object'][] = $pronoun_term->name;
 				}
 			}
 		}
 
-		$build_pronouns  = ( ! empty( $pronouns['singular'] ) ) ? implode( '/', $pronouns['singular'] ) : '';
-		$build_pronouns .= ( ! empty( $pronouns['plural'] ) ) ? implode( '/', $pronouns['plural'] ) : '';
+		$build_pronouns  = ( ! empty( $pronouns['subject'] ) ) ? implode( '/', $pronouns['subject'] ) : '';
+		$build_pronouns .= ( ! empty( $pronouns['object'] ) ) ? '/' . implode( '/', $pronouns['object'] ) : '';
 
 		return $build_pronouns;
 	}
