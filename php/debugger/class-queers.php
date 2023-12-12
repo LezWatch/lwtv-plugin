@@ -75,7 +75,7 @@ class Queers {
 
 				// If ANY actor is flagged as queer, we're queer.
 				foreach ( $character_actors as $actor ) {
-					$actor_queer = ( 'yes' === lwtv_plugin()->is_actor_queer( $actor ) ) ? true : false;
+					$actor_queer = lwtv_plugin()->is_actor_queer( $actor );
 
 					// If queer, we're done!
 					if ( $actor_queer ) {

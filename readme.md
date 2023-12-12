@@ -453,12 +453,10 @@ Templates used by the shortcodes and Gutenberg (as well as when included on the 
 Stored in `/php/theme/` - Code used to generate data for the theme in weird ways. Each class file has a `make()` function that generates the output. Some have sub-sets.
 
 * `class-actor-birthday.php` - Boolean return if an actor is having a birthday.
-* `class-content-warning.php` - If a show has a content warning, we display it/
-* `class-data-actor.php` - Generate custom data for actors
-    - `function age()` - Generate and return actor age
-    - `function characters()` - Generate and return characters played by actor
-    - `function dead()` - Generate and return all DEAD characters played by actor
-    - `function terms()`  - Generate and return term data related to actor (gender, pronouns, etc)
+* `class-actor-characters.php` - List all characters for an actor.
+* `class-actor-pronouns.php` - Sort actor pronouns
+* `class-actor-terms.php` - List simple terms for actors (i.e. gender, sexuality)
+* `class-content-warning.php` - If a show has a content warning, we display it.
 * `class-data-author.php` - Generate and return data for Authors (Mika, Tracy, Etc.)
     - `function social()` - Social Media for authors
     - `function favorite_shows()` - Favorite Showes

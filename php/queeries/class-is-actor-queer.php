@@ -30,10 +30,8 @@ class Is_Actor_Queer {
 
 		// Check the override.
 		$override = get_post_meta( $the_id, 'lezactors_queer_override', true );
-		if ( isset( $override ) && ! empty( $override ) && 'undefined' !== $override ) {
-			if ( 'is_queer' === $override ) {
-				return true;
-			}
+		if ( isset( $override ) && ! empty( $override ) && 'is_queer' === $override ) {
+			return true;
 		}
 
 		// If we're private, we aren't queer no matter what to protect identities.

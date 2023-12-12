@@ -16,14 +16,19 @@ class Is_Actor_Trans {
 	 * @param  int $the_id - Post ID
 	 * @return bool
 	 */
-	public function make( $the_id ) {
+	public function make( $the_id ): bool {
 
+		// Only run for actors
 		if ( ! isset( $the_id ) || 'post_type_actors' !== get_post_type( $the_id ) ) {
-			return;
+			return false;
+		}
+
+		// If the post is private, auto-false
+		if ( 'private' === get_post_status( $the_id ) ) {
+			return false;
 		}
 
 		// Defaults
-		$is_trans  = 'no';
 		$the_terms = '';
 
 		// The gender terms this actor uses:
@@ -36,13 +41,9 @@ class Is_Actor_Trans {
 
 		// If the string has 'trans' anywhere in it, we're trans!
 		if ( false !== strpos( $the_terms, 'trans' ) ) {
-			$is_trans = 'yes';
+			return true;
 		}
 
-		if ( 'private' === get_post_status( $the_id ) ) {
-			$is_trans = 'no';
-		}
-
-		return $is_trans;
+		return false;
 	}
 }

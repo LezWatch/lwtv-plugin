@@ -388,7 +388,7 @@ class Characters {
 							// (i.e. the one listed first). If THEY are QIRL, the show gets points.
 							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
 								$top_actor = reset( $actors_ids );
-								if ( 'yes' === lwtv_plugin()->is_actor_queer( $top_actor ) ) {
+								if ( lwtv_plugin()->is_actor_queer( $top_actor ) ) {
 									++$char_counts['quirl'];
 								}
 							}
@@ -401,7 +401,7 @@ class Characters {
 
 							// If an actor is transgender, we get an extra bonus.
 							foreach ( $actors_ids as $actor ) {
-								if ( 'yes' === lwtv_plugin()->is_actor_trans( $actor ) ) {
+								if ( lwtv_plugin()->is_actor_trans( $actor ) ) {
 									++$char_counts['txirl'];
 								}
 							}

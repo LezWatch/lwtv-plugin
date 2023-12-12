@@ -73,7 +73,10 @@ class Cache {
 		foreach ( $clear_urls as $url ) {
 			// Change domain.com/path/to/url to domain.com/PURGE/path/to/url
 			$url_parse    = wp_parse_url( $url );
-			$url_to_purge = $url_parse['scheme'] . '//' . $url_parse['host'] . '/purge' . $url_parse['path'];
+			$url_to_purge = $url_parse['scheme'] . '//' . $url_parse['host'] . '/purge';
+			if ( isset( $url_parse['path'] ) ) {
+				$url_to_purge .= $url_parse['path'];
+			}
 
 			// Reload the data by calling the page
 			wp_remote_get( $url_to_purge );

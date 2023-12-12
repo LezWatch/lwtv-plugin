@@ -58,7 +58,14 @@ class CMB2 {
 	}
 
 	/**
-	 * Get a list of terms
+	 * Save Taxonomies.
+	 */
+	public function select2_taxonomy_save( $post_id, $postmeta, $taxonomy ) {
+		( new Taxonomies() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
+	}
+
+	/**
+	 * Get Select2 Defaults
 	 */
 	public function get_select2_defaults( $postmeta, $taxonomy, $post_id = 0, $none = false ) {
 		return ( new Taxonomies() )->get_select2_defaults( $postmeta, $taxonomy, $post_id, $none );

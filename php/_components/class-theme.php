@@ -4,9 +4,12 @@
  */
 namespace LWTV\_Components;
 
+use LWTV\Theme\Actor_Age;
 use LWTV\Theme\Actor_Birthday;
+use LWTV\Theme\Actor_Characters;
+use LWTV\Theme\Actor_Pronouns;
+use LWTV\Theme\Actor_Terms;
 use LWTV\Theme\Content_Warning;
-use LWTV\Theme\Data_Actor;
 use LWTV\Theme\Data_Author;
 use LWTV\Theme\Data_Character;
 use LWTV\Theme\List_Characters;
@@ -48,6 +51,12 @@ class Theme implements Component, Templater {
 			'is_actor_birthday'         => array( $this, 'is_actor_birthday' ),
 			'get_ways_to_watch'         => array( $this, 'get_ways_to_watch' ),
 			'get_tvmaze_episodes'       => array( $this, 'get_tvmaze_episodes' ),
+			'get_actor_pronouns'        => array( $this, 'get_actor_pronouns' ),
+			'get_actor_gender'          => array( $this, 'get_actor_gender' ),
+			'get_actor_sexuality'       => array( $this, 'get_actor_sexuality' ),
+			'get_actor_characters'      => array( $this, 'get_actor_characters' ),
+			'get_actor_dead'            => array( $this, 'get_actor_dead' ),
+			'get_actor_age'             => array( $this, 'get_actor_age' ),
 		);
 	}
 
@@ -144,18 +153,6 @@ class Theme implements Component, Templater {
 	}
 
 	/**
-	 * Generate actor data
-	 *
-	 * @param int    $the_id Actor ID
-	 * @param string $format Type of output
-	 *
-	 * @return string
-	 */
-	public function get_actor_data( $the_id, $format ) {
-		return ( new Data_Actor() )->make( $the_id, $format );
-	}
-
-	/**
 	 * Is actor birthday
 	 *
 	 * @param int $the_id Actor ID
@@ -184,5 +181,65 @@ class Theme implements Component, Templater {
 	 */
 	public function get_tvmaze_episodes( $show_id ) {
 		return ( new TVMaze() )->episodes( $show_id );
+	}
+
+	/**
+	 * Get Actor Pronouns
+	 *
+	 * @param  int $actor_id
+	 * @return string
+	 */
+	public function get_actor_pronouns( $actor_id ) {
+		return ( new Actor_Pronouns() )->make( $actor_id );
+	}
+
+	/**
+	 * Get Actor Sexuality
+	 *
+	 * @param  int $actor_id
+	 * @return string
+	 */
+	public function get_actor_sexuality( $actor_id ) {
+		return ( new Actor_Terms() )->make( $actor_id, 'sexuality' );
+	}
+
+	/**
+	 * Get Actor Gender
+	 *
+	 * @param  int $actor_id
+	 * @return string
+	 */
+	public function get_actor_gender( $actor_id ) {
+		return ( new Actor_Terms() )->make( $actor_id, 'gender' );
+	}
+
+	/**
+	 * Get Actor Characters
+	 *
+	 * @param  int $actor_id
+	 * @return string
+	 */
+	public function get_actor_characters( $actor_id ) {
+		return ( new Actor_Characters() )->make( $actor_id, 'all' );
+	}
+
+	/**
+	 * Get Actor Dead Characters
+	 *
+	 * @param  int $actor_id
+	 * @return string
+	 */
+	public function get_actor_dead( $actor_id ) {
+		return ( new Actor_Characters() )->make( $actor_id, 'dead' );
+	}
+
+	/**
+	 * Get Actor Age
+	 *
+	 * @param  int $actor_id
+	 * @return string
+	 */
+	public function get_actor_age( $actor_id ) {
+		return ( new Actor_Age() )->make( $actor_id );
 	}
 }
