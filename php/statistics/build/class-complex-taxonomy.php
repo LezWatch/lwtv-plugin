@@ -50,7 +50,7 @@ class Complex_Taxonomy {
 						break;
 					case 'actors':
 						$all_actors_query = lwtv_plugin()->queery_post_type( 'post_type_actors' );
-						if ( $all_actors_query->have_posts() ) {
+						if ( is_object( $all_actors_query ) && $all_actors_query->have_posts() ) {
 							$char_array = wp_list_pluck( $all_actors_query->posts, 'ID' );
 							wp_reset_query();
 						}
@@ -61,10 +61,10 @@ class Complex_Taxonomy {
 
 								// And now we set the numbers!
 								switch ( $is_queer ) {
-									case 'yes':
+									case true:
 										++$array['queer']['count'];
 										break;
-									case 'no':
+									case false:
 										++$array['not_queer']['count'];
 										break;
 								}
@@ -81,7 +81,7 @@ class Complex_Taxonomy {
 					$term_slug           = $term->slug;
 					$term_name           = $term->name;
 					$count_terms_queery  = lwtv_plugin()->queery_taxonomy( $post_type, 'lez_' . $data, 'slug', $term_slug, 'IN' );
-					$term_count          = $count_terms_queery->post_count;
+					$term_count          = ( is_object( $count_terms_queery ) ) ? $count_terms_queery->post_count : 0;
 					$array[ $term_slug ] = array(
 						'count' => $term_count,
 						'name'  => $term_name,

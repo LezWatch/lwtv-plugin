@@ -216,7 +216,7 @@ class Stats_JSON {
 						'dead_chars' => get_post_meta( $actor, 'lezactors_dead_count', true ),
 						'gender'     => implode( ', ', wp_get_post_terms( $actor, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
 						'sexuality'  => implode( ', ', wp_get_post_terms( $actor, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-						'queer'      => lwtv_plugin()->is_actor_queer( $actor ),
+						'queer'      => ( lwtv_plugin()->is_actor_queer( $actor ) ) ? 'yes' : 'no',
 						'url'        => get_the_permalink( $actor ),
 					);
 				}
@@ -567,7 +567,7 @@ class Stats_JSON {
 					'dead_chars' => get_post_meta( $id, 'lezactors_dead_count', true ),
 					'gender'     => implode( ', ', wp_get_post_terms( $id, 'lez_actor_gender', array( 'fields' => 'names' ) ) ),
 					'sexuality'  => implode( ', ', wp_get_post_terms( $id, 'lez_actor_sexuality', array( 'fields' => 'names' ) ) ),
-					'queer'      => lwtv_plugin()->is_actor_queer( $id ),
+					'queer'      => ( lwtv_plugin()->is_actor_queer( $id ) ) ? 'yes' : 'no',
 					'url'        => get_the_permalink( $id ),
 				);
 				break;

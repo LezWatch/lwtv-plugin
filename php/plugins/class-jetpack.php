@@ -14,9 +14,6 @@ if ( ! class_exists( 'Jetpack' ) ) {
 class Jetpack {
 
 	public function __construct() {
-		// Custom search.
-		add_action( 'init', array( $this, 'init_jetpack_search_filters' ) );
-
 		// Jetpack extra images.
 		add_action( 'admin_init', array( $this, 'jetpack_external_images' ) );
 
@@ -26,33 +23,10 @@ class Jetpack {
 		// Integrate spam checkers with Jetpack.
 		add_filter( 'jetpack_contact_form_is_spam', array( $this, 'jetpack_spammers' ), 11, 2 );
 		add_filter( 'jetpack_contact_form_is_spam', array( $this, 'jetpack_harassment' ), 11, 2 );
-	}
 
-	/**
-	 * Jetpack Search Filters
-	 * We want to make sure we get post types in there.
-	 */
-	public function init_jetpack_search_filters() {
-		if ( class_exists( 'Jetpack_Search' ) ) {
-			// phpcs:disable
-			\Jetpack_Search::instance()->set_filters( [
-				'Content Type' => [
-					'type'  => 'post_type',
-					'count' => 10,
-				],
-				'Categories'   => [
-					'type'     => 'taxonomy',
-					'taxonomy' => 'category',
-					'count'    => 10,
-				],
-				'Tags'         => [
-					'type'     => 'taxonomy',
-					'taxonomy' => 'post_tag',
-					'count'    => 10,
-				],
-			] );
-			// phpcs:enable
-		}
+		// Kill AI in Jetpack.
+		add_filter( 'jetpack_ai_chat_enabled', array( $this, 'disable_ai' ) );
+		add_filter( 'jetpack_ai_enabled', array( $this, 'disable_ai' ) );
 	}
 
 	/**
@@ -145,5 +119,14 @@ class Jetpack {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Disable Jetpack AI. Evil!
+	 *
+	 * @return bool
+	 */
+	public function disable_ai() {
+		return false;
 	}
 }

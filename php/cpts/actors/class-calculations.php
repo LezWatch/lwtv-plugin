@@ -33,7 +33,7 @@ class Calculations {
 			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
 
 			// We only need the IDs:
-			if ( $charactersloop && $charactersloop->have_posts() ) {
+			if ( is_object( $charactersloop ) && $charactersloop->have_posts() ) {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 			}
 			// Reset to end
@@ -113,7 +113,7 @@ class Calculations {
 		// Calculate meta:
 		$all_chars  = self::count( $post_id, 'count' );
 		$dead_chars = self::count( $post_id, 'dead' );
-		$is_queer   = ( 'yes' === lwtv_plugin()->is_actor_queer( $post_id ) ) ? true : false;
+		$is_queer   = lwtv_plugin()->is_actor_queer( $post_id );
 
 		// Update Meta:
 		update_post_meta( $post_id, 'lezactors_char_count', $all_chars );

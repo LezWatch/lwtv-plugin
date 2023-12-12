@@ -2,7 +2,7 @@
 
 namespace LWTV\Theme;
 
-class Data_Actor {
+class Actor_Characters {
 	/**
 	 * Generate Actor Data
 	 *
@@ -16,42 +16,13 @@ class Data_Actor {
 	public function make( $actor_id, $format ) {
 
 		// Early Bail
-		$valid_data  = array( 'characters', 'age', 'dead' );
-		$run_as_term = array( 'gender', 'sexuality', 'pronouns' );
-		if ( ! in_array( $format, array_merge( $valid_data, $run_as_term ), true ) ) {
+		$valid_data = array( 'all', 'dead' );
+		if ( ! in_array( $format, $valid_data, true ) ) {
 			return;
 		}
 
-		$do_run = ( in_array( $format, $run_as_term, true ) ) ? 'terms' : $format;
 		$array  = array( $actor_id, $format );
-		$output = self::$do_run( ...$array );
-
-		return $output;
-	}
-
-	/**
-	 * Generate Actor Age
-	 *
-	 * Take the birth and death and ouput as needed.
-	 *
-	 * @param string  $actor  ID Actor ID
-	 * @param string  $format Type of Output
-	 *
-	 * @return string Age.
-	 */
-	public function age( $actor_id, $format ) {
-		$format = $format;
-		$output = '';
-		$end    = new \DateTime();
-		if ( get_post_meta( $actor_id, 'lezactors_death', true ) ) {
-			$end = new \DateTime( get_post_meta( $actor_id, 'lezactors_death', true ) );
-		}
-		if ( get_post_meta( $actor_id, 'lezactors_birth', true ) ) {
-			$start = new \DateTime( get_post_meta( $actor_id, 'lezactors_birth', true ) );
-		}
-		if ( isset( $start ) ) {
-			$output = $start->diff( $end );
-		}
+		$output = self::$format( ...$array );
 
 		return $output;
 	}
@@ -64,7 +35,7 @@ class Data_Actor {
 	 *
 	 * @return array  All the characters by ID.
 	 */
-	public function characters( $actor_id, $format ) {
+	public function all( $actor_id, $format ) {
 		$format = $format;
 		// Get array of characters (by ID).
 		$character_array = get_post_meta( $actor_id, 'lezactors_char_list', true );
@@ -165,26 +136,5 @@ class Data_Actor {
 			}
 		}
 		return $dead;
-	}
-
-	/**
-	 * Generate terms
-	 *
-	 * @param string  $actor      ID Actor ID
-	 * @param string  $term_check Term to check
-	 *
-	 * @return string All the terms, formatted nicely.
-	 */
-	public function terms( $actor_id, $term_check ) {
-		$output    = '';
-		$term_name = 'lez_actor_' . $term_check;
-		$the_terms = get_the_terms( $actor_id, $term_name, true );
-		if ( $the_terms && ! is_wp_error( $the_terms ) ) {
-			foreach ( $the_terms as $a_term ) {
-				$output .= '<a href="' . get_term_link( $a_term->slug, $term_name ) . '" rel="tag" title="' . $a_term->name . '">' . $a_term->name . '</a> ';
-			}
-		}
-
-		return $output;
 	}
 }

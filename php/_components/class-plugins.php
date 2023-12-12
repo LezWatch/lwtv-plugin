@@ -45,6 +45,7 @@ class Plugins implements Component, Templater {
 			'clean_cache_urls'                  => array( $this, 'clean_cache_urls' ),
 			'get_cmb2_terms_list'               => array( $this, 'get_cmb2_terms_list' ),
 			'get_select2_defaults'              => array( $this, 'get_select2_defaults' ),
+			'save_select2_taxonomy'             => array( $this, 'save_select2_taxonomy' ),
 		);
 	}
 
@@ -76,6 +77,18 @@ class Plugins implements Component, Templater {
 	 */
 	public function get_cmb2_terms_list( $taxonomies, $query_args = '' ) {
 		return ( new CMB2() )->get_cmb2_terms_list( $taxonomies, $query_args );
+	}
+
+	/**
+	 * Save Select2 Taxonomy
+	 *
+	 * @param  int    $post_id
+	 * @param  string $postmeta
+	 * @param  string $taxonomy
+	 * @return void
+	 */
+	public function save_select2_taxonomy( $post_id, $postmeta, $taxonomy ) {
+		( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
 	}
 
 	/**
