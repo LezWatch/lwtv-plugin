@@ -23,7 +23,7 @@ class Dead_Taxonomy {
 			$queery = lwtv_plugin()->queery_tax_two( $post_type, $taxonomy, 'slug', $term->slug, 'lez_cliches', 'slug', 'dead' );
 
 			$array[ $term->slug ] = array(
-				'count' => $queery->post_count,
+				'count' => ( is_object( $queery ) ) ? $queery->post_count : 0,
 				'name'  => $term->name,
 				'url'   => get_term_link( $term ),
 			);

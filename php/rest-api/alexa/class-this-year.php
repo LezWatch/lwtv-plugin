@@ -108,10 +108,10 @@ class This_Year {
 		$death_this_year_query = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
 
 		// Translators: %s is number of dead characters
-		$death_this_year = ( 0 === $death_this_year_query->post_count ) ? 'no characters died' : sprintf( _n( '%s character died', '%s characters died', $death_this_year_query->post_count ), $death_this_year_query->post_count );
+		$death_this_year = ( ! is_object( $death_this_year_query ) || 0 === $death_this_year_query->post_count ) ? 'no characters died' : sprintf( _n( '%s character died', '%s characters died', $death_this_year_query->post_count ), $death_this_year_query->post_count );
 
 		// Conclusion
-		if ( $datetime->format( 'Y' ) > 2013 ) {
+		if ( $datetime->format( 'Y' ) > LWTV_CREATED_YEAR ) {
 			$output = $intro . ', LezWatch T. V. made ' . $posts . ', added ' . $characters . ', and added ' . $shows . '. ' . $dead . '.';
 		} else {
 			$output = 'Looking at the history of queer female, non-binary, and trans characters on television, I can tell you some things about ' . $datetime->format( 'Y' ) . ' ... ' . $dead . '.';

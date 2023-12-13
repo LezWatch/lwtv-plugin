@@ -18,8 +18,11 @@ require_once __DIR__ . '/php/_helpers/class-autoload.php';
 // Plugin Version
 define( 'LWTV_PLUGIN_VERSION', '6.0' );
 
-// Define First Year:
+// Define First Year with queers:
 define( 'LWTV_FIRST_YEAR', '1961' );
+
+// Define when the site started:
+define( 'LWTV_CREATED_YEAR', '2013' );
 
 // Plugin Home
 define( 'LWTV_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );

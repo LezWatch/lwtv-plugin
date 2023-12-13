@@ -91,7 +91,6 @@ class What_Happened_JSON {
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 
 		$date        = ( ! $date ) ? $dt->format( 'Y' ) : $date;
-		$today       = ( $date !== $dt->format( 'Y-m-d' ) ) ? false : true;
 		$count_array = array();
 
 		// Figure out what date we're working with here...
@@ -138,14 +137,15 @@ class What_Happened_JSON {
 				$count_array['dead'] = $death_query_count;
 				break;
 			case 'day':
-				$death_query         = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'm/d/Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
+				$death_query         = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y-m-d' ), 'lez_cliches', 'slug', 'dead', 'LIKE' );
 				$count_array['dead'] = ( is_object( $death_query ) ) ? $death_query->post_count : 0;
 				break;
 			default:
 				$count_array['dead'] = 0;
 		}
 
-		if ( $datetime->format( 'Y' ) > 2013 ) {
+		// This is calculating how much content we've added since the site started.
+		if ( $datetime->format( 'Y' ) > LWTV_CREATED_YEAR ) {
 			// Calculate characters and shows
 			$valid_post_types = array(
 				'posts'      => 'post',
@@ -188,13 +188,6 @@ class What_Happened_JSON {
 				$count_array[ $name ] = $queery->post_count;
 				wp_reset_postdata();
 			}
-
-			// translators: %s is the number of characters
-			$characters = ( 0 === $count_array['characters'] ) ? 'no characters' : sprintf( _n( '%s character', '%s characters', $count_array['characters'] ), $count_array['characters'] );
-			// translators: %s is the number of shows
-			$shows = ( 0 === $count_array['shows'] ) ? 'no shows' : sprintf( _n( '%s show', '%s shows', $count_array['shows'] ), $count_array['shows'] );
-			// translators: %s is the number of posts
-			$posts = ( 0 === $count_array['posts'] ) ? 'no posts' : sprintf( _n( '%s post', '%s posts', $count_array['posts'] ), $count_array['posts'] );
 		}
 
 		// Information for shows
