@@ -5,3 +5,26 @@
 .gform_editor .gform_lwtvlocation input, .gform_editor .gform_lwtvlocation label {
 	opacity: .6;
 }
+
+/**
+ * Featured Image code
+ */
+th#featured_image,
+td.featured_image.column-featured_image {
+	max-height: 25px;
+	max-width: 25px;
+	color: #444;
+	width: 2.2em;
+}
+td.featured_image span.dashicons-no {
+	color: #dc3232;
+}
+td.featured_image span.dashicons-yes {
+	color: #46b450;
+}
+td.featured_image span.dashicons-flag {
+	color: #826EB4;
+}
+div#screen-options-wrap.hidden span.dashicons-camera {
+	padding-top: 5px;
+}

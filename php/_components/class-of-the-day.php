@@ -346,11 +346,16 @@ class Of_The_Day implements Component, Templater {
 					$date = $dt->format( 'm-d' );
 				}
 
+				$mystery_array    = array( 10250, 11066, 79739, 87052 );
 				$meta_query_array = array(
 					array(
 						'key'     => '_thumbnail_id',
-						'value'   => '79739', // Don't show if there's no image OR the image is Mystery woman.
-						'compare' => '!=',
+						'value'   => $mystery_array, // Don't show if the image is Mystery woman.
+						'compare' => 'NOT IN',
+					),
+					array(
+						'key'     => '_thumbnail_id', // Images are required
+						'compare' => 'EXISTS',
 					),
 					array(
 						'key'     => 'lezchars_show_group',
