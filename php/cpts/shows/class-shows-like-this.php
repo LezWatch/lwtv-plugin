@@ -1,7 +1,8 @@
 <?php
 /**
  * Name: Shows Like This
- * Description: Calculate other shows you'd like if you like this
+ * Description: Calculate other shows you'd like if you like this.
+ *
  * This requires https://wordpress.org/plugins/related-posts-by-taxonomy/
  * See https://wordpress.org/support/topic/adding-meta-to-where-join-currently-it-replaces/
  */
@@ -10,6 +11,9 @@ namespace LWTV\CPTs\Shows;
 
 class Shows_Like_This {
 
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		add_filter( 'related_posts_by_taxonomy_posts_meta_query', array( $this, 'meta_query' ), 10, 4 );
 		add_filter( 'related_posts_by_taxonomy', array( $this, 'alter_results' ), 10, 4 );
@@ -17,6 +21,12 @@ class Shows_Like_This {
 		add_filter( 'related_posts_by_taxonomy_wp_rest_api', '__return_true' );
 	}
 
+	/**
+	 * Shows like this
+	 *
+	 * @param  int         $show_id
+	 * @return string|bool
+	 */
 	public function make( $show_id ) {
 		$return = '';
 
@@ -71,12 +81,23 @@ class Shows_Like_This {
 		}
 
 		if ( empty( $return ) ) {
-			$return = false;
+			return false;
 		}
 
 		return $return;
 	}
 
+	/**
+	 * Custom Meta Query for related posts
+	 *
+	 * @TODO: Move this to a QUEERY looper.
+	 *
+	 * @param  array  $meta_query
+	 * @param  int    $post_id
+	 * @param  array  $taxonomies
+	 * @param  array  $args
+	 * @return array
+	 */
 	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function meta_query( $meta_query, $post_id, $taxonomies, $args ) {
 
@@ -137,7 +158,7 @@ class Shows_Like_This {
 			)
 		);
 
-		if ( $reciprocity_loop->have_posts() ) {
+		if ( is_object( $reciprocity_loop ) && $reciprocity_loop->have_posts() ) {
 			while ( $reciprocity_loop->have_posts() ) {
 				$reciprocity_loop->the_post();
 				$this_show_id = get_the_ID();

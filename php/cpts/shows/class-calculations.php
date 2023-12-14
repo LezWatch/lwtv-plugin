@@ -10,74 +10,58 @@ class Calculations {
 
 	/**
 	 * Calculate show rating.
+	 *
+	 * @param int  $post_id Post ID
+	 * @return int          Show score
 	 */
 	public function show_score( $post_id ) {
 
-		if ( ! isset( $post_id ) ) {
+		// If this is not a valid show post type, we skip.
+		if ( ! isset( $post_id ) || 'post_type_shows' !== get_post_type( $post_id ) ) {
 			return;
 		}
 
-		// Get base ratings
-		// Multiply by 3 for a max of 30
+		// Set initial score:
+		$score = 0;
+
+		// Base Ratings: Multiply by 3 for a max of 30
 		$realness   = min( (int) get_post_meta( $post_id, 'lezshows_realness_rating', true ), 5 );
 		$quality    = min( (int) get_post_meta( $post_id, 'lezshows_quality_rating', true ), 5 );
 		$screentime = min( (int) get_post_meta( $post_id, 'lezshows_screentime_rating', true ), 5 );
-		$score      = ( $realness + $quality + $screentime ) * 3;
+		$score     .= ( $realness + $quality + $screentime ) * 3;
 
-		// Add in Thumb Score Rating: 10, 5, 0, -10
-		switch ( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) ) {
-			case 'Yes':
-				$score += 10;
-				break;
-			case 'Meh':
-				$score += 5;
-				break;
-			case 'TBD':
-				$score += 0;
-				break;
-			case 'No':
-				$score -= 10;
-				break;
-			default:
-				$score = $score;
-				break;
-		}
+		// Thumb Score Rating: 10, 5, 0, -10
+		$worth_it    = get_post_meta( $post_id, 'lezshows_worthit_rating', true );
+		$worth_score = array(
+			'Yes' => 10,
+			'Meh' => 5,
+			'No'  => -10,
+			'TBD' => 0,
+		);
+		$score      += ( key_exists( $worth_it, $worth_score ) ) ? $worth_score[ $worth_it ] : 0;
 
-		// Add in Star Rating: 20, 10, 5, -15
+		// Star Rating: 20, 10, 5, -15
 		$star_terms = get_the_terms( $post_id, 'lez_stars' );
-		$color      = ( ! empty( $star_terms ) && ! is_wp_error( $star_terms ) ) ? $star_terms[0]->slug : get_post_meta( $post_id, 'lez_stars', true );
-
-		switch ( $color ) {
-			case 'gold':
-				$score += 20;
-				break;
-			case 'silver':
-				$score += 10;
-				break;
-			case 'bronze':
-				$score += 5;
-				break;
-			case 'anti':
-				$score -= 15;
-				break;
-		}
+		$stars      = ( ! empty( $star_terms ) && ! is_wp_error( $star_terms ) ) ? $star_terms[0]->slug : get_post_meta( $post_id, 'lez_stars', true );
+		$star_score = array(
+			'gold'   => 20,
+			'silver' => 10,
+			'bronze' => 5,
+			'anti'   => -15,
+		);
+		$score     += ( key_exists( $stars, $star_score ) ) ? $star_score[ $stars ] : 0;
 
 		// Trigger Warning: -5, -10, -15
 		$trigger_terms = get_the_terms( $post_id, 'lez_triggers' );
 		$trigger       = ( ! empty( $trigger_terms ) && ! is_wp_error( $trigger_terms ) ) ? $trigger_terms[0]->slug : get_post_meta( $post_id, 'lezshows_triggerwarning', true );
-		switch ( $trigger ) {
-			case 'on':
-			case 'high':
-				$score -= 15;
-				break;
-			case 'med':
-			case 'medium':
-				$score -= 10;
-				break;
-			case 'low':
-				$score -= 5;
-				break;
-		}
+		$trigger_score = array(
+			'on'     => 15,
+			'high'   => 15,
+			'med'    => 10,
+			'medium' => 10,
+			'low'    => 5,
+		);
+		$score        += ( key_exists( $trigger, $trigger_score ) ) ? $trigger_score[ $trigger ] : 0;
 
 		// Shows We Love: 40 points
 		if ( 'on' === get_post_meta( $post_id, 'lezshows_worthit_show_we_love', true ) ) {
@@ -92,7 +76,8 @@ class Calculations {
 	 *
 	 * This will update the metakeys on save
 	 *
-	 * @param int $post_id The post ID.
+	 * @param  int $post_id  The post ID.
+	 * @return int           The number of queers
 	 */
 	public function count_queers( $post_id, $type = 'count' ) {
 
@@ -215,7 +200,7 @@ class Calculations {
 		$tropes       = wp_get_post_terms( $post_id, 'lez_tropes', true );
 		$count_tropes = ( $tropes ) ? count( $tropes ) : 0;
 		$has_dead     = ( has_term( 'dead-queers', 'lez_tropes', $post_id ) ) ? true : false;
-		$has_happyend = ( has_term( 'happy-ending', 'lez_tropes', $post_id ) ) ? true : false;
+		$is_happy_end = ( has_term( 'happy-ending', 'lez_tropes', $post_id ) ) ? true : false;
 
 		// Death Override Checker.
 		$override = get_post_meta( $post_id, 'lezshows_byq_override', true );
@@ -302,10 +287,10 @@ class Calculations {
 		$score = ( $score < 0 ) ? 0 : $score;
 
 		// Death Deductions
-		if ( 0 !== $score && $has_dead && ! $has_happyend ) {
+		if ( 0 !== $score && $has_dead && ! $is_happy_end ) {
 			// If there are dead WITHOUT happy-ending, drop by a third.
 			$score = ( $score * .66 );
-		} elseif ( 0 !== $score && $has_dead && $has_happyend ) {
+		} elseif ( 0 !== $score && $has_dead && $is_happy_end ) {
 			// If there are dead WITH happy-ending, drop by a quarter
 			$score = ( $score * .75 );
 		}
@@ -318,6 +303,11 @@ class Calculations {
 
 	/**
 	 * Calculate show character score.
+	 *
+	 * NO MATTER WHAT YOU THINK the post counts HAVE to be two separate meta fields.
+	 * Otherwise you get weird issues with FacetWP.
+	 *
+	 * Attempts: 4
 	 */
 	public function show_character_score( $post_id ) {
 
@@ -337,9 +327,7 @@ class Calculations {
 			$score['score'] = self::count_queers( $post_id, 'score' );
 		}
 
-		// Update post meta for counts
-		// NOTE: This cannot be an array because of how it's used for Facet later on.
-		// MIKA! SERIOUSLY! NO!
+		// Update post meta for counts (NO YOU CANNOT MAKE THIS AN ARRAY)
 		update_post_meta( $post_id, 'lezshows_char_count', $number_chars );
 		update_post_meta( $post_id, 'lezshows_dead_count', $number_dead );
 
@@ -384,14 +372,11 @@ class Calculations {
 			// Loop to get the list of characters
 			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
 
-			if ( $charactersloop->have_posts() ) {
+			if ( is_object( $charactersloop ) && $charactersloop->have_posts() ) {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 			}
 
 			$characters = array_unique( $characters );
-
-			// Reset to end
-			wp_reset_query();
 		}
 
 		$new_characters = array();

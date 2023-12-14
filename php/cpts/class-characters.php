@@ -318,13 +318,11 @@ class Characters {
 		// If the character list is empty, we must build it
 		if ( ! isset( $characters ) || empty( $characters ) ) {
 			// Loop to get the list of characters
-			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			$characters_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
-			if ( $charactersloop->have_posts() ) {
-				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
+			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
+				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
 			}
-
-			wp_reset_query();
 
 			$characters = ( is_array( $characters ) ) ? array_unique( $characters ) : array( $characters );
 		}
@@ -501,17 +499,14 @@ class Characters {
 		// If the character list is empty, we must build it
 		if ( empty( $characters ) ) {
 			// Loop to get the list of characters
-			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			$characters_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
-			if ( $charactersloop->have_posts() ) {
-				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
+			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
+				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
 			}
 
 			$characters = ( ! is_array( $characters ) ) ? array() : array_unique( $characters );
 			update_post_meta( $show_id, 'lezshows_char_list', $characters );
-
-			// Reset to end
-			wp_reset_query();
 		}
 
 		// Empty array to display later

@@ -7,7 +7,6 @@
 
 namespace LWTV\_Components;
 
-use Error;
 use LWTV\Calendar\ICS_Parser;
 use LWTV\Calendar\Names;
 
@@ -84,6 +83,8 @@ class Calendar implements Component, Templater {
 	 *
 	 * Saves the ICS data to a file so we're not overloading the API.
 	 *
+	 * @param $ics_file  Location of ICS file (optional)
+	 *
 	 * @return void
 	 */
 	public function download_tvmaze( $ics_file = null ) {
@@ -157,6 +158,7 @@ class Calendar implements Component, Templater {
 
 	/**
 	 * Customize Post Title Placeholder
+	 *
 	 * @param  string $input
 	 * @return string The new title
 	 */

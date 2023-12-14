@@ -126,7 +126,7 @@ class This_Year implements Component, Templater {
 	/*
 	 * Extra Meta Variables for Yoast and Year pages
 	 *
-	 * The type of stats page we're on
+	 * @return string  The year.
 	 */
 	public function yoast_retrieve_year_replacement() {
 		$this_year = get_query_var( 'thisyear', 'none' );

@@ -239,7 +239,6 @@ class Exclusions {
 			}
 		}
 		wp_reset_postdata();
-		wp_reset_query();
 
 		return $queery;
 	}

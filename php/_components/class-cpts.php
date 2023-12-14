@@ -19,6 +19,11 @@ use LWTV\CPTs\Shows\Shows_Like_This;
 class CPTs implements Component, Templater {
 
 	/**
+	 * Our Post Types
+	 */
+	const POST_TYPES = array( 'post_type_actors', 'post_type_characters', 'post_type_shows' );
+
+	/**
 	 * Constructor
 	 */
 	public function init() {
@@ -156,8 +161,7 @@ class CPTs implements Component, Templater {
 	 * @return array $actions Modified actions.
 	 */
 	public function remove_quick_edit( $actions, $post ) {
-		$cpts = array( 'post_type_actors', 'post_type_characters', 'post_type_shows' );
-		if ( in_array( get_post_type( $post->ID ), $cpts, true ) ) {
+		if ( in_array( get_post_type( $post->ID ), self::POST_TYPES, true ) ) {
 			unset( $actions['inline hide-if-no-js'] );
 		}
 		return $actions;
@@ -172,8 +176,7 @@ class CPTs implements Component, Templater {
 	 * @return array $actions Modified actions.
 	 */
 	public function remove_member_bulk_actions( $actions, $post ) {
-		$cpts = array( 'post_type_actors', 'post_type_characters', 'post_type_shows' );
-		if ( in_array( get_post_type( $post->ID ), $cpts, true ) ) {
+		if ( in_array( get_post_type( $post->ID ), self::POST_TYPES, true ) ) {
 			unset( $actions['edit'] );
 		}
 		return $actions;

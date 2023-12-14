@@ -21,7 +21,7 @@ use LWTV\Features\User_Profiles;
 class Features implements Component, Templater {
 
 	/*
-	 * Construct
+	 * Init
 	 */
 	public function init() {
 		add_filter( 'wp_headers', array( $this, 'modify_front_end_http_headers' ), 10, 2 );
@@ -153,7 +153,7 @@ class Features implements Component, Templater {
 	}
 
 	/**
-	 * Hide the LWTV Plugin.
+	 * Hide the LWTV Plugin from the Plugin list.
 	 *
 	 * @access public
 	 * @return void

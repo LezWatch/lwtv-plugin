@@ -31,6 +31,9 @@ class Transients implements Component, Templater {
 	 * Get Transient
 	 *
 	 * A wrapper to default to false if you're developing.
+	 *
+	 * @param  string      $transient The Transient name
+	 * @return string|bool            Transient value (or false)
 	 */
 	public static function get_transient( $transient ) {
 		if ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) {

@@ -15,28 +15,25 @@ class Related_Posts {
 	/**
 	 * Output posts related to this show, character, or actor.
 	 *
-	 * @access public
-	 * @param mixed $slug
-	 * @return void
+	 * @param  string $slug
+	 * @return string
 	 */
 	public function related_posts( $slug ) {
 
+		// Default content:
+		$the_related_posts = '<em>Coming soon...</em>';
+
+		// If there are no posts, return early.
 		if ( ! self::are_there_posts( $slug ) ) {
-			return;
+			return $the_related_posts;
 		}
 
 		$related_post_loop = lwtv_plugin()->get_related_posts_by_tag( 'post', $slug );
-
-		if ( $related_post_loop && $related_post_loop->have_posts() ) {
-			$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
-			$related_post_query = array_unique( $related_post_query );
-			wp_reset_query();
+		if ( is_object( $related_post_loop ) && $related_post_loop->have_posts() ) {
+			$related_post_query = array_unique( wp_list_pluck( $related_post_loop->posts, 'ID' ) );
 		}
 
-		$the_related_posts = '<em>Coming soon...</em>';
-
 		if ( isset( $related_post_query ) && is_array( $related_post_query ) ) {
-
 			// We get a max of 10 but we only want to show 3
 			$max_posts  = 3;
 			$count_post = 0;
@@ -75,45 +72,54 @@ class Related_Posts {
 	 */
 	public function count_related_posts( $slug ): array {
 
-		// If there are no posts
+		// If there are no posts, return empty.
 		if ( ! self::are_there_posts( $slug ) ) {
 			return array();
 		}
 
-		$related_post_loop  = lwtv_plugin()->get_related_posts_by_tag( 'post', $slug );
+		$related_post_loop = lwtv_plugin()->get_related_posts_by_tag( 'post', $slug );
+
+		// If this isn't an object, return empty.
+		if ( ! is_object( $related_post_loop ) ) {
+			return array();
+		}
+
 		$related_post_query = wp_list_pluck( $related_post_loop->posts, 'ID' );
 		$related_post_query = array_unique( $related_post_query );
+
 		return $related_post_query;
 	}
 
 	/**
 	 * Are there related posts?
 	 *
-	 * @access public
-	 * @static
 	 * @param mixed $slug
-	 * @return void
+	 * @return bool
 	 */
-	public function are_there_posts( $slug ) {
+	public function are_there_posts( $slug ): bool {
 
-		// If there are no posts with the tag, return false
+		// If there are no posts with the tag, return false.
 		$term = term_exists( $slug, 'post_tag' );
 		if ( 0 === $term || null === $term ) {
 			return false;
 		}
 
-		// If there are no posts IN the tag, return false
+		// If there are no posts IN the tag, return false.
 		$term_data = get_term_by( 'id', $term['term_id'], 'post_tag' );
 		if ( ! isset( $term_data->count ) ) {
 			return false;
 		}
 
-		// Elsa let it go and return true
+		// Elsa let it go and return true.
 		return true;
 	}
 
 	/**
 	 * Related Content Archive
+	 *
+	 * @param int     $tag_id ID of tag for the archive.
+	 *
+	 * @return string The related items.
 	 */
 	public function related_archive_header( $tag_id ) {
 		$tag         = get_tag( $tag_id );
@@ -156,9 +162,8 @@ class Related_Posts {
 	 * Related Content: Shows, Characters, or Actors related to this post
 	 * Used on Posts only.
 	 *
-	 * @access public
-	 * @param mixed $content
-	 * @return void
+	 * @param  string $content
+	 * @return string Update content
 	 */
 	public function related_content( $content ) {
 		if ( is_singular( 'post' ) ) {

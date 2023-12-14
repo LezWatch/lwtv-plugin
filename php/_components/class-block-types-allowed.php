@@ -35,7 +35,7 @@ class Block_Types_Allowed implements Component {
 	/**
 	 * Get all allowed core block types.
 	 *
-	 * @return array<string>
+	 * @return array
 	 */
 	public function get_disallowed_core_block_types() {
 		/**
@@ -49,7 +49,7 @@ class Block_Types_Allowed implements Component {
 	/**
 	 * Filter the list of allowed blocks.
 	 *
-	 * @return array<string> Allowed blocks types.
+	 * @return array Allowed blocks types.
 	 */
 	public function filter_maybe_disable_block_types() {
 		$registered_block_types = WP_Block_Type_Registry::get_instance()->get_all_registered();
@@ -63,9 +63,7 @@ class Block_Types_Allowed implements Component {
 			}
 		}
 
-		/**
-		 * List of allowed block types.
-		 */
+		// List of allowed block types.
 		return $allowed_block_types;
 	}
 }

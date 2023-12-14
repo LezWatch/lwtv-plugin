@@ -75,7 +75,13 @@ class CMB2_Metaboxes {
 		return $return;
 	}
 
-
+	/**
+	 * Dynamically update genres.
+	 *
+	 * Has some issues.
+	 *
+	 * @return void
+	 */
 	public function return_genres_options() {
 		$terms_array = array();
 		$output      = '<option value="">None (please choose one)</option>';
@@ -311,7 +317,7 @@ class CMB2_Metaboxes {
 			)
 		);
 		// Field: Show Intersectionality.
-		$field_intersectional = $cmb_b_details->add_field(
+		$cmb_b_details->add_field(
 			array(
 				'name'              => 'Intersectionality',
 				'id'                => $prefix . 'intersectional',
@@ -327,7 +333,7 @@ class CMB2_Metaboxes {
 			)
 		);
 		// Field: Tropes.
-		$field_tropes = $cmb_b_details->add_field(
+		$cmb_b_details->add_field(
 			array(
 				'name'              => 'Trope Plots',
 				'id'                => $prefix . 'tropes',

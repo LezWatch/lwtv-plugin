@@ -83,25 +83,25 @@ class Plugins implements Component, Templater {
 	 * Save Select2 Taxonomy
 	 *
 	 * @param  int    $post_id
-	 * @param  string $postmeta
+	 * @param  string $post_meta
 	 * @param  string $taxonomy
 	 * @return void
 	 */
-	public function save_select2_taxonomy( $post_id, $postmeta, $taxonomy ) {
-		( new CMB2() )->select2_taxonomy_save( $post_id, $postmeta, $taxonomy );
+	public function save_select2_taxonomy( $post_id, $post_meta, $taxonomy ) {
+		( new CMB2() )->select2_taxonomy_save( $post_id, $post_meta, $taxonomy );
 	}
 
 	/**
 	 * Get default data for some odd CMB2 things using select2
 	 *
-	 * @param  string  $postmeta the name of the postmeta used by CMB2
-	 * @param  string  $taxonomy the name of the taxonomy we're using
-	 * @param  integer $post_id  post ID
-	 * @param  boolean $none     does it have a 'none'?
+	 * @param  string  $post_meta the name of the post_meta used by CMB2
+	 * @param  string  $taxonomy  the name of the taxonomy we're using
+	 * @param  integer $post_id   post ID
+	 * @param  boolean $none      does it have a 'none'?
 	 *
-	 * @return array             An array of Term IDs
+	 * @return array              An array of Term IDs
 	 */
-	public function get_select2_defaults( $postmeta, $taxonomy, $post_id = 0, $none = false ) {
-		return ( new CMB2() )->get_select2_defaults( $postmeta, $taxonomy, $post_id, $none );
+	public function get_select2_defaults( $post_meta, $taxonomy, $post_id = 0, $none = false ) {
+		return ( new CMB2() )->get_select2_defaults( $post_meta, $taxonomy, $post_id, $none );
 	}
 }

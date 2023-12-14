@@ -16,13 +16,21 @@ class Dashboard_Widgets implements Component {
 		add_action( 'wp_dashboard_setup', array( $this, 'custom_dashboard_widgets' ) );
 	}
 
+	/**
+	 * Custom Dashboard Widget
+	 */
 	public function custom_dashboard_widgets() {
 		if ( current_user_can( 'upload_files' ) ) {
-			wp_add_dashboard_widget( 'lwtv_data_check_widget', 'LezWatch.TV Tools', array( $this, 'lwtv_data_check_dashboard_content' ) );
+			wp_add_dashboard_widget( 'lwtv_data_check_widget', 'LezWatch.TV Tools', array( $this, 'check_dashboard_content' ) );
 		}
 	}
 
-	public function lwtv_data_check_dashboard_content() {
+	/**
+	 * Check dashboard content
+	 *
+	 * @return void
+	 */
+	public function check_dashboard_content() {
 		// Get Last Status
 		$options   = get_option( 'lwtv_debugger_status' );
 		$timestamp = $options['timestamp'];
