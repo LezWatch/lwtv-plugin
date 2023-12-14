@@ -8,6 +8,9 @@ namespace LWTV\CPTs;
 
 class Related_Posts {
 
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		add_filter( 'the_content', array( $this, 'related_content' ) );
 	}

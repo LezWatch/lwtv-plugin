@@ -15,7 +15,15 @@ use LWTV\CPTs\Characters\Custom_Columns;
  */
 class Characters {
 
-	protected static $all_taxonomies;
+	/**
+	 * All Taxonomies
+	 */
+	const ALL_TAXONOMIES = array(
+		'lez_cliches'   => array( 'name' => 'cliché' ),
+		'lez_gender'    => array( 'name' => 'gender' ),
+		'lez_sexuality' => array( 'name' => 'sexual orientation' ),
+		'lez_romantic'  => array( 'name' => 'romantic orientation' ),
+	);
 
 	/**
 	 * Constructor
@@ -33,14 +41,6 @@ class Characters {
 		// Yoast Hooks
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 
-		// Define show taxonomies
-		self::$all_taxonomies = array(
-			'lez_cliches'   => array( 'name' => 'cliché' ),
-			'lez_gender'    => array( 'name' => 'gender' ),
-			'lez_sexuality' => array( 'name' => 'sexual orientation' ),
-			'lez_romantic'  => array( 'name' => 'romantic orientation' ),
-		);
-
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
 		// While this isn't the official API for this need, it works.
@@ -48,7 +48,7 @@ class Characters {
 		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
 
 			$all_tax_array = array();
-			foreach ( self::$all_taxonomies as $char_tax => $char_array ) {
+			foreach ( self::ALL_TAXONOMIES as $char_tax => $char_array ) {
 				if ( ! isset( $char_tax['hide'] ) || false !== $char_array['hide'] ) {
 					$all_tax_array[] = $char_tax;
 				}
@@ -66,7 +66,6 @@ class Characters {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ), 10, 3 );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
@@ -83,12 +82,14 @@ class Characters {
 	}
 
 	/*
-	 * CPT Settings
+	 * Create Post Type
+	 *
+	 * post_type_characters
 	 */
 	public function create_post_type() {
 
 		$char_taxonomies = array();
-		foreach ( self::$all_taxonomies as $slug => $array ) {
+		foreach ( self::ALL_TAXONOMIES as $slug => $more ) {
 			$char_taxonomies[] = $slug;
 		}
 
@@ -155,7 +156,7 @@ class Characters {
 	 */
 	public function create_taxonomies() {
 
-		foreach ( self::$all_taxonomies as $tax_slug => $tax_array ) {
+		foreach ( self::ALL_TAXONOMIES as $tax_slug => $tax_array ) {
 			// Remove lez_ from slug.
 			$slug = str_replace( 'lez_', '', $tax_slug );
 
@@ -287,18 +288,6 @@ class Characters {
 				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
 			}
 		}
-	}
-
-	/*
-	 * Style for dashboard
-	 */
-	public function admin_css() {
-		echo "<style type='text/css'>
-			#adminmenu #menu-posts-post_type_characters div.wp-menu-image:before, #dashboard_right_now li.post_type_characters-count a:before {
-				content: '\\f484';
-				margin-left: -1px;
-			}
-		</style>";
 	}
 
 	/**

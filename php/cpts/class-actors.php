@@ -17,7 +17,18 @@ use LWTV\CPTs\Actors\Custom_Columns;
 
 class Actors {
 
-	protected static $all_taxonomies;
+	/**
+	 * All Taxonomies
+	 */
+	const ALL_TAXONOMIES = array(
+		'lez_actor_gender'    => array( 'name' => 'gender' ),
+		'lez_actor_sexuality' => array(
+			'name'   => 'sexuality',
+			'plural' => 'sexualities',
+		),
+		'lez_actor_romantic'  => array( 'name' => 'romantic orientation' ),
+		'lez_actor_pronouns'  => array( 'name' => 'pronoun' ),
+	);
 
 	/**
 	 * Constructor
@@ -38,18 +49,6 @@ class Actors {
 		// Save Hooks
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
 
-		// Define show taxonomies
-		// SLUG => PRETTY NAME
-		self::$all_taxonomies = array(
-			'lez_actor_gender'    => array( 'name' => 'gender' ),
-			'lez_actor_sexuality' => array(
-				'name'   => 'sexuality',
-				'plural' => 'sexualities',
-			),
-			'lez_actor_romantic'  => array( 'name' => 'romantic orientation' ),
-			'lez_actor_pronouns'  => array( 'name' => 'pronoun' ),
-		);
-
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
 		// While this isn't the official API for this need, it works.
@@ -57,7 +56,7 @@ class Actors {
 		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
 
 			$all_tax_array = array();
-			foreach ( self::$all_taxonomies as $actor_tax => $actor_array ) {
+			foreach ( self::ALL_TAXONOMIES as $actor_tax => $actor_array ) {
 				if ( ! isset( $actor_array['hide'] ) || false !== $actor_array['hide'] ) {
 					$all_tax_array[] = $actor_tax;
 				}
@@ -75,7 +74,6 @@ class Actors {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
@@ -91,13 +89,15 @@ class Actors {
 	}
 
 	/*
-	 * CPT Settings
+	 * Create Actor Post Type
+	 *
+	 * post_type_actors
 	 *
 	 */
 	public function create_post_type() {
 
 		$actor_taxonomies = array();
-		foreach ( self::$all_taxonomies as $actor_tax => $actor_array ) {
+		foreach ( self::ALL_TAXONOMIES as $actor_tax => $actor_array ) {
 			$actor_taxonomies[] = $actor_tax;
 		}
 
@@ -160,11 +160,10 @@ class Actors {
 	}
 
 	/*
-	 * Custom Taxonomies
-	 *
+	 * Create Custom Taxonomies
 	 */
 	public function create_taxonomies() {
-		foreach ( self::$all_taxonomies as $tax_slug => $tax_array ) {
+		foreach ( self::ALL_TAXONOMIES as $tax_slug => $tax_array ) {
 			// Remove lez_ from slug.
 			$slug = str_replace( 'lez_', '', $tax_slug );
 
@@ -274,7 +273,7 @@ class Actors {
 	}
 
 	/*
-	 * Add to 'Right Now'
+	 * Add count of actors to 'Right Now'
 	 */
 	public function dashboard_glance_items() {
 		foreach ( array( 'post_type_actors' ) as $post_type ) {
@@ -288,22 +287,6 @@ class Actors {
 				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
 			}
 		}
-	}
-
-	/*
-	 * Style for dashboard
-	 */
-	public function admin_css() {
-		echo "<style type='text/css'>
-			#adminmenu #menu-posts-post_type_actors div.wp-menu-image:before, #dashboard_right_now li.post_type_actors-count a:before {
-				content: '\\f336';
-				margin-left: -1px;
-			}
-
-			.fixed th.column-actors-charcount, .fixed th.column-actors-queer {
-				width: 4em;
-			}
-		</style>";
 	}
 
 	/*

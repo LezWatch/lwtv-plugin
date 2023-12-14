@@ -13,6 +13,7 @@ use LWTV\Calendar\Names;
 class Calendar implements Component, Templater {
 
 	const POST_TYPE = 'post_type_tvmaze';
+	const PREFIX    = 'leztvmaze_';
 
 	/**
 	 * Constructor
@@ -173,13 +174,11 @@ class Calendar implements Component, Templater {
 	 * CMB2 Metaboxes
 	 */
 	public function cmb2_metaboxes() {
-		// prefix for all custom fields.
-		$prefix = 'leztvmaze_';
 
 		// MetaBox Group: Character Main Data
 		$tvmaze_grid = \new_cmb2_box(
 			array(
-				'id'           => $prefix . 'metabox_main',
+				'id'           => self::PREFIX . 'metabox_main',
 				'title'        => 'TVMaze Names',
 				'object_types' => array( self::POST_TYPE ),
 				'context'      => 'normal',
@@ -193,7 +192,7 @@ class Calendar implements Component, Templater {
 		$tvmaze_grid->add_field(
 			array(
 				'name'       => 'TV Show',
-				'id'         => $prefix . 'our_show',
+				'id'         => self::PREFIX . 'our_show',
 				'desc'       => 'Select one show. Each TVMaze show can only link to ONE show.',
 				'type'       => 'custom_attached_posts', // This field type
 				'post_type'  => 'post_type_shows',
