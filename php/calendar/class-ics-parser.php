@@ -65,7 +65,7 @@ class ICS_Parser {
 		$ical->initUrl( $url );
 
 		// Timezone
-		$tz = new \DateTimeZone( 'America/New_York' );
+		$tz = new \DateTimeZone( LWTV_TIMEZONE );
 
 		// Default is today:
 		$start_datetime = new \DateTime( 'today', $tz );

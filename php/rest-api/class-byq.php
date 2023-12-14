@@ -216,7 +216,7 @@ class BYQ {
 		if ( 'today' === $this_day ) {
 			// Create the date with regards to timezones
 			$timestamp = time();
-			$dt        = new \DateTime( 'now', new \DateTimeZone( 'America/New_York' ) ); //first argument "must" be a string
+			$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 			$this_day = $dt->format( 'm-d' );
 		}

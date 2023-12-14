@@ -9,11 +9,14 @@ namespace LWTV\Calendar;
 
 class Blocks {
 
-	const TIMEZONE = 'America/New_York';
-
+	/**
+	 * Make the Calendar
+	 *
+	 * @return string
+	 */
 	public function make() {
 		// Build out start and end dates.
-		$tz    = new \DateTimeZone( self::TIMEZONE );
+		$tz    = new \DateTimeZone( LWTV_TIMEZONE );
 		$today = new \DateTime( 'today', $tz );
 
 		// Query Variables.

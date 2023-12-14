@@ -173,9 +173,8 @@ class Of_The_Day implements Component, Templater {
 		$format       = ( ! in_array( $format, $valid_format, true ) ) ? 'default' : $format;
 
 		// Create the date with regards to timezones
-		$tz        = 'America/New_York';
 		$timestamp = time();
-		$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 		$date = $dt->format( 'm-d' );
 
@@ -339,9 +338,8 @@ class Of_The_Day implements Component, Templater {
 			case 'character':
 				if ( '' === $date ) {
 					// Create the date with regards to timezones
-					$tz        = 'America/New_York';
 					$timestamp = time();
-					$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+					$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 					$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 					$date = $dt->format( 'm-d' );
 				}
@@ -459,9 +457,8 @@ class Of_The_Day implements Component, Templater {
 
 		if ( '' === $date ) {
 			// Create the date with regards to timezones
-			$tz        = 'America/New_York';
 			$timestamp = time();
-			$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+			$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 			$date = $dt->format( 'm-d' );
 		}

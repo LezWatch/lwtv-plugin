@@ -20,9 +20,8 @@ class This_Year {
 	public function what_happened( $date = false ) {
 
 		// Create the date with regards to timezones
-		$tz        = 'America/New_York';
 		$timestamp = time();
-		$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 
 		$date  = ( false === $date ) ? $dt->format( 'Y-m-d' ) : $date;

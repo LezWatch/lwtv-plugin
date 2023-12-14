@@ -74,6 +74,12 @@ class Exclusions {
 		<?php
 	}
 
+	/**
+	 * Table content
+	 *
+	 * @param  array   $items Items to check
+	 * @return string  Build Table in HTML
+	 */
 	public static function table_content( $items, $check = 'queerness' ) {
 		$number = 1;
 		foreach ( $items as $item ) {
@@ -222,9 +228,13 @@ class Exclusions {
 
 	/**
 	 * Loop through the results and remove posts that aren't undefined.
+	 *
+	 * @param  string $post_type
+	 * @param  string $meta
+	 * @return array  Posts to check.
 	 */
-	public static function queery_loop( $post_type, $meta ) {
-		$queery_loop = lwtv_plugin()->queery_post_meta( $post_type, $meta, '', 'EXISTS' );
+	public static function queery_loop( $post_type, $post_meta ) {
+		$queery_loop = lwtv_plugin()->queery_post_meta( $post_type, $post_meta, '', 'EXISTS' );
 		$queery      = array();
 
 		if ( ! is_object( $queery_loop ) || ! $queery_loop->have_posts() ) {
@@ -233,12 +243,11 @@ class Exclusions {
 
 		while ( $queery_loop->have_posts() ) {
 			$queery_loop->the_post();
-			$override = get_post_meta( get_the_ID(), $meta, true );
+			$override = get_post_meta( get_the_ID(), $post_meta, true );
 			if ( 'undefined' !== $override ) {
 				$queery[] = get_the_ID();
 			}
 		}
-		wp_reset_postdata();
 
 		return $queery;
 	}

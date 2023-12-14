@@ -2,7 +2,7 @@
 /**
  * Set up Theme Autoloader.
  *
- * @package Galvanized
+ * @package LWTV
  */
 
 namespace LWTV\_Helpers;
@@ -10,7 +10,7 @@ namespace LWTV\_Helpers;
 /**
  * Class Autoload.
  *
- * @package Galvanized
+ * @package LWTV
  */
 class Autoload {
 
@@ -53,7 +53,7 @@ class Autoload {
 
 		foreach ( $paths as $path ) {
 			if ( is_readable( $path ) ) {
-				require_once $path; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable, WPThemeReview.CoreFunctionality.FileInclude.FileIncludeFound
+				require_once $path;
 
 				return; // Return as soon as we've resolved the first one.
 			}
@@ -62,17 +62,18 @@ class Autoload {
 
 	/**
 	 * Resolve the requested classname to the possible file path
-	 * of a registered namespace by type (class, interface, trait).
+	 * of a registered namespace by type (abstract, class, interface, trait).
 	 *
 	 * @param string $maybe_class Fully qualified class name.
 	 *
 	 * @return array<string> List of mapped file paths.
 	 */
 	public function resolve( $maybe_class ) {
-		$prefixes = array( 'class', 'interface', 'trait' );
+		$prefixes = array( 'abstract', 'class', 'interface', 'trait' );
 
 		foreach ( $this->namespace_dir_map as $namespace => $path ) {
-			if ( 0 === strpos( $maybe_class, $namespace . '\\' ) ) { // Append the trailing slash to not match SomeClassName where SomeClass is defined.
+			// Append the trailing slash to not match SomeClassName where SomeClass is defined.
+			if ( 0 === strpos( $maybe_class, $namespace . '\\' ) ) {
 				$maybe_class = substr( $maybe_class, strlen( $namespace ) + 1 );
 
 				$file_path_template = $this->file_path_from_parts(
@@ -145,10 +146,13 @@ class Autoload {
 	 * @return string
 	 */
 	protected function turn_class_to_file_name( $maybe_class ) {
+		$underscore_classes = array( '_Components', '_Helpers', '_Utils' );
 		// If these are Components or Helpers, we keep the underscore
-		if ( '_Helpers' === $maybe_class || '_Components' === $maybe_class ) {
+		if ( in_array( $maybe_class, $underscore_classes, true ) ) {
 			return strtolower( $maybe_class );
 		}
+
+		// Else, whack it.
 		return strtolower( str_replace( '_', '-', $maybe_class ) );
 	}
 }

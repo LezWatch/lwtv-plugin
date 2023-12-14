@@ -80,6 +80,12 @@ class Validation {
 		add_action( 'load-$page_id', array( $this, 'admin_notices' ) );
 	}
 
+	/**
+	 * Last Run
+	 *
+	 * @param  string $tool
+	 * @return string When was a tool last run.
+	 */
 	public static function last_run( $tool ) {
 		$options = get_option( 'lwtv_debugger_status' );
 
@@ -99,6 +105,8 @@ class Validation {
 
 	/*
 	 * Admin Notices
+	 *
+	 * @reutrn void
 	 */
 	private function admin_notices() {
 		if ( ! isset( $_GET['message'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
@@ -131,6 +139,8 @@ class Validation {
 
 	/*
 	 * Settings Page Content
+	 *
+	 * @return void
 	 */
 	public static function settings_page() {
 		// Get the active tab for later
@@ -195,8 +205,8 @@ class Validation {
 	/**
 	 * Build Table content
 	 *
-	 * @param  array $items
-	 * @return void
+	 * @param  array  $items
+	 * @return string Table Content
 	 */
 	public static function table_content( $items ) {
 		$number = 1;

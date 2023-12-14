@@ -71,9 +71,8 @@ class What_Happened_JSON {
 	public function what_happened_rest_api_callback( $data ) {
 
 		// Create the date with regards to timezones
-		$tz        = 'America/New_York';
 		$timestamp = time();
-		$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 
 		$params   = $data->get_params();
@@ -85,9 +84,8 @@ class What_Happened_JSON {
 	public function what_happened( $date = false ) {
 
 		// Create the date with regards to timezones
-		$tz        = 'America/New_York';
 		$timestamp = time();
-		$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 
 		$date        = ( ! $date ) ? $dt->format( 'Y' ) : $date;
@@ -211,9 +209,8 @@ class What_Happened_JSON {
 	public function count_shows( $thisyear = false ) {
 
 		// Create the date with regards to timezones
-		$tz        = 'America/New_York';
 		$timestamp = time();
-		$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 
 		$thisyear        = ( ! $thisyear ) ? $dt->format( 'Y' ) : $thisyear;
