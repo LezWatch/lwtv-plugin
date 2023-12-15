@@ -21,9 +21,8 @@ class Dead_Year {
 			$array = array();
 
 			// Create the date with regards to timezones
-			$tz        = 'America/New_York';
 			$timestamp = time();
-			$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+			$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 			$this_year = $dt->format( 'Y' );
 
@@ -39,7 +38,7 @@ class Dead_Year {
 
 				$array[ $year ] = array(
 					'name'  => $year,
-					'count' => $year_death_query->post_count,
+					'count' => ( is_object( $year_death_query ) ) ? $year_death_query->post_count : 0,
 					'url'   => home_url( '/this-year/' . $year . '/' ),
 				);
 			}

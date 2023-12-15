@@ -16,10 +16,9 @@ class Is_Show_On_Air {
 	 * @param  int  $year    - Year they may be on air
 	 * @return bool
 	 */
-	public function make( $post_id, $year ) {
+	public function make( $post_id, $year ): bool {
 
 		// Defaults
-		$return    = false;
 		$this_year = gmdate( 'Y' );
 
 		// Get the data.
@@ -41,10 +40,10 @@ class Is_Show_On_Air {
 			// AND if END is qual to or GREATER than $year
 			// Then the show was on air.
 			if ( $airdates['start'] <= $year && $airdates['finish'] >= $year ) {
-				$return = true;
+				return true;
 			}
 		}
 
-		return $return;
+		return false;
 	}
 }

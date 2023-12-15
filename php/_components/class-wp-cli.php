@@ -15,6 +15,9 @@ class WP_CLI implements Component {
 		// Null
 	}
 
+	/**
+	 * Constructor. Wraps around CLI.
+	 */
 	public function __construct() {
 		if ( ! defined( 'WP_CLI' ) || false === WP_CLI ) {
 			return;

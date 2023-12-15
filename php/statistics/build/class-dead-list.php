@@ -18,9 +18,8 @@ class Dead_List {
 			$array     = array();
 			$dead_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_death_year', '', '!=' );
 
-			if ( $dead_loop->have_posts() ) {
+			if ( is_object( $dead_loop ) && $dead_loop->have_posts() ) {
 				$queery = wp_list_pluck( $dead_loop->posts, 'ID' );
-				wp_reset_query();
 			}
 
 			foreach ( $queery as $char ) {

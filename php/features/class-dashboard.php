@@ -16,7 +16,6 @@ class Dashboard {
 	public function __construct() {
 		add_filter( 'manage_posts_columns', array( $this, 'featured_image_manage_posts_columns' ) );
 		add_action( 'manage_posts_custom_column', array( $this, 'featured_image_manage_custom_columns' ), 10, 2 );
-		add_action( 'admin_print_scripts', array( $this, 'featured_image_admin_print_styles' ) );
 	}
 
 	/*
@@ -58,39 +57,17 @@ class Dashboard {
 			return;
 		}
 
+		$mystery_array     = array( 10250, 11066, 79739, 87052 );
 		$post_thumbnail_id = get_post_thumbnail_id( $post_ID );
 		$output            = '<span class="dashicons dashicons-no"><span class="screen-reader-text">No</span></span>';
 		if ( $post_thumbnail_id ) {
-			$output = '<span class="dashicons dashicons-yes"><span class="screen-reader-text">Yes</span></span>';
+			if ( in_array( $post_thumbnail_id, $mystery_array, true ) ) {
+				$output = '<span class="dashicons dashicons-flag"><span class="screen-reader-text">?</span></span>';
+			} else {
+				$output = '<span class="dashicons dashicons-yes"><span class="screen-reader-text">Yes</span></span>';
+			}
 		}
 
 		echo wp_kses_post( $output );
-	}
-
-	/*
-	 * CSS for featured image custom column
-	 *
-	 * @since 1.1
-	 */
-	public function featured_image_admin_print_styles() {
-		echo '
-		<style>
-			th#featured_image,
-			td.featured_image.column-featured_image {
-				max-height: 25px;
-				max-width: 25px;
-				color: #444;
-				width: 2.2em;
-			}
-			td.featured_image span.dashicons-no {
-				color: #dc3232;
-			}
-			td.featured_image span.dashicons-yes {
-				color: #46b450;
-			}
-			div#screen-options-wrap.hidden span.dashicons-camera {
-				padding-top: 5px;
-			}
-		</style>';
 	}
 }

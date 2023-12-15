@@ -15,7 +15,7 @@ class Admin_Menu implements Component {
 	/**
 	 * Local Variables
 	 */
-	protected $page_id = null;        // page ID
+	protected $page_id = null;
 
 	/*
 	 * Construct
@@ -89,6 +89,12 @@ class Admin_Menu implements Component {
 		<?php
 	}
 
+	/**
+	 * Enqueue Scripts
+	 *
+	 * @param  string $hook Page we're on.
+	 * @return void
+	 */
 	public function admin_enqueue_scripts( $hook ) {
 		// Load only on ?page=mypluginname
 		$my_hooks = array( 'toplevel_page_lwtv', 'lezwatch-tv_page_lwtv_data_check', 'lezwatch-tv_page_lwtv_monitor_check', 'lezwatch-tv_page_lwtv_exclusion_check' );

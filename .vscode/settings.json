@@ -15,8 +15,19 @@
 		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
 	},
 	"cSpell.words": [
+		"lezchars",
+		"lezpress",
+		"lezwatch",
+		"lezwatchtv",
 		"lwtv",
+		"pagename",
 		"queery",
-		"Templater"
+		"symbolicons",
+		"SYMBOLICONS",
+		"Templater",
+		"thisyear",
+		"tvmaze",
+		"wpseo",
+		"Yoast"
 	]
 }

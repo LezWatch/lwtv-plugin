@@ -84,7 +84,7 @@ class Stats_JSON {
 		$response  = $this->statistics( $stat_type, $format, $page );
 
 		if ( false === $response ) {
-			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method' );
+			return new \WP_Error( 'not_found', 'No route was found matching the URL and request method.' );
 		}
 
 		return $response;
@@ -110,7 +110,7 @@ class Stats_JSON {
 		// phpcs:enable
 
 		// Valid Data
-		$valid_type   = array( 'characters', 'actors', 'shows', 'death', 'first-year', 'stations', 'nations' );
+		$valid_type   = array( 'characters', 'actors', 'shows', 'death', 'first-year', 'stations', 'nations', 'none' );
 		$valid_format = array( 'simple', 'complex', 'years', 'cliches', 'tropes', 'worth-it', 'stars', 'formats', 'triggers', 'loved', 'nations', 'sexuality', 'gender', 'romantic', 'genres', 'queer-irl', 'intersections', 'id' );
 
 		// Per Page Check
@@ -147,6 +147,7 @@ class Stats_JSON {
 			case 'nations':
 				$stats_array = self::get_show_taxonomy( 'country', $format, $page );
 				break;
+			case 'none':
 			default:
 				$stats_array = self::get_characters( 'simple' );
 		}
@@ -201,7 +202,6 @@ class Stats_JSON {
 				break;
 			case 'complex':
 				$queery = lwtv_plugin()->queery_post_type( 'post_type_actors', $page );
-				wp_reset_query();
 
 				if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
 					return $stats_array;
@@ -283,7 +283,6 @@ class Stats_JSON {
 				break;
 			case 'complex':
 				$charactersloop = lwtv_plugin()->queery_post_type( 'post_type_characters', $page );
-				wp_reset_query();
 
 				if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
 					return $stats_array;
@@ -292,6 +291,10 @@ class Stats_JSON {
 				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
 
 				foreach ( $characters as $character ) {
+					if ( 'post_type_characters' !== get_post_type( $character ) ) {
+						continue;
+					}
+
 					$died   = get_post_meta( $character, 'lezchars_death_year', true );
 					$died   = ( ! is_array( $died ) ) ? array( $died ) : $died;
 					$shows  = count( get_post_meta( $character, 'lezchars_show_group', true ) );
@@ -317,26 +320,26 @@ class Stats_JSON {
 						)
 					);
 
-					$stats_array[ get_the_title() ] = array(
+					$stats_array[ get_the_title( $character ) ] = array(
 						'id'        => $character,
 						'died'      => $died,
 						'actors'    => $actors,
 						'shows'     => $shows,
 						'gender'    => $gender,
 						'sexuality' => $sexual,
-						'url'       => get_the_permalink(),
+						'url'       => get_the_permalink( $character ),
 					);
 				}
 				break;
 			case 'simple':
 				$dead_count  = get_term_by( 'slug', 'dead', 'lez_cliches' );
 				$stats_array = array(
-					'total'                => wp_count_posts( 'post_type_characters' )->publish,
+					'total'                => (int) wp_count_posts( 'post_type_characters' )->publish,
 					'dead'                 => $dead_count->count,
-					'genders'              => wp_count_terms( 'lez_gender' ),
-					'sexualities'          => wp_count_terms( 'lez_sexuality' ),
-					'romantic_orientation' => wp_count_terms( 'lez_romantic' ),
-					'cliches'              => wp_count_terms( 'lez_cliches' ),
+					'genders'              => (int) wp_count_terms( 'lez_gender' ),
+					'sexualities'          => (int) wp_count_terms( 'lez_sexuality' ),
+					'romantic_orientation' => (int) wp_count_terms( 'lez_romantic' ),
+					'cliches'              => (int) wp_count_terms( 'lez_cliches' ),
 				);
 				break;
 		}
@@ -476,7 +479,6 @@ class Stats_JSON {
 				break;
 			case 'complex':
 				$showsloop = lwtv_plugin()->queery_post_type( 'post_type_shows', $page );
-				wp_reset_query();
 
 				if ( ! is_object( $showsloop ) || ! $showsloop->have_posts() ) {
 					return $stats_array;
@@ -677,7 +679,6 @@ class Stats_JSON {
 
 			// Get the posts for this singular term (i.e. a specific station)
 			$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
-			wp_reset_query();
 
 			if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
 				return;

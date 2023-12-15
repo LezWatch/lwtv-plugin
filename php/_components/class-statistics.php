@@ -17,6 +17,17 @@ use LWTV\Statistics\Build\Taxonomy_Breakdowns as Build_Taxonomy_Breakdowns;
 
 class Statistics implements Component, Templater {
 
+	/**
+	 * Versions of scripts.
+	 */
+	const VERSIONING = array(
+		'chartjs'                   => '4.4.1',
+		'chartjs-plugin-annotation' => '2.2.1',
+		'palette'                   => '1.0.0',
+		'tablesorter'               => '2.31.3',
+		'tablesorter-bootstrap'     => '2.31.1',
+	);
+
 	/*
 	 * Init
 	 */
@@ -55,14 +66,14 @@ class Statistics implements Component, Templater {
 		}
 
 		// Enqueue files shared:
-		wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/chart.js', array( 'jquery' ), '4.4.1', false );
-		wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), '2.2.1', false );
-		wp_enqueue_script( 'palette', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/palette.js', array(), '1.0.0', false );
+		wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/chart.js', array( 'jquery' ), self::VERSIONING['chartjs'], false );
+		wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), self::VERSIONING['chartjs-plugin-annotation'], false );
+		wp_enqueue_script( 'palette', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/palette.js', array(), self::VERSIONING['palette'], false );
 
 		// Custom extra for stats pages:
 		if ( is_page( array( 'statistics' ) ) ) {
-			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), '2.31.3', false );
-			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/css/theme.bootstrap_4.min.css', array(), '2.31.1', false );
+			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), self::VERSIONING['tablesorter'], false );
+			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/css/theme.bootstrap_4.min.css', array(), self::VERSIONING['tablesorter-bootstrap'], false );
 
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );
@@ -230,9 +241,9 @@ class Statistics implements Component, Templater {
 
 			$count = $this->count_shows( 'total', 'stations', $minor );
 		} else {
-			$run_data = 'taxonomy_breakdowns';
-			$precount = $count;
-			$count    = ( new Build_Taxonomy_Breakdowns() )->make( $precount, 'count', $data, $subject );
+			$run_data  = 'taxonomy_breakdowns';
+			$pre_count = $count;
+			$count     = ( new Build_Taxonomy_Breakdowns() )->make( $pre_count, 'count', $data, $subject );
 		}
 
 		return array(
@@ -261,9 +272,8 @@ class Statistics implements Component, Templater {
 		}
 
 		// Create the date with regards to timezones
-		$tz        = 'America/New_York';
 		$timestamp = time();
-		$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 		$date = $dt->format( 'Y' );
 

@@ -17,7 +17,27 @@ use LWTV\CPTs\Actors\Custom_Columns;
 
 class Actors {
 
-	protected static $all_taxonomies;
+	/**
+	 * Post type slug.
+	 *
+	 * @var string
+	 */
+	const SLUG = 'post_type_actors';
+
+	/**
+	 * All Taxonomies
+	 *
+	 * @var array
+	 */
+	const ALL_TAXONOMIES = array(
+		'lez_actor_gender'    => array( 'name' => 'gender' ),
+		'lez_actor_sexuality' => array(
+			'name'   => 'sexuality',
+			'plural' => 'sexualities',
+		),
+		'lez_actor_romantic'  => array( 'name' => 'romantic orientation' ),
+		'lez_actor_pronouns'  => array( 'name' => 'pronoun' ),
+	);
 
 	/**
 	 * Constructor
@@ -38,18 +58,6 @@ class Actors {
 		// Save Hooks
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ), 10, 3 );
 
-		// Define show taxonomies
-		// SLUG => PRETTY NAME
-		self::$all_taxonomies = array(
-			'lez_actor_gender'    => array( 'name' => 'gender' ),
-			'lez_actor_sexuality' => array(
-				'name'   => 'sexuality',
-				'plural' => 'sexualities',
-			),
-			'lez_actor_romantic'  => array( 'name' => 'romantic orientation' ),
-			'lez_actor_pronouns'  => array( 'name' => 'pronoun' ),
-		);
-
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
 		// While this isn't the official API for this need, it works.
@@ -57,7 +65,7 @@ class Actors {
 		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
 
 			$all_tax_array = array();
-			foreach ( self::$all_taxonomies as $actor_tax => $actor_array ) {
+			foreach ( self::ALL_TAXONOMIES as $actor_tax => $actor_array ) {
 				if ( ! isset( $actor_array['hide'] ) || false !== $actor_array['hide'] ) {
 					$all_tax_array[] = $actor_tax;
 				}
@@ -75,7 +83,6 @@ class Actors {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
 	}
@@ -91,13 +98,15 @@ class Actors {
 	}
 
 	/*
-	 * CPT Settings
+	 * Create Actor Post Type
+	 *
+	 * post_type_actors
 	 *
 	 */
 	public function create_post_type() {
 
 		$actor_taxonomies = array();
-		foreach ( self::$all_taxonomies as $actor_tax => $actor_array ) {
+		foreach ( self::ALL_TAXONOMIES as $actor_tax => $actor_array ) {
 			$actor_taxonomies[] = $actor_tax;
 		}
 
@@ -138,7 +147,7 @@ class Actors {
 			),
 		);
 		$args     = array(
-			'label'               => 'post_type_actors',
+			'label'               => self::SLUG,
 			'description'         => 'Actors',
 			'labels'              => $labels,
 			'public'              => true,
@@ -156,15 +165,14 @@ class Actors {
 			'capability_type'     => array( 'actor', 'actors' ),
 			'map_meta_cap'        => true,
 		);
-		register_post_type( 'post_type_actors', $args );
+		register_post_type( self::SLUG, $args );
 	}
 
 	/*
-	 * Custom Taxonomies
-	 *
+	 * Create Custom Taxonomies
 	 */
 	public function create_taxonomies() {
-		foreach ( self::$all_taxonomies as $tax_slug => $tax_array ) {
+		foreach ( self::ALL_TAXONOMIES as $tax_slug => $tax_array ) {
 			// Remove lez_ from slug.
 			$slug = str_replace( 'lez_', '', $tax_slug );
 
@@ -203,7 +211,7 @@ class Actors {
 			);
 
 			// Register taxonomy
-			register_taxonomy( $tax_slug, 'post_type_actors', $arguments );
+			register_taxonomy( $tax_slug, self::SLUG, $arguments );
 		}
 	}
 
@@ -274,13 +282,13 @@ class Actors {
 	}
 
 	/*
-	 * Add to 'Right Now'
+	 * Add count of actors to 'Right Now'
 	 */
 	public function dashboard_glance_items() {
-		foreach ( array( 'post_type_actors' ) as $post_type ) {
+		foreach ( array( self::SLUG ) as $post_type ) {
 			$num_posts = wp_count_posts( $post_type );
 			if ( $num_posts && $num_posts->publish ) {
-				if ( 'post_type_actors' === $post_type ) {
+				if ( self::SLUG === $post_type ) {
 					// translators: %s is the number of actors
 					$text = _n( '%s Actor', '%s Actors', $num_posts->publish );
 				}
@@ -288,22 +296,6 @@ class Actors {
 				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
 			}
 		}
-	}
-
-	/*
-	 * Style for dashboard
-	 */
-	public function admin_css() {
-		echo "<style type='text/css'>
-			#adminmenu #menu-posts-post_type_actors div.wp-menu-image:before, #dashboard_right_now li.post_type_actors-count a:before {
-				content: '\\f336';
-				margin-left: -1px;
-			}
-
-			.fixed th.column-actors-charcount, .fixed th.column-actors-queer {
-				width: 4em;
-			}
-		</style>";
 	}
 
 	/*
@@ -334,7 +326,7 @@ class Actors {
 	 * Customize title
 	 */
 	public function custom_enter_title( $input ) {
-		if ( 'post_type_actors' === get_post_type() ) {
+		if ( self::SLUG === get_post_type() ) {
 			$input = 'Add actor';
 		}
 		return $input;

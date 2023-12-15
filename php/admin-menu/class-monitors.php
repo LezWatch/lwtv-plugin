@@ -74,6 +74,8 @@ class Monitors {
 	 * Check TVMaze
 	 *
 	 * Returns the file/date stamp of the file, so we know if it's been updated.
+	 *
+	 * @return array status of TVMaze
 	 */
 	public static function check_tvmaze() {
 		$filename = lwtv_plugin()->get_tvmaze_ics();
@@ -107,7 +109,7 @@ class Monitors {
 				);
 			}
 
-			$status = '<p><strong>Last updated:</strong> ' . wp_date( 'D, d M Y H:i:s', $file_time, new \DateTimeZone( 'America/Los_Angeles' ) ) . ' (' . $time_since . ' ago).</p>';
+			$status = '<p><strong>Last updated:</strong> ' . wp_date( 'D, d M Y H:i:s', $file_time, new \DateTimeZone( LWTV_SERVER_TIMEZONE ) ) . ' (' . $time_since . ' ago).</p>';
 		}
 
 		$return = array(
@@ -119,8 +121,12 @@ class Monitors {
 		return $return;
 	}
 
+	/**
+	 * Check GTMetrix
+	 *
+	 * @return array status of GTMetrix
+	 */
 	public static function check_gtmetrix() {
-
 		$gtmetrix_url = 'https://gtmetrix.com/api/2.0/pages/Mtpr9uKg/latest-report';
 		$icon         = array(
 			'symbolicon'   => 'warning.svg',
@@ -201,6 +207,15 @@ class Monitors {
 		return $return;
 	}
 
+	/**
+	 * Check Uptime Robot
+	 *
+	 * Note: The keys are safe here, as they are the READ ONLY keys.
+	 * Frankly if anyone wants to use them to check on us, they can.
+	 *
+	 * @param  string $sitename
+	 * @return array  Status of Uptime checker
+	 */
 	public static function check_uptime_robot( $sitename ) {
 		$uptime_url = 'https://api.uptimerobot.com/v2/getMonitors';
 		$api_keys   = array(

@@ -2,7 +2,7 @@
 /**
  * Block_Types_Allowed class.
  *
- * @package WP_Theme_Template
+ * @package LWTV
  */
 
 namespace LWTV\_Components;
@@ -35,13 +35,13 @@ class Block_Types_Allowed implements Component {
 	/**
 	 * Get all allowed core block types.
 	 *
-	 * @return array<string>
+	 * @return array
 	 */
 	public function get_disallowed_core_block_types() {
 		/**
-		 * Filters the list of disallowed core block types.
+		 * Filters the list of allowed core block types to exclude the disallowed.
 		 *
-		 * @param array<string> $disallowed_core_block_types List of NOT allowed core block types.
+		 * @param array<string> self::DISALLOWED_CORE_BLOCK_TYPES List of NOT allowed core block types.
 		 */
 		return apply_filters( 'lwtv_plugin_allowed_core_block_types', self::DISALLOWED_CORE_BLOCK_TYPES );
 	}
@@ -49,7 +49,7 @@ class Block_Types_Allowed implements Component {
 	/**
 	 * Filter the list of allowed blocks.
 	 *
-	 * @return array<string> Allowed blocks types.
+	 * @return array Allowed blocks types.
 	 */
 	public function filter_maybe_disable_block_types() {
 		$registered_block_types = WP_Block_Type_Registry::get_instance()->get_all_registered();
@@ -63,9 +63,7 @@ class Block_Types_Allowed implements Component {
 			}
 		}
 
-		/**
-		 * List of allowed block types.
-		 */
+		// List of allowed block types.
 		return $allowed_block_types;
 	}
 }

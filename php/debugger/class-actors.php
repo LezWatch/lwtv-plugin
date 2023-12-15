@@ -18,7 +18,7 @@ class Actors {
 	 *
 	 * @return array $problems - array of problems. Can be empty.
 	 */
-	public function find_actors_problems( $items = array() ) {
+	public function find_actors_problems( $items = array() ): array {
 
 		// The array we will be checking.
 		$actors = array();
@@ -37,9 +37,8 @@ class Actors {
 			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
-			if ( $the_loop && $the_loop->have_posts() ) {
+			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-				wp_reset_query();
 			}
 		}
 
@@ -173,7 +172,7 @@ class Actors {
 	 *
 	 * @return array $problems - array of problems. Can be empty.
 	 */
-	public function find_actors_incomplete( $items = array() ) {
+	public function find_actors_incomplete( $items = array() ): array {
 
 		// The array we will be checking.
 		$actors = array();
@@ -192,9 +191,8 @@ class Actors {
 			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
-			if ( $the_loop && $the_loop->have_posts() ) {
+			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-				wp_reset_query();
 			}
 		}
 
@@ -251,7 +249,7 @@ class Actors {
 	 *
 	 * @return array $problems - array of problems. Can be empty.
 	 */
-	public function find_actors_no_imdb( $items = array() ) {
+	public function find_actors_no_imdb( $items = array() ): array {
 
 		// The array we will be checking.
 		$actors = array();
@@ -270,9 +268,8 @@ class Actors {
 			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 			// Add ONLY the IDs to the array.
-			if ( $the_loop && $the_loop->have_posts() ) {
+			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-				wp_reset_query();
 			}
 		}
 
@@ -337,7 +334,7 @@ class Actors {
 	 *
 	 * @return array    $items Result of checks.
 	 */
-	public function check_actors_wikidata( $actors = 0, $items = array() ) {
+	public function check_actors_wikidata( $actors = 0, $items = array() ): array {
 
 		// If actors aren't a number or 0, AND they're not an array, we check everyone...
 		if ( is_numeric( $actors ) && 0 !== $actors && ! is_array( $actors ) ) {
@@ -363,16 +360,15 @@ class Actors {
 				$the_loop = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 
 				// Add ONLY the IDs to the array.
-				if ( $the_loop && $the_loop->have_posts() ) {
+				if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 					$actors = wp_list_pluck( $the_loop->posts, 'ID' );
-					wp_reset_query();
 				}
 			}
 		}
 
 		// If somehow actors is totally empty...
 		if ( empty( $actors ) ) {
-			return false;
+			return array();
 		}
 
 		// Make sure we don't have dupes.
@@ -401,8 +397,7 @@ class Actors {
 				'website'   => get_post_meta( $actor_id, 'lezactors_homepage', true ),
 			);
 
-			$permalink = basename( get_permalink( $actor_id ) );
-			$language  = 'en';
+			$language = 'en';
 
 			// Search for the actor, using the Q-ID if it's set.
 			$wikidata_id = get_post_meta( $actor_id, 'lezactors_wikidata', true );
@@ -435,7 +430,7 @@ class Actors {
 				$wiki_queery = 'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' . $search_body['search']['0']['id'] . '&format=json';
 				$wiki_data   = wp_remote_get( $wiki_queery );
 				if ( is_wp_error( $wiki_data ) ) {
-					return;
+					return array();
 				}
 				$wiki_array = json_decode( $wiki_data['body'], true );
 
@@ -445,7 +440,6 @@ class Actors {
 				// If there's a wikipedia URL, let's get details.
 				if ( '' !== $check_ours['wikipedia'] ) {
 					$parsed_wiki = wp_parse_url( $check_ours['wikipedia'] );
-					$parsed_url  = explode( '.', $parsed_wiki['host'] );
 					$wiki_lang   = $parsed_wiki['host'][0];
 
 					if ( isset( $wiki_actor['sitelinks'][ $wiki_lang . 'wiki' ] ) ) {

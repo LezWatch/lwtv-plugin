@@ -33,9 +33,8 @@ class Actor_Char_Role {
 				// Loop to get the list of characters
 				$characters = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $the_id, 'LIKE' );
 
-				if ( $characters->have_posts() ) {
+				if ( is_object( $characters ) && $characters->have_posts() ) {
 					$char_array = wp_list_pluck( $characters->posts, 'ID' );
-					wp_reset_query();
 				}
 				$char_array = array_unique( $char_array );
 

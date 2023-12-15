@@ -122,7 +122,7 @@ class Rest_API implements Component, Templater {
 	}
 
 	/**
-	 * Export
+	 * Export custom JSON
 	 *
 	 * @param  string $type
 	 * @param  string $item

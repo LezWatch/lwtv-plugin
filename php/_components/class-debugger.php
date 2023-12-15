@@ -134,7 +134,7 @@ class Debugger implements Component, Templater {
 	 *
 	 * @param array $items - array of Actors
 	 */
-	public function find_actors_problems( $items = array() ) {
+	public function find_actors_problems( $items = array() ): array {
 		return ( new Actors() )->find_actors_problems( $items );
 	}
 
@@ -143,7 +143,7 @@ class Debugger implements Component, Templater {
 	 *
 	 * @param array $items - array of Actors
 	 */
-	public function find_actors_incomplete( $items = array() ) {
+	public function find_actors_incomplete( $items = array() ): array {
 		return ( new Actors() )->find_actors_incomplete( $items );
 	}
 
@@ -152,7 +152,7 @@ class Debugger implements Component, Templater {
 	 *
 	 * @param array $items - array of Actors
 	 */
-	public function find_actors_no_imdb( $items = array() ) {
+	public function find_actors_no_imdb( $items = array() ): array {
 		return ( new Actors() )->find_actors_no_imdb( $items );
 	}
 
@@ -162,7 +162,7 @@ class Debugger implements Component, Templater {
 	 * @param int|array $actors - Post ID of actor OR array of actors
 	 * @param array     $items  - array of existing items (used for re-check)
 	 */
-	public function check_actors_wikidata( $actors = 0, $items = array() ) {
+	public function check_actors_wikidata( $actors = 0, $items = array() ): array {
 		return ( new Actors() )->check_actors_wikidata( $actors, $items );
 	}
 
@@ -171,7 +171,7 @@ class Debugger implements Component, Templater {
 	 *
 	 * @param array $items - array of Shows
 	 */
-	public function find_shows_bad_url( $items = array() ) {
+	public function find_shows_bad_url( $items = array() ): array {
 		return ( new Shows() )->find_shows_bad_url( $items );
 	}
 
@@ -180,7 +180,7 @@ class Debugger implements Component, Templater {
 	 *
 	 * @param array $items - array of Shows
 	 */
-	public function find_shows_no_imdb( $items = array() ) {
+	public function find_shows_no_imdb( $items = array() ): array {
 		return ( new Shows() )->find_shows_no_imdb( $items );
 	}
 
@@ -189,7 +189,7 @@ class Debugger implements Component, Templater {
 	 *
 	 * @param array $items - array of Shows
 	 */
-	public function find_shows_problems( $items = array() ) {
+	public function find_shows_problems( $items = array() ): array {
 		return ( new Shows() )->find_shows_problems( $items );
 	}
 
@@ -198,7 +198,7 @@ class Debugger implements Component, Templater {
 	 *
 	 * @param array $items - array of Characters
 	 */
-	public function find_characters_problems( $items = array() ) {
+	public function find_characters_problems( $items = array() ): array {
 		return ( new Characters() )->find_characters_problems( $items );
 	}
 
@@ -207,7 +207,7 @@ class Debugger implements Component, Templater {
 	 *
 	 * @param array $the_id - Show ID to check
 	 */
-	public function check_disabled_characters( $the_id ) {
+	public function check_disabled_characters( $the_id ): array {
 		return ( new Characters() )->check_disabled_characters( $the_id );
 	}
 
@@ -218,7 +218,7 @@ class Debugger implements Component, Templater {
 	 *
 	 * @param array $the_id - Show ID to check
 	 */
-	public function find_queer_chars( $items = array() ) {
+	public function find_queer_chars( $items = array() ): array {
 		return ( new Queers() )->find_queerchars( $items );
 	}
 }

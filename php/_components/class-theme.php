@@ -57,6 +57,7 @@ class Theme implements Component, Templater {
 			'get_actor_characters'      => array( $this, 'get_actor_characters' ),
 			'get_actor_dead'            => array( $this, 'get_actor_dead' ),
 			'get_actor_age'             => array( $this, 'get_actor_age' ),
+			'get_actor_birthday'        => array( $this, 'get_actor_birthday' ),
 		);
 	}
 
@@ -161,6 +162,17 @@ class Theme implements Component, Templater {
 	 */
 	public function is_actor_birthday( $the_id ) {
 		return ( new Actor_Birthday() )->make( $the_id );
+	}
+
+	/**
+	 * Is actor birthday
+	 *
+	 * @param int $the_id Actor ID
+	 *
+	 * @return bool
+	 */
+	public function get_actor_birthday( $the_id ) {
+		return ( new Actor_Birthday() )->get( $the_id );
 	}
 
 	/**

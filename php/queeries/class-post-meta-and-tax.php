@@ -20,7 +20,7 @@ class Post_Meta_And_Tax {
 	 * @param string $key The post meta key being searched for.
 	 * @param string $value The post meta VALUE being searched for.
 	 * @param string $taxonomy The taxonomy being searched
-	 * @param array $term The term being searched for.
+	 * @param array  $term The term being searched for.
 	 * @param string $compare Search operator for meta_query. Default =
 	 * @param string $operator Search operator for tax_query. Default IN.
 	 *

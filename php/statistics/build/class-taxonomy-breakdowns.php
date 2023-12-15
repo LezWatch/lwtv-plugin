@@ -86,9 +86,8 @@ class Taxonomy_Breakdowns {
 			// Get the posts.
 			$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $data_main, 'slug', $slug );
 
-			if ( $queery->have_posts() ) {
+			if ( is_object( $queery ) && $queery->have_posts() ) {
 				$all_shows = wp_list_pluck( $queery->posts, 'ID' );
-				wp_reset_query();
 			}
 
 			if ( isset( $all_shows ) && is_array( $all_shows ) ) {

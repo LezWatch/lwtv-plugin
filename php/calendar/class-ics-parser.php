@@ -45,16 +45,18 @@ class ICS_Parser {
 	/**
 	 * Add the query variables so WordPress won't override it
 	 *
+	 * @param  array $vars The array of query variables
 	 * @return $vars
 	 * @since 1.2
 	 */
-	public function query_vars( $vars ) {
+	public function query_vars( $vars ): array {
 		$vars[] = 'tvdate';
 		return $vars;
 	}
 
 	/**
 	 * Generate what's on for a specific date
+	 *
 	 * @param  string $url  URL of calendar
 	 * @param  string $when string of a day [today, tomorrow]
 	 * @param  string $date date event happens [Y-m-d]
@@ -65,7 +67,7 @@ class ICS_Parser {
 		$ical->initUrl( $url );
 
 		// Timezone
-		$tz = new \DateTimeZone( 'America/New_York' );
+		$tz = new \DateTimeZone( LWTV_TIMEZONE );
 
 		// Default is today:
 		$start_datetime = new \DateTime( 'today', $tz );
@@ -120,6 +122,10 @@ class ICS_Parser {
 		$interval_end   = $end_datetime->format( 'Y-m-d' ) . ' 04:59:00';
 		$events         = $ical->eventsFromRange( $interval_start, $interval_end );
 
+		if ( ! is_array( $events ) ) {
+			return array();
+		}
+
 		return $events;
 	}
 
@@ -129,7 +135,7 @@ class ICS_Parser {
 	 * @param  string  $format Format of the date (default Y-m-d)
 	 * @return boolean         True/false
 	 */
-	public function validate_date( $date, $format = 'Y-m-d' ) {
+	public function validate_date( $date, $format = 'Y-m-d' ): bool {
 		$d = \DateTime::createFromFormat( $format, $date );
 		return $d && $d->format( $format ) === $date;
 	}

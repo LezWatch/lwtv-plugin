@@ -13,8 +13,11 @@ class Characters {
 
 	/**
 	 * Find Characters with Problems
+	 *
+	 * @param  array $items Array of characters to check (can be empty)
+	 * @return array Characters with issues
 	 */
-	public function find_characters_problems( $items = array() ) {
+	public function find_characters_problems( $items = array() ): array {
 
 		// The array we will be checking.
 		$characters = array();
@@ -32,9 +35,8 @@ class Characters {
 			// Get all the characters
 			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_characters' );
 
-			if ( $the_loop && $the_loop->have_posts() ) {
+			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
-				wp_reset_query();
 			}
 		}
 
@@ -123,38 +125,25 @@ class Characters {
 
 	/**
 	 * Check all characters who are disabled.
-	 * @param  [type] $show_id [description]
-	 * @return [type]          [description]
+	 *
+	 * Note: There is no 'rechecking' for this, since it's per show.
+	 * The recheck check happens earlier.
+	 *
+	 * @param  int   $show_id post ID of show
+	 * @return array array saying what's wrong.
 	 */
-	public function check_disabled_characters( $show_id ) {
+	public function check_disabled_characters( $show_id ): array {
 
 		// The array we will be checking.
-		$characters = array();
-
-		// Are we a full scan or a recheck?
-		if ( ! empty( $items ) ) {
-			// Check only the characters from items!
-			foreach ( $items as $character_item ) {
-				if ( get_post_status( $character_item['id'] ) !== 'draft' ) {
-					// If it's NOT a draft, we'll recheck.
-					$characters[] = $character_item['id'];
-				}
-			}
-		} else {
-			// Get all the characters
-			$characters = lwtv_plugin()->get_characters_list( $show_id, 'query' );
-		}
+		$characters = lwtv_plugin()->get_characters_list( $show_id, 'query' );
 
 		// If somehow characters is totally empty...
 		if ( empty( $characters ) ) {
-			return false;
+			return array();
 		}
 
 		// Make sure we don't have dupes.
 		$characters = array_unique( $characters );
-
-		// reset items since we recheck off $characters.
-		$items = array();
 
 		// Default has disabled
 		$has_disabled = false;

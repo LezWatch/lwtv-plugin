@@ -32,7 +32,7 @@ class WP_Meta {
 				'compare' => $compare,
 			),
 		);
-		$query      = new WP_Meta_Query( $query_args );
+		$query      = new \WP_Meta_Query( $query_args );
 
 		$sql = $query->get_sql(
 			'post',

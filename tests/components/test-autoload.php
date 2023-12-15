@@ -22,6 +22,7 @@ class Autoload_Test extends \WP_UnitTestCase {
 
 		$this->assertEquals(
 			[
+				'/path/to/some-class/abstract-root.php',
 				'/path/to/some-class/class-root.php',
 				'/path/to/some-class/interface-root.php',
 				'/path/to/some-class/trait-root.php',

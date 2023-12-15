@@ -52,7 +52,6 @@ class Complex_Taxonomy {
 						$all_actors_query = lwtv_plugin()->queery_post_type( 'post_type_actors' );
 						if ( is_object( $all_actors_query ) && $all_actors_query->have_posts() ) {
 							$char_array = wp_list_pluck( $all_actors_query->posts, 'ID' );
-							wp_reset_query();
 						}
 
 						if ( is_array( $char_array ) ) {

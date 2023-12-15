@@ -30,14 +30,12 @@ class Calculations {
 		if ( empty( $characters ) || 0 === count( $characters ) ) {
 
 			// Loop to get the list of characters:
-			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
+			$characters_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
 
 			// We only need the IDs:
-			if ( is_object( $charactersloop ) && $charactersloop->have_posts() ) {
-				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
+			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
+				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
 			}
-			// Reset to end
-			wp_reset_query();
 
 			$characters = ( ! is_array( $characters ) ) ? array( $characters ) : $characters;
 			$characters = array_unique( $characters );

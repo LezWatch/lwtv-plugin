@@ -30,9 +30,14 @@
 }
 
 .lwtv-tools-container .dashicons-yes {
-  color: #77b227;
+  color: #46B450;
 }
 
-.lwtv-tools-container .dashicons-warning {
-color: #dc3232;
+.lwtv-tools-container .dashicons-warning,
+.lwtv-tools-container .dashicons-no {
+  color: #DC3232;
+}
+
+.lwtv-tools-container .dashicons-flag {
+  color: #826EB4;
 }

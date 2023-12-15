@@ -12,8 +12,12 @@ use LWTV\Features\Shortcodes;
 
 class Serverside {
 
+	// Directory
 	protected static $directory;
 
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		new Shortcodes();
 		self::$directory = __DIR__;

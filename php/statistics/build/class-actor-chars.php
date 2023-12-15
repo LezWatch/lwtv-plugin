@@ -26,9 +26,8 @@ class Actor_Chars {
 			// list of people
 			$all_query = lwtv_plugin()->queery_post_type( 'post_type_' . $type );
 
-			if ( $all_query->have_posts() ) {
+			if ( is_object( $all_query ) && $all_query->have_posts() ) {
 				$all_array = wp_list_pluck( $all_query->posts, 'ID' );
-				wp_reset_query();
 			}
 
 			$array = array();

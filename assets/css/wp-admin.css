@@ -2,6 +2,58 @@
 	opacity: 1;
 }
 
+/**
+ * Gravity Forms
+ */
 .gform_editor .gform_lwtvlocation input, .gform_editor .gform_lwtvlocation label {
 	opacity: .6;
+}
+
+/**
+ * Featured Image code
+ */
+th#featured_image,
+td.featured_image.column-featured_image {
+	max-height: 25px;
+	max-width: 25px;
+	color: #444;
+	width: 2.2em;
+}
+td.featured_image span.dashicons-no {
+	color: #dc3232;
+}
+td.featured_image span.dashicons-yes {
+	color: #46b450;
+}
+td.featured_image span.dashicons-flag {
+	color: #826EB4;
+}
+div#screen-options-wrap.hidden span.dashicons-camera {
+	padding-top: 5px;
+}
+
+/**
+ * Right Now
+ */
+
+#adminmenu #menu-posts-post_type_characters div.wp-menu-image:before, #dashboard_right_now li.post_type_characters-count a:before {
+	content: '\f484';
+	margin-left: -1px;
+}
+
+#adminmenu #menu-posts-post_type_actors div.wp-menu-image:before, #dashboard_right_now li.post_type_actors-count a:before {
+	content: '\f336';
+	margin-left: -1px;
+}
+
+.fixed th.column-actors-charcount, .fixed th.column-actors-queer {
+	width: 4em;
+}
+
+#adminmenu #menu-posts-post_type_shows div.wp-menu-image:before, #dashboard_right_now li.post_type_shows-count a:before {
+	content: '\f126';
+	margin-left: -1px;
+}
+select#lezshows_airdates_start, select#lezshows_airdates_finish {
+	width: 40%;
 }

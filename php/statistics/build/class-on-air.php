@@ -26,9 +26,8 @@ class On_Air {
 			$array = array();
 
 			// Create the date with regards to timezones
-			$tz        = 'America/New_York';
 			$timestamp = time();
-			$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+			$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 			$this_year = $dt->format( 'Y' );
 
@@ -49,9 +48,8 @@ class On_Air {
 						$show_queery = ( false === $data ) ? lwtv_plugin()->queery_post_type( 'post_type_shows' ) : $data;
 						$allshows    = array();
 
-						if ( $show_queery->have_posts() ) {
+						if ( is_object( $show_queery ) && $show_queery->have_posts() ) {
 							$allshows = wp_list_pluck( $show_queery->posts, 'ID' );
-							wp_reset_query();
 							$allshows = ( ! is_array( $allshows ) ) ? array( $allshows ) : $allshows;
 						}
 
@@ -66,10 +64,12 @@ class On_Air {
 
 				// If we have values for $year_queery we add to the array
 				if ( ! empty( $year_queery ) ) {
+					$count = 0;
+
 					// Shows spits back a number, characters an object
 					if ( is_numeric( $year_queery ) ) {
 						$count = $year_queery;
-					} else {
+					} elseif ( is_object( $year_queery ) ) {
 						$count = $year_queery->post_count;
 					}
 

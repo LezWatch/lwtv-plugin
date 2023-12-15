@@ -24,7 +24,7 @@ use LWTV\_Helpers\Utils;
  * @method void   calculate_actor_data( $post_id )                      \_Components\CPTs
  * @method void   calculate_character_data( $post_id )                  \_Components\CPTs
  * @method void   calculate_show_data( $post_id )                       \_Components\CPTs
- * @method array  get_chars_for_show( $show_id, $havecharcount, $role ) \_Components\CPTs
+ * @method array  get_chars_for_show( $show_id, $role ) \_Components\CPTs
  * @method mixed  get_characters_list( $show_id, $output )              \_Components\CPTs
  * @method string get_related_archive_header( $tag_id )                 \_Components\CPTs
  * @method bool   has_cpt_related_posts( $show_id )                     \_Components\CPTs
@@ -120,6 +120,7 @@ use LWTV\_Helpers\Utils;
  * @method string get_actor_characters( $actor_id )                         \_Components\Theme
  * @method string get_actor_dead( $actor_id )                               \_Components\Theme
  * @method string get_actor_age( $actor_id )                                \_Components\Theme
+ * @method string get_actor_birthday( $actor_id )                           \_Components\Theme
  *
  * THIS YEAR
  * @method string get_this_year_display( $year ) \_Components\This_Year

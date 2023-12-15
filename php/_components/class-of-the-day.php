@@ -173,9 +173,8 @@ class Of_The_Day implements Component, Templater {
 		$format       = ( ! in_array( $format, $valid_format, true ) ) ? 'default' : $format;
 
 		// Create the date with regards to timezones
-		$tz        = 'America/New_York';
 		$timestamp = time();
-		$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+		$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 		$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 		$date = $dt->format( 'm-d' );
 
@@ -339,18 +338,22 @@ class Of_The_Day implements Component, Templater {
 			case 'character':
 				if ( '' === $date ) {
 					// Create the date with regards to timezones
-					$tz        = 'America/New_York';
 					$timestamp = time();
-					$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+					$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 					$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 					$date = $dt->format( 'm-d' );
 				}
 
+				$mystery_array    = array( 10250, 11066, 79739, 87052 );
 				$meta_query_array = array(
 					array(
 						'key'     => '_thumbnail_id',
-						'value'   => '79739', // Don't show if there's no image OR the image is Mystery woman.
-						'compare' => '!=',
+						'value'   => $mystery_array, // Don't show if the image is Mystery woman.
+						'compare' => 'NOT IN',
+					),
+					array(
+						'key'     => '_thumbnail_id', // Images are required
+						'compare' => 'EXISTS',
 					),
 					array(
 						'key'     => 'lezchars_show_group',
@@ -454,9 +457,8 @@ class Of_The_Day implements Component, Templater {
 
 		if ( '' === $date ) {
 			// Create the date with regards to timezones
-			$tz        = 'America/New_York';
 			$timestamp = time();
-			$dt        = new \DateTime( 'now', new \DateTimeZone( $tz ) ); //first argument "must" be a string
+			$dt        = new \DateTime( 'now', new \DateTimeZone( LWTV_TIMEZONE ) ); //first argument "must" be a string
 			$dt->setTimestamp( $timestamp ); //adjust the object to correct timestamp
 			$date = $dt->format( 'm-d' );
 		}

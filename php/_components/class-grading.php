@@ -13,10 +13,18 @@ use LWTV\Grading\TVMaze;
 
 class Grading implements Component, Templater {
 
+	/*
+	 * Init
+	 */
 	public function init(): void {
-		//
+		// Void
 	}
 
+	/**
+	 * Template Tags
+	 *
+	 * @return array
+	 */
 	public function get_template_tags(): array {
 		return array(
 			'get_grade_color'       => array( $this, 'color' ),

@@ -17,8 +17,44 @@ use LWTV\CPTs\Shows\Shows_Like_This;
  */
 class Shows {
 
-	protected static $all_taxonomies;
-	protected static $select2_taxonomies;
+	/**
+	 * Post type slug.
+	 *
+	 * @var string
+	 */
+	const SLUG = 'post_type_shows';
+
+	/**
+	 * All Taxonomies
+	 *
+	 * @var array
+	 */
+	const ALL_TAXONOMIES = array(
+		'lez_stations'      => array( 'name' => 'TV station' ),
+		'lez_tropes'        => array( 'name' => 'trope' ),
+		'lez_formats'       => array( 'name' => 'format' ),
+		'lez_genres'        => array( 'name' => 'genre' ),
+		'lez_country'       => array( 'name' => 'nation' ),
+		'lez_stars'         => array( 'name' => 'star' ),
+		'lez_triggers'      => array( 'name' => 'trigger' ),
+		'lez_intersections' => array( 'name' => 'intersection' ),
+		'lez_showtagged'    => array(
+			'name'   => 'tagged',
+			'plural' => 'tagged',
+			'hide'   => false,
+		),
+	);
+
+	/**
+	 * Taxonomies that use Select2
+	 */
+	const SELECT2_TAXONOMIES = array(
+		'lezshows_tropes'         => 'lez_tropes',
+		'lezshows_tvgenre'        => 'lez_genres',
+		'lezshows_intersectional' => 'lez_intersections',
+		'lezshows_tvnations'      => 'lez_country',
+		'lezshows_tvstations'     => 'lez_stations',
+	);
 
 	/**
 	 * Constructor
@@ -35,40 +71,13 @@ class Shows {
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 
-		// Define show taxonomies
-		// slug => name/purals/etc
-		self::$all_taxonomies = array(
-			'lez_stations'      => array( 'name' => 'TV station' ),
-			'lez_tropes'        => array( 'name' => 'trope' ),
-			'lez_formats'       => array( 'name' => 'format' ),
-			'lez_genres'        => array( 'name' => 'genre' ),
-			'lez_country'       => array( 'name' => 'nation' ),
-			'lez_stars'         => array( 'name' => 'star' ),
-			'lez_triggers'      => array( 'name' => 'trigger' ),
-			'lez_intersections' => array( 'name' => 'intersection' ),
-			'lez_showtagged'    => array(
-				'name'   => 'tagged',
-				'plural' => 'tagged',
-				'hide'   => false,
-			),
-		);
-
-		// These taxonomies use select2.
-		self::$select2_taxonomies = array(
-			'lezshows_tropes'         => 'lez_tropes',
-			'lezshows_tvgenre'        => 'lez_genres',
-			'lezshows_intersectional' => 'lez_intersections',
-			'lezshows_tvnations'      => 'lez_country',
-			'lezshows_tvstations'     => 'lez_stations',
-		);
-
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
 		// While this isn't the official API for this need, it works.
 		// https://github.com/WordPress/gutenberg/issues/6912#issuecomment-428403380
 		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
 			$all_tax_array = array();
-			foreach ( self::$all_taxonomies as $a_show_tax => $a_show_array ) {
+			foreach ( self::ALL_TAXONOMIES as $a_show_tax => $a_show_array ) {
 				if ( ! isset( $a_show_array['hide'] ) || false !== $a_show_array['hide'] ) {
 					$all_tax_array[] = $a_show_tax;
 				}
@@ -106,7 +115,6 @@ class Shows {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_filter( 'quick_edit_show_taxonomy', array( $this, 'hide_tags_from_quick_edit' ), 10, 3 );
 		add_action( 'save_post_post_type_shows', array( $this, 'save_post_meta' ), 12, 3 );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
@@ -142,11 +150,13 @@ class Shows {
 
 	/**
 	 * Create Custom Post Type
+	 *
+	 * post_type_shows
 	 */
 	public function create_post_type() {
 
 		$show_taxonomies = array();
-		foreach ( self::$all_taxonomies as $show_tax => $show_array ) {
+		foreach ( self::ALL_TAXONOMIES as $show_tax => $show_array ) {
 			$show_taxonomies[] = $show_tax;
 		}
 
@@ -187,7 +197,7 @@ class Shows {
 			),
 		);
 		$args     = array(
-			'label'               => 'post_type_shows',
+			'label'               => self::SLUG,
 			'labels'              => $labels,
 			'description'         => 'TV Shows',
 			'public'              => true,
@@ -205,7 +215,7 @@ class Shows {
 			'capability_type'     => array( 'show', 'shows' ),
 			'map_meta_cap'        => true,
 		);
-		register_post_type( 'post_type_shows', $args );
+		register_post_type( self::SLUG, $args );
 	}
 
 	/*
@@ -213,7 +223,7 @@ class Shows {
 	 */
 	public function create_taxonomies() {
 
-		foreach ( self::$all_taxonomies as $tax_slug => $tax_details ) {
+		foreach ( self::ALL_TAXONOMIES as $tax_slug => $tax_details ) {
 			$slug = str_replace( 'lez_', '', $tax_slug );
 
 			$name_singular = ucwords( $tax_details['name'] );
@@ -255,7 +265,7 @@ class Shows {
 			);
 
 			// Register taxonomy
-			register_taxonomy( $tax_slug, 'post_type_shows', $arguments );
+			register_taxonomy( $tax_slug, self::SLUG, $arguments );
 		}
 	}
 
@@ -281,7 +291,7 @@ class Shows {
 		lwtv_plugin()->calculate_show_data( $post_id );
 
 		// ALWAYS sync up data.
-		foreach ( self::$select2_taxonomies as $postmeta => $taxonomy ) {
+		foreach ( self::SELECT2_TAXONOMIES as $postmeta => $taxonomy ) {
 			lwtv_plugin()->save_select2_taxonomy( $post_id, $postmeta, $taxonomy );
 		}
 
@@ -293,10 +303,10 @@ class Shows {
 	 * Add to 'Right Now'
 	 */
 	public function dashboard_glance_items() {
-		foreach ( array( 'post_type_shows' ) as $post_type ) {
+		foreach ( array( self::SLUG ) as $post_type ) {
 			$num_posts = wp_count_posts( $post_type );
 			if ( $num_posts && $num_posts->publish ) {
-				if ( 'post_type_shows' === $post_type ) {
+				if ( self::SLUG === $post_type ) {
 					// translators: %s is the number of TV shows we have (total)
 					$text = _n( '%s TV Show', '%s TV Shows', $num_posts->publish );
 				}
@@ -304,21 +314,6 @@ class Shows {
 				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
 			}
 		}
-	}
-
-	/*
-	 * Style for dashboard
-	 */
-	public function admin_css() {
-		echo "<style type='text/css'>
-			#adminmenu #menu-posts-post_type_shows div.wp-menu-image:before, #dashboard_right_now li.post_type_shows-count a:before {
-				content: '\\f126';
-				margin-left: -1px;
-			}
-			select#lezshows_airdates_start, select#lezshows_airdates_finish {
-				width: 40%;
-			}
-		</style>";
 	}
 
 	/**
@@ -346,7 +341,7 @@ class Shows {
 	 * @return string The new title
 	 */
 	public function custom_enter_title( $input ) {
-		if ( 'post_type_shows' === get_post_type() ) {
+		if ( self::SLUG === get_post_type() ) {
 			$input = 'Add show';
 		}
 		return $input;

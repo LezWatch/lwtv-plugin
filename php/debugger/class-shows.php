@@ -28,9 +28,8 @@ class Shows {
 			// Get all the shows
 			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_shows' );
 
-			if ( $the_loop && $the_loop->have_posts() ) {
+			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
-				wp_reset_query();
 			}
 		}
 
@@ -201,7 +200,7 @@ class Shows {
 			// list everything that has a DISABLED intersection tag
 			$disabled_shows_loop = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_intersections', 'slug', 'disabilities' );
 
-			if ( $disabled_shows_loop->have_posts() ) {
+			if ( is_object( $disabled_shows_loop ) && $disabled_shows_loop->have_posts() ) {
 				$shows = wp_list_pluck( $disabled_shows_loop->posts, 'ID' );
 				wp_reset_query();
 			}
@@ -258,7 +257,7 @@ class Shows {
 			// Get all the shows
 			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_shows' );
 
-			if ( $the_loop && $the_loop->have_posts() ) {
+			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
 				wp_reset_query();
 			}
@@ -341,7 +340,7 @@ class Shows {
 			// Get all the shows
 			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_shows' );
 
-			if ( $the_loop && $the_loop->have_posts() ) {
+			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$shows = wp_list_pluck( $the_loop->posts, 'ID' );
 				wp_reset_query();
 			}

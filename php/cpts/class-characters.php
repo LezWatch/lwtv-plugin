@@ -15,7 +15,24 @@ use LWTV\CPTs\Characters\Custom_Columns;
  */
 class Characters {
 
-	protected static $all_taxonomies;
+	/**
+	 * Post type slug.
+	 *
+	 * @var string
+	 */
+	const SLUG = 'post_type_characters';
+
+	/**
+	 * All Taxonomies
+	 *
+	 * @var array
+	 */
+	const ALL_TAXONOMIES = array(
+		'lez_cliches'   => array( 'name' => 'cliché' ),
+		'lez_gender'    => array( 'name' => 'gender' ),
+		'lez_sexuality' => array( 'name' => 'sexual orientation' ),
+		'lez_romantic'  => array( 'name' => 'romantic orientation' ),
+	);
 
 	/**
 	 * Constructor
@@ -33,14 +50,6 @@ class Characters {
 		// Yoast Hooks
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 
-		// Define show taxonomies
-		self::$all_taxonomies = array(
-			'lez_cliches'   => array( 'name' => 'cliché' ),
-			'lez_gender'    => array( 'name' => 'gender' ),
-			'lez_sexuality' => array( 'name' => 'sexual orientation' ),
-			'lez_romantic'  => array( 'name' => 'romantic orientation' ),
-		);
-
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
 		// While this isn't the official API for this need, it works.
@@ -48,7 +57,7 @@ class Characters {
 		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
 
 			$all_tax_array = array();
-			foreach ( self::$all_taxonomies as $char_tax => $char_array ) {
+			foreach ( self::ALL_TAXONOMIES as $char_tax => $char_array ) {
 				if ( ! isset( $char_tax['hide'] ) || false !== $char_array['hide'] ) {
 					$all_tax_array[] = $char_tax;
 				}
@@ -66,7 +75,6 @@ class Characters {
 	 * Admin Init
 	 */
 	public function admin_init() {
-		add_action( 'admin_head', array( $this, 'admin_css' ) );
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ), 10, 3 );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
@@ -83,12 +91,14 @@ class Characters {
 	}
 
 	/*
-	 * CPT Settings
+	 * Create Post Type
+	 *
+	 * post_type_characters
 	 */
 	public function create_post_type() {
 
 		$char_taxonomies = array();
-		foreach ( self::$all_taxonomies as $slug => $array ) {
+		foreach ( self::ALL_TAXONOMIES as $slug => $more ) {
 			$char_taxonomies[] = $slug;
 		}
 
@@ -129,7 +139,7 @@ class Characters {
 			),
 		);
 		$args     = array(
-			'label'               => 'post_type_characters',
+			'label'               => self::SLUG,
 			'description'         => 'Characters',
 			'labels'              => $labels,
 			'public'              => true,
@@ -147,7 +157,7 @@ class Characters {
 			'capability_type'     => array( 'character', 'characters' ),
 			'map_meta_cap'        => true,
 		);
-		register_post_type( 'post_type_characters', $args );
+		register_post_type( self::SLUG, $args );
 	}
 
 	/*
@@ -155,7 +165,7 @@ class Characters {
 	 */
 	public function create_taxonomies() {
 
-		foreach ( self::$all_taxonomies as $tax_slug => $tax_array ) {
+		foreach ( self::ALL_TAXONOMIES as $tax_slug => $tax_array ) {
 			// Remove lez_ from slug.
 			$slug = str_replace( 'lez_', '', $tax_slug );
 
@@ -198,7 +208,7 @@ class Characters {
 			);
 
 			// Register taxonomy
-			register_taxonomy( $tax_slug, 'post_type_characters', $arguments );
+			register_taxonomy( $tax_slug, self::SLUG, $arguments );
 		}
 	}
 
@@ -276,10 +286,10 @@ class Characters {
 	 * Add to 'Right Now'
 	 */
 	public function dashboard_glance_items() {
-		foreach ( array( 'post_type_characters' ) as $post_type ) {
+		foreach ( array( self::SLUG ) as $post_type ) {
 			$num_posts = wp_count_posts( $post_type );
 			if ( $num_posts && $num_posts->publish ) {
-				if ( 'post_type_characters' === $post_type ) {
+				if ( self::SLUG === $post_type ) {
 					// translators: %s is the number of characters
 					$text = _n( '%s Character', '%s Characters', $num_posts->publish );
 				}
@@ -289,28 +299,14 @@ class Characters {
 		}
 	}
 
-	/*
-	 * Style for dashboard
-	 */
-	public function admin_css() {
-		echo "<style type='text/css'>
-			#adminmenu #menu-posts-post_type_characters div.wp-menu-image:before, #dashboard_right_now li.post_type_characters-count a:before {
-				content: '\\f484';
-				margin-left: -1px;
-			}
-		</style>";
-	}
-
 	/**
 	 * list_characters function.
 	 *
-	 * @access public
-	 * @static
 	 * @param mixed $show_id
 	 * @param string $output (default: 'query')
-	 * @return void
+	 * @return mixed (int|array)
 	 */
-	public function list_characters( $show_id, $output = 'query' ) {
+	public function list_characters( $show_id, $output = 'query' ): mixed {
 
 		// Get array of characters (by ID)
 		$characters = get_post_meta( $show_id, 'lezshows_char_list', true );
@@ -318,13 +314,11 @@ class Characters {
 		// If the character list is empty, we must build it
 		if ( ! isset( $characters ) || empty( $characters ) ) {
 			// Loop to get the list of characters
-			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			$characters_loop = lwtv_plugin()->queery_post_meta( self::SLUG, 'lezchars_show_group', $show_id, 'LIKE' );
 
-			if ( $charactersloop->have_posts() ) {
-				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
+			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
+				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
 			}
-
-			wp_reset_query();
 
 			$characters = ( is_array( $characters ) ) ? array_unique( $characters ) : array( $characters );
 		}
@@ -464,7 +458,7 @@ class Characters {
 	 * @param mixed $role: regular (default), recurring, guest
 	 * @return array of characters
 	 */
-	public function get_chars_for_show( $show_id, $havecharcount, $role = 'regular' ) {
+	public function get_chars_for_show( $show_id, $role = 'regular' ): mixed {
 
 		/**
 		 * Funny things:
@@ -491,8 +485,8 @@ class Characters {
 		$valid_roles = array( 'regular', 'recurring', 'guest' );
 
 		// If this isn't a show page, or there are no valid roles, bail.
-		if ( ! isset( $show_id ) || 'post_type_shows' !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
-			return;
+		if ( ! isset( $show_id ) || self::SLUG !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
+			return null;
 		}
 
 		// Get array of characters (by ID)
@@ -501,17 +495,14 @@ class Characters {
 		// If the character list is empty, we must build it
 		if ( empty( $characters ) ) {
 			// Loop to get the list of characters
-			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			$characters_loop = lwtv_plugin()->queery_post_meta( self::SLUG, 'lezchars_show_group', $show_id, 'LIKE' );
 
-			if ( $charactersloop->have_posts() ) {
-				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
+			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
+				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
 			}
 
 			$characters = ( ! is_array( $characters ) ) ? array() : array_unique( $characters );
 			update_post_meta( $show_id, 'lezshows_char_list', $characters );
-
-			// Reset to end
-			wp_reset_query();
 		}
 
 		// Empty array to display later
@@ -605,7 +596,7 @@ class Characters {
 	 * Customize title
 	 */
 	public function custom_enter_title( $input ) {
-		if ( 'post_type_characters' === get_post_type() ) {
+		if ( self::SLUG === get_post_type() ) {
 			$input = 'Add character';
 		}
 		return $input;

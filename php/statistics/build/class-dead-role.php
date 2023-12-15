@@ -25,9 +25,8 @@ class Dead_Role {
 				'recurring' => 0,
 			);
 
-			if ( $all_the_dead->have_posts() ) {
+			if ( is_object( $all_the_dead ) && $all_the_dead->have_posts() ) {
 				$dead_chars = wp_list_pluck( $all_the_dead->posts, 'ID' );
-				wp_reset_query();
 			}
 
 			foreach ( $dead_chars as $dead_id ) {
@@ -51,17 +50,17 @@ class Dead_Role {
 				'regular'   => array(
 					'count' => $by_role['regular'],
 					'name'  => 'Regular',
-					'url'   => home_url( '/role/regular/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=regular' ),
 				),
 				'guest'     => array(
 					'count' => $by_role['guest'],
 					'name'  => 'Guest',
-					'url'   => home_url( '/role/guest/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=guest' ),
 				),
 				'recurring' => array(
 					'count' => $by_role['recurring'],
 					'name'  => 'Recurring',
-					'url'   => home_url( '/role/recurring/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=recurring' ),
 				),
 			);
 

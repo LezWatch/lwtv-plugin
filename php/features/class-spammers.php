@@ -14,7 +14,7 @@ class Spammers {
 	 *
 	 * @return array the list
 	 */
-	public static function list( $keys = 'disallowed_keys' ) {
+	public static function list( $keys = 'disallowed_keys' ): array {
 
 		// Preflight check:
 		$valid_keys = array( 'disallowed_keys', 'moderation_keys' );
@@ -47,7 +47,7 @@ class Spammers {
 	 * @param  string  $plugin        The plugin we're checking (default FALSE)
 	 * @return boolean                True/False spammer
 	 */
-	public static function is_spammer( $to_check, $type = 'email', $keys = 'disallowed_keys' ) {
+	public static function is_spammer( $to_check, $type = 'email', $keys = 'disallowed_keys' ): bool {
 
 		// If nothing was passed through, we cannot check at all so bail.
 		if ( empty( $to_check ) ) {

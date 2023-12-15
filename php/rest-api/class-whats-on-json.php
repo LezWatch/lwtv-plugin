@@ -110,7 +110,7 @@ class Whats_On_JSON {
 		$when_today = array( 'today', 'now', 'tonight' );
 		$when       = ( in_array( $when, $when_today, true ) ) ? 'today' : $when;
 		$when       = ( ! in_array( $when, array( 'today', 'tomorrow' ), true ) ) ? 'today' : $when;
-		$lwtv_tz    = new \DateTimeZone( 'America/New_York' );
+		$lwtv_tz    = new \DateTimeZone( LWTV_TIMEZONE );
 
 		lwtv_plugin()->get_transient( 'lwtv_missed_schedule' );
 
@@ -141,7 +141,7 @@ class Whats_On_JSON {
 	 */
 	public function whats_on_date( $date ) {
 
-		$lwtv_tz    = new \DateTimeZone( 'America/New_York' );
+		$lwtv_tz    = new \DateTimeZone( LWTV_TIMEZONE );
 		$tvmaze_url = lwtv_plugin()->get_tvmaze_ics();
 		if ( false === $tvmaze_url ) {
 			$return['none'] = 'The Calendar is down for maintenance. Come back soon.';
@@ -342,7 +342,7 @@ class Whats_On_JSON {
 	}
 
 	public function convert_time( $date ) {
-		$lwtv_tz   = new \DateTimeZone( 'America/New_York' );
+		$lwtv_tz   = new \DateTimeZone( LWTV_TIMEZONE );
 		$tvmaze_tz = new \DateTimeZone( 'UTC' );
 		$dt        = new \DateTime( $date, $tvmaze_tz );
 		$dt->setTimezone( $lwtv_tz );
@@ -363,7 +363,7 @@ class Whats_On_JSON {
 			return array();
 		}
 
-		$lwtv_tz        = new \DateTimeZone( 'America/New_York' );
+		$lwtv_tz        = new \DateTimeZone( LWTV_TIMEZONE );
 		$tvmaze_tz      = new \DateTimeZone( 'UTC' );
 		$by_day_array   = array();
 		$episodes_array = lwtv_plugin()->generate_ics_by_date( $tvmaze_url, 'week', $date );
@@ -438,7 +438,7 @@ class Whats_On_JSON {
 	 */
 	public function parse_calendar( $whats_on ) {
 
-		$lwtv_tz   = new \DateTimeZone( 'America/New_York' );
+		$lwtv_tz   = new \DateTimeZone( LWTV_TIMEZONE );
 		$tvmaze_tz = new \DateTimeZone( 'UTC' );
 		$on_array  = array();
 
