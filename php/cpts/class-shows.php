@@ -18,7 +18,16 @@ use LWTV\CPTs\Shows\Shows_Like_This;
 class Shows {
 
 	/**
+	 * Post type slug.
+	 *
+	 * @var string
+	 */
+	const SLUG = 'post_type_shows';
+
+	/**
 	 * All Taxonomies
+	 *
+	 * @var array
 	 */
 	const ALL_TAXONOMIES = array(
 		'lez_stations'      => array( 'name' => 'TV station' ),
@@ -188,7 +197,7 @@ class Shows {
 			),
 		);
 		$args     = array(
-			'label'               => 'post_type_shows',
+			'label'               => self::SLUG,
 			'labels'              => $labels,
 			'description'         => 'TV Shows',
 			'public'              => true,
@@ -206,7 +215,7 @@ class Shows {
 			'capability_type'     => array( 'show', 'shows' ),
 			'map_meta_cap'        => true,
 		);
-		register_post_type( 'post_type_shows', $args );
+		register_post_type( self::SLUG, $args );
 	}
 
 	/*
@@ -256,7 +265,7 @@ class Shows {
 			);
 
 			// Register taxonomy
-			register_taxonomy( $tax_slug, 'post_type_shows', $arguments );
+			register_taxonomy( $tax_slug, self::SLUG, $arguments );
 		}
 	}
 
@@ -294,10 +303,10 @@ class Shows {
 	 * Add to 'Right Now'
 	 */
 	public function dashboard_glance_items() {
-		foreach ( array( 'post_type_shows' ) as $post_type ) {
+		foreach ( array( self::SLUG ) as $post_type ) {
 			$num_posts = wp_count_posts( $post_type );
 			if ( $num_posts && $num_posts->publish ) {
-				if ( 'post_type_shows' === $post_type ) {
+				if ( self::SLUG === $post_type ) {
 					// translators: %s is the number of TV shows we have (total)
 					$text = _n( '%s TV Show', '%s TV Shows', $num_posts->publish );
 				}
@@ -332,7 +341,7 @@ class Shows {
 	 * @return string The new title
 	 */
 	public function custom_enter_title( $input ) {
-		if ( 'post_type_shows' === get_post_type() ) {
+		if ( self::SLUG === get_post_type() ) {
 			$input = 'Add show';
 		}
 		return $input;

@@ -18,7 +18,16 @@ use LWTV\CPTs\Actors\Custom_Columns;
 class Actors {
 
 	/**
+	 * Post type slug.
+	 *
+	 * @var string
+	 */
+	const SLUG = 'post_type_actors';
+
+	/**
 	 * All Taxonomies
+	 *
+	 * @var array
 	 */
 	const ALL_TAXONOMIES = array(
 		'lez_actor_gender'    => array( 'name' => 'gender' ),
@@ -138,7 +147,7 @@ class Actors {
 			),
 		);
 		$args     = array(
-			'label'               => 'post_type_actors',
+			'label'               => self::SLUG,
 			'description'         => 'Actors',
 			'labels'              => $labels,
 			'public'              => true,
@@ -156,7 +165,7 @@ class Actors {
 			'capability_type'     => array( 'actor', 'actors' ),
 			'map_meta_cap'        => true,
 		);
-		register_post_type( 'post_type_actors', $args );
+		register_post_type( self::SLUG, $args );
 	}
 
 	/*
@@ -202,7 +211,7 @@ class Actors {
 			);
 
 			// Register taxonomy
-			register_taxonomy( $tax_slug, 'post_type_actors', $arguments );
+			register_taxonomy( $tax_slug, self::SLUG, $arguments );
 		}
 	}
 
@@ -276,10 +285,10 @@ class Actors {
 	 * Add count of actors to 'Right Now'
 	 */
 	public function dashboard_glance_items() {
-		foreach ( array( 'post_type_actors' ) as $post_type ) {
+		foreach ( array( self::SLUG ) as $post_type ) {
 			$num_posts = wp_count_posts( $post_type );
 			if ( $num_posts && $num_posts->publish ) {
-				if ( 'post_type_actors' === $post_type ) {
+				if ( self::SLUG === $post_type ) {
 					// translators: %s is the number of actors
 					$text = _n( '%s Actor', '%s Actors', $num_posts->publish );
 				}
@@ -317,7 +326,7 @@ class Actors {
 	 * Customize title
 	 */
 	public function custom_enter_title( $input ) {
-		if ( 'post_type_actors' === get_post_type() ) {
+		if ( self::SLUG === get_post_type() ) {
 			$input = 'Add actor';
 		}
 		return $input;

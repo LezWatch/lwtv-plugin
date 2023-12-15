@@ -16,7 +16,16 @@ use LWTV\CPTs\Characters\Custom_Columns;
 class Characters {
 
 	/**
+	 * Post type slug.
+	 *
+	 * @var string
+	 */
+	const SLUG = 'post_type_characters';
+
+	/**
 	 * All Taxonomies
+	 *
+	 * @var array
 	 */
 	const ALL_TAXONOMIES = array(
 		'lez_cliches'   => array( 'name' => 'cliché' ),
@@ -130,7 +139,7 @@ class Characters {
 			),
 		);
 		$args     = array(
-			'label'               => 'post_type_characters',
+			'label'               => self::SLUG,
 			'description'         => 'Characters',
 			'labels'              => $labels,
 			'public'              => true,
@@ -148,7 +157,7 @@ class Characters {
 			'capability_type'     => array( 'character', 'characters' ),
 			'map_meta_cap'        => true,
 		);
-		register_post_type( 'post_type_characters', $args );
+		register_post_type( self::SLUG, $args );
 	}
 
 	/*
@@ -199,7 +208,7 @@ class Characters {
 			);
 
 			// Register taxonomy
-			register_taxonomy( $tax_slug, 'post_type_characters', $arguments );
+			register_taxonomy( $tax_slug, self::SLUG, $arguments );
 		}
 	}
 
@@ -277,10 +286,10 @@ class Characters {
 	 * Add to 'Right Now'
 	 */
 	public function dashboard_glance_items() {
-		foreach ( array( 'post_type_characters' ) as $post_type ) {
+		foreach ( array( self::SLUG ) as $post_type ) {
 			$num_posts = wp_count_posts( $post_type );
 			if ( $num_posts && $num_posts->publish ) {
-				if ( 'post_type_characters' === $post_type ) {
+				if ( self::SLUG === $post_type ) {
 					// translators: %s is the number of characters
 					$text = _n( '%s Character', '%s Characters', $num_posts->publish );
 				}
@@ -305,7 +314,7 @@ class Characters {
 		// If the character list is empty, we must build it
 		if ( ! isset( $characters ) || empty( $characters ) ) {
 			// Loop to get the list of characters
-			$characters_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			$characters_loop = lwtv_plugin()->queery_post_meta( self::SLUG, 'lezchars_show_group', $show_id, 'LIKE' );
 
 			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
 				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
@@ -476,7 +485,7 @@ class Characters {
 		$valid_roles = array( 'regular', 'recurring', 'guest' );
 
 		// If this isn't a show page, or there are no valid roles, bail.
-		if ( ! isset( $show_id ) || 'post_type_shows' !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
+		if ( ! isset( $show_id ) || self::SLUG !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
 			return null;
 		}
 
@@ -486,7 +495,7 @@ class Characters {
 		// If the character list is empty, we must build it
 		if ( empty( $characters ) ) {
 			// Loop to get the list of characters
-			$characters_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
+			$characters_loop = lwtv_plugin()->queery_post_meta( self::SLUG, 'lezchars_show_group', $show_id, 'LIKE' );
 
 			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
 				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
@@ -587,7 +596,7 @@ class Characters {
 	 * Customize title
 	 */
 	public function custom_enter_title( $input ) {
-		if ( 'post_type_characters' === get_post_type() ) {
+		if ( self::SLUG === get_post_type() ) {
 			$input = 'Add character';
 		}
 		return $input;

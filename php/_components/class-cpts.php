@@ -11,6 +11,7 @@ use LWTV\CPTs\Related_Posts;
 use LWTV\CPTs\Actors;
 use LWTV\CPTs\Characters;
 use LWTV\CPTs\Shows;
+use LWTV\CPTs\TVMaze;
 use LWTV\CPTs\Shows\Shows_Like_This;
 
 /**
@@ -36,6 +37,7 @@ class CPTs implements Component, Templater {
 		new Actors();
 		new Characters();
 		new Shows();
+		new TVMaze();
 	}
 
 	/**
