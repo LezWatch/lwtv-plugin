@@ -458,7 +458,7 @@ class Characters {
 	 * @param mixed $role: regular (default), recurring, guest
 	 * @return array of characters
 	 */
-	public function get_chars_for_show( $show_id, $role = 'regular' ): ?array {
+	public function get_chars_for_show( $show_id, $role = 'regular' ): mixed {
 
 		/**
 		 * Funny things:

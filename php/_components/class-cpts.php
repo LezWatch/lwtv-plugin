@@ -99,7 +99,7 @@ class CPTs implements Component, Templater {
 	 * @param  string $role
 	 * @return mixed  (int|array)
 	 */
-	public function get_chars_for_show( $show_id, $role = 'regular' ): ?array {
+	public function get_chars_for_show( $show_id, $role = 'regular' ): mixed {
 		return ( new Characters() )->get_chars_for_show( $show_id, $role );
 	}
 
