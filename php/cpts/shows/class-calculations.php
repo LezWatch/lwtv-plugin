@@ -117,9 +117,9 @@ class Calculations {
 
 			// If the count for all characters is 0, we don't need to run this.
 			if ( 0 !== $char_count ) {
-				$chars_regular   = lwtv_plugin()->get_chars_for_show( $post_id, $char_count, 'regular' );
-				$chars_recurring = lwtv_plugin()->get_chars_for_show( $post_id, $char_count, 'recurring' );
-				$chars_guest     = lwtv_plugin()->get_chars_for_show( $post_id, $char_count, 'guest' );
+				$chars_regular   = lwtv_plugin()->get_chars_for_show( $post_id, 'regular' );
+				$chars_recurring = lwtv_plugin()->get_chars_for_show( $post_id, 'recurring' );
+				$chars_guest     = lwtv_plugin()->get_chars_for_show( $post_id, 'guest' );
 
 				// Points: Regular = 5; Recurring = 2; Guests = 1
 				$char_score = ( count( $chars_regular ) * 5 ) + ( count( $chars_recurring ) * 2 ) + count( $chars_guest );

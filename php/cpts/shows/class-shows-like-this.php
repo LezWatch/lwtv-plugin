@@ -24,10 +24,10 @@ class Shows_Like_This {
 	/**
 	 * Shows like this
 	 *
-	 * @param  int         $show_id
-	 * @return string|bool
+	 * @param  int   $show_id
+	 * @return mixed (string|bool)
 	 */
-	public function make( $show_id ) {
+	public function make( $show_id ): mixed {
 		$return = '';
 
 		if ( ! empty( $show_id ) && has_filter( 'related_posts_by_taxonomy_posts_meta_query' ) ) {

@@ -21,7 +21,7 @@ class Related_Posts {
 	 * @param  string $slug
 	 * @return string
 	 */
-	public function related_posts( $slug ) {
+	public function related_posts( $slug ): string {
 
 		// Default content:
 		$the_related_posts = '<em>Coming soon...</em>';
@@ -124,7 +124,7 @@ class Related_Posts {
 	 *
 	 * @return string The related items.
 	 */
-	public function related_archive_header( $tag_id ) {
+	public function related_archive_header( $tag_id ): string {
 		$tag         = get_tag( $tag_id );
 		$linked_post = get_term_meta( $tag->term_id, 'lez_termsmeta_linked_post', true );
 		$icons       = array(
@@ -168,7 +168,7 @@ class Related_Posts {
 	 * @param  string $content
 	 * @return string Update content
 	 */
-	public function related_content( $content ) {
+	public function related_content( $content ): string {
 		if ( is_singular( 'post' ) ) {
 
 			$post_tags   = get_the_tags( get_the_ID() );

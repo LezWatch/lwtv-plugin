@@ -65,7 +65,7 @@ class CPTs implements Component, Templater {
 	 * @param  int $post_id
 	 * @return void
 	 */
-	public function calculate_actor_data( $post_id ) {
+	public function calculate_actor_data( $post_id ): void {
 		( new Actors() )->do_the_math( $post_id );
 	}
 
@@ -75,7 +75,7 @@ class CPTs implements Component, Templater {
 	 * @param  int $post_id
 	 * @return void
 	 */
-	public function calculate_character_data( $post_id ) {
+	public function calculate_character_data( $post_id ): void {
 		( new Characters() )->do_the_math( $post_id );
 	}
 
@@ -85,7 +85,7 @@ class CPTs implements Component, Templater {
 	 * @param  int $post_id
 	 * @return void
 	 */
-	public function calculate_show_data( $post_id ) {
+	public function calculate_show_data( $post_id ): void {
 		( new Shows() )->do_the_math( $post_id );
 	}
 
@@ -95,10 +95,10 @@ class CPTs implements Component, Templater {
 	 * @param  int    $show_id
 	 * @param  mixed  $havecharcount
 	 * @param  string $role
-	 * @return void
+	 * @return mixed  (int|array)
 	 */
-	public function get_chars_for_show( $show_id, $havecharcount, $role = 'regular' ) {
-		return ( new Characters() )->get_chars_for_show( $show_id, $havecharcount, $role );
+	public function get_chars_for_show( $show_id, $role = 'regular' ): ?array {
+		return ( new Characters() )->get_chars_for_show( $show_id, $role );
 	}
 
 	/**
@@ -106,9 +106,9 @@ class CPTs implements Component, Templater {
 	 *
 	 * @param  int    $show_id
 	 * @param  string $output
-	 * @return mixed
+	 * @return mixed  (int|array)
 	 */
-	public function get_characters_list( $show_id, $output = 'query' ) {
+	public function get_characters_list( $show_id, $output = 'query' ): mixed {
 		return ( new Characters() )->list_characters( $show_id, $output );
 	}
 
@@ -118,7 +118,7 @@ class CPTs implements Component, Templater {
 	 * @param  int $tag_id
 	 * @return string
 	 */
-	public function get_related_archive_header( $tag_id ) {
+	public function get_related_archive_header( $tag_id ): string {
 		return ( new Related_Posts() )->related_archive_header( $tag_id );
 	}
 
@@ -128,7 +128,7 @@ class CPTs implements Component, Templater {
 	 * @param  string $slug
 	 * @return bool
 	 */
-	public function has_cpt_related_posts( $slug ) {
+	public function has_cpt_related_posts( $slug ): bool {
 		return ( new Related_Posts() )->are_there_posts( $slug );
 	}
 
@@ -138,7 +138,7 @@ class CPTs implements Component, Templater {
 	 * @param  string $slug
 	 * @return void
 	 */
-	public function get_cpt_related_posts( $slug ) {
+	public function get_cpt_related_posts( $slug ): string {
 		return ( new Related_Posts() )->related_posts( $slug );
 	}
 
@@ -148,7 +148,7 @@ class CPTs implements Component, Templater {
 	 * @param  [type] $post_id
 	 * @return void
 	 */
-	public function get_shows_like_this_show( $post_id ) {
+	public function get_shows_like_this_show( $post_id ): mixed {
 		return ( new Shows_Like_This() )->make( $post_id );
 	}
 
@@ -160,7 +160,7 @@ class CPTs implements Component, Templater {
 	 *
 	 * @return array $actions Modified actions.
 	 */
-	public function remove_quick_edit( $actions, $post ) {
+	public function remove_quick_edit( $actions, $post ): array {
 		if ( in_array( get_post_type( $post->ID ), self::POST_TYPES, true ) ) {
 			unset( $actions['inline hide-if-no-js'] );
 		}
@@ -175,7 +175,7 @@ class CPTs implements Component, Templater {
 	 *
 	 * @return array $actions Modified actions.
 	 */
-	public function remove_member_bulk_actions( $actions, $post ) {
+	public function remove_member_bulk_actions( $actions, $post ): array {
 		if ( in_array( get_post_type( $post->ID ), self::POST_TYPES, true ) ) {
 			unset( $actions['edit'] );
 		}

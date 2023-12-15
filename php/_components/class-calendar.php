@@ -52,7 +52,7 @@ class Calendar implements Component, Templater {
 	 *
 	 * @return array        array of all the shows on that day
 	 */
-	public function generate_ics_by_date( $url, $when, $date = false ) {
+	public function generate_ics_by_date( $url, $when, $date = false ): array {
 		return ( new ICS_Parser() )->generate_by_date( $url, $when, $date );
 	}
 
@@ -64,7 +64,7 @@ class Calendar implements Component, Templater {
 	 *
 	 * @return string — The display name
 	 */
-	public function get_show_name_for_calendar( $show_name, $source = 'lwtv' ) {
+	public function get_show_name_for_calendar( $show_name, $source = 'lwtv' ): string {
 		return ( new Names() )->make( $show_name, $source );
 	}
 
@@ -88,7 +88,7 @@ class Calendar implements Component, Templater {
 	 *
 	 * @return void
 	 */
-	public function download_tvmaze( $ics_file = null ) {
+	public function download_tvmaze( $ics_file = null ): void {
 		$ics_file = ( is_null( $ics_file ) ) ? self::get_tvmaze_ics() : $ics_file;
 		$response = wp_remote_get( TV_MAZE );
 		if ( is_array( $response ) && ! is_wp_error( $response ) ) {

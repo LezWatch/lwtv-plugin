@@ -293,13 +293,11 @@ class Characters {
 	/**
 	 * list_characters function.
 	 *
-	 * @access public
-	 * @static
 	 * @param mixed $show_id
 	 * @param string $output (default: 'query')
-	 * @return void
+	 * @return mixed (int|array)
 	 */
-	public function list_characters( $show_id, $output = 'query' ) {
+	public function list_characters( $show_id, $output = 'query' ): mixed {
 
 		// Get array of characters (by ID)
 		$characters = get_post_meta( $show_id, 'lezshows_char_list', true );
@@ -451,7 +449,7 @@ class Characters {
 	 * @param mixed $role: regular (default), recurring, guest
 	 * @return array of characters
 	 */
-	public function get_chars_for_show( $show_id, $havecharcount, $role = 'regular' ) {
+	public function get_chars_for_show( $show_id, $role = 'regular' ): ?array {
 
 		/**
 		 * Funny things:
@@ -479,7 +477,7 @@ class Characters {
 
 		// If this isn't a show page, or there are no valid roles, bail.
 		if ( ! isset( $show_id ) || 'post_type_shows' !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
-			return;
+			return null;
 		}
 
 		// Get array of characters (by ID)

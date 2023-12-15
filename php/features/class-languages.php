@@ -8,7 +8,7 @@ namespace LWTV\Features;
 
 class Languages {
 
-	public function all_languages() {
+	public function all_languages(): array {
 		$languages = array(
 			'af'     => 'Afrikaans',
 			'sq'     => 'Albanian - shqip',

@@ -39,9 +39,9 @@ class Block_Types_Allowed implements Component {
 	 */
 	public function get_disallowed_core_block_types() {
 		/**
-		 * Filters the list of disallowed core block types.
+		 * Filters the list of allowed core block types to exclude the disallowed.
 		 *
-		 * @param array<string> $disallowed_core_block_types List of NOT allowed core block types.
+		 * @param array<string> self::DISALLOWED_CORE_BLOCK_TYPES List of NOT allowed core block types.
 		 */
 		return apply_filters( 'lwtv_plugin_allowed_core_block_types', self::DISALLOWED_CORE_BLOCK_TYPES );
 	}

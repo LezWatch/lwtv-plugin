@@ -28,6 +28,8 @@ class Dashboard_Widgets implements Component {
 	/**
 	 * Check dashboard content
 	 *
+	 * Echos page.
+	 *
 	 * @return void
 	 */
 	public function check_dashboard_content() {

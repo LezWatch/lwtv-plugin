@@ -75,22 +75,27 @@ class Features implements Component, Templater {
 	/**
 	 * Get all languages we know.
 	 */
-	public function get_all_languages() {
+	public function get_all_languages(): array {
 		return ( new Languages() )->all_languages();
 	}
 
 	/**
 	 * Get all Spammers
 	 */
-	public function get_spammers_list() {
+	public function get_spammers_list(): array {
 		return ( new Spammers() )->list();
 	}
 
 	/**
-	 * Get Is this a spammer?
+	 * Is this a Spammer?
+	 *
+	 * @param  string $to_check - content to check (i.e. "John Doe", "foo@example.com")
+	 * @param  string $type     - Type of to check (email, name, URL)
+	 * @param  string $keys     - Key to check against (nearly always disallowed)
+	 * @return bool
 	 */
-	public function is_spammer( $to_check, $type = 'email', $keys = 'disallowed_keys' ) {
-		return ( new Spammers() )->list( $to_check, $type, $keys );
+	public function is_spammer( $to_check, $type = 'email', $keys = 'disallowed_keys' ): bool {
+		return ( new Spammers() )->is_spammer( $to_check, $type, $keys );
 	}
 
 	/**
@@ -147,7 +152,7 @@ class Features implements Component, Templater {
 	 *
 	 * @param array $methods XMLRPC methods.
 	 */
-	public function remove_xmlrpc_methods( $methods ) {
+	public function remove_xmlrpc_methods( $methods ): array {
 		unset( $methods['pingback.ping'] );
 		return $methods;
 	}
@@ -158,7 +163,7 @@ class Features implements Component, Templater {
 	 * @access public
 	 * @return void
 	 */
-	public function hide_lwtv_plugin() {
+	public function hide_lwtv_plugin(): void {
 		global $wp_list_table;
 
 		$hide_plugins = array(
@@ -180,7 +185,7 @@ class Features implements Component, Templater {
 	 * @param mixed $url    - URL from which checks come and need to be blocked (i.e. wp.org).
 	 * @return array        - $data
 	 */
-	public function disable_wp_update( $data, $url ) {
+	public function disable_wp_update( $data, $url ): array {
 		if ( 0 === strpos( $url, 'https://api.wordpress.org/plugins/update-check/' ) ) {
 			$my_plugin = plugin_basename( dirname( __DIR__, 1 ) );
 			$plugins   = json_decode( $data['body']['plugins'], true );
@@ -201,7 +206,7 @@ class Features implements Component, Templater {
 	 * @param string $icon_color - What color to use.
 	 * @return string
 	 */
-	public function get_icon_svg( $base64 = true, $icon_color = false ) {
+	public function get_icon_svg( $base64 = true, $icon_color = false ): string {
 		$fill = ( false !== $icon_color ) ? sanitize_hex_color( $icon_color ) : '#82878c';
 
 		$svg = '<svg width="100%" height="100%" version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:' . $fill . '"><path d="M4,10c0,-4.411 3.589,-8 8,-8c4.411,0 8,3.589 8,8v2.08c0.706,0.102 1.378,0.308 2,0.605v-2.685c0,-5.514 -4.486,-10 -10,-10c-5.514,0 -10,4.486 -10,10v2.685c0.622,-0.297 1.294,-0.503 2,-0.605Zm8,-6c-3.309,0 -6,2.691 -6,6v1.025c0.578,-0.772 1.294,-1.43 2.112,-1.929c0.412,-1.77 1.994,-3.096 3.888,-3.096c1.894,0 3.476,1.326 3.888,3.096c0.819,0.499 1.534,1.157 2.112,1.929v-1.025c0,-3.309 -2.691,-6 -6,-6Zm7,10h-1.712c-0.654,-2.307 -2.771,-4 -5.288,-4c-2.517,0 -4.634,1.693 -5.288,4h-1.712c-2.761,0 -5,2.239 -5,5c0,2.761 2.239,5 5,5h14c2.761,0 5,-2.239 5,-5c0,-2.761 -2.239,-5 -5,-5Z" transform="scale(0.666667)" fill="' . $fill . '"></path></svg>';
@@ -221,7 +226,7 @@ class Features implements Component, Templater {
 	 * @param mixed $post         int   - the post ID.
 	 * @return                    array - form fields.
 	 */
-	public function add_attachment_attribution( $form_fields, $post ) {
+	public function add_attachment_attribution( $form_fields, $post ): array {
 		$field_value                     = get_post_meta( $post->ID, 'lwtv_attribution', true );
 		$form_fields['lwtv_attribution'] = array(
 			'value' => $field_value ? $field_value : '',
@@ -238,7 +243,7 @@ class Features implements Component, Templater {
 	 * @param mixed $attachment_id  int - attachment ID.
 	 * @return void
 	 */
-	public function save_attachment_attribution( $attachment_id ) {
+	public function save_attachment_attribution( $attachment_id ): void {
 		if ( isset( $_REQUEST['attachments'][ $attachment_id ]['lwtv_attribution'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			$lwtv_attribution = sanitize_text_field( wp_unslash( $_REQUEST['attachments'][ $attachment_id ]['lwtv_attribution'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 			update_post_meta( $attachment_id, 'lwtv_attribution', $lwtv_attribution );
@@ -252,7 +257,7 @@ class Features implements Component, Templater {
 	 *
 	 * @return array $defaults  Updated defaults.
 	 */
-	public function default_avatar( $defaults ) {
+	public function default_avatar( $defaults ): array {
 		$toaster              = plugins_url( 'assets/images/toaster.png', dirname( __DIR__, 1 ) );
 		$defaults[ $toaster ] = 'Toaster';
 		$unicorn              = plugins_url( 'assets/images/unicorn.png', dirname( __DIR__, 1 ) );
@@ -268,7 +273,7 @@ class Features implements Component, Templater {
 	 * @param  string $format Format to output.
 	 * @return string         Updated date format.
 	 */
-	public function validate_date( $date, $format = 'Y-m-d' ) {
+	public function validate_date( $date, $format = 'Y-m-d' ): string {
 		$d = \DateTime::createFromFormat( $format, $date );
 		// The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
 		return $d && $d->format( $format ) === $date;
@@ -279,14 +284,14 @@ class Features implements Component, Templater {
 	 *
 	 * Source: https://make.wordpress.org/core/2021/06/14/introducing-the-template-editor-in-wordpress-5-8/
 	 */
-	public function after_setup_theme() {
+	public function after_setup_theme(): void {
 		remove_theme_support( 'block-templates' );
 	}
 
 	/**
 	 * Admin CSS
 	 */
-	public function admin_enqueue_scripts() {
+	public function admin_enqueue_scripts(): void {
 		if ( is_admin() ) {
 			wp_enqueue_style( 'lwtv_data_check_admin', plugins_url( 'assets/css/wp-admin.css', dirname( __DIR__, 1 ) ), array(), LWTV_PLUGIN_VERSION );
 		}
@@ -295,7 +300,7 @@ class Features implements Component, Templater {
 	/**
 	 * Login Logos
 	 */
-	public function login_logos() {
+	public function login_logos(): void {
 		?>
 		<style type="text/css">
 			#login h1 a, .login h1 a { background-image: url(<?php echo esc_url( plugins_url( 'assets/images/lezwatchtv.png', dirname( __DIR__, 1 ) ) ); ?>);
@@ -310,14 +315,14 @@ class Features implements Component, Templater {
 	/**
 	 * Login URL
 	 */
-	public function login_headerurl() {
+	public function login_headerurl(): string {
 		return home_url();
 	}
 
 	/**
 	 * Login Title
 	 */
-	public function login_headertitle() {
+	public function login_headertitle(): string {
 		return get_bloginfo( 'name' );
 	}
 
@@ -329,7 +334,7 @@ class Features implements Component, Templater {
 	 * @param  string $error Existing Error.
 	 * @return string $error Updated Error.
 	 */
-	public function login_errors( $error ) {
+	public function login_errors( $error ): string {
 		$diane = '<br /><img src="' . plugins_url( '/assets/images/diane-fuck-off.gif', dirname( __DIR__, 1 ) ) . '" />';
 		$error = $error . $diane;
 		return $error;
@@ -339,7 +344,7 @@ class Features implements Component, Templater {
 	 * Damn it Google, GO AWAY from our dev sites!
 	 * Since: 2.1.4
 	 */
-	public function add_meta_tags() {
+	public function add_meta_tags(): void {
 		echo '<meta name="robots" content="noindex">' . "\n";
 	}
 
@@ -352,7 +357,7 @@ class Features implements Component, Templater {
 	 *
 	 * @return boolean  Open or Closed.
 	 */
-	public function filter_media_comment_status( $open, $post_id ) {
+	public function filter_media_comment_status( $open, $post_id ): bool {
 		$post = get_post( $post_id );
 		if ( 'attachment' === $post->post_type ) {
 			return false;
@@ -366,7 +371,7 @@ class Features implements Component, Templater {
 	 * @param  int $expire Current expire length (3 days).
 	 * @return int            New time (1 year)
 	 */
-	public function extend_login_session( $expire ) {
+	public function extend_login_session( $expire ): string {
 		if ( ! empty( $expire ) ) {
 			return $expire;
 		}
@@ -382,8 +387,8 @@ class Features implements Component, Templater {
 	 *
 	 * @return array
 	 */
-	public function modify_front_end_http_headers( $headers, $wp ) {
-		// The oEmbed endpoints should remain embedable.
+	public function modify_front_end_http_headers( $headers, $wp ): array {
+		// The oEmbed endpoints should remain embed-able.
 		if ( ! isset( $wp->query_vars['embed'] ) || ! $wp->query_vars['embed'] ) {
 			$headers['X-Frame-Options'] = 'SAMEORIGIN';
 		}
