@@ -50,17 +50,17 @@ class Dead_Role {
 				'regular'   => array(
 					'count' => $by_role['regular'],
 					'name'  => 'Regular',
-					'url'   => home_url( '/role/regular/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=regular' ),
 				),
 				'guest'     => array(
 					'count' => $by_role['guest'],
 					'name'  => 'Guest',
-					'url'   => home_url( '/role/guest/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=guest' ),
 				),
 				'recurring' => array(
 					'count' => $by_role['recurring'],
 					'name'  => 'Recurring',
-					'url'   => home_url( '/role/recurring/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=recurring' ),
 				),
 			);
 

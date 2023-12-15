@@ -137,17 +137,17 @@ class Show_Roles {
 				'guest'     => array(
 					'name'  => 'Only Guests',
 					'count' => count( $guest_alive_array ),
-					'url'   => home_url( '/role/guest/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=guest' ),
 				),
 				'main'      => array(
 					'name'  => 'Only Main',
 					'count' => count( $main_alive_array ),
-					'url'   => home_url( '/role/regular/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=regular' ),
 				),
 				'recurring' => array(
 					'name'  => 'Only Recurring',
 					'count' => count( $recurring_alive_array ),
-					'url'   => home_url( '/role/recurring/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=recurring' ),
 				),
 			);
 
@@ -155,17 +155,17 @@ class Show_Roles {
 				'guest'     => array(
 					'name'  => 'Only Guests',
 					'count' => $guest['dead'],
-					'url'   => home_url( '/role/guest/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=guest' ),
 				),
 				'main'      => array(
 					'name'  => 'Only Main',
 					'count' => $regular['dead'],
-					'url'   => home_url( '/role/regular/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=regular' ),
 				),
 				'recurring' => array(
 					'name'  => 'Only Recurring',
 					'count' => $recurring['dead'],
-					'url'   => home_url( '/role/recurring/' ),
+					'url'   => home_url( '/characters/?fwp_char_roles=recurring' ),
 				),
 			);
 
