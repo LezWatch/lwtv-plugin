@@ -99,7 +99,7 @@ class CPTs implements Component, Templater {
 	 * @param  string $role
 	 * @return mixed  (int|array)
 	 */
-	public function get_chars_for_show( $show_id, $role = 'regular' ): mixed {
+	public function get_chars_for_show( $show_id, $role = 'regular' ): array {
 		return ( new Characters() )->get_chars_for_show( $show_id, $role );
 	}
 
@@ -108,7 +108,7 @@ class CPTs implements Component, Templater {
 	 *
 	 * @param  int    $show_id
 	 * @param  string $output
-	 * @return mixed  (int|array)
+	 * @return mixed  (int|array|object)
 	 */
 	public function get_characters_list( $show_id, $output = 'query' ): mixed {
 		return ( new Characters() )->list_characters( $show_id, $output );

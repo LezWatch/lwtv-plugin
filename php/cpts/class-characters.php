@@ -458,7 +458,7 @@ class Characters {
 	 * @param mixed $role: regular (default), recurring, guest
 	 * @return array of characters
 	 */
-	public function get_chars_for_show( $show_id, $role = 'regular' ): mixed {
+	public function get_chars_for_show( $show_id, $role = 'regular' ): array {
 
 		/**
 		 * Funny things:
@@ -486,7 +486,7 @@ class Characters {
 
 		// If this isn't a show page, or there are no valid roles, bail.
 		if ( ! isset( $show_id ) || self::SLUG !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
-			return null;
+			return array();
 		}
 
 		// Get array of characters (by ID)
