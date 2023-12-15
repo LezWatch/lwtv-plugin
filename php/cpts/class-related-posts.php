@@ -21,14 +21,14 @@ class Related_Posts {
 	 * @param  string $slug
 	 * @return string
 	 */
-	public function related_posts( $slug ): string {
+	public function related_posts( $slug ): mixed {
 
 		// Default content:
 		$the_related_posts = '<em>Coming soon...</em>';
 
 		// If there are no posts, return early.
 		if ( ! self::are_there_posts( $slug ) ) {
-			return $the_related_posts;
+			return null;
 		}
 
 		$related_post_loop = lwtv_plugin()->get_related_posts_by_tag( 'post', $slug );
