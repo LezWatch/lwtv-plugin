@@ -50,7 +50,6 @@ class On_Air {
 
 						if ( is_object( $show_queery ) && $show_queery->have_posts() ) {
 							$allshows = wp_list_pluck( $show_queery->posts, 'ID' );
-							wp_reset_query();
 							$allshows = ( ! is_array( $allshows ) ) ? array( $allshows ) : $allshows;
 						}
 

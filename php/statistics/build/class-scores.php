@@ -19,9 +19,8 @@ class Scores {
 			$the_queery = lwtv_plugin()->queery_post_type( $post_type );
 			$array      = array();
 
-			if ( $the_queery->have_posts() ) {
+			if ( is_object( $the_queery ) && $the_queery->have_posts() ) {
 				$scores_shows = wp_list_pluck( $the_queery->posts, 'ID' );
-				wp_reset_query();
 			}
 
 			if ( is_array( $scores_shows ) ) {

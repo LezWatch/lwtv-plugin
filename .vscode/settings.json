@@ -15,6 +15,7 @@
 		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
 	},
 	"cSpell.words": [
+		"lezchars",
 		"lezpress",
 		"lezwatch",
 		"lezwatchtv",

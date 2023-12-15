@@ -44,7 +44,6 @@ class Actor_Characters {
 		if ( empty( $character_array ) ) {
 			// Loop to get the list of characters
 			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $actor_id, 'LIKE' );
-			wp_reset_query();
 
 			if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
 				return;
@@ -105,7 +104,6 @@ class Actor_Characters {
 		if ( empty( $character_array ) ) {
 			// Loop to get the list of characters
 			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $actor_id, 'LIKE' );
-			wp_reset_query();
 
 			if ( ! is_object( $charactersloop ) || ! $charactersloop->have_posts() ) {
 				return;

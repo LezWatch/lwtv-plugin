@@ -202,7 +202,6 @@ class Stats_JSON {
 				break;
 			case 'complex':
 				$queery = lwtv_plugin()->queery_post_type( 'post_type_actors', $page );
-				wp_reset_query();
 
 				if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
 					return $stats_array;
@@ -480,7 +479,6 @@ class Stats_JSON {
 				break;
 			case 'complex':
 				$showsloop = lwtv_plugin()->queery_post_type( 'post_type_shows', $page );
-				wp_reset_query();
 
 				if ( ! is_object( $showsloop ) || ! $showsloop->have_posts() ) {
 					return $stats_array;
@@ -681,7 +679,6 @@ class Stats_JSON {
 
 			// Get the posts for this singular term (i.e. a specific station)
 			$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $type, 'slug', $slug, 'IN' );
-			wp_reset_query();
 
 			if ( ! is_object( $queery ) || ! $queery->have_posts() ) {
 				return;

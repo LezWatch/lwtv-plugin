@@ -21,7 +21,7 @@ class Is_Actor_Queer {
 	 * @param  mixed $the_id
 	 * @return bool
 	 */
-	public function make( $the_id ) {
+	public function make( $the_id ): bool {
 
 		// If we're not an actor, return null.
 		if ( ! isset( $the_id ) || 'post_type_actors' !== get_post_type( $the_id ) ) {

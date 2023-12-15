@@ -24,16 +24,14 @@ class Dead_Shows {
 
 			// Shows With Dead Query
 			$dead_shows_query = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers' );
-			if ( $dead_shows_query->have_posts() ) {
+			if ( is_object( $dead_shows_query ) && $dead_shows_query->have_posts() ) {
 				$dead_shows = wp_list_pluck( $dead_shows_query->posts, 'ID' );
-				wp_reset_query();
 			}
 
 			// Shows With NO Dead Query
 			$alive_shows_query = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_tropes', 'slug', 'dead-queers', 'NOT IN' );
-			if ( $alive_shows_query->have_posts() ) {
+			if ( is_object( $alive_shows_query ) && $alive_shows_query->have_posts() ) {
 				$alive_shows = wp_list_pluck( $alive_shows_query->posts, 'ID' );
-				wp_reset_query();
 			}
 
 			// Predef Arrays

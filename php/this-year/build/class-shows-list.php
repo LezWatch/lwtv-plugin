@@ -40,8 +40,6 @@ class Shows_List {
 		$counted_shows = 0;
 		$shows_queery  = lwtv_plugin()->queery_post_type( 'post_type_shows' );
 
-		wp_reset_query();
-
 		if ( ! is_object( $shows_queery ) || ! $shows_queery->have_posts() ) {
 			return;
 		}

@@ -25,9 +25,8 @@ class Dead_Role {
 				'recurring' => 0,
 			);
 
-			if ( $all_the_dead->have_posts() ) {
+			if ( is_object( $all_the_dead ) && $all_the_dead->have_posts() ) {
 				$dead_chars = wp_list_pluck( $all_the_dead->posts, 'ID' );
-				wp_reset_query();
 			}
 
 			foreach ( $dead_chars as $dead_id ) {

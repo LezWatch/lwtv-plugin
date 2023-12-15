@@ -23,9 +23,8 @@ class Show_Roles {
 			// List of shows
 			$all_shows_query = lwtv_plugin()->queery_post_type( 'post_type_shows' );
 
-			if ( $all_shows_query->have_posts() ) {
+			if ( is_object( $all_shows_query ) && $all_shows_query->have_posts() ) {
 				$show_array = wp_list_pluck( $all_shows_query->posts, 'ID' );
-				wp_reset_query();
 			}
 
 			$guest_alive_array     = array();
@@ -43,7 +42,7 @@ class Show_Roles {
 
 					$role_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $show_id, 'LIKE' );
 
-					if ( $role_loop->have_posts() ) {
+					if ( is_object( $role_loop ) && $role_loop->have_posts() ) {
 
 						$guest     = array(
 							'alive' => 0,

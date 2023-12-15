@@ -6,8 +6,29 @@
  * Version: 6.0
  * Author: LezWatch.TV
  * Update URI: http://lezwatchtv.com
+ * License: GPLv3
  *
  * @package LWTV
+ */
+
+/**
+ * Copyright 2014-24 LezWatch.TV (webmaster@lezwatchtv.com)
+ *
+ * This file is part of the core LWTV plugin, a plugin for WordPress.
+ *
+ * Core LezWatch.TV Plugin is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * Core LezWatch.TV Plugin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this installation as LICENSE.
+ *
+ * If not, see <https://www.gnu.org/licenses/gpl-3.0.html>.
  */
 
 use LWTV\_Helpers\Autoload;

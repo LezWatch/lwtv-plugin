@@ -32,9 +32,8 @@ class Characters {
 			// Get all the characters
 			$the_loop = lwtv_plugin()->queery_post_type( 'post_type_characters' );
 
-			if ( $the_loop && $the_loop->have_posts() ) {
+			if ( is_object( $the_loop ) && $the_loop->have_posts() ) {
 				$characters = wp_list_pluck( $the_loop->posts, 'ID' );
-				wp_reset_query();
 			}
 		}
 

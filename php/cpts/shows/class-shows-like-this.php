@@ -179,9 +179,10 @@ class Shows_Like_This {
 					}
 				}
 			}
-			wp_reset_query();
 			$reciprocity = wp_parse_id_list( $reciprocity );
 		}
+
+		wp_reset_query();
 
 		return $reciprocity;
 	}

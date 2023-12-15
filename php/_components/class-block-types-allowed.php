@@ -2,7 +2,7 @@
 /**
  * Block_Types_Allowed class.
  *
- * @package WP_Theme_Template
+ * @package LWTV
  */
 
 namespace LWTV\_Components;
