@@ -10,6 +10,8 @@ namespace LWTV\CPTs;
 use LWTV\CPTs\Characters\Calculations;
 use LWTV\CPTs\Characters\CMB2_Metaboxes;
 use LWTV\CPTs\Characters\Custom_Columns;
+use LWTV\CPTs\Shows;
+
 /**
  * class LWTV_CPT_Characters
  */
@@ -458,8 +460,7 @@ class Characters {
 	 * @param mixed $role: regular (default), recurring, guest
 	 * @return array of characters
 	 */
-	public function get_chars_for_show( $show_id, $role = 'regular' ): array {
-
+	public function get_chars_for_show( $show_id, $role = 'regular' ): mixed {
 		/**
 		 * Funny things:
 		 *   - The Sara Lance Complexity -- Because someone is on a lot of shows,
@@ -485,7 +486,7 @@ class Characters {
 		$valid_roles = array( 'regular', 'recurring', 'guest' );
 
 		// If this isn't a show page, or there are no valid roles, bail.
-		if ( ! isset( $show_id ) || self::SLUG !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
+		if ( Shows::SLUG !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
 			return array();
 		}
 
