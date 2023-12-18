@@ -41,7 +41,7 @@ class The_Output {
 			'Lists'             => array( $subject, $data, $build_array, $count ),
 			'Percentages'       => array( $subject, $data, $build_array, $count ),
 			'Piecharts'         => array( $subject, $data, $build_array ),
-			'Stacked_Barcharts' => array( $subject, $data, $build_array ),
+			'Barcharts_Stacked' => array( $subject, $data, $build_array ),
 			'Trendline'         => array( $subject, $data, $build_array ),
 		);
 

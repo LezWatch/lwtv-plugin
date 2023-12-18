@@ -125,7 +125,7 @@ class What_Happened_JSON {
 				break;
 			case 'month':
 				$death_query       = lwtv_plugin()->queery_post_meta_and_tax( 'post_type_characters', 'lezchars_death_year', $datetime->format( 'Y' ), 'lez_cliches', 'slug', 'dead', 'REGEXP' );
-				$death_list_array  = lwtv_plugin()->list_of_dead_characters( $death_query );
+				$death_list_array  = lwtv_plugin()->get_list_of_dead_characters( $death_query );
 				$death_query_count = 0;
 				foreach ( $death_list_array as $the_dead ) {
 					if ( $datetime->format( 'm' ) === gmdate( 'm', $the_dead['died'] ) ) {

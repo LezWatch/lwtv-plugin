@@ -46,14 +46,15 @@ class Rest_API implements Component, Templater {
 	 */
 	public function get_template_tags(): array {
 		return array(
-			'generate_tvshow_calendar'  => array( $this, 'generate_tvshow_calendar' ),
-			'get_whats_on_date'         => array( $this, 'get_whats_on_date' ),
-			'get_whats_on_show'         => array( $this, 'get_whats_on_show' ),
-			'get_what_happened_on_date' => array( $this, 'get_what_happened_on_date' ),
-			'get_json_statistics'       => array( $this, 'get_json_statistics' ),
-			'get_json_similar_show'     => array( $this, 'get_json_similar_show' ),
-			'get_json_export'           => array( $this, 'get_json_export' ),
-			'get_json_last_death'       => array( $this, 'get_json_last_death' ),
+			'generate_tvshow_calendar'    => array( $this, 'generate_tvshow_calendar' ),
+			'get_whats_on_date'           => array( $this, 'get_whats_on_date' ),
+			'get_whats_on_show'           => array( $this, 'get_whats_on_show' ),
+			'get_what_happened_on_date'   => array( $this, 'get_what_happened_on_date' ),
+			'get_json_statistics'         => array( $this, 'get_json_statistics' ),
+			'get_json_similar_show'       => array( $this, 'get_json_similar_show' ),
+			'get_json_export'             => array( $this, 'get_json_export' ),
+			'get_json_last_death'         => array( $this, 'get_json_last_death' ),
+			'get_list_of_dead_characters' => array( $this, 'get_json_last_death' ),
 		);
 	}
 
@@ -136,11 +137,20 @@ class Rest_API implements Component, Templater {
 	}
 
 	/**
-	 * Generate List of Dead
+	 * Get the last Death
 	 *
 	 * @return array with last dead character data
 	 */
 	public function get_json_last_death() {
 		return ( new BYQ() )->last_death();
+	}
+
+	/**
+	 * Generate List of Dead
+	 *
+	 * @return array with a list of the dead
+	 */
+	public function get_list_of_dead_characters( $dead_chars_loop ): array {
+		return ( new BYQ() )->list_of_dead_characters( $dead_chars_loop );
 	}
 }

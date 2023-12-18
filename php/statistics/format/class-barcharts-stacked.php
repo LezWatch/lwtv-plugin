@@ -18,9 +18,8 @@ class Barcharts_Stacked {
 	 */
 	public function make( $subject, $data, $data_array ) {
 
-		$count     = count( $data_array );
-		$step_size = '5';
-		$height    = max( ( $count * 20 ), 30 ) + 20;
+		$count  = count( $data_array );
+		$height = max( ( $count * 20 ), 30 ) + 20;
 
 		// [main-term-subtax]
 		// [main taxonomy]-[term of main]-[subtaxonomy to parse]
@@ -29,7 +28,6 @@ class Barcharts_Stacked {
 		//     [country-usa-all]
 		$pieces      = explode( '_', $data );
 		$data_main   = $pieces[0];
-		$data_term   = ( isset( $pieces[1] ) ) ? $pieces[1] : 'all';
 		$data_subtax = ( isset( $pieces[2] ) ) ? $pieces[2] : 'all';
 
 		// Define our settings
