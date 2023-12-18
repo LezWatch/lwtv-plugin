@@ -125,6 +125,7 @@ class Related_Posts {
 	 * @return string The related items.
 	 */
 	public function related_archive_header( $tag_id ): string {
+		$related     = '';
 		$tag         = get_tag( $tag_id );
 		$linked_post = get_term_meta( $tag->term_id, 'lez_termsmeta_linked_post', true );
 		$icons       = array(
@@ -156,9 +157,7 @@ class Related_Posts {
 			}
 		}
 
-		if ( isset( $related ) ) {
-			return $related;
-		}
+		return $related;
 	}
 
 	/**

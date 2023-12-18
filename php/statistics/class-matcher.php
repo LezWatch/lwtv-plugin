@@ -53,7 +53,7 @@ class Matcher {
 		'low'        => 'Averages',
 		'percentage' => 'Percentages',
 		'piechart'   => 'Piecharts',
-		'stackedbar' => 'Stacked_Barcharts',
+		'stackedbar' => 'Barcharts_Stacked',
 		'trendline'  => 'Trendline',
 	);
 

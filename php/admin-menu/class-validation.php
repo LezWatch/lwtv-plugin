@@ -53,10 +53,13 @@ class Validation {
 			'name' => 'Shows IMDb',
 			'desc' => 'Shows that have no IMDb value. This may actually be okay as not all webseries/international shows are listed.',
 		),
-		'show_urls'         => array(
+		// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+		/*
+			'show_urls'         => array(
 			'name' => 'Shows Watch Links',
 			'desc' => 'Shows that have invalid Ways to Watch links. Make sure they are all valid and functional.',
 		),
+		*/
 	);
 
 	/**

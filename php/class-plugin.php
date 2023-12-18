@@ -90,6 +90,7 @@ use LWTV\_Helpers\Utils;
  * @method mixed  get_json_similar_show( $show_slug )               \_Components\Rest_API
  * @method array  get_json_export( $type, $item, $tax, $term )      \_Components\Rest_API
  * @method array  get_json_last_death()                             \_Components\Rest_API
+ * @method array  get_list_of_dead_characters( $loop )              \_Components\Rest_API
  *
  * STATISTICS
  * @method mixed  generate_statistics( $subject, $data, $format, $post_id, $custom_array ) \_Components\Statistics

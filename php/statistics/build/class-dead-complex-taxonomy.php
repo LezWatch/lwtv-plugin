@@ -2,7 +2,7 @@
 
 namespace LWTV\Statistics\Build;
 
-class Dead_Complex {
+class Dead_Complex_Taxonomy {
 
 	/**
 	 * Complex death taxonomies for stations and nations.
@@ -39,7 +39,7 @@ class Dead_Complex {
 				$queery = lwtv_plugin()->queery_taxonomy( 'post_type_shows', 'lez_' . $type, 'slug', $slug );
 
 				// Process the posts.
-				if ( $queery->have_posts() ) {
+				if ( is_object( $queery ) && $queery->have_posts() ) {
 					// Defaults.
 					$shows      = 0;
 					$characters = 0;
