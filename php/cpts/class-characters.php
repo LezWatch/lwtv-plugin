@@ -581,9 +581,6 @@ class Characters {
 		// Always Sync Taxonomies
 		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_cliches', 'lez_cliches' );
 
-		// Always update Wikidata
-		lwtv_plugin()->check_actors_wikidata( $post_id );
-
 		// If we've got a list of URLs, then flush.
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
 			lwtv_plugin()->clean_cache_urls( $clear_urls );

@@ -34,6 +34,7 @@ use LWTV\_Helpers\Utils;
  * DEBUGGER
  * @method string sanitize_social( $usename, $social )     \_Components\Debugger
  * @method bool   validate_imdb( $imdb, $type )            \_Components\Debugger
+ * @method bool   validate_wikidata_id( $wiki_id )         \_Components\Debugger
  * @method string format_wikidate( $date )                 \_Components\Debugger
  * @method array  find_actors_problems( $items )           \_Components\Debugger
  * @method array  find_actors_incomplete( $items )         \_Components\Debugger

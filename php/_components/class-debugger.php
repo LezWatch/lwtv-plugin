@@ -38,6 +38,7 @@ class Debugger implements Component, Templater {
 		return array(
 			'sanitize_social'           => array( $this, 'sanitize_social' ),
 			'validate_imdb'             => array( $this, 'validate_imdb' ),
+			'validate_wikidata_id'      => array( $this, 'validate_wikidata_id' ),
 			'format_wikidate'           => array( $this, 'format_wikidate' ),
 			'find_actors_problems'      => array( $this, 'find_actors_problems' ),
 			'find_actors_incomplete'    => array( $this, 'find_actors_incomplete' ),
@@ -106,8 +107,7 @@ class Debugger implements Component, Templater {
 	public function validate_imdb( $imdb, $type = 'show' ): bool {
 
 		// Defaults
-		$result = true;
-		$type   = ( ! in_array( $type, array( 'show', 'actor' ), true ) ) ? 'show' : $type;
+		$type = ( ! in_array( $type, array( 'show', 'actor' ), true ) ) ? 'show' : $type;
 
 		switch ( $type ) {
 			case 'show':
@@ -123,10 +123,36 @@ class Debugger implements Component, Templater {
 
 		// IMDB looks like tt123456 or nm12356
 		if ( substr( $imdb, 0, 2 ) !== $substr || ! is_numeric( substr( $imdb, 2 ) ) ) {
-			$result = false;
+			return false;
 		}
 
-		return $result;
+		return true;
+	}
+
+	/**
+	 * Validate WikiData ID.
+	 *
+	 * They're always Q and a number (i.e. Q12345)
+	 *
+	 * @param  string $wiki_id
+	 * @return bool
+	 */
+	public function validate_wikidata_id( $wiki_id ) {
+		// If it doesn't start with a Q, fail.
+		if ( ! str_starts_with( $wiki_id, 'Q' ) ) {
+			return false;
+		}
+
+		// Remove the Q:
+		$no_qid = (int) ltrim( $wiki_id, 'Q' );
+
+		// If it doesn't end with a number, fail.
+		if ( 0 === $no_qid ) {
+			return false;
+		}
+
+		// Otherwise true.
+		return true;
 	}
 
 	/**

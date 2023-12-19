@@ -42,13 +42,13 @@ define( 'LWTV_PLUGIN_VERSION', '6.0' );
 // Define First Year with queers:
 define( 'LWTV_FIRST_YEAR', '1961' );
 
-// Define when the site started:
+// Define when the site started (Sept 2013):
 define( 'LWTV_CREATED_YEAR', '2013' );
 
-// Plugin Home
+// Plugin Home:
 define( 'LWTV_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
-// Timezone
+// Timezones:
 define( 'LWTV_TIMEZONE', 'America/New_York' );
 define( 'LWTV_SERVER_TIMEZONE', 'America/Los_Angeles' );
 

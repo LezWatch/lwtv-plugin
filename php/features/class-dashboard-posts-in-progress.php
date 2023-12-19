@@ -37,7 +37,6 @@ class Dashboard_Posts_In_Progress {
 			return;
 		}
 
-		add_action( 'admin_enqueue_scripts', array( &$this, 'custom_css' ) );
 		add_action( 'wp_dashboard_setup', array( &$this, 'register_widget' ) );
 		add_filter( 'wp_dashboard_widgets', array( &$this, 'add_widget' ) );
 	}
@@ -48,16 +47,6 @@ class Dashboard_Posts_In_Progress {
 	 */
 	public function register_widget() {
 		wp_add_dashboard_widget( 'dashboard_in_progress', __( 'Posts in Progress', 'lwtv-plugin' ), array( &$this, 'widget' ) );
-	}
-
-	/**
-	 * Output custom CSS
-	 */
-	public function custom_css() {
-		if ( is_user_logged_in() && is_admin() ) {
-			wp_register_style( 'dashboard_in_progress', plugins_url( 'style.css', __FILE__ ), false, LWTV_PLUGIN_VERSION );
-			wp_enqueue_style( 'dashboard_in_progress' );
-		}
 	}
 
 	/**

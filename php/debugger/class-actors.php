@@ -335,7 +335,6 @@ class Actors {
 	 * @return array    $items Result of checks.
 	 */
 	public function check_actors_wikidata( $actors = 0, $items = array() ): array {
-
 		// If actors aren't a number or 0, AND they're not an array, we check everyone...
 		if ( is_numeric( $actors ) && 0 !== $actors && ! is_array( $actors ) ) {
 			$actors = array( $actors );
@@ -433,7 +432,6 @@ class Actors {
 					return array();
 				}
 				$wiki_array = json_decode( $wiki_data['body'], true );
-
 				$wiki_actor = array_shift( $wiki_array['entities'] );
 				$wiki_link  = '';
 
@@ -485,7 +483,7 @@ class Actors {
 		if ( is_array( $items ) ) {
 			// Save it all in the DB
 			foreach ( $items as $one_item => $one_data ) {
-				if ( 'post_type_actor' === get_post_type( $one_data['id'] ) ) {
+				if ( 'post_type_actors' === get_post_type( $one_data['id'] ) ) {
 					update_post_meta( $one_data['id'], '_lezactors_wikidata', $one_data );
 				} else {
 					// Needed because of oopsie.
