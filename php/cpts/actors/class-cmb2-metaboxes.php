@@ -49,10 +49,11 @@ class CMB2_Metaboxes {
 		if ( ! isset( $post->ID ) || 'draft' === get_post_status( $post->ID ) || 'auto-draft' === get_post_status( $post->ID ) || '' === get_the_title( $post->ID ) ) {
 			$wikidata = 'auto-draft';
 		} else {
+			lwtv_plugin()->check_actors_wikidata( $post->ID );
 			$wikidata     = get_post_meta( $post->ID, 'lezactors_saved_wikidata', true );
 			$wikidata_qid = get_post_meta( $post->ID, 'lezactors_wikidata_qid', true );
 
-			if ( empty( $wikidata_qid ) ) {
+			if ( empty( $wikidata_qid ) && isset( $wikidata['wikidata'] ) ) {
 				$wikidata_qid = $wikidata['wikidata'];
 			}
 		}
@@ -106,14 +107,16 @@ class CMB2_Metaboxes {
 			echo '<p>All data for ' . esc_html( get_the_title( $post_id ) ) . ' matches <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData!</a></p>';
 		} else {
 			echo '<p>The following data does not match <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData</a>:</p>';
-			echo '<ul>';
 			foreach ( $wikidata as $datatype => $result ) {
-				echo '<li><strong>' . esc_html( ucfirst( $datatype ) ) . ':</strong><ul><li><em>Our Data:</em> ' . esc_html( $result['ours'] ) . '</li><li><em>WikiData:</em> ' . esc_html( $result['wikidata'] ) . '</li></ul></li>';
+				echo '<p><strong>' . esc_html( ucfirst( $datatype ) ) . ':</strong></p>';
+				echo '<ul>';
+				echo '<li>LezWatch: ' . esc_html( $result['ours'] ) . '</li>';
+				echo '<li>WikiData: ' . esc_html( $result['wikidata'] ) . '</li>';
+				echo '<ul>';
 			}
-			echo '<ul>';
 
+			echo '<hr>';
 			echo '<p>Please double check. WikiData is sometimes wrong about Social Media.</p>';
-
 			echo '<p>(Warning: This doesn\'t currently refresh on save.)</p>';
 		}
 	}
