@@ -150,7 +150,7 @@ class Characters {
 			'rest_base'           => 'character',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-nametag',
-			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', 'custom-fields' ),
 			'has_archive'         => 'characters',
 			'rewrite'             => array( 'slug' => 'character' ),
 			'taxonomies'          => $char_taxonomies,

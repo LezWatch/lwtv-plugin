@@ -16,46 +16,138 @@ class Post_Meta {
 	const ALL_POST_META = array(
 		// Meta Name                    => Post Type
 		// Actors
-		'lezactors_birth'               => 'post_type_actors',
-		'lezactors_death'               => 'post_type_actors',
-		'lezactors_imdb'                => 'post_type_actors',
-		'lezactors_wikipedia'           => 'post_type_actors',
-		'lezactors_homepage'            => 'post_type_actors',
-		'lezactors_twitter'             => 'post_type_actors',
-		'lezactors_tumblr'              => 'post_type_actors',
-		'lezactors_instagram'           => 'post_type_actors',
-		'lezactors_mastodon'            => 'post_type_actors',
-		'lezactors_facebook'            => 'post_type_actors',
-		'lezactors_tiktok'              => 'post_type_actors',
-		'lezactors_char_list'           => 'post_type_actors',
-		'lezactors_queer_override'      => 'post_type_actors',
-		'lezactors_wikidata'            => 'post_type_actors',
+		'lezactors_birth'               => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_death'               => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_imdb'                => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_wikipedia'           => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_homepage'            => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_twitter'             => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_tumblr'              => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_instagram'           => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_mastodon'            => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_facebook'            => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_tiktok'              => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_char_list'           => array(
+			'post_type'  => 'post_type_actors',
+			'type'       => 'array',
+			'items_type' => 'string',
+		),
+		'lezactors_char_count'          => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_dead_count'          => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_show_list'           => array(
+			'post_type'  => 'post_type_actors',
+			'type'       => 'array',
+			'items_type' => 'string',
+		),
+		'lezactors_queer_override'      => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_wikidata_qid'        => array(
+			'post_type' => 'post_type_actors',
+		),
+		'lezactors_saved_wikidata'      => array(
+			'post_type'  => 'post_type_actors',
+			'type'       => 'object',
+			'items_type' => 'string',
+		),
 		// Characters
-		'lezchars_death_year'           => 'post_type_characters',
-		'lezchars_actor'                => 'post_type_characters',
-		'lezchars_show_group'           => 'post_type_characters',
+		'lezchars_death_year'           => array(
+			'post_type' => 'post_type_characters',
+		),
+		'lezchars_actor'                => array(
+			'post_type' => 'post_type_characters',
+		),
+		'lezchars_show_group'           => array(
+			'post_type' => 'post_type_characters',
+		),
 		// Shows
-		'lezshows_airdates'             => 'post_type_shows',
-		'lezshows_seasons'              => 'post_type_shows',
-		'lezshows_tvtype'               => 'post_type_shows',
-		'lezshows_imdb'                 => 'post_type_shows',
-		'lezshows_worthit_rating'       => 'post_type_shows',
-		'lezshows_worthit_details'      => 'post_type_shows',
-		'lezshows_worthit_show_we_love' => 'post_type_shows',
-		'lezshows_3rd_scores'           => 'post_type_shows',
-		'lezshows_affiliate'            => 'post_type_shows',  // These are all the Ways to watch URLs, I know it's badly named.
-		'lezshows_similar_shows'        => 'post_type_shows',
-		'lezshows_ships'                => 'post_type_shows',
-		'lezshows_plots'                => 'post_type_shows',
-		'lezshows_episodes'             => 'post_type_shows',
-		'lezshows_realness_rating'      => 'post_type_shows',
-		'lezshows_realness_details'     => 'post_type_shows',
-		'lezshows_quality_rating'       => 'post_type_shows',
-		'lezshows_quality_details'      => 'post_type_shows',
-		'lezshows_screentime_rating'    => 'post_type_shows',
-		'lezshows_screentime_details'   => 'post_type_shows',
+		'lezshows_airdates'             => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_seasons'              => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_tvtype'               => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_imdb'                 => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_worthit_rating'       => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_worthit_details'      => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_worthit_show_we_love' => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_3rd_scores'           => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_affiliate'            => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_similar_shows'        => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_ships'                => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_plots'                => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_episodes'             => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_realness_rating'      => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_realness_details'     => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_quality_rating'       => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_quality_details'      => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_screentime_rating'    => array(
+			'post_type' => 'post_type_shows',
+		),
+		'lezshows_screentime_details'   => array(
+			'post_type' => 'post_type_shows',
+		),
 		// TV Maze
-		'leztvmaze_our_show'            => 'post_type_tvmaze',
+		'leztvmaze_our_show'            => array(
+			'post_type' => 'post_type_tvmaze',
+		),
 	);
 
 	/**
@@ -71,7 +163,7 @@ class Post_Meta {
 		add_filter( 'rest_prepare_taxonomy', function( $response, $taxonomy ) {
 
 			$all_tax_array = array();
-			foreach ( self::ALL_POST_META as $post_meta => $post_type ) {
+			foreach ( self::ALL_POST_META as $post_meta ) {
 				$all_tax_array[] = $post_meta;
 			}
 
@@ -85,15 +177,44 @@ class Post_Meta {
 
 	/*
 	 * Create and register the meta data for it's associated post type.
+	 *
+	 * Note: https://make.wordpress.org/core/2019/10/03/wp-5-3-supports-object-and-array-meta-types-in-the-rest-api/
 	 */
 	public function create_meta_data() {
-		$default_args = array(
+		$arguments = array(
 			'show_in_rest' => true,
 		);
 
 		// Register the metas automagically
-		foreach ( self::ALL_POST_META as $meta_name => $post_type ) {
-			register_meta( $post_type, $meta_name, $default_args );
+		foreach ( self::ALL_POST_META as $meta_name => $meta_data ) {
+			$post_type = $meta_data['post_type'];
+
+			// Set the type.
+			$arguments['type'] = ( isset( $meta_data['type'] ) ) ? $meta_data['type'] : 'string';
+
+			// Set Items Types:
+			if ( 'string' !== $arguments['type'] && isset( $meta_data['items_type'] ) ) {
+				$arguments['show_in_rest'] = array(
+					'schema' => array(
+						'type'                 => $meta_data['type'],
+						'items'                => array(
+							'type' => $meta_data['items_type'],
+						),
+						'additionalProperties' => array(
+							'type' => 'string',
+						),
+					),
+				);
+
+				// Set Properties.
+				if ( isset( $meta_data['properties'] ) ) {
+					$arguments['show_in_rest']['schema']['items']['properties'] = $meta_data['properties'];
+				}
+			} else {
+				$arguments['show_in_rest'] = true;
+			}
+
+			register_post_meta( $post_type, $meta_name, $arguments );
 		}
 	}
 }

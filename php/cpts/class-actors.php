@@ -156,7 +156,7 @@ class Actors {
 			'rest_base'           => 'actor',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-id',
-			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', 'custom-fields' ),
 			'has_archive'         => 'actors',
 			'rewrite'             => array( 'slug' => 'actor' ),
 			'taxonomies'          => $actor_taxonomies,

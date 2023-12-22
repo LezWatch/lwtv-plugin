@@ -399,7 +399,7 @@ class Actors {
 			$language = 'en';
 
 			// Search for the actor, using the Q-ID if it's set.
-			$wikidata_id = get_post_meta( $actor_id, 'lezactors_wikidata', true );
+			$wikidata_id = get_post_meta( $actor_id, 'lezactors_wikidata_qid', true );
 			if ( ! empty( $wikidata_id ) ) {
 				$search_name = $wikidata_id;
 			} else {
@@ -484,10 +484,10 @@ class Actors {
 			// Save it all in the DB
 			foreach ( $items as $one_item => $one_data ) {
 				if ( 'post_type_actors' === get_post_type( $one_data['id'] ) ) {
-					update_post_meta( $one_data['id'], '_lezactors_wikidata', $one_data );
+					update_post_meta( $one_data['id'], 'lezactors_saved_wikidata', $one_data );
 				} else {
 					// Needed because of oopsie.
-					delete_post_meta( $one_data['id'], '_lezactors_wikidata' );
+					delete_post_meta( $one_data['id'], 'lezactors_saved_wikidata' );
 				}
 			}
 		}

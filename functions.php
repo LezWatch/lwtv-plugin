@@ -36,7 +36,7 @@ use LWTV\Plugin;
 
 require_once __DIR__ . '/php/_helpers/class-autoload.php';
 
-// Plugin Version
+// Plugin Version.
 define( 'LWTV_PLUGIN_VERSION', '6.0' );
 
 // Define First Year with queers:

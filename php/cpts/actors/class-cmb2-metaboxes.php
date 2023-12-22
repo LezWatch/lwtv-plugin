@@ -24,7 +24,7 @@ class CMB2_Metaboxes {
 	 */
 	public function add_wikidata_metabox() {
 		add_meta_box(
-			'metabox_lezactors_wikidata',
+			'metaboxlezactors_saved_wikidata',
 			'WikiData',
 			array( $this, 'wikidata_metabox_callback' ),
 			'post_type_actors',
@@ -49,8 +49,8 @@ class CMB2_Metaboxes {
 		if ( ! isset( $post->ID ) || 'draft' === get_post_status( $post->ID ) || 'auto-draft' === get_post_status( $post->ID ) || '' === get_the_title( $post->ID ) ) {
 			$wikidata = 'auto-draft';
 		} else {
-			$wikidata     = get_post_meta( $post->ID, '_lezactors_wikidata', true );
-			$wikidata_qid = get_post_meta( $post->ID, 'lezactors_wikidata', true );
+			$wikidata     = get_post_meta( $post->ID, 'lezactors_saved_wikidata', true );
+			$wikidata_qid = get_post_meta( $post->ID, 'lezactors_wikidata_qid', true );
 
 			if ( empty( $wikidata_qid ) ) {
 				$wikidata_qid = $wikidata['wikidata'];
@@ -372,7 +372,7 @@ class CMB2_Metaboxes {
 		$field_wikidata = $cmb_actorside->add_field(
 			array(
 				'name'       => 'WikiData ID',
-				'id'         => self::PREFIX . 'wikidata',
+				'id'         => self::PREFIX . 'wikidata_qid',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: Q2933359 - use to override the search',

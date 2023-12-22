@@ -208,7 +208,7 @@ class Shows {
 			'rest_base'           => 'show',
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-video-alt',
-			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'publicize' ),
+			'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'publicize', 'custom-fields' ),
 			'has_archive'         => 'shows',
 			'rewrite'             => array( 'slug' => 'show' ),
 			'delete_with_user'    => false,
