@@ -7,8 +7,6 @@
 
 namespace LWTV\CPTs;
 
-use LWTV\CPTs\Shows\CMB2_Metaboxes;
-
 class TVMaze {
 
 	/**
@@ -27,7 +25,6 @@ class TVMaze {
 	 * Constructor
 	 */
 	public function __construct() {
-		new CMB2_Metaboxes();
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
