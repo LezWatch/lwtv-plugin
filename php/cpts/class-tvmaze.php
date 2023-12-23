@@ -7,8 +7,6 @@
 
 namespace LWTV\CPTs;
 
-use LWTV\CPTs\Shows\CMB2_Metaboxes;
-
 class TVMaze {
 
 	/**
@@ -27,7 +25,6 @@ class TVMaze {
 	 * Constructor
 	 */
 	public function __construct() {
-		new CMB2_Metaboxes();
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
@@ -58,7 +55,7 @@ class TVMaze {
 			'not_found_in_trash'       => 'No TVMaze Names found in Trash',
 			'update_item'              => 'Update TVMaze Name',
 			'featured_image'           => 'TVMaze Name Image',
-			'set_featured_image'       => 'Set TVMaze Name Image (recommended 1200 x 675)',
+			'set_featured_image'       => 'Set TVMaze Name Image',
 			'remove_featured_image'    => 'Remove TVMaze Name Image',
 			'use_featured_image'       => 'Use as TVMaze Name Image',
 			'archives'                 => 'TVMaze Name Archives',
@@ -82,7 +79,7 @@ class TVMaze {
 			'show_in_nav_menus' => true,
 			'menu_position'     => 75,
 			'menu_icon'         => 'dashicons-share-alt2',
-			'supports'          => array( 'title' ),
+			'supports'          => array( 'title', 'custom-fields' ),
 			'has_archive'       => false,
 			'delete_with_user'  => false,
 			'capability_type'   => array( 'tvmaze_name', 'tvmaze_names' ),

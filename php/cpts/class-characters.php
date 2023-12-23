@@ -150,7 +150,7 @@ class Characters {
 			'rest_base'           => 'character',
 			'menu_position'       => 7,
 			'menu_icon'           => 'dashicons-nametag',
-			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions' ),
+			'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', 'custom-fields' ),
 			'has_archive'         => 'characters',
 			'rewrite'             => array( 'slug' => 'character' ),
 			'taxonomies'          => $char_taxonomies,
@@ -580,9 +580,6 @@ class Characters {
 
 		// Always Sync Taxonomies
 		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_cliches', 'lez_cliches' );
-
-		// Always update Wikidata
-		lwtv_plugin()->check_actors_wikidata( $post_id );
 
 		// If we've got a list of URLs, then flush.
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {

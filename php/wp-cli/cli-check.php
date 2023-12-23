@@ -136,7 +136,7 @@ class WP_CLI_LWTV_Check {
 		if ( 'post_type_actors' === $post_type ) {
 			// Do the thing!
 			$items        = lwtv_plugin()->check_actors_wikidata( $actor_id );
-			$return_array = array( 'id', 'name', 'wikidata', 'birth', 'death', 'imdb', 'wikipedia', 'instagram', 'twitter', 'website' );
+			$return_array = array( 'id', 'name', 'wikidata', 'birth', 'death', 'imdb', 'wikipedia', 'website', 'instagram', 'twitter', 'facebook' );
 
 			if ( empty( $items ) ) {
 				\WP_CLI::error( 'Something has gone horribly wrong. Go get Mika.' );
@@ -146,7 +146,7 @@ class WP_CLI_LWTV_Check {
 		}
 
 		\WP_CLI::success( 'WikiData comparison for ' . get_the_title( $actor_id ) . ' complete!' );
-		\WP_CLI\Utils\format_items( $format, $items, $return_array );
+		\WP_CLI\Utils\format_items( $this->format, $items, $return_array );
 	}
 
 	/**

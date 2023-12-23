@@ -7,23 +7,26 @@ namespace LWTV\CPTs\Actors;
 
 class CMB2_Metaboxes {
 
+	// prefix for all custom fields
+	const PREFIX = 'lezactors_';
+
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
-		add_action( 'add_meta_boxes', array( $this, 'add_wikidata_meta_box' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_wikidata_metabox' ) );
 	}
 
 	/*
 	 * Non CMB2 Metaboxes
 	 */
-	public function add_wikidata_meta_box() {
+	public function add_wikidata_metabox() {
 		add_meta_box(
-			'metabox_lezactors_wikidata',
+			'metaboxlezactors_saved_wikidata',
 			'WikiData',
-			array( $this, 'wikidata_meta_box_callback' ),
+			array( $this, 'wikidata_metabox_callback' ),
 			'post_type_actors',
 			'side',
 			'high'
@@ -35,67 +38,120 @@ class CMB2_Metaboxes {
 	 * @param  object $post Post Object
 	 * @return echo         The MetaBox content.
 	 */
-	public function wikidata_meta_box_callback( $post ) {
+	public function wikidata_metabox_callback( $post ) {
+
+		wp_nonce_field( 'wikidata-metabox-save', 'wikidata_metabox_nonce' );
+
+		$wikidata     = false;
+		$wikidata_url = '';
 
 		// If it's an auto draft, we do nothing. Else, we roll.
 		if ( ! isset( $post->ID ) || 'draft' === get_post_status( $post->ID ) || 'auto-draft' === get_post_status( $post->ID ) || '' === get_the_title( $post->ID ) ) {
 			$wikidata = 'auto-draft';
 		} else {
 			lwtv_plugin()->check_actors_wikidata( $post->ID );
-			$wikidata = get_post_meta( $post->ID, '_lezactors_wikidata' );
+			$wikidata     = get_post_meta( $post->ID, 'lezactors_saved_wikidata', true );
+			$wikidata_qid = get_post_meta( $post->ID, 'lezactors_wikidata_qid', true );
+
+			if ( empty( $wikidata_qid ) && isset( $wikidata['wikidata'] ) ) {
+				$wikidata_qid = $wikidata['wikidata'];
+			}
 		}
 
 		// If Wikidata isn't empty AND there's a valid Q code, we go
-		if ( ! empty( $wikidata ) && ! empty( $wikidata['0']['wikidata'] ) ) {
+		if ( ! empty( $wikidata ) && ! empty( $wikidata_qid ) && lwtv_plugin()->validate_wikidata_id( $wikidata_qid ) ) {
 
 			// Build URL
-			$wikidata_url = 'https://www.wikidata.org/wiki/' . $wikidata['0']['wikidata'];
+			$wikidata_url = 'https://www.wikidata.org/wiki/' . $wikidata_qid;
 
 			// Clean array
-			unset( $wikidata['0']['id'] );
-			unset( $wikidata['0']['name'] );
-			unset( $wikidata['0']['wikidata'] );
+			unset( $wikidata['id'] );
+			unset( $wikidata['name'] );
+			unset( $wikidata['wikidata'] );
 
-			foreach ( $wikidata['0'] as $datatype => $result ) {
+			foreach ( $wikidata as $datatype => $result ) {
 				if ( 'match' === $result || 'n/a' === $result ) {
-					unset( $wikidata['0'][ $datatype ] );
+					unset( $wikidata[ $datatype ] );
 				}
 			}
+
+			$wikidata = ( empty( $wikidata ) ) ? true : $wikidata;
+
 		} elseif ( empty( $wikidata ) ) {
 			$wikidata = false;
 		}
 
+		// Output Wikidata info.
+		$this->output_wikidata( $post->ID, $wikidata, $wikidata_url );
+
+		// To Do: A button here to rerun the check.
+	}
+
+	/**
+	 * Outputs the Wikidata.
+	 *
+	 * @param  [type] $wikidata
+	 * @param  [type] $wikidata_url
+	 * @return void
+	 */
+	public function output_wikidata( $post_id, $wikidata, $wikidata_url ) {
+
 		if ( ! $wikidata ) {
-			echo '<p>No information for ' . esc_html( get_the_title( $post->ID ) ) . ' found in WikiData.</p>';
+			echo '<p>No information for ' . esc_html( get_the_title( $post_id ) ) . ' found in WikiData.</p>';
 		} elseif ( 'auto-draft' === $wikidata ) {
 			echo '<p>WikiData checks pending. Once we fill in some information, it will be able to check.</p>';
 			// To Do: A button here to trigger the check
-		} elseif ( ! isset( $wikidata_url ) ) {
+		} elseif ( empty( $wikidata_url ) ) {
 			echo '<p>There is no WikiData available on this actor.</p>';
-		} elseif ( empty( $wikidata['0'] ) ) {
-			echo '<p>All data for ' . esc_html( get_the_title( $post->ID ) ) . ' matches <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData!</a></p>';
+		} elseif ( true === $wikidata ) {
+			echo '<p>All data for ' . esc_html( get_the_title( $post_id ) ) . ' matches <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData!</a></p>';
 		} else {
-			echo '<p>The following data does not match <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData!</a>:</p>';
-			echo '<ul>';
-			foreach ( $wikidata['0'] as $datatype => $result ) {
-				echo '<li><strong>' . esc_html( ucfirst( $datatype ) ) . ':</strong><ul><li><em>Our Data:</em> ' . esc_html( $result['ours'] ) . '</li><li><em>WikiData:</em> ' . esc_html( $result['wikidata'] ) . '</li></ul></li>';
+			echo '<p>The following data does not match <a href="' . esc_url( $wikidata_url ) . '" target="_blank">WikiData</a>:</p>';
+			foreach ( $wikidata as $datatype => $result ) {
+				echo '<p><strong>' . esc_html( ucfirst( $datatype ) ) . ':</strong></p>';
+				echo '<ul>';
+				echo '<li>LezWatch: ' . esc_html( $result['ours'] ) . '</li>';
+				echo '<li>WikiData: ' . esc_html( $result['wikidata'] ) . '</li>';
+				echo '<ul>';
 			}
-			echo '<ul>';
 
+			echo '<hr>';
 			echo '<p>Please double check. WikiData is sometimes wrong about Social Media.</p>';
-
 			echo '<p>(Warning: This doesn\'t currently refresh on save.)</p>';
-			// To Do: A button here to rerun the check.
 		}
+	}
+
+	/**
+	 * Rerun the wikidata checker on save.
+	 *
+	 * Not being used yet, since the stupid thing won't re-run until a reload because
+	 * Gutenberg STILL lacks that ability.
+	 */
+	public function save_wikidata_metabox( $post_id ) {
+		//
+		// Check if our nonce is set.
+		if ( ! isset( $_POST['wikidata_metabox_nonce'] ) || ! wp_verify_nonce( $_POST['wikidata_metabox_nonce'], 'wikidata-metabox-save' ) ) {
+			return;
+		}
+
+		// If this is an autosave, our form has not been submitted, so we don't want to do anything.
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		// Check the user's permissions.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		// Rerun the wiki:
+		lwtv_plugin()->check_actors_wikidata( $post_id );
 	}
 
 	/*
 	 * CMB2 Metaboxes
 	 */
 	public function cmb2_metaboxes() {
-		// prefix for all custom fields
-		$prefix = 'lezactors_';
-
 		// Metabox Group: Quick Dropdowns
 		$cmb_actorside = \new_cmb2_box(
 			array(
@@ -113,7 +169,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'             => 'Gender',
 				'desc'             => 'Gender Identity',
-				'id'               => $prefix . 'gender',
+				'id'               => self::PREFIX . 'gender',
 				'taxonomy'         => 'lez_actor_gender',
 				'type'             => 'taxonomy_select',
 				'default'          => 'cis-woman',
@@ -126,7 +182,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'             => 'Sexuality',
 				'desc'             => 'Sexual Orientation',
-				'id'               => $prefix . 'sexuality',
+				'id'               => self::PREFIX . 'sexuality',
 				'taxonomy'         => 'lez_actor_sexuality',
 				'type'             => 'taxonomy_select',
 				'default'          => 'unknown',
@@ -139,7 +195,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'             => 'Romantic Nature',
 				'desc'             => 'AKA affectional orientation',
-				'id'               => $prefix . 'romantic',
+				'id'               => self::PREFIX . 'romantic',
 				'taxonomy'         => 'lez_actor_romantic',
 				'type'             => 'taxonomy_select',
 				'show_option_none' => 'No Selection (default)',
@@ -150,7 +206,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'    => 'Queer Override',
 				'desc'    => 'Allow manual intervention to force someone to be marked as queer or not.',
-				'id'      => $prefix . 'queer_override',
+				'id'      => self::PREFIX . 'queer_override',
 				'type'    => 'select',
 				'default' => 'undefined',
 				'options' => array(
@@ -165,7 +221,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'              => 'Pronouns',
 				'desc'              => 'Pronouns (Optional)',
-				'id'                => $prefix . 'pronouns',
+				'id'                => self::PREFIX . 'pronouns',
 				'taxonomy'          => 'lez_actor_pronouns',
 				'type'              => 'taxonomy_multicheck_inline',
 				'default'           => '',
@@ -179,7 +235,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'        => 'Date of Birth',
 				'desc'        => 'If known',
-				'id'          => $prefix . 'birth',
+				'id'          => self::PREFIX . 'birth',
 				'type'        => 'text_date',
 				'date_format' => 'Y-m-d',
 			)
@@ -189,7 +245,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'        => 'Date of Death',
 				'desc'        => 'If applicable',
-				'id'          => $prefix . 'death',
+				'id'          => self::PREFIX . 'death',
 				'type'        => 'text_date',
 				'date_format' => 'Y-m-d',
 			)
@@ -198,7 +254,7 @@ class CMB2_Metaboxes {
 		$field_imdb = $cmb_actorside->add_field(
 			array(
 				'name'       => 'IMDb',
-				'id'         => $prefix . 'imdb',
+				'id'         => self::PREFIX . 'imdb',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: nm6087250',
@@ -209,7 +265,7 @@ class CMB2_Metaboxes {
 		$field_wiki = $cmb_actorside->add_field(
 			array(
 				'name'       => 'WikiPedia URL',
-				'id'         => $prefix . 'wikipedia',
+				'id'         => self::PREFIX . 'wikipedia',
 				'type'       => 'text_url',
 				'attributes' => array(
 					'placeholder' => 'https://en.wikipedia.org/wiki/Caity_Lotz',
@@ -220,7 +276,7 @@ class CMB2_Metaboxes {
 		$field_home = $cmb_actorside->add_field(
 			array(
 				'name'       => 'Homepage URL',
-				'id'         => $prefix . 'homepage',
+				'id'         => self::PREFIX . 'homepage',
 				'type'       => 'text_url',
 				'attributes' => array(
 					'placeholder' => 'https://actorname.com',
@@ -231,7 +287,7 @@ class CMB2_Metaboxes {
 		$field_twitter = $cmb_actorside->add_field(
 			array(
 				'name'       => 'X (Twitter)',
-				'id'         => $prefix . 'twitter',
+				'id'         => self::PREFIX . 'twitter',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: aliliebert - without the @',
@@ -242,7 +298,7 @@ class CMB2_Metaboxes {
 		$field_instagram = $cmb_actorside->add_field(
 			array(
 				'name'       => 'Instagram',
-				'id'         => $prefix . 'instagram',
+				'id'         => self::PREFIX . 'instagram',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: whododatlikedat',
@@ -253,7 +309,7 @@ class CMB2_Metaboxes {
 		$field_tumblr = $cmb_actorside->add_field(
 			array(
 				'name'       => 'Tumblr',
-				'id'         => $prefix . 'tumblr',
+				'id'         => self::PREFIX . 'tumblr',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: tiredandlonelymuse (remove .tumblr.com)',
@@ -264,7 +320,7 @@ class CMB2_Metaboxes {
 		$field_mastodon = $cmb_actorside->add_field(
 			array(
 				'name'       => 'Mastodon',
-				'id'         => $prefix . 'mastodon',
+				'id'         => self::PREFIX . 'mastodon',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: https://mastodon.instance/@username',
@@ -275,7 +331,7 @@ class CMB2_Metaboxes {
 		$field_facebook = $cmb_actorside->add_field(
 			array(
 				'name'       => 'Facebook',
-				'id'         => $prefix . 'facebook',
+				'id'         => self::PREFIX . 'facebook',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: https://facebook.com/username',
@@ -286,7 +342,7 @@ class CMB2_Metaboxes {
 		$field_tiktok = $cmb_actorside->add_field(
 			array(
 				'name'       => 'TikTok',
-				'id'         => $prefix . 'tiktok',
+				'id'         => self::PREFIX . 'tiktok',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: @reesewitherspoon - WITH the @',
@@ -297,7 +353,7 @@ class CMB2_Metaboxes {
 		$field_bluesky = $cmb_actorside->add_field(
 			array(
 				'name'       => 'BlueSky',
-				'id'         => $prefix . 'bluesky',
+				'id'         => self::PREFIX . 'bluesky',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: https://bsky.app/profile/jerilryan.bsky.social',
@@ -308,7 +364,7 @@ class CMB2_Metaboxes {
 		$field_twitch = $cmb_actorside->add_field(
 			array(
 				'name'       => 'Twitch',
-				'id'         => $prefix . 'twitch',
+				'id'         => self::PREFIX . 'twitch',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: https://www.twitch.tv/criticalrole',
@@ -319,7 +375,7 @@ class CMB2_Metaboxes {
 		$field_wikidata = $cmb_actorside->add_field(
 			array(
 				'name'       => 'WikiData ID',
-				'id'         => $prefix . 'wikidata',
+				'id'         => self::PREFIX . 'wikidata_qid',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: Q2933359 - use to override the search',
@@ -342,7 +398,7 @@ class CMB2_Metaboxes {
 			array(
 				'name' => 'Duplicate Name',
 				'desc' => 'If this actor has the same name as another actor, check this box to confirm.',
-				'id'   => $prefix . 'dupe_override',
+				'id'   => self::PREFIX . 'dupe_override',
 				'type' => 'checkbox',
 			)
 		);

@@ -5,37 +5,35 @@
 
 namespace LWTV\CPTs\Shows;
 
-use LWTV\Plugins\CMB2;
-
 class CMB2_Metaboxes {
 
-	public $ratings_array;
-	public $thumbs_array;
-	public $affiliates_array;
+	// prefix for all custom fields
+	const PREFIX = 'lezshows_';
+
+	const RATINGS = array(
+		'0' => '0',
+		'1' => '1',
+		'2' => '2',
+		'3' => '3',
+		'4' => '4',
+		'5' => '5',
+	);
+
+	// Array of thumbscores.
+	const THUMBS = array(
+		'Yes' => 'Yes',
+		'Meh' => 'Meh',
+		'No'  => 'No',
+		'TBD' => 'TBD',
+	);
+
+	// Languages.
 	public $language_array;
 
 	public function __construct() {
 		add_action( 'cmb2_init', array( $this, 'cmb2_metaboxes' ) );
 		add_filter( 'cmb2_enqueue_js', array( $this, 'cmb2_scripts' ) );
 		add_action( 'wp_ajax_get_genres', array( $this, 'return_genres_options' ) );
-
-		// Array of Valid Ratings.
-		$this->ratings_array = array(
-			'0' => '0',
-			'1' => '1',
-			'2' => '2',
-			'3' => '3',
-			'4' => '4',
-			'5' => '5',
-		);
-
-		// Array of thumbscores.
-		$this->thumbs_array = array(
-			'Yes' => 'Yes',
-			'Meh' => 'Meh',
-			'No'  => 'No',
-			'TBD' => 'TBD',
-		);
 
 		// Allow for multiple language names to be saved.
 		$this->language_array = lwtv_plugin()->get_all_languages();
@@ -50,7 +48,7 @@ class CMB2_Metaboxes {
 	 * @return mixed
 	 */
 	public function cmb2_scripts( $scripts ) {
-		wp_enqueue_script( 'ajaxified_dropdown', plugin_dir_url( dirname( __DIR__ ) ) . 'assets/js/cmb2_ajax.js', array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'ajaxified_dropdown', plugin_dir_url( dirname( __DIR__, 2 ) ) . 'assets/js/cmb2_ajax.js', array( 'jquery' ), '1.0.0', true );
 		$return = $scripts;
 
 		return $return;
@@ -120,9 +118,6 @@ class CMB2_Metaboxes {
 	 * CMB2 Metaboxes
 	 */
 	public function cmb2_metaboxes() {
-		// prefix for all custom fields.
-		$prefix = 'lezshows_';
-
 		// @codingStandardsIgnoreStart.
 		// Get the post ID.
 		$post_id = null;
@@ -147,7 +142,7 @@ class CMB2_Metaboxes {
 			)
 		);
 		// Field: Excerpt.
-		$field_excerpt = $cmb_a_excerpt->add_field(
+		$cmb_a_excerpt->add_field(
 			array(
 				'name'      => 'Excerpt',
 				'id'        => 'excerpt',
@@ -175,7 +170,7 @@ class CMB2_Metaboxes {
 		$field_airdates = $cmb_b_details->add_field(
 			array(
 				'name'    => 'Air Dates',
-				'id'      => $prefix . 'airdates',
+				'id'      => self::PREFIX . 'airdates',
 				'type'    => 'date_year_range',
 				'text'    => array(
 					'start_label'  => '',
@@ -198,7 +193,7 @@ class CMB2_Metaboxes {
 		$field_seasons = $cmb_b_details->add_field(
 			array(
 				'name'            => 'Seasons Aired',
-				'id'              => $prefix . 'seasons',
+				'id'              => self::PREFIX . 'seasons',
 				'type'            => 'text',
 				'attributes'      => array(
 					'type'    => 'number',
@@ -212,7 +207,7 @@ class CMB2_Metaboxes {
 		$field_stations = $cmb_b_details->add_field(
 			array(
 				'name'              => 'TV Station(s)',
-				'id'                => $prefix . 'tvstations',
+				'id'                => self::PREFIX . 'tvstations',
 				'taxonomy'          => 'lez_stations',
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
@@ -229,7 +224,7 @@ class CMB2_Metaboxes {
 		$field_nations = $cmb_b_details->add_field(
 			array(
 				'name'              => 'Country of Origin',
-				'id'                => $prefix . 'tvnations',
+				'id'                => self::PREFIX . 'tvnations',
 				'taxonomy'          => 'lez_country',
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
@@ -245,7 +240,7 @@ class CMB2_Metaboxes {
 		$field_format = $cmb_b_details->add_field(
 			array(
 				'name'             => 'Media Format',
-				'id'               => $prefix . 'tvtype',
+				'id'               => self::PREFIX . 'tvtype',
 				'taxonomy'         => 'lez_formats',
 				'type'             => 'taxonomy_select',
 				'remove_default'   => 'true',
@@ -257,7 +252,7 @@ class CMB2_Metaboxes {
 		$field_imdb = $cmb_b_details->add_field(
 			array(
 				'name'       => 'IMDb ID',
-				'id'         => $prefix . 'imdb',
+				'id'         => self::PREFIX . 'imdb',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Ex: tt6087250',
@@ -268,7 +263,7 @@ class CMB2_Metaboxes {
 		$field_genre = $cmb_b_details->add_field(
 			array(
 				'name'              => 'Genre',
-				'id'                => $prefix . 'tvgenre',
+				'id'                => self::PREFIX . 'tvgenre',
 				'taxonomy'          => 'lez_genres',
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
@@ -284,7 +279,7 @@ class CMB2_Metaboxes {
 		$field_genre_primary = $cmb_b_details->add_field(
 			array(
 				'name'             => 'Primary Genre',
-				'id'               => $prefix . 'tvgenre_primary',
+				'id'               => self::PREFIX . 'tvgenre_primary',
 				'type'             => 'select',
 				'default'          => 'custom',
 				'options_cb'       => array( $this, 'cmb2_get_genres_options' ),
@@ -297,7 +292,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'             => 'Show Stars',
 				'desc'             => 'Gold is by/for queers, No Stars is normal TV',
-				'id'               => $prefix . 'stars',
+				'id'               => self::PREFIX . 'stars',
 				'taxonomy'         => 'lez_stars',
 				'type'             => 'taxonomy_select',
 				'remove_default'   => 'true',
@@ -309,7 +304,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'             => 'Warning?',
 				'desc'             => 'Trigger Warnings',
-				'id'               => $prefix . 'triggerwarning',
+				'id'               => self::PREFIX . 'triggerwarning',
 				'taxonomy'         => 'lez_triggers',
 				'type'             => 'taxonomy_select',
 				'remove_default'   => 'true',
@@ -320,7 +315,7 @@ class CMB2_Metaboxes {
 		$cmb_b_details->add_field(
 			array(
 				'name'              => 'Intersectionality',
-				'id'                => $prefix . 'intersectional',
+				'id'                => self::PREFIX . 'intersectional',
 				'taxonomy'          => 'lez_intersections',
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
@@ -336,7 +331,7 @@ class CMB2_Metaboxes {
 		$cmb_b_details->add_field(
 			array(
 				'name'              => 'Trope Plots',
-				'id'                => $prefix . 'tropes',
+				'id'                => self::PREFIX . 'tropes',
 				'taxonomy'          => 'lez_tropes',
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
@@ -383,18 +378,18 @@ class CMB2_Metaboxes {
 		$field_worththumb = $cmb_c_worth->add_field(
 			array(
 				'name'    => 'Worth Watching?',
-				'id'      => $prefix . 'worthit_rating',
+				'id'      => self::PREFIX . 'worthit_rating',
 				'desc'    => 'Is this show worth watching?',
 				'type'    => 'select',
 				'default' => 'TBD',
-				'options' => $this->thumbs_array,
+				'options' => self::THUMBS,
 			)
 		);
 		// Field: Worth Wit Details.
 		$field_worthdetails = $cmb_c_worth->add_field(
 			array(
 				'name'       => 'Details on Why',
-				'id'         => $prefix . 'worthit_details',
+				'id'         => self::PREFIX . 'worthit_details',
 				'type'       => 'textarea_small',
 				'attributes' => array(
 					'placeholder' => 'Why is this show worth (or not) watching?',
@@ -414,7 +409,7 @@ class CMB2_Metaboxes {
 		// METABOX GROUP: Editorial Section
 		$cmb_d_editorial = \new_cmb2_box(
 			array(
-				'id'           => $prefix . 'editorial',
+				'id'           => self::PREFIX . 'editorial',
 				'title'        => 'Editorial Section - STAFF ONLY (non admins can\'t see this)',
 				'object_types' => array( 'post_type_shows' ),
 				'context'      => 'normal',
@@ -433,7 +428,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'    => 'Show We Love',
 				'desc'    => 'This is a show we officially love.',
-				'id'      => $prefix . 'worthit_show_we_love',
+				'id'      => self::PREFIX . 'worthit_show_we_love',
 				'type'    => 'checkbox',
 				'default' => false,
 			)
@@ -443,7 +438,7 @@ class CMB2_Metaboxes {
 			array(
 				'name' => 'BYQ Override',
 				'desc' => 'Do NOT treat BYQ as a negative.',
-				'id'   => $prefix . 'byq_override',
+				'id'   => self::PREFIX . 'byq_override',
 				'type' => 'checkbox',
 			)
 		);
@@ -459,7 +454,7 @@ class CMB2_Metaboxes {
 		// METABOX GROUP: Watch
 		$cmb_e_watch = \new_cmb2_box(
 			array(
-				'id'           => $prefix . 'watchdeets',
+				'id'           => self::PREFIX . 'watchdeets',
 				'title'        => 'Watching Details',
 				'object_types' => array( 'post_type_shows' ),
 				'context'      => 'normal',
@@ -474,7 +469,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'       => 'Watch Online Link(s)',
 				'desc'       => 'Paste in a direct link. Links are auto-converted to affiliate links.',
-				'id'         => $prefix . 'affiliate',
+				'id'         => self::PREFIX . 'affiliate',
 				'type'       => 'text_url',
 				'repeatable' => true,
 			)
@@ -484,7 +479,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'       => 'Similar Shows',
 				'desc'       => 'Drag shows from the left column to the right column to add them.<br />Use search to find the shows.',
-				'id'         => $prefix . 'similar_shows',
+				'id'         => self::PREFIX . 'similar_shows',
 				'type'       => 'custom_attached_posts',
 				'options'    => array(
 					'query_args' => array(
@@ -501,7 +496,7 @@ class CMB2_Metaboxes {
 		// Field Group: Show Name Information
 		$group_names = $cmb_e_watch->add_field(
 			array(
-				'id'         => $prefix . 'show_names',
+				'id'         => self::PREFIX . 'show_names',
 				'type'       => 'group',
 				'repeatable' => true,
 				'options'    => array(
@@ -518,7 +513,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'             => 'Name',
 				'desc'             => 'Use if the show has different names per language',
-				'id'               => $prefix . 'alt_show_name',
+				'id'               => self::PREFIX . 'alt_show_name',
 				'type'             => 'text',
 				'show_option_none' => true,
 			)
@@ -553,7 +548,7 @@ class CMB2_Metaboxes {
 		$cmb_f_shiplots->add_field(
 			array(
 				'name'       => '#Ships',
-				'id'         => $prefix . 'ships',
+				'id'         => self::PREFIX . 'ships',
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => 'Separate multiple ship names with commas',
@@ -564,7 +559,7 @@ class CMB2_Metaboxes {
 		$field_timeline = $cmb_f_shiplots->add_field(
 			array(
 				'name'       => 'Queer Timeline',
-				'id'         => $prefix . 'plots',
+				'id'         => self::PREFIX . 'plots',
 				'type'       => 'wysiwyg',
 				'options'    => array(
 					'textarea_rows' => 10,
@@ -580,7 +575,7 @@ class CMB2_Metaboxes {
 		$field_episodes = $cmb_f_shiplots->add_field(
 			array(
 				'name'       => 'Notable Episodes',
-				'id'         => $prefix . 'episodes',
+				'id'         => self::PREFIX . 'episodes',
 				'type'       => 'wysiwyg',
 				'options'    => array(
 					'textarea_rows' => 10,
@@ -618,17 +613,17 @@ class CMB2_Metaboxes {
 		$field_rating_real = $cmb_g_ratings->add_field(
 			array(
 				'name'    => 'Realness Rating',
-				'id'      => $prefix . 'realness_rating',
+				'id'      => self::PREFIX . 'realness_rating',
 				'desc'    => 'How realistic are the queers?',
 				'type'    => 'radio_inline',
-				'options' => $this->ratings_array,
+				'options' => self::RATINGS,
 			)
 		);
 		// Field: Realness Details.
 		$field_detail_real = $cmb_g_ratings->add_field(
 			array(
 				'name'       => 'Realness Details',
-				'id'         => $prefix . 'realness_details',
+				'id'         => self::PREFIX . 'realness_details',
 				'type'       => 'wysiwyg',
 				'options'    => array(
 					'textarea_rows' => 5,
@@ -644,17 +639,17 @@ class CMB2_Metaboxes {
 		$field_rating_quality = $cmb_g_ratings->add_field(
 			array(
 				'name'    => 'Quality Rating',
-				'id'      => $prefix . 'quality_rating',
+				'id'      => self::PREFIX . 'quality_rating',
 				'desc'    => 'How good is the show for queers?',
 				'type'    => 'radio_inline',
-				'options' => $this->ratings_array,
+				'options' => self::RATINGS,
 			)
 		);
 		// Field: Show Quality Details.
 		$field_detail_quality = $cmb_g_ratings->add_field(
 			array(
 				'name'       => 'Quality Details',
-				'id'         => $prefix . 'quality_details',
+				'id'         => self::PREFIX . 'quality_details',
 				'type'       => 'wysiwyg',
 				'options'    => array(
 					'textarea_rows' => 5,
@@ -670,17 +665,17 @@ class CMB2_Metaboxes {
 		$field_rating_screen = $cmb_g_ratings->add_field(
 			array(
 				'name'    => 'Screentime Rating',
-				'id'      => $prefix . 'screentime_rating',
+				'id'      => self::PREFIX . 'screentime_rating',
 				'desc'    => 'How much air-time do they get?',
 				'type'    => 'radio_inline',
-				'options' => $this->ratings_array,
+				'options' => self::RATINGS,
 			)
 		);
 		// Field: Screentime Details.
 		$field_detail_screen = $cmb_g_ratings->add_field(
 			array(
 				'name'       => 'Screentime Details',
-				'id'         => $prefix . 'screentime_details',
+				'id'         => self::PREFIX . 'screentime_details',
 				'type'       => 'wysiwyg',
 				'options'    => array(
 					'textarea_rows' => 5,
