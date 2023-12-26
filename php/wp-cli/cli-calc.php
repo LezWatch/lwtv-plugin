@@ -113,4 +113,4 @@ class WP_CLI_LWTV_Calculate {
 	}
 }
 
-\WP_CLI::add_command( 'lwtv calc', 'WP_CLI_LWTV_Calculate' );
+\WP_CLI::add_command( 'lwtv calc', 'WP_CLI_LWTV_Calculate', $args );
