@@ -73,7 +73,8 @@ class Cache {
 		foreach ( $clear_urls as $url ) {
 			// Change domain.com/path/to/url to domain.com/PURGE/path/to/url
 			$url_parse    = wp_parse_url( $url );
-			$url_to_purge = $url_parse['scheme'] . '//' . $url_parse['host'] . '/purge';
+			$domain       = isset( $url_parse['host'] ) ? 'https://' . $url_parse['host'] : get_site_url();
+			$url_to_purge = $domain . '/purge';
 			if ( isset( $url_parse['path'] ) ) {
 				$url_to_purge .= $url_parse['path'];
 			}
