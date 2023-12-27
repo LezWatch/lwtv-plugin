@@ -55,7 +55,10 @@ class CMB2_Metaboxes {
 	}
 
 	/**
-	 * Create a list of all genres that the show has
+	 * Create a list of all genres that the show has.
+	 *
+	 * Note: This CANNOT use lwtv_plugin()->get_cmb2_terms_list() as it
+	 * lists ALL of the term, and not just the ones they have.
 	 */
 	public function cmb2_get_genres_options() {
 		$the_id = ( false !== get_the_ID() ) ? get_the_ID() : 0;
