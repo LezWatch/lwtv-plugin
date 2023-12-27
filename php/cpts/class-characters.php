@@ -563,14 +563,17 @@ class Characters {
 		// Fix Shows - you only get one!
 		$all_shows = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$new_shows = array();
-		foreach ( $all_shows as $each_show ) {
-			// If it's an array, de-array it.
-			if ( is_array( $each_show['show'] ) ) {
-				$each_show['show'] = reset( $each_show['show'] );
+
+		if ( is_array( $all_shows ) ) {
+			foreach ( $all_shows as $each_show ) {
+				// If it's an array, de-array it.
+				if ( is_array( $each_show['show'] ) ) {
+					$each_show['show'] = reset( $each_show['show'] );
+				}
+				$new_shows[] = $each_show;
 			}
-			$new_shows[] = $each_show;
+			update_post_meta( $post_id, 'lezchars_show_group', $new_shows );
 		}
-		update_post_meta( $post_id, 'lezchars_show_group', $new_shows );
 
 		// Character scores
 		$this->do_the_math( $post_id );
