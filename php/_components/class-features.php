@@ -27,6 +27,7 @@ class Features implements Component, Templater {
 		add_filter( 'wp_headers', array( $this, 'modify_front_end_http_headers' ), 10, 2 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'pre_ping', array( $this, 'no_self_ping' ) );
+		add_filter( 'all_plugins', array( $this, 'hide_lwtv_plugin' ) );
 
 		// Instantiate actions and filters:
 		add_action( 'init', array( $this, 'instantiate_actions_and_filters' ) );
@@ -107,7 +108,6 @@ class Features implements Component, Templater {
 		add_filter( 'http_request_args', array( $this, 'disable_wp_update' ), 10, 2 );
 		add_filter( 'attachment_fields_to_edit', array( $this, 'add_attachment_attribution' ), 10000, 2 );
 		add_action( 'edit_attachment', array( $this, 'save_attachment_attribution' ) );
-		add_action( 'pre_current_active_plugins', array( $this, 'hide_lwtv_plugin' ) );
 		add_filter( 'avatar_defaults', array( $this, 'default_avatar' ) );
 
 		// Disable check for 'is your admin stuff legit'.
@@ -161,20 +161,22 @@ class Features implements Component, Templater {
 	 * Hide the LWTV Plugin from the Plugin list.
 	 *
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
-	public function hide_lwtv_plugin(): void {
-		global $wp_list_table;
-
-		$hide_plugins = array(
-			plugin_basename( dirname( __DIR__, 1 ) ),
+	public function hide_lwtv_plugin( $plugins ): array {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$should_hide    = ! array_key_exists( 'show_all', $_GET );
+		$hidden_plugins = array(
+			'lwtv-plugin/functions.php',
 		);
-		$curr_plugins = $wp_list_table->items;
-		foreach ( $curr_plugins as $plugin => $data ) {
-			if ( in_array( $plugin, $hide_plugins, true ) ) {
-				unset( $wp_list_table->items[ $plugin ] );
+
+		if ( $should_hide ) {
+			foreach ( $hidden_plugins as $hidden_plugin ) {
+				unset( $plugins[ $hidden_plugin ] );
 			}
 		}
+
+		return $plugins;
 	}
 
 	/**
