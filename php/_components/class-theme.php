@@ -260,10 +260,16 @@ class Theme implements Component, Templater {
 	/**
 	 * Do the Math
 	 *
+	 * If a user is NOT logged in, and this got called, re-run the math.
+	 * This is to prevent the math from being run on every page load, since
+	 * we have a lot of caching.
+	 *
 	 * @param  int $post_id
 	 * @return void
 	 */
 	public function generate_the_math( $post_id ): void {
-		( new Do_Math() )->make( $post_id );
+		if ( ! is_user_logged_in() ) {
+			( new Do_Math() )->make( $post_id );
+		}
 	}
 }
