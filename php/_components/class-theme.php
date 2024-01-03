@@ -59,7 +59,7 @@ class Theme implements Component, Templater {
 			'get_actor_dead'            => array( $this, 'get_actor_dead' ),
 			'get_actor_age'             => array( $this, 'get_actor_age' ),
 			'get_actor_birthday'        => array( $this, 'get_actor_birthday' ),
-			'generate_the_math'         => array( $this, 'generate_the_math' ),
+			'get_admin_tools'           => array( $this, 'get_admin_tools' ),
 		);
 	}
 
@@ -260,16 +260,36 @@ class Theme implements Component, Templater {
 	/**
 	 * Do the Math
 	 *
-	 * If a user is NOT logged in, and this got called, re-run the math.
-	 * This is to prevent the math from being run on every page load, since
-	 * we have a lot of caching.
+	 * Creates an editor only button to refresh cache and recalculate a page.
 	 *
 	 * @param  int $post_id
 	 * @return void
 	 */
-	public function generate_the_math( $post_id ): void {
-		if ( ! is_user_logged_in() ) {
-			( new Do_Math() )->make( $post_id );
+	public function get_admin_tools( $post_id ): void {
+		// If you're logged in and can edit posts, you can refresh the scores.
+		if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
+			if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'lwtv-update-math' ) ) {
+				( new Do_Math() )->make( $post_id );
+				sleep( 5 );
+				wp_safe_redirect( get_the_permalink( $post_id ) );
+				exit;
+			}
+
+			?>
+			<section id="editor-tools" class="widget widget_editor_tools">
+				<div class="card">
+					<div class="card-header"><h4>Editor Tools</h4></div>
+					<form id="update_math" name="update_math" method="post">
+						</br>
+						<center><button type="submit" class="btn btn-primary btn-block" id="submit" name="submit">
+							Refresh Data
+						</button></center>
+						<?php wp_nonce_field( 'lwtv-update-math' ); ?>
+						</br>
+					</form>
+				</div>
+			</section>
+			<?php
 		}
 	}
 }
