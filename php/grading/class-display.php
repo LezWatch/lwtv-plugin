@@ -63,24 +63,6 @@ class Display {
 				<?php
 			}
 		}
-
-		// If you're logged in and can edit posts, you can refresh the scores.
-		if ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) {
-			$post_id = get_the_ID();
-			if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'lwtv-update-scores' ) ) {
-				lwtv_plugin()->calculate_show_data( $post_id );
-				sleep( 5 );
-				wp_safe_redirect( get_the_permalink( $post_id ) );
-				exit;
-			}
-
-			?>
-			<form id="update_scores" name="update_scores" method="post">
-				<center><p><br /><input type="submit" value="Refresh Scores" tabindex="6" id="submit" name="submit" /></p></center>
-				<?php wp_nonce_field( 'lwtv-update-scores' ); ?>
-			</form>
-			<?php
-			echo '</center>';
-		}
+		echo '</center>';
 	}
 }
