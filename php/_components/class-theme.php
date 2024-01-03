@@ -12,6 +12,7 @@ use LWTV\Theme\Actor_Terms;
 use LWTV\Theme\Content_Warning;
 use LWTV\Theme\Data_Author;
 use LWTV\Theme\Data_Character;
+use LWTV\Theme\Do_Math;
 use LWTV\Theme\List_Characters;
 use LWTV\Theme\Show_Stars;
 use LWTV\Theme\Stats_Symbolicon;
@@ -58,6 +59,7 @@ class Theme implements Component, Templater {
 			'get_actor_dead'            => array( $this, 'get_actor_dead' ),
 			'get_actor_age'             => array( $this, 'get_actor_age' ),
 			'get_actor_birthday'        => array( $this, 'get_actor_birthday' ),
+			'generate_the_math'         => array( $this, 'generate_the_math' ),
 		);
 	}
 
@@ -253,5 +255,15 @@ class Theme implements Component, Templater {
 	 */
 	public function get_actor_age( $actor_id ) {
 		return ( new Actor_Age() )->make( $actor_id );
+	}
+
+	/**
+	 * Do the Math
+	 *
+	 * @param  int $post_id
+	 * @return void
+	 */
+	public function generate_the_math( $post_id ): void {
+		( new Do_Math() )->make( $post_id );
 	}
 }

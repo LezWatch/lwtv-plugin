@@ -123,6 +123,7 @@ use LWTV\_Helpers\Utils;
  * @method string get_actor_dead( $actor_id )                               \_Components\Theme
  * @method string get_actor_age( $actor_id )                                \_Components\Theme
  * @method string get_actor_birthday( $actor_id )                           \_Components\Theme
+ * @method void   generate_the_math( $post_id )                             \_Components\Theme
  *
  * THIS YEAR
  * @method string get_this_year_display( $year ) \_Components\This_Year
