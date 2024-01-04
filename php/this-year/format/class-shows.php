@@ -22,17 +22,18 @@ class Shows {
 
 		switch ( $view ) {
 			case 'new-shows':
-				$fail_msg = '<p>No shows were new in ' . $this_year . '</p>';
-				$header   = 'Shows Started in ' . $this_year;
+				$header = 'Shows Started in ' . $this_year;
 				break;
 			case 'canceled-shows':
-				$fail_msg = '<p>No shows were canceled in ' . $this_year . '</p>';
-				$header   = 'Shows Canceled in ' . $this_year;
+				$header = 'Shows Canceled in ' . $this_year;
 				break;
 			default:
-				$fail_msg = '<p>No shows were on air in ' . $this_year . '</p>';
-				$header   = 'Shows On Air in ' . $this_year;
+				$header = 'Shows On Air in ' . $this_year;
 				break;
+		}
+
+		if ( empty( $shows_listed ) && empty( $shows_formats ) && empty( $shows_country ) ) {
+			return;
 		}
 		?>
 		<h2><a name="showsonair"><?php echo (int) $shows_count; ?> <?php echo esc_html( $header ); ?></a></h2>
@@ -52,7 +53,9 @@ class Shows {
 			}
 			?>
 		</ul>
+
 		<p>&nbsp;</p>
+
 		<div class="tab-content" id="v-pills-tabContent">
 			<?php
 			if ( ! empty( $shows_listed ) ) {
@@ -81,9 +84,8 @@ class Shows {
 					</table>
 				</div>
 				<?php
-			} else {
-				$has_shows = false;
 			}
+
 			if ( ! empty( $shows_formats ) ) {
 				ksort( $shows_formats );
 				?>
@@ -110,9 +112,8 @@ class Shows {
 					</table>
 				</div>
 				<?php
-			} else {
-				$has_shows = false;
 			}
+
 			if ( ! empty( $shows_country ) ) {
 				ksort( $shows_country );
 				?>
@@ -140,11 +141,6 @@ class Shows {
 					</table>
 				</div>
 				<?php
-			} else {
-				$has_shows = false;
-			}
-			if ( ! isset( $has_shows ) || ! $has_shows ) {
-				echo wp_kses_post( $fail_msg );
 			}
 			?>
 		</div> <!-- Pills -->

@@ -15,14 +15,14 @@ class Dead {
 		$count      = ( isset( $char_array['count'] ) ) ? $char_array['count'] : '0';
 		$list_array = ( isset( $char_array['list'] ) ) ? $char_array['list'] : '';
 		$show_array = ( isset( $char_array['show'] ) ) ? $char_array['show'] : '';
-		?>
-		<h2><a name="died"><?php echo (int) $count; ?> Characters Died</a></h2>
 
-		<p>&nbsp;</p>
-
-		<?php
 		if ( ! empty( $list_array ) ) {
 			?>
+
+			<h2><a name="died"><?php echo (int) $count; ?> Characters Died</a></h2>
+
+			<p>&nbsp;</p>
+
 			<div class="container">
 				<div class="row">
 					<div class="col">
@@ -77,8 +77,6 @@ class Dead {
 				</div>
 			</div>
 			<?php
-		} else {
-			echo '<p>No known characters died in ' . (int) $this_year . '.</p>';
 		}
 	}
 }

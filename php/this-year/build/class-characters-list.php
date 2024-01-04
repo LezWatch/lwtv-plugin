@@ -111,6 +111,10 @@ class Characters_List {
 			);
 		}
 
+		if ( 0 === $counted_chars ) {
+			return array();
+		}
+
 		return $return_array;
 	}
 }

@@ -145,6 +145,10 @@ class Shows_List {
 			);
 		}
 
+		if ( 0 === $counted_shows ) {
+			return array();
+		}
+
 		return $return_array;
 	}
 }
