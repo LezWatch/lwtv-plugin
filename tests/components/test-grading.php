@@ -18,6 +18,12 @@ use LWTV\Plugin;
 class Grading_Test extends \WP_UnitTestCase {
 
 	/**
+	 * Test class instance.
+	 */
+	private $instance;
+	private $grading_post_id;
+
+	/**
 	 * Set up.
 	 *
 	 * @return void
