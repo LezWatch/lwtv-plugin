@@ -163,7 +163,7 @@ SQL;
 				lwtv_plugin()->find_actors_no_imdb();
 				break;
 			case 'Wed':
-				lwtv_plugin()->find_actors_incomplete();
+				lwtv_plugin()->find_duplicates();
 				break;
 			case 'Thu':
 				lwtv_plugin()->find_queer_chars();
