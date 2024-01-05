@@ -8,9 +8,9 @@
 namespace LWTV\Admin_Menu;
 
 use LWTV\Validator\Actor_Checker;
-use LWTV\Validator\Actor_Empty;
 use LWTV\Validator\Actor_IMDb;
 use LWTV\Validator\Actor_Wiki;
+use LWTV\Validator\Duplicates;
 use LWTV\Validator\Character_Checker;
 use LWTV\Validator\Queer_Checker;
 use LWTV\Validator\Show_Checker;
@@ -29,13 +29,13 @@ class Validation {
 			'name' => 'Queer Checker',
 			'desc' => 'Checks that all characters with queer actors have the queer cliché, and all actors with queer characters are, in fact, queer.',
 		),
+		'dupe_checker'      => array(
+			'name' => 'Duplicate Checker',
+			'desc' => 'Actors and Shows that are duplicates.',
+		),
 		'actor_checker'     => array(
 			'name' => 'Actor Checker',
 			'desc' => 'Checks that all information for actors appears correct. This includes social media and links.',
-		),
-		'actor_empty'       => array(
-			'name' => 'Incomplete Actors',
-			'desc' => 'Actors that have not yet been updated since the Great Migration.',
 		),
 		'actor_imdb'        => array(
 			'name' => 'Actors IMDb',
@@ -170,14 +170,14 @@ class Validation {
 					case 'tab_actor_checker':
 						( new Actor_Checker() )->make();
 						break;
-					case 'tab_actor_empty':
-						( new Actor_Empty() )->make();
-						break;
 					case 'tab_actor_imdb':
 						( new Actor_IMDB() )->make();
 						break;
 					case 'tab_actor_wiki':
 						( new Actor_Wiki() )->make();
+						break;
+					case 'tab_dupe_checker':
+						( new Duplicates() )->make();
 						break;
 					case 'tab_character_checker':
 						( new Character_Checker() )->make();

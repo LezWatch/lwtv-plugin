@@ -81,6 +81,7 @@ use LWTV\_Helpers\Utils;
  * @method array  queery_tax_two( $post_type, $taxonomy1, $field1, $terms1, $taxonomy2, $field2, $terms2, $operator1, $operator2, $relation ) \_Components\Queeries
  * @method array  queery_taxonomy( $post_type, $taxonomy, $field, $term, $operator )                                                          \_Components\Queeries
  * @method array  queery_wp_meta( $post_type, $slug )                                                                                         \_Components\Queeries
+ * @method string get_id_from_slug( $the_slug )                                                                                               \_Components\Queeries
  *
  * REST API
  * @method string generate_tvshow_calendar( $date )                 \_Components\Rest_API

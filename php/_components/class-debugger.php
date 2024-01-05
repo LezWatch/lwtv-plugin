@@ -9,6 +9,7 @@ namespace LWTV\_Components;
 
 use LWTV\Debugger\Actors;
 use LWTV\Debugger\Characters;
+use LWTV\Debugger\Dupes;
 use LWTV\Debugger\Queers;
 use LWTV\Debugger\Shows;
 
@@ -50,6 +51,7 @@ class Debugger implements Component, Templater {
 			'find_characters_problems'  => array( $this, 'find_characters_problems' ),
 			'check_disabled_characters' => array( $this, 'check_disabled_characters' ),
 			'find_queer_chars'          => array( $this, 'find_queer_chars' ),
+			'find_duplicates'           => array( $this, 'find_duplicates' ),
 		);
 	}
 
@@ -246,5 +248,16 @@ class Debugger implements Component, Templater {
 	 */
 	public function find_queer_chars( $items = array() ): array {
 		return ( new Queers() )->find_queerchars( $items );
+	}
+
+	/**
+	 * Find Duplicates
+	 *
+	 * Find all posts that end in -2
+	 *
+	 * @param array $items - array of Posts
+	 */
+	public function find_duplicates( $items = array() ): array {
+		return ( new Dupes() )->find_duplicates( $items );
 	}
 }
