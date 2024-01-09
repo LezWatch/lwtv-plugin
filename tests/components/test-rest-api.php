@@ -19,6 +19,25 @@ use LWTV\Rest_API\Stats_JSON;
 class Rest_API_Test extends \WP_UnitTestCase {
 
 	/**
+	 * Test class instance.
+	 */
+	private $instance;
+	private $char_death_1;
+	private $char_death_2;
+	private $today;
+	private $show_deadchars_post_id;
+	private $show_alivechars_post_id;
+	private $show_startednow_post_id;
+	private $show_endednow_post_id;
+	private $actor_dead_post_id;
+	private $actor_alive_post_id;
+	private $character_1_post_id;
+	private $character_2_post_id;
+	private $character_3_post_id;
+	private $get_what_happened;
+	private $get_statistics;
+
+	/**
 	 * Set up.
 	 *
 	 * @return void

@@ -17,6 +17,15 @@ use LWTV\_Components\Symbolicons;
 class Symbolicons_Test extends \WP_UnitTestCase {
 
 	/**
+	 * Test class instance.
+	 */
+	private $instance;
+	private $path;
+	private $test_path;
+	private $beer_mug;
+	private $square;
+
+	/**
 	 * Set up.
 	 *
 	 * @return void

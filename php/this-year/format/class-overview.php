@@ -37,28 +37,34 @@ class Overview {
 				</div>
 			</div>
 
-			<div class="row">
-				<div class="col col-sm-6">
-					<div class="card text-center">
-						<h3 class="card-header sexuality">Character Sexuality</h3>
-						<div class="card-body bg-light">
-							<div>
-								<?php ( new Generator() )->make( $this_year, 'chart', 'sexuality' ); ?>
+			<?php
+			if ( 0 !== (int) $array['characters'] ) {
+				?>
+				<div class="row">
+					<div class="col col-sm-6">
+						<div class="card text-center">
+							<h3 class="card-header sexuality">Character Sexuality</h3>
+							<div class="card-body bg-light">
+								<div>
+									<?php ( new Generator() )->make( $this_year, 'chart', 'sexuality' ); ?>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col col-sm-6">
+						<div class="card text-center">
+							<h3 class="card-header gender">Character Gender</h3>
+							<div class="card-body bg-light">
+								<div>
+									<?php ( new Generator() )->make( $this_year, 'chart', 'gender' ); ?>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col col-sm-6">
-					<div class="card text-center">
-						<h3 class="card-header gender">Character Gender</h3>
-						<div class="card-body bg-light">
-							<div>
-								<?php ( new Generator() )->make( $this_year, 'chart', 'gender' ); ?>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+				<?php
+			}
+			?>
 
 			<div class="row">
 				<div class="col">

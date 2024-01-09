@@ -7,6 +7,7 @@
 
 namespace LWTV\_Components;
 
+use LWTV\Queeries\Get_ID_From_Slug;
 use LWTV\Queeries\Is_Actor_Queer;
 use LWTV\Queeries\Is_Actor_Trans;
 use LWTV\Queeries\Is_Show_On_Air;
@@ -52,6 +53,7 @@ class Queeries implements Component, Templater {
 			'queery_tax_two'           => array( $this, 'queery_tax_two' ),
 			'queery_taxonomy'          => array( $this, 'queery_taxonomy' ),
 			'queery_wp_meta'           => array( $this, 'queery_wp_meta' ),
+			'get_id_from_slug'         => array( $this, 'get_id_from_slug' ),
 		);
 	}
 
@@ -186,5 +188,15 @@ class Queeries implements Component, Templater {
 	 */
 	public function queery_wp_meta( $post_type, $slug ) {
 		return ( new WP_Meta() )->make( $post_type, $slug );
+	}
+
+	/**
+	 * Get Post ID from slug
+	 *
+	 * @param  string $the_slug
+	 * @return string
+	 */
+	public function get_id_from_slug( $the_slug ) {
+		return ( new Get_ID_From_Slug() )->make( $the_slug );
 	}
 }

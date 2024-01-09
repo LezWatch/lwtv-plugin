@@ -26,6 +26,7 @@ class WP_CLI implements Component {
 		// These have to be called differently. Boo.
 		require_once dirname( __DIR__, 1 ) . '/wp-cli/cli-calc.php';       // wp lwtv CALC [ID]
 		require_once dirname( __DIR__, 1 ) . '/wp-cli/cli-check.php';      // wp lwtv CHECK [queerchars|wiki] [id]
+		require_once dirname( __DIR__, 1 ) . '/wp-cli/cli-dupes.php';      // wp lwtv DUPES
 		require_once dirname( __DIR__, 1 ) . '/wp-cli/cli-generate.php';   // wp lwtv GENERATE [otd|tvmaze]
 
 		$args = array(

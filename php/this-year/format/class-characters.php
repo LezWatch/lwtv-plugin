@@ -25,7 +25,6 @@ class Characters {
 		<?php
 		// If the data isn't empty, we go!
 		if ( ! empty( $char_array ) && ! empty( $show_array ) ) {
-
 			// List everyone by character
 			?>
 			<div class="container">
@@ -79,8 +78,6 @@ class Characters {
 			</div>
 
 			<?php
-		} else {
-			echo '<p>No characters were on air in ' . (int) $this_year . '.</p>';
 		}
 	}
 }
