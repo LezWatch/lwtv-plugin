@@ -140,6 +140,8 @@ class Stop_Spammers {
 	}
 
 	/**
+	 * DEPRECATED: No longer needed with NGINX
+	 *
 	 * Get the IP and process it.
 	 *
 	 * To actually use this, though, you need a HIDDEN field, which has the following:
