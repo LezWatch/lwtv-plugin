@@ -80,7 +80,7 @@ class WP_CLI_LWTV_Check {
 
 		try {
 			$this->run_checker( $this->check, $this->second );
-		} catch ( Exception $exception ) {
+		} catch ( \Exception $exception ) {
 			\WP_CLI::error( $exception->getMessage(), false );
 		}
 	}
