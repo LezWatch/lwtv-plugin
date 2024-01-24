@@ -10,6 +10,7 @@ namespace LWTV\CPTs;
 use LWTV\CPTs\Actors\Calculations;
 use LWTV\CPTs\Actors\CMB2_Metaboxes;
 use LWTV\CPTs\Actors\Custom_Columns;
+use LWTV\CPTs\Actors\Privacy;
 
 /**
  * class LWTV_CPT_Actors
@@ -232,7 +233,10 @@ class Actors {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 
-		// Do the math
+		// Privacy check
+		$this->make_private( $post_id, 'check' );
+
+		// Do the math:
 		$this->do_the_math( $post_id );
 
 		// re-hook this function
@@ -330,5 +334,36 @@ class Actors {
 			$input = 'Add actor';
 		}
 		return $input;
+	}
+
+	/**
+	 * Make actor Private
+	 *
+	 * @param  int $post_id
+	 * @return void
+	 */
+	public function make_private( $post_id, $set = false ) {
+		( new Privacy() )->make( $post_id, $set );
+	}
+
+	/**
+	 * Hide Actor Data
+	 *
+	 * @param  int    $post_id
+	 * @param  string $type    - Type of post data we're hiding.
+	 * @return bool
+	 */
+	public function hide_data( $post_id, $type ): bool {
+		return ( new Privacy() )->hide( $post_id, $type );
+	}
+
+	/**
+	 * Get the privacy warning
+	 *
+	 * @param  int $post_id
+	 * @return mixed
+	 */
+	public function privacy_warning( $post_id ): void {
+		( new Privacy() )->get_warning( $post_id );
 	}
 }

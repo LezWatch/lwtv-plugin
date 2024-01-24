@@ -58,6 +58,8 @@ class CPTs implements Component, Templater {
 			'has_cpt_related_posts'      => array( $this, 'has_cpt_related_posts' ),
 			'get_cpt_related_posts'      => array( $this, 'get_cpt_related_posts' ),
 			'get_shows_like_this_show'   => array( $this, 'get_shows_like_this_show' ),
+			'hide_actor_data'            => array( $this, 'hide_actor_data' ),
+			'the_actor_privacy_warning'  => array( $this, 'the_actor_privacy_warning' ),
 		);
 	}
 
@@ -147,11 +149,26 @@ class CPTs implements Component, Templater {
 	/**
 	 * Get Shows Like this show
 	 *
-	 * @param  [type] $post_id
+	 * @param  int $post_id
 	 * @return void
 	 */
 	public function get_shows_like_this_show( $post_id ): mixed {
 		return ( new Shows_Like_This() )->make( $post_id );
+	}
+
+	/**
+	 * Hide actor data
+	 *
+	 * @param  int    $post_id
+	 * @param  string $type     - type of data to hide
+	 * @return bool
+	 */
+	public function hide_actor_data( $post_id, $type ): bool {
+		return ( new Actors() )->hide_data( $post_id, $type );
+	}
+
+	public function the_actor_privacy_warning( $post_id ): void {
+		( new Actors() )->privacy_warning( $post_id );
 	}
 
 	/**
@@ -170,7 +187,7 @@ class CPTs implements Component, Templater {
 	}
 
 	/**
-	 * Remove Quick Edit if it's one of our CPTs.
+	 * Remove Bulk Actions if it's one of our CPTs.
 	 *
 	 * @param array  $actions The potential actions on the page.
 	 * @param object $post    Post Object
