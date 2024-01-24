@@ -3,7 +3,7 @@
  * Plugin Name: Core LezWatch.TV Plugin
  * Plugin URI:  https://lezwatchtv.com
  * Description: All the base code for LezWatch.TV - If this isn't active, the site dies. An ugly death.
- * Version: 6.0.1
+ * Version: 6.1.0
  * Author: LezWatch.TV
  * Update URI: http://lezwatchtv.com
  * License: GPLv3
@@ -37,7 +37,7 @@ use LWTV\Plugin;
 require_once __DIR__ . '/php/_helpers/class-autoload.php';
 
 // Plugin Version.
-define( 'LWTV_PLUGIN_VERSION', '6.0.1' );
+define( 'LWTV_PLUGIN_VERSION', '6.1.0' );
 
 // Define First Year with queers:
 define( 'LWTV_FIRST_YEAR', '1961' );

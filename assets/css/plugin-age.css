@@ -1,0 +1,112 @@
+/*------------------------------------------------------------------------------
+  5.0 - Plugin Age
+------------------------------------------------------------------------------*/
+
+#age-plugins-table tbody td p {
+	margin-top: 0;
+}
+
+#age-plugins-table tbody td p strong {
+	font-size: 14px;
+}
+
+#age-plugins-table thead td.check-column,
+#age-plugins-table tfoot td.check-column {
+	padding-top: 11px;
+}
+
+.plugins .age th,
+.plugins .age td {
+	border-bottom: 0;
+}
+
+.plugin-age-tr td {
+	border-top: 0;
+}
+
+.plugins tr.active.plugin-age-tr + tr.inactive th,
+.plugins tr.active.plugin-age-tr + tr.inactive td,
+.plugins tr.active + tr.inactive th,
+.plugins tr.active + tr.inactive td {
+	border-top: 1px solid rgba(0,0,0,0.03);
+	-webkit-box-shadow: inset 0 1px 0 rgba(0,0,0,0.02), inset 0 -1px 0 #e1e1e1;
+	box-shadow: inset 0 1px 0 rgba(0,0,0,0.02), inset 0 -1px 0 #e1e1e1;
+}
+
+.plugins .age td,
+.plugins .age th,
+.plugins tr.active + tr.inactive.age th,
+.plugins tr.active + tr.inactive.age td {
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.plugins .active.age td,
+.plugins .active.age th,
+tr.active.age + tr.plugin-age-tr .plugin-age {
+	background-color: #fef7f1;
+}
+
+.plugin-age-tr.active td {
+	border-left: 4px solid #00a0d2;
+}
+
+.plugins .active.age th.check-column,
+.plugins .active.age + .plugin-age-tr .plugin-age {
+	border-left: 4px solid #d54e21;
+}
+
+.plugins .age .second,
+.plugins .age .row-actions,
+.plugins .aged .second,
+.plugins .aged .row-actions {
+	padding-bottom: 0;
+}
+
+.plugin-age-tr .age-message {
+	font-size: 13px;
+	font-weight: normal;
+	margin: 0 10px 8px 31px;
+	padding: 6px 12px 8px 40px;
+	background-color: #fff8e5;
+	background-color: rgba(0,0,0,0.03);
+}
+
+.plugin-age-tr .age-message:before {
+	color: #ffb900;
+	display: inline-block;
+	font: normal 20px/1 dashicons;
+	speak: none;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	vertical-align: top;
+}
+
+.plugin-age-tr .age-message:before,
+.plugin-card .age-now:before {
+	content: "\f534";
+}
+
+.plugin-age-tr .age-message:before {
+	margin: 0 10px 0 -30px;
+}
+
+.plugin-card .age-now:before {
+	margin: 3px 5px 0 -2px;
+}
+
+.wp-list-table.plugins tbody tr.plugin-age-tr td.plugin-age {
+	overflow: hidden; /* clearfix */
+	padding: 0;
+	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
+	box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+
+/* age notices for active plugins */
+tr.active + tr.plugin-age-tr .plugin-age {
+	background-color: #f7fcfe;
+}
+
+tr.active + tr.plugin-age-tr:not(.aged) .plugin-age .age-message {
+	background-color: #fff8e5;
+}

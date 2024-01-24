@@ -10,7 +10,9 @@ use LWTV\Features\Cron;
 use LWTV\Features\Dashboard_Posts_In_Progress;
 use LWTV\Features\Dashboard;
 use LWTV\Features\Embeds;
+use LWTV\Features\Environment;
 use LWTV\Features\Languages;
+use LWTV\Features\Plugin_Age;
 use LWTV\Features\Private_Posts;
 use LWTV\Features\Roles;
 use LWTV\Features\Shortcodes;
@@ -37,6 +39,8 @@ class Features implements Component, Templater {
 		new Dashboard_Posts_In_Progress();
 		new Dashboard();
 		new Embeds();
+		new Environment();
+		new Plugin_Age();
 		new Private_Posts();
 		new Roles();
 		new Shortcodes();
@@ -138,6 +142,10 @@ class Features implements Component, Templater {
 			add_action( 'wp_head', array( $this, 'add_meta_tags' ), 2 );
 			defined( 'JETPACK_DEV_DEBUG' ) || define( 'JETPACK_DEV_DEBUG', true );
 		}
+
+		// Post Statues
+		wp_register_style( 'ui-labs-post-statuses', plugins_url( 'assets/css/post-statuses.css', dirname( __DIR__ ) ), false, LWTV_PLUGIN_VERSION );
+		wp_enqueue_style( 'ui-labs-post-statuses' );
 
 		// After Theme Setup...
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ), 11 );
