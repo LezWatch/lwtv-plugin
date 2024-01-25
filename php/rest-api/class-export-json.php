@@ -586,12 +586,21 @@ class Export_JSON {
 
 			// Actors
 			$all_actors = get_post_meta( $page->ID, 'lezchars_actor', true );
+
+			// If all_actors is not an array, it's a string. Let's make it an array.
+			// This is a hold over from ye olde days.
 			if ( ! is_array( $all_actors ) ) {
 				$all_actors = array( get_post_meta( $page->ID, 'lezchars_actor', true ) );
 			}
+
+			// Add each actor's name to the array.
 			foreach ( $all_actors as $an_actor ) {
-				$the_actors[] = get_the_title( $an_actor );
+				// Only add the actor if they're NOT hidden.
+				if ( ! lwtv_plugin()->hide_actor_data( $an_actor, 'all' ) ) {
+					$the_actors[] = get_the_title( $an_actor );
+				}
 			}
+
 			if ( isset( $the_actors ) ) {
 				if ( count( $the_actors ) > 1 && 'wiki' === $format ) {
 					$last_element = array_pop( $the_actors );
@@ -654,6 +663,11 @@ class Export_JSON {
 		// Let's make sure.
 		if ( isset( $page ) && 'post_type_actors' === get_post_type( $page->ID ) ) {
 
+			// If the actor has asked to be private, we respect that.
+			if ( lwtv_plugin()->hide_actor_data( $page->ID, 'all' ) ) {
+				return array();
+			}
+
 			// Empty Array
 			$data = array();
 
@@ -665,9 +679,12 @@ class Export_JSON {
 			$gender_terms   = get_the_terms( $page->ID, 'lez_actor_gender', true );
 			$data['gender'] = ( $gender_terms && ! is_wp_error( $gender_terms ) ) ? join( ', ', wp_list_pluck( $gender_terms, 'name' ) ) : '';
 
-			// Born
-			if ( get_post_meta( $page->ID, 'lezactors_birth', true ) ) {
-				$get_birth = new \DateTime( get_post_meta( $page->ID, 'lezactors_birth', true ) );
+			// If the actor has asked to keep their DoB private, we honor it.
+			if ( ! lwtv_plugin()->hide_actor_data( $page->ID, 'dob' ) ) {
+				// Born
+				if ( get_post_meta( $page->ID, 'lezactors_birth', true ) ) {
+					$get_birth = new \DateTime( get_post_meta( $page->ID, 'lezactors_birth', true ) );
+				}
 			}
 
 			// Died
@@ -684,11 +701,14 @@ class Export_JSON {
 			// IMdb
 			$data['imdb'] = ( get_post_meta( $page->ID, 'lezactors_imdb', true ) ) ? 'https://imdb.com/name/' . get_post_meta( $page->ID, 'lezactors_imdb', true ) : '';
 
-			// Twitter
-			$data['twitter'] = ( get_post_meta( $page->ID, 'lezactors_twitter', true ) ) ? 'https://twitter.com/' . get_post_meta( $page->ID, 'lezactors_twitter', true ) : '';
+			// If the actor has asked to keep their Socials private, we honor it.
+			if ( ! lwtv_plugin()->hide_actor_data( $page->ID, 'socials' ) ) {
+				// Twitter
+				$data['twitter'] = ( get_post_meta( $page->ID, 'lezactors_twitter', true ) ) ? 'https://twitter.com/' . get_post_meta( $page->ID, 'lezactors_twitter', true ) : '';
 
-			// Instagram
-			$data['instagram'] = ( get_post_meta( $page->ID, 'lezactors_instagram', true ) ) ? 'https://instagram.com/' . get_post_meta( $page->ID, 'lezactors_instagram', true ) : '';
+				// Instagram
+				$data['instagram'] = ( get_post_meta( $page->ID, 'lezactors_instagram', true ) ) ? 'https://instagram.com/' . get_post_meta( $page->ID, 'lezactors_instagram', true ) : '';
+			}
 
 			$return = array(
 				'uid'  => $page->ID,
@@ -698,23 +718,29 @@ class Export_JSON {
 
 			switch ( $format ) {
 				case 'wiki':
-					// Collect oddites
-					$data['born'] = ( isset( $get_birth ) ) ? ' b. ' . date_format( $get_birth, 'F d, Y' ) : '';
+					// Collect oddities
+					if ( ! lwtv_plugin()->hide_actor_data( $page->ID, 'dob' ) ) {
+						$data['born'] = ( isset( $get_birth ) ) ? ' b. ' . date_format( $get_birth, 'F d, Y' ) : '';
+					}
 					$data['died'] = ( isset( $get_dead ) ) ? ' and died ' . date_format( $get_dead, 'F d, Y' ) : '';
 
 					// Now Build
 					$return['description'] = $data['sexuality'] . ' ' . $data['gender'] . ' actor' . $data['born'] . $data['died'] . '. ' . $data['wikipedia'];
 					break;
 				case 'raw':
+					if ( ! lwtv_plugin()->hide_actor_data( $page->ID, 'dob' ) ) {
+						$return['born'] = ( isset( $get_birth ) ) ? date_format( $get_birth, 'F d, Y' ) : '';
+					}
+					$return['died']      = ( isset( $get_dead ) ) ? date_format( $get_dead, 'F d, Y' ) : '';
 					$return['sexuality'] = $data['sexuality'];
 					$return['gender']    = $data['gender'];
-					$return['born']      = ( isset( $get_birth ) ) ? date_format( $get_birth, 'F d, Y' ) : '';
-					$return['died']      = ( isset( $get_dead ) ) ? date_format( $get_dead, 'F d, Y' ) : '';
 					$return['website']   = $data['website'];
 					$return['imdb']      = $data['imdb'];
 					$return['wikipedia'] = $data['wikipedia'];
-					$return['twitter']   = $data['twitter'];
-					$return['instagram'] = $data['instagram'];
+					if ( ! lwtv_plugin()->hide_actor_data( $page->ID, 'socials' ) ) {
+						$return['twitter']   = $data['twitter'];
+						$return['instagram'] = $data['instagram'];
+					}
 					break;
 			}
 		}

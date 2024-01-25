@@ -167,6 +167,12 @@ class CPTs implements Component, Templater {
 		return ( new Actors() )->hide_data( $post_id, $type );
 	}
 
+	/**
+	 * The Actor Privacy Warning
+	 *
+	 * @param  int $post_id
+	 * @return void
+	 */
 	public function the_actor_privacy_warning( $post_id ): void {
 		( new Actors() )->privacy_warning( $post_id );
 	}
