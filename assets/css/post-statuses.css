@@ -3,11 +3,18 @@
 ------------------------------------------------------------------------------*/
 .post-state .draft,
 .post-state .password-protected,
-.post-state .pending,
 .post-state .protected,
+.post-state .pending,
 .post-state .scheduled,
-.post-state .sticky
- {
+.post-state .sticky,
+.post-state .private,
+.status-draft .post-state,
+.status-password-protected .post-state,
+.status-protected .post-state,
+.status-pending .post-state,
+.status-scheduled .post-state,
+.status-sticky .post-state,
+.status-private .post-state {
 	position:relative;
 	padding: 1px 5px;
 	font-size: 90%;
@@ -18,6 +25,7 @@
 }
 
 /* Pending */
+.status-pending .post-state,
 .post-state .pending {
 	color: #fff;
 	text-shadow: rgba(255,255,255,0.6) 0 1px 0;
@@ -26,6 +34,7 @@
 }
 
 /* Draft */
+.status-draft .post-state,
 .post-state .draft {
 	color: #fff;
 	text-shadow: rgba(0,0,0,0.7) 0 -1px 0;
@@ -34,6 +43,7 @@
 }
 
 /* Sticky */
+.status-sticky .post-state,
 .post-state .sticky {
 	color: #fff;
 	text-shadow: rgba(0,0,0,0.7) 0 -1px 0;
@@ -42,6 +52,7 @@
 }
 
 /* Private */
+.status-private .post-state,
 .post-state .private {
 	text-shadow: rgba(255,255,255,1) 0 1px 0;
 	background: #f0f0f1;
@@ -49,6 +60,8 @@
 }
 
 /* Password Protected */
+.status-password-protected .post-state,
+.status-protected .post-state,
 .post-state .password-protected,
 .post-state .protected {
 	color: #fff;
@@ -58,6 +71,7 @@
 }
 
 /* Scheduled Posts */
+.status-scheduled .post-state,
 .post-state .scheduled {
 	color: #fff;
 	text-shadow: rgba(0,0,0,1) 0 -1px 0;
