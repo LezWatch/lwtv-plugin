@@ -341,7 +341,7 @@ class Shortcodes {
 		// Get all the stupid social...
 		$bluesky   = ( ! empty( $content['bluesky'] ) ) ? '<a href="' . $content['bluesky'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'bluesky.svg', 'fa-bluesky' ) . '</a>' : false;
 		$instagram = ( ! empty( $content['instagram'] ) ) ? '<a href="' . $content['instagram'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'instagram.svg', 'fa-instagram' ) . '</a>' : false;
-		$twitter   = ( ! empty( $content['twitter'] ) ) ? '<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'twitter.svg', 'fa-twitter' ) . '</a>' : false;
+		$twitter   = ( ! empty( $content['twitter'] ) ) ? '<a href="https://twitter.com/' . $content['twitter'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'x-twitter.svg', 'fa-twitter' ) . '</a>' : false;
 		$tumblr    = ( ! empty( $content['tumblr'] ) ) ? '<a href="' . $content['tumblr'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'tumblr.svg', 'fa-tumblr' ) . '</a>' : false;
 		$website   = ( ! empty( $content['website'] ) ) ? '<a href="' . $content['website'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'home.svg', 'fa-home' ) . '</a>' : false;
 		$mastodon  = ( ! empty( $content['mastodon'] ) ) ? '<a href="' . $content['mastodon'] . '" target="_blank" rel="nofollow">' . lwtv_plugin()->get_symbolicon( 'mastodon.svg', 'fa-mastodon' ) . '</a>' : false;
