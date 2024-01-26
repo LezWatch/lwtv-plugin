@@ -313,7 +313,7 @@ class Shortcodes {
 
 			// Generate Content
 			$content = array(
-				'avatar'    => get_avatar( $author_id ),
+				'avatar'    => get_avatar( $author_id, 125 ),
 				'url'       => get_author_posts_url( $author_id ),
 				'name'      => $user->display_name,
 				'title'     => get_the_author_meta( 'jobrole', $author_id ),
@@ -356,7 +356,7 @@ class Shortcodes {
 			case 'compact':
 				$author_title = ( '' !== $content['title'] ) ? '<strong>' . $content['title'] . '</strong><br />' : '';
 				// Show it
-				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h5 class="author_name"><a href="' . $content['url'] . '">' . $content['name'] . '</a></h5><hr>' . $author_title . implode( ' ', $social_array ) . '</div>';
+				$author_details = '<div class="col-sm-2">' . $content['avatar'] . '</div><div class="col-sm"><h5 class="author_name"><a href="' . $content['url'] . '">' . $content['name'] . '</a></h5><hr>' . $author_title . implode( ' ', $social_array ) . '</div>';
 				break;
 			case 'large':
 				// Sort out the title
@@ -364,14 +364,14 @@ class Shortcodes {
 				$view_articles    = ( $content['postcount'] > 0 ) ? '<div class="author-archives">' . lwtv_plugin()->get_symbolicon( 'newspaper.svg', 'fa-newspaper-o' ) . '&nbsp;<a href="' . get_author_posts_url( get_the_author_meta( 'ID', $author_id ) ) . '">View all articles by ' . $content['name'] . '</a></div>' : '';
 
 				// Build it.
-				$author_details = '<div class="col-sm-3">' . $content['avatar'] . '</div><div class="col-sm"><h4 class="author_name">' . $content['name'] . ' ' . $content['title'] . ' ' . implode( ' ', $social_array ) . '</h4><div class="author-bio">' . nl2br( $content['bio'] ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
+				$author_details = '<div class="col-sm-2">' . $content['avatar'] . '</div><div class="col-sm"><h4 class="author_name">' . $content['name'] . ' ' . $content['title'] . ' ' . implode( ' ', $social_array ) . '</h4><div class="author-bio">' . nl2br( $content['bio'] ) . '</div><div class="author-details">' . $view_articles . $content['fav_shows'] . '</div>';
 				break;
 			default:
 				$author_details = '';
 				break;
 		}
 
-		$author_box = '<div class="author-box-shortcode"><section class="author-box">' . $author_details . '</section><br /></div>';
+		$author_box = '<div class="author-box-shortcode"><section class="author-box"><div class="row">' . $author_details . '</row></section><br /></div>';
 
 		return $author_box;
 	}
