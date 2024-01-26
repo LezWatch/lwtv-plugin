@@ -32,7 +32,7 @@ class Serverside {
 					'users'       => array( 'type' => 'string' ),
 					'format'      => array( 'type' => 'string' ),
 				),
-				'render_callback' => array( 'Shortcodes', 'author_box' ),
+				'render_callback' => array( $this, 'render_author_box' ),
 			)
 		);
 
@@ -44,7 +44,7 @@ class Serverside {
 					'api_version' => 3,
 					'taxonomy'    => array( 'type' => 'string' ),
 				),
-				'render_callback' => array( 'Shortcodes', 'glossary' ),
+				'render_callback' => array( $this, 'render_glossary' ),
 			)
 		);
 
@@ -69,6 +69,20 @@ class Serverside {
 				'render_callback' => array( $this, 'render_private_blocks' ),
 			)
 		);
+	}
+
+	/**
+	 * Render the Author Box
+	 */
+	public function render_author_box( $attributes ) {
+		return ( new Shortcodes() )->author_box( $attributes );
+	}
+
+	/**
+	 * Render the Glossary
+	 */
+	public function render_glossary( $attributes ) {
+		return ( new Shortcodes() )->glossary( $attributes );
 	}
 
 	/**
