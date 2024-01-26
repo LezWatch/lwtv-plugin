@@ -1,0 +1,72 @@
+/*------------------------------------------------------------------------------
+  1.0 - Post Statuses
+------------------------------------------------------------------------------*/
+.post-state .draft,
+.post-state .password-protected,
+.post-state .pending,
+.post-state .protected,
+.post-state .scheduled,
+.post-state .sticky
+ {
+	position:relative;
+	padding: 1px 5px;
+	font-size: 90%;
+	font-weight: bold;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+/* Pending */
+.post-state .pending {
+	color: #fff;
+	text-shadow: rgba(255,255,255,0.6) 0 1px 0;
+	background: #f03cc3;
+	border: 1px solid #413200;
+}
+
+/* Draft */
+.post-state .draft {
+	color: #fff;
+	text-shadow: rgba(0,0,0,0.7) 0 -1px 0;
+	background: #8a2424;
+	border: 1px solid #451313;
+}
+
+/* Sticky */
+.post-state .sticky {
+	color: #fff;
+	text-shadow: rgba(0,0,0,0.7) 0 -1px 0;
+	background: #72aee6;
+	border: 1px solid #043959;
+}
+
+/* Private */
+.post-state .private {
+	text-shadow: rgba(255,255,255,1) 0 1px 0;
+	background: #f0f0f1;
+	border: 1px solid #2c3338;
+}
+
+/* Password Protected */
+.post-state .password-protected,
+.post-state .protected {
+	color: #fff;
+	text-shadow:rgba(0,0,0,1) 0 -1px 0;
+	background: #2c3338;
+	border: 1px solid #101517;
+}
+
+/* Scheduled Posts */
+.post-state .scheduled {
+	color: #fff;
+	text-shadow: rgba(0,0,0,1) 0 -1px 0;
+	background: #005c12;
+	border: 1px solid #003008;
+}
+
+/* Remove invisibility cloak for non-linked post titles. (non-admin users) */
+.author-other strong,
+.alternate.author-other strong {
+	color: #555;
+}

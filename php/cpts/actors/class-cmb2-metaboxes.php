@@ -393,13 +393,27 @@ class CMB2_Metaboxes {
 				'default'   => get_post_field( 'post_excerpt' ),
 			)
 		);
-		// Field: Dupe Override
-		$field_dupe_override = $cmb_actorside->add_field(
+		// Field: Make Actor Private
+		$field_make_private = $cmb_actorside->add_field(
 			array(
-				'name' => 'Duplicate Name',
-				'desc' => 'If this actor has the same name as another actor, check this box to confirm.',
-				'id'   => self::PREFIX . 'dupe_override',
-				'type' => 'checkbox',
+				'name'    => 'Make specific data private',
+				'id'      => self::PREFIX . 'make_option_private',
+				'type'    => 'multicheck',
+				'desc'    => 'Check the boxes for the data you want to make private. If "All" is selected, the page will be private.',
+				'options' => array(
+					'hide_all'     => 'Hide All',
+					'hide_dob'     => 'Date of Birth',
+					'hide_socials' => 'Social Media',
+				),
+			)
+		);
+		// Privacy Notes
+		$field_make_private_note = $cmb_actorside->add_field(
+			array(
+				'name' => 'Details on why an actor is private',
+				'id'   => self::PREFIX . 'make_option_private_notes',
+				'type' => 'textarea',
+				'desc' => 'If we got an email or any such notes, we can put them here.',
 			)
 		);
 
@@ -433,7 +447,7 @@ class CMB2_Metaboxes {
 			$row10->addColumns( array( $field_bluesky, $field_twitch ) );
 			$row11->addColumns( array( $field_wikidata ) );
 			$row12->addColumns( array( $field_excerpt ) );
-			$row13->addColumns( array( $field_dupe_override ) );
+			$row13->addColumns( array( $field_make_private, $field_make_private_note ) );
 		}
 	}
 

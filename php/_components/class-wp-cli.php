@@ -23,11 +23,19 @@ class WP_CLI implements Component {
 			return;
 		}
 
-		// These have to be called differently. Boo.
-		require_once dirname( __DIR__, 1 ) . '/wp-cli/cli-calc.php';       // wp lwtv CALC [ID]
-		require_once dirname( __DIR__, 1 ) . '/wp-cli/cli-check.php';      // wp lwtv CHECK [queerchars|wiki] [id]
-		require_once dirname( __DIR__, 1 ) . '/wp-cli/cli-dupes.php';      // wp lwtv DUPES
-		require_once dirname( __DIR__, 1 ) . '/wp-cli/cli-generate.php';   // wp lwtv GENERATE [otd|tvmaze]
+		// CLI Commands Loader.
+		$cli_loader = array(
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-calc.php' ),     // wp lwtv CALC [ID]
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-check.php' ),    // wp lwtv CHECK [queerchars|wiki] [id]
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-dupes.php' ),    // wp lwtv DUPES
+			sprintf( '%s/%s', dirname( __DIR__, 1 ) . '/wp-cli/', 'cli-generate.php' ), // wp lwtv GENERATE [otd|tvmaze]
+		);
+
+		foreach ( $cli_loader as $path_to_command ) {
+			if ( file_exists( $path_to_command ) ) {
+				require_once $path_to_command; //phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
+			}
+		}
 
 		$args = array(
 			'shortdesc' => 'Useful commands for LezWatch.TV.',

@@ -129,18 +129,6 @@ class Actors {
 				}
 			}
 
-			// - Duplicate Actor check - shouldn't end in -[NUMBER].
-			// Check if slug ends in -# - if so, flag as warning
-			// For this to be effective, though, we need an override for actors with same name!
-			// lezactors_dupe_override
-			/**
-			$is_dupe = get_post_meta( $actor_id, 'lezactors_dupe_override', true );
-
-			if ( ! $is_dupe && is_numeric( substr( $check['dupes'], -1, 1 ) ) ) {
-				$problems[] = 'There is another actor with this name. If these are separate people, please edit their pages and check the box "Duplicate Name Okay" at the bottom. If not, combine the actors and edit their characters.';
-			}
-			**/
-
 			// If we added any problems, loop and add.
 			if ( ! empty( $problems ) ) {
 				$items[] = array(

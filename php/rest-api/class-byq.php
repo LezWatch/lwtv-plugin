@@ -196,7 +196,7 @@ class BYQ {
 		$last_death = array_shift( $last_death );
 
 		// Calculate the difference between then and now
-		if ( ! is_null( $last_death['died'] ) ) {
+		if ( isset( $last_death['died'] ) && ! is_null( $last_death['died'] ) ) {
 			$diff                = abs( time() - $last_death['died'] );
 			$last_death['since'] = $diff;
 			$return              = $last_death;

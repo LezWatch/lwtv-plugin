@@ -168,17 +168,21 @@ class Who_Are_You {
 	 */
 	public function is_gay( $name = false ) {
 
+		$output  = '';
 		$failure = 'I\'m sorry, I don\'t recognize that name. Please try again, asking me who a specific actor is.';
 		if ( ! $name ) {
 			return $failure;
 		}
 
-		// Get the actor array:
+		// Get the actor array
 		$results = self::search_this( 'actors', $name );
 
 		if ( isset( $results ) && is_array( $results ) ) {
+			// Remove all empty results:
+			$results = array_filter( $results );
+
 			if ( count( $results ) > 1 ) {
-				$output = 'I found more than one actor matching that name. ';
+				$output .= 'I found more than one actor matching that name. ';
 			}
 
 			foreach ( $results as $actor ) {
@@ -188,7 +192,7 @@ class Who_Are_You {
 				$output .= ' Would you like to learn more about them? Ask LezWatch T. V. Tell me about the actor ' . $actor['name'] . '.';
 			}
 		} else {
-			$output = 'I can\'t find an actor who has played a character by that name.';
+			$output .= 'I can\'t find an actor who has played a character by that name.';
 		}
 
 		return $output;
@@ -217,9 +221,14 @@ class Who_Are_You {
 				$this_search->the_post();
 				switch ( $post_type ) {
 					case 'actors':
-						$search_array = self::search_actors( get_the_ID() );
-						// We also need the content which is easier to get here.
-						$search_array['content'] = apply_filters( 'the_content', get_the_content() );
+						if ( lwtv_plugin()->hide_actor_data( get_the_ID(), 'all' ) ) {
+							// If the actor is set private, we show nothing.
+							$search_array = array();
+						} else {
+							$search_array = self::search_actors( get_the_ID() );
+							// We also need the content which is easier to get here.
+							$search_array['content'] = apply_filters( 'the_content', get_the_content() );
+						}
 						break;
 					case 'characters':
 						$search_array = self::search_characters( get_the_ID() );
@@ -232,8 +241,12 @@ class Who_Are_You {
 						$search_array['content'] = wp_strip_all_tags( get_the_excerpt(), true );
 						break;
 				}
-				$search_array['name']         = get_the_title();
-				$return_array[ get_the_ID() ] = $search_array;
+
+				// If the search array is false, there's no data.
+				if ( false !== $search_array ) {
+					$search_array['name']         = get_the_title();
+					$return_array[ get_the_ID() ] = $search_array;
+				}
 			}
 			wp_reset_postdata();
 		}
@@ -253,29 +266,37 @@ class Who_Are_You {
 	 */
 	public function search_actors( $post_id ) {
 
-		// Age calculations
-		if ( get_post_meta( $post_id, 'lezactors_death', true ) ) {
-			$death = new \DateTime( get_post_meta( $post_id, 'lezactors_death', true ) );
-			$end   = new \DateTime( get_post_meta( $post_id, 'lezactors_death', true ) );
-		} else {
-			$death = false;
-			$end   = new \DateTime();
+		// Check Privacy. If the actor is hidden, we don't want to show anything.
+		if ( lwtv_plugin()->hide_actor_data( $post_id, 'all' ) ) {
+			return;
 		}
 
-		$start = ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) ? new \DateTime( get_post_meta( $post_id, 'lezactors_birth', true ) ) : false;
+		// Show age ONLY if the actor has not asked us to hide age.
+		if ( ! lwtv_plugin()->hide_actor_data( $post_id, 'dob' ) ) {
+			// Age calculations
+			if ( get_post_meta( $post_id, 'lezactors_death', true ) ) {
+				$death = new \DateTime( get_post_meta( $post_id, 'lezactors_death', true ) );
+				$end   = new \DateTime( get_post_meta( $post_id, 'lezactors_death', true ) );
+			} else {
+				$death = false;
+				$end   = new \DateTime();
+			}
 
-		// If we have a birthdate, let's parse.
-		if ( isset( $start ) && false !== $start ) {
-			$age_is = $start->diff( $end );
-			$born   = $start->format( 'm F, Y' );
-			$age    = $age_is->format( '%Y years old' );
-		}
+			$start = ( get_post_meta( get_the_ID(), 'lezactors_birth', true ) ) ? new \DateTime( get_post_meta( $post_id, 'lezactors_birth', true ) ) : false;
 
-		// If we have a death date, we'll use it.
-		if ( isset( $death ) && false !== $death ) {
-			$died = $start->format( 'm F, Y' );
-		} else {
-			$end = false;
+			// If we have a birthdate, let's parse.
+			if ( isset( $start ) && false !== $start ) {
+				$age_is = $start->diff( $end );
+				$born   = $start->format( 'm F, Y' );
+				$age    = $age_is->format( '%Y years old' );
+			}
+
+			// If we have a death date, we'll use it.
+			if ( isset( $death ) && false !== $death ) {
+				$died = $start->format( 'm F, Y' );
+			} else {
+				$end = false;
+			}
 		}
 
 		// Gender and sexuality
@@ -301,6 +322,9 @@ class Who_Are_You {
 		$search_array['born']       = $born;
 		$search_array['died']       = $died;
 		$search_array['age']        = $age;
+
+		// Remove all empty results:
+		$search_array = array_filter( $search_array );
 
 		// Return the array
 		return $search_array;
