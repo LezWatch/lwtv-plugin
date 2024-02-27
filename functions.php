@@ -56,8 +56,12 @@ define( 'LWTV_SERVER_TIMEZONE', 'America/Los_Angeles' );
  * Symbolicons
  */
 $upload_dir = wp_upload_dir();
-define( 'LWTV_SYMBOLICONS_PATH', $upload_dir['basedir'] . '/lezpress-icons/symbolicons/' );
-define( 'LWTV_SYMBOLICONS_URL', $upload_dir['baseurl'] . '/lezpress-icons/symbolicons/' );
+if ( ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
+	define( 'LWTV_SYMBOLICONS_PATH', $upload_dir['basedir'] . '/lezpress-icons/symbolicons/' );
+}
+if ( ! defined( 'LWTV_SYMBOLICONS_URL' ) ) {
+	define( 'LWTV_SYMBOLICONS_URL', $upload_dir['baseurl'] . '/lezpress-icons/symbolicons/' );
+}
 
 /**
  * Autoloader serves for `LWTV` namespace and autoload all files under the php directory.

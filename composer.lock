@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b1f3276db868a329a5437610e1ebc8e5",
+    "content-hash": "8c03e96c4f6f9619330dad1e2acd3eda",
     "packages": [
         {
             "name": "johngrogg/ics-parser",
@@ -125,6 +125,63 @@
                 "source": "https://github.com/10up/wp_mock/tree/1.0.0"
             },
             "time": "2023-07-26T03:03:21+00:00"
+        },
+        {
+            "name": "aldavigdis/wp-tests-strapon",
+            "version": "dev-account-for-no-terminal",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aldavigdis/wp-tests-strapon.git",
+                "reference": "d896de835d7ebf4900bdcecb189dd17579523586"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aldavigdis/wp-tests-strapon/zipball/d896de835d7ebf4900bdcecb189dd17579523586",
+                "reference": "d896de835d7ebf4900bdcecb189dd17579523586",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^2.6",
+                "phpunit/phpunit": "^9.0",
+                "simoneast/simple-ansi-colors": "^1.0",
+                "yoast/phpunit-polyfills": "^2.0"
+            },
+            "require-dev": {
+                "composer/composer": "^2.7",
+                "psy/psysh": "^0.12.0",
+                "squizlabs/php_codesniffer": "^3.8",
+                "wp-coding-standards/wpcs": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "class": "Aldavigdis\\WpTestsStrapon\\StraponMain"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Aldavigdis\\WpTestsStrapon\\": "src/"
+                }
+            },
+            "license": [
+                "No-Evil-Use"
+            ],
+            "authors": [
+                {
+                    "name": "Alda Vigdís Skarphéðinsdóttir",
+                    "email": "aldavigdis@aldavigdis.is"
+                }
+            ],
+            "description": "Strap the WordPress PHPUnit tests library onto your plugin or theme with this handy Composer package.",
+            "keywords": [
+                "dev",
+                "phpunit",
+                "testing",
+                "wordpress"
+            ],
+            "support": {
+                "source": "https://github.com/aldavigdis/wp-tests-strapon/tree/account-for-no-terminal",
+                "issues": "https://github.com/aldavigdis/wp-tests-strapon/issues"
+            },
+            "time": "2024-02-18T17:26:51+00:00"
         },
         {
             "name": "antecedent/patchwork",
@@ -517,16 +574,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.0.0",
+            "version": "v5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "4a21235f7e56e713259a6f76bf4b5ea08502b9dc"
+                "reference": "2218c2252c874a4624ab2f613d86ac32d227bc69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/4a21235f7e56e713259a6f76bf4b5ea08502b9dc",
-                "reference": "4a21235f7e56e713259a6f76bf4b5ea08502b9dc",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/2218c2252c874a4624ab2f613d86ac32d227bc69",
+                "reference": "2218c2252c874a4624ab2f613d86ac32d227bc69",
                 "shasum": ""
             },
             "require": {
@@ -569,9 +626,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.0.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.0.1"
             },
-            "time": "2024-01-07T17:17:35+00:00"
+            "time": "2024-02-21T19:24:10+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1436,16 +1493,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.6.16",
+            "version": "9.6.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3767b2c56ce02d01e3491046f33466a1ae60a37f"
+                "reference": "1a156980d78a6666721b7e8e8502fe210b587fcd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3767b2c56ce02d01e3491046f33466a1ae60a37f",
-                "reference": "3767b2c56ce02d01e3491046f33466a1ae60a37f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/1a156980d78a6666721b7e8e8502fe210b587fcd",
+                "reference": "1a156980d78a6666721b7e8e8502fe210b587fcd",
                 "shasum": ""
             },
             "require": {
@@ -1519,7 +1576,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.16"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.17"
             },
             "funding": [
                 {
@@ -1535,7 +1592,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-19T07:03:14+00:00"
+            "time": "2024-02-23T13:14:51+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -2502,17 +2559,67 @@
             "time": "2020-09-28T06:39:44+00:00"
         },
         {
-            "name": "squizlabs/php_codesniffer",
-            "version": "3.8.1",
+            "name": "simoneast/simple-ansi-colors",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "14f5fff1e64118595db5408e946f3a22c75807f7"
+                "url": "https://github.com/SimonEast/Simple-Ansi-Colors.git",
+                "reference": "7b0abb5d779e25fffd26bcceb3d88278d1c064ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/14f5fff1e64118595db5408e946f3a22c75807f7",
-                "reference": "14f5fff1e64118595db5408e946f3a22c75807f7",
+                "url": "https://api.github.com/repos/SimonEast/Simple-Ansi-Colors/zipball/7b0abb5d779e25fffd26bcceb3d88278d1c064ed",
+                "reference": "7b0abb5d779e25fffd26bcceb3d88278d1c064ed",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Ansi": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Simon East",
+                    "email": "simon@yump.com.au"
+                }
+            ],
+            "description": "Simple PHP class for converting basic HTML-like color tags into ANSI escape codes for use in console apps and scripts. Auto-detection for Windows/Ansicon users included.",
+            "homepage": "https://github.com/SimonEast/Simple-Ansi-Colors",
+            "keywords": [
+                "ansi",
+                "ansicon",
+                "color",
+                "colors",
+                "colour",
+                "colours",
+                "console"
+            ],
+            "support": {
+                "issues": "https://github.com/SimonEast/Simple-Ansi-Colors/issues",
+                "source": "https://github.com/SimonEast/Simple-Ansi-Colors/tree/master"
+            },
+            "time": "2015-11-24T03:03:27+00:00"
+        },
+        {
+            "name": "squizlabs/php_codesniffer",
+            "version": "3.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
+                "reference": "d63cee4890a8afaf86a22e51ad4d97c91dd4579b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/d63cee4890a8afaf86a22e51ad4d97c91dd4579b",
+                "reference": "d63cee4890a8afaf86a22e51ad4d97c91dd4579b",
                 "shasum": ""
             },
             "require": {
@@ -2579,7 +2686,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-01-11T20:47:48+00:00"
+            "time": "2024-02-16T15:06:51+00:00"
         },
         {
             "name": "theseer/tokenizer",
