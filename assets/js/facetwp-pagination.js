@@ -8,9 +8,11 @@
 
 (function($) {
     $(document).on('facetwp-loaded', function() {
-        $('html, body').animate({
-            scrollTop: $('.facetwp-page-title')
-        }, 500);
+        if ( FWP.loaded ) { // Run only after the first page load
+            $('html, body').animate({
+                scrollTop: $('.facetwp-page-title') // Scroll to the top of the element with class "facetwp-page-title"
+            }, 500);
+        }
     });
 })(jQuery);
 

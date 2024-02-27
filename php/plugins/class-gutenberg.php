@@ -5,7 +5,7 @@
  *
  * https://gist.githubusercontent.com/Clorith/3def2df9ddf47e0e7452d28cf76fb134/raw/958d1ce12fe811474a1d5827de3eae2b53c6f09b/disable-fullscreen-snippet.php
  *
- * @version 1.0
+ * @version 1.0 Feb 11, 2022.
  * @package library
  */
 

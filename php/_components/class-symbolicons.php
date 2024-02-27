@@ -11,6 +11,8 @@
 
 namespace LWTV\_Components;
 
+use LWTV\Grading\LWTV;
+
 class Symbolicons implements Component, Templater {
 
 	/*
@@ -156,9 +158,9 @@ class Symbolicons implements Component, Templater {
 
 		$icon = $this->get_icon_file( $svg );
 
-		if ( isset( $icon ) ) {
+		if ( ! empty( $icon ) ) {
 			// @codingStandardsIgnoreStart
-			$return = '<span class="' . $svg_class . '" role="img">' . file_get_contents( $icon ) . '</span>';
+			$return = '<span class="' . $svg_class . '" role="img">' . trim( file_get_contents( $icon ) ) . '</span>';
 			// @codingStandardsIgnoreEnd
 		}
 
@@ -172,10 +174,12 @@ class Symbolicons implements Component, Templater {
 	 * @return string
 	 */
 	public function get_icon_file( $svg ) {
+		$icon = plugin_dir_path( dirname( __DIR__, 1 ) ) . 'assets/images/square.svg';
+
 		if ( defined( 'LWTV_SYMBOLICONS_PATH' ) && file_exists( LWTV_SYMBOLICONS_PATH . $svg ) ) {
 			$icon = LWTV_SYMBOLICONS_PATH . $svg;
-		} elseif ( ! wp_style_is( 'fontawesome', 'enqueued' ) ) {
-			$icon = get_template_directory() . '/images/square.svg';
+		} elseif ( wp_style_is( 'fontawesome', 'enqueued' ) ) {
+			$icon = '';
 		}
 
 		return $icon;

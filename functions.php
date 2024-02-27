@@ -47,6 +47,7 @@ define( 'LWTV_CREATED_YEAR', '2013' );
 
 // Plugin Home:
 define( 'LWTV_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'LWTV_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 // Timezones:
 define( 'LWTV_TIMEZONE', 'America/New_York' );
@@ -56,8 +57,12 @@ define( 'LWTV_SERVER_TIMEZONE', 'America/Los_Angeles' );
  * Symbolicons
  */
 $upload_dir = wp_upload_dir();
-define( 'LWTV_SYMBOLICONS_PATH', $upload_dir['basedir'] . '/lezpress-icons/symbolicons/' );
-define( 'LWTV_SYMBOLICONS_URL', $upload_dir['baseurl'] . '/lezpress-icons/symbolicons/' );
+if ( ! defined( 'LWTV_SYMBOLICONS_PATH' ) ) {
+	define( 'LWTV_SYMBOLICONS_PATH', $upload_dir['basedir'] . '/lezpress-icons/symbolicons/' );
+}
+if ( ! defined( 'LWTV_SYMBOLICONS_URL' ) ) {
+	define( 'LWTV_SYMBOLICONS_URL', $upload_dir['baseurl'] . '/lezpress-icons/symbolicons/' );
+}
 
 /**
  * Autoloader serves for `LWTV` namespace and autoload all files under the php directory.

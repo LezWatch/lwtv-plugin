@@ -48,7 +48,7 @@ class CMB2_Metaboxes {
 	 * @return mixed
 	 */
 	public function cmb2_scripts( $scripts ) {
-		wp_enqueue_script( 'ajaxified_dropdown', plugin_dir_url( dirname( __DIR__, 2 ) ) . 'assets/js/cmb2_ajax.js', array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'ajaxified_dropdown', LWTV_PLUGIN_URL . 'assets/js/cmb2_ajax.js', array( 'jquery' ), '1.0.0', true );
 		$return = $scripts;
 
 		return $return;
