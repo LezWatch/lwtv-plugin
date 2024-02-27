@@ -19,6 +19,10 @@ class Environment {
 			$this->default_env_type = 'uilabs-' . wp_get_environment_type();
 		}
 
+		if ( defined( 'LWTV_DEV_SITE' ) && LWTV_DEV_SITE ) {
+			$this->default_env_type = 'uilabs-development';
+		}
+
 		add_action( 'init', array( $this, 'init' ) );
 		add_filter( 'admin_body_class', array( &$this, 'admin_body_class' ) );
 	}
