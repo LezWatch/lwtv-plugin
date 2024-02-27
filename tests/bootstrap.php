@@ -5,20 +5,47 @@
  * @package Lwtv_Plugin
  */
 
-$_tests_dir = getenv( 'WP_TESTS_DIR' );
+if ( file_exists( '/vendor/aldavigdis/wp-tests-strapon/bootstrap.php' ) && file_exists( '/vendor/autoload.php' ) ) {
+	// defer to strapon
+	require 'vendor/autoload.php';
 
-if ( ! $_tests_dir ) {
-	$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
-}
+	use Aldavigdis\WpTestsStrapon\Bootstrap;
+	use Aldavigdis\WpTestsStrapon\FetchWP;
 
-// Forward custom PHPUnit Polyfills configuration to PHPUnit bootstrap file.
-$_phpunit_polyfills_path = getenv( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' );
-if ( false !== $_phpunit_polyfills_path ) {
-	define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', $_phpunit_polyfills_path );
+	if ( getenv( 'WP_VERSION' ) === false ) {
+		putenv( 'WP_VERSION=master' );
+	}
+
+	if ( defined( 'WP_TESTS_CONFIG_FILE_PATH' ) === false ) {
+		define(
+			'WP_TESTS_CONFIG_FILE_PATH',
+			Aldavigdis\WpTestsStrapon\Config::path()
+		);
+	}
+
+	Bootstrap::init( getenv( 'WP_VERSION' ) );
+
+	$_tests_dir   = FetchWP::extractDirPath() . 'wordpress-develop-trunk/tests/phpunit/';
+	$no_functions = "Could not find {$_tests_dir}/includes/functions.php, please check if your Strapon is secure.";
+} else {
+	// Fallback to wp-tests.
+	$_tests_dir = getenv( 'WP_TESTS_DIR' );
+
+	if ( ! $_tests_dir ) {
+		$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
+	}
+
+	// Forward custom PHPUnit Polyfills configuration to PHPUnit bootstrap file.
+	$_phpunit_polyfills_path = getenv( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' );
+	if ( false !== $_phpunit_polyfills_path ) {
+		define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', $_phpunit_polyfills_path );
+	}
+
+	$no_functions = "Could not find {$_tests_dir}/includes/functions.php, have you run plugins/lwtv-plugin/bin/install-wp-tests.sh ?";
 }
 
 if ( ! file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
-	echo "Could not find {$_tests_dir}/includes/functions.php, have you run bin/install-wp-tests.sh ?" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo $no_functions . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	exit( 1 );
 }
 

@@ -44,8 +44,15 @@
     "wp-coding-standards/wpcs": "^3.0",
     "10up/wp_mock": "^1.0",
     "phpunit/phpunit": "^9.6",
+    "aldavigdis/wp-tests-strapon": "*",
     "yoast/phpunit-polyfills": "^2.0",
     "phpcompatibility/phpcompatibility-wp": "*",
     "php-stubs/wp-cli-stubs": "^2.9"
-  }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/aldavigdis/wp-tests-strapon.git"
+    }
+  ]
 }
