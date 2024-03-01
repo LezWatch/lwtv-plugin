@@ -22,9 +22,9 @@ class Debugger_Test extends \WP_UnitTestCase {
 	 */
 	public function test_sanitize_twitter() {
 		$format = 'twitter';
-		$real = 'thisisaname';
-		$bad  = 'this$is$a%name';
-		$long = 'https://twitter.com/' . $real;
+		$real   = 'thisisaname';
+		$bad    = 'this$is$a%name';
+		$long   = 'https://twitter.com/' . $real;
 
 		$sanitize_long = ( new Debugger() )->sanitize_social( $long, $format );
 		$sanitize_real = ( new Debugger() )->sanitize_social( $real, $format );
