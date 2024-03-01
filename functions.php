@@ -47,6 +47,7 @@ define( 'LWTV_CREATED_YEAR', '2013' );
 
 // Plugin Home:
 define( 'LWTV_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'LWTV_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 // Timezones:
 define( 'LWTV_TIMEZONE', 'America/New_York' );

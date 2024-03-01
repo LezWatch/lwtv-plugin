@@ -22,7 +22,7 @@ class Statistics implements Component, Templater {
 	 */
 	const VERSIONING = array(
 		'chartjs'                   => '4.4.1',
-		'chartjs-plugin-annotation' => '2.2.1',
+		'chartjs-plugin-annotation' => '3.0.1',
 		'palette'                   => '1.0.0',
 		'tablesorter'               => '2.31.3',
 		'tablesorter-bootstrap'     => '2.31.1',
@@ -66,14 +66,14 @@ class Statistics implements Component, Templater {
 		}
 
 		// Enqueue files shared:
-		wp_enqueue_script( 'chartjs', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/chart.js', array( 'jquery' ), self::VERSIONING['chartjs'], false );
-		wp_enqueue_script( 'chartjs-plugin-annotation', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), self::VERSIONING['chartjs-plugin-annotation'], false );
-		wp_enqueue_script( 'palette', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/palette.js', array(), self::VERSIONING['palette'], false );
+		wp_enqueue_script( 'chartjs', LWTV_PLUGIN_URL . 'assets/js/chart.js', array( 'jquery' ), self::VERSIONING['chartjs'], false );
+		wp_enqueue_script( 'chartjs-plugin-annotation', LWTV_PLUGIN_URL . 'assets/js/chartjs-plugin-annotation.min.js', array( 'chartjs' ), self::VERSIONING['chartjs-plugin-annotation'], false );
+		wp_enqueue_script( 'palette', LWTV_PLUGIN_URL . 'assets/js/palette.js', array(), self::VERSIONING['palette'], false );
 
 		// Custom extra for stats pages:
 		if ( is_page( array( 'statistics' ) ) ) {
-			wp_enqueue_script( 'tablesorter', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), self::VERSIONING['tablesorter'], false );
-			wp_enqueue_style( 'tablesorter', plugin_dir_url( dirname( __DIR__, 1 ) ) . 'assets/css/theme.bootstrap_4.min.css', array(), self::VERSIONING['tablesorter-bootstrap'], false );
+			wp_enqueue_script( 'tablesorter', LWTV_PLUGIN_URL . 'assets/js/jquery.tablesorter.js', array( 'jquery' ), self::VERSIONING['tablesorter'], false );
+			wp_enqueue_style( 'tablesorter', LWTV_PLUGIN_URL . 'assets/css/theme.bootstrap_4.min.css', array(), self::VERSIONING['tablesorter-bootstrap'], false );
 
 			$statistics = get_query_var( 'statistics', 'none' );
 			$stat_view  = get_query_var( 'view', 'main' );

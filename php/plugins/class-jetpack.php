@@ -102,7 +102,7 @@ class Jetpack {
 		if ( 'post.php' === $pagenow && isset( $_GET['post'] ) ) {
 
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$post_type = get_post_type( $_GET['post'] );
+			$post_type = get_post_type( sanitize_text_field( $_GET['post'] ) );
 
 			if ( in_array( $post_type, $no_images_for, true ) ) {
 				add_action(

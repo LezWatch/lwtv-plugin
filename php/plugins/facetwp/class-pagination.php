@@ -23,7 +23,7 @@ class Pagination {
 	 * @return void
 	 */
 	public function wp_enqueue_scripts() {
-		wp_enqueue_script( 'facetwp-pagination', plugin_dir_url( dirname( __DIR__, 2 ) ) . '/assets/js/facetwp-pagination.js', array(), LWTV_PLUGIN_VERSION, true );
+		wp_enqueue_script( 'facetwp-pagination', LWTV_PLUGIN_URL . '/assets/js/facetwp-pagination.js', array(), LWTV_PLUGIN_VERSION, true );
 	}
 
 	/**
