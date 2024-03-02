@@ -52,7 +52,7 @@ class Taxonomies {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$new_post_meta_data = ( isset( $_POST[ $postmeta ] ) ) ? sanitize_text_field( $_POST[ $postmeta ] ) : '';
+		$new_post_meta_data = ( isset( $_POST[ $postmeta ] ) ) ? $_POST[ $postmeta ] : '';
 		$none_term          = get_term_by( 'slug', 'none', $taxonomy );
 		if ( false !== $none_term && is_array( $new_post_meta_data ) ) {
 			$the_post_meta_data = array_diff( $new_post_meta_data, array( $none_term->term_id ) );
