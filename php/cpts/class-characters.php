@@ -10,7 +10,6 @@ namespace LWTV\CPTs;
 use LWTV\CPTs\Characters\Calculations;
 use LWTV\CPTs\Characters\CMB2_Metaboxes;
 use LWTV\CPTs\Characters\Custom_Columns;
-use LWTV\CPTs\Shows;
 
 /**
  * class LWTV_CPT_Characters
@@ -37,6 +36,11 @@ class Characters {
 	);
 
 	/**
+	 * Shadow Taxonomy
+	 */
+	const SHADOW_TAXONOMY = 'shadow_tax_characters';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -45,9 +49,13 @@ class Characters {
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
+		// Cron action to update meta when saved.
+		add_action( 'lwtv_update_char_meta', array( $this, 'update_char_meta' ) );
+
 		// Create CPT and Taxes
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
+		add_action( 'init', array( $this, 'create_shadow_taxonomies' ), 0 );
 
 		// Yoast Hooks
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
@@ -80,16 +88,6 @@ class Characters {
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ), 10, 3 );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
-	}
-
-	/**
-	 * Do The Math
-	 *
-	 * @param  int  $post_id
-	 * @return void
-	 */
-	public function do_the_math( $show_id ) {
-		( new Calculations() )->do_the_math( $show_id );
 	}
 
 	/*
@@ -199,6 +197,7 @@ class Characters {
 			$arguments = array(
 				'hierarchical'          => false,
 				'labels'                => $labels,
+				'public'                => true,
 				'show_ui'               => true,
 				'show_in_rest'          => true,
 				'show_admin_column'     => true,
@@ -212,6 +211,62 @@ class Characters {
 			// Register taxonomy
 			register_taxonomy( $tax_slug, self::SLUG, $arguments );
 		}
+	}
+
+	/**
+	 * Registers shadow taxonomy for being able to relate Characters to TV shows and actors.
+	 * Think of it as we're adding the taxonomy for the character to the show and actor CPT.
+	 *
+	 * See https://packagist.org/packages/spock/shadow-taxonomies for more information.
+	 */
+	public function create_shadow_taxonomies() {
+		require_once LWTV_PLUGIN_PATH . '/plugins/shadow-taxonomy/index.php';
+
+		$show_ui = ( defined( 'WP_DEBUG' ) && true === WP_DEBUG ) ? true : false;
+
+		register_taxonomy(
+			self::SHADOW_TAXONOMY,
+			array( Actors::SLUG, Shows::SLUG ),
+			array(
+				'label'         => 'Characters',
+				'rewrite'       => false,
+				'show_tagcloud' => false,
+				'show_ui'       => $show_ui,
+				'public'        => false,
+				'hierarchical'  => false,
+				'show_in_menu'  => $show_ui,
+				'meta_box_cb'   => false,
+			)
+		);
+
+		\Shadow_Taxonomy\Core\create_relationship( self::SLUG, self::SHADOW_TAXONOMY );
+	}
+
+	/*
+	 * Add to 'Right Now'
+	 */
+	public function dashboard_glance_items() {
+		foreach ( array( self::SLUG ) as $post_type ) {
+			$num_posts = wp_count_posts( $post_type );
+			if ( $num_posts && $num_posts->publish ) {
+				if ( self::SLUG === $post_type ) {
+					// translators: %s is the number of characters
+					$text = _n( '%s Character', '%s Characters', $num_posts->publish );
+				}
+				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
+				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
+			}
+		}
+	}
+
+	/*
+	 * Customize title
+	 */
+	public function custom_enter_title( $input ) {
+		if ( self::SLUG === get_post_type() ) {
+			$input = 'Add character';
+		}
+		return $input;
 	}
 
 	/*
@@ -282,23 +337,6 @@ class Characters {
 	public function yoast_seo_register_extra_replacements() {
 		\wpseo_register_var_replacement( '%%actors%%', array( $this, 'yoast_retrieve_actors_replacement' ), 'basic', 'A list of actors who played the character, separated by commas.' );
 		\wpseo_register_var_replacement( '%%shows%%', array( $this, 'yoast_retrieve_shows_replacement' ), 'basic', 'A list of shows the character was on, separated by commas.' );
-	}
-
-	/*
-	 * Add to 'Right Now'
-	 */
-	public function dashboard_glance_items() {
-		foreach ( array( self::SLUG ) as $post_type ) {
-			$num_posts = wp_count_posts( $post_type );
-			if ( $num_posts && $num_posts->publish ) {
-				if ( self::SLUG === $post_type ) {
-					// translators: %s is the number of characters
-					$text = _n( '%s Character', '%s Characters', $num_posts->publish );
-				}
-				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
-				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
-			}
-		}
 	}
 
 	/**
@@ -547,8 +585,6 @@ class Characters {
 	 * Save post meta for characters
 	 *
 	 * @param int $post_id The post ID.
-	 * @param post $post The post object.
-	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
 	public function save_post_meta( $post_id ) {
 
@@ -560,7 +596,69 @@ class Characters {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
+		$this->schedule_cron( $post_id );
+
+		// re-hook this function
+		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
+	}
+
+	/**
+	 * Do The Math
+	 *
+	 * @param  int  $post_id
+	 * @return void
+	 */
+	public function do_the_math( $show_id ) {
+		( new Calculations() )->do_the_math( $show_id );
+	}
+
+	/*
+	 * Schedule the cron job
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	public function schedule_cron( $post_id ) {
+		// Schedule the cron job.
+		if ( ! wp_next_scheduled( 'lwtv_save_char_meta' ) ) {
+			wp_schedule_single_event( time(), 'lwtv_update_char_meta', array( $post_id ) );
+		}
+	}
+
+	/*
+	 * Update post meta for characters
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	public function update_char_meta( $post_id ) {
 		// Fix Shows - you only get one!
+		$this->fix_shows( $post_id );
+
+		// Character scores
+		$this->do_the_math( $post_id );
+
+		// Always Sync Taxonomies
+		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		$this->sync_shadow_tax( $post_id );
+
+		// Get a list of URLs to flush
+		$clear_urls = lwtv_plugin()->collect_cache_urls_for_characters( $post_id );
+
+		// If we've got a list of URLs, then flush.
+		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
+			lwtv_plugin()->clean_cache_urls( $clear_urls );
+		}
+	}
+
+	/**
+	 * Fix shows.
+	 *
+	 * At some point the show-group made an array for each show in a group, which is just
+	 * wrong. This makes sure to DE-array them.
+	 *
+	 * @param  int  $post_id
+	 * @return void
+	 */
+	public function fix_shows( $post_id ) {
 		$all_shows = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$new_shows = array();
 
@@ -574,32 +672,58 @@ class Characters {
 			}
 			update_post_meta( $post_id, 'lezchars_show_group', $new_shows );
 		}
-
-		// Character scores
-		$this->do_the_math( $post_id );
-
-		// Get a list of URLs to flush
-		$clear_urls = lwtv_plugin()->collect_cache_urls_for_characters( $post_id );
-
-		// Always Sync Taxonomies
-		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_cliches', 'lez_cliches' );
-
-		// If we've got a list of URLs, then flush.
-		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			lwtv_plugin()->clean_cache_urls( $clear_urls );
-		}
-
-		// re-hook this function
-		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 	}
 
-	/*
-	 * Customize title
+	/**
+	 * Sync Shadow Tax
+	 *
+	 * Sync the shadow taxonomy for shows with the character.
+	 *
+	 * @param  int  $post_id
+	 * @return void
 	 */
-	public function custom_enter_title( $input ) {
-		if ( self::SLUG === get_post_type() ) {
-			$input = 'Add character';
+	public function sync_shadow_tax( $post_id ) {
+		$show_group       = get_post_meta( $post_id, 'lezchars_show_group', true );
+		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $post_id, self::SHADOW_TAXONOMY );
+
+		if ( $show_group ) {
+			foreach ( $show_group as $each_show ) {
+				// Remove the Array.
+				if ( is_array( $each_show['show'] ) ) {
+					$each_show['show'] = $each_show['show'][0];
+				}
+
+				$shadow_show = \Shadow_Taxonomy\Core\get_associated_term( $each_show['show'], Shows::SHADOW_TAXONOMY );
+
+				// Add the tax for the show to the character.
+				if ( ! has_term( $shadow_show->term_id, Shows::SHADOW_TAXONOMY, $post_id ) ) {
+					wp_set_object_terms( $post_id, $shadow_show->term_id, Shows::SHADOW_TAXONOMY, true );
+				}
+
+				// Add the tax for the character to the show.
+				if ( ! has_term( $shadow_character->term_id, self::SHADOW_TAXONOMY, $each_show['show'] ) ) {
+					wp_set_object_terms( $each_show['show'], $shadow_character->term_id, self::SHADOW_TAXONOMY, true );
+				}
+			}
 		}
-		return $input;
+
+		$actors = get_post_meta( $post_id, 'lezchars_actor', true );
+		if ( $actors ) {
+			$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
+
+			foreach ( $actors as $actor ) {
+				$shadow_actor = \Shadow_Taxonomy\Core\get_associated_term( $actor, Actors::SHADOW_TAXONOMY );
+
+				// Add the tax for the actor to the character.
+				if ( ! has_term( $shadow_actor->term_id, Actors::SHADOW_TAXONOMY, $post_id ) ) {
+					wp_add_object_terms( $post_id, $shadow_actor->term_id, Actors::SHADOW_TAXONOMY, true );
+				}
+
+				// Add the tax for the character to the actor.
+				if ( ! has_term( $shadow_character->term_id, self::SHADOW_TAXONOMY, $actor ) ) {
+					wp_add_object_terms( $actor, $shadow_character->term_id, self::SHADOW_TAXONOMY, true );
+				}
+			}
+		}
 	}
 }

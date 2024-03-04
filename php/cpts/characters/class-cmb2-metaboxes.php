@@ -5,6 +5,8 @@
 
 namespace LWTV\CPTs\Characters;
 
+use LWTV\CPTs\Shows;
+
 class CMB2_Metaboxes {
 	public $character_roles;
 	public $years_array;
@@ -221,6 +223,7 @@ class CMB2_Metaboxes {
 			)
 		);
 		// Field: Show Name
+		/**
 		$cmb_characters->add_group_field(
 			$group_shows,
 			array(
@@ -240,6 +243,20 @@ class CMB2_Metaboxes {
 				),
 			)
 		);
+		**/
+
+		$cmb_characters->add_group_field(
+			$group_shows,
+			array(
+				'name'           => 'TV Show',
+				'id'             => 'show',
+				'desc'           => 'Select a show. If there are additional shows, scroll down and use the \'Add Another Show\' button.',
+				'type'           => 'taxonomy_select', // This field type
+				'taxonomy'       => Shows::SHADOW_TAXONOMY,
+				'remove_default' => 'true', // Removes the default metabox provided by WP core.
+			)
+		);
+
 		// Field: Character Type
 		$cmb_characters->add_group_field(
 			$group_shows,

@@ -41,6 +41,11 @@ class Actors {
 	);
 
 	/**
+	 * Shadow Taxonomy
+	 */
+	const SHADOW_TAXONOMY = 'shadow_tax_actors';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -52,6 +57,7 @@ class Actors {
 		// Create CPT and Taxes
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
+		add_action( 'init', array( $this, 'create_shadow_taxonomies' ), 0 );
 
 		// Yoast Hooks
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra' ) );
@@ -214,6 +220,35 @@ class Actors {
 			// Register taxonomy
 			register_taxonomy( $tax_slug, self::SLUG, $arguments );
 		}
+	}
+
+	/**
+	 * Registers shadow taxonomy for being able to relate Actors to Characters.
+	 * Think of it as we're adding the taxonomy for the actor to the character CPT.
+	 *
+	 * See https://packagist.org/packages/spock/shadow-taxonomies for more information.
+	 */
+	public function create_shadow_taxonomies() {
+		require_once LWTV_PLUGIN_PATH . '/plugins/shadow-taxonomy/index.php';
+
+		$show_ui = ( defined( 'WP_DEBUG' ) && true === WP_DEBUG ) ? true : false;
+
+		register_taxonomy(
+			self::SHADOW_TAXONOMY,
+			Characters::SLUG,
+			array(
+				'label'         => 'Characters',
+				'rewrite'       => false,
+				'show_tagcloud' => false,
+				'show_ui'       => $show_ui,
+				'public'        => false,
+				'hierarchical'  => false,
+				'show_in_menu'  => $show_ui,
+				'meta_box_cb'   => false,
+			)
+		);
+
+		\Shadow_Taxonomy\Core\create_relationship( self::SLUG, self::SHADOW_TAXONOMY );
 	}
 
 	/*

@@ -33,23 +33,41 @@ A user-friendly Git client such as [GitHub Desktop](https://desktop.github.com) 
 1. Clone this repository: `git clone git@github.com:lezwatch/lwtv-plugin`
 2. Move into the project directory: `cd lwtv-plugin`
 3. Install the project dependencies: `npm install`
-4. Run an initial build: `npm run build`
+4. Update all the things (npm, composer, etc): `npm run updater`
+5. Run an initial build: `npm run build`
+
+### Shadow Taxonomies
+
+In order to speed up front-end page loads, we use shadow taxonomies. This means every TV show, Actor, and Character that has a post _also_ has a secret taxonomy term. To properly set this up you will need to run the following on your local site:
+
+```
+wp shadow sync --cpt=post_type_shows --tax=shadow_tax_shows
+wp shadow sync --cpt=post_type_actors --tax=shadow_tax_actors
+wp shadow sync --cpt=post_type_characters --tax=shadow_tax_characters
+```
+
+Each command will need to be run multiple times until there are no more posts left to process (it only handles 500 at a time).
+
+Then you run these commands to connect the parts together.
+
+```
+wp lwtv shadow characters shows
+wp lwtv shadow characters actors
+wp lwtv shadow shows characters
+wp lwtv shadow actors characters
+```
+
+This only needs to be run _once_. After setup, the site will dynamically set a new shadow term for every new character/actor/show.
 
 ## Contributing
 
-All code must pass through the `development` branch which is kept up tp date. As such, any pull requests should be made to **development**, which will push the code automatically to our development server for testing.
+All code must pass through the `development` branch which is kept up to date. As such, any pull requests should be made to **development**, which will push the code automatically to our development server for testing.
 
-1. Using the `development` branch as base, create a new branch with a descriptive name like `fixing-charts` or `fix/chartjs421` or `feature/latest-posts` . Commit your work to that branch until it's ready for full testing
+1. Using the `production` branch as base, create a new branch with a descriptive name like `fixing-charts` or `fix/chartjs421` or `feature/latest-posts` . Commit your work to that branch until it's ready for full testing
 2. Open [a pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request) from your feature branch to the `development` branch.
 3. If you are not a main developer, your pull request will be reviewed before it can be merged. If there are issues or changes needed, you may be asked to do so, or they may be done for you.
 4. When the code passes review, it will be merged into the `development` branch and can be tested on the dev server.
-5. Once the code passes tests, the `development` branch will be merged into `production` and the job is done!
-
-To install and update:
-
-* `$ npm install` - Install all the things.
-* `$ npm run updater` - Updates all the things (npm, composer, etc).
-* `$ npm run build` - Builds all the things for production.
+5. Once the code passes tests, the branch can be merged into `production` and the job is done!
 
 All commits are linted automatically on commit via eslint and phpcs, to ensure nothing breaks when we push the code.
 
@@ -511,6 +529,13 @@ Stored in `/wp-cli/` -- All code for WP-CLI
 * `cli-calc.php` - Calculations on content (scores, character count, etc) - `wp lwtv CALC [ID]`
 * `cli-check.php` - Data validation checkers - `wp lwtv CHECK [queerchars|wiki] [id]`
 * `cli-generate.php` - Generate custom content - `wp lwtv GENERATE [otd|tvmaze]`
+
+### Plugins
+* `cmb-field-select2` - Forked from [MustardBees](https://github.com/mustardBees/cmb-field-select2)
+* `cmb2-attached-posts` - Forked from [WebDevStudios](https://github.com/WebDevStudios/cmb2-attached-posts)
+* `cmb2-grid` - Forked from [Oraggami](https://github.com/origgami/CMB2-grid)
+* `facetwp-cmb2` - Forked from [WebDevStudios](https://github.com/WebDevStudios/facetwp-cmb2)
+* `shadow-taxonomy` - By [PatelUtkarsh](https://github.com/patelutkarsh/shadow-taxonomy)
 
 ### Tests
 
