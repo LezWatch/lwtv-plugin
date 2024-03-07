@@ -32,7 +32,9 @@ class Display {
 						<img
 							alt="Powered By <?php echo esc_html( $score['name'] ); ?>"
 							src="<?php echo esc_url( $score['image'] ); ?>"
-							style="max-height: 36px;padding-bottom: 4px;"
+							height="36px"
+							width="36px"
+							style="padding-bottom: 4px;"
 						/>
 					</center>
 					<svg

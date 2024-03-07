@@ -19,11 +19,13 @@ class Pagination {
 	}
 
 	/**
-	 * Enqueue Scripts
+	 * Enqueue Scripts on archive pages only.
 	 * @return void
 	 */
 	public function wp_enqueue_scripts() {
-		wp_enqueue_script( 'facetwp-pagination', LWTV_PLUGIN_URL . '/assets/js/facetwp-pagination.js', array(), LWTV_PLUGIN_VERSION, true );
+		if ( is_archive() ) {
+			wp_enqueue_script( 'facetwp-pagination', LWTV_PLUGIN_URL . '/assets/js/facetwp-pagination.js', array(), LWTV_PLUGIN_VERSION, true );
+		}
 	}
 
 	/**
