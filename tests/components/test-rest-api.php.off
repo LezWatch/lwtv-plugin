@@ -4,6 +4,8 @@
  *
  * Functionality tests for Rest_API
  *
+ * CURRENTLY BROKEN BECUASE WE USE SHADOW TAXONOMIES!
+ *
  * @package Lwtv_Plugin
  */
 
