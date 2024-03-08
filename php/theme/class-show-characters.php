@@ -64,6 +64,8 @@ class Show_Characters {
 		 *   - Just a Phase Samantha     -- By the time we hit 6000 characters, the math
 		 *                                  stopped working to show all the characters.
 		 *                                  Now it's set to 1/10th the number of chars.
+		 *   - The Shadow Tax            -- In order to prevent this from being an ongoing
+		 *                                  issue, we use shadow taxonomies instead.
 		 *
 		 * Calculate the max number of characters to list, based on the
 		 * previous count. Default/Minimum is the number of characters divided by 10
@@ -94,7 +96,9 @@ class Show_Characters {
 						$char_show['show'] = $char_show['show'][0];
 					}
 
-					// Because of show IDs having SIMILAR numbers, we need to be a little more flex
+					// Because of show IDs having SIMILAR numbers, we need to be a little more flexible.
+					// We PROBABLY don't need this anymore, but it's here just in case.
+
 					// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
 					if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
 						$display[ $char_id ] = array(
