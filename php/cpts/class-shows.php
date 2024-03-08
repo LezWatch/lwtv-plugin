@@ -282,8 +282,6 @@ class Shows {
 	 * See https://packagist.org/packages/spock/shadow-taxonomies for more information.
 	 */
 	public function create_shadow_taxonomies() {
-		require_once LWTV_PLUGIN_PATH . '/plugins/shadow-taxonomy/index.php';
-
 		$show_ui = ( defined( 'WP_DEBUG' ) && true === WP_DEBUG ) ? true : false;
 
 		register_taxonomy(

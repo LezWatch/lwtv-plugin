@@ -13,7 +13,7 @@ use LWTV\Theme\Content_Warning;
 use LWTV\Theme\Data_Author;
 use LWTV\Theme\Data_Character;
 use LWTV\Theme\Do_Math;
-use LWTV\Theme\List_Characters;
+use LWTV\Theme\Show_Characters;
 use LWTV\Theme\Show_Stars;
 use LWTV\Theme\Stats_Symbolicon;
 use LWTV\Theme\Taxonomy_Archive_Title;
@@ -41,7 +41,8 @@ class Theme implements Component, Templater {
 	public function get_template_tags(): array {
 		return array(
 			'get_stats_symbolicon'      => array( $this, 'get_stats_symbolicon' ),
-			'get_list_characters'       => array( $this, 'get_list_characters' ),
+			'get_characters_list'       => array( $this, 'get_characters_list' ),
+			'get_chars_for_show'        => array( $this, 'get_chars_for_show' ),
 			'get_author_social'         => array( $this, 'get_author_social' ),
 			'get_author_favorite_shows' => array( $this, 'get_author_favorite_shows' ),
 			'get_tax_archive_title'     => array( $this, 'get_tax_archive_title' ),
@@ -75,15 +76,27 @@ class Theme implements Component, Templater {
 	}
 
 	/**
-	 * List all characters
+	 * List all characters for shows
 	 *
 	 * @param  int    $post_id
 	 * @param  string $format
 	 *
 	 * @return array  List of characters
 	 */
-	public function get_list_characters( $post_id, $format ) {
-		return ( new List_Characters() )->make( $post_id, $format );
+	public function get_characters_list( $post_id, $format ) {
+		return ( new Show_Characters() )->make( $post_id, $format );
+	}
+
+	/**
+	 * Output all the characters for the show
+	 *
+	 * @param  int    $post_id
+	 * @param  string $role
+	 *
+	 * @return array  List of characters
+	 */
+	public function get_chars_for_show( $show_id, $role ) {
+		return ( new Show_Characters() )->make( $show_id, 'query', $role );
 	}
 
 	/**
@@ -231,7 +244,7 @@ class Theme implements Component, Templater {
 	 * Get Actor Characters
 	 *
 	 * @param  int $actor_id
-	 * @return string
+	 * @return mixed
 	 */
 	public function get_actor_characters( $actor_id ) {
 		return ( new Actor_Characters() )->make( $actor_id, 'all' );
@@ -241,7 +254,7 @@ class Theme implements Component, Templater {
 	 * Get Actor Dead Characters
 	 *
 	 * @param  int $actor_id
-	 * @return string
+	 * @return mixed
 	 */
 	public function get_actor_dead( $actor_id ) {
 		return ( new Actor_Characters() )->make( $actor_id, 'dead' );

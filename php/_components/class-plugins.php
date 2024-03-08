@@ -30,6 +30,7 @@ class Plugins implements Component, Templater {
 		new Jetpack();
 		new Related_Posts_By_Taxonomy();
 		new Yoast();
+		require_once LWTV_PLUGIN_PATH . '/plugins/shadow-taxonomy/index.php';
 	}
 
 	/**

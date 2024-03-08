@@ -93,7 +93,7 @@ class Calculations {
 		}
 
 		// before we do the math, let's see if we have any characters:
-		$raw_char_count = get_post_meta( $post_id, 'lezshows_char_list', true );
+		$raw_char_count = lwtv_plugin()->get_characters_list( $post_id, 'count' );
 
 		if ( ! empty( $raw_char_count ) ) {
 			$raw_char_count = ( ! is_array( $raw_char_count ) ) ? array( $raw_char_count ) : $raw_char_count;
@@ -365,19 +365,7 @@ class Calculations {
 		}
 
 		// Get array of characters (by ID)
-		$characters = array_unique( get_post_meta( $post_id, 'lezshows_char_list', true ) );
-
-		// If the character list is empty, we must build it
-		if ( empty( $characters ) ) {
-			// Loop to get the list of characters
-			$charactersloop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_show_group', $post_id, 'LIKE' );
-
-			if ( is_object( $charactersloop ) && $charactersloop->have_posts() ) {
-				$characters = wp_list_pluck( $charactersloop->posts, 'ID' );
-			}
-
-			$characters = array_unique( $characters );
-		}
+		$characters = lwtv_plugin()->get_characters_list( $post_id, 'query' );
 
 		$new_characters = array();
 		foreach ( $characters as $char_id ) {
@@ -411,8 +399,7 @@ class Calculations {
 			}
 		}
 
-		// Update the roles score
-		update_post_meta( $post_id, 'lezshows_char_list', $new_characters );
+		// Update the roles scores
 		update_post_meta( $post_id, 'lezshows_char_roles', $role_data );
 
 		// Update the taxonomies scores

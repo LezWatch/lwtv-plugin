@@ -60,7 +60,7 @@ class Custom_Columns {
 				$output = ucfirst( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) );
 				break;
 			case 'shows-queercount':
-				$output = count( get_post_meta( $post_id, 'lezshows_char_list', true ) );
+				$output = lwtv_plugin()->get_characters_list( $post_id, 'count' );
 				break;
 			default:
 				$output = '';
