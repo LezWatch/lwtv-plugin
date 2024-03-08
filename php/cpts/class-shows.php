@@ -57,11 +57,6 @@ class Shows {
 	);
 
 	/**
-	 * Shadow Taxonomy
-	 */
-	const SHADOW_TAXONOMY = 'shadow_tax_shows';
-
-	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -75,7 +70,6 @@ class Shows {
 		// Create CPT and Taxes
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
-		add_action( 'init', array( $this, 'create_shadow_taxonomies' ), 0 );
 
 		// phpcs:disable
 		// Hide taxonomies from Gutenberg.
@@ -273,33 +267,6 @@ class Shows {
 			// Register taxonomy
 			register_taxonomy( $tax_slug, self::SLUG, $arguments );
 		}
-	}
-
-	/**
-	 * Registers shadow taxonomy for being able to relate each TV Show to the characters.
-	 * Think of it as we're adding the taxonomy for the show to the actor CPT.
-	 *
-	 * See https://packagist.org/packages/spock/shadow-taxonomies for more information.
-	 */
-	public function create_shadow_taxonomies() {
-		$show_ui = ( defined( 'WP_DEBUG' ) && true === WP_DEBUG ) ? true : false;
-
-		register_taxonomy(
-			self::SHADOW_TAXONOMY,
-			Characters::SLUG,
-			array(
-				'label'         => 'SHADOW Shows',
-				'rewrite'       => false,
-				'show_tagcloud' => false,
-				'show_ui'       => $show_ui,
-				'public'        => false,
-				'hierarchical'  => false,
-				'show_in_menu'  => $show_ui,
-				'meta_box_cb'   => false,
-			)
-		);
-
-		\Shadow_Taxonomy\Core\create_relationship( self::SLUG, self::SHADOW_TAXONOMY );
 	}
 
 	/*

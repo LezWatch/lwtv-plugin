@@ -55,13 +55,6 @@ class Calculations {
 					$each_show['show'] = $each_show['show'][0];
 				}
 
-				$shadow_show = \Shadow_Taxonomy\Core\get_associated_term( $each_show['show'], Shows::SHADOW_TAXONOMY );
-
-				// Add the tax for the show to the character.
-				if ( ! has_term( $shadow_show->term_id, Shows::SHADOW_TAXONOMY, $post_id ) ) {
-					wp_set_object_terms( $post_id, $shadow_show->term_id, Shows::SHADOW_TAXONOMY, true );
-				}
-
 				// Add the tax for the character to the show.
 				if ( ! has_term( $shadow_character->term_id, Characters::SHADOW_TAXONOMY, $each_show['show'] ) ) {
 					wp_set_object_terms( $each_show['show'], $shadow_character->term_id, Characters::SHADOW_TAXONOMY, true );
@@ -84,13 +77,6 @@ class Calculations {
 			$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 			foreach ( $actors as $actor ) {
-				$shadow_actor = \Shadow_Taxonomy\Core\get_associated_term( $actor, Actors::SHADOW_TAXONOMY );
-
-				// Add the tax for the actor to the character.
-				if ( ! has_term( $shadow_actor->term_id, Actors::SHADOW_TAXONOMY, $post_id ) ) {
-					wp_add_object_terms( $post_id, $shadow_actor->term_id, Actors::SHADOW_TAXONOMY, true );
-				}
-
 				// Add the tax for the character to the actor.
 				if ( ! has_term( $shadow_character->term_id, Characters::SHADOW_TAXONOMY, $actor ) ) {
 					wp_add_object_terms( $actor, $shadow_character->term_id, Characters::SHADOW_TAXONOMY, true );

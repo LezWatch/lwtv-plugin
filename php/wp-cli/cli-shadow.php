@@ -136,12 +136,11 @@ class WP_CLI_LWTV_Shadow {
 	/**
 	 * Sync characters to shows.
 	 *
-	 * This looks for all the shows attached to a character and syncs them to the shadow taxonomy for that show.
+	 * This looks for all the shows attached to a character and syncs them to the shadow taxonomy for the character.
 	 *
 	 * @param int $one_post Character post ID
 	 */
 	public function sync_characters_to_shows( $one_post ) {
-		$shadow_tax       = 'shadow_tax_shows';
 		$shadow_cpt       = 'shadow_tax_characters';
 		$show_group       = get_post_meta( $one_post, 'lezchars_show_group', true );
 		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $one_post, $shadow_cpt );
@@ -158,14 +157,7 @@ class WP_CLI_LWTV_Shadow {
 				$each_show['show'] = $each_show['show'][0];
 			}
 
-			$shadow_show = \Shadow_Taxonomy\Core\get_associated_term( $each_show['show'], $shadow_tax );
-
-			\WP_CLI::line( 'Syncing ' . get_the_title( $one_post ) . ' with ' . $shadow_show->name );
-
-			// Add the tax for the show to the character.
-			if ( ! has_term( $shadow_show->term_id, $shadow_tax, $one_post ) ) {
-				wp_set_object_terms( $one_post, $shadow_show->term_id, $shadow_tax, true );
-			}
+			\WP_CLI::line( 'Syncing ' . get_the_title( $one_post ) . ' with ' . get_the_title( $each_show['show'] ) );
 
 			// Add the tax for the character to the show.
 			if ( ! has_term( $shadow_character->term_id, $shadow_cpt, $each_show['show'] ) ) {
@@ -177,12 +169,11 @@ class WP_CLI_LWTV_Shadow {
 	/**
 	 * Sync characters to actors.
 	 *
-	 * This looks for all the actors attached to a character and syncs them to the shadow taxonomy for that actor.
+	 * This looks for all the actors attached to a character and syncs them to the shadow taxonomy for the character.
 	 *
 	 * @param int $one_post Character post ID
 	 */
 	public function sync_characters_to_actors( $one_post ) {
-		$shadow_tax       = 'shadow_tax_actors';
 		$shadow_cpt       = 'shadow_tax_characters';
 		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $one_post, $shadow_cpt );
 		$actors           = get_post_meta( $one_post, 'lezchars_actor', true );
@@ -195,14 +186,7 @@ class WP_CLI_LWTV_Shadow {
 		$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 		foreach ( $actors as $actor ) {
-			$shadow_actor = \Shadow_Taxonomy\Core\get_associated_term( $actor, $shadow_tax );
-
-			\WP_CLI::line( 'Syncing ' . get_the_title( $one_post ) . ' to ' . $shadow_actor->name );
-
-			// Add the tax for the actor to the character.
-			if ( ! has_term( $shadow_actor->term_id, $shadow_tax, $one_post ) ) {
-				wp_add_object_terms( $one_post, $shadow_actor->term_id, $shadow_tax, true );
-			}
+			\WP_CLI::line( 'Syncing ' . get_the_title( $one_post ) . ' to ' . get_the_title( $actor ) );
 
 			// Add the tax for the character to the actor.
 			if ( ! has_term( $shadow_character->term_id, $shadow_cpt, $actor ) ) {
