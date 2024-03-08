@@ -41,12 +41,10 @@ A user-friendly Git client such as [GitHub Desktop](https://desktop.github.com) 
 In order to speed up front-end page loads, we use shadow taxonomies. This means every TV show, Actor, and Character that has a post _also_ has a secret taxonomy term. To properly set this up you will need to run the following on your local site:
 
 ```
-wp shadow sync --cpt=post_type_shows --tax=shadow_tax_shows
-wp shadow sync --cpt=post_type_actors --tax=shadow_tax_actors
 wp shadow sync --cpt=post_type_characters --tax=shadow_tax_characters
 ```
 
-Each command will need to be run multiple times until there are no more posts left to process (it only handles 500 at a time).
+The command will need to be run multiple times until there are no more posts left to process (it only handles 500 at a time).
 
 Then you run these commands to connect the parts together (they'll run everyone):
 
