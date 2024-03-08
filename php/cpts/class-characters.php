@@ -226,7 +226,7 @@ class Characters {
 			self::SHADOW_TAXONOMY,
 			array( Actors::SLUG, Shows::SLUG ),
 			array(
-				'label'         => 'Characters',
+				'label'         => 'SHADOW Characters',
 				'rewrite'       => false,
 				'show_tagcloud' => false,
 				'show_ui'       => $show_ui,

@@ -288,7 +288,7 @@ class Shows {
 			self::SHADOW_TAXONOMY,
 			Characters::SLUG,
 			array(
-				'label'         => 'TV Shows',
+				'label'         => 'SHADOW Shows',
 				'rewrite'       => false,
 				'show_tagcloud' => false,
 				'show_ui'       => $show_ui,

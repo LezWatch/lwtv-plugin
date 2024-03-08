@@ -48,28 +48,27 @@ wp shadow sync --cpt=post_type_characters --tax=shadow_tax_characters
 
 Each command will need to be run multiple times until there are no more posts left to process (it only handles 500 at a time).
 
-Then you run these commands to connect the parts together.
+Then you run these commands to connect the parts together (they'll run everyone):
 
 ```
-wp lwtv shadow characters shows
-wp lwtv shadow characters actors
-wp lwtv shadow shows characters
-wp lwtv shadow actors characters
+wp lwtv shadow shows
+wp lwtv shadow actors
 ```
 
-This only needs to be run _once_. After setup, the site will dynamically set a new shadow term for every new character/actor/show.
+This setup only needs to be performed _once_. Afterwards, the site will dynamically set a new shadow term for every new character/actor/show, and update when content is changed.
 
 ## Contributing
 
-All code must pass through the `development` branch which is kept up to date. As such, any pull requests should be made to **development**, which will push the code automatically to our development server for testing.
+All pull requests should be made to both **development** and **production**.
 
 1. Using the `production` branch as base, create a new branch with a descriptive name like `fixing-charts` or `fix/chartjs421` or `feature/latest-posts` . Commit your work to that branch until it's ready for full testing
 2. Open [a pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request) from your feature branch to the `development` branch.
 3. If you are not a main developer, your pull request will be reviewed before it can be merged. If there are issues or changes needed, you may be asked to do so, or they may be done for you.
 4. When the code passes review, it will be merged into the `development` branch and can be tested on the dev server.
-5. Once the code passes tests, the branch can be merged into `production` and the job is done!
+5. Once the code passes tests, create a pull request from your branch to `production`.
+6. When approved, the branch can be merged into `production` and the job is done!
 
-All commits are linted automatically on commit via eslint and phpcs, to ensure nothing breaks when we push the code.
+All commits are linted automatically on commit via eslint and phpcs, to ensure nothing breaks when we push the code. PHPUnit testing is in it's nascent stages using [WP-Tests-Strapon](https://github.com/aldavigdis/wp-tests-strapon).
 
 ### Libraries
 
@@ -487,7 +486,7 @@ Stored in `/php/theme/` - Code used to generate data for the theme in weird ways
     - `function oneshow()` - Generate data for PRIMARY show
     - `function shows()` - Generate data for all shows a character is on
     - `function terms()`  - Generate and return term data related to character (gender, pronouns, etc)
-* `class-list-characters.php` - Generate and return list of Characters from a show
+* `class-show-characters.php` - Generate and return list of Characters from a show
 * `class-show-stars.php` - Make show stars
 * `class-stats-symbolicon.php` - Makes the icon/title for symbolicons
 * `class-taxonomy-archive-title.php` - Customize title of archives with pretty icons
