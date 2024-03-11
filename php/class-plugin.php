@@ -124,6 +124,9 @@ use LWTV\_Helpers\Utils;
  * @method string get_ways_to_watch( $show_id )                             \_Components\Theme
  * @method bool   is_actor_birthday( $actor_id )                            \_Components\Theme
  *
+ * DEPRECATED:
+ * @method mixed  get_list_characters( $post_id, $format )                  \_Components\Theme
+ *
  * THIS YEAR
  * @method string get_this_year_display( $year ) \_Components\This_Year
  *

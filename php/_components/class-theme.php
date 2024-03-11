@@ -42,6 +42,7 @@ class Theme implements Component, Templater {
 		return array(
 			'get_stats_symbolicon'      => array( $this, 'get_stats_symbolicon' ),
 			'get_characters_list'       => array( $this, 'get_characters_list' ),
+			'get_list_characters'       => array( $this, 'get_characters_list' ), // THIS IS DEPRECATED!!
 			'get_chars_for_show'        => array( $this, 'get_chars_for_show' ),
 			'get_author_social'         => array( $this, 'get_author_social' ),
 			'get_author_favorite_shows' => array( $this, 'get_author_favorite_shows' ),
