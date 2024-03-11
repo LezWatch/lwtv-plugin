@@ -22,6 +22,8 @@ class Show_Characters {
 
 		if ( $get_shadow_tax ) {
 			$characters = $this->get_characters_from_shadow_tax( $get_shadow_tax, $format );
+		} elseif ( taxonomy_exists( Characters::SHADOW_TAXONOMY ) ) {
+			$characters = $this->get_characters_from_taxonomy( $post_id );
 		} else {
 			$characters = $this->get_characters_from_post_meta( $post_id, $format );
 		}
@@ -288,6 +290,25 @@ class Show_Characters {
 			}
 
 			$characters = ( is_array( $characters ) ) ? array_unique( $characters ) : array( $characters );
+		}
+
+		return $characters;
+	}
+
+
+	/**
+	 * Get characters from the taxonomy
+	 *
+	 * @param int $show_id
+	 *
+	 * @return array IDs of characters.
+	 */
+	public function get_characters_from_taxonomy( $show_id ) {
+		$characters = array();
+		$char_list  = wp_get_post_terms( $show_id, Characters::SHADOW_TAXONOMY, array( 'fields' => 'ids' ) );
+
+		foreach ( $char_list as $char_id ) {
+			$characters[] = get_term_meta( $char_id, 'shadow_shadow_tax_characters_post_id', true );
 		}
 
 		return $characters;

@@ -3,6 +3,7 @@
 namespace LWTV\Theme;
 
 use LWTV\CPTs\Characters;
+use function Shadow_Taxonomy\Core\get_the_posts;
 
 /**
  * Generate character data for actors.
@@ -44,10 +45,12 @@ class Actor_Characters {
 		$format = $format;
 
 		// if there is a character shadow tax, we need to get the characters from there.
-		$get_shadow_tax = \Shadow_Taxonomy\Core\get_the_posts( $actor_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
+		$get_shadow_tax = get_the_posts( $actor_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
 
 		if ( $get_shadow_tax ) {
 			$characters = $this->get_characters_from_shadow_tax( $get_shadow_tax );
+		} elseif ( taxonomy_exists( Characters::SHADOW_TAXONOMY ) ) {
+			$characters = $this->get_characters_from_taxonomy( $actor_id );
 		} else {
 			$characters = $this->get_characters_from_post_meta( $actor_id );
 		}
@@ -69,6 +72,24 @@ class Actor_Characters {
 
 		foreach ( $shadow_array as $shadow ) {
 			$characters[] = $shadow->ID;
+		}
+
+		return $characters;
+	}
+
+	/**
+	 * Get characters from the taxonomy
+	 *
+	 * @param int $actor_id
+	 *
+	 * @return array IDs of characters.
+	 */
+	public function get_characters_from_taxonomy( $actor_id ) {
+		$characters = array();
+		$char_list  = wp_get_post_terms( $actor_id, Characters::SHADOW_TAXONOMY, array( 'fields' => 'ids' ) );
+
+		foreach ( $char_list as $char_id ) {
+			$characters[] = get_term_meta( $char_id, 'shadow_shadow_tax_characters_post_id', true );
 		}
 
 		return $characters;

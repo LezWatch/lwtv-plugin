@@ -369,14 +369,14 @@ class Characters {
 	}
 
 	/*
-	 * Schedule the cron job
+	 * Schedule the cron job to run in 30 seconds.
 	 *
 	 * @param int $post_id The post ID.
 	 */
 	public function schedule_cron( $post_id ) {
 		// Schedule the cron job.
 		if ( ! wp_next_scheduled( 'lwtv_save_char_meta' ) ) {
-			wp_schedule_single_event( time(), 'lwtv_update_char_meta', array( $post_id ) );
+			wp_schedule_single_event( time() + 30, 'lwtv_update_char_meta', array( $post_id ) );
 		}
 	}
 
