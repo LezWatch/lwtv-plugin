@@ -6,9 +6,7 @@
 
 namespace LWTV\CPTs\Characters;
 
-use LWTV\CPTs\Actors;
 use LWTV\CPTs\Characters;
-use LWTV\CPTs\Shows;
 
 class Calculations {
 
