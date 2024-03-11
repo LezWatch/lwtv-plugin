@@ -5,8 +5,6 @@
 
 namespace LWTV\CPTs\Characters;
 
-use LWTV\CPTs\Shows;
-
 class CMB2_Metaboxes {
 	public $character_roles;
 	public $years_array;
