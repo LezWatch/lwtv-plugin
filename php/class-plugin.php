@@ -124,7 +124,7 @@ use LWTV\_Helpers\Utils;
  * @method string get_ways_to_watch( $show_id )                             \_Components\Theme
  * @method bool   is_actor_birthday( $actor_id )                            \_Components\Theme
  *
- * DEPRECATED:
+ * DEPRECATED - Can be deleted after Shadow Taxonomy is fully implemented.
  * @method mixed  get_list_characters( $post_id, $format )                  \_Components\Theme
  *
  * THIS YEAR
