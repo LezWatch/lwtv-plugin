@@ -95,16 +95,12 @@ class Calculations {
 		// before we do the math, let's see if we have any characters:
 		$raw_char_count = lwtv_plugin()->get_characters_list( $post_id, 'count' );
 
-		if ( ! empty( $raw_char_count ) ) {
-			$raw_char_count = ( ! is_array( $raw_char_count ) ) ? array( $raw_char_count ) : $raw_char_count;
-			$char_count     = count( $raw_char_count );
+		// Empty raw? Return 0.
+		if ( empty( $raw_char_count ) ) {
+			return 0;
 		}
-
-		// If there is no char_count, re-run the whole check.
-		// Also check if 1, since sometimes that means the array is broken.
-		if ( ! isset( $char_count ) || empty( $char_count ) || 1 === $char_count ) {
-			$char_count = lwtv_plugin()->get_characters_list( $post_id, 'count' );
-		}
+		$raw_char_count = ( ! is_array( $raw_char_count ) ) ? array( $raw_char_count ) : $raw_char_count;
+		$char_count     = count( $raw_char_count );
 
 		// No characters? It's a zero.
 		if ( 0 === $char_count ) {
@@ -117,9 +113,9 @@ class Calculations {
 
 			// If the count for all characters is 0, we don't need to run this.
 			if ( 0 !== $char_count ) {
-				$chars_regular   = lwtv_plugin()->get_chars_for_show( $post_id, 'regular' );
-				$chars_recurring = lwtv_plugin()->get_chars_for_show( $post_id, 'recurring' );
-				$chars_guest     = lwtv_plugin()->get_chars_for_show( $post_id, 'guest' );
+				$chars_regular   = lwtv_plugin()->get_chars_for_show( $post_id, 'count', 'regular' );
+				$chars_recurring = lwtv_plugin()->get_chars_for_show( $post_id, 'count', 'recurring' );
+				$chars_guest     = lwtv_plugin()->get_chars_for_show( $post_id, 'count', 'guest' );
 
 				// Points: Regular = 5; Recurring = 2; Guests = 1
 				$char_score = ( count( $chars_regular ) * 5 ) + ( count( $chars_recurring ) * 2 ) + count( $chars_guest );

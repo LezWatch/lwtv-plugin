@@ -58,11 +58,6 @@ class Post_Meta {
 		'lezactors_dead_count'          => array(
 			'post_type' => 'post_type_actors',
 		),
-		'lezactors_show_list'           => array(
-			'post_type'  => 'post_type_actors',
-			'type'       => 'array',
-			'items_type' => 'string',
-		),
 		'lezactors_saved_wikidata'      => array(
 			'post_type'  => 'post_type_actors',
 			'type'       => 'object',

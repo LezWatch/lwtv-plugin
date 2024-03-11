@@ -224,7 +224,7 @@ class Characters {
 
 		register_taxonomy(
 			self::SHADOW_TAXONOMY,
-			array( Actors::SLUG, Shows::SLUG ),
+			array( Actors::SLUG, Shows::SLUG, self::SLUG ),
 			array(
 				'label'         => 'SHADOW Characters',
 				'rewrite'       => false,
