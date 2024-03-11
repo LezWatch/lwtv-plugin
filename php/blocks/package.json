@@ -15,7 +15,7 @@
 	},
 	"dependencies": {
 		"@wordpress/blocks": "^12.28.1",
-		"@wordpress/i18n": "^4.50.0"
+		"@wordpress/i18n": "^4.53.0"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^27.0.0"
