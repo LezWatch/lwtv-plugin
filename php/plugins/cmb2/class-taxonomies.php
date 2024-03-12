@@ -37,11 +37,13 @@ class Taxonomies {
 					$shows      = get_post_meta( $char_id, 'lezchars_show_group', true );
 					$name_shows = array();
 
-					foreach ( $shows as $show ) {
-						if ( is_array( $show['show'] ) ) {
-							$show['show'] = $show['show'][0];
+					if ( is_array( $shows ) ) {
+						foreach ( $shows as $show ) {
+							if ( is_array( $show['show'] ) ) {
+								$show['show'] = $show['show'][0];
+							}
+							$name_shows[] = get_the_title( $show['show'] );
 						}
-						$name_shows[] = get_the_title( $show['show'] );
 					}
 
 					$terms_array[ $term->term_id ] = $term->name . ' (' . implode( ', ', $name_shows ) . ')';
