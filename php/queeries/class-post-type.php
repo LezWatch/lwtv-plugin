@@ -15,7 +15,7 @@ class Post_Type {
 	 *
 	 * @param string $post_type i.e 'posts' or 'post_type_characters'
 	 *
-	 * @return array The WP_Query Array
+	 * @return WP_Query
 	 */
 
 	public function make( $post_type, $page = 0 ) {

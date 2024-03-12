@@ -38,6 +38,34 @@ class CPTs_Test extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * Test if the post type can be created
+	 */
+	public function test_can_make_char_post_type() {
+		$args = array (
+			'post_title' => 'Test Character',
+			'post_type'  => post_type_exists( Characters::SLUG ),
+		);
+		$p    = $this->factory->post->create( $args );
+
+
+		$post = get_post( $p );
+
+		$this->assertNotNull( $post );
+
+		// Make shadow term and check.
+		$shadow_character = $this->factory->term->create(
+			array(
+				'taxonomy' => 'shadow_tax_characters',
+				'name'     => 'Test Character',
+				'slug'     => 'Test-character',
+			)
+		);
+		update_term_meta( $shadow_character, 'shadow_shadow_tax_characters_post_id', $p );
+		$shadow_term = term_exists( 'test-character', Characters::SHADOW_TAXONOMY );
+		$this->assertNotNull( $shadow_term );
+	}
+
+	/**
 	 * Test if the ACTOR taxonomies exist
 	 */
 	public function test_actor_taxonomies_exists() {
@@ -63,6 +91,14 @@ class CPTs_Test extends \WP_UnitTestCase {
 
 		$fake_taxonomy = taxonomy_exists( 'lezactors_fake' );
 		$this->assertFalse( $fake_taxonomy );
+	}
+
+	/**
+	 * Test if Character Secret Taxonomy exists.
+	 */
+	public function test_character_secret_taxonomy_exists() {
+		$taxonomy_exists = taxonomy_exists( Characters::SHADOW_TAXONOMY );
+		$this->assertTrue( $taxonomy_exists );
 	}
 
 	/**

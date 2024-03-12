@@ -52,8 +52,6 @@ class CPTs implements Component, Templater {
 			'calculate_actor_data'       => array( $this, 'calculate_actor_data' ),
 			'calculate_character_data'   => array( $this, 'calculate_character_data' ),
 			'calculate_show_data'        => array( $this, 'calculate_show_data' ),
-			'get_chars_for_show'         => array( $this, 'get_chars_for_show' ),
-			'get_characters_list'        => array( $this, 'get_characters_list' ),
 			'get_related_archive_header' => array( $this, 'get_related_archive_header' ),
 			'has_cpt_related_posts'      => array( $this, 'has_cpt_related_posts' ),
 			'get_cpt_related_posts'      => array( $this, 'get_cpt_related_posts' ),
@@ -91,29 +89,6 @@ class CPTs implements Component, Templater {
 	 */
 	public function calculate_show_data( $post_id ): void {
 		( new Shows() )->do_the_math( $post_id );
-	}
-
-	/**
-	 * Get characters list for Show
-	 *
-	 * @param  int    $show_id
-	 * @param  mixed  $havecharcount
-	 * @param  string $role
-	 * @return mixed  (int|array)
-	 */
-	public function get_chars_for_show( $show_id, $role = 'regular' ): mixed {
-		return ( new Characters() )->get_chars_for_show( $show_id, $role );
-	}
-
-	/**
-	 * Get list of characters
-	 *
-	 * @param  int    $show_id
-	 * @param  string $output
-	 * @return mixed  (int|array|object)
-	 */
-	public function get_characters_list( $show_id, $output = 'query' ): mixed {
-		return ( new Characters() )->list_characters( $show_id, $output );
 	}
 
 	/**

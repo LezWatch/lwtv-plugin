@@ -6,6 +6,8 @@
 
 namespace LWTV\CPTs\Characters;
 
+use LWTV\CPTs\Characters;
+
 class Calculations {
 
 	/**
@@ -34,70 +36,45 @@ class Calculations {
 	}
 
 	/**
-	 * Update the related shows.
-	 * In order to reduce load, we only run this on saves.
+	 * Sync Shows
 	 *
-	 * @param  int   $post_id
-	 * @return N/A   No return, just update show calculation
+	 * Sync the shadow taxonomy for shows with the character.
+	 *
+	 * @param  int  $post_id
+	 * @return void
 	 */
-	public function shows( $post_id ) {
-		// Generate list of shows to purge
-		$shows = get_post_meta( $post_id, 'lezchars_show_group', true );
-		if ( ! empty( $shows ) ) {
-			foreach ( $shows as $show_id ) {
-				if ( isset( $show_id['show'] ) ) {
+	public function sync_shows( $post_id, $shadow_character ) {
+		$show_group = get_post_meta( $post_id, 'lezchars_show_group', true );
 
-					// Remove the Array.
-					if ( is_array( $show_id['show'] ) ) {
-						$show_id['show'] = $show_id['show'][0];
-					}
-
-					// Add character to list for show
-					$characters = get_post_meta( $show_id['show'], 'lezshows_char_list', true );
-					if ( empty( $characters ) ) {
-						$characters = array();
-					}
-					$characters[] = $post_id;
-					$characters   = array_unique( $characters );
-					update_post_meta( $show_id['show'], 'lezshows_char_list', $characters );
-
-					lwtv_plugin()->calculate_show_data( $show_id['show'] );
+		if ( $show_group ) {
+			foreach ( $show_group as $each_show ) {
+				// Remove the Array.
+				if ( is_array( $each_show['show'] ) ) {
+					$each_show['show'] = $each_show['show'][0];
 				}
+
+				// Add the tax for the character to the show.
+				wp_set_object_terms( $each_show['show'], $shadow_character->term_id, Characters::SHADOW_TAXONOMY, true );
 			}
 		}
 	}
 
 	/**
-	 * Update the Actors.
-	 * In order to reduce load, we only run this on saves.
+	 * Sync Actors
 	 *
-	 * @param  int   $post_id, Post ID of character
-	 * @return N/A   No return, just update actor calculation
+	 * Sync the shadow taxonomy for actors with the character.
+	 *
+	 * @param  int  $post_id
+	 * @return void
 	 */
-	public function actors( $post_id ) {
-		// Array of Actors saved to post
+	public function sync_actors( $post_id, $shadow_character ) {
 		$actors = get_post_meta( $post_id, 'lezchars_actor', true );
-		if ( ! is_array( $actors ) ) {
-			$actors = array( $actors );
-		}
+		if ( $actors ) {
+			$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
-		if ( ! empty( $actors ) ) {
-			foreach ( $actors as $actor_id ) {
-
-				// Get the list of characters from the actor as listed.
-				$characters = get_post_meta( $actor_id, 'lezactors_char_list', true );
-				if ( empty( $characters ) ) {
-					$characters = array();
-				}
-
-				// Add to array of characters by ID on CPT actor as post meta and
-				// sort to ensure no dupes.
-				$characters[] = $post_id;
-				$characters   = array_unique( $characters );
-				update_post_meta( $actor_id, 'lezactors_char_list', $characters );
-
-				// Do the math for actors:
-				lwtv_plugin()->calculate_actor_data( $actor_id );
+			foreach ( $actors as $actor ) {
+				// Add the tax for the character to the actor.
+				wp_add_object_terms( $actor, $shadow_character->term_id, Characters::SHADOW_TAXONOMY, true );
 			}
 		}
 	}
@@ -112,10 +89,13 @@ class Calculations {
 		// Calculate Death
 		self::death( $post_id );
 
-		// Update shows
-		self::shows( $post_id );
+		// Get the shadow tax ID
+		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $post_id, Characters::SHADOW_TAXONOMY );
 
-		// Update Actors
-		self::actors( $post_id );
+		// Update Show data
+		self::sync_shows( $post_id, $shadow_character );
+
+		// Update Actor data
+		self::sync_actors( $post_id, $shadow_character );
 	}
 }

@@ -488,19 +488,16 @@ class Stats_JSON {
 
 				foreach ( $shows as $show ) {
 					$stats_array[ get_the_title( $show ) ] = array(
-						'id'              => $show,
-						'nations'         => implode( ', ', wp_get_post_terms( $show, 'lez_country', array( 'fields' => 'names' ) ) ),
-						'stations'        => implode( ', ', wp_get_post_terms( $show, 'lez_stations', array( 'fields' => 'names' ) ) ),
-
-						'worth_it'        => get_post_meta( $show, 'lezshows_worthit_rating', true ),
-						'trigger'         => implode( ', ', wp_get_post_terms( $show, 'lez_triggers', array( 'fields' => 'names' ) ) ),
-						'star'            => implode( ', ', wp_get_post_terms( $show, 'lez_stars', array( 'fields' => 'names' ) ) ),
-						'loved'           => ( ( get_post_meta( $show, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no' ),
-						'chars_total'     => get_post_meta( $show, 'lezshows_char_count', true ),
-						'chars_dead'      => get_post_meta( $show, 'lezshows_dead_count', true ),
-						'chars_sexuality' => get_post_meta( $show, 'lezshows_char_sexuality', true ),
-						'chars_gender'    => get_post_meta( $show, 'lezshows_char_gender', true ),
-						'url'             => get_the_permalink( $show ),
+						'id'          => $show,
+						'nations'     => implode( ', ', wp_get_post_terms( $show, 'lez_country', array( 'fields' => 'names' ) ) ),
+						'stations'    => implode( ', ', wp_get_post_terms( $show, 'lez_stations', array( 'fields' => 'names' ) ) ),
+						'worth_it'    => get_post_meta( $show, 'lezshows_worthit_rating', true ),
+						'trigger'     => implode( ', ', wp_get_post_terms( $show, 'lez_triggers', array( 'fields' => 'names' ) ) ),
+						'star'        => implode( ', ', wp_get_post_terms( $show, 'lez_stars', array( 'fields' => 'names' ) ) ),
+						'loved'       => ( ( get_post_meta( $show, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no' ),
+						'chars_total' => get_post_meta( $show, 'lezshows_char_count', true ),
+						'chars_dead'  => get_post_meta( $show, 'lezshows_dead_count', true ),
+						'url'         => get_the_permalink( $show ),
 					);
 				}
 				break;
@@ -589,20 +586,17 @@ class Stats_JSON {
 				break;
 			case 'show':
 				$stats_array = array(
-					'id'              => $id,
-					'title'           => get_the_title( $id ),
-					'nations'         => implode( ', ', wp_get_post_terms( $id, 'lez_country', array( 'fields' => 'names' ) ) ),
-					'stations'        => implode( ', ', wp_get_post_terms( $id, 'lez_stations', array( 'fields' => 'names' ) ) ),
-
-					'worth_it'        => get_post_meta( $id, 'lezshows_worthit_rating', true ),
-					'trigger'         => implode( ', ', wp_get_post_terms( $id, 'lez_triggers', array( 'fields' => 'names' ) ) ),
-					'star'            => implode( ', ', wp_get_post_terms( $id, 'lez_stars', array( 'fields' => 'names' ) ) ),
-					'loved'           => ( ( get_post_meta( $id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no' ),
-					'chars_total'     => get_post_meta( $id, 'lezshows_char_count', true ),
-					'chars_dead'      => get_post_meta( $id, 'lezshows_dead_count', true ),
-					'chars_sexuality' => get_post_meta( $id, 'lezshows_char_sexuality', true ),
-					'chars_gender'    => get_post_meta( $id, 'lezshows_char_gender', true ),
-					'url'             => get_the_permalink( $id ),
+					'id'          => $id,
+					'title'       => get_the_title( $id ),
+					'nations'     => implode( ', ', wp_get_post_terms( $id, 'lez_country', array( 'fields' => 'names' ) ) ),
+					'stations'    => implode( ', ', wp_get_post_terms( $id, 'lez_stations', array( 'fields' => 'names' ) ) ),
+					'worth_it'    => get_post_meta( $id, 'lezshows_worthit_rating', true ),
+					'trigger'     => implode( ', ', wp_get_post_terms( $id, 'lez_triggers', array( 'fields' => 'names' ) ) ),
+					'star'        => implode( ', ', wp_get_post_terms( $id, 'lez_stars', array( 'fields' => 'names' ) ) ),
+					'loved'       => ( ( get_post_meta( $id, 'lezshows_worthit_show_we_love', true ) ) ? 'yes' : 'no' ),
+					'chars_total' => get_post_meta( $id, 'lezshows_char_count', true ),
+					'chars_dead'  => get_post_meta( $id, 'lezshows_dead_count', true ),
+					'url'         => get_the_permalink( $id ),
 				);
 				break;
 		}
