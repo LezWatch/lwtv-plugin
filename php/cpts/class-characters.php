@@ -57,6 +57,9 @@ class Characters {
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
 		add_action( 'init', array( $this, 'create_shadow_taxonomies' ), 0 );
 
+		// WP-Admin alert if the shadow taxonomy is empty.
+		add_action( 'admin_notices', array( $this, 'admin_notices_shadowtax__error' ) );
+
 		// Yoast Hooks
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
 
@@ -427,5 +430,35 @@ class Characters {
 			}
 			update_post_meta( $post_id, 'lezchars_show_group', $new_shows );
 		}
+	}
+
+	/**
+	 * Display admin notice if the shadow taxonomy is empty or if there are
+	 * fewer terms than posts.
+	 *
+	 * Of note: There will be more terms than PUBLISHED posts, as drafts etc
+	 * are not counted.
+	 *
+	 * @return void
+	 */
+	public function admin_notices_shadowtax__error() {
+		// Admin only
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$num_posts = wp_count_posts( self::SLUG );
+		$num_terms = wp_count_terms( self::SHADOW_TAXONOMY );
+		$class     = 'notice notice-error';
+
+		if ( empty( $num_terms ) || is_wp_error( $num_terms ) ) {
+			$message = 'The sync for Shadow Characters has not been run. Via CLI you need to run "wp shadow sync characters".';
+		} elseif ( $num_posts->publish > $num_terms ) {
+			$message = 'The sync for Shadow Characters is not complete. Via CLI you need to run "wp shadow sync characters" until there are no characters left to process.';
+		} else {
+			return;
+		}
+
+		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 	}
 }
