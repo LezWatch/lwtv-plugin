@@ -53,7 +53,7 @@ class WP_CLI_LWTV_Shadow {
 	 *   - actors
 	 * ---
 	 *
-	 * [--post_id=<post_id>] (optional)
+	 * [--post_id=<post_id>]
 	 * : Post ID to sync.
 	 * ---
 	 * default: null
@@ -89,22 +89,23 @@ class WP_CLI_LWTV_Shadow {
 	 */
 	public function run_shadow_sync( $tax, $post_id ) {
 		// The taxonomy we're syncing FROM
-		$shadow_tax = 'shadow_tax_' . $tax;
+		$shadow_tax = 'shadow_tax_characters';
 
 		if ( ! taxonomy_exists( $shadow_tax ) ) {
 			\WP_CLI::error( 'The Taxonomy you provided does not exist.' );
 		}
 
-		\WP_CLI::line( 'Syncing characters to ' . $shadow_tax . '...' );
-		$this->sync_characters( $shadow_tax, $post_id );
+		\WP_CLI::line( 'Syncing characters to ' . $tax . '...' );
+		$this->sync_characters( $tax, $post_id );
 	}
 
 	/**
 	 * Sync characters with the requested shadow taxonomy.
 	 *
-	 * @param string shadow_tax Shadow Taxonomy
+	 * @param string tax what we're syncing TO
+	 * @param int    post_id Post ID to sync (optional)
 	 */
-	public function sync_characters( $shadow_tax, $post_id ) {
+	public function sync_characters( $tax, $post_id ) {
 		if ( $post_id ) {
 			$posts_array = array( $post_id );
 		} else {
@@ -118,11 +119,11 @@ class WP_CLI_LWTV_Shadow {
 		}
 
 		foreach ( $posts_array as $one_post ) {
-			switch ( $shadow_tax ) {
-				case 'shadow_tax_shows':
+			switch ( $tax ) {
+				case 'shows':
 					$this->sync_characters_to_shows( $one_post );
 					break;
-				case 'shadow_tax_actors':
+				case 'actors':
 					$this->sync_characters_to_actors( $one_post );
 					break;
 				default:
@@ -130,7 +131,7 @@ class WP_CLI_LWTV_Shadow {
 			}
 		}
 
-		\WP_CLI::line( 'Synced Characters with ' . $shadow_tax . '.' );
+		\WP_CLI::line( 'Synced Characters with ' . $tax . '.' );
 	}
 
 	/**
