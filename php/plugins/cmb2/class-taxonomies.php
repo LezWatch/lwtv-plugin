@@ -5,6 +5,8 @@
 
 namespace LWTV\Plugins\CMB2;
 
+use LWTV\CPTs\Characters;
+
 class Taxonomies {
 
 	/**
@@ -30,7 +32,22 @@ class Taxonomies {
 		$terms_array = array();
 		if ( ! empty( $terms ) ) {
 			foreach ( $terms as $term ) {
-				$terms_array[ $term->term_id ] = $term->name;
+				if ( Characters::SHADOW_TAXONOMY === $term->taxonomy ) {
+					$char_id    = get_term_meta( $term->term_id, 'shadow_shadow_tax_characters_post_id', true );
+					$shows      = get_post_meta( $char_id, 'lezchars_show_group', true );
+					$name_shows = array();
+
+					foreach ( $shows as $show ) {
+						if ( is_array( $show['show'] ) ) {
+							$show['show'] = $show['show'][0];
+						}
+						$name_shows[] = get_the_title( $show['show'] );
+					}
+
+					$terms_array[ $term->term_id ] = $term->name . ' (' . implode( ', ', $name_shows ) . ')';
+				} else {
+					$terms_array[ $term->term_id ] = $term->name;
+				}
 			}
 		}
 		return $terms_array;
