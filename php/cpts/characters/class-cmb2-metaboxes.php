@@ -142,6 +142,7 @@ class CMB2_Metaboxes {
 			array(
 				'name'              => 'Romantic Relationships',
 				'id'                => $prefix . 'relationship_chart',
+				'desc'              => 'If the character has had a romantic relationship with another character (even just a one-night-stand), list it here.',
 				'taxonomy'          => 'shadow_tax_characters',
 				'type'              => 'pw_multiselect',
 				'select_all_button' => false,
