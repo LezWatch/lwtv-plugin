@@ -99,6 +99,7 @@ class Calculations {
 		if ( empty( $raw_char_count ) ) {
 			return 0;
 		}
+
 		$raw_char_count = ( ! is_array( $raw_char_count ) ) ? array( $raw_char_count ) : $raw_char_count;
 		$char_count     = count( $raw_char_count );
 
@@ -361,32 +362,34 @@ class Calculations {
 		}
 
 		// Get array of characters (by ID)
-		$characters = lwtv_plugin()->get_characters_list( $post_id, 'query' );
-
+		$characters     = lwtv_plugin()->get_characters_list( $post_id, 'query' );
 		$new_characters = array();
-		foreach ( $characters as $char_id ) {
-			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
-			if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
-				foreach ( $shows_array as $char_show ) {
+		if ( is_array( $characters ) ) {
+			foreach ( $characters as $char_id ) {
+				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
-					// Remove the array if it's there.
-					if ( is_array( $char_show['show'] ) ) {
-						$char_show['show'] = $char_show['show'][0];
-					}
+				if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
+					foreach ( $shows_array as $char_show ) {
 
-					// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
-					if ( $char_show['show'] == $post_id ) {
-						// Bump the array for this role
-						++$role_data[ $char_show['type'] ];
-						$new_characters[] = $char_id;
+						// Remove the array if it's there.
+						if ( is_array( $char_show['show'] ) ) {
+							$char_show['show'] = $char_show['show'][0];
+						}
 
-						// Now we'll sort gender and stuff...
-						foreach ( $valid_taxes as $title => $taxonomy ) {
-							$this_term = get_the_terms( $char_id, $taxonomy, true );
-							if ( $this_term && ! is_wp_error( $this_term ) ) {
-								foreach ( $this_term as $term ) {
-									++$tax_data[ $title ][ $term->slug ];
+						// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
+						if ( $char_show['show'] == $post_id ) {
+							// Bump the array for this role
+							++$role_data[ $char_show['type'] ];
+							$new_characters[] = $char_id;
+
+							// Now we'll sort gender and stuff...
+							foreach ( $valid_taxes as $title => $taxonomy ) {
+								$this_term = get_the_terms( $char_id, $taxonomy, true );
+								if ( $this_term && ! is_wp_error( $this_term ) ) {
+									foreach ( $this_term as $term ) {
+										++$tax_data[ $title ][ $term->slug ];
+									}
 								}
 							}
 						}

@@ -6,7 +6,9 @@
 
 namespace LWTV\CPTs\Characters;
 
+use LWTV\CPTs\Actors;
 use LWTV\CPTs\Characters;
+use LWTV\CPTs\Shows;
 
 class Calculations {
 
@@ -55,6 +57,8 @@ class Calculations {
 
 				// Add the tax for the character to the show.
 				wp_set_object_terms( $each_show['show'], $shadow_character->term_id, Characters::SHADOW_TAXONOMY, true );
+
+				Shows::do_the_math( $each_show['show'] );
 			}
 		}
 	}
@@ -75,6 +79,8 @@ class Calculations {
 			foreach ( $actors as $actor ) {
 				// Add the tax for the character to the actor.
 				wp_add_object_terms( $actor, $shadow_character->term_id, Characters::SHADOW_TAXONOMY, true );
+
+				Actors::do_the_math( $actor );
 			}
 		}
 	}

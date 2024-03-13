@@ -152,17 +152,14 @@ class Show_Characters {
 				// If the character is in this show, AND a published character
 				// we will pass the following data to the character template
 				// to determine what to display.
-				if (
-					'' !== $shows_array &&
-					! empty( $shows_array ) &&
-					'publish' === get_post_status( $char_id )
-				) {
+				if ( '' !== $shows_array && ! empty( $shows_array ) && 'publish' === get_post_status( $char_id ) ) {
 					foreach ( $shows_array as $char_show ) {
+						// De-array the show (there was an old issue with this, but it's fixed now).
 						if ( is_array( $char_show['show'] ) ) {
 							$char_show['show'] = $char_show['show'][0];
 						}
-						// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
-						if ( $char_show['show'] == $show_id ) {
+
+						if ( (int) $char_show['show'] === (int) $show_id ) {
 							// Get a list of actors (we need this twice later)
 							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
 							if ( ! is_array( $actors_ids ) ) {
@@ -208,6 +205,10 @@ class Show_Characters {
 									++$char_counts['txirl'];
 								}
 							}
+						} else {
+							// If the character is not associated with the show, remove the character taxonomy from the show.
+							$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
+							wp_remove_object_terms( $char_show['show'], (int) $term_id, Characters::SHADOW_TAXONOMY );
 						}
 					}
 				}
