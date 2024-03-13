@@ -148,7 +148,6 @@ class CMB2_Metaboxes {
 				'select_all_button' => false,
 				'remove_default'    => 'true',
 				'options'           => lwtv_plugin()->get_cmb2_terms_list( 'shadow_tax_characters' ),
-				'default'           => lwtv_plugin()->get_select2_defaults( 'lezchars_relationship_chart', 'shadow_tax_characters', $post_id, true ),
 				'attributes'        => array(
 					'placeholder' => 'List any romantic partners here...',
 				),
