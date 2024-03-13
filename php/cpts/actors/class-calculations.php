@@ -6,6 +6,8 @@
 
 namespace LWTV\CPTs\Actors;
 
+use LWTV\CPTs\Characters;
+
 class Calculations {
 
 	/*
@@ -30,20 +32,18 @@ class Calculations {
 		$queercount = 0;
 		$deadcount  = 0;
 
-		$characters = array_unique( $characters );
+		if ( is_array( $characters ) ) {
+			foreach ( $characters as $char_id => $char_details ) {
+				$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
+				$is_dead      = has_term( 'dead', 'lez_cliches', $char_id );
 
-		foreach ( $characters as $char_id ) {
-			$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
-			$is_dead      = has_term( 'dead', 'lez_cliches', $char_id );
-
-			if ( '' !== $actors_array && 'publish' === get_post_status( $char_id ) ) {
-				foreach ( $actors_array as $char_actor ) {
-					// To compensate for maybe character situations, we need this loose
-					// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
-					if ( $char_actor == $post_id ) {
-						++$queercount;
-						if ( $is_dead ) {
-							++$deadcount;
+				if ( '' !== $actors_array && is_array( $actors_array ) && 'publish' === get_post_status( $char_id ) ) {
+					foreach ( $actors_array as $char_actor ) {
+						if ( (int) $char_actor === (int) $post_id ) {
+							++$queercount;
+							if ( $is_dead ) {
+								++$deadcount;
+							}
 						}
 					}
 				}

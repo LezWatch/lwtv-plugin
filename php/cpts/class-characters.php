@@ -49,9 +49,6 @@ class Characters {
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
-		// Cron action to update meta when saved.
-		add_action( 'lwtv_update_char_meta', array( $this, 'update_char_meta' ) );
-
 		// Create CPT and Taxes
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
@@ -196,7 +193,7 @@ class Characters {
 				'menu_name'                  => $name_plural,
 			);
 
-			//parameters for the new taxonomy
+			// parameters for the new taxonomy
 			$arguments = array(
 				'hierarchical'          => false,
 				'labels'                => $labels,
@@ -355,7 +352,7 @@ class Characters {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
-		$this->schedule_cron( $post_id );
+		$this->update_char_meta( $post_id );
 
 		// re-hook this function
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
@@ -367,20 +364,8 @@ class Characters {
 	 * @param  int  $post_id
 	 * @return void
 	 */
-	public function do_the_math( $show_id ) {
+	public static function do_the_math( $show_id ) {
 		( new Calculations() )->do_the_math( $show_id );
-	}
-
-	/*
-	 * Schedule the cron job to run in 30 seconds.
-	 *
-	 * @param int $post_id The post ID.
-	 */
-	public function schedule_cron( $post_id ) {
-		// Schedule the cron job.
-		if ( ! wp_next_scheduled( 'lwtv_save_char_meta' ) ) {
-			wp_schedule_single_event( time() + 30, 'lwtv_update_char_meta', array( $post_id ) );
-		}
 	}
 
 	/*

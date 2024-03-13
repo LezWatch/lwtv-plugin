@@ -3,7 +3,6 @@
 namespace LWTV\Theme;
 
 use LWTV\CPTs\Characters;
-use function Shadow_Taxonomy\Core\get_the_posts;
 
 /**
  * Generate character data for actors.
@@ -45,7 +44,7 @@ class Actor_Characters {
 		$format = $format;
 
 		// if there is a character shadow tax, we need to get the characters from there.
-		$get_shadow_tax = get_the_posts( $actor_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
+		$get_shadow_tax = \Shadow_Taxonomy\Core\get_the_posts( $actor_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
 
 		if ( $get_shadow_tax ) {
 			$characters = $this->get_characters_from_shadow_tax( $get_shadow_tax );
@@ -146,6 +145,7 @@ class Actor_Characters {
 		// Rebuild the character array in format:
 		foreach ( $character_array as $char_id ) {
 			$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
+
 			if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 				foreach ( $actors_array as $char_actor ) {
 					if ( (int) $char_actor === (int) $actor_id ) {
@@ -156,6 +156,10 @@ class Actor_Characters {
 							'content' => get_the_content( $char_id ),
 							'shows'   => get_post_meta( $char_id, 'lezchars_show_group', true ),
 						);
+					} else {
+						// If the character is not associated with the actor, remove the character taxonomy from the actor.
+						$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
+						wp_remove_object_terms( $char_actor, (int) $term_id, Characters::SHADOW_TAXONOMY );
 					}
 				}
 			}
