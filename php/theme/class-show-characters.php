@@ -1,5 +1,40 @@
 <?php
 
+/**
+ * Use shadow taxonomy data to:
+ *  - get characters from the shadow taxonomy
+ *  - take a list of characters and break them into their myriad roles.
+ *
+ * There are fallbacks to 'the old ways' of doing things, but we're
+ * trying to move away from that.
+ *
+ * There's a long and storied history of this file. It's been through a lot.
+ * Keeping the docblock here for posterity and amusement.
+ *
+ * Used to be:
+ *  - Calculate the max number of characters to list, based on the
+ *    previous count. Default/Minimum is the number of characters divided by 10
+ *
+ * We got there by trying to deal with the following issues:
+ *
+ *   - The Sara Lance Complexity -- Because someone is on a lot of shows,
+ *                                  we have to make sure the IDs are right
+ *                                  and the show isn't a partial match.
+ *                                  Sara hasn't been on EVERY show yet.
+ *   - The Shane Clause          -- Thanks to Shane sleeping with everyone,
+ *                                  we had to limit this loop to 100 minimum
+ *   - The Clone Club Corollary  -- Sarah Manning took the place of every
+ *                                  single other character played by Tatiana
+ *                                  Maslany.
+ *   - The Vanishing Xenaphobia  -- When set to under 200, Xena doesn't show
+ *                                  on the Xena:WP show page
+ *   - Just a Phase Samantha     -- By the time we hit 6000 characters, the math
+ *                                  stopped working to show all the characters.
+ *                                  Now it's set to 1/10th the number of chars.
+ *   - The Shadow Tax            -- In order to prevent this from being an ongoing
+ *                                  issue, we use shadow taxonomies instead.
+ */
+
 namespace LWTV\Theme;
 
 use LWTV\CPTs\Characters;
@@ -50,29 +85,6 @@ class Show_Characters {
 	 * @return array of characters with custom data to output
 	 */
 	public function build_character_data( $characters, $show_id, $role = 'regular' ): mixed {
-		/**
-		 * Funny things:
-		 *   - The Sara Lance Complexity -- Because someone is on a lot of shows,
-		 *                                  we have to make sure the IDs are right
-		 *                                  and the show isn't a partial match.
-		 *                                  Sara hasn't been on EVERY show yet.
-		 *   - The Shane Clause          -- Thanks to Shane sleeping with everyone,
-		 *                                  we had to limit this loop to 100 minimum
-		 *   - The Clone Club Corollary  -- Sarah Manning took the place of every
-		 *                                  single other character played by Tatiana
-		 *                                  Maslany.
-		 *   - The Vanishing Xenaphobia  -- When set to under 200, Xena doesn't show
-		 *                                  on the Xena:WP show page
-		 *   - Just a Phase Samantha     -- By the time we hit 6000 characters, the math
-		 *                                  stopped working to show all the characters.
-		 *                                  Now it's set to 1/10th the number of chars.
-		 *   - The Shadow Tax            -- In order to prevent this from being an ongoing
-		 *                                  issue, we use shadow taxonomies instead.
-		 *
-		 * Calculate the max number of characters to list, based on the
-		 * previous count. Default/Minimum is the number of characters divided by 10
-		 */
-
 		// Valid Roles:
 		$valid_roles = array( 'regular', 'recurring', 'guest' );
 
@@ -222,6 +234,7 @@ class Show_Characters {
 		switch ( $output ) {
 			case 'dead':
 				// Count of dead characters
+				update_post_meta( $show_id, 'lezshows_dead_count', $char_counts['dead'] );
 				$return = $char_counts['dead'];
 				break;
 			case 'none':
@@ -241,11 +254,13 @@ class Show_Characters {
 				$return = $char_counts['txirl'];
 				break;
 			case 'query':
-				// WP Array of all characters
+				// Array of all characters by ID
+				update_post_meta( $show_id, 'lezshows_char_list', $new_characters );
 				$return = $new_characters;
 				break;
 			case 'count':
 				// Count of all characters on the show
+				update_post_meta( $show_id, 'lezshows_char_count', count( $new_characters ) );
 				$return = count( $new_characters );
 				break;
 		}
