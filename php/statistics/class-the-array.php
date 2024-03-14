@@ -56,7 +56,7 @@ class The_Array {
 			'Char_Role'             => '',
 			'Complex_Taxonomy'      => array( $count, $data, $subject ),
 			'Dead_Basic'            => array( $subject, 'array' ),
-			'Dead_Complex_Taxonomy' => array( substr( $data, 0, -5 ) ),
+			'Dead_Complex_Taxonomy' => array( str_replace( 'dead-', '', $data ) ),
 			'Dead_List'             => array( $format ),
 			'Dead_Role'             => '',
 			'Dead_Shows'            => array( 'simple' ),
