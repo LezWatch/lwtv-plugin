@@ -95,7 +95,6 @@ class WP_CLI_LWTV_Shadow {
 			\WP_CLI::error( 'The Taxonomy you provided does not exist.' );
 		}
 
-		\WP_CLI::line( 'Syncing characters to ' . $tax . '...' );
 		$this->sync_characters( $tax, $post_id );
 	}
 
@@ -118,7 +117,14 @@ class WP_CLI_LWTV_Shadow {
 			}
 		}
 
+		if ( ! is_array( $posts_array ) || empty( $posts_array ) ) {
+			\WP_CLI::error( 'There are no posts in that post type.' );
+		}
+
+		$progress_bar = \WP_CLI\Utils\make_progress_bar( sprintf( 'Starting sync. Found %d characters...', count( $posts_array ) ), count( $posts_array ) );
+
 		foreach ( $posts_array as $one_post ) {
+			$progress_bar->tick();
 			switch ( $tax ) {
 				case 'shows':
 					$this->sync_characters_to_shows( $one_post );
@@ -147,7 +153,6 @@ class WP_CLI_LWTV_Shadow {
 		$shadow_character = \Shadow_Taxonomy\Core\get_associated_term( $one_post, $shadow_cpt );
 
 		if ( ! $show_group ) {
-			\WP_CLI::line( 'No shows to sync with ' . get_the_title( $one_post ) . '.' );
 			return;
 		}
 
@@ -157,8 +162,6 @@ class WP_CLI_LWTV_Shadow {
 			if ( is_array( $each_show['show'] ) ) {
 				$each_show['show'] = $each_show['show'][0];
 			}
-
-			\WP_CLI::line( 'Syncing ' . get_the_title( $one_post ) . ' with ' . get_the_title( $each_show['show'] ) );
 
 			// Add the tax for the character to the show.
 			if ( ! has_term( $shadow_character->term_id, $shadow_cpt, $each_show['show'] ) ) {
@@ -187,8 +190,6 @@ class WP_CLI_LWTV_Shadow {
 		$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 		foreach ( $actors as $actor ) {
-			\WP_CLI::line( 'Syncing ' . get_the_title( $one_post ) . ' to ' . get_the_title( $actor ) );
-
 			// Add the tax for the character to the actor.
 			if ( ! has_term( $shadow_character->term_id, $shadow_cpt, $actor ) ) {
 				wp_add_object_terms( $actor, $shadow_character->term_id, $shadow_cpt, true );
