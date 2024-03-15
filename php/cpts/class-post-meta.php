@@ -86,6 +86,11 @@ class Post_Meta {
 		'lezshows_char_count'           => array(
 			'post_type' => 'post_type_shows',
 		),
+		'lezshows_char_list'            => array(
+			'post_type'  => 'post_type_shows',
+			'type'       => 'array',
+			'items_type' => 'string',
+		),
 		'lezshows_dead_count'           => array(
 			'post_type' => 'post_type_shows',
 		),

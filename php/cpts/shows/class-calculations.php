@@ -401,7 +401,15 @@ class Calculations {
 		// Update the roles scores
 		update_post_meta( $post_id, 'lezshows_char_roles', $role_data );
 
-		// Update the taxonomies scores
+		// Update the characters
+		update_post_meta( $post_id, 'lezshows_char_list', $new_characters );
+
+		/**
+		 * Update the taxonomies
+		 *  - lezshows_char_sexuality
+		 *  - lezshows_char_gender
+		 *  - lezshows_char_romantic
+		 */
 		foreach ( $valid_taxes as $title => $taxonomy ) {
 			update_post_meta( $post_id, 'lezshows_char_' . $title, $tax_data[ $title ] );
 		}

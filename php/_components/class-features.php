@@ -152,6 +152,9 @@ class Features implements Component, Templater {
 
 		// Block pingbacks.
 		add_filter( 'xmlrpc_methods', array( $this, 'remove_xmlrpc_methods' ) );
+
+		// Block AI image indexing.
+		header( 'X-Robots-Tag: noimageai, noimageindex', true );
 	}
 
 	/**
