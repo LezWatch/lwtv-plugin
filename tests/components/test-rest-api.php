@@ -12,6 +12,7 @@ namespace LWTV\Tests;
 use LWTV\_Components\Rest_API;
 use LWTV\Rest_API\What_Happened_JSON;
 use LWTV\Rest_API\Stats_JSON;
+use LWTV\_Components\Plugins;
 
 /**
  * Ways to Watch Tests.
@@ -51,7 +52,7 @@ class Rest_API_Test extends \WP_UnitTestCase {
 		$this->today        = date( 'Y-m-d' );
 
 		// Make a Show with dead characters
-		$show_deadchars = array(
+		$show_deadchars = array (
 			'post_title'   => 'Fake Show with Dead',
 			'post_content' => 'This is a post about a show and we will pretend things',
 			'post_status'  => 'publish',
@@ -64,7 +65,7 @@ class Rest_API_Test extends \WP_UnitTestCase {
 				),
 			),
 		);
-		$this->show_deadchars_post_id = wp_insert_post( $show_deadchars );
+		$show_deadchars_post_id = $this->factory->post->create( $show_deadchars );
 
 		// Make a Show without dead
 		$show_alivechars = array(
@@ -80,7 +81,7 @@ class Rest_API_Test extends \WP_UnitTestCase {
 				),
 			),
 		);
-		$this->show_alivechars_post_id = wp_insert_post( $show_alivechars );
+		$this->show_alivechars_post_id = $this->factory->post->create( $show_alivechars );
 
 		// Make a Show that started now
 		$show_startednow = array(
@@ -96,7 +97,7 @@ class Rest_API_Test extends \WP_UnitTestCase {
 				),
 			),
 		);
-		$this->show_startednow_post_id = wp_insert_post( $show_startednow );
+		$this->show_startednow_post_id = $this->factory->post->create( $show_startednow );
 
 		// Make a Show that ended now
 		$show_endednow = array(
@@ -112,7 +113,7 @@ class Rest_API_Test extends \WP_UnitTestCase {
 				),
 			),
 		);
-		$this->show_endednow_post_id = wp_insert_post( $show_endednow );
+		$this->show_endednow_post_id = $this->factory->post->create( $show_endednow );
 
 		// Make an actor who is dead
 		$actor_dead = array(
@@ -127,7 +128,7 @@ class Rest_API_Test extends \WP_UnitTestCase {
 				'lezactors_char_count' => 2,
 			),
 		);
-		$this->actor_dead_post_id = wp_insert_post( $actor_dead );
+		$this->actor_dead_post_id = $this->factory->post->create( $actor_dead );
 
 		// Make an actor who is alive
 		$actor_alive = array(
@@ -141,7 +142,7 @@ class Rest_API_Test extends \WP_UnitTestCase {
 				'lezactors_char_count' => 1,
 			),
 		);
-		$this->actor_alive_post_id = wp_insert_post( $actor_alive );
+		$this->actor_alive_post_id = $this->factory->post->create( $actor_alive );
 
 		// Make a Character to use.
 		$character_1 = array(
@@ -163,7 +164,15 @@ class Rest_API_Test extends \WP_UnitTestCase {
 				),
 			),
 		);
-		$this->character_1_post_id = wp_insert_post( $character_1 );
+		$this->character_1_post_id = $this->factory->post->create( $character_1 );
+		$shadow_character_1        = $this->factory->term->create(
+			array(
+				'taxonomy' => 'shadow_tax_characters',
+				'name'     => 'Fake Character 1',
+				'slug'     => 'fake-character-1',
+			)
+		);
+		update_term_meta( $shadow_character_1, 'shadow_shadow_tax_characters_post_id', $this->character_1_post_id );
 
 		// Make a second Character to use.
 		$character_2 = array(
@@ -185,7 +194,15 @@ class Rest_API_Test extends \WP_UnitTestCase {
 				),
 			),
 		);
-		$this->character_2_post_id = wp_insert_post( $character_2 );
+		$this->character_2_post_id = $this->factory->post->create( $character_2 );
+		$shadow_character_2        = $this->factory->term->create(
+			array(
+				'taxonomy' => 'shadow_tax_characters',
+				'name'     => 'Fake Character 2',
+				'slug'     => 'fake-character-2',
+			)
+		);
+		update_term_meta( $shadow_character_2, 'shadow_shadow_tax_characters_post_id', $this->character_2_post_id );
 
 		// Make a third Character to use.
 		$character_3 = array(
@@ -205,12 +222,15 @@ class Rest_API_Test extends \WP_UnitTestCase {
 				),
 			),
 		);
-		$this->character_3_post_id = wp_insert_post( $character_3 );
-
-		// Add the dead actor to character_1 and character_2
-		add_post_meta( $this->actor_dead_post_id, 'lezactors_char_list', array( $this->character_2_post_id, $this->character_1_post_id ), true );
-		// Add the alive actor to character_3
-		add_post_meta( $this->actor_alive_post_id, 'lezactors_char_list', array( $this->character_3_post_id ), true );
+		$this->character_3_post_id = $this->factory->post->create( $character_3 );
+		$shadow_character_3        = $this->factory->term->create(
+			array(
+				'taxonomy' => 'shadow_tax_characters',
+				'name'     => 'Fake Character 3',
+				'slug'     => 'fake-character-3',
+			)
+		);
+		update_term_meta( $shadow_character_3, 'shadow_shadow_tax_characters_post_id', $this->character_3_post_id );
 
 		// Make the BYQ taxonomy and add it to one show
 		$tropes  = get_taxonomy( 'lez_tropes' );

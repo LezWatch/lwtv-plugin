@@ -35,37 +35,10 @@ class Actor_Char_Dead {
 			);
 
 			// Get array of characters (by ID)
-			$char_array = get_post_meta( $the_id, 'lezactors_char_list', true );
-
-			// If the character list is empty, we must build it
-			if ( empty( $char_array ) ) {
-				// Loop to get the list of characters
-				$characters = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $the_id, 'LIKE' );
-
-				if ( is_object( $characters ) && $characters->have_posts() ) {
-					$char_array = wp_list_pluck( $characters->posts, 'ID' );
-				}
-
-				$char_array = array_unique( $char_array );
-
-				foreach ( $char_array as $char_id ) {
-					$actors = get_post_meta( $char_id, 'lezchars_actor', true );
-					if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
-						foreach ( $actors as $actor ) {
-							// We have to check because due to so many characters, we have some actor mis-matches.
-							if ( $actor == $the_id ) {  // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
-								$character_checked[] = $the_id;
-							}
-						}
-					}
-				}
-
-				$char_array = $character_checked;
-				update_post_meta( $the_id, 'lezactors_char_list', $char_array );
-			}
+			$char_array = lwtv_plugin()->get_actor_characters( $the_id );
 
 			if ( is_array( $char_array ) ) {
-				foreach ( $char_array as $char_id ) {
+				foreach ( $char_array as $char_id => $data ) {
 					$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 					if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 						foreach ( $actors_array as $char_actor ) {

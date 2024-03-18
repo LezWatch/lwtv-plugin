@@ -52,21 +52,11 @@ class Post_Meta {
 		'lezactors_wikipedia'           => array(
 			'post_type' => 'post_type_actors',
 		),
-		'lezactors_char_list'           => array(
-			'post_type'  => 'post_type_actors',
-			'type'       => 'array',
-			'items_type' => 'string',
-		),
 		'lezactors_char_count'          => array(
 			'post_type' => 'post_type_actors',
 		),
 		'lezactors_dead_count'          => array(
 			'post_type' => 'post_type_actors',
-		),
-		'lezactors_show_list'           => array(
-			'post_type'  => 'post_type_actors',
-			'type'       => 'array',
-			'items_type' => 'string',
 		),
 		'lezactors_saved_wikidata'      => array(
 			'post_type'  => 'post_type_actors',
@@ -96,13 +86,13 @@ class Post_Meta {
 		'lezshows_char_count'           => array(
 			'post_type' => 'post_type_shows',
 		),
-		'lezshows_dead_count'           => array(
-			'post_type' => 'post_type_shows',
-		),
 		'lezshows_char_list'            => array(
 			'post_type'  => 'post_type_shows',
 			'type'       => 'array',
 			'items_type' => 'string',
+		),
+		'lezshows_dead_count'           => array(
+			'post_type' => 'post_type_shows',
 		),
 		'lezshows_dead_list'            => array(
 			'post_type'  => 'post_type_shows',

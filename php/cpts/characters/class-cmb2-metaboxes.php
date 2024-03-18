@@ -137,6 +137,22 @@ class CMB2_Metaboxes {
 				),
 			)
 		);
+		// Field: Character Partners
+		$cmb_characters->add_field(
+			array(
+				'name'              => 'Romantic Relationships',
+				'id'                => $prefix . 'relationship_chart',
+				'desc'              => 'If the character has had a romantic relationship with another character (even just a one-night-stand), list it here.',
+				'taxonomy'          => 'shadow_tax_characters',
+				'type'              => 'pw_multiselect',
+				'select_all_button' => false,
+				'remove_default'    => 'true',
+				'options'           => lwtv_plugin()->get_cmb2_terms_list( 'shadow_tax_characters' ),
+				'attributes'        => array(
+					'placeholder' => 'List any romantic partners here...',
+				),
+			)
+		);
 		// Field: Year of Death (if applicable)
 		$cmb_characters->add_field(
 			array(
@@ -240,6 +256,7 @@ class CMB2_Metaboxes {
 				),
 			)
 		);
+
 		// Field: Character Type
 		$cmb_characters->add_group_field(
 			$group_shows,

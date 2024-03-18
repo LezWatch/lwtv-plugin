@@ -10,7 +10,6 @@ namespace LWTV\CPTs;
 use LWTV\CPTs\Characters\Calculations;
 use LWTV\CPTs\Characters\CMB2_Metaboxes;
 use LWTV\CPTs\Characters\Custom_Columns;
-use LWTV\CPTs\Shows;
 
 /**
  * class LWTV_CPT_Characters
@@ -37,6 +36,11 @@ class Characters {
 	);
 
 	/**
+	 * Shadow Taxonomy
+	 */
+	const SHADOW_TAXONOMY = 'shadow_tax_characters';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -48,6 +52,10 @@ class Characters {
 		// Create CPT and Taxes
 		add_action( 'init', array( $this, 'create_post_type' ), 0 );
 		add_action( 'init', array( $this, 'create_taxonomies' ), 0 );
+		add_action( 'init', array( $this, 'create_shadow_taxonomies' ), 0 );
+
+		// WP-Admin alert if the shadow taxonomy is empty.
+		add_action( 'admin_notices', array( $this, 'admin_notices_shadowtax__error' ) );
 
 		// Yoast Hooks
 		add_action( 'wpseo_register_extra_replacements', array( $this, 'yoast_seo_register_extra_replacements' ) );
@@ -80,16 +88,6 @@ class Characters {
 		add_action( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ) );
 		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ), 10, 3 );
 		add_filter( 'enter_title_here', array( $this, 'custom_enter_title' ) );
-	}
-
-	/**
-	 * Do The Math
-	 *
-	 * @param  int  $post_id
-	 * @return void
-	 */
-	public function do_the_math( $show_id ) {
-		( new Calculations() )->do_the_math( $show_id );
 	}
 
 	/*
@@ -195,10 +193,11 @@ class Characters {
 				'menu_name'                  => $name_plural,
 			);
 
-			//parameters for the new taxonomy
+			// parameters for the new taxonomy
 			$arguments = array(
 				'hierarchical'          => false,
 				'labels'                => $labels,
+				'public'                => true,
 				'show_ui'               => true,
 				'show_in_rest'          => true,
 				'show_admin_column'     => true,
@@ -212,6 +211,60 @@ class Characters {
 			// Register taxonomy
 			register_taxonomy( $tax_slug, self::SLUG, $arguments );
 		}
+	}
+
+	/**
+	 * Registers shadow taxonomy for being able to relate Characters to TV shows and actors.
+	 * Think of it as we're adding the taxonomy for the character to the show and actor CPT.
+	 *
+	 * See https://packagist.org/packages/spock/shadow-taxonomies for more information.
+	 */
+	public function create_shadow_taxonomies() {
+		$show_ui = ( defined( 'WP_DEBUG' ) && true === WP_DEBUG ) ? true : false;
+
+		register_taxonomy(
+			self::SHADOW_TAXONOMY,
+			array( Actors::SLUG, Shows::SLUG, self::SLUG ),
+			array(
+				'label'         => 'SHADOW Characters',
+				'rewrite'       => false,
+				'show_tagcloud' => false,
+				'show_ui'       => $show_ui,
+				'public'        => false,
+				'hierarchical'  => false,
+				'show_in_menu'  => $show_ui,
+				'meta_box_cb'   => false,
+			)
+		);
+
+		\Shadow_Taxonomy\Core\create_relationship( self::SLUG, self::SHADOW_TAXONOMY );
+	}
+
+	/*
+	 * Add to 'Right Now'
+	 */
+	public function dashboard_glance_items() {
+		foreach ( array( self::SLUG ) as $post_type ) {
+			$num_posts = wp_count_posts( $post_type );
+			if ( $num_posts && $num_posts->publish ) {
+				if ( self::SLUG === $post_type ) {
+					// translators: %s is the number of characters
+					$text = _n( '%s Character', '%s Characters', $num_posts->publish );
+				}
+				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
+				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
+			}
+		}
+	}
+
+	/*
+	 * Customize title
+	 */
+	public function custom_enter_title( $input ) {
+		if ( self::SLUG === get_post_type() ) {
+			$input = 'Add character';
+		}
+		return $input;
 	}
 
 	/*
@@ -285,270 +338,9 @@ class Characters {
 	}
 
 	/*
-	 * Add to 'Right Now'
-	 */
-	public function dashboard_glance_items() {
-		foreach ( array( self::SLUG ) as $post_type ) {
-			$num_posts = wp_count_posts( $post_type );
-			if ( $num_posts && $num_posts->publish ) {
-				if ( self::SLUG === $post_type ) {
-					// translators: %s is the number of characters
-					$text = _n( '%s Character', '%s Characters', $num_posts->publish );
-				}
-				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
-				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
-			}
-		}
-	}
-
-	/**
-	 * list_characters function.
-	 *
-	 * @param mixed $show_id
-	 * @param string $output (default: 'query')
-	 * @return mixed (int|array)
-	 */
-	public function list_characters( $show_id, $output = 'query' ): mixed {
-
-		// Get array of characters (by ID)
-		$characters = get_post_meta( $show_id, 'lezshows_char_list', true );
-
-		// If the character list is empty, we must build it
-		if ( ! isset( $characters ) || empty( $characters ) ) {
-			// Loop to get the list of characters
-			$characters_loop = lwtv_plugin()->queery_post_meta( self::SLUG, 'lezchars_show_group', $show_id, 'LIKE' );
-
-			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
-				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
-			}
-
-			$characters = ( is_array( $characters ) ) ? array_unique( $characters ) : array( $characters );
-		}
-
-		$new_characters  = array();
-		$dead_characters = array();
-		$char_counts     = array(
-			'total' => 0,
-			'dead'  => 0,
-			'none'  => 0,
-			'quirl' => 0,
-			'trans' => 0,
-			'txirl' => 0,
-		);
-
-		if ( ! empty( $characters ) ) {
-
-			foreach ( $characters as $char_id ) {
-				// Get the list of shows.
-				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
-
-				// If the character is in this show, AND a published character
-				// we will pass the following data to the character template
-				// to determine what to display.
-				if (
-					'' !== $shows_array &&
-					! empty( $shows_array ) &&
-					'publish' === get_post_status( $char_id )
-				) {
-					foreach ( $shows_array as $char_show ) {
-						if ( is_array( $char_show['show'] ) ) {
-							$char_show['show'] = $char_show['show'][0];
-						}
-						// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
-						if ( $char_show['show'] == $show_id ) {
-							// Get a list of actors (we need this twice later)
-							$actors_ids = get_post_meta( $char_id, 'lezchars_actor', true );
-							if ( ! is_array( $actors_ids ) ) {
-								$actors_ids = array( $actors_ids );
-							}
-
-							// The Queer Clone Calculations: The post query gets too many IDs
-							// So we don't **REALLY** count then via this method unless the show
-							// is there for the character.
-							// Increase the count of characters
-							++$char_counts['total'];
-							$new_characters[] = $char_id;
-
-							// Dead?
-							if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
-								++$char_counts['dead'];
-								$dead_characters[] = $char_id;
-							}
-							// No cliches?
-							if ( has_term( 'none', 'lez_cliches', $char_id ) ) {
-								++$char_counts['none'];
-							}
-							// The Tambour Takedown: Checking Queer IRL
-							// We don't award shows that have cast a cis/het actor in a queer
-							// role. To solve this, we grab the actor listed as PRIMARY ACTOR
-							// (i.e. the one listed first). If THEY are QIRL, the show gets points.
-							if ( has_term( 'queer-irl', 'lez_cliches', $char_id ) ) {
-								$top_actor = reset( $actors_ids );
-								if ( lwtv_plugin()->is_actor_queer( $top_actor ) ) {
-									++$char_counts['quirl'];
-								}
-							}
-
-							// Is the character is not Cisgender ...
-							$valid_trans_char = array( 'cisgender', 'intersex', 'unknown' );
-							if ( ! has_term( $valid_trans_char, 'lez_gender', $char_id ) ) {
-								++$char_counts['trans'];
-							}
-
-							// If an actor is transgender, we get an extra bonus.
-							foreach ( $actors_ids as $actor ) {
-								if ( lwtv_plugin()->is_actor_trans( $actor ) ) {
-									++$char_counts['txirl'];
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		if ( empty( $new_characters ) ) {
-			$new_characters = $characters;
-		}
-
-		update_post_meta( $show_id, 'lezshows_char_list', $new_characters );
-		update_post_meta( $show_id, 'lezshows_char_count', count( $new_characters ) );
-		update_post_meta( $show_id, 'lezshows_dead_list', $dead_characters );
-		update_post_meta( $show_id, 'lezshows_dead_count', $char_counts['dead'] );
-
-		switch ( $output ) {
-			case 'dead':
-				// Count of dead characters
-				$return = $char_counts['dead'];
-				break;
-			case 'none':
-				// count of characters with NO clichés
-				$return = $char_counts['none'];
-				break;
-			case 'queer-irl':
-				// count of characters who are queer IRL
-				$return = $char_counts['quirl'];
-				break;
-			case 'trans':
-				// Count of trans characters
-				$return = $char_counts['trans'];
-				break;
-			case 'trans-irl':
-				// count of characters who are trans IRL
-				$return = $char_counts['txirl'];
-				break;
-			case 'query':
-				// WP Array of all characters
-				$return = $new_characters;
-				break;
-			case 'count':
-				// Count of all characters on the show
-				$return = count( $new_characters );
-				break;
-		}
-
-		return $return;
-	}
-
-	/**
-	 * Get Characters For Show
-	 *
-	 * Get all the characters for a show, based on role type.
-	 *
-	 * @access public
-	 * @param mixed $show_id: Extracted from page the function is called on
-	 * @param mixed $role: regular (default), recurring, guest
-	 * @return array of characters
-	 */
-	public function get_chars_for_show( $show_id, $role = 'regular' ): mixed {
-		/**
-		 * Funny things:
-		 *   - The Sara Lance Complexity -- Because someone is on a lot of shows,
-		 *                                  we have to make sure the IDs are right
-		 *                                  and the show isn't a partial match.
-		 *                                  Sara hasn't been on EVERY show yet.
-		 *   - The Shane Clause          -- Thanks to Shane sleeping with everyone,
-		 *                                  we had to limit this loop to 100 minimum
-		 *   - The Clone Club Corollary  -- Sarah Manning took the place of every
-		 *                                  single other character played by Tatiana
-		 *                                  Maslany.
-		 *   - The Vanishing Xenaphobia  -- When set to under 200, Xena doesn't show
-		 *                                  on the Xena:WP show page
-		 *   - Just a Phase Samantha     -- By the time we hit 6000 characters, the math
-		 *                                  stopped working to show all the characters.
-		 *                                  Now it's set to 1/10th the number of chars.
-		 *
-		 * Calculate the max number of characters to list, based on the
-		 * previous count. Default/Minimum is the number of characters divided by 10
-		 */
-
-		// Valid Roles:
-		$valid_roles = array( 'regular', 'recurring', 'guest' );
-
-		// If this isn't a show page, or there are no valid roles, bail.
-		if ( Shows::SLUG !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
-			return array();
-		}
-
-		// Get array of characters (by ID)
-		$characters = get_post_meta( $show_id, 'lezshows_char_list', true );
-
-		// If the character list is empty, we must build it
-		if ( empty( $characters ) ) {
-			// Loop to get the list of characters
-			$characters_loop = lwtv_plugin()->queery_post_meta( self::SLUG, 'lezchars_show_group', $show_id, 'LIKE' );
-
-			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
-				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
-			}
-
-			$characters = ( ! is_array( $characters ) ) ? array() : array_unique( $characters );
-			update_post_meta( $show_id, 'lezshows_char_list', $characters );
-		}
-
-		// Empty array to display later
-		$display = array();
-
-		foreach ( $characters as $char_id ) {
-			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
-
-			// If the character is in this show, AND a published character,
-			// AND has this role ON THIS SHOW we will pass the following
-			// data to the character template to determine what to display.
-			if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
-				foreach ( $shows_array as $char_show ) {
-
-					// Remove the Array if it's there.
-					if ( is_array( $char_show['show'] ) ) {
-						$char_show['show'] = $char_show['show'][0];
-					}
-
-					// Because of show IDs having SIMILAR numbers, we need to be a little more flex
-					// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
-					if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
-						$display[ $char_id ] = array(
-							'id'        => $char_id,
-							'title'     => get_the_title( $char_id ),
-							'url'       => get_the_permalink( $char_id ),
-							'content'   => get_the_content( $char_id ),
-							'shows'     => $shows_array,
-							'show_from' => $show_id,
-							'role_from' => $role,
-						);
-					}
-				}
-			}
-		}
-
-		return $display;
-	}
-
-	/*
 	 * Save post meta for characters
 	 *
 	 * @param int $post_id The post ID.
-	 * @param post $post The post object.
-	 * @param bool $update Whether this is an existing post being updated or not.
 	 */
 	public function save_post_meta( $post_id ) {
 
@@ -560,7 +352,56 @@ class Characters {
 		// unhook this function so it doesn't loop infinitely
 		remove_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 
+		$this->update_char_meta( $post_id );
+
+		// re-hook this function
+		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
+	}
+
+	/**
+	 * Do The Math
+	 *
+	 * @param  int  $post_id
+	 * @return void
+	 */
+	public static function do_the_math( $show_id ) {
+		( new Calculations() )->do_the_math( $show_id );
+	}
+
+	/*
+	 * Update post meta for characters
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	public function update_char_meta( $post_id ) {
 		// Fix Shows - you only get one!
+		$this->fix_shows( $post_id );
+
+		// Character scores and sync taxonomies
+		$this->do_the_math( $post_id );
+
+		// Always Sync Taxonomies
+		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_cliches', 'lez_cliches' );
+
+		// Get a list of URLs to flush
+		$clear_urls = lwtv_plugin()->collect_cache_urls_for_characters( $post_id );
+
+		// If we've got a list of URLs, then flush.
+		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
+			lwtv_plugin()->clean_cache_urls( $clear_urls );
+		}
+	}
+
+	/**
+	 * Fix shows.
+	 *
+	 * At some point the show-group made an array for each show in a group, which is just
+	 * wrong. This makes sure to DE-array them.
+	 *
+	 * @param  int  $post_id
+	 * @return void
+	 */
+	public function fix_shows( $post_id ) {
 		$all_shows = get_post_meta( $post_id, 'lezchars_show_group', true );
 		$new_shows = array();
 
@@ -574,32 +415,35 @@ class Characters {
 			}
 			update_post_meta( $post_id, 'lezchars_show_group', $new_shows );
 		}
-
-		// Character scores
-		$this->do_the_math( $post_id );
-
-		// Get a list of URLs to flush
-		$clear_urls = lwtv_plugin()->collect_cache_urls_for_characters( $post_id );
-
-		// Always Sync Taxonomies
-		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_cliches', 'lez_cliches' );
-
-		// If we've got a list of URLs, then flush.
-		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			lwtv_plugin()->clean_cache_urls( $clear_urls );
-		}
-
-		// re-hook this function
-		add_action( 'save_post_post_type_characters', array( $this, 'save_post_meta' ) );
 	}
 
-	/*
-	 * Customize title
+	/**
+	 * Display admin notice if the shadow taxonomy is empty or if there are
+	 * fewer terms than posts.
+	 *
+	 * Of note: There will be more terms than PUBLISHED posts, as drafts etc
+	 * are not counted.
+	 *
+	 * @return void
 	 */
-	public function custom_enter_title( $input ) {
-		if ( self::SLUG === get_post_type() ) {
-			$input = 'Add character';
+	public function admin_notices_shadowtax__error() {
+		// Admin only
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
 		}
-		return $input;
+
+		$num_posts = wp_count_posts( self::SLUG );
+		$num_terms = wp_count_terms( self::SHADOW_TAXONOMY );
+		$class     = 'notice notice-error';
+
+		if ( empty( $num_terms ) || is_wp_error( $num_terms ) ) {
+			$message = 'The sync for Shadow Characters has not been run. Via CLI you need to run "wp shadow sync characters".';
+		} elseif ( $num_posts->publish > $num_terms ) {
+			$message = 'The sync for Shadow Characters is not complete. Via CLI you need to run "wp shadow sync characters" until there are no characters left to process.';
+		} else {
+			return;
+		}
+
+		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 	}
 }

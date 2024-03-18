@@ -33,25 +33,40 @@ A user-friendly Git client such as [GitHub Desktop](https://desktop.github.com) 
 1. Clone this repository: `git clone git@github.com:lezwatch/lwtv-plugin`
 2. Move into the project directory: `cd lwtv-plugin`
 3. Install the project dependencies: `npm install`
-4. Run an initial build: `npm run build`
+4. Update all the things (npm, composer, etc): `npm run updater`
+5. Run an initial build: `npm run build`
+
+### Shadow Taxonomies
+
+In order to speed up front-end page loads, we use shadow taxonomies. This means every Character has a secret taxonomy term that can be added to shows, actors, or even characters. To properly set this up you will need to run the following on your local site:
+
+```
+wp shadow sync --cpt=post_type_characters --tax=shadow_tax_characters
+```
+
+The command will need to be run multiple times until there are no more posts left to process (it only handles 500 at a time).
+
+Then you run these commands to connect the parts together (they'll run everyone):
+
+```
+wp lwtv shadow shows
+wp lwtv shadow actors
+```
+
+This setup only needs to be performed _once_. Afterwards, the site will dynamically set a new shadow term for every new character/actor/show, and update when content is changed.
 
 ## Contributing
 
-All code must pass through the `development` branch which is kept up tp date. As such, any pull requests should be made to **development**, which will push the code automatically to our development server for testing.
+All pull requests should be made to both **development** and **production**.
 
-1. Using the `development` branch as base, create a new branch with a descriptive name like `fixing-charts` or `fix/chartjs421` or `feature/latest-posts` . Commit your work to that branch until it's ready for full testing
+1. Using the `production` branch as base, create a new branch with a descriptive name like `fixing-charts` or `fix/chartjs421` or `feature/latest-posts` . Commit your work to that branch until it's ready for full testing
 2. Open [a pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request) from your feature branch to the `development` branch.
 3. If you are not a main developer, your pull request will be reviewed before it can be merged. If there are issues or changes needed, you may be asked to do so, or they may be done for you.
 4. When the code passes review, it will be merged into the `development` branch and can be tested on the dev server.
-5. Once the code passes tests, the `development` branch will be merged into `production` and the job is done!
+5. Once the code passes tests, create a pull request from your branch to `production`.
+6. When approved, the branch can be merged into `production` and the job is done!
 
-To install and update:
-
-* `$ npm install` - Install all the things.
-* `$ npm run updater` - Updates all the things (npm, composer, etc).
-* `$ npm run build` - Builds all the things for production.
-
-All commits are linted automatically on commit via eslint and phpcs, to ensure nothing breaks when we push the code.
+All commits are linted automatically on commit via eslint and phpcs, to ensure nothing breaks when we push the code. PHPUnit testing is in it's nascent stages using [WP-Tests-Strapon](https://github.com/aldavigdis/wp-tests-strapon).
 
 ### Libraries
 
@@ -469,7 +484,7 @@ Stored in `/php/theme/` - Code used to generate data for the theme in weird ways
     - `function oneshow()` - Generate data for PRIMARY show
     - `function shows()` - Generate data for all shows a character is on
     - `function terms()`  - Generate and return term data related to character (gender, pronouns, etc)
-* `class-list-characters.php` - Generate and return list of Characters from a show
+* `class-show-characters.php` - Generate and return list of Characters from a show
 * `class-show-stars.php` - Make show stars
 * `class-stats-symbolicon.php` - Makes the icon/title for symbolicons
 * `class-taxonomy-archive-title.php` - Customize title of archives with pretty icons
@@ -511,6 +526,13 @@ Stored in `/wp-cli/` -- All code for WP-CLI
 * `cli-calc.php` - Calculations on content (scores, character count, etc) - `wp lwtv CALC [ID]`
 * `cli-check.php` - Data validation checkers - `wp lwtv CHECK [queerchars|wiki] [id]`
 * `cli-generate.php` - Generate custom content - `wp lwtv GENERATE [otd|tvmaze]`
+
+### Plugins
+* `cmb-field-select2` - Forked from [MustardBees](https://github.com/mustardBees/cmb-field-select2)
+* `cmb2-attached-posts` - Forked from [WebDevStudios](https://github.com/WebDevStudios/cmb2-attached-posts)
+* `cmb2-grid` - Forked from [Oraggami](https://github.com/origgami/CMB2-grid)
+* `facetwp-cmb2` - Forked from [WebDevStudios](https://github.com/WebDevStudios/facetwp-cmb2)
+* `shadow-taxonomy` - By [PatelUtkarsh](https://github.com/patelutkarsh/shadow-taxonomy)
 
 ### Tests
 

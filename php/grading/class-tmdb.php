@@ -15,7 +15,7 @@ class TMDB {
 	 */
 	public function get_all_data( int $show_id ): array {
 		return array(
-			'image' => plugins_url( '/assets/images/scores/tmdb.svg', dirname( __DIR__, 1 ) ),
+			'image' => plugins_url( '/assets/images/scores/tmdb.png', dirname( __DIR__, 1 ) ),
 			'name'  => 'The Movie Database',
 			'score' => $this->get_score( $show_id ),
 			'color' => lwtv_plugin()->get_grade_color( $this->get_score( $show_id ) ),

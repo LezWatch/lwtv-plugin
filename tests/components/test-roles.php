@@ -27,4 +27,18 @@ class Roles_Test extends \WP_UnitTestCase {
 		$this->assertFalse( $false_role );
 		$this->assertTrue( $true_role );
 	}
+
+	/**
+	 * Test if the role has the correct capabilities
+	 */
+	public function test_data_editor_limits() {
+		$user_id = $this->factory()->user->create(
+			array(
+				'role' => 'data_editor',
+			)
+		);
+
+		$this->assertFalse( user_can( $user_id, 'publish_posts' ) );
+		$this->assertTrue( user_can( $user_id, 'edit_others_posts' ) );
+	}
 }

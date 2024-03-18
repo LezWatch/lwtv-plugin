@@ -67,7 +67,7 @@ class Shows {
 			);
 
 			// Check if there are characters. -- Trying to auto-fix crashes :(
-			$charshowlist = get_post_meta( $show_id, 'lezshows_char_list', true );
+			$charshowlist = lwtv_plugin()->get_characters_list( $show_id, 'count' );
 			if ( ( false === $charshowlist || ! $check['chars'] || empty( $check['chars'] ) ) && $check['screentime'] > 1 ) {
 				$problems[] = 'No characters listed.';
 			}

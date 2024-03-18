@@ -127,7 +127,7 @@ class Shows {
 	 * @param  int  $post_id
 	 * @return void
 	 */
-	public function do_the_math( $show_id ) {
+	public static function do_the_math( $show_id ) {
 		( new Calculations() )->do_the_math( $show_id );
 	}
 

@@ -18,7 +18,7 @@
     "preinstall": "composer install",
     "postinstall": "( node ./node_scripts/postinstall.js ) && ( cd ./php/blocks && npm install --ignore-scripts )",
     "prepare": "husky install",
-    "updater": "npm update && composer update && ( node ./node_scripts/postinstall.js )",
+    "updater": "npm update --workspaces && composer update && ( node ./node_scripts/postinstall.js )",
     "clean": "rm -rf node_modules vendor blocks/node_modules"
   },
   "author": "LezWatch.TV",
@@ -26,7 +26,7 @@
   "repository": "https://github.com/lezwatch/lwtv-plugin/",
   "dependencies": {
     "@npmcli/fs": "^3.1.0",
-    "@wordpress/scripts": "^27.0.0",
+    "@wordpress/scripts": "^27.4.0",
     "chart.js": "^4.4.0",
     "chartjs-plugin-annotation": "^3.0.1",
     "npm-run-all": "^4.1.5",
@@ -36,6 +36,10 @@
   "devDependencies": {
     "@types/node": "^18.19",
     "eslint-plugin-prettier": "^5.1.3",
-    "husky": "^9.0.11"
+    "husky": "^9.0.11",
+    "lint-staged": "^14.0.1"
+  },
+  "lint-staged": {
+    "*.php": "npm run lint:phpcs"
   }
 }

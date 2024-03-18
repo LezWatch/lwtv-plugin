@@ -21,7 +21,7 @@ class Statistics implements Component, Templater {
 	 * Versions of scripts.
 	 */
 	const VERSIONING = array(
-		'chartjs'                   => '4.4.1',
+		'chartjs'                   => '4.4.2',
 		'chartjs-plugin-annotation' => '3.0.1',
 		'palette'                   => '1.0.0',
 		'tablesorter'               => '2.31.3',

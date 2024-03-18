@@ -491,7 +491,6 @@ class Stats_JSON {
 						'id'              => $show,
 						'nations'         => implode( ', ', wp_get_post_terms( $show, 'lez_country', array( 'fields' => 'names' ) ) ),
 						'stations'        => implode( ', ', wp_get_post_terms( $show, 'lez_stations', array( 'fields' => 'names' ) ) ),
-
 						'worth_it'        => get_post_meta( $show, 'lezshows_worthit_rating', true ),
 						'trigger'         => implode( ', ', wp_get_post_terms( $show, 'lez_triggers', array( 'fields' => 'names' ) ) ),
 						'star'            => implode( ', ', wp_get_post_terms( $show, 'lez_stars', array( 'fields' => 'names' ) ) ),
@@ -593,7 +592,6 @@ class Stats_JSON {
 					'title'           => get_the_title( $id ),
 					'nations'         => implode( ', ', wp_get_post_terms( $id, 'lez_country', array( 'fields' => 'names' ) ) ),
 					'stations'        => implode( ', ', wp_get_post_terms( $id, 'lez_stations', array( 'fields' => 'names' ) ) ),
-
 					'worth_it'        => get_post_meta( $id, 'lezshows_worthit_rating', true ),
 					'trigger'         => implode( ', ', wp_get_post_terms( $id, 'lez_triggers', array( 'fields' => 'names' ) ) ),
 					'star'            => implode( ', ', wp_get_post_terms( $id, 'lez_stars', array( 'fields' => 'names' ) ) ),

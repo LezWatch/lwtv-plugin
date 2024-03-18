@@ -94,7 +94,7 @@ class Actors {
 	 * @param  int  $post_id
 	 * @return void
 	 */
-	public function do_the_math( $show_id ) {
+	public static function do_the_math( $show_id ) {
 		( new Calculations() )->do_the_math( $show_id );
 	}
 
@@ -298,30 +298,6 @@ class Actors {
 				}
 				$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
 				printf( '<li class="%1$s-count"><a href="edit.php?post_type=%1$s">%2$s</a></li>', esc_attr( $post_type ), esc_html( $text ) );
-			}
-		}
-	}
-
-	/*
-	 * Post Page Meta Box
-	 * For listing critical information
-	 */
-	public function post_page_metabox() {
-		global $post;
-
-		if ( is_object( $post ) ) {
-			switch ( $post->post_type ) {
-				case 'post_type_actors':
-					$countqueers = get_post_meta( $post->ID, 'lezactors_char_count', true );
-					$deadqueers  = get_post_meta( $post->ID, 'lezactors_dead_count', true );
-					echo '<div class="misc-pub-section lwtv misc-pub-lwtv">
-						<span id="characters">Characters: <b>' . (int) $countqueers . '</b> total';
-					if ( $deadqueers ) {
-						echo '/ <b>' . (int) $deadqueers . '</b> dead';
-					}
-					echo '</span>
-					</div>';
-					break;
 			}
 		}
 	}

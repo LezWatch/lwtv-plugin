@@ -6,6 +6,8 @@
 
 namespace LWTV\CPTs\Actors;
 
+use LWTV\CPTs\Characters;
+
 class Calculations {
 
 	/*
@@ -24,57 +26,24 @@ class Calculations {
 		}
 
 		// Get array of characters (by ID)
-		$characters = get_post_meta( $post_id, 'lezactors_char_list', true );
-
-		// If the character list is empty, we must build it
-		if ( empty( $characters ) || 0 === count( $characters ) ) {
-
-			// Loop to get the list of characters:
-			$characters_loop = lwtv_plugin()->queery_post_meta( 'post_type_characters', 'lezchars_actor', $post_id, 'LIKE' );
-
-			// We only need the IDs:
-			if ( is_object( $characters_loop ) && $characters_loop->have_posts() ) {
-				$characters = wp_list_pluck( $characters_loop->posts, 'ID' );
-			}
-
-			$characters = ( ! is_array( $characters ) ) ? array( $characters ) : $characters;
-			$characters = array_unique( $characters );
-		}
-
-		// Check all characters:
-		foreach ( $characters as $char_id ) {
-			$actors = get_post_meta( $char_id, 'lezchars_actor', true );
-			if ( 'publish' === get_post_status( $char_id ) && isset( $actors ) && ! empty( $actors ) ) {
-				foreach ( $actors as $actor ) {
-					// We have to check because due to so many characters, we have some actor mis-matches.
-					if ( $actor == $post_id ) {  // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
-						$character_checked[] = $char_id;
-					}
-				}
-			}
-		}
-
-		// Update post meta:
-		update_post_meta( $post_id, 'lezactors_char_list', $character_checked );
+		$characters = lwtv_plugin()->get_actor_characters( $post_id );
 
 		// Process character counts:
 		$queercount = 0;
 		$deadcount  = 0;
 
-		$characters = array_unique( $characters );
+		if ( is_array( $characters ) ) {
+			foreach ( $characters as $char_id => $char_details ) {
+				$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
+				$is_dead      = has_term( 'dead', 'lez_cliches', $char_id );
 
-		foreach ( $characters as $char_id ) {
-			$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
-			$is_dead      = has_term( 'dead', 'lez_cliches', $char_id );
-
-			if ( '' !== $actors_array && 'publish' === get_post_status( $char_id ) ) {
-				foreach ( $actors_array as $char_actor ) {
-					// To compensate for maybe character situations, we need this loose
-					// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
-					if ( $char_actor == $post_id ) {
-						++$queercount;
-						if ( $is_dead ) {
-							++$deadcount;
+				if ( '' !== $actors_array && is_array( $actors_array ) && 'publish' === get_post_status( $char_id ) ) {
+					foreach ( $actors_array as $char_actor ) {
+						if ( (int) $char_actor === (int) $post_id ) {
+							++$queercount;
+							if ( $is_dead ) {
+								++$deadcount;
+							}
 						}
 					}
 				}

@@ -5,6 +5,8 @@
 
 namespace LWTV\Plugins\CMB2;
 
+use LWTV\CPTs\Characters;
+
 class Taxonomies {
 
 	/**
@@ -30,7 +32,24 @@ class Taxonomies {
 		$terms_array = array();
 		if ( ! empty( $terms ) ) {
 			foreach ( $terms as $term ) {
-				$terms_array[ $term->term_id ] = $term->name;
+				if ( Characters::SHADOW_TAXONOMY === $term->taxonomy ) {
+					$char_id    = get_term_meta( $term->term_id, 'shadow_shadow_tax_characters_post_id', true );
+					$shows      = get_post_meta( $char_id, 'lezchars_show_group', true );
+					$name_shows = array();
+
+					if ( is_array( $shows ) ) {
+						foreach ( $shows as $show ) {
+							if ( is_array( $show['show'] ) ) {
+								$show['show'] = $show['show'][0];
+							}
+							$name_shows[] = get_the_title( $show['show'] );
+						}
+					}
+
+					$terms_array[ $term->term_id ] = $term->name . ' (' . implode( ', ', $name_shows ) . ')';
+				} else {
+					$terms_array[ $term->term_id ] = $term->name;
+				}
 			}
 		}
 		return $terms_array;
@@ -52,7 +71,7 @@ class Taxonomies {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$new_post_meta_data = ( isset( $_POST[ $postmeta ] ) ) ? $_POST[ $postmeta ] : '';
+		$new_post_meta_data = ( isset( $_POST[ $postmeta ] ) ) ? $_POST[ $postmeta ] : ''; // Note: You cannot sanitize this here.
 		$none_term          = get_term_by( 'slug', 'none', $taxonomy );
 		if ( false !== $none_term && is_array( $new_post_meta_data ) ) {
 			$the_post_meta_data = array_diff( $new_post_meta_data, array( $none_term->term_id ) );
