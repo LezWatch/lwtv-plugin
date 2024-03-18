@@ -55,6 +55,10 @@ class Calculations {
 					$each_show['show'] = $each_show['show'][0];
 				}
 
+				if ( get_post_status( $each_show['show'] ) !== 'publish' ) {
+					continue;
+				}
+
 				// Add the tax for the character to the show.
 				wp_set_object_terms( $each_show['show'], $shadow_character->term_id, Characters::SHADOW_TAXONOMY, true );
 
@@ -77,6 +81,11 @@ class Calculations {
 			$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 			foreach ( $actors as $actor ) {
+
+				if ( get_post_status( $actor ) !== 'publish' ) {
+					continue;
+				}
+
 				// Add the tax for the character to the actor.
 				wp_add_object_terms( $actor, $shadow_character->term_id, Characters::SHADOW_TAXONOMY, true );
 
