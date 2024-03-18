@@ -60,7 +60,9 @@ class Show_Characters {
 		} elseif ( taxonomy_exists( Characters::SHADOW_TAXONOMY ) ) {
 			$characters = $this->get_characters_from_taxonomy( $post_id );
 		} else {
-			$characters = $this->get_characters_from_post_meta( $post_id, $format );
+			return array();
+			// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+			// $characters = $this->get_characters_from_post_meta( $post_id );
 		}
 
 		if ( ! empty( $role ) ) {

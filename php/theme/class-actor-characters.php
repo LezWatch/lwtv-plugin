@@ -51,7 +51,9 @@ class Actor_Characters {
 		} elseif ( taxonomy_exists( Characters::SHADOW_TAXONOMY ) ) {
 			$characters = $this->get_characters_from_taxonomy( $actor_id );
 		} else {
-			$characters = $this->get_characters_from_post_meta( $actor_id );
+			return array();
+			// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+			// $characters = $this->get_characters_from_post_meta( $actor_id );
 		}
 
 		$build_data = $this->build_character_info( $characters, $actor_id );
