@@ -165,7 +165,7 @@ class WP_CLI_LWTV_Shadow {
 
 			// Add the tax for the character to the show.
 			if ( ! has_term( $shadow_character->term_id, $shadow_cpt, $each_show['show'] ) ) {
-				wp_set_object_terms( $each_show['show'], $shadow_character->term_id, $shadow_cpt, true );
+				wp_add_object_terms( (int) $each_show['show'], (int) $shadow_character->term_id, $shadow_cpt );
 			}
 		}
 	}
@@ -190,10 +190,7 @@ class WP_CLI_LWTV_Shadow {
 		$actors = ( ! is_array( $actors ) ) ? array( $actors ) : $actors;
 
 		foreach ( $actors as $actor ) {
-			// Add the tax for the character to the actor.
-			if ( ! has_term( $shadow_character->term_id, $shadow_cpt, $actor ) ) {
-				wp_add_object_terms( $actor, $shadow_character->term_id, $shadow_cpt, true );
-			}
+			wp_add_object_terms( (int) $actor, (int) $shadow_character->term_id, $shadow_cpt );
 		}
 	}
 }

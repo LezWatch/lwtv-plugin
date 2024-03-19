@@ -71,8 +71,10 @@ class Actor_Characters {
 	public function get_characters_from_shadow_tax( $shadow_array ) {
 		$characters = array();
 
-		foreach ( $shadow_array as $shadow ) {
-			$characters[] = $shadow->ID;
+		foreach ( $shadow_array as $shadow => $item ) {
+			if ( isset( $item->ID ) && ! empty( $item->ID ) ) {
+				$characters[] = $item->ID;
+			}
 		}
 
 		return $characters;
@@ -160,8 +162,8 @@ class Actor_Characters {
 						);
 					} else {
 						// If the character is not associated with the actor, remove the character taxonomy from the actor.
-						$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
-						wp_remove_object_terms( $char_actor, (int) $term_id, Characters::SHADOW_TAXONOMY );
+						$term_id = get_post_meta( $char_actor, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
+						wp_remove_object_terms( (int) $char_actor, (int) $term_id, Characters::SHADOW_TAXONOMY );
 					}
 				}
 			}

@@ -60,7 +60,7 @@ class Calculations {
 				}
 
 				// Add the tax for the character to the show.
-				wp_set_object_terms( $each_show['show'], $shadow_character->term_id, Characters::SHADOW_TAXONOMY, true );
+				wp_add_object_terms( (int) $each_show['show'], (int) $shadow_character->term_id, Characters::SHADOW_TAXONOMY );
 
 				Shows::do_the_math( $each_show['show'] );
 			}
@@ -87,7 +87,7 @@ class Calculations {
 				}
 
 				// Add the tax for the character to the actor.
-				wp_add_object_terms( $actor, $shadow_character->term_id, Characters::SHADOW_TAXONOMY, true );
+				wp_add_object_terms( (int) $actor, (int) $shadow_character->term_id, Characters::SHADOW_TAXONOMY );
 
 				Actors::do_the_math( $actor );
 			}
