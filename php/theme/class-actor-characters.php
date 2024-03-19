@@ -21,7 +21,7 @@ class Actor_Characters {
 	public function make( $actor_id, $format ) {
 
 		// Early Bail
-		$valid_data = array( 'all', 'dead' );
+		$valid_data = array( 'all', 'dead', 'count' );
 		if ( ! in_array( $format, $valid_data, true ) ) {
 			return;
 		}
@@ -38,11 +38,9 @@ class Actor_Characters {
 	 * @param string  $actor  ID Actor ID
 	 * @param string  $format Type of Output
 	 *
-	 * @return array  All the characters by ID.
+	 * @return array  number of characters for that actor.
 	 */
-	public function all( $actor_id, $format ) {
-		$format = $format;
-
+	public function generate_list( $actor_id ) {
 		// if there is a character shadow tax, we need to get the characters from there.
 		$get_shadow_tax = \Shadow_Taxonomy\Core\get_the_posts( $actor_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
 
@@ -51,11 +49,42 @@ class Actor_Characters {
 		} elseif ( taxonomy_exists( Characters::SHADOW_TAXONOMY ) ) {
 			$characters = $this->get_characters_from_taxonomy( $actor_id );
 		} else {
-			return array();
+			return 0;
 			// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 			// $characters = $this->get_characters_from_post_meta( $actor_id );
 		}
 
+		return $characters;
+	}
+
+	/**
+	 * Generate count of characters
+	 *
+	 * @param string  $actor  ID Actor ID
+	 * @param string  $format Type of Output
+	 *
+	 * @return array  number of characters for that actor.
+	 */
+	public function count( $actor_id, $format = 'count' ) {
+		$format = $format;
+
+		$characters = $this->generate_list( $actor_id );
+
+		return count( $characters );
+	}
+
+	/**
+	 * Generate list of characters
+	 *
+	 * @param string  $actor  ID Actor ID
+	 * @param string  $format Type of Output
+	 *
+	 * @return array  All the characters by ID.
+	 */
+	public function all( $actor_id, $format ) {
+		$format = $format;
+
+		$characters = $this->generate_list( $actor_id );
 		$build_data = $this->build_character_info( $characters, $actor_id );
 
 		return $build_data;
@@ -186,7 +215,7 @@ class Actor_Characters {
 		$dead   = array();
 
 		// Get array of characters (by ID)
-		$character_array = $this->all( $actor_id, 'all' );
+		$character_array = $this->generate_list( $actor_id );
 
 		if ( is_array( $character_array ) ) {
 			foreach ( $character_array as $char_id ) {
