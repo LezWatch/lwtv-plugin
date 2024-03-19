@@ -143,18 +143,18 @@ class Show_Characters {
 						continue;
 					}
 
-					$shows_array_clean[ $char_show['show'] ] = $char_show['type'];
-					$shows_array_simple[]                    = $char_show['show'];
+					$shows_roles[ $char_show['show'] ] = $char_show['type'];
+					$shows_array_simple[]              = $char_show['show'];
 				}
 
 				if ( 'all' === $role ) {
 					foreach ( array( 'regular', 'recurring', 'guest' ) as $all_role ) {
-						if ( $all_role === $shows_array_clean[ $show_id ] ) {
-							$display[ $all_role ][] = $this->build_role_data( $char_id, $show_id, $shows_array_simple, $all_role );
+						if ( $all_role === $shows_roles[ $show_id ] ) {
+							$display[ $all_role ][] = $this->build_role_data( $char_id, $show_id, $shows_array, $all_role );
 						}
 					}
 				} else {
-					$display[ $char_id ] = $this->build_role_data( $char_id, $show_id, $shows_array_simple, $shows_array_clean[ $show_id ] );
+					$display[ $char_id ] = $this->build_role_data( $char_id, $show_id, $shows_array, $shows_roles[ $show_id ] );
 				}
 			}
 		}
@@ -170,17 +170,17 @@ class Show_Characters {
 	 *
 	 * @param int    $char_id           Character ID
 	 * @param int    $show_id           ID of the show
-	 * @param array  $shows_array_simple Array of show IDs
+	 * @param array  $shows_array       Array of show IDs
 	 * @param string $role              Role of the characters to look for
 	 *
 	 * @return array of characters with custom data to output
 	 */
-	public function build_role_data( $char_id, $show_id, $shows_array_simple, $role ) {
+	public function build_role_data( $char_id, $show_id, $shows_array, $role ) {
 		$display = array(
 			'id'        => $char_id,
 			'title'     => get_the_title( $char_id ),
 			'url'       => get_the_permalink( $char_id ),
-			'shows'     => $shows_array_simple,
+			'shows'     => $shows_array,
 			'show_from' => $show_id,
 			'role_from' => $role,
 		);
