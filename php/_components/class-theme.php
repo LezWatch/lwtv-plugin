@@ -248,7 +248,7 @@ class Theme implements Component, Templater {
 	 * @return mixed
 	 */
 	public function get_actor_characters( $actor_id ) {
-		return ( new Actor_Characters() )->make( $actor_id, 'count' );
+		return ( new Actor_Characters() )->make( $actor_id, 'all' );
 	}
 
 	/**

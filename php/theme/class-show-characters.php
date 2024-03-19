@@ -162,12 +162,24 @@ class Show_Characters {
 		return $display;
 	}
 
+	/**
+	 * Build Role Data
+	 *
+	 * Get all the characters for a show, based on role type and output in
+	 * a customized format for the show page.
+	 *
+	 * @param int    $char_id           Character ID
+	 * @param int    $show_id           ID of the show
+	 * @param array  $shows_array_simple Array of show IDs
+	 * @param string $role              Role of the characters to look for
+	 *
+	 * @return array of characters with custom data to output
+	 */
 	public function build_role_data( $char_id, $show_id, $shows_array_simple, $role ) {
 		$display = array(
 			'id'        => $char_id,
 			'title'     => get_the_title( $char_id ),
 			'url'       => get_the_permalink( $char_id ),
-			'content'   => get_the_content( $char_id ),
 			'shows'     => $shows_array_simple,
 			'show_from' => $show_id,
 			'role_from' => $role,
@@ -351,7 +363,6 @@ class Show_Characters {
 
 		return $characters;
 	}
-
 
 	/**
 	 * Get characters from the taxonomy

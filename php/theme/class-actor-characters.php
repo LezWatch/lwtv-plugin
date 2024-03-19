@@ -175,6 +175,7 @@ class Actor_Characters {
 		// @TODO: There needs to be a way to invalidate this and re-run without a re-save.
 
 		$characters = array();
+		$dead       = array();
 		// Rebuild the character array in format:
 		foreach ( $character_array as $char_id ) {
 			$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
@@ -188,16 +189,28 @@ class Actor_Characters {
 				foreach ( $actors_array as $char_actor ) {
 					if ( (int) $char_actor === (int) $actor_id ) {
 						$characters[ $char_id ] = array(
-							'id'      => $char_id,
-							'title'   => get_the_title( $char_id ),
-							'url'     => get_the_permalink( $char_id ),
-							'content' => get_the_content( $char_id ),
-							'shows'   => get_post_meta( $char_id, 'lezchars_show_group', true ),
+							'id'    => $char_id,
+							'title' => get_the_title( $char_id ),
+							'url'   => get_the_permalink( $char_id ),
+							'shows' => get_post_meta( $char_id, 'lezchars_show_group', true ),
 						);
+
+						if ( has_term( 'dead', 'lez_cliches', $char_id ) ) {
+							$dead[ $char_id ] = array(
+								'id'    => $char_id,
+								'title' => get_the_title( $char_id ),
+								'url'   => get_the_permalink( $char_id ),
+							);
+						}
 					}
 				}
 			}
 		}
+
+		update_post_meta( $actor_id, 'lezactors_char_count', count( $characters ) );
+		update_post_meta( $actor_id, 'lezactors_char_list', $characters );
+		update_post_meta( $actor_id, 'lezactors_dead_count', count( $dead ) );
+		update_post_meta( $actor_id, 'lezactors_dead_list', $dead );
 
 		return $characters;
 	}
@@ -234,6 +247,8 @@ class Actor_Characters {
 				}
 			}
 		}
+
+		update_post_meta( $actor_id, 'lezactors_dead_count', count( $dead ) );
 
 		return $dead;
 	}
