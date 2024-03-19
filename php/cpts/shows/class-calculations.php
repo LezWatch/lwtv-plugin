@@ -6,6 +6,8 @@
 
 namespace LWTV\CPTs\Shows;
 
+use LWTV\CPTs\Characters;
+
 class Calculations {
 
 	/**
@@ -93,20 +95,13 @@ class Calculations {
 		}
 
 		// before we do the math, let's see if we have any characters:
-		$raw_char_count = lwtv_plugin()->get_characters_list( $post_id, 'count' );
+		$char_count = count( get_post_meta( $post_id, 'lezshows_char_list', true ) );
 
 		// Empty raw? Return 0.
-		if ( empty( $raw_char_count ) ) {
+		if ( empty( $char_count ) ) {
 			return 0;
 		}
-
-		$raw_char_count = ( ! is_array( $raw_char_count ) ) ? array( $raw_char_count ) : $raw_char_count;
-		$char_count     = count( $raw_char_count );
-
-		// No characters? It's a zero.
-		if ( 0 === $char_count ) {
-			return 0;
-		}
+		$char_roles = get_post_meta( $post_id, 'lezshows_char_roles', true );
 
 		// Here we need to break down the scores:
 		if ( 'score' === $type ) {
@@ -114,12 +109,12 @@ class Calculations {
 
 			// If the count for all characters is 0, we don't need to run this.
 			if ( 0 !== $char_count ) {
-				$chars_regular   = lwtv_plugin()->get_chars_for_show( $post_id, 'count', 'regular' );
-				$chars_recurring = lwtv_plugin()->get_chars_for_show( $post_id, 'count', 'recurring' );
-				$chars_guest     = lwtv_plugin()->get_chars_for_show( $post_id, 'count', 'guest' );
+				$chars_regular   = $char_roles['regular'];
+				$chars_recurring = $char_roles['recurring'];
+				$chars_guest     = $char_roles['guest'];
 
 				// Points: Regular = 5; Recurring = 2; Guests = 1
-				$char_score = ( count( $chars_regular ) * 5 ) + ( count( $chars_recurring ) * 2 ) + count( $chars_guest );
+				$char_score = ( $chars_regular * 5 ) + ( $chars_recurring * 2 ) + $chars_guest;
 
 				// TODO: Consider ratio-ing - if there are a lot of guests and no regulars, that's bad, but if your guests
 				// are closer in line to the number of regulars... Maybe 4 guests to 1 regular?
@@ -334,7 +329,7 @@ class Calculations {
 	/**
 	 * Calculate show character data.
 	 */
-	public function show_character_data( $post_id ) {
+	public function show_character_data( $show_id ) {
 
 		// What role each character has
 		$role_data = array(
@@ -362,32 +357,23 @@ class Calculations {
 		}
 
 		// Get array of characters (by ID)
-		$characters     = lwtv_plugin()->get_characters_list( $post_id, 'query' );
-		$new_characters = array();
+		$characters = lwtv_plugin()->get_characters_list( $show_id, 'query' );
 
 		if ( is_array( $characters ) ) {
 			foreach ( $characters as $char_id ) {
-
-				// If the character isn't published, skip it.
-				if ( get_post_status( $char_id ) !== 'publish' ) {
-					continue;
-				}
-
 				$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
 
-				if ( '' !== $shows_array && 'publish' === get_post_status( $char_id ) ) {
+				if ( is_array( $shows_array ) && ! empty( $shows_array ) ) {
 					foreach ( $shows_array as $char_show ) {
-
 						// Remove the array if it's there.
 						if ( is_array( $char_show['show'] ) ) {
 							$char_show['show'] = $char_show['show'][0];
 						}
 
 						// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
-						if ( $char_show['show'] == $post_id ) {
+						if ( $char_show['show'] == $show_id ) {
 							// Bump the array for this role
 							++$role_data[ $char_show['type'] ];
-							$new_characters[] = $char_id;
 
 							// Now we'll sort gender and stuff...
 							foreach ( $valid_taxes as $title => $taxonomy ) {
@@ -405,10 +391,7 @@ class Calculations {
 		}
 
 		// Update the roles scores
-		update_post_meta( $post_id, 'lezshows_char_roles', $role_data );
-
-		// Update the characters
-		update_post_meta( $post_id, 'lezshows_char_list', $new_characters );
+		update_post_meta( $show_id, 'lezshows_char_roles', $role_data );
 
 		/**
 		 * Update the taxonomies
@@ -417,7 +400,7 @@ class Calculations {
 		 *  - lezshows_char_romantic
 		 */
 		foreach ( $valid_taxes as $title => $taxonomy ) {
-			update_post_meta( $post_id, 'lezshows_char_' . $title, $tax_data[ $title ] );
+			update_post_meta( $show_id, 'lezshows_char_' . $title, $tax_data[ $title ] );
 		}
 	}
 
@@ -435,11 +418,8 @@ class Calculations {
 	 */
 	public function do_the_math( $post_id ) {
 
-		// Delete the data.
-		$delete_array = array( 'lezshows_char_list', 'lezshows_char_count', 'lezshows_dead_list', 'lezshows_dead_count', 'lezshows_the_score' );
-		foreach ( $delete_array as $delete_meta ) {
-			delete_post_meta( $post_id, $delete_meta );
-		}
+		// Generate character data
+		self::show_character_data( $post_id );
 
 		// Get the ratings
 		$score_show_rating = self::show_score( $post_id );
@@ -447,9 +427,6 @@ class Calculations {
 		$score_chars_total = self::show_character_score( $post_id );
 		$score_chars_alive = $score_chars_total['alive'];
 		$score_chars_score = $score_chars_total['score'];
-
-		// Generate character data
-		self::show_character_data( $post_id );
 
 		// Calculate the full score
 		$calculate = ( $score_show_rating + $score_show_tropes + $score_chars_alive + $score_chars_score ) / 4;
