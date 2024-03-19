@@ -189,10 +189,6 @@ class Actor_Characters {
 							'content' => get_the_content( $char_id ),
 							'shows'   => get_post_meta( $char_id, 'lezchars_show_group', true ),
 						);
-					} else {
-						// If the character is not associated with the actor, remove the character taxonomy from the actor.
-						$term_id = get_post_meta( $char_actor, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
-						wp_remove_object_terms( (int) $char_actor, (int) $term_id, Characters::SHADOW_TAXONOMY );
 					}
 				}
 			}
