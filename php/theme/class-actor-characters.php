@@ -150,6 +150,11 @@ class Actor_Characters {
 		foreach ( $character_array as $char_id ) {
 			$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 
+			if ( ! in_array( (string) $actor_id, $actors_array, true ) ) {
+				$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
+				wp_remove_object_terms( (int) $actor_id, (int) $term_id, Characters::SHADOW_TAXONOMY );
+			}
+
 			if ( 'publish' === get_post_status( $char_id ) && isset( $actors_array ) && ! empty( $actors_array ) ) {
 				foreach ( $actors_array as $char_actor ) {
 					if ( (int) $char_actor === (int) $actor_id ) {
@@ -160,10 +165,6 @@ class Actor_Characters {
 							'content' => get_the_content( $char_id ),
 							'shows'   => get_post_meta( $char_id, 'lezchars_show_group', true ),
 						);
-					} else {
-						// If the character is not associated with the actor, remove the character taxonomy from the actor.
-						$term_id = get_post_meta( $char_actor, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
-						wp_remove_object_terms( (int) $char_actor, (int) $term_id, Characters::SHADOW_TAXONOMY );
 					}
 				}
 			}
