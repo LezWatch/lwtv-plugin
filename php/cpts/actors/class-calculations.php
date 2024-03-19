@@ -34,6 +34,12 @@ class Calculations {
 
 		if ( is_array( $characters ) ) {
 			foreach ( $characters as $char_id => $char_details ) {
+
+				// If the character isn't published, skip it.
+				if ( get_post_status( $char_id ) !== 'publish' ) {
+					continue;
+				}
+
 				$actors_array = get_post_meta( $char_id, 'lezchars_actor', true );
 				$is_dead      = has_term( 'dead', 'lez_cliches', $char_id );
 

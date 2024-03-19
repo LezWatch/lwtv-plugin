@@ -60,20 +60,50 @@ class Show_Characters {
 		} elseif ( taxonomy_exists( Characters::SHADOW_TAXONOMY ) ) {
 			$characters = $this->get_characters_from_taxonomy( $post_id );
 		} else {
-			$characters = $this->get_characters_from_post_meta( $post_id, $format );
+			return array();
+			// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+			// $characters = $this->get_characters_from_post_meta( $post_id );
 		}
 
+		$clean_characters = $this->clean_character_array( $characters, $post_id );
+
 		if ( ! empty( $role ) ) {
-			$build_data = $this->build_character_data( $characters, $post_id, $role );
+			$build_data = $this->build_character_data( $clean_characters, $post_id, $role );
 		} else {
-			$build_data = $this->build_character_list( $characters, $post_id, $format );
+			$build_data = $this->build_character_list( $clean_characters, $post_id, $format );
 		}
 
 		return $build_data;
 	}
 
+	public function clean_character_array( $characters, $show_id ) {
+		foreach ( $characters as $char_id ) {
+			$shows_array = get_post_meta( $char_id, 'lezchars_show_group', true );
+
+			foreach ( $shows_array as $char_show ) {
+				// Remove the Array if it's there.
+				if ( is_array( $char_show['show'] ) ) {
+					$char_show['show'] = $char_show['show'][0];
+				}
+				$shows_array_simple[] = $char_show['show'];
+			}
+
+			// If the show is not in the simple array for this character, remove the character.
+			$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
+			if ( ! in_array( (string) $show_id, $shows_array_simple, true ) ) {
+				wp_remove_object_terms( (int) $show_id, (int) $term_id, Characters::SHADOW_TAXONOMY );
+				unset( $characters[ $char_id ] );
+			} else {
+				// Add the tax for the character to the show.
+				wp_add_object_terms( (int) $show_id, (int) $term_id, Characters::SHADOW_TAXONOMY );
+			}
+
+			return $characters;
+		}
+	}
+
 	/**
-	 * Get Characters For Show
+	 * Build Character Data
 	 *
 	 * Get all the characters for a show, based on role type and output in
 	 * a customized format for the show page.
@@ -86,7 +116,7 @@ class Show_Characters {
 	 */
 	public function build_character_data( $characters, $show_id, $role = 'regular' ): mixed {
 		// Valid Roles:
-		$valid_roles = array( 'regular', 'recurring', 'guest' );
+		$valid_roles = array( 'regular', 'recurring', 'guest', 'all' );
 
 		// If this isn't a show page, or there are no valid roles, bail.
 		if ( Shows::SLUG !== get_post_type( $show_id ) || ! in_array( $role, $valid_roles, true ) ) {
@@ -102,32 +132,58 @@ class Show_Characters {
 			// If the character is in this show, AND a published character,
 			// AND has this role ON THIS SHOW we will pass the following
 			// data to the character template to determine what to display.
-			if ( 'publish' === get_post_status( $char_id ) && isset( $shows_array ) && ! empty( $shows_array ) ) {
+			if ( isset( $shows_array ) && ! empty( $shows_array ) ) {
 				foreach ( $shows_array as $char_show ) {
-
 					// Remove the Array if it's there.
 					if ( is_array( $char_show['show'] ) ) {
 						$char_show['show'] = $char_show['show'][0];
 					}
 
-					// Because of show IDs having SIMILAR numbers, we need to be a little more flexible.
-					// We PROBABLY don't need this anymore, but it's here just in case.
-
-					// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
-					if ( $char_show['show'] == $show_id && $char_show['type'] === $role ) {
-						$display[ $char_id ] = array(
-							'id'        => $char_id,
-							'title'     => get_the_title( $char_id ),
-							'url'       => get_the_permalink( $char_id ),
-							'content'   => get_the_content( $char_id ),
-							'shows'     => $shows_array,
-							'show_from' => $show_id,
-							'role_from' => $role,
-						);
+					if ( ! (int) $char_show['show'] === (int) $show_id ) {
+						continue;
 					}
+
+					$shows_roles[ $char_show['show'] ] = $char_show['type'];
+					$shows_array_simple[]              = $char_show['show'];
+				}
+
+				if ( 'all' === $role ) {
+					foreach ( array( 'regular', 'recurring', 'guest' ) as $all_role ) {
+						if ( $all_role === $shows_roles[ $show_id ] ) {
+							$display[ $all_role ][] = $this->build_role_data( $char_id, $show_id, $shows_array, $all_role );
+						}
+					}
+				} else {
+					$display[ $char_id ] = $this->build_role_data( $char_id, $show_id, $shows_array, $shows_roles[ $show_id ] );
 				}
 			}
 		}
+
+		return $display;
+	}
+
+	/**
+	 * Build Role Data
+	 *
+	 * Get all the characters for a show, based on role type and output in
+	 * a customized format for the show page.
+	 *
+	 * @param int    $char_id           Character ID
+	 * @param int    $show_id           ID of the show
+	 * @param array  $shows_array       Array of show IDs
+	 * @param string $role              Role of the characters to look for
+	 *
+	 * @return array of characters with custom data to output
+	 */
+	public function build_role_data( $char_id, $show_id, $shows_array, $role ) {
+		$display = array(
+			'id'        => $char_id,
+			'title'     => get_the_title( $char_id ),
+			'url'       => get_the_permalink( $char_id ),
+			'shows'     => $shows_array,
+			'show_from' => $show_id,
+			'role_from' => $role,
+		);
 
 		return $display;
 	}
@@ -217,10 +273,6 @@ class Show_Characters {
 									++$char_counts['txirl'];
 								}
 							}
-						} else {
-							// If the character is not associated with the show, remove the character taxonomy from the show.
-							$term_id = get_post_meta( $char_id, sanitize_key( 'shadow_' . Characters::SHADOW_TAXONOMY . '_term_id' ), true );
-							wp_remove_object_terms( $char_show['show'], (int) $term_id, Characters::SHADOW_TAXONOMY );
 						}
 					}
 				}
@@ -231,10 +283,13 @@ class Show_Characters {
 			$new_characters = $characters;
 		}
 
+		update_post_meta( $show_id, 'lezshows_dead_count', $char_counts['dead'] );
+		update_post_meta( $show_id, 'lezshows_char_count', count( $new_characters ) );
+		update_post_meta( $show_id, 'lezshows_char_list', $new_characters );
+
 		switch ( $output ) {
 			case 'dead':
 				// Count of dead characters
-				update_post_meta( $show_id, 'lezshows_dead_count', $char_counts['dead'] );
 				$return = $char_counts['dead'];
 				break;
 			case 'none':
@@ -255,12 +310,10 @@ class Show_Characters {
 				break;
 			case 'query':
 				// Array of all characters by ID
-				update_post_meta( $show_id, 'lezshows_char_list', $new_characters );
 				$return = $new_characters;
 				break;
 			case 'count':
 				// Count of all characters on the show
-				update_post_meta( $show_id, 'lezshows_char_count', count( $new_characters ) );
 				$return = count( $new_characters );
 				break;
 		}
@@ -310,7 +363,6 @@ class Show_Characters {
 
 		return $characters;
 	}
-
 
 	/**
 	 * Get characters from the taxonomy
