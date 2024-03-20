@@ -75,7 +75,7 @@ class Cache {
 		}
 
 		foreach ( $clear_urls as $url ) {
-			global $nginx_purger;
+			$nginx_purger = new \Purger();
 			$nginx_purger->purge_url( $url );
 		}
 	}
