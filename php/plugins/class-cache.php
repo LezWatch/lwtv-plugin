@@ -70,17 +70,13 @@ class Cache {
 	 * @return void
 	 */
 	public function clean_urls( $clear_urls ) {
-		foreach ( $clear_urls as $url ) {
-			// Change domain.com/path/to/url to domain.com/PURGE/path/to/url
-			$url_parse    = wp_parse_url( $url );
-			$domain       = isset( $url_parse['host'] ) ? 'https://' . $url_parse['host'] : get_site_url();
-			$url_to_purge = $domain . '/purge';
-			if ( isset( $url_parse['path'] ) ) {
-				$url_to_purge .= $url_parse['path'];
-			}
+		if ( ! is_plugin_active( 'nginx-helper/nginx-helper.php' ) ) {
+			return;
+		}
 
-			// Reload the data by calling the page
-			wp_remote_get( $url_to_purge );
+		foreach ( $clear_urls as $url ) {
+			global $nginx_purger;
+			$nginx_purger->purge_url( $url );
 		}
 	}
 }
