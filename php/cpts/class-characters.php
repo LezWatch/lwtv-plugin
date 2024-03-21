@@ -389,7 +389,7 @@ class Characters {
 
 		// If we've got a list of URLs, then flush.
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			lwtv_plugin()->clean_cache_urls( $clear_urls );
+			lwtv_plugin()->clean_cache_urls( $post_id, $clear_urls );
 		}
 	}
 

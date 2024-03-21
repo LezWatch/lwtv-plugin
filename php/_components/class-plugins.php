@@ -43,6 +43,8 @@ class Plugins implements Component, Templater {
 	public function get_template_tags(): array {
 		return array(
 			'collect_cache_urls_for_characters' => array( $this, 'collect_cache_urls_for_characters' ),
+			'collect_cache_urls_for_actors'     => array( $this, 'collect_cache_urls_for_actors_or_shows' ),
+			'collect_cache_urls_for_shows'      => array( $this, 'collect_cache_urls_for_actors_or_shows' ),
 			'clean_cache_urls'                  => array( $this, 'clean_cache_urls' ),
 			'get_cmb2_terms_list'               => array( $this, 'get_cmb2_terms_list' ),
 			'get_select2_defaults'              => array( $this, 'get_select2_defaults' ),

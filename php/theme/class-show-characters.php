@@ -284,7 +284,7 @@ class Show_Characters {
 		}
 
 		update_post_meta( $show_id, 'lezshows_dead_count', $char_counts['dead'] );
-		update_post_meta( $show_id, 'lezshows_char_count', count( $new_characters ) );
+		update_post_meta( $show_id, 'lezshows_char_count', $char_counts['total'] );
 		update_post_meta( $show_id, 'lezshows_char_list', $new_characters );
 
 		switch ( $output ) {
