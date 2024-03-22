@@ -90,10 +90,6 @@ class Cache {
 	 * @return void
 	 */
 	public function clean_urls( $post_id, $clear_urls ) {
-		if ( ! is_plugin_active( 'nginx-helper/nginx-helper.php' ) ) {
-			return;
-		}
-
 		// If published within the last 15 minutes, flush home page
 		$post_date = get_post_time( 'U', true, $post_id );
 		$delta     = time() - $post_date;
@@ -102,7 +98,15 @@ class Cache {
 		}
 
 		foreach ( $clear_urls as $url ) {
-			wp_remote_get( $url );
+			// Nginx Helper.
+			if ( is_plugin_active( 'nginx-helper/nginx-helper.php' ) ) {
+				wp_remote_get( $url );
+			}
+
+			// WP Rocket.
+			if ( function_exists( 'rocket_clean_post' ) ) {
+				rocket_clean_post( $url );
+			}
 		}
 	}
 }

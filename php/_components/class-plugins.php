@@ -65,10 +65,21 @@ class Plugins implements Component, Templater {
 	/**
 	 * Collect the URLs we're going to flush for characters
 	 *
+	 * @param  int     $post_id ID of the character
+	 * @return array   array of URLs
+	 */
+	public function collect_cache_urls_for_actors_or_shows( $post_id ) {
+		return ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
+	}
+
+	/**
+	 * Collect the URLs we're going to flush.
+	 *
+	 * @param  int     $post_id ID of the show or actor
 	 * @param  array  $clear_urls - Arrays of URLs to clean
 	 */
-	public function clean_cache_urls( $clear_urls ) {
-		return ( new Cache() )->clean_urls( $clear_urls );
+	public function clean_cache_urls( $post_id, $clear_urls ) {
+		return ( new Cache() )->clean_urls( $post_id, $clear_urls );
 	}
 
 	/**
