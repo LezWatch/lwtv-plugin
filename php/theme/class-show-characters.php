@@ -53,6 +53,12 @@ class Show_Characters {
 	 */
 	public function make( $post_id, $format, $role = '' ) {
 
+		$post_status = get_post_status( $post_id );
+
+		if ( 'publish' !== get_post_status( $post_id ) ) {
+			return array();
+		}
+
 		$get_shadow_tax = \Shadow_Taxonomy\Core\get_the_posts( $post_id, Characters::SHADOW_TAXONOMY, Characters::SLUG );
 
 		if ( $get_shadow_tax ) {
@@ -63,6 +69,10 @@ class Show_Characters {
 			return array();
 			// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 			// $characters = $this->get_characters_from_post_meta( $post_id );
+		}
+
+		if ( empty( $characters ) || ! is_array( $characters ) ) {
+			return array();
 		}
 
 		$clean_characters = $this->clean_character_array( $characters, $post_id );

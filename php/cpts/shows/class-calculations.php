@@ -95,10 +95,11 @@ class Calculations {
 		}
 
 		// before we do the math, let's see if we have any characters:
-		$char_count = count( get_post_meta( $post_id, 'lezshows_char_list', true ) );
+		$char_list  = get_post_meta( $post_id, 'lezshows_char_list', true );
+		$char_count = ( is_array( $char_list ) ) ? count( $char_list ) : 0;
 
 		// Empty raw? Return 0.
-		if ( empty( $char_count ) ) {
+		if ( empty( $char_count ) || 0 === $char_count ) {
 			return 0;
 		}
 		$char_roles = get_post_meta( $post_id, 'lezshows_char_roles', true );
