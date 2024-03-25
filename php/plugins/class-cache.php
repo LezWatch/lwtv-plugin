@@ -94,7 +94,7 @@ class Cache {
 		$post_date = get_post_time( 'U', true, $post_id );
 		$delta     = time() - $post_date;
 		if ( $delta < ( 15 * 60 ) ) {
-			$clean_urls[] = home_url();
+			$clear_urls[] = home_url();
 		}
 
 		foreach ( $clear_urls as $url ) {
