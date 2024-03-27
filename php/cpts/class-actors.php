@@ -239,6 +239,15 @@ class Actors {
 		// Do the math:
 		$this->do_the_math( $post_id );
 
+		// Caching
+		// Get a list of URLs to flush
+		$clear_urls = lwtv_plugin()->collect_cache_urls_for_actors_or_shows( $post_id );
+
+		// If we've got a list of URLs, then flush.
+		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
+			lwtv_plugin()->clean_cache_urls( $post_id, $clear_urls );
+		}
+
 		// re-hook this function
 		add_action( 'save_post_post_type_actors', array( $this, 'save_post_meta' ) );
 	}

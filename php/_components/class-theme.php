@@ -1,6 +1,9 @@
 <?php
 /*
- * Themes
+ * Theme Components
+ *
+ * In general these are used in the front-end of the theme. Other functions
+ * may also use them, however.
  */
 namespace LWTV\_Components;
 
@@ -9,6 +12,7 @@ use LWTV\Theme\Actor_Birthday;
 use LWTV\Theme\Actor_Characters;
 use LWTV\Theme\Actor_Pronouns;
 use LWTV\Theme\Actor_Terms;
+use LWTV\Theme\Character_Relationships;
 use LWTV\Theme\Content_Warning;
 use LWTV\Theme\Data_Author;
 use LWTV\Theme\Data_Character;
@@ -44,6 +48,7 @@ class Theme implements Component, Templater {
 			'get_characters_list'       => array( $this, 'get_characters_list' ),
 			'get_list_characters'       => array( $this, 'get_characters_list' ), // THIS IS DEPRECATED!!
 			'get_chars_for_show'        => array( $this, 'get_chars_for_show' ),
+			'get_chars_relationships'   => array( $this, 'get_chars_relationships' ),
 			'get_author_social'         => array( $this, 'get_author_social' ),
 			'get_author_favorite_shows' => array( $this, 'get_author_favorite_shows' ),
 			'get_tax_archive_title'     => array( $this, 'get_tax_archive_title' ),
@@ -98,6 +103,17 @@ class Theme implements Component, Templater {
 	 */
 	public function get_chars_for_show( $show_id, $role ) {
 		return ( new Show_Characters() )->make( $show_id, 'query', $role );
+	}
+
+	/**
+	 * Output all the characters this character has relationships with.
+	 *
+	 * @param  int    $char_id
+	 *
+	 * @return array  List of characters by ID.
+	 */
+	public function get_chars_relationships( $char_id ): array {
+		return ( new Character_Relationships() )->make( $char_id );
 	}
 
 	/**

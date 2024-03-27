@@ -382,13 +382,14 @@ class Characters {
 
 		// Always Sync Taxonomies
 		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_cliches', 'lez_cliches' );
+		lwtv_plugin()->save_select2_taxonomy( $post_id, 'lezchars_relationship_chart', 'shadow_tax_characters' );
 
 		// Get a list of URLs to flush
 		$clear_urls = lwtv_plugin()->collect_cache_urls_for_characters( $post_id );
 
 		// If we've got a list of URLs, then flush.
 		if ( isset( $clear_urls ) && ! empty( $clear_urls ) ) {
-			lwtv_plugin()->clean_cache_urls( $clear_urls );
+			lwtv_plugin()->clean_cache_urls( $post_id, $clear_urls );
 		}
 	}
 

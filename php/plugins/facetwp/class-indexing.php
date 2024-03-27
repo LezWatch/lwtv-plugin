@@ -208,6 +208,9 @@ class Indexing {
 			if ( 'char_actors' === $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];
 				foreach ( $values as $val ) {
+					if ( empty( $val ) ) {
+						continue;
+					}
 					$params['facet_value']         = $val;
 					$params['facet_display_value'] = get_the_title( $val );
 					$facet_class->insert( $params );
@@ -221,11 +224,12 @@ class Indexing {
 			if ( 'char_shows' === $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];
 				foreach ( $values as $val ) {
-					if ( isset( $val['show'] ) ) {
-						$params['facet_value']         = $val['show'];
-						$params['facet_display_value'] = get_the_title( $val['show'] );
-						$facet_class->insert( $params );
+					if ( ! isset( $val['show'] ) ) {
+						continue;
 					}
+					$params['facet_value']         = $val['show'];
+					$params['facet_display_value'] = get_the_title( $val['show'] );
+					$facet_class->insert( $params );
 				}
 				// skip default indexing
 				$params['facet_value'] = '';
@@ -236,9 +240,12 @@ class Indexing {
 			if ( 'char_roles' === $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];
 				foreach ( $values as $val ) {
-						$params['facet_value']         = $val['type'];
-						$params['facet_display_value'] = ucfirst( $val['type'] );
-						$facet_class->insert( $params );
+					if ( ! isset( $val['type'] ) ) {
+						continue;
+					}
+					$params['facet_value']         = $val['type'];
+					$params['facet_display_value'] = ucfirst( $val['type'] );
+					$facet_class->insert( $params );
 				}
 				// skip default indexing
 				$params['facet_value'] = '';
@@ -252,6 +259,9 @@ class Indexing {
 			if ( 'char_years' === $params['facet_name'] ) {
 				$values = (array) $params['facet_value'];
 				foreach ( $values as $val ) {
+					if ( ! isset( $val['appears'] ) ) {
+						continue;
+					}
 					foreach ( $val['appears'] as $year ) {
 						$params['facet_value']         = $year;
 						$params['facet_display_value'] = $year;

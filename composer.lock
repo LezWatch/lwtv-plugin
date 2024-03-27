@@ -128,49 +128,62 @@
         },
         {
             "name": "aldavigdis/wp-tests-strapon",
-            "version": "dev-account-for-no-terminal",
+            "version": "0.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aldavigdis/wp-tests-strapon.git",
-                "reference": "d896de835d7ebf4900bdcecb189dd17579523586"
+                "reference": "506335d054a31c386e4d305aff175053a706f754"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aldavigdis/wp-tests-strapon/zipball/d896de835d7ebf4900bdcecb189dd17579523586",
-                "reference": "d896de835d7ebf4900bdcecb189dd17579523586",
+                "url": "https://api.github.com/repos/aldavigdis/wp-tests-strapon/zipball/506335d054a31c386e4d305aff175053a706f754",
+                "reference": "506335d054a31c386e4d305aff175053a706f754",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^2.6",
-                "phpunit/phpunit": "^9.0",
+                "phpunit/phpunit": "^9 || ^10",
                 "simoneast/simple-ansi-colors": "^1.0",
                 "yoast/phpunit-polyfills": "^2.0"
             },
             "require-dev": {
                 "composer/composer": "^2.7",
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpunit/phpunit": "^10.0",
                 "psy/psysh": "^0.12.0",
+                "slevomat/coding-standard": "^8.14",
                 "squizlabs/php_codesniffer": "^3.8",
                 "wp-coding-standards/wpcs": "^3.0"
             },
             "type": "library",
-            "extra": {
-                "class": "Aldavigdis\\WpTestsStrapon\\StraponMain"
-            },
             "autoload": {
                 "psr-4": {
                     "Aldavigdis\\WpTestsStrapon\\": "src/"
                 }
             },
+            "scripts": {
+                "test": [
+                    "./vendor/bin/phpunit --testdox --display-warnings --display-notices"
+                ],
+                "lint:check": [
+                    "vendor/bin/phpcs src/ bootstrap.php  tests/"
+                ],
+                "lint:fix": [
+                    "vendor/bin/phpcbf src/ bootstrap.php  tests/"
+                ]
+            },
             "license": [
-                "No-Evil-Use"
+                "AGPL-3.0-or-later"
             ],
             "authors": [
                 {
                     "name": "Alda Vigdís Skarphéðinsdóttir",
-                    "email": "aldavigdis@aldavigdis.is"
+                    "email": "aldavigdis@aldavigdis.is",
+                    "role": "Developer"
                 }
             ],
             "description": "Strap the WordPress PHPUnit tests library onto your plugin or theme with this handy Composer package.",
+            "homepage": "https://github.com/aldavigdis/wp-tests-strapon",
             "keywords": [
                 "dev",
                 "phpunit",
@@ -178,10 +191,17 @@
                 "wordpress"
             ],
             "support": {
-                "source": "https://github.com/aldavigdis/wp-tests-strapon/tree/account-for-no-terminal",
-                "issues": "https://github.com/aldavigdis/wp-tests-strapon/issues"
+                "issues": "https://github.com/aldavigdis/wp-tests-strapon/issues",
+                "source": "https://github.com/aldavigdis/wp-tests-strapon",
+                "email": "aldavigdis@aldavigdis.is"
             },
-            "time": "2024-02-18T17:26:51+00:00"
+            "funding": [
+                {
+                    "type": "github",
+                    "url": "https://github.com/aldavigdis"
+                }
+            ],
+            "time": "2024-03-23T16:34:26+00:00"
         },
         {
             "name": "antecedent/patchwork",
@@ -432,16 +452,16 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "1.6.9",
+            "version": "1.6.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "0cc058854b3195ba21dc6b1f7b1f60f4ef3a9c06"
+                "reference": "81a161d0b135df89951abd52296adf97deb0723d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/0cc058854b3195ba21dc6b1f7b1f60f4ef3a9c06",
-                "reference": "0cc058854b3195ba21dc6b1f7b1f60f4ef3a9c06",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/81a161d0b135df89951abd52296adf97deb0723d",
+                "reference": "81a161d0b135df89951abd52296adf97deb0723d",
                 "shasum": ""
             },
             "require": {
@@ -453,8 +473,8 @@
                 "phpunit/phpunit": "<8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^8.5 || ^9.6.10",
-                "symplify/easy-coding-standard": "^12.0.8"
+                "phpunit/phpunit": "^8.5 || ^9.6.17",
+                "symplify/easy-coding-standard": "^12.1.14"
             },
             "type": "library",
             "autoload": {
@@ -511,7 +531,7 @@
                 "security": "https://github.com/mockery/mockery/security/advisories",
                 "source": "https://github.com/mockery/mockery"
             },
-            "time": "2023-12-10T02:24:34+00:00"
+            "time": "2024-03-21T18:34:15+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1500,16 +1520,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.6.17",
+            "version": "9.6.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "1a156980d78a6666721b7e8e8502fe210b587fcd"
+                "reference": "32c2c2d6580b1d8ab3c10b1e9e4dc263cc69bb04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/1a156980d78a6666721b7e8e8502fe210b587fcd",
-                "reference": "1a156980d78a6666721b7e8e8502fe210b587fcd",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/32c2c2d6580b1d8ab3c10b1e9e4dc263cc69bb04",
+                "reference": "32c2c2d6580b1d8ab3c10b1e9e4dc263cc69bb04",
                 "shasum": ""
             },
             "require": {
@@ -1583,7 +1603,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.17"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.18"
             },
             "funding": [
                 {
@@ -1599,7 +1619,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-23T13:14:51+00:00"
+            "time": "2024-03-21T12:07:32+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -2746,16 +2766,16 @@
         },
         {
             "name": "wp-coding-standards/wpcs",
-            "version": "3.0.1",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WordPress/WordPress-Coding-Standards.git",
-                "reference": "b4caf9689f1a0e4a4c632679a44e638c1c67aff1"
+                "reference": "9333efcbff231f10dfd9c56bb7b65818b4733ca7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress/WordPress-Coding-Standards/zipball/b4caf9689f1a0e4a4c632679a44e638c1c67aff1",
-                "reference": "b4caf9689f1a0e4a4c632679a44e638c1c67aff1",
+                "url": "https://api.github.com/repos/WordPress/WordPress-Coding-Standards/zipball/9333efcbff231f10dfd9c56bb7b65818b4733ca7",
+                "reference": "9333efcbff231f10dfd9c56bb7b65818b4733ca7",
                 "shasum": ""
             },
             "require": {
@@ -2764,16 +2784,16 @@
                 "ext-tokenizer": "*",
                 "ext-xmlreader": "*",
                 "php": ">=5.4",
-                "phpcsstandards/phpcsextra": "^1.1.0",
-                "phpcsstandards/phpcsutils": "^1.0.8",
-                "squizlabs/php_codesniffer": "^3.7.2"
+                "phpcsstandards/phpcsextra": "^1.2.1",
+                "phpcsstandards/phpcsutils": "^1.0.10",
+                "squizlabs/php_codesniffer": "^3.9.0"
             },
             "require-dev": {
                 "php-parallel-lint/php-console-highlighter": "^1.0.0",
                 "php-parallel-lint/php-parallel-lint": "^1.3.2",
                 "phpcompatibility/php-compatibility": "^9.0",
                 "phpcsstandards/phpcsdevtools": "^1.2.0",
-                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0"
+                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0 || ^8.0 || ^9.0"
             },
             "suggest": {
                 "ext-iconv": "For improved results",
@@ -2804,11 +2824,11 @@
             },
             "funding": [
                 {
-                    "url": "https://opencollective.com/thewpcc/contribute/wp-php-63406",
+                    "url": "https://opencollective.com/php_codesniffer",
                     "type": "custom"
                 }
             ],
-            "time": "2023-09-14T07:06:09+00:00"
+            "time": "2024-03-25T16:39:00+00:00"
         },
         {
             "name": "yoast/phpunit-polyfills",

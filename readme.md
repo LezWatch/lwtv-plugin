@@ -465,13 +465,14 @@ Templates used by the shortcodes and Gutenberg (as well as when included on the 
 
 ### Theme
 
-Stored in `/php/theme/` - Code used to generate data for the theme in weird ways. Each class file has a `make()` function that generates the output. Some have sub-sets.
+Stored in `/php/theme/` - Code used to generate data primarily for the theme in weird ways. Each class file has a `make()` function that generates the output. Some have sub-sets.
 
 * `class-actor-age.php` - Returns actor age.
 * `class-actor-birthday.php` - Boolean return if an actor is having a birthday.
 * `class-actor-characters.php` - List all characters for an actor.
-* `class-actor-pronouns.php` - Sort actor pronouns
+* `class-actor-pronouns.php` - Sort actor pronouns.
 * `class-actor-terms.php` - List simple terms for actors (i.e. gender, sexuality)
+* `class-character-relationships` - IDs of all characters a specific character (i.e. Sara Lance) has had a relationship with.
 * `class-content-warning.php` - If a show has a content warning, we display it.
 * `class-data-author.php` - Generate and return data for Authors (Mika, Tracy, Etc.)
     - `function social()` - Social Media for authors
@@ -526,6 +527,7 @@ Stored in `/wp-cli/` -- All code for WP-CLI
 * `cli-calc.php` - Calculations on content (scores, character count, etc) - `wp lwtv CALC [ID]`
 * `cli-check.php` - Data validation checkers - `wp lwtv CHECK [queerchars|wiki] [id]`
 * `cli-generate.php` - Generate custom content - `wp lwtv GENERATE [otd|tvmaze]`
+* `cli-shadow.php` - Build out shadow taxonomy connections - `wp lwtv shadow [shows|actors] [ID (optional)]`
 
 ### Plugins
 * `cmb-field-select2` - Forked from [MustardBees](https://github.com/mustardBees/cmb-field-select2)
@@ -541,16 +543,22 @@ Stored in `/tests/ ` -- Unit/Functionality Tests
 * `bootstrap.php` - Boostrapper
 * `test-sample.php` - Sample
 
-All tests for the components are found in `/components/`:
+Helper functions are in `/helpers/`:
 
 * `test-autoload.php`
+
+All tests for the components are found in `/components/`:
+
 * `test-block-types-allowed.php`
+* `test-blocks.php`
 * `test-cpts.php`
 * `test-debugger.php`
 * `test-grading.php`
 * `test-roles.php`
 * `test-symbolicon.php`
 * `test-ways-to-watch.php`
+
+Commonly used data is stored in `/data/` (currently only images).
 
 ### Node Scripts
 
