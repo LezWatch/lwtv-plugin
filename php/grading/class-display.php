@@ -52,7 +52,10 @@ class Display {
 							stroke-dasharray="<?php echo esc_html( $score['score'] ); ?>, 100"
 						/>
 						<?php
-							$x_size = ( isset( $score['alt_s'] ) ) ? '7' : '9';
+						$x_size = ( isset( $score['alt_s'] ) ) ? '7' : '9';
+						if ( 100 === (int) $score['score'] ) {
+							$x_size = '4';
+						}
 						?>
 						<text x="<?php echo (int) $x_size; ?>" y="23" class="percentage">
 							<?php
