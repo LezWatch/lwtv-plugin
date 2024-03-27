@@ -52,14 +52,20 @@ class Custom_Columns {
 			$airdate = 'N/A';
 		}
 
+		$rating = ucfirst( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) );
+
 		switch ( $column ) {
 			case 'shows-airdate':
 				$output = $airdate;
 				break;
 			case 'shows-worthit':
-				$output = ucfirst( get_post_meta( $post_id, 'lezshows_worthit_rating', true ) );
+				$output = ( false !== $rating ) ? $rating : 'N/A';
 				break;
 			case 'shows-queercount':
+				if ( 'publish' !== get_post_status( $post_id ) ) {
+					$output = 'N/A';
+					break;
+				}
 				$output = lwtv_plugin()->get_characters_list( $post_id, 'count' );
 				break;
 			default:

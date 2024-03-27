@@ -104,20 +104,28 @@ class CPTs implements Component, Templater {
 	/**
 	 * Does a CPT have related posts?
 	 *
-	 * @param  string $slug
+	 * @param  mixed $slug
 	 * @return bool
 	 */
 	public function has_cpt_related_posts( $slug ): bool {
+		if ( is_numeric( $slug ) ) {
+			$slug = get_post_field( 'post_name', get_post( $slug ) );
+		}
+
 		return ( new Related_Posts() )->are_there_posts( $slug );
 	}
 
 	/**
 	 * Get the related posts
 	 *
-	 * @param  string $slug
+	 * @param  mixed $slug
 	 * @return void
 	 */
 	public function get_cpt_related_posts( $slug ): string {
+		if ( is_numeric( $slug ) ) {
+			$slug = get_post_field( 'post_name', get_post( $slug ) );
+		}
+
 		return ( new Related_Posts() )->related_posts( $slug );
 	}
 

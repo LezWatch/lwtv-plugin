@@ -43,6 +43,8 @@ class Plugins implements Component, Templater {
 	public function get_template_tags(): array {
 		return array(
 			'collect_cache_urls_for_characters' => array( $this, 'collect_cache_urls_for_characters' ),
+			'collect_cache_urls_for_actors'     => array( $this, 'collect_cache_urls_for_actors_or_shows' ),
+			'collect_cache_urls_for_shows'      => array( $this, 'collect_cache_urls_for_actors_or_shows' ),
 			'clean_cache_urls'                  => array( $this, 'clean_cache_urls' ),
 			'get_cmb2_terms_list'               => array( $this, 'get_cmb2_terms_list' ),
 			'get_select2_defaults'              => array( $this, 'get_select2_defaults' ),
@@ -63,10 +65,21 @@ class Plugins implements Component, Templater {
 	/**
 	 * Collect the URLs we're going to flush for characters
 	 *
+	 * @param  int     $post_id ID of the character
+	 * @return array   array of URLs
+	 */
+	public function collect_cache_urls_for_actors_or_shows( $post_id ) {
+		return ( new Cache() )->collect_cache_urls_for_actors_or_shows( $post_id );
+	}
+
+	/**
+	 * Collect the URLs we're going to flush.
+	 *
+	 * @param  int     $post_id ID of the show or actor
 	 * @param  array  $clear_urls - Arrays of URLs to clean
 	 */
-	public function clean_cache_urls( $clear_urls ) {
-		return ( new Cache() )->clean_urls( $clear_urls );
+	public function clean_cache_urls( $post_id, $clear_urls ) {
+		return ( new Cache() )->clean_urls( $post_id, $clear_urls );
 	}
 
 	/**

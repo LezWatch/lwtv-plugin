@@ -63,8 +63,9 @@ use LWTV\_Helpers\Utils;
  * @method void   set_of_the_day()         \_Components\Of_The_Day
  *
  * PLUGINS
- * @method void   clean_cache_urls( $urls )                                     \_Components\Plugins
+ * @method void   clean_cache_urls( $post_id, $urls )                           \_Components\Plugins
  * @method array  collect_cache_urls_for_characters( $post_id )                 \_Components\Plugins
+ * @method array  collect_cache_urls_for_actors_or_shows( $post_id )            \_Components\Plugins
  * @method array  get_cmb2_terms_list( $taxonomies, $query_args )               \_Components\Plugins
  * @method array  get_select2_defaults( $postmeta, $taxonomy, $post_id, $none ) \_Components\Plugins
  *

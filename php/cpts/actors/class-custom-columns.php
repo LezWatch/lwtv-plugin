@@ -48,6 +48,10 @@ class Custom_Columns {
 				echo esc_html( $queer );
 				break;
 			case 'actors-charcount':
+				if ( 'publish' !== get_post_status( $post_id ) ) {
+					echo 'N/A';
+					break;
+				}
 				$charcount = get_post_meta( $post_id, 'lezactors_char_count', true );
 				echo (int) $charcount;
 				break;
